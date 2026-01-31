@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
-// @version      1.1.0
+// @version      2.0
 // @run-at       document-end
 // @match        https://espace.ecam.fr/group/education/notes*
 // @grant        none
@@ -48,13 +48,13 @@
         .main-average-card { background: linear-gradient(135deg, #ffffff 30%, #514ba2ff 75%); border-radius: 20px; padding: 30px; margin-bottom: 15px; border: 2px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; transition: box-shadow 0.3s ease, border-color 0.3s ease, left 0.3s ease, top 0.3s ease; user-select: none }
         /* .main-average-card:hover { border-color: #667eea; box-shadow: 3px 5px 5px 0px #00000042; } */
 
-        .average-display { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 7px; }
-        .average-number { font-size: 48px; font-weight: 800; -webkit-text-fill-color: #2A2F72; padding-top: 9px; }
-        .average-label { font-size: 18px; color: #666; font-weight: 500; }
-        .average-stats { display: flex; gap: 30px; }
-        .stat-item { text-align: center; }
-        .stat-value { font-size: 24px; font-weight: 700; color: #c1a7ffff; }
-        .stat-label { font-size: 12px; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+        .average-display    { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 7px; }
+        .average-number     { font-size: 48px; font-weight: 800; -webkit-text-fill-color: #2A2F72; padding-top: 9px; }
+        .average-label      { font-size: 18px; color: #666; font-weight: 500; }
+        .average-stats      { display: flex; gap: 30px; }
+        .stat-item          { text-align: center; }
+        .stat-value         { font-size: 24px; font-weight: 700; color: #c1a7ffff; }
+        .stat-label         { font-size: 12px; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
 
         .new-grades-card      { display: flex; flex-direction: column; margin-top: 10px; margin-bottom: 25px; padding: 10px; gap:10px ; border-radius: 16px; border: 4px solid #446dff; background: #e3e9ffff; box-shadow: 0px 0px 15px 5px #322bff87;}
         .new-grades-card.none { border: 2px solid #446dff; background: #f7f9ffff; box-shadow: none; }
@@ -96,9 +96,10 @@
         .semester-info { display: flex; align-items: center; gap: 12px; }
         .semester-name { font-size: 18px; font-weight: 600; color: #1a1a1a; }
         .semester-average { padding: 6px 12px; background: white; border-radius: 8px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
-        .average-good { color: #10b981; border: 1px solid #10b98130; }
-        .average-medium { color: #f59e0b; border: 1px solid #f59e0b30; }
-        .average-bad { color: #ef4444; border: 1px solid #ef444430; }
+        .average-good       { color: #10b981; border: 1px solid #10b98130; }
+        .average-medium     { color: #f59e0b; border: 1px solid #f59e0b30; }
+        .average-bad        { color: #ef4444; border: 1px solid #ef444430; }
+        .average-unknown    { color: #6d6d6dff; border: 1px solid #80808030; }
         .semester-toggle { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; }
         .semester-toggle.open { transform: rotate(180deg); }
         .semester-content       { padding: 24px; display: none; }
@@ -264,15 +265,54 @@
             this.notes = [];
             this.semestres = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{}, 7:{}, 8:{}, 9:{}, 10:{}};
 
+            this.gradesDatas = {
+                sem: {
+                    "5": {
+                        sem: 5,
+                        average: 0,
+                        classAvg: 0,
+                        unclassified: {
+                            matieres: []
+                        },
+                        ues: [
+                            {
+                                name: "Mathematics for Engineers 5", 
+                                average:0, 
+                                classAvg:0,
+                                totalCoef:0,
+                                matieres: [
+                                    {
+                                        name: "Mathematics for Engineers 5",
+                                        average: 0,
+                                        classAvg: 0,
+                                        coef: 0,
+                                        totalCoef: 0,
+                                        nbDisabledGrades: 0,
+                                        nbSimGrades: 0,
+                                        nbSimGradesCoef: 0,
+                                        nbEnabledSimGrades: 0,
+                                        grades: [
+                                            {type: "Final Exam (DS2)",      note: 10, coef: 50, date:"", teacher:""},
+                                            {type: "Midterm (DS1)",         note: 10, coef: 35, date:"", teacher:""},
+                                            {type: "Continuous Assessment)",note: 10, coef: 15, date:"", teacher:""}
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            };
             this.gradesDatas = {};
-            this.ueConfig =         JSON.parse( localStorage.getItem("ECAM_DASHBOARD_UE_CONFIG")) || {};
-            this.sim =              JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SIM_NOTES")) || {};
-            this.ignoredGrades =    JSON.parse( localStorage.getItem("ECAM_DASHBOARD_IGNORED_GRADES")) || [];
+            this.ueConfig =         JSON.parse( localStorage.getItem("ECAM_DASHBOARD_UE_CONFIG") ) || {};
+            this.ueConfigVers =                 localStorage.getItem("ECAM_DASHBOARD_UE_CONFIG_VERSION") || 0;
+            this.sim =              JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SIM_NOTES") ) || {};
+            this.ignoredGrades =    JSON.parse( localStorage.getItem("ECAM_DASHBOARD_IGNORED_GRADES") ) || [];
 
-            this.savedReadGrades =  JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SAVED_READ_GRADES")) || [] ;
+            this.savedReadGrades =  JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SAVED_READ_GRADES") ) || [] ;
             this.newGrades = [];
 
-            this.defSem =                       localStorage.getItem("ECAM_DASHBOARD_DEFAULT_SEMESTER") || "all";
+            this.defSem =                       localStorage.getItem("ECAM_DASHBOARD_DEFAULT_SEMESTER") || 5;
             this.currentSemester = this.defSem;
 
             this.defView =                      /* localStorage.getItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE") || */ "detailed";
@@ -296,40 +336,65 @@
             this.init();
         }
 
-
         saveConfig() { localStorage.setItem('ECAM_DASHBOARD_UE_CONFIG', JSON.stringify(this.ueConfig)); }
         saveSim() { localStorage.setItem("ECAM_DASHBOARD_SIM_NOTES", JSON.stringify(this.sim)); }
         saveignoredGrades() { localStorage.setItem("ECAM_DASHBOARD_IGNORED_GRADES", JSON.stringify(this.ignoredGrades)); }
-        ensureSimPath(sem, ue, mat) {
-            if(!this.sim[sem]) this.sim[sem]={};
-            if(!this.sim[sem][ue]) this.sim[sem][ue]={};
-            if(mat !== undefined && !this.sim[sem][ue][mat]) this.sim[sem][ue][mat]=[];
+        ensureSimPath(sem, ueName, mat) {
+            if(!this.sim[sem]) { this.sim[sem]={ues:[]}; }
+            let ueIndex = -1; this.sim[sem].ues.forEach((ue,index) => {if (ue.name==ueName) ueIndex=index})
+            if(ueIndex==-1) { this.sim[sem].ues.push({name:ueName, matieres:[{name: mat, grades: []}]}); ueIndex = this.sim[sem].ues.length-1; }
+            let matIndex = -1;  this.sim[sem].ues[ueIndex].matieres.forEach((matiere, index) => {if (matiere.name==mat) matIndex=index})
+            if(mat !== undefined && matIndex==-1) { this.sim[sem].ues[ueIndex].matieres[matIndex]={name:mat, grades:[]}; }; 
         }
-        deleteUnusedSimPath(sem, ue, mat) {
-            if (this.sim[sem][ue][mat].length == 0) {delete this.sim[sem][ue][mat]}
-            if (this.sim[sem][ue] == {}) {delete this.sim[sem][ue]}
+        deleteUnusedSimPath(sem, ueName, mat) {
+            this.ensureSimPath(sem, ueName, mat);
+            let ueIndex = -1; this.sim[sem].ues.forEach((ue,index) => {if (ue.name==ueName) ueIndex=index})
+            let matIndex = -1;  this.sim[sem].ues[ueIndex].matieres.forEach((matiere, index) => {if (matiere.name==mat) matIndex=index})
+            if (this.sim[sem].ues[ueIndex].matieres[matIndex] == {}) {this.sim[sem].ues[ueIndex].matieres.splice(matIndex,1)}
+            else if (this.sim[sem].ues[ueIndex].matieres[matIndex].grades.length == 0) {this.sim[sem].ues[ueIndex].matieres.splice(matIndex,1)}
+
+            if (this.sim[sem].ues[ueIndex] == {}) {this.sim[sem].ues.splice(ueIndex,1)}
+            else if (this.sim[sem].ues[ueIndex].matieres.length == 0) {this.sim[sem].ues.splice(ueIndex,1)}
+            
             if (this.sim[sem] == {}) {delete this.sim[sem]}
+            else if (this.sim[sem].ues.length == 0) {delete this.sim[sem]}
+            
         }
-        getSimNotes(sem, ue, mat){ return (this.sim[sem]&&this.sim[sem][ue]&&this.sim[sem][ue][mat])||[]; }
-        getAllMatieresForUE(sem, ueData, ueName){
+        getSimNotes(sem, ueName, mat){
+            this.ensureSimPath(sem, ueName, mat);
+            let ueIndex = -1; this.sim[sem].ues.forEach((ue,index) => {if (ue.name==ueName) ueIndex=index});
+            let matIndex = -1;  this.sim[sem].ues[ueIndex].matieres.forEach((matiere, index) => {if (matiere.name==mat) matIndex=index});
+            const simGrades = new Array(this.sim[sem].ues[ueIndex].matieres[matIndex].grades)[0];
+            // this.deleteUnusedSimPath(sem, ueName, mat);
+            return simGrades;
+        }
+        getAllMatieresForUE(sem, ueData){
             const real = ueData.matieres || [];
-            const simOnly = Object.keys(((this.sim[sem]||{})[ueName]||{}));
-            return Array.from(new Set([...real, ...simOnly]));
+            const ueName = ueData.name;
+            let ueIndex = -1; this.ueConfig[sem].ues.forEach((ue,index) => {if (ue.name==ueName) ueIndex=index})
+            let simOnly = [];
+            if ((this.sim[sem]||[]).length > 0) {
+                simOnly = ((this.sim[sem]||{}).ues[ueIndex]||[]);
+            }
+            
+            return Array.from(new Set([...real, ...simOnly])); 
         }
         getNoteColor(note) { if (note >= 12) return 'good'; if (note >= 10) return 'medium'; return 'bad'; }
-        getAverageColor(avg) { if (avg >= 12) return 'average-good'; if (avg >= 10) return 'average-medium'; return 'average-bad'; }
-
+        getAverageColor(avg) { if (avg >= 12) return 'average-good'; if (avg >= 10) return 'average-medium'; if (avg == " - ") return 'average-unknown'; return 'average-bad'; }
+        gradeIsIgnored(n) { return this.ignoredGrades.indexOf([n.semestre, n.matiere, n.type+" "+n.date+" "+n.prof].join("\\")) != -1 }
         moyennePonderee(arr) {
             if (!arr || arr.length === 0) return 0;
-            let total = 0, coeffs = 0;
+            let total = 0, classTotal = 0, coeffs = 0;
             arr.forEach(n => { 
                 if (this.ignoredGrades.indexOf([n.semestre, n.matiere, n.type+" "+n.date+" "+n.prof].join("\\")) == -1) {
                     total += n.note * (n.coef||0); 
+                    classTotal += (n.classAvg||0) * (n.coef||0);
                     coeffs += (n.coef||0); 
                 }
             });
-            const v = coeffs ? (total / coeffs) : 0;
-            return Number.isFinite(v) ? Number(v.toFixed(2)) : 0;
+            const average = coeffs ? Math.round(100*total / coeffs)/100 : 0;
+            const classAvg = coeffs ? Math.round(100*classTotal/coeffs)/100 : 0;
+            return {average, classAvg}; 
         }
         parseNotes() {
             if (!this.ERROR503) {
@@ -351,22 +416,232 @@
                         this.notes.push({ note, classAvg, coef, semestre, matiere, type, prof, date, libelle });
                     }
                 });
-                this.notes.forEach(n => {
-                    if (!this.semestres[n.semestre]) this.semestres[n.semestre] = {};
-                    if (!this.semestres[n.semestre][n.matiere]) this.semestres[n.semestre][n.matiere] = [];
-                    this.semestres[n.semestre][n.matiere].push(n);
-                });
             }
             else {
                 this.notes = new Array(this.savedReadGrades);
             }
+
+            this.notes.forEach(n => {
+                if (!this.semestres[n.semestre]) this.semestres[n.semestre] = {};
+                if (!this.semestres[n.semestre][n.matiere]) this.semestres[n.semestre][n.matiere] = [];
+                this.semestres[n.semestre][n.matiere].push(n);
+            });
         }
 
+        // MARK: Generate gradesDatas
+        generateGradesDatas() {
+            this.gradesDatas = {};
+            Object.keys(this.semestres).forEach(sem => 
+            {
+                this.gradesDatas[sem] = {ues: [], sem, average: 0, classAvg: 0, unclassified: {average: 0, classAvg: 0, fakeAvg: 0, fakeClassAvg: 0, matieres:[]}};
+                let s = this.gradesDatas[sem];
+                let remainingMatieres = {};
+
+                // If the current semester in the scope has a config in this.ueConfig
+                if (this.ueConfig[sem] && this.ueConfigVers == 2) 
+                {
+                    // If the current semester in the scope has its UEs configured in this.ueConfig
+                    if (this.ueConfig[sem].ues) {
+                        this.ueConfig[sem].ues.forEach((ueData, ueIndex) => 
+                        {
+                            this.gradesDatas[sem].ues.push({name: ueData.name, average: 0, classAvg: 0, totalMatsCoef: 0, totalGradesCoef: 0, nbDisabledGrades: 0, nbSimGrades: 0, totalSimGradesCoef: 0, nbEnabledSimGrades: 0, matieres: []})
+                            let ue = this.gradesDatas[sem].ues[ueIndex];
+
+                            Object.keys(this.semestres[sem]).forEach((matName, matIndex) => 
+                            {
+                                let matIsClassified = false;
+                                let matConfigIndex = 0;
+                                let matConfigData = {};
+                                ueData.matieres.forEach((matCfgData, matCfgIndex) => {
+                                    if (matCfgData.name == matName) {matIsClassified = true; matConfigIndex = matCfgIndex; matConfigData = matCfgData; while (matConfigData.length < matCfgIndex) ue.matieres.push({})}
+                                })
+
+                                if (matIsClassified) {
+                                    ue.matieres[matConfigIndex] = {name: matConfigData.name, ue: matConfigData.name, average: 0, classAvg: 0, coef: matConfigData.coef, totalCoef: 0, nbDisabledGrades: 0, nbSimGrades: 0, totalSimGradesCoef: 0, nbEnabledSimGrades: 0, grades: []}
+                                    let mat = ue.matieres[matConfigIndex];
+                                    
+                                    this.semestres[sem][matConfigData.name].forEach((n, gradeIndex) => 
+                                    {
+                                        mat.grades.push(n);
+
+                                        let enabled = true;
+                                        if (this.gradeIsIgnored(n)) {enabled = false}
+                                        mat.grades[gradeIndex].enabled = enabled;
+                                        mat.grades[gradeIndex].ue = ueData.name;
+                                        mat.grades[gradeIndex].mat = matConfigData.name;
+                                        mat.totalCoef += n.coef;
+                                    })
+
+                                    const avg = this.moyennePonderee(mat.grades);
+                                    mat.average = avg.average;
+                                    mat.classAvg = avg.classAvg;
+
+                                    ue.average += mat.average*mat.coef/100;
+                                    ue.classAvg += mat.classAvg*mat.coef/100;
+                                    ue.totalGradesCoef += mat.totalCoef*ue.matieres.length;
+                                    ue.totalMatsCoef += mat.coef;
+                                    
+                                }
+                                else {remainingMatieres[matName] = this.semestres[sem][matName]}
+                            })
+                            ue.average = Math.round(100*ue.average)/100;
+                            ue.classAvg = Math.round(100*ue.classAvg)/100;
+                            s.average += ue.average;
+                            s.classAvg += ue.classAvg;
+                        })
+                    }
+                    else {remainingMatieres = this.semestres[sem]}
+                }
+                else {remainingMatieres = this.semestres[sem]}
+
+                if (Object.keys(remainingMatieres).length > 0)
+                {
+                    Object.keys(remainingMatieres).forEach((matName, matIndex) => 
+                    {
+                        s.unclassified.matieres.push(
+                            {name: matName, sem, ue: "unclassified", average: 0, classAvg: 0, totalCoef: 0, grades: []}
+                        )
+                        let mat = s.unclassified.matieres[matIndex];
+
+                        remainingMatieres[matName].forEach(n => 
+                        {
+                            let enabled = true;
+                            if (this.gradeIsIgnored(n)) {enabled = false}
+                            n.sem = sem;
+                            n.ue = "unclassified";
+                            n.mat = matName;
+                            n.enabled = enabled;
+                            mat.totalCoef += n.coef;
+
+                            mat.grades.push(n);
+                        })
+
+                        const avg = this.moyennePonderee(mat.grades);
+                        mat.average = avg.average;
+                        mat.classAvg = avg.classAvg;
+
+                        s.unclassified.average += mat.average;
+                        s.unclassified.fakeAvg += mat.average;
+                        s.unclassified.classAvg += mat.classAvg;
+                        s.unclassified.fakeClassAvg += mat.classAvg;
+                    })
+                    s.unclassified.average =  Math.round(100*s.unclassified.average/ s.unclassified.matieres.length)/100;
+                    s.unclassified.classAvg = Math.round(100*s.unclassified.classAvg/s.unclassified.matieres.length)/100;
+                }
+                else if (s.ues.length == 0)
+                {
+                    s.unclassified = {average: " - ", classAvg: " - ", matieres:[]};
+                    s.average =  " - ";
+                    s.classAvg = " - ";
+                }
+
+                s.average =  Math.round(100*(s.average+s.unclassified.fakeAvg)/ (s.ues.length+s.unclassified.matieres.length))/100;
+                s.classAvg = Math.round(100*(s.classAvg+s.unclassified.fakeClassAvg)/(s.ues.length+s.unclassified.matieres.length))/100;
+
+                if (isNaN(s.average)) {s.average = " - "}
+                if (isNaN(s.classAvg)) {s.classAvg = " - "}
+            })
+        }
+
+        // MARK: Modify gradesDatas
+        modifyGradesDatas(targetType="move mat", sem, oldMatIndex, newMatIndex, oldUeIndex, newUeIndex) {
+            const unclassified = this.gradesDatas[sem].unclassified;
+            let oldUe = this.gradesDatas[sem].ues[oldUeIndex];
+            let newUe = this.gradesDatas[sem].ues[newUeIndex];
+            const editType = /edit (.+)/ig.exec(targetType);
+
+            if (targetType=="move mat") {
+                // insert the mat at index oldMatIndex from the ue at index oldUeIndex to the newMatIndex index of the ue at index newUeIndex 
+                newUe.matieres.splice(newMatIndex, 0, oldUe.matieres.splice(oldMatIndex, 1))
+
+                // recalculating datas for each ue
+                [newUe, oldUe].forEach(ue => {
+                    ue.nbDisabledGrades = 0; ue.totalGradesCoef = 0; ue.totalMatsCoef = 0; ue.totalSimGradesCoef = 0; ue.nbEnabledSimGrades = 0; ue.nbSimGrades = 0; ue.classAvg = 0; ue.average = 0;
+                    ue.matieres.forEach(mat => {
+                        mat.ue = ue.name;
+                        ue.average += mat.average*mat.coef/100;
+                        ue.classAvg += mat.classAvg*mat.coef/100;
+                        mat.forEach(n => {
+                            n.mat = mat.name;
+                            if (!n.enabled) ue.nbDisabledGrades++;
+                            if (n.__sim) ue.nbSimGrades++;
+                            if (n.__sim && n.enabled) {ue.nbEnabledSimGrades++; ue.totalSimGradesCoef+=n.coef}
+                            ue.totalGradesCoef += n.coef;
+                        })
+                        ue.totalMatsCoef += mat.coef;
+                    })
+                })
+            }
+            else if (targetType=="remove mat") {
+                // moving the mat at index oldMatIndex from the ue at index oldUeIndex to the unclassified section
+                this.gradesDatas[sem].unclassified.matieres.push(this.gradesDatas[sem].ues[oldUeIndex].matieres.splice(oldMatIndex, 1))
+
+                // recalculating datas for the old ue and the unclassified section
+                unclassified.fakeAvg = 0; unclassified.fakeClassAvg = 0;
+                unclassified.matieres.forEach(mat => {
+                    unclassified.fakeAvg += mat.average;
+                    unclassified.fakeClassAvg += mat.classAvg;
+                })
+                unclassified.average = Math.round(100*unclassified.fakeAvg/unclassified.matieres.length)/100;
+                unclassified.classAvg = Math.round(100*unclassified.fakeClassAvg/unclassified.matieres.length)/100;
+
+                oldUe.nbDisabledGrades = 0; oldUe.totalGradesCoef = 0; oldUe.totalMatsCoef = 0; oldUe.totalSimGradesCoef = 0; oldUe.nbEnabledSimGrades = 0; oldUe.nbSimGrades = 0; oldUe.classAvg = 0; oldUe.average = 0;
+                oldUe.matieres.forEach(mat => {
+                    oldUe.average += mat.average*mat.coef/100;
+                    oldUe.classAvg += mat.classAvg*mat.coef/100;
+                    mat.forEach(n => {
+                        if (!n.enabled) oldUe.nbDisabledGrades++;
+                        if (n.__sim) oldUe.nbSimGrades++;
+                        if (n.__sim && n.enabled) {oldUe.nbEnabledSimGrades++; oldUe.totalSimGradesCoef+=n.coef}
+                        oldUe.totalGradesCoef += n.coef;
+                    })
+                    oldUe.totalMatsCoef += mat.coef;
+                })
+            }
+            else if (targetType=="move ue") {
+                // moving the ue at index oldUeIndex to index newUeIndex
+                this.gradesDatas[sem].ues.splice(newUeIndex, 0, this.gradesDatas[sem].ues.splice(oldUeIndex, 1))
+            }
+            else if (targetType=="remove ue") {
+                // pushing all grades in the classified section (order doesn't matter)
+                this.gradesDatas[sem].ues[oldUeIndex].matieres.forEach(mat => {
+                    unclassified.matieres.push(mat)
+                })
+                // removing the UE placed at index oldUeIndex
+                this.gradesDatas[sem].ues.splice(oldUeIndex, 1)
+
+                // recalculating the averages of the unclassified section
+                unclassified.fakeAvg = 0; unclassified.fakeClassAvg = 0;
+                unclassified.matieres.forEach(mat => {
+                    unclassified.fakeAvg += mat.average;
+                    unclassified.fakeClassAvg += mat.classAvg;
+                })
+                unclassified.average = Math.round(100*unclassified.fakeAvg/unclassified.matieres.length)/100;
+                unclassified.classAvg = Math.round(100*unclassified.fakeClassAvg/unclassified.matieres.length)/100;
+            }
+            else if (editType) {
+                // regenerate grades 
+                Object.keys(this.gradesDatas).forEach(sem => { let s = this.gradesDatas[sem];
+                    s.ues.forEach((ue, ueIndex) => {
+                        if (targetType == "ue") {this.gradesDatas[sem].ues[ueIndex]}
+                        ue.matieres.forEach(mat => {
+                            mat.grades.forEach(n => {
+                                mat.average += n.note;
+                                mat.classAvg += n.classAvg;
+                            })
+                        })
+                    })
+                })
+            }
+            else {console.error(`no targetType isn't of a managed value in modifyGradeData()`); return}
+
+        }
 
 
         // MARK: init
         init() {
             this.parseNotes();
+            this.generateGradesDatas();
             if (this.savedReadGrades.length == 0) {
                 this.newGrades = [];
                 this.notes.forEach(e => {this.savedReadGrades.push(e)})
@@ -389,7 +664,7 @@
         createDashboard() {
             const container = document.createElement("div");
             container.className = "ecam-dash";
-            const moyenneGenerale = this.moyennePonderee(this.notes);
+            const moyenneGenerale = this.moyennePonderee(this.notes).average;
             const totalNotes = this.notes.length;
             const ueStats = this.getUEStats();
 
@@ -431,7 +706,7 @@
                     <div class="stat-item"><div class="stat-value">${Object.keys(this.semestres).length}</div><div class="stat-label"></div></div>
                     <div class="stat-item"><div class="stat-value">${ueStats.validated}/${ueStats.total}</div><div class="stat-label"></div></div>
                 </div>
-                <div class="hitbox" style="position: absolute; display: flex; width: 1781px; height: 101px; top: 347px; left: 39px;"></div>
+                <div class="hitbox" style="position: absolute; display: flex; width: 95%; height: 101px; top: 347px; left: 39px;"></div>
             </div>
 
 
@@ -450,7 +725,7 @@
 
             <div class="controls-bar">
                 <div class="filter-tabs">
-                    <button class="filter-tab" id="filter-tab-all-semesters" data-filter="all" ${this.currentSemester == "all" ? "active" : ""}></button>
+                    <button class="filter-tab ${this.currentSemester == "all" ? "active" : ""}" id="filter-tab-all-semesters" data-filter="all"></button>
                     ${Object.keys(this.semestres).sort((a,b) => a-b).map(s => `<button class="filter-tab ${s == this.currentSemester ? "active" : ""}" id="filter-tab-semester-${s}" data-filter="${s}">S${s}</button>`).join('')}
                 </div>
                 <div class="view-toggle">
@@ -532,7 +807,7 @@
         // MARK: renderContent
         renderContent(transition=true) {
 
-            {   // Language Sensitive text in the Dashboard Header and Semester filter tab (which don't refresh on calling the renderContent() method)
+            {   // Language Sensitive text in the Dashboard Header and Semester filter tab (which doesn't refresh on calling the renderContent() method)
                 const dashTitle = document.querySelector(".dash-title");
                 const dashSubtitle = document.querySelector(".dash-subtitle");
                 dashTitle.innerHTML = `${this.lang == "fr" ? 'ECAM Notes Dashboard' : "ECAM Grades Dashboard"}`;
@@ -593,7 +868,7 @@
 
             let semesterKeys = [];
             if (this.currentSemester === "all") {
-                semesterKeys = Object.keys(this.semestres).sort();
+                semesterKeys = Object.keys(this.semestres).sort((a,b) => parseInt(a) - parseInt(b));
             }
             else if (this.currentSemester === "last") {
                 semesterKeys = [Object.keys(this.semestres).sort().at(-1)];
@@ -601,27 +876,28 @@
             else {
                 semesterKeys = [this.currentSemester];
             }
-            this.gradesDatas = {};
+
             const contentArea = document.getElementById("contentArea");
-            contentArea.innerHTML = "";
+            contentArea.innerHTML = "";       
+            
             semesterKeys.forEach(sem => {
                 const section = document.createElement("div");
                 section.className = `semester-section ${transition ? "fade-in" : ""}`;
-                const moyenneSem = this.moyennePonderee([].concat(...Object.values(this.semestres[sem] || {})));
-                const avgClass = this.getAverageColor(moyenneSem);
-                const unclassified = this.getUnclassifiedMatieres(sem);
+                const moyenneSem = this.gradesDatas[sem].average;
+                const avgColor = this.getAverageColor(moyenneSem);
+                const unclassified = this.gradesDatas[sem].unclassified.matieres;
                 section.innerHTML = `
                 <div class="semester-header" data-semester="${sem}">
                     <div class="semester-info">
                         <div class="semester-name">📚 ${this.lang == "fr" ? 'Semestre' : "Semester"} ${sem}</div>
-                            <div class="semester-average ${avgClass}">
-                                <span>${moyenneSem >= 10 ? '✅' : '⚠️'}</span><span>${moyenneSem}/20</span>
+                            <div class="semester-average ${avgColor}">
+                                <span>${moyenneSem == " - " ? "" : `${moyenneSem >= 10 ? '✅' : '⚠️'}`}</span><span>${moyenneSem}/20</span>
                             </div>
                         </div>
                     <div class="semester-toggle open">▲</div>
                 </div>
                 <div class="semester-content show" id="sem-content-${sem}">
-                    <div class="ue-grid" ${unclassified.length == 0 || !this.ueConfig[sem] || Object.keys(this.ueConfig[sem])[0] == undefined ? `style="gap: 0px"` : ``}>
+                    <div class="ue-grid" ${unclassified.length == 0 || !this.ueConfig[sem] || unclassified == undefined ? `style="gap: 0px"` : ``}>
                         <div class="modules-section">
                             <div class="modules-content">
                                 ${this.renderAllUECards(sem)}
@@ -634,7 +910,7 @@
                                 </div>
                                 <div style="display: flex; flex-direction: row; gap: 8px; align-items: center">
                                     <div class="unclassified-content">
-                                        ${unclassified.length > 0 ?  `${this.renderAllUnclassifiedMatCard(sem, unclassified)}` : ``}
+                                        ${unclassified.length > 0 ?  `${this.renderAllUnclassifiedMatCard(sem)}` : ``}
                                     </div>
                                 </div>
                             </div>
@@ -648,34 +924,35 @@
                 const container = document.getElementById(`sem-content-${sem}`)
 
                 // Set the all matiere cards' moyenne
-                document.querySelectorAll(".ue-moyenne").forEach(ueMoy => {
-                    let newMoy = 0;
-                    let totalCoef = 0;
-                    let ignoredMatieres = 0;
-                    const sem = ueMoy.dataset.sem;
-                    const ue = ueMoy.dataset.ue;
+                // document.querySelectorAll(".ue-moyenne").forEach(ueMoy => {
+                //     let newMoy = 0;
+                //     let totalCoef = 0;
+                //     let ignoredMatieres = 0;
+                //     const sem = ueMoy.dataset.sem;
+                //     const ue = ueMoy.dataset.ue;
+                //     let ueIndex = 0; this.gradesDatas[sem].ues.forEach((ue, index) => {if (ue.name==ue) ueIndex=index})
 
-                    Object.keys(this.gradesDatas[sem][ue].matieres).forEach(matiereName => {
-                        const matiere = this.gradesDatas[sem][ue].matieres[matiereName];
-                        if (matiere.totalDisabledGrades != matiere.grades.length) {
-                            newMoy += matiere.average * parseInt(matiere.coef);
-                            totalCoef += parseInt(matiere.coef);
-                        }
-                        else {ignoredMatieres++}
-                    })
+                //     this.gradesDatas[sem].ues[ueIndex].matieres.forEach(matiereName => {
+                //         const matiere = this.gradesDatas[sem].ues[ueIndex].matieres[matiereName];
+                //         if (matiere.totalDisabledGrades != matiere.grades.length) {
+                //             newMoy += matiere.average * parseInt(matiere.coef);
+                //             totalCoef += parseInt(matiere.coef);
+                //         }
+                //         else {ignoredMatieres++}
+                //     })
 
-                    newMoy = Math.round(newMoy/totalCoef*100)/100;
+                //     newMoy = Math.round(newMoy/totalCoef*100)/100;
                     
-                    this.gradesDatas[sem][ue].average = newMoy;
-                    ueMoy.childNodes[0].data = `${newMoy}/20`;
+                //     this.gradesDatas[sem].ues[ueIndex].average = newMoy;
+                //     ueMoy.childNodes[0].data = `${newMoy}/20`;
 
-                    if (ignoredMatieres == Object.keys(this.gradesDatas[sem][ue].matieres).length) 
-                        {ueMoy.classList.remove('bad'); ueMoy.classList.remove('good'); ueMoy.classList.add("unknown"); ueMoy.childNodes[0].data = " - /20"}
-                    else if (newMoy >= 10)
-                        {ueMoy.classList.remove('bad'); ueMoy.classList.add('good'); ueMoy.classList.remove("unknown")}
-                    else
-                        {ueMoy.classList.add('bad'); ueMoy.classList.remove('good'); ueMoy.classList.remove("unknown")}
-                })
+                //     if (ignoredMatieres == this.gradesDatas[sem].ues[ueIndex].matieres.length) 
+                //         {ueMoy.classList.remove('bad'); ueMoy.classList.remove('good'); ueMoy.classList.add("unknown"); ueMoy.childNodes[0].data = " - /20"}
+                //     else if (newMoy >= 10)
+                //         {ueMoy.classList.remove('bad'); ueMoy.classList.add('good'); ueMoy.classList.remove("unknown")}
+                //     else
+                //         {ueMoy.classList.add('bad'); ueMoy.classList.remove('good'); ueMoy.classList.remove("unknown")}
+                // })
 
                 // Set all the UE titles' total state text
                 // document.querySelectorAll(".ue-title-state").forEach(ueTitleState => {
@@ -692,7 +969,10 @@
                         const ueName = e.target.dataset.uen;
                         const semX = e.target.dataset.sem;
                         const mat = e.target.dataset.mat;
-                        const id = this.sim[semX][ueName][mat].length;
+                        let ueIndex = -1; this.sim[sem].ues.forEach((ue,index) => {if (ue.name==ueName) ueIndex=index})
+                        let matIndex = -1;  this.sim[sem].ues[ueIndex].matieres.forEach((matiere, index) => {if (matiere.name==mat) matIndex=index})
+
+                        const id = this.sim[semX].ues[ueIndex].matieres[matIndex].length;
                         const typeInp = container.querySelector(`.note-simulee-input.sim-inp-type[data-sem="${semX}"][data-mat="${mat}"]`);
                         const noteInp = container.querySelector(`.note-simulee-input.sim-inp-note[data-sem="${semX}"][data-mat="${mat}"]`);
                         const coefInp = container.querySelector(`.note-simulee-input.sim-inp-coef[data-sem="${semX}"][data-mat="${mat}"]`);
@@ -703,7 +983,7 @@
                         const date = dateInp?.value||'';
                         if(isNaN(note) || isNaN(coef)){ alert(this.lang == "fr" ? "Note et coef requis" : "Grade and coef required"); return; }
                         this.ensureSimPath(semX, ueName, mat);
-                        this.sim[semX][ueName][mat].push({
+                        this.sim[semX].ues[ueIndex].matieres[matIndex].grades.push({
                             note, 
                             coef,
                             type: type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`,
@@ -727,6 +1007,9 @@
                         const semX = e.target.dataset.sem;
                         const mat = e.target.dataset.mat;
                         const id = e.target.dataset.id;
+                        let ueIndex = -1; this.sim[sem].ues.forEach((ue,index) => {if (ue.name==ueName) ueIndex=index})
+                        let matIndex = -1;  this.sim[sem].ues[ueIndex].matieres.forEach((matiere, index) => {if (matiere.name==mat) matIndex=index})
+
                         let noteRow = e.target.parentElement.parentElement;
                         // const typeInp = container.querySelector(`.note-simulee-input-edit.sim-inp-type[data-sem="${semX}"][data-mat="${mat}"]`);
                         const typeInp = noteRow.querySelector(`.note-simulee-input-edit.sim-inp-type`)
@@ -738,9 +1021,9 @@
                         const newCoef = parseFloat(coefInp?.value||'');
                         const date = dateInp?.value||'';
                         if(isNaN(newNote) || isNaN(newCoef)){ alert(this.lang == "fr" ? "Note et coef requis" : "Grade and coef required"); return; }
-                        this.sim[semX][ueName][mat].forEach((note, index) => {
+                        this.sim[semX].ues[ueIndex].matieres[matIndex].grades.forEach((note, index) => {
                             if (note.id == id) {
-                                this.sim[semX][ueName][mat][index] = {
+                                this.sim[semX].ues[ueIndex].matieres[matIndex].grades[index] = {
                                     note: newNote, 
                                     coef: newCoef,
                                     type: type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`,
@@ -767,7 +1050,8 @@
                         const ueName = e.target.dataset.uen;
                         const mat = e.target.dataset.mat;
                         const type = e.target.dataset.type;
-                        this.sim[semX][ueName][mat].splice(this.sim[semX][ueName][mat].indexOf(type), 1);
+                        let gradeIndex = -1; this.sim[semX].ues[ueIndex].matieres[matIndex].grades.forEach((grade, index) => {if (grade.type==type) gradeIndex=index})
+                        this.sim[semX].ues[ueIndex].matieres[matIndex].grades.splice(gradeIndex, 1);
                         this.deleteUnusedSimPath(semX, ueName, mat);
                         this.saveSim();
                         this.renderContent(true);
@@ -796,8 +1080,9 @@
                             const content = header.nextElementSibling;
                             const sem = header.dataset.semester;
                             const ueName = this.editMode ? header.children[0].children[1].value : header.children[0].innerText;
-                            const ueConfig = this.ueConfig[sem] || {};
-                            const ueData = ueConfig[ueName];
+                            const ueConfig = (this.ueConfig[sem] || {}).ues || [];
+                            let ueData = {};
+                            ueConfig.ues.forEach((ue) => {if (ue.name == ueName) ueData = ue});
                             
                             const ueContent = header.parentElement.querySelector(".ue-details");
                             ueContent.innerHTML = this.renderAllMatCardCompact(ueData, sem, ueName);
@@ -807,10 +1092,10 @@
                     });
                 }
 
-                this.setNotesTableTotalCoef()
-                this.attachEventListeners();
 
             });
+            this.attachEventListeners();
+            this.setNotesTableTotalCoef();
         }
 
 
@@ -818,42 +1103,22 @@
 
         // MARK: renderAllUECards
         renderAllUECards(sem) {
-            const container = document.getElementById(`sem-content-${sem}`);
-            const ueConfig = this.ueConfig[sem] || {};
-            if(!Object.keys(this.gradesDatas).includes(sem)) this.gradesDatas[sem] = {};
-
             let html = '';
-
-            Object.keys(ueConfig).forEach(ueName => {
-                html += this.renderUECard(sem, ueName);
+            this.gradesDatas[sem].ues.forEach(ue => {
+                html += this.renderUECard(sem, ue);
             });
-
             return html;
 
         }
 
         // MARK: renderUECard
-        renderUECard(sem, ueName) {
-            const ueConfig = this.ueConfig[sem] || {};
-            const ueData = ueConfig[ueName];
-            const ueNotes = this.calculateUENotes(sem, ueData, ueName);
-            const includedNotes = (ueNotes || []).filter(n => this.ignoredGrades.indexOf([sem, n.matiere, n.type+" "+n.date+" "+n.prof].join("\\")) == -1);
-            let weight = 0; includedNotes.forEach(note => {weight += note.coef/100})
-            const moyenne = includedNotes.length ? this.moyennePonderee(includedNotes) : " - ";
-            const hasSim = (this.sim[sem] && this.sim[sem][ueName] && Object.values(this.sim[sem][ueName]).some(arr=>arr.length>0)) ? true : false;
-
-            if (!Object.keys(this.gradesDatas[sem]).includes(ueName)) this.gradesDatas[sem][ueName] = {average: moyenne, matieres:{}};
-            const allMats = this.getAllMatieresForUE(sem, ueData, ueName);
-            allMats.forEach(m => { 
-                if (!Object.keys(this.gradesDatas[sem][ueName].matieres).includes(m)) {
-                    this.gradesDatas[sem][ueName].matieres[m] = {grades: []};
-                } else {
-                    this.gradesDatas[sem][ueName].matieres[m].grades = [];
-                }
-            });
-            ueNotes.forEach(n => {
-                this.gradesDatas[sem][ueName].matieres[n.matiere].grades.push(n);
-            });
+        renderUECard(sem, ueData) {
+            const ueName = ueData.name;
+            let ueIndex = 0; this.gradesDatas[sem].ues.forEach((ue,index) => {if (ue.name==ueData.name) ueIndex=index})
+            let ueNotes = []; let includedNotes = []; // const ueNotes = this.calculateUENotes(sem, ueData);
+            this.gradesDatas[sem].ues[ueIndex].matieres.forEach(mat => {mat.grades.forEach(n =>{ueNotes.push(n); if (n.enabled) {includedNotes.push(n)}})});
+            // const includedNotes = (ueNotes || []).filter(n => this.ignoredGrades.indexOf([sem, n.matiere, n.type+" "+n.date+" "+n.prof].join("\\")) == -1);
+            const moyenne = includedNotes.length ? this.gradesDatas[sem].ues[ueIndex].average : " - ";
             
             let html = `
             <div class="ue-card ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'validated' : 'failed'}`}" id="ue-card-${ueName}-in-semester-${sem}">
@@ -876,12 +1141,12 @@
                         <div class="ue-matiere-total-coef-value" data-sem="${sem}" data-ue="${ueName}"></div>
                     </div>
                     <div class="ue-moyenne ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'good' : 'bad'}`}" data-sem="${sem}" data-ue="${ueName}">
-                         - /20 
+                        ${moyenne}/20 
                         <div class="ue-toggle open">▲</div>
                         <button class="ue-delete-btn" ${this.editMode ? `class="display:none"` : ""} id="ue-delete-btn-${ueName}-in-semester-${sem}" data-semester="${sem}" data-ue="${ueName}">🗑️</button>
                     </div>
                 </div>
-                ${hasSim ? `<div style="width:97%;font-size:12px;color:#374151;background:#eef2ff;border:1px solid #c7d2fe;padding:6px 8px;border-radius:8px; margin:8px 0px;">${this.lang == "fr" ? "Inclut des notes simulées" : "Includes simulated grades"}</div>` : ``}
+                ${ueData.nbsimGrades > 0 ? `<div style="width:97%;font-size:12px;color:#374151;background:#eef2ff;border:1px solid #c7d2fe;padding:6px 8px;border-radius:8px; margin:8px 0px;">${this.lang == "fr" ? "Inclut des notes simulées" : "Includes simulated grades"}</div>` : ``}
                 <div class="ue-details" id="ue-details-${ueName}-in-semester${sem}" style="display:flex; flex-direction: column; align-items: center; width: 98%">
                     ${this.renderAllMatCardDetailed(ueData, sem, ueName)}
                 </div>
@@ -904,20 +1169,21 @@
 
         // MARK: renderAllMatCardDetailed
         renderAllMatCardDetailed(ueData, sem, ueName) {
-            return Object.keys(this.gradesDatas[sem][ueName].matieres).map(matiere => {
-                if (matiere != "average") 
-                    {return this.renderMatCardDetailed(ueData, sem, ueName, matiere)}
+            let ueIndex = -1; this.gradesDatas[sem].ues.forEach((ue,index) => {if (ue.name==ueName) ueIndex=index})
+            return this.gradesDatas[sem].ues[ueIndex].matieres.map((matiere) => {
+                {return this.renderMatCardDetailed(ueData, sem, matiere.name)}
             }).join("")
         }
 
         // MARK: renderMatCardDetailed
-        renderMatCardDetailed(ueData, sem, ueName, matiere) {
-            const matNotes = this.gradesDatas[sem][ueName].matieres[matiere].grades;
-            const ueMoy = this.gradesDatas[sem][ueName].average;
-            const moyMat = this.moyennePonderee(matNotes);
-            const pct = ueData?.pourcentages?.[matiere] || 0;
-            this.gradesDatas[sem][ueName].matieres[matiere].average = matNotes.length != 0 ? moyMat : " - ";
-            this.gradesDatas[sem][ueName].matieres[matiere].coef = parseInt(pct);
+        renderMatCardDetailed(ueData, sem, matiere) {
+            const ueName = ueData.name;
+            let ueIndex = -1; this.gradesDatas[sem].ues.forEach((ue,index) => {if (ue.name==ueName) ueIndex=index})
+            let matIndex = -1;  this.gradesDatas[sem].ues[ueIndex].matieres.forEach((mat, index) => {if (mat.name==matiere) matIndex=index})
+            const matNotes = this.gradesDatas[sem].ues[ueIndex].matieres[matIndex].grades;
+            const ueMoy = this.gradesDatas[sem].ues[ueIndex].average;
+            const moyMat = this.gradesDatas[sem].ues[ueIndex].matieres[matIndex].average;
+            const coef = this.gradesDatas[sem].ues[ueIndex].matieres[matIndex].coef; // const coef = ueData?.pourcentages?.[matiere] || 0;
             
                 let html = `
                 <div class="matiere-card ${ueMoy != " - " && moyMat != 0 ? `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}` : ``}" ${this.editMode ? `style="user-select: none;"` : ``} id="matiere-card-${matiere}-${ueName}-semester${sem}" data-semester="${sem}" data-ue="${ueName}" data-subject="${matiere}">
@@ -930,8 +1196,8 @@
                                     <div class="note-type">
                                         ${this.lang == "fr" ? "Poids UE" : "TU Weight"}: 
                                         ${this.editMode 
-                                            ? `<input class="matiere-coef-input-box any-input" id="matiere-coef-input-box-${sem}-${ueName}-${matiere}" data-semestre="${sem}" data-ue="${ueName}" data-subject="${matiere}" type="number" placeholder="%" step="5" min="0" max="100" value="${pct}"/>%`
-                                            : `<span style="font-weight: 800;">${pct}%</span>`}
+                                            ? `<input class="matiere-coef-input-box any-input" id="matiere-coef-input-box-${sem}-${ueName}-${matiere}" data-semestre="${sem}" data-ue="${ueName}" data-subject="${matiere}" type="number" placeholder="%" step="5" min="0" max="100" value="${coef}"/>%`
+                                            : `<span style="font-weight: 800;">${coef}%</span>`}
                                         | 
                                         ${this.lang == "fr" ? "Moyenne" : "Average"}: 
                                         <span class="mat-moyenne ${moyMat==0 ? '' : `${moyMat>=10 ? 'good' : 'bad'}`}">${moyMat==0 ? " - " : moyMat}/20</span> 
@@ -1037,9 +1303,9 @@
                         </tr>
                 `;
             });
-            this.gradesDatas[sem][ueName].matieres[matiere].totalCoef = totalCoef;
-            this.gradesDatas[sem][ueName].matieres[matiere].totalDisabledGrades = totalDisabledGrades;
-            this.gradesDatas[sem][ueName].matieres[matiere].totalSimGrades = totalSimGrades;
+            this.gradesDatas[sem].ues[ueIndex].matieres[matIndex].totalCoef = totalCoef;
+            this.gradesDatas[sem].ues[ueIndex].matieres[matIndex].totalDisabledGrades = totalDisabledGrades;
+            this.gradesDatas[sem].ues[ueIndex].matieres[matIndex].totalSimGrades = totalSimGrades;
 
             // Formulaire d'ajout de note simulée pour cette matière
                 html += `
@@ -1077,21 +1343,23 @@
 
         // MARK: renderAllMatCardCompact
         renderAllMatCardCompact(ueData, sem, ueName) {
-            return Object.keys(this.gradesDatas[sem][ueName].matieres).map(matiere => {
-                if (matiere != "average") 
-                    {return this.renderMatCardCompact(ueData, sem, ueName, matiere)}
+            let ueIndex = -1; this.gradesDatas[sem].ues.forEach((ue,index) => {if (ue.name==ueName) ueIndex=index})
+            return this.gradesDatas[sem].ues[ueIndex].matieres.map(matiere => {
+                {return this.renderMatCardCompact(ueData, sem, ueName, matiere)}
             }).join("")
         }
 
         // MARK: renderMatCardCompact
         renderMatCardCompact(ueData, sem, ueName, matiere) {
-            const matNotes = this.gradesDatas[sem][ueName].matieres[matiere].grades;
-            const moyMat = this.moyennePonderee(matNotes);
-            const pct = ueData?.pourcentages?.[matiere] || 0;
+            let ueIndex = -1; this.gradesDatas[sem].ues.forEach((ue,index) => {if (ue.name==ueName) ueIndex=index})
+            let matIndex = -1;  this.gradesDatas[sem].ues[ueIndex].matieres.forEach((matiere, index) => {if (matiere.name==mat) matIndex=index})
+            const matNotes = this.gradesDatas[sem].ues[ueIndex].matieres[matIndex].grades;
+            const moyMat = this.moyennePonderee(matNotes).average;
+            const coef = ueData?.pourcentages?.[matiere] || 0;
             const includedNotesLength = (matNotes || []).filter(n => this.ignoredGrades.indexOf([sem, n.matiere, n.type+" "+n.date+" "+n.prof].join("\\")) == -1).length;
             const simGradesLength = (matNotes || []).filter(n => n.__sim).length;
-            this.gradesDatas[sem][ueName].matieres[matiere].average = matNotes.length != 0 ? moyMat : " - ";
-            this.gradesDatas[sem][ueName].matieres[matiere].coef = parseInt(pct);
+            this.gradesDatas[sem].ues[ueIndex].matieres[matIndex].average = matNotes.length != 0 ? moyMat : " - ";
+            this.gradesDatas[sem].ues[ueIndex].matieres[matIndex].coef = parseInt(coef);
 
             const html = `
             <div style="display:flex; margin:10px; gap:6px; flex-direction:column; align-items: center; width: 100%">
@@ -1102,8 +1370,8 @@
                             <div class="matiere-name">${matiere}</div>
                             <div style="font-size:13px;color:#666;">
                                 ${this.editMode 
-                                    ? `<input class="matiere-coef-input-box any-input" id="matiere-coef-input-box-${sem}-${ueName}-${matiere}" data-semestre="${sem}" data-ue="${ueName}" data-subject="${matiere}" type="number" placeholder="%" step="5" min="0" max="100" value="${pct}"/>%`
-                                    : `<span style="font-weight: 800">${pct}%</span>`} ${this.lang == "fr" ? "de l'UE" : "of the TU"} • 
+                                    ? `<input class="matiere-coef-input-box any-input" id="matiere-coef-input-box-${sem}-${ueName}-${matiere}" data-semestre="${sem}" data-ue="${ueName}" data-subject="${matiere}" type="number" placeholder="%" step="5" min="0" max="100" value="${coef}"/>%`
+                                    : `<span style="font-weight: 800">${coef}%</span>`} ${this.lang == "fr" ? "de l'UE" : "of the TU"} • 
                                 ${matNotes.length===0 ? `${this.lang == "fr" ? "aucune publiée" : "no published grade"}` : `${matNotes.length} ${this.lang == "fr" ? `note${matNotes.length>1?"s":""} au total` : `grade${matNotes.length>1?"s":""} total`}`}
                                 ${matNotes.length>0 
                                     ? ` • <span ${includedNotesLength<matNotes.length ? `style="color: #df0000"` : ``}>
@@ -1133,16 +1401,11 @@
 
 
 
-        renderAllUnclassifiedMatCard(sem, matieres) {
-            let html = ``;
-            if (!this.gradesDatas[sem]) this.gradesDatas[sem] = {};
-            this.gradesDatas[sem]["unclassified"] = {matieres:{}};
+        renderAllUnclassifiedMatCard(sem) {
+            const matieres = this.gradesDatas[sem].unclassified.matieres;
 
-            matieres.forEach(matiere => {
-                const notes = (this.semestres[sem]||{})[matiere]||[];
-                const moyenne = this.moyennePonderee(notes);
-                this.gradesDatas[sem]["unclassified"].average = moyenne;
-                this.gradesDatas[sem]["unclassified"].matieres[matiere] = {grades: []};
+            let html = ``;
+            matieres.forEach((matiere) => {
                 html += this.renderUnclassifiedMatCard(sem, matiere);
             })
             return html
@@ -1150,28 +1413,26 @@
         // MARK: renderUnclassifiedMatCard
         renderUnclassifiedMatCard(sem, matiere) {
             let html = ``;
-            let totalCoef = 0;
-            let totalClassAvg = 0;
 
-            const notes = (this.semestres[sem]||{})[matiere]||[];
-            const moyMat = this.moyennePonderee(notes);
+            const notes = matiere.grades;
+            const moyMat = matiere.average;
             html +=`
-            <div class="matiere-card unclassified ${moyMat >= 10 ? `good` : `bad`}" id="mat-card-semester-${sem}-matiere-${matiere}" ${this.editMode ? `style="user-select: none;"` : ""} ${this.editMode ? `draggable="true"` : ""} data-subject="${matiere}" data-semester="${sem}">
-                <div class="matiere-card-header unclassified  ${moyMat >= 10 ? `good` : `bad`}" style="${this.editMode ? "cursor: move; padding-left: 10px;" : "padding-left: 50px;"}" data-sem="${sem}" data-subject="${matiere}">
+            <div class="matiere-card unclassified ${moyMat >= 10 ? `good` : `bad`}" id="mat-card-semester-${sem}-matiere-${matiere.name}" ${this.editMode ? `style="user-select: none;"` : ""} ${this.editMode ? `draggable="true"` : ""} data-subject="${matiere.name}" data-semester="${sem}">
+                <div class="matiere-card-header unclassified  ${moyMat >= 10 ? `good` : `bad`}" style="${this.editMode ? "cursor: move; padding-left: 10px;" : "padding-left: 50px;"}" data-sem="${sem}" data-subject="${matiere.name}">
                     ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("unclassified-matiere-card")}</div>` : ""}
                     <div style="width: 40%">
-                        ${matiere}
+                        ${matiere.name}
                         <div style="font-size:12px;margin-top:4px;">${this.lang == "fr" ? "Moyenne" : "Average"}: <span class="mat-moyenne ${moyMat>=10 ? 'good' : 'bad'}" >${moyMat}/20</span></div>
                     </div>
                     <div class="notes-table-coef" style="display:flex; flex-direction: column; width:58%; gap:4px; padding-left: 10px; font-size: 13px">
                         <div>
                             ${this.lang == "fr" ? `Coef Total de notes :` : `Total Grades Coef:`}
                         </div>
-                        <div class="notes-table-matiere-total-coef-value" data-sem="${sem}" data-ue="unclassified" data-subject="${matiere}"></div>
+                        <div class="notes-table-matiere-total-coef-value" data-sem="${sem}" data-ue="unclassified" data-subject="${matiere.name}"></div>
                     </div>
                 </div>
 
-                <table class="notes-table ${moyMat >= 10 ? "good" : "bad"}" id="notes-table-${matiere}">
+                <table class="notes-table ${moyMat >= 10 ? "good" : "bad"}" id="notes-table-${matiere.name}">
                     <thead>
                         ${notes.length > 0 || this.editMode
                             ? `<tr style="/* border-bottom: 2px solid #d5d5d5; */">
@@ -1201,9 +1462,6 @@
                     <tbody>
             `;
             notes.forEach((note, index) => {
-                this.gradesDatas[sem]["unclassified"].matieres[matiere].grades.push(note);
-                totalCoef += note.coef;
-                totalClassAvg += note.classAvg;
 
                 html += `
                         <tr class="note-row-unsorted-grades ${index == notes.length-1 ? `last` : ``}">
@@ -1216,9 +1474,6 @@
                         </tr>
                 `;
             });
-            this.gradesDatas[sem]["unclassified"].matieres[matiere].average = moyMat;
-            this.gradesDatas[sem]["unclassified"].matieres[matiere].totalCoef = totalCoef;
-            this.gradesDatas[sem]["unclassified"].matieres[matiere].totalDisabledGrades = 0;
 
             html +=`</tbody></table></div>`;
             return html;
@@ -1229,25 +1484,35 @@
 
         // MARK: Set total coefs
         setNotesTableTotalCoef() {
-            document.querySelectorAll(".notes-table-matiere-total-coef-value").forEach(totalCoefDiv => {
+            document.querySelectorAll(".notes-table-matiere-total-coef-value").forEach((totalCoefDiv, index) => {
                 const sem = totalCoefDiv.dataset.sem;
-                const ue = totalCoefDiv.dataset.ue;
+                const ueName = totalCoefDiv.dataset.ue;
                 const subject = totalCoefDiv.dataset.subject;
-                const totalCoef =       this.gradesDatas[sem][ue].matieres[subject].totalCoef;
-                const disabledGrades =  this.gradesDatas[sem][ue].matieres[subject].totalDisabledGrades;
-                const nbSimGrades =     this.gradesDatas[sem][ue].matieres[subject].totalSimGrades;
-                const simulatedGrades = this.gradesDatas[sem][ue].matieres[subject].grades.map(grade => {if(grade.__sim) return grade});
-                let enabledSimulatedGrades = [];
-                if (nbSimGrades > 0) enabledSimulatedGrades = simulatedGrades.filter(n => {if (n) {return this.ignoredGrades.indexOf([sem, n.matiere, n.type+" "+n.date+" "+n.prof].join("\\")) == -1} else {return false}})
-                let totalSimGradesCoef = 0; enabledSimulatedGrades.forEach(grade => {totalSimGradesCoef+=grade.coef});
-                
-                this.gradesDatas[sem][ue].matieres[subject].simulatedGrades = simulatedGrades;
-                this.gradesDatas[sem][ue].matieres[subject].enabledSimulatedGrades = enabledSimulatedGrades;
-                this.gradesDatas[sem][ue].matieres[subject].totalSimGradesCoef = totalSimGradesCoef;
-                
+                let totalCoef = 0, disabledGrades = 0, nbSimGrades = 0, totalSimGradesCoef = 0, nbEnabledSimGrades = 0; 
+
+                if (ueName != "unclassified") {
+                    let ueIndex = -1; this.gradesDatas[sem].ues.forEach((ue,index) => {if (ue.name==ueName) ueIndex=index});
+                    let matIndex = 0; this.gradesDatas[sem].ues[ueIndex].matieres.forEach((mat, index) => {if (mat.name == subject) matIndex=index})
+                    const mat = this.gradesDatas[sem].ues[ueIndex].matieres[matIndex];
+                    totalCoef =             mat.totalCoef;
+                    disabledGrades =        mat.nbDisabledGrades;
+                    nbSimGrades =           mat.nbSimGrades;
+                    totalSimGradesCoef =    mat.totalSimGradesCoef;
+                    nbEnabledSimGrades =    mat.nbEnabledSimGrades;
+                }
+                else
+                {
+                    let matIndex = 0; this.gradesDatas[sem].unclassified.matieres.forEach((mat, index) => {if (mat.name == subject) matIndex=index})
+                    const unclassifiedMat = this.gradesDatas[sem].unclassified.matieres[matIndex];
+                    totalCoef =             unclassifiedMat.totalCoef;
+                    disabledGrades =        0;
+                    nbSimGrades =           0;
+                    totalSimGradesCoef =    0;
+                    nbEnabledSimGrades =    0;
+                }
+
                 let advice = this.lang == `fr` ? `toutes tes notes sont là !` : `all your grades are out!`;
                 let color = ` #10b981`;
-
                 
                 if (totalSimGradesCoef > 0 && totalCoef-totalSimGradesCoef == 100) {
                     advice = this.lang == `fr` ? `toutes tes notes sont là, mais tu devrais désactiver tes notes simulées` : `all your grades are out, but you should disable your simulated grades`;
@@ -1260,8 +1525,8 @@
                     }
                     else if (disabledGrades > 0) {
                         advice = this.lang == `fr` 
-                            ? `une note est désactivée${simulatedGrades.length != enabledSimulatedGrades.length ? `, mais c'est une note simulée, donc toutes tes notes ne sont encore pas là !` : ``}` 
-                            : `a grade is disabled${simulatedGrades.length != enabledSimulatedGrades.length ? `, but it's a simulated grade, so all your grades aren't out yet!` : ``}`;
+                            ? `une note est désactivée${nbSimGrades != nbEnabledSimGrades ? `, mais c'est une note simulée, donc toutes tes notes ne sont encore pas là !` : ``}` 
+                            : `a grade is disabled${nbSimGrades != nbEnabledSimGrades ? `, but it's a simulated grade, so all your grades aren't out yet!` : ``}`;
                         color = ` #e98c00`;
                     }
                     else if (totalCoef == 0) {
@@ -1273,7 +1538,7 @@
                         color = ` #e90000`;
                     }
                 }
-                else if (enabledSimulatedGrades.length > 0) {
+                else if (nbEnabledSimGrades > 0) {
                     if (totalSimGradesCoef < 100) {
                         advice = this.lang == `fr` 
                             ? `${totalSimGradesCoef}% de ta note est simulée, toutes tes vraies notes ne sont pas encore là !` 
@@ -1307,23 +1572,28 @@
             })
             document.querySelectorAll(".ue-matiere-total-coef-value").forEach(totalCoefDiv => {
                 const sem = totalCoefDiv.dataset.sem;
-                const ue = totalCoefDiv.dataset.ue;
-                const nbSubjects = Object.keys(this.gradesDatas[sem][ue].matieres).length;
-                let totalCoefSubjects = 0, totalCoefGrades = 0, disabledGrades = 0, nbSimGrades = 0, simulatedGrades = [], enabledSimulatedGrades = [], totalSimGradesCoef = 0, nbSubjectBelow100 = 0, nbSubjectOver100 = 0;
-                Object.keys(this.gradesDatas[sem][ue].matieres).forEach(subjectName => {
-                    const subject = this.gradesDatas[sem][ue].matieres[subjectName];
-                    totalCoefSubjects += subject.coef;
-                    totalCoefGrades += subject.totalCoef;
-                    disabledGrades += subject.totalDisabledGrades;
-                    nbSimGrades += subject.totalSimGrades;
-                    subject.simulatedGrades.forEach(simGrade => {simulatedGrades.push(simGrade)})
-                    subject.enabledSimulatedGrades.forEach(enabledSimGrade => {enabledSimulatedGrades.push(enabledSimGrade)});
-                    totalSimGradesCoef += subject.totalSimGradesCoef;
-                    if (subject.totalCoef < 100) nbSubjectBelow100++;
-                    else if (subject.totalCoef > 100) nbSubjectOver100++;
-                })
+                const ueName = totalCoefDiv.dataset.ue;
+                let totalCoefGrades = 0, totalCoefSubjects = 0, disabledGrades = 0, nbSimGrades = 0, totalSimGradesCoef = 0, nbEnabledSimGrades = 0; 
 
-                totalCoefGrades = Math.round(totalCoefGrades/nbSubjects*100)/100;
+                if (ueName != "unclassified") {
+                    let ueIndex = -1; this.gradesDatas[sem].ues.forEach((ue,index) => {if (ue.name==ueName) ueIndex=index});
+                    const ue = this.gradesDatas[sem].ues[ueIndex];
+                    totalCoefGrades =       ue.totalGradesCoef;
+                    totalCoefSubjects =     ue.totalMatsCoef;
+                    disabledGrades =        ue.nbDisabledGrades;
+                    nbSimGrades =           ue.nbSimGrades;
+                    totalSimGradesCoef =    ue.totalSimGradesCoef;
+                    nbEnabledSimGrades =    ue.nbEnabledSimGrades;
+                }
+                else
+                {
+                    totalCoefGrades =       this.gradesDatas[sem].unclassified.totalCoef;
+                    totalCoefSubjects =     100/this.gradesDatas[sem].unclassified.matieres.length;
+                    disabledGrades =        0;
+                    nbSimGrades =           0;
+                    totalSimGradesCoef =    0;
+                    nbEnabledSimGrades =    0;
+                }
                 
                 let advice = this.lang == `fr` ? `toutes tes notes sont là !` : `all your grades are out!`;
                 let color = ` #10b981`;
@@ -1339,8 +1609,8 @@
                     }
                     else if (disabledGrades > 0) {
                         advice = this.lang == `fr` 
-                            ? `une note est désactivée${simulatedGrades.length != enabledSimulatedGrades.length ? `, mais c'est une note simulée, donc toutes tes notes ne sont encore pas là !` : ``}` 
-                            : `a grade is disabled${simulatedGrades.length != enabledSimulatedGrades.length ? `, but it's a simulated grade, so all your grades aren't out yet!` : ``}`;
+                            ? `une note est désactivée${nbEnabledSimGrades != nbEnabledSimGrades ? `, mais c'est une note simulée, donc toutes tes notes ne sont encore pas là !` : ``}` 
+                            : `a grade is disabled${nbEnabledSimGrades != nbEnabledSimGrades ? `, but it's a simulated grade, so all your grades aren't out yet!` : ``}`;
                         color = ` #e98c00`;
                     }
                     else if (totalCoefGrades == 0) {
@@ -1360,7 +1630,7 @@
                         color = ` #e90000`;
                     }
                 }
-                else if (enabledSimulatedGrades.length > 0) {
+                else if (nbEnabledSimGrades > 0) {
                     if (totalSimGradesCoef < 100) {
                         advice = this.lang == `fr` 
                             ? `${totalSimGradesCoef}% de ta note est simulée, toutes tes vraies notes ne sont pas encore là !` 
@@ -1426,9 +1696,10 @@
 
         clearIgnoredGradesForUE(sem, ueName) {
             // Clear ignored grades only for the specified UE
-            const ueConfig = this.ueConfig[sem] || {};
-            const ueData = ueConfig[ueName];
-            const allMats = this.getAllMatieresForUE(sem, ueData, ueName);
+            const ueConfig = (this.ueConfig[sem] || {}).ues || [];
+            let ueData = {};
+            ueConfig.forEach((ue, index) => {if (ue.name == ueName) ueData = ueConfig.ues[index]});
+            const allMats = this.getAllMatieresForUE(sem, ueData);
 
             // Keep ignored grades that are NOT part of this UE
             this.ignoredGrades = (this.ignoredGrades || []).filter(ignoredId => {
@@ -1528,20 +1799,22 @@
 
         }
 
-        calculateUENotes(sem, ueData, ueName){
+        calculateUENotes(sem, ueData){
             const notes = [];
-            const allMats = this.getAllMatieresForUE(sem, ueData, ueName);
-            allMats.forEach(matiere=>{
-                const pct = ueData.pourcentages[matiere] || 0;
+            const ueName = ueData.name;
+            let ueIndex = 0; this.gradesDatas[sem].ues.forEach((ue, index) => {if (ue.name == ueData.name) ueIndex=index})
+            /* const allMats = this.getAllMatieresForUE(sem, ueData);  */ const allMats = this.gradesDatas[sem].ues[ueIndex].matieres;
+            allMats.forEach(matiere => {
+                const coef = matiere.coef || 0;
                 const realNotes = (this.semestres[sem]&&this.semestres[sem][matiere]) ? this.semestres[sem][matiere] : [];
                 const simNotes  = this.getSimNotes(sem, ueName, matiere).map(n=>({ ...n, __sim:true }));
 
                 const src = [...realNotes, ...simNotes];
-                src.forEach(n=>{
+                src.forEach(n => {
                     notes.push({
                         ...n,
                         coef: n.coef,
-                        coefInUE: (n.coef||0) * (pct/100),
+                        coefInUE: (n.coef||0) * (coef/100),
                         matiere
                     });
                 });
@@ -1549,19 +1822,13 @@
             return notes;
         }
 
-        getUnclassifiedMatieres(sem) {
-            const classified = new Set();
-            const ueConfig = this.ueConfig[sem] || {};
-            Object.values(ueConfig).forEach(ue => { (ue.matieres||[]).forEach(m => classified.add(m)); });
-            return Object.keys(this.semestres[sem]||{}).filter(m => !classified.has(m));
-        }
-
         getUEStats() {
             let validated = 0, total = 0;
             Object.keys(this.ueConfig).forEach(sem => {
-                Object.keys(this.ueConfig[sem]).forEach(ueName => {
-                    const ueNotes = this.calculateUENotes(sem, this.ueConfig[sem][ueName], ueName);
-                    const moyenne = this.moyennePonderee(ueNotes);
+                this.ueConfig[sem].ues.forEach((ue, ueIndex) => {
+                    const ueName = ue.name;
+                    const ueNotes = this.calculateUENotes(sem, this.ueConfig[sem].ues[ueIndex]);
+                    const moyenne = this.moyennePonderee(ueNotes).average;
                     if (moyenne != 0 && ueNotes.length > 0) total++; if (moyenne >= 10) validated++;
                 });
             });
@@ -1575,8 +1842,9 @@
             const ueName = header.dataset.ue;
 
             const sem = header.dataset.semester;
-            const ueConfig = this.ueConfig[sem] || {};
-            const ueData = ueConfig[ueName];
+            const ueConfig = (this.ueConfig[sem] || {}).ues || [];
+            let ueData = {};
+            ueConfig.forEach((ue, index) => {if (ue.name == ueName) ueData = ueConfig.ues[index]});
 
             if (toggle.classList.contains('open')) {
                 ueContent.innerHTML = this.renderAllMatCardCompact(ueData, sem, ueName);
@@ -1595,16 +1863,16 @@
         // MARK: EVENT LISTENERS
         attachEventListeners() {
 
-            document.onwheel = (e) => {
-                console.log(
-                    "ONWHEEL EVENT\n" + 
-                    "Offset X: " + e.offsetX +      " | Offset Y: " + e.offsetY +       " | over " + e.target.className + "\n" + 
-                    "Delta X:  " + e.deltaX +       " | Delta Y:  " + e.deltaY +        "\n" + 
-                    "WDelta X: " + e.wheelDeltaX +  " | WDelta Y:   " + e.wheelDeltaY + "\n" + 
-                    "The mouse is at the following position:\n" + 
-                    "Client X: " + e.clientX +    " | Client Y: " + e.clientY 
-                )
-            }
+            // document.onwheel = (e) => {
+            //     console.log(
+            //         "ONWHEEL EVENT\n" + 
+            //         "Offset X: " + e.offsetX +      " | Offset Y: " + e.offsetY +       " | over " + e.target.className + "\n" + 
+            //         "Delta X:  " + e.deltaX +       " | Delta Y:  " + e.deltaY +        "\n" + 
+            //         "WDelta X: " + e.wheelDeltaX +  " | WDelta Y:   " + e.wheelDeltaY + "\n" + 
+            //         "The mouse is at the following position:\n" + 
+            //         "Client X: " + e.clientX +    " | Client Y: " + e.clientY 
+            //     )
+            // }
 
             document.onclick = (e) => {
                 // Toggle semestres
@@ -1725,10 +1993,12 @@
                 inputBox.onchange = e => {
                     const sem = e.target.dataset.semestre;
                     const ueName = e.target.dataset.ue;
-                    const matiere = e.target.dataset.subject;
+                    const matName = e.target.dataset.subject;
                     const newCoef = e.target.value;
-                    this.ueConfig[sem][ueName].pourcentages[matiere] = newCoef;
-                    this.gradesDatas[sem][ueName].matieres[matiere].coef = newCoef;
+                    let ueIndex = -1; ueConfig.ues.forEach((ue, index) => {if (ue.name == ueName) ueIndex = index});
+                    let matIndex = -1;  ueConfig.ues[ueIndex].matieres.forEach((matiere, index) => {if (matiere.name==matName) matIndex=index});
+                    this.ueConfig[sem].ues[ueIndex].pourcentages[matIndex] = newCoef;
+                    this.gradesDatas[sem].ues[ueIndex].matieres[matIndex].coef = newCoef;
                     this.saveConfig();
                     this.renderContent(false);
                     this.attachEventListeners();
@@ -1969,8 +2239,9 @@
                 btn.onclick = e => {
                     const sem = e.target.dataset.semester;
                     const ueName = e.target.dataset.ue;
+                    let ueIndex = -1; this.gradesDatas[sem].ues.forEach((ue,index) => {if (ue.name==ueName) ueIndex=index});
 
-                    delete this.ueConfig[sem][ueName]
+                    this.ueConfig[sem].ues.splice(ueIndex, 1)
                     if (this.ueConfig[sem] == {}) {delete this.ueConfig[sem]}
 
                     this.saveConfig()
@@ -2112,34 +2383,45 @@
                 this.selectedMatiereCards.forEach(selectedMatiereCard => {if (selectedMatiereCard.id == card.id) cardIsSelected = true;})
                 const sem = card.dataset.semester;
                 let subject, oldUeName, manageSim = true;
-                if (!this.ueConfig[sem]) this.ueConfig[sem] = {}; if (!this.sim[sem]) manageSim = false;
+                if (!this.ueConfig[sem]) this.ueConfig[sem] = {ues:[]}; if (!this.sim[sem]) manageSim = false;
                 let newUeName = "Module 1"; let count = 1;
-                while (this.ueConfig[sem][newUeName]) {count++; newUeName = `Module ${count}`;}
-
-
-                // Adding a [newUeName] property to this.ueConfig as its first property, so that any new module appears first in the module section
-                this.ueConfig[sem] = {[newUeName]: {matieres: [], pourcentages: {}}, ...this.ueConfig[sem]}
-                
-                if (!card.classList.contains("unclassified")) {
+                let newUeIndex = -1; 
+                if (this.ueConfig[sem].ues.length==0) {
+                    newUeIndex = 0;
                 }
+                else
+                {
+                    this.ueConfig[sem].ues.forEach((ue,index) => {if (ue.name==newUeName) newUeIndex=index});
+                    while (newUeIndex!=-1 || newUeIndex==0 && this.ueConfig[sem].ues.length==0) {
+                        count++;
+                        this.ueConfig[sem].ues.forEach((ue,index) => {if (ue.name==newUeName) newUeIndex=index}); 
+                        newUeName = `Module ${count}`;
+                        if (count>20) {newUeIndex==-1}
+                    }
+                }
+                
 
+
+                this.ueConfig[sem].ues.push({name: newUeName, matieres: [], pourcentages: {}})
+                
                 if (!cardIsSelected) {
                     subject = card.dataset.subject;
-                    this.ueConfig[sem][newUeName].matieres.push(subject);
-                    this.ueConfig[sem][newUeName].pourcentages[subject] = 100;
+                    this.ueConfig[sem].ues[newUeIndex].matieres.push(subject);
+                    this.ueConfig[sem].ues[newUeIndex].pourcentages[subject] = 100;
 
                     if (!card.classList.contains("unclassified")) {
-                        oldUeName = card.dataset.ue
-                        subject = card.dataset.subject
-                        const subjectIndex = this.ueConfig[sem][oldUeName].matieres.indexOf(subject);
-                        this.ueConfig[sem][oldUeName].matieres.splice(subjectIndex,1);
-                        delete this.ueConfig[sem][oldUeName].pourcentages[subject];
-                        if (manageSim) {if (!this.sim[sem][oldUeName]) manageSim = false;}
+                        oldUeName = card.dataset.ue;
+                        subject = card.dataset.subject;
+                        let oldUeIndex = -1; this.ueConfig[sem].ues.forEach((ue,index) => {if (ue.name==ueName) oldUeIndex=index});
+                        const subjectIndex = this.ueConfig[sem].ues[oldUeIndex].matieres.indexOf(subject);
+
+                        this.ueConfig[sem].ues[oldUeIndex].matieres.splice(subjectIndex,1);
+                        delete this.ueConfig[sem].ues[oldUeIndex].pourcentages[subject];
+                        if (manageSim) {if (!this.sim[sem].ues[oldUeIndex]) manageSim = false;}
                         if (manageSim) {
-                            this.sim[sem] = {[newUeName]: {}, ...this.sim[sem]}
-                            this.sim[sem][newUeName][subject] = [];
-                            this.sim[sem][oldUeName][subject].forEach((_, index) => {
-                                this.sim[sem][newUeName][subject].push(this.sim[sem][oldUeName][subject][index].shift())
+                            this.sim[sem].ues.unshift({name: newUeName, matieres:[{name: subject, grades: {}}]})
+                            this.sim[sem].ues[oldUeIndex].matieres[0].grades.forEach((_, index) => {
+                                this.sim[sem].ues[newUeIndex].matieres[subjectIndex].push(this.sim[sem].ues[oldUeIndex][subjectIndex][index].shift())
                             })
                             this.deleteUnusedSimPath(sem, oldUeName, subject);
                             this.saveSim();
@@ -2152,24 +2434,26 @@
                     this.selectedMatiereCards.forEach((selectedMatiereCard, index) => {
                         subject = selectedMatiereCard.dataset.subject;
 
-                        this.ueConfig[sem][newUeName].matieres.push(subject);
-                        this.ueConfig[sem][newUeName].pourcentages[subject] = Math.round(100/this.selectedMatiereCards.length);
+                        this.ueConfig[sem].ues[newUeIndex].matieres.push(subject);
+                        this.ueConfig[sem].ues[newUeIndex].pourcentages[subject] = Math.round(100/this.selectedMatiereCards.length);
                         if (this.selectedMatiereCards.length == index+1) {
-                            this.ueConfig[sem][newUeName].pourcentages[subject] = remainingCoef;
+                            this.ueConfig[sem].ues[newUeIndex].pourcentages[subject] = remainingCoef;
                         }
-                        remainingCoef -= this.ueConfig[sem][newUeName].pourcentages[subject];
+                        remainingCoef -= this.ueConfig[sem].ues[newUeIndex].pourcentages[subject];
 
                         if (!selectedMatiereCard.classList.contains("unclassified")) {
                             oldUeName = selectedMatiereCard.dataset.ue
                             subject = selectedMatiereCard.dataset.subject
-                            const subjectIndex = this.ueConfig[sem][oldUeName].matieres.indexOf(subject);
-                            this.ueConfig[sem][oldUeName].matieres.splice(subjectIndex,1);
-                            delete this.ueConfig[sem][oldUeName].pourcentages[subject];
-                            if (manageSim) {if (!this.sim[sem][oldUeName][subject]) manageSim = false}
+                            let oldUeIndex = -1; this.ueConfig[sem].ues.forEach((ue,index) => {if (ue.name==ueName) oldUeIndex=index});
+                            const subjectIndex = this.ueConfig[sem].ues[oldUeIndex].matieres.indexOf(subject);
+
+                            this.ueConfig[sem].ues[oldUeIndex].matieres.splice(subjectIndex,1);
+                            delete this.ueConfig[sem].ues[oldUeIndex].pourcentages[subject];
+                            if (manageSim) {if (!this.sim[sem].ues[oldUeIndex].matieres[subjectIndex]) manageSim = false}
                             if (manageSim) {
-                                this.sim[sem][newUeName][subject] = [];
-                                this.sim[sem][oldUeName][subject].forEach((_, index) => {
-                                    this.sim[sem][newUeName][subject].push(this.sim[sem][oldUeName][subject][index].shift())
+                                this.sim[sem].ues.unshift({name: newUeName, matieres:[{name: subject, grades: {}}]})
+                                this.sim[sem].ues[oldUeIndex].matieres[0].grades.forEach((_, index) => {
+                                    this.sim[sem].ues[newUeIndex].matieres[subjectIndex].push(this.sim[sem].ues[oldUeIndex][subjectIndex][index].shift())
                                 })
                                 this.deleteUnusedSimPath(sem, oldUeName, subject);
                                 this.saveSim();
@@ -2189,376 +2473,12 @@
         ueTitleInputChangeAction(e) {
             const sem = e.target.dataset.semester;
             const ueName = e.target.dataset.ue;
+            let ueIndex = -1; this.ueConfig[sem].ues.forEach((ue,index) => {if (ue.name==ueName) ueIndex=index});
             const regExpExec = RegExp(`${ueName}`, "ig").exec(JSON.stringify(this.ueConfig[sem])); 
-            this.ueConfig[sem] = JSON.parse('{"'+e.target.value+ regExpExec.input.slice(regExpExec.index+regExpExec[0].length,regExpExec.input.length));
+            // this.ueConfig[sem] = JSON.parse('{"'+e.target.value+ regExpExec.input.slice(regExpExec.index+regExpExec[0].length,regExpExec.input.length));
+            this.ueConfig[sem].ues[ueIndex].name = e.target.value;
             this.saveConfig()
             this.renderContent(false)
-        }
-
-
-        // ======== MODAL CONFIG ========
-        openConfigModal() {
-            const modal = document.getElementById("configModal");
-            modal.className = "config-modal";
-            modal.style.display = "flex";
-            const firstSem = Object.keys(this.semestres).sort()[0] || "1";
-            if (!this.tempSelection[firstSem]) this.tempSelection[firstSem] = new Set();
-
-            modal.innerHTML = `
-            <div class="config-content">
-                <div class="config-header">
-                    <h2 class="config-title">Configuration des Unités d'Enseignement</h2>
-                    <button class="config-close" id="closeConfig">✕</button>
-                </div>
-                <div class="config-body">
-                    <div class="config-layout">
-                        <div class="config-sidebar">
-                            <div class="semester-selector">
-                            <label>Semestre à configurer</label>
-                            <select class="semester-select" id="configSemSelect">
-                                ${Object.keys(this.semestres).sort().map(s => `<option value="${s}"; ${s==this.currentSemester ? `selected` : ``}>Semestre ${s} </option>`).join('')}
-                            </select>
-                            </div>
-                            <div class="matieres-pool">
-                            <div class="pool-title">
-                                <span>Matières disponibles</span>
-                                <div class="pool-actions">
-                                <button class="auto-adjust-btn" id="selectAll">Tout</button>
-                                <button class="auto-adjust-btn" id="clearAll">Aucun</button>
-                                </div>
-                            </div>
-                            <div id="matieresPool"></div>
-                        </div>
-                    </div>
-                    <div class="config-main">
-                        <div class="create-ue-section">
-                            <div class="create-ue-header">
-                                <input type="text" class="ue-name-input any-input" id="newUEName" placeholder="Nom de l'UE (ex: UE1 - Sciences)">
-                                <button class="create-ue-btn" id="seedNewUEBtn">Remplir depuis la sélection</button>
-                                <button class="create-ue-btn" id="createUEBtn">Créer l'UE</button>
-                            </div>
-                            <div class="ue-matieres-container" id="newUEContainer">
-                                <div class="empty-ue-message">Sélectionnez des matières à gauche puis « Remplir depuis la sélection »</div>
-                            </div>
-                            <div class="percentage-total" id="newUETotal" style="display:none;">
-                                <span>Total: 0%</span>
-                                <button class="auto-adjust-btn" id="newUEAutoAdjust">Ajuster à 100%</button>
-                            </div>
-                        </div>
-                        <div id="existingUEs"></div>
-                    </div>
-                    </div>
-                </div>
-            </div>
-            `;
-            document.getElementById('configSemSelect').value = this.currentSemester;
-            this.renderConfigContent(this.currentSemester);
-            this.attachConfigListeners();
-        }
-
-        renderConfigContent(sem) {
-            if (!this.tempSelection[sem]) this.tempSelection[sem] = new Set();
-
-            // Pool matières
-            const pool = document.getElementById("matieresPool");
-            const matieres = Object.keys(this.semestres[sem] || {}).sort((a,b)=>a.localeCompare(b));
-            const ueConfig = this.ueConfig[sem] || {};
-            const used = new Set();
-            Object.values(ueConfig).forEach(ue => (ue.matieres||[]).forEach(m => used.add(m)));
-
-            pool.innerHTML = matieres.map(m => {
-                const isUsed = used.has(m);
-                const checked = this.tempSelection[sem].has(m) ? 'checked' : '';
-                return `
-                <label class="matiere-row ${isUsed ? 'used' : ''}">
-                    <input type="checkbox" class="pool-checkbox" data-matiere="${m}" ${checked}>
-                    <span>${m}</span>
-                    ${isUsed ? `<span style="margin-left:auto; font-size:12px; color:#667eea;">déjà dans une UE</span>` : ''}
-                </label>
-                `;
-            }).join('');
-
-            // UEs existantes
-            const existingContainer = document.getElementById("existingUEs");
-            existingContainer.innerHTML = '<h3 style="margin-top: 30px; margin-bottom: 16px; font-size: 16px;">UE configurées</h3>';
-
-            Object.keys(ueConfig).forEach(ueName => {
-                const ue = ueConfig[ueName];
-                const totalPct = Object.values(ue.pourcentages||{}).reduce((sum, pct) => sum + pct, 0);
-                const card = document.createElement("div");
-                card.className = "ue-edit-card";
-                card.innerHTML = `
-                <div class="ue-edit-header">
-                    <div class="ue-edit-title">${ueName}</div>
-                    <div style="display:flex; gap:8px;">
-                    <button class="add-selected-btn" data-ue="${ueName}" data-sem="${sem}">+ Ajouter à la sélection</button>
-                    <button class="ue-delete-btn" data-ue="${ueName}" data-sem="${sem}">✕</button>
-                    </div>
-                </div>
-                <div class="ue-matieres-container" data-ue="${ueName}">
-                    ${(ue.matieres||[]).map(m => `
-                    <div class="matiere-in-ue" data-matiere="${m}">
-                        <div class="matiere-ue-name">${m}</div>
-                        <input type="number" class="percentage-input any-input" value="${ue.pourcentages[m] || 0}" min="0" max="100" data-ue="${ueName}" data-matiere="${m}" data-sem="${sem}">
-                        <button class="remove-matiere-btn" data-ue="${ueName}" data-matiere="${m}" data-sem="${sem}">Retirer</button>
-                    </div>
-                    `).join('')}
-                </div>
-                <div class="percentage-total ${totalPct === 100 ? 'valid' : 'invalid'}" data-ue-total="${ueName}">
-                    <span>Total: ${totalPct}%</span>
-                    <button class="auto-adjust-btn" data-ue="${ueName}" data-sem="${sem}">Ajuster à 100%</button>
-                </div>
-                <div style="display:flex;gap:8px;align-items:center;margin-top:8px;">
-                    <input type="text" placeholder="Nouvelle matière (fantôme)" class="ue-ghost-name any-input" data-ue="${ueName}" data-sem="${sem}" style="flex:1;padding:8px;border:1px solid #e5e5e5;border-radius:8px;">
-                    <button class="auto-adjust-btn ue-ghost-add" data-ue="${ueName}" data-sem="${sem}">Ajouter matière</button>
-                </div>
-                `;
-                existingContainer.appendChild(card);
-            });
-
-            // Listeners colonne gauche
-            pool.querySelectorAll('.pool-checkbox').forEach(cb => {
-                cb.onchange = (e) => {
-                    const mat = e.target.dataset.matiere;
-                    if (e.target.checked) this.tempSelection[sem].add(mat);
-                    else this.tempSelection[sem].delete(mat);
-                }
-            });
-
-            // Listeners cartes UEs
-            this.attachExistingUEListeners();
-        }
-
-        // ======== Listeners Config ========
-        attachConfigListeners() {
-            document.getElementById('closeConfig').onclick = () => {
-                document.getElementById('configModal').style.display = 'none';
-                this.renderContent(true);
-            };
-
-            const semSelect = document.getElementById('configSemSelect');
-            semSelect.onchange = (e) => this.renderConfigContent(e.target.value);
-
-            // Sélection tout/aucun
-            document.getElementById('selectAll').onclick = () => {
-                const sem = semSelect.value;
-                const cbs = document.querySelectorAll('#matieresPool .pool-checkbox');
-                cbs.forEach(cb => { cb.checked = true; this.tempSelection[sem].add(cb.dataset.matiere); });
-            };
-            document.getElementById('clearAll').onclick = () => {
-                const sem = semSelect.value;
-                const cbs = document.querySelectorAll('#matieresPool .pool-checkbox');
-                cbs.forEach(cb => { cb.checked = false; this.tempSelection[sem].delete(cb.dataset.matiere); });
-            };
-
-            // Supprimer la note simulée
-            document.getElementById('')
-
-            // Pré-remplir la nouvelle UE avec la sélection
-            document.getElementById('seedNewUEBtn').onclick = () => {
-                const sem = semSelect.value;
-                const sel = Array.from(this.tempSelection[sem]);
-                const container = document.getElementById('newUEContainer');
-                if (sel.length === 0) {
-                    container.innerHTML = '<div class="empty-ue-message">Aucune matière sélectionnée</div>';
-                    document.getElementById('newUETotal').style.display = 'none';
-                    return;
-                }
-                const pct = Math.floor(100 / sel.length);
-                container.innerHTML = sel.map((m, i) => `
-                <div class="matiere-in-ue" data-matiere="${m}">
-                    <div class="matiere-ue-name">${m}</div>
-                    <input type="number" class="percentage-input newUE any-input" value="${i === sel.length - 1 ? 100 - pct * (sel.length - 1) : pct}" min="0" max="100">
-                    <button class="remove-matiere-btn remove-new" data-matiere="${m}">Retirer</button>
-                </div>
-                `).join('');
-                this.updateNewUETotal();
-                document.getElementById('newUETotal').style.display = 'flex';
-
-                container.querySelectorAll('.remove-new').forEach(btn => {
-                    btn.onclick = (e) => {
-                        const row = e.target.closest('.matiere-in-ue');
-                        row.remove();
-                        this.updateNewUETotal();
-                    };
-                });
-                container.querySelectorAll('.percentage-input.newUE').forEach(inp => {
-                    inp.onchange = () => this.updateNewUETotal();
-                });
-            };
-
-            // Equalize new UE to 100
-            document.getElementById('newUEAutoAdjust').onclick = () => {
-                const inputs = Array.from(document.querySelectorAll('.percentage-input.newUE'));
-                if (inputs.length === 0) return;
-                const pct = Math.floor(100 / inputs.length);
-                inputs.forEach((inp, i) => { inp.value = (i === inputs.length - 1 ? 100 - pct * (inputs.length - 1) : pct); });
-                this.updateNewUETotal();
-            };
-
-            // Créer l’UE
-            document.getElementById('createUEBtn').onclick = () => {
-                const sem = semSelect.value;
-                const name = document.getElementById('newUEName').value.trim();
-                if (!name) { alert('Nom d’UE requis'); return; }
-                const rows = Array.from(document.querySelectorAll('#newUEContainer .matiere-in-ue'));
-                if (rows.length === 0) { alert('Ajoutez au moins une matière'); return; }
-                const matieres = rows.map(r => r.dataset.matiere);
-                const pourcentages = {};
-                let total = 0;
-                rows.forEach((r, i) => {
-                    const val = Math.max(0, Math.min(100, parseInt(r.querySelector('.percentage-input').value)||0));
-                    pourcentages[r.dataset.matiere] = val;
-                    total += val;
-                });
-                if (total !== 100) { alert('Le total des pourcentages doit faire 100%'); return; }
-
-                if (!this.ueConfig[sem]) this.ueConfig[sem] = {};
-                this.ueConfig[sem][name] = { matieres, pourcentages };
-                this.saveConfig();
-
-                document.getElementById('newUEName').value = '';
-                document.getElementById('newUEContainer').innerHTML = '<div class="empty-ue-message">Sélectionnez des matières à gauche puis « Remplir depuis la sélection »</div>';
-                document.getElementById('newUETotal').style.display = 'none';
-
-                this.renderConfigContent(sem);
-            };
-        }
-
-        updateNewUETotal() {
-            const totalDiv = document.getElementById('newUETotal');
-            const inputs = Array.from(document.querySelectorAll('.percentage-input.newUE'));
-            const total = inputs.reduce((s, i) => s + (parseInt(i.value)||0), 0);
-            totalDiv.className = `percentage-total ${total === 100 ? 'valid' : 'invalid'}`;
-            totalDiv.querySelector('span').textContent = `Total: ${total}%`;
-        }
-
-        attachExistingUEListeners() {
-            // Ajout de la sélection aux UEs
-            document.querySelectorAll('.add-selected-btn').forEach(btn => {
-                btn.onclick = (e) => {
-                    const sem = e.target.dataset.sem;
-                    const ue = e.target.dataset.ue;
-                    const selected = Array.from(this.tempSelection[sem] || []);
-                    if (selected.length === 0) { alert('Sélectionnez des matières à gauche'); return; }
-
-                    if (!this.ueConfig[sem] || !this.ueConfig[sem][ue]) return;
-                    const ueObj = this.ueConfig[sem][ue];
-                    const toAdd = selected.filter(m => !(ueObj.matieres||[]).includes(m));
-
-                    if (toAdd.length === 0) { alert('Aucune nouvelle matière à ajouter'); return; }
-
-                    ueObj.matieres = [...(ueObj.matieres||[]), ...toAdd];
-                    // répartition égale
-                    const count = ueObj.matieres.length;
-                    const base = Math.floor(100 / count);
-                    ueObj.matieres.forEach((m, i) => {
-                        ueObj.pourcentages[m] = (i === count - 1) ? 100 - base * (count - 1) : base;
-                    });
-                    this.saveConfig();
-                    this.renderConfigContent(sem);
-                };
-            });
-
-            // Supprimer UE
-            document.querySelector(".ue-edit-header").querySelectorAll('.ue-delete-btn').forEach(btn => {
-                btn.onclick = (e) => {
-                    const ue = e.target.dataset.ue;
-                    const sem = e.target.dataset.sem;
-                    if (confirm(`Supprimer l'UE "${ue}" ?`)) {
-                        delete this.ueConfig[sem][ue];
-                        this.saveConfig();
-                        this.renderConfigContent(sem);
-                    }
-                };
-            });
-
-            // Retirer matière d’une UE
-            document.querySelectorAll('.remove-matiere-btn').forEach(btn => {
-                btn.onclick = (e) => {
-                    const ue = e.target.dataset.ue;
-                    const sem = e.target.dataset.sem;
-                    const mat = e.target.dataset.matiere;
-                    const obj = this.ueConfig[sem][ue];
-                    const idx = (obj.matieres||[]).indexOf(mat);
-                    if (idx > -1) {
-                        obj.matieres.splice(idx, 1);
-                        delete obj.pourcentages[mat];
-                        const count = obj.matieres.length;
-                        if (count > 0) {
-                            const base = Math.floor(100 / count);
-                            obj.matieres.forEach((m, i) => {
-                                obj.pourcentages[m] = (i === count - 1) ? 100 - base * (count - 1) : base;
-                            });
-                        }
-                        this.saveConfig();
-                        this.renderConfigContent(sem);
-                    }
-                };
-            });
-
-            // Modifier pourcentages dans UEs
-            document.querySelectorAll('.percentage-input').forEach(input => {
-                input.onchange = (e) => {
-                    const ue = e.target.dataset.ue;
-                    const matiere = e.target.dataset.matiere;
-                    const sem = e.target.dataset.sem;
-                    const val = Math.max(0, Math.min(100, parseInt(e.target.value) || 0));
-                    this.ueConfig[sem][ue].pourcentages[matiere] = val;
-                    this.saveConfig();
-
-                    const totalPct = Object.values(this.ueConfig[sem][ue].pourcentages).reduce((s, p) => s + p, 0);
-                    const totalDiv = document.querySelector(`.percentage-total[data-ue-total="${ue}"]`);
-                    if (totalDiv){
-                        totalDiv.className = `percentage-total ${totalPct === 100 ? 'valid' : 'invalid'}`;
-                        totalDiv.querySelector('span').textContent = `Total: ${totalPct}%`;
-                    }
-                };
-            });
-
-            // Auto adjust à 100%
-            document.querySelectorAll('.auto-adjust-btn[data-ue]').forEach(btn => {
-                btn.onclick = (e) => {
-                    const ue = e.target.dataset.ue;
-                    const sem = e.target.dataset.sem;
-                    const obj = this.ueConfig[sem][ue];
-                    const count = (obj.matieres||[]).length;
-                    if (count === 0) return;
-                    const base = Math.floor(100 / count);
-                    obj.matieres.forEach((m, i) => {
-                        obj.pourcentages[m] = (i === count - 1) ? 100 - base * (count - 1) : base;
-                    });
-                    this.saveConfig();
-                    this.renderConfigContent(sem);
-                };
-            });
-
-            // Ajouter matière fantôme
-            document.querySelectorAll('.ue-ghost-add').forEach(btn=>{
-                btn.onclick = (e)=>{
-                    let sem = e.target.dataset.sem;
-                    let ue = e.target.dataset.ue;
-                    let inp = e.target.parentElement.querySelector(`.ue-ghost-name[data-ue="${ue}"][data-sem="${sem}"]`);
-                    let name = (inp.value||'').trim();
-                    if(!name){ alert('Nom requis'); return; }
-                    let obj = this.ueConfig[sem][ue];
-                    obj.matieres = obj.matieres || [];
-                    if(!obj.matieres.includes(name)){
-                        obj.matieres.push(name);
-                        let count = obj.matieres.length;
-                        let base = Math.floor(100 / count);
-                        obj.pourcentages = obj.pourcentages || {};
-                        obj.matieres.forEach((m,i)=>{ obj.pourcentages[m] = (i===count-1) ? 100 - base*(count-1) : base; });
-                        this.saveConfig();
-                        this.ensureSimPath(sem, ue, name);
-                        this.saveSim();
-                        this.renderConfigContent(sem);
-                        sem = null; ue = null; inp = null; name = null; obj = null; count = null; base = null;
-                    } else {
-                        alert('Matière déjà présente');
-                    }
-                };
-            });
         }
 
         importData(file) {
@@ -2571,7 +2491,9 @@
                         if (parsed && parsed.ueConfig) {
                             try {
                                 this.ueConfig = parsed.ueConfig || {};
+                                this.ueConfigVers = parsed.version || 0;
                                 localStorage.setItem('ECAM_DASHBOARD_UE_CONFIG', JSON.stringify(this.ueConfig));
+                                localStorage.setItem('ECAM_DASHBOARD_UE_CONFIG_VERSION', parsed.version);
                             } catch (e) {
                                 // ignore storage errors
                             }
@@ -2647,17 +2569,17 @@
             Object.keys(this.semestres).forEach(sem => {
                 if (!data.semestres[sem]) data.semestres[sem] = { ues: {} };
                 if (this.ueConfig[sem]) {
-                    Object.keys(this.ueConfig[sem]).forEach(ue => {
-                        const ueNotes = this.calculateUENotes(sem, this.ueConfig[sem][ue], ue);
+                    Object.keys(this.ueConfig[sem]).forEach((ue, ueIndex) => {
+                        const ueNotes = this.calculateUENotes(sem, this.ueConfig[sem].ues[ueIndex]);
                         data.semestres[sem].ues[ue] = {
-                            matieres: this.ueConfig[sem][ue].matieres,
-                            pourcentages: this.ueConfig[sem][ue].pourcentages,
-                            simulees: (this.sim[sem]&&this.sim[sem][ue]) || {}
+                            matieres: this.ueConfig[sem].ues[ueIndex].matieres,
+                            pourcentages: this.ueConfig[sem].ues[ueIndex].pourcentages,
+                            simulees: (this.sim[sem]&&this.sim[sem].ues[ueIndex]) || {}
                         };
                     });
                 }
             });
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const blob = new Blob([JSON.stringify(data, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -2744,7 +2666,7 @@
     }
 
     if (ERROR503) {
-        document.body.children[0].remove(); document.body.children[0].remove(); document.body.children[0].remove(); 
+        document.body.children[0].remove(); document.body.children[0].remove(); 
         new ECAMDashboard();
     }
     else

@@ -1,0 +1,70 @@
+{
+    "date": "2025-12-20T16:09:17.540Z",
+    "version": 2,
+    "ueConfig": {
+        "5": {
+            "ues": [
+                {
+                    "name" : "Mathematics for Engineers 5",
+                    "matieres": [
+                        {"name": "Mathematics for Engineers 5", "coef": 70},
+                        {"name": "Network & Security", "coef": 30}
+                    ]
+                },
+                {
+                    "name" : "Mechanical Engineering 5",
+                    "matieres": [
+                        {"name": "Strength of Materials", "coef": 40},
+                        {"name": "Materials 2", "coef": 25},
+                        {"name": "Introduction to Heat Transfer", "coef": 35}
+                    ]
+                },
+                {
+                    "name" : "Electrical Engineering 5",
+                    "matieres": [
+                        {"name": "Electrical Machines", "coef": 100}
+                    ]
+                },
+                {
+                    "name" : "Industrial Organisation 5",
+                    "matieres": [
+                        {"name": "Industrial Methods", "coef": 30},
+                        {"name": "Industrial Organisation", "coef": 70}
+                    ]
+                },
+                {
+                    "name" : "Multidisciplinary Project 5",
+                    "matieres": [
+                        {"name": "Ecodesign Project Part 1 - Environment", "coef": 50},
+                        {"name": "Ecodesign Project Part 1 - Technical", "coef": 50}
+                    ]
+                },
+                {
+                    "name" : "Society, Management & Entrepreneurship 5",
+                    "matieres": [
+                        {"name": "Professional Engineering Project", "coef": 15},
+                        {"name": "Engineering Ethics", "coef": 35},
+                        {"name": "Advanced English Skills 5: (IELTS Preparation)", "coef": 50}
+                    ]
+                }
+            ]
+        }
+    },
+    "semestres": {
+        "1": {
+        "ues": {}
+        },
+        "2": {
+        "ues": {}
+        },
+        "3": {
+        "ues": {}
+        },
+        "4": {
+        "ues": {}
+        },
+        "5": {
+        "ues": {}
+        }
+    }
+}
