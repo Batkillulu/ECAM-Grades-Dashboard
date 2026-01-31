@@ -1,0 +1,154 @@
+{
+  "date": "2025-12-20T16:09:17.540Z",
+  "ueConfig": {
+    "6": {
+      "Mathematics for Engineers 6": {
+        "matieres": [
+          "Probabilities and Inferential Statistics",
+          "Object-Oriented Programming"
+        ],
+        "pourcentages": {
+          "Probabilities and Inferential Statistics": 65,
+          "Object-Oriented Programming": 35
+        }
+      },
+      "Control Engineering 6": {
+        "matieres": [
+          "Introduction to Control Theory",
+          "Power Electronics"
+        ],
+        "pourcentages": {
+          "Introduction to Control Theory": 60,
+          "Power Electronics": 40
+        }
+      },
+      "Systtems Engineering 6": {
+        "matieres": [
+          "Quality",
+          "Vibrations"
+        ],
+        "pourcentages": {
+          "Quality": 40,
+          "Vibrations": 60
+        }
+      },
+      "Multidisciplinary Project 6": {
+        "matieres": [
+          "Ecodesign Project Part 2 - Environment",
+          "Ecodesign Project Part 2 - Technical"
+        ],
+        "pourcentages": {
+          "Ecodesign Project Part 2 - Environment": 50,
+          "Ecodesign Project Part 2 - Technical": 50
+        }
+      },
+      "Society, Management & Entrepreneurship 6": {
+        "matieres": [
+          "Principles of Marketing",
+          "Global affairs",
+          "Advanced English Skills 6",
+          "Professional Project"
+        ],
+        "pourcentages": {
+          "Principles of Marketing": 25,
+          "Global affairs": 25,
+          "Advanced English Skills 6": 35,
+          "Professional Project": 15
+        }
+      },
+      "Sustainable Energy and Environmental Engineering 6": {
+        "matieres": [
+          "Advanced Heat Transfer",
+          "Hydraulics",
+          "Heating Ventilation & Air Conditioning HVAC"
+        ],
+        "pourcentages": {
+          "Advanced Heat Transfer": 35,
+          "Hydraulics": 25,
+          "Heating Ventilation & Air Conditioning HVAC": 40
+        }
+      }
+    },
+    "5": {
+      "Mathematics for Engineers 5": {
+        "matieres": [
+          "Mathematics for Engineers 5",
+          "Network & Security"
+        ],
+        "pourcentages": {
+          "Mathematics for Engineers 5": 70,
+          "Network & Security": 30
+        }
+      },
+      "Mechanical Engineering 5": {
+        "matieres": [
+          "Strength of Materials",
+          "Materials 2",
+          "Introduction to Heat Transfer"
+        ],
+        "pourcentages": {
+          "Strength of Materials": 40,
+          "Materials 2": 25,
+          "Introduction to Heat Transfer": 35
+        }
+      },
+      "Electrical Engineering 5": {
+        "matieres": [
+          "Electrical Machines"
+        ],
+        "pourcentages": {
+          "Electrical Machines": 100
+        }
+      },
+      "Industrial Organisation 5": {
+        "matieres": [
+          "Industrial Methods",
+          "Industrial Organisation"
+        ],
+        "pourcentages": {
+          "Industrial Methods": 30,
+          "Industrial Organisation": 70
+        }
+      },
+      "Multidisciplinary Project 5": {
+        "matieres": [
+          "Ecodesign Project Part 1 - Environment",
+          "Ecodesign Project Part 1 - Technical"
+        ],
+        "pourcentages": {
+          "Ecodesign Project Part 1 - Environment": 50,
+          "Ecodesign Project Part 1 - Technical": 50
+        }
+      },
+      "Society, Management & Entrepreneurship 5": {
+        "matieres": [
+          "Professional Engineering Project",
+          "Engineering Ethics",
+          "Advanced English Skills 5: (IELTS Preparation)"
+        ],
+        "pourcentages": {
+          "Professional Engineering Project": 15,
+          "Engineering Ethics": 35,
+          "Advanced English Skills 5: (IELTS Preparation)": 50
+        }
+      }
+    }
+  },
+  "semestres": {
+    "1": {
+      "ues": {}
+    },
+    "2": {
+      "ues": {}
+    },
+    "3": {
+      "ues": {}
+    },
+    "4": {
+      "ues": {}
+    },
+    "5": {
+      "ues": {}
+    }
+  }
+}
