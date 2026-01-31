@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
-// @version      1.0.1
+// @version      1.1.0
 // @run-at       document-end
 // @match        https://espace.ecam.fr/group/education/notes*
 // @grant        none
@@ -25,15 +25,29 @@
     const styles = `
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         * { box-sizing: border-box; }
-        .ecam-dash { font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; margin: 20px auto; max-width: 1400px; color: #1a1a1a; }
-        .dash-header { background: linear-gradient(135deg, #5b62bf 0%, #2A2F72 100%); color: white; padding: 30px 40px; border-radius: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 3px 5px 5px 0px #00000042; }
+        .ecam-dash { display: grid; flex-direction: column; justify-content:center; grid-template-columns: 100%; font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; margin: 0% 1.5%; color: #1a1a1a; }
+        .dash-header { background: linear-gradient(135deg, #5b62bf 0%, #2A2F72 100%); color: white; padding: 30px 40px; border-radius: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 3px 5px 5px 0px #00000042; }
         .dash-title { font-size: 28px; font-weight: 700; margin: 0; }
         .dash-subtitle { font-size: 14px; opacity: 0.95; margin-top: 5px; }
-        .lang-btn { border: 2px solid; border-radius: 20px; border-color: #000000ff; background: #6f79ff }
-        .lang-btn.active { border-color: #ceefffff}
-        .header-actions { display: flex; gap: 12px; }
-        .main-average-card { background: linear-gradient(135deg, #ffffff 30%, #514ba2ff 75%); border-radius: 20px; padding: 30px; margin-bottom: 30px; border: 2px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; transition: all 0.3s ease; }
-        .main-average-card:hover { border-color: #667eea; box-shadow: 3px 5px 5px 0px #00000042; }
+        .lang-btn           { border: 2px solid #000000ff; background: #6f79ff; border-radius: 18px; width: 36px; height: 36px; }
+        .lang-btn.active    { border: 2px solid #ceefffff; }
+        .lang-btn:hover     { border: 2px solid #afe4ffff; background: #a6acff; }
+        .header-actions         { display: flex; gap: 12px; }
+
+        .btn                                { display: flex; justify-content: center; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-size: 14px; }
+        .btn-edit-mode:hover:not(:disabled) { transform: scale(0.95); background: linear-gradient(135deg, #7d92eeff 0%, #8e5ebeff 100%); }
+        .btn-edit-mode                      { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: grid; width: 126px; height: 108px; transition: all 0.2s ease }
+        .btn-edit-mode.on                   { transform: scale(0.95); box-shadow: inset 0px 0px 6px 4px #ffffff; }
+        .btn-export                         { background: white; color: #666; display: flex; align-items: center; width: 140px; height: 50px; }
+        .btn-import                         { background: white; color: #666; display: flex; align-items: center; width: 140px; height: 50px; }
+        .btn-export:hover                   { border: 1px solid #667eea; color: #667eea; transform: scale(0.95); box-shadow: 3px 5px 5px 0px #00000042; }
+        .btn-import:hover                   { border: 1px solid #667eea; color: #667eea; transform: scale(0.95); box-shadow: 3px 5px 5px 0px #00000042; }
+        .btn-icon                           { font-size: 20px; margin-bottom: 2px }
+        .btn:disabled                       { opacity: 0.5; cursor: not-allowed; }
+
+        .main-average-card { background: linear-gradient(135deg, #ffffff 30%, #514ba2ff 75%); border-radius: 20px; padding: 30px; margin-bottom: 15px; border: 2px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; transition: box-shadow 0.3s ease, border-color 0.3s ease, left 0.3s ease, top 0.3s ease; user-select: none }
+        /* .main-average-card:hover { border-color: #667eea; box-shadow: 3px 5px 5px 0px #00000042; } */
+
         .average-display { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 7px; }
         .average-number { font-size: 48px; font-weight: 800; -webkit-text-fill-color: #2A2F72; padding-top: 9px; }
         .average-label { font-size: 18px; color: #666; font-weight: 500; }
@@ -41,25 +55,42 @@
         .stat-item { text-align: center; }
         .stat-value { font-size: 24px; font-weight: 700; color: #c1a7ffff; }
         .stat-label { font-size: 12px; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
-        .controls-bar { background: white; border-radius: 16px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #e5e5e5; }
-        .filter-title { border: 2px solid #b3bbe7; border-radius: 20px; color: white; font-weight: 700; font-size: 14px; padding: 10px 15px; margin-right: 70%; margin-bottom: -15px; background: linear-gradient(45deg, #446dff 20%, #1222ff12 75%); position: relative; transition: all 0.2s ease; }
-        .filter-title:hover { box-shadow: 3px 5px 5px 0px #00000042; }
-        .filter-tabs { display: flex; background: #f7f7f7; padding: 4px; border-radius: 12px; gap: 4px; }
-        .filter-tab { padding: 10px 20px; background: transparent; border: none; border-radius: 8px; cursor: pointer; font-weight: 500; color: #666; transition: all 0.2s ease; font-size: 14px; }
-        .filter-tab:hover { background: #fff; color: #333; transform: scale(1.1); box-shadow: 3px 5px 5px 0px #00000042; }
-        .filter-tab.active { background: white; color: #667eea; box-shadow: 3px 5px 5px 0px #00000042; }
-        .view-toggle { display: flex; gap: 8px; background: #f7f7f7; padding: 4px; border-radius: 8px; }
-        .view-btn { padding: 8px 12px; background: transparent; border: none; border-radius: 6px; cursor: pointer; font-size: 18px; transition: all 0.2s ease; }
-        .view-btn.active { background: white; box-shadow: 3px 5px 5px 0px #00000042; }
+
+        .new-grades-card      { display: flex; flex-direction: column; margin-top: 10px; margin-bottom: 25px; padding: 10px; gap:10px ; border-radius: 16px; border: 4px solid #446dff; background: #e3e9ffff; box-shadow: 0px 0px 15px 5px #322bff87;}
+        .new-grades-card.none { border: 2px solid #446dff; background: #f7f9ffff; box-shadow: none; }
+        .new-grades-card-title { font-size: 20px; font-weight: 800; color: #2A2F72; margin-left: 5px; display:flex; align-items:center }
+        .new-grades-content { display: flex; flex-direction: column; gap: 20px; }
+        .new-grades-matiere-card { display: flex; flex-direction: column; border: 2px solid #c1a7ffff; border-radius: 12px; }
+        .new-grades-matiere-card:hover { cursor:alias }
+        .new-grades-matiere-card-title { border: 2px solid #c1a7ffff; border-radius: 12px; margin: -2px -2px 5px -2px; font-size: 16px; font-weight: 600; background: #c1ceff; padding: 5px 0px 5px 10px; }
+        .new-grades-table {  }
+        .new-grades-table-notes {  }
+        .new-grades-notif { display: flex; align-items: center; justify-content: center; border-radius: 10px; color: #dafaff; font-weight: 800; font-size: 17px; background: #6554ff; width: 90%; height: 50px; cursor:pointer; position:fixed; left:5%; right:0px; top:-10px; z-index:299; box-shadow: 0 0 5px rgba(0,0,0,0.5);  transition: all 0.5s ease; }
+        .new-grades-notif.on { top:50px }
+
+        .controls-bar { background: white; border-radius: 16px; padding: 16px 20px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #e5e5e5; }
+        .filter-title { border-radius: 20px; color: white; font-weight: 700; font-size: 14px; padding: 10px 15px; margin-right: 70%; margin-bottom: -15px; background: linear-gradient(45deg, #446dff 20%, #1222ff12 60%, #ffffff00 89%); position: relative; transition: all 0.2s ease; }
+        .filter-title:hover { background: linear-gradient(45deg, #446dff 20%, #1222ff12 70%, #ffffff00 95%); }
+        .filter-tabs { display: flex; background: #f7f7f7; padding: 4px; border-radius: 12px; gap: 4px; height: 44px; }
+        .filter-tab { display: flex; justify-content: center; padding: 10px 20px; background: transparent; border: none; border-radius: 8px; cursor: pointer; font-weight: 500; color: #666; transition: all 0.2s ease; font-size: 14px; width: 57px; }
+        .filter-tab:hover  { background: white; color: #333333ff; box-shadow: 3px 5px 5px 0px #00000042; transform: scale(1.1); }
+        .filter-tab.active { background: white; color: #667eeaff; box-shadow: 3px 5px 5px 0px #00000042; }
+
+        .view-toggle { display: flex; background: #f7f7f7; padding: 4px; border-radius: 8px; gap: 8px; align-items: center; }
+        .view-btn { background: transparent; padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 18px; transition: all 0.2s ease; width: 48px; height: 40px; }
         .view-btn:hover  { background: white; box-shadow: 3px 5px 5px 0px #00000042; transform: scale(0.95); }
+        .view-btn.active { background: white; box-shadow: 3px 5px 5px 0px #00000042; }
+
         .content-area { display: grid; gap: 24px; }
+
         .intranet-collapse { background: #f9fafb; margin: 20px 0px; border-radius: 20px; padding: 20px 24px; border-bottom: 1px solid #e5e5e5; display: flex; justify-content: center; align-items: center; cursor: pointer; }
         .intranet-collapse:hover { background: #f3f4f6; }
         .intranet-text { display: flex; align-items: center; font-size: 18px; font-weight: 600; color: #1a1a1a; }
         .intranet-toggle { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; }
         .intranet-toggle.openLeft { transform: rotate(-180deg); }
         .intranet-toggle.openRight { transform: rotate(180deg); }
-        .semester-section { background: white; border-radius: 20px; overflow: hidden; border: 1px solid #e5e5e5; transition: all 0.3s ease; }
+
+        .semester-section { background: white; border-radius: 24px; overflow: hidden; border: 1px solid #e5e5e5; transition: all 0.3s ease; }
         .semester-header { background: #f9fafb; padding: 20px 24px; border-bottom: 1px solid #e5e5e5; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         .semester-header:hover { background: #f3f4f6; }
         .semester-info { display: flex; align-items: center; gap: 12px; }
@@ -70,97 +101,160 @@
         .average-bad { color: #ef4444; border: 1px solid #ef444430; }
         .semester-toggle { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; }
         .semester-toggle.open { transform: rotate(180deg); }
-        .semester-content { padding: 24px; display: none; }
-        .semester-content.show { display: block; }
-        .ue-grid { display: grid; gap: 20px; margin-bottom: 24px; }
-        .ue-card { background: #fafafa; border-radius: 16px; border: 2px solid #e5e5e5; transition: all 0.3s ease; }
-        .ue-card.validated { border-color: #10b981; background: #f0fdf4; }
-        .ue-card.failed { border-color: #ef4444; background: #fef2f2; }
-        .ue-card.unknown { border-color: #6d6d6dff; background: #d1d1d1ff; }
-        .ue-header { display: flex; border-radius: 16px; justify-content: space-between; align-items: start; padding: 22px 20px 20px 20px; border-bottom: 1px solid #e5e5e5; padding-bottom: 12px; }
-        .ue-header:hover { background: #f3f4f6; }
-        .ue-title { font-size: 16px; font-weight: 600; color: #1a1a1a; }
-        .ue-moyenne { font-size: 20px; font-weight: 700; display: flex;}
-        .ue-moyenne.good { color: #10b981; }
-        .ue-moyenne.bad { color: #ef4444; }
-        .ue-moyenne.unknown { color: #6d6d6dff; }
-        .mat-moyenne { font-weight: 800; }
-        .mat-moyenne.good { color: #10b981; }
-        .mat-moyenne.bad { color: #ef4444; }
-        .ue-toggle { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; margin-left: 5px; }
-        .ue-toggle.open { transform: rotate(180deg); }
-        .notes-table { width: 98%; border-collapse: separate; border-spacing: 0; padding-right: 20px; margin: 12px 20px 20px 20px; }
-        .notes-table.compact { margin: -12px 20px 20px 20px; }
-        .notes-table th { background: #f9fafb; padding: 10px 12px; text-align: left; font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #e5e5e5; }
-        .notes-table td { padding: 12px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
-        .notes-table tr:hover { background: #c9d8e7ff; }
-        .note-value { font-weight: 600; font-size: 16px; }
-        .note-good { color: #10b981; } .note-medium { color: #f59e0b; } .note-bad { color: #ef4444; }
-        .matiere-name { font-weight: 500; color: #1a1a1a; }
-        .note-type { font-size: 12px; color: #666; margin-top: 2px; }
-        .note-date { font-size: 12px; color: #999; }
-        .unclassified-section { background: #fff8f0; border-radius: 16px; padding: 20px; border: 2px dashed #fbbf24; margin-top: 20px; }
-        .unclassified-title { font-size: 16px; font-weight: 600; color: #92400e; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-        .config-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 10000; backdrop-filter: blur(4px); }
-        .config-content { background: white; border-radius: 24px; width: 90%; max-width: 1000px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 3px 5px 5px 0px #00000042; }
-        .config-header { padding: 24px 30px; border-bottom: 1px solid #e5e5e5; display: flex; justify-content: space-between; align-items: center; }
-        .config-title { font-size: 22px; font-weight: 700; color: #1a1a1a; }
-        .config-close { width: 36px; height: 36px; border-radius: 50%; border: none; background: #f3f4f6; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; font-size: 20px; }
-        .config-close:hover { background: #e5e7eb; transform: scale(1.1); }
-        .config-body { padding: 30px; overflow-y: auto; flex: 1; }
-        .config-layout { display: grid; grid-template-columns: 360px 1fr; gap: 30px; height: 100%; }
-        .config-sidebar { border-right: 1px solid #e5e5e5; padding-right: 30px; }
-        .config-main { overflow-y: auto; }
-        .semester-selector { margin-bottom: 24px; }
-        .semester-selector label { display: block; font-size: 14px; font-weight: 600; color: #666; margin-bottom: 8px; }
-        .semester-select { width: 100%; padding: 10px 14px; border: 2px solid #e5e5e5; border-radius: 10px; font-size: 14px; font-weight: 500; background: white; cursor: pointer; transition: all 0.2s ease; }
-        .semester-select:hover { border-color: #667eea; }
-        .semester-select:focus { outline: none; border-color: #667eea; box-shadow: 3px 5px 5px 0px #00000042; }
-        .matieres-pool { background: #f9fafb; border-radius: 12px; padding: 16px; min-height: 200px; }
-        .pool-title { font-size: 14px; font-weight: 600; color: #666; margin-bottom: 12px; display:flex; align-items:center; justify-content:space-between;}
-        .pool-actions { display:flex; gap:8px;}
-        .matiere-row { display:flex; align-items:center; gap:10px; padding:8px 10px; background:white; border:2px solid #e5e5e5; border-radius:10px; margin:6px 0; }
-        .matiere-row.used { background:#eff6ff; border-color:#667eea; opacity:0.8; }
-        .create-ue-section { margin-bottom: 24px; }
-        .create-ue-header { display: flex; gap: 12px; margin-bottom: 16px; }
-        .ue-name-input { flex: 1; padding: 10px 14px; background: #d3d3d3ff ; border: 2px solid #a7a7a7ff; border-radius: 10px; font-size: 14px; transition: all 0.2s ease; }
-        .ue-name-input:focus { outline: none; border-color: #667eea; box-shadow: 3px 5px 5px 0px #00000042; }
-        .create-ue-btn { padding: 10px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
-        .create-ue-btn:hover { transform: scale(1.1); box-shadow: 3px 5px 5px 0px #00000042; }
-        .create-ue-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-        .ue-edit-card { background: white; border: 2px solid #e5e5e5; border-radius: 12px; padding: 16px; margin-bottom: 16px; transition: all 0.2s ease; }
-        .ue-edit-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .ue-edit-title { font-size: 16px; font-weight: 600; color: #1a1a1a; }
-        .ue-delete-btn { width: 28px; height: 28px; border-radius: 50%; border: none; background: #fee2e2; color: #ef4444; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
-        .ue-delete-btn:hover { background: #ef4444; color: white; transform: scale(1.1); }
-        .ue-matieres-container { min-height: 60px; background: #f9fafb; border-radius: 8px; padding: 12px; border: 2px solid #e5e5e5; transition: all 0.2s ease; }
-        .matiere-in-ue { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 10px; background: white; border: 1px solid #e5e5e5; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; }
-        .matiere-ue-name { font-size: 14px; font-weight: 500; color: #1a1a1a; }
-        .percentage-input { width: 70px; padding: 4px 8px; border: 1px solid #e5e5e5; border-radius: 6px; font-size: 14px; text-align: right; }
-        .remove-matiere-btn { border:none; background:#f3f4f6; border-radius:6px; padding:6px 8px; cursor:pointer; }
-        .percentage-total { margin-top: 12px; padding: 12px; background: #f9fafb; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
-        .percentage-total.valid { background: #f0fdf4; color: #10b981; }
-        .percentage-total.invalid { background: #fef2f2; color: #ef4444; }
-        .auto-adjust-btn, .add-selected-btn { padding: 4px 12px; background: white; border: 1px solid currentColor; border-radius: 6px; font-size: 12px; cursor: pointer; }
-        .btn { padding: 10px 20px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-size: 14px; }
-        .btn-config { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: grid; }
-        .btn-config:hover:not(:disabled) { transform: scale(0.95); box-shadow: 3px 5px 5px 0px #00000042; }
-        .btn-export { background: white; color: #666; border: 2px solid #e5e5e5; display: flex; align-items: center; }
-        .btn-export:hover { border-color: #667eea; color: #667eea; transform: scale(0.95); box-shadow: 3px 5px 5px 0px #00000042; }
-        .btn-import { background: white; color: #666; border: 2px solid #e5e5e5; display: flex; align-items: center; }
-        .btn-import:hover { border-color: #667eea; color: #667eea; transform: scale(0.95); box-shadow: 3px 5px 5px 0px #00000042; }
-        .btn-icon { font-size: 20px }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .note-simulee-input { border-radius: 10px; border-color: #667eea; padding: 2px 10px}
-        .note-checkbox { cursor: pointer; }
-        @media (max-width: 768px){ .config-layout { grid-template-columns:1fr; } .config-sidebar { border-right:none; border-bottom:1px solid #e5e5e5; padding-right:0; padding-bottom:20px; } .dash-header { flex-direction:column; align-items:start; gap:16px; } .average-display { flex-direction:column; gap:4px; } .average-number { font-size:36px; } }
-        .loading { text-align: center; padding: 40px; color: #999; }
-        .loading::after { content: '...'; animation: dots 1.5s steps(4, end) infinite; }
-        @keyframes dots { 0%,20%{content:'.';} 40%{content:'..';} 60%,100%{content:'...';} }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .fade-in { animation: fadeIn 0.3s ease; }
-    `;
+        .semester-content       { padding: 24px; display: none; }
+        .semester-content.show  { display: flex; flex-direction: row; gap: 0px; transition: gap 0.2s ease; }
 
+        .ue-grid                { display: grid; width: 100%; gap: 20px; }
+        .ue-card                { display: flex; flex-direction: column; align-items: center; background: #fafafa; border-radius: 16px; border: 3px solid #e5e5e5; transition: all 0.3s ease; }
+        .ue-card.validated      { border-color: #10b981; background: #f0fdf4; }
+        .ue-card.failed         { border-color: #ef4444; background: #fef2f2; }
+        .ue-card.unknown        { border-color: #6d6d6dff; background: #d1d1d1ff; }
+        .ue-header              { display: flex; align-items: center; padding: 20px 20px 18px 20px; border-bottom: 3px solid #e5e5e5; border-radius: 16px 16px 0px 0px; width: 100%; cursor: pointer; }
+        .ue-header.validated    { border-color: #10b981; background: #e0ffeaff; }
+        .ue-header.failed       { border-color: #ef4444; background: #ffd9d9ff; }
+        .ue-header.unknown      { border-color: #6d6d6dff; background: #acacacff; }
+        .ue-header:hover        { background: #f3f4f6; }
+        .ue-title                       { font-size: 16px; font-weight: 800; color: #1a1a1a; width:42%; margin-bottom: 2px; }
+        .ue-title.input                 { font-size: 16px; font-weight: 800; color: #1a1a1a; width:90%; border-radius: 12px; padding-left: 10px; }
+        .ue-matiere-total-coef-value    { display: flex; gap: 15px; font-weight: 600; }
+        .ue-moyenne                     { font-size: 24px; font-weight: 800; display: flex; align-items: center; gap:10px; width: 180px; }
+        .ue-moyenne.good                { color: #10b981; }
+        .ue-moyenne.bad                 { color: #ef4444; }
+        .ue-moyenne.unknown             { color: #6d6d6dff; }
+        .ue-toggle                      { width: 24px; height: 24px; font-size: 18px; color: #000000; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; margin-left: 5px; }
+        .ue-toggle.open                 { transform: rotate(180deg); }
+        .add-a-matiere-card             { display: flex; align-items: center; justify-content: center; gap: 8px; height: 50px; width: 98%; margin-bottom: 15px; border: 3px dashed #7fc2ff; border-radius: 20px; font-size: 24px; font-weight: 700; color: #7fc2ff; background: aliceblue; cursor: pointer; box-shadow: none; transition: all 0.2s ease }
+        .add-a-matiere-card:hover       { background: white; font-size: 26px; box-shadow: inset 0px 0px 17px 0px #0400ff38; }
+        .add-a-matiere-card-plus        { font-size: 40px; font-weight: 900; height: 20px; transition: transform 0.2s ease; }
+
+        .modules-section                                { display: flex; flex-direction: row; gap: 0px; align-items: center; width: 100% }
+        .modules-content                                { display: grid; gap: 20px; width: 100%; }
+
+        .unclassified-part                              { display: flex; flex-direction: row; gap: 0px; }
+        .unclassified-section                           { display: flex; flex-direction: column; width: 100%; background: #fff8f0; border-radius: 20px; padding: 20px; border: 2px dashed #fbbf24; }
+        .unclassified-content                           { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; }
+        .unclassified-title                             { font-size: 16px; font-weight: 600; color: #92400e; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        
+        .drop-matiere-to-create-eu                      { display: flex; flex-direction: column; border-radius: 20px; border: 0px dashed #7fc2ff; width: 0%; transition: width 0.2s ease; }
+
+
+        .matiere-card                { display: flex; flex-direction: column; align-items: center; border: 4px solid #ffffffff; border-radius: 20px; width: 100%; background: #c5c5c5; margin: 12px 0px 20px 0px; transition: width 0.3s ease; }
+        .matiere-card.good           { background: #f0fdf4; }
+        .matiere-card.meh            { background: #fff2e4; }
+        .matiere-card.bad            { background: #fef2f2; }
+        .matiere-card-header         { display: flex; align-items: center; height: 62px; width: 100%; padding: 5px 0px; border-radius: 20px 20px 0px 0px; background: #b8b8b8; font-weight:600; border-bottom: 4px solid white; }
+        .matiere-card-header.good    { background: #e3ffeb; }
+        .matiere-card-header.meh     { background: #ffe8d0; }
+        .matiere-card-header.bad     { background: #ffe0e0; }
+        .matiere-name                { font-weight: 800; color: #1a1a1a; font-size: 14px }
+        .matiere-card.compact                   { display:flex; flex-direction: row; justify-content:space-between; align-items:center; padding: 7px 0px; border-radius: 16px; border: 3px solid #ffffff; height: 68px; width: 100%; transition: all 0.2s ease; background: none; margin: 0px; }
+        .matiere-card.compact.edit-mode         {  }
+        .matiere-card.compact:hover             { background: #f3f4f6; box-shadow: inset 0px 0px 8px 1px #0032ff42; transform: scale(0.995); }
+        .matiere-card.compact.edit-mode:hover   { transform: scale(1); }
+        .matiere-card.unclassified              { display: flex; flex-direction: column; align-items: center; border: 2px solid #e4f3ffff; border-radius: 20px; width:99%; background: white; user-select: none; margin: 0px; transition: width 0.3s ease }
+        .matiere-card.unclassified.good         { background: #f0fdf4; }
+        .matiere-card.unclassified.bad          { background: #fef2f2; }
+        .matiere-card-header.unclassified       { display:flex; flex-direction: row; align-items:center; border-radius: 20px 20px 0px 0px; border-bottom: 2px solid #e4f3ffff; gap:8px; font-weight:700; height: 60px; width: 100%; vertical-align:top; font-size:15px }
+        .matiere-card-header.unclassified.good  { background: #e3ffeb; }
+        .matiere-card-header.unclassified.bad   { background: #ffe0e0; }
+        .notes-table-matiere-total-coef-value   { display: flex; gap: 15px }
+        .mat-moyenne        { font-size: 16px; font-weight: 800; }
+        .mat-moyenne.good   { color: #10b981; }
+        .mat-moyenne.bad    { color: #ef4444; }
+        .selected-matiere-card-notif-container  { display: grid; justify-items: end; gap: 10px; position: fixed; top: 50px; left: calc(99.5% - 20%); transition: width 0.3s ease; }
+        .selected-matiere-card-notif-div        { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; position: relative; left: 500px; height: 60px; width: max-content; background: #9696ff; border-radius: 18px; border: 5px solid #d4daff; font-size: 13px; font-weight: 500; color: black; padding: 10px; gap: 5px; transition: left 0.3s ease; }
+        .selected-matiere-card-notif-div.on     { left: 0px }
+
+        .note-row                           { border-bottom: 1px solid white /* #e4e4e4 */; height: 39px; transition: background 0.3s ease; }
+        .note-row.last                      { vertical-align: baseline; border-bottom: none; height: 41px; }
+        .note-row.sim                       { background: #e9efff9a; }
+        .note-row:hover                     { background: #eeedfd; }
+        .notes-table                        { width: 98%; background: #c5c5c5; }
+        .notes-table.compact                { margin: -12px 20px 20px 20px; }
+        .notes-table.good                   { background: #f0fdf4}
+        .notes-table.meh                    { background: #fff2e4}
+        .notes-table.bad                    { background: #fef2f2}
+        .notes-table th                     { padding: 10px 12px; height: 39px; font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 3px solid white /* #e5e5e5 */; }
+        .notes-table td                     { padding: 10px; font-size: 14px; }
+        .notes-table-type                   { padding-left:30px; width: 30%; }
+        .notes-table-note                   { width: 13% }
+        .notes-table-coef                   { width: 10% }
+        .notes-table-classAvg               { width: 10% }
+        .notes-table-date                   { width: 10% }
+        .notes-table-teacher                { display: table-cell; font-size:12px;color: #999; text-align: end; width: 32%; }
+        .note-row-unsorted-grades           { background: unset; border-bottom: 1px solid white; transition: background 0.3s ease; height: 39px; }
+        .note-row-unsorted-grades:hover     { background: #c9d8e7ff; }
+        .note-row-unsorted-grades.last      { border-bottom: none; height: 41px; }
+        .note-type      { font-size: 12px; color: #666; margin-top: 2px; }
+        .note-value     { font-weight: 600; font-size: 16px; }
+        .note-good      { color: #10b981; }
+        .note-medium    { color: #f59e0b; }
+        .note-bad       { color: #ef4444; }
+        .note-date      { font-size: 12px; color: #999; }
+		.subject-sim-del-btn        { border: 1px solid #A7CEDF; border-radius: 6px; cursor: pointer; }
+        .note-simulee-input         { border-radius: 10px; border-color: #667eea; padding: 2px 10px}
+        .note-simulee-input-edit    { border-radius: 10px; border-color: #667eea; padding: 2px 10px}
+		.note-sim-del-btn           { border: none; border-radius: 6px; cursor: pointer; }
+        .note-checkbox  { cursor: pointer; }
+
+        /* Config modal part */
+            .config-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 10000; backdrop-filter: blur(4px); }
+            .config-content { background: white; border-radius: 24px; width: 90%; max-width: 1000px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 3px 5px 5px 0px #00000042; }
+            .config-header { padding: 24px 30px; border-bottom: 1px solid #e5e5e5; display: flex; justify-content: space-between; align-items: center; }
+            .config-title { font-size: 22px; font-weight: 700; color: #1a1a1a; }
+            .config-close { width: 36px; height: 36px; border-radius: 50%; border: none; background: #f3f4f6; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; font-size: 20px; }
+            .config-close:hover { background: #e5e7eb; transform: scale(1.1); }
+            .config-body { padding: 30px; overflow-y: auto; flex: 1; }
+            .config-layout { display: grid; grid-template-columns: 360px 1fr; gap: 30px; height: 100%; }
+            .config-sidebar { border-right: 1px solid #e5e5e5; padding-right: 30px; }
+            .config-main { overflow-y: auto; }
+            .semester-selector { margin-bottom: 24px; }
+            .semester-selector label { display: block; font-size: 14px; font-weight: 600; color: #666; margin-bottom: 8px; }
+            .semester-select { width: 100%; padding: 10px 14px; border: 2px solid #e5e5e5; border-radius: 10px; font-size: 14px; font-weight: 500; background: white; cursor: pointer; transition: all 0.2s ease; }
+            .semester-select:hover { border-color: #667eea; }
+            .semester-select:focus { outline: none; border-color: #667eea; box-shadow: 3px 5px 5px 0px #00000042; }
+            .matieres-pool { background: #f9fafb; border-radius: 12px; padding: 16px; min-height: 200px; }
+            .pool-title { font-size: 14px; font-weight: 600; color: #666; margin-bottom: 12px; display:flex; align-items:center; justify-content:space-between;}
+            .pool-actions { display:flex; gap:8px;}
+            .matiere-row { display:flex; align-items:center; gap:10px; padding:8px 10px; background:white; border:2px solid #e5e5e5; border-radius:10px; margin:6px 0; }
+            .matiere-row.used { background:#eff6ff; border-color:#667eea; opacity:0.8; }
+            .create-ue-section { margin-bottom: 24px; }
+            .create-ue-header { display: flex; gap: 12px; margin-bottom: 16px; }
+            .ue-name-input              { flex: 1; padding: 10px 14px; background: #d3d3d3ff ; border: 2px solid #a7a7a7ff; border-radius: 10px; font-size: 14px; transition: all 0.2s ease; }
+            .ue-name-input:focus        { outline: none; border-color: #667eea; box-shadow: 3px 5px 5px 0px #00000042; }
+            .create-ue-btn { padding: 10px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+            .create-ue-btn:hover { transform: scale(1.1); box-shadow: 3px 5px 5px 0px #00000042; }
+            .create-ue-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+            .ue-edit-card { background: white; border: 2px solid #e5e5e5; border-radius: 12px; padding: 16px; margin-bottom: 16px; transition: all 0.2s ease; }
+            .ue-edit-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+            .ue-edit-title { font-size: 16px; font-weight: 600; color: #1a1a1a; }
+            .ue-delete-btn { width: 28px; height: 28px; border-radius: 50%; border: none; background: #fee2e2; color: #ef4444; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+            .ue-delete-btn:hover { background: #ef4444; color: white; transform: scale(1.1); }
+            .ue-matieres-container { min-height: 60px; background: #f9fafb; border-radius: 8px; padding: 12px; border: 2px solid #e5e5e5; transition: all 0.2s ease; }
+            .matiere-in-ue { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 10px; background: white; border: 1px solid #e5e5e5; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; }
+            .matiere-ue-name { font-size: 14px; font-weight: 500; color: #1a1a1a; }
+            .matiere-coef-input-box { width: 40px; border-radius: 9px; border: 1px solid; text-align: center }
+            .percentage-input { width: 70px; padding: 4px 8px; border: 1px solid #e5e5e5; border-radius: 6px; font-size: 14px; text-align: right; }
+            .remove-matiere-btn { border:none; background:#f3f4f6; border-radius:6px; padding:6px 8px; cursor:pointer; }
+            .percentage-total { margin-top: 12px; padding: 12px; background: #f9fafb; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+            .percentage-total.valid { background: #f0fdf4; color: #10b981; }
+            .percentage-total.invalid { background: #fef2f2; color: #ef4444; }
+            .auto-adjust-btn, .add-selected-btn { padding: 4px 12px; background: white; border: 1px solid currentColor; border-radius: 6px; font-size: 12px; cursor: pointer; }
+        /**/
+
+        /* Animations part */
+            .selectable-text-content { cursor:  }
+            @media (max-width: 768px){ .config-layout { grid-template-columns:1fr; } .config-sidebar { border-right:none; border-bottom:1px solid #e5e5e5; padding-right:0; padding-bottom:20px; } .dash-header { flex-direction:column; align-items:start; gap:16px; } .average-display { flex-direction:column; gap:4px; } .average-number { font-size:36px; } }
+            .loading { text-align: center; padding: 40px; color: #999; }
+            @keyframes dots { 0%,20%{content:'.';} 40%{content:'..';} 60%,100%{content:'...';} }
+            .loading::after { content: '...'; animation: dots 1.5s steps(4, end) infinite; }
+            @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+            .fade-in { animation: fadeIn 0.3s ease; }
+            @keyframes scrollTo { 15% {scale: 100% 100%;} 100% {scale: 105% 105%; border: 5px solid #5f77ff} }
+            .scroll-to { animation: 0.3s 2 alternate scrollTo ease }
+    `;
+    const ERROR503 = document.title == '503 Service Unavailable' || document.title == 'ECAM Grades Dashboard - Transform Your Grade Experience';
+    
     const styleSheet = document.createElement("style");
     styleSheet.textContent = styles;
     document.head.appendChild(styleSheet);
@@ -168,27 +262,53 @@
     class ECAMDashboard {
         constructor() {
             this.notes = [];
-            this.semestres = {};
-            this.ueConfig = JSON.parse(localStorage.getItem("ECAM_UE_CONFIG_V2")) || {};
-            this.sim = JSON.parse(localStorage.getItem("ECAM_SIM_NOTES_V1")) || {}; // simulations
-            this.ignoredGrades = JSON.parse(localStorage.getItem("ECAM_IGNORED_GRADES_V1")) || [];
-            this.defSem = localStorage.getItem("ECAM_DEFAULT_SEMESTER") || "last";
+            this.semestres = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{}, 7:{}, 8:{}, 9:{}, 10:{}};
+
+            this.gradesDatas = {};
+            this.ueConfig =         JSON.parse( localStorage.getItem("ECAM_DASHBOARD_UE_CONFIG")) || {};
+            this.sim =              JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SIM_NOTES")) || {};
+            this.ignoredGrades =    JSON.parse( localStorage.getItem("ECAM_DASHBOARD_IGNORED_GRADES")) || [];
+
+            this.savedReadGrades =  JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SAVED_READ_GRADES")) || [] ;
+            this.newGrades = [];
+
+            this.defSem =                       localStorage.getItem("ECAM_DASHBOARD_DEFAULT_SEMESTER") || "all";
             this.currentSemester = this.defSem;
-            this.defView = localStorage.getItem("ECAM_DEFAULT_VIEW_MODE") || "detailed";
+
+            this.defView =                      /* localStorage.getItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE") || */ "detailed";
             this.viewMode = this.defView;
-            this.lang = localStorage.getItem("ECAM_DEFAULT_LANGUAGE") || "fr";
+
+            this.lang =                         localStorage.getItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE") || "en";
             this.tempSelection = {}; // { [sem]: Set<matiere> }
+            this.draggedMatId = "";
+            this.today = new Date().toISOString().split('T')[0];
+            this.editMode = true;
+
+            this.contentFirstLoad = true;
+            this.mobileVer = false;
+
+            this.ueHeaderNoMove = true;
+            this.selectedMatiereCards = [];
+            this.scrollToThisElem = "";
+
+            this.ERROR503 = document.title == '503 Service Unavailable' || document.title == 'ECAM Grades Dashboard - Transform Your Grade Experience';
+
             this.init();
         }
 
-        // ===== helpers simulation =====
-        saveConfig() { localStorage.setItem('ECAM_UE_CONFIG_V2', JSON.stringify(this.ueConfig)); }
-        saveSim(){ localStorage.setItem("ECAM_SIM_NOTES_V1", JSON.stringify(this.sim)); }
-        saveignoredGrades(){ localStorage.setItem("ECAM_IGNORED_GRADES_V1", JSON.stringify(this.ignoredGrades)); }
-        ensureSimPath(sem, ue, mat){
+
+        saveConfig() { localStorage.setItem('ECAM_DASHBOARD_UE_CONFIG', JSON.stringify(this.ueConfig)); }
+        saveSim() { localStorage.setItem("ECAM_DASHBOARD_SIM_NOTES", JSON.stringify(this.sim)); }
+        saveignoredGrades() { localStorage.setItem("ECAM_DASHBOARD_IGNORED_GRADES", JSON.stringify(this.ignoredGrades)); }
+        ensureSimPath(sem, ue, mat) {
             if(!this.sim[sem]) this.sim[sem]={};
             if(!this.sim[sem][ue]) this.sim[sem][ue]={};
             if(mat !== undefined && !this.sim[sem][ue][mat]) this.sim[sem][ue][mat]=[];
+        }
+        deleteUnusedSimPath(sem, ue, mat) {
+            if (this.sim[sem][ue][mat].length == 0) {delete this.sim[sem][ue][mat]}
+            if (this.sim[sem][ue] == {}) {delete this.sim[sem][ue]}
+            if (this.sim[sem] == {}) {delete this.sim[sem]}
         }
         getSimNotes(sem, ue, mat){ return (this.sim[sem]&&this.sim[sem][ue]&&this.sim[sem][ue][mat])||[]; }
         getAllMatieresForUE(sem, ueData, ueName){
@@ -196,53 +316,76 @@
             const simOnly = Object.keys(((this.sim[sem]||{})[ueName]||{}));
             return Array.from(new Set([...real, ...simOnly]));
         }
-
-        init() {
-            this.parseNotes();
-            this.createDashboard();
-            this.attachEventListeners();
-        }
-
-        parseNotes() {
-            const rows = document.querySelectorAll("table.greyGridTable tbody tr");
-            rows.forEach(row => {
-                const cells = row.querySelectorAll("td");
-                if (cells.length >= 6 && cells[0].textContent.includes("/20")) {
-                    const note = parseFloat(cells[0].textContent.replace("/20", "").replace(",", ".")) || 0;
-                    const libelle = cells[1].textContent.trim();
-                    const coef = parseFloat(cells[2].textContent.replace("%", "").replace(",", ".")) || 0;
-                    const prof = cells[4].textContent.trim();
-                    const date = cells[5].textContent.trim();
-                    const semMatch = libelle.match(/Semester\s+(\d+)/i);
-                    const semestre = semMatch ? semMatch[1] : "?";
-                    const parts = libelle.split(" - ").map(p => p.trim());
-                    const matiere = parts.length >= 3 ? parts.slice(1,-1).join(" - ") : libelle;
-                    const type = parts.length >= 2 ? parts.at(-1) : "";
-                    this.notes.push({ note, coef, semestre, matiere, type, prof, date, libelle });
-                }
-            });
-            this.notes.forEach(n => {
-                if (!this.semestres[n.semestre]) this.semestres[n.semestre] = {};
-                if (!this.semestres[n.semestre][n.matiere]) this.semestres[n.semestre][n.matiere] = [];
-                this.semestres[n.semestre][n.matiere].push(n);
-            });
-        }
+        getNoteColor(note) { if (note >= 12) return 'good'; if (note >= 10) return 'medium'; return 'bad'; }
+        getAverageColor(avg) { if (avg >= 12) return 'average-good'; if (avg >= 10) return 'average-medium'; return 'average-bad'; }
 
         moyennePonderee(arr) {
             if (!arr || arr.length === 0) return 0;
             let total = 0, coeffs = 0;
             arr.forEach(n => { 
                 if (this.ignoredGrades.indexOf([n.semestre, n.matiere, n.type+" "+n.date+" "+n.prof].join("\\")) == -1) {
-                    total += n.note * (n.coef||0); coeffs += (n.coef||0); 
+                    total += n.note * (n.coef||0); 
+                    coeffs += (n.coef||0); 
                 }
             });
             const v = coeffs ? (total / coeffs) : 0;
             return Number.isFinite(v) ? Number(v.toFixed(2)) : 0;
         }
+        parseNotes() {
+            if (!this.ERROR503) {
+                const rows = document.querySelectorAll("table.greyGridTable tbody tr");
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll("td");
+                    if (cells.length >= 6 && cells[0].textContent.includes("/20")) {
+                        const note = parseFloat(cells[0].textContent.replace("/20", "").replace(",", ".")) || 0;
+                        const classAvg = parseFloat(cells[3].textContent.replace("/20", "").replace(",", ".")) || 0;
+                        const libelle = cells[1].textContent.trim();
+                        const coef = parseFloat(cells[2].textContent.replace("%", "").replace(",", ".")) || 0;
+                        const prof = cells[4].textContent.trim();
+                        const date = cells[5].textContent.trim();
+                        const semMatch = libelle.match(/Semester\s+(\d+)/i);
+                        const semestre = semMatch ? semMatch[1] : "?";
+                        const parts = libelle.split(" - ").map(p => p.trim());
+                        const matiere = parts.length >= 3 ? parts.slice(1,-1).join(" - ") : libelle;
+                        const type = parts.length >= 2 ? parts.at(-1) : "";
+                        this.notes.push({ note, classAvg, coef, semestre, matiere, type, prof, date, libelle });
+                    }
+                });
+                this.notes.forEach(n => {
+                    if (!this.semestres[n.semestre]) this.semestres[n.semestre] = {};
+                    if (!this.semestres[n.semestre][n.matiere]) this.semestres[n.semestre][n.matiere] = [];
+                    this.semestres[n.semestre][n.matiere].push(n);
+                });
+            }
+            else {
+                this.notes = new Array(this.savedReadGrades);
+            }
+        }
 
-        getNoteColor(note) { if (note >= 14) return 'good'; if (note >= 10) return 'medium'; return 'bad'; }
-        getAverageColor(avg) { if (avg >= 14) return 'average-good'; if (avg >= 10) return 'average-medium'; return 'average-bad'; }
 
+
+        // MARK: init
+        init() {
+            this.parseNotes();
+            if (this.savedReadGrades.length == 0) {
+                this.newGrades = [];
+                this.notes.forEach(e => {this.savedReadGrades.push(e)})
+                localStorage.setItem("ECAM_DASHBOARD_SAVED_READ_GRADES", JSON.stringify(this.savedReadGrades));
+            }
+            if (document.body.clientWidth <= 753) {
+                this.mobileVer = true;
+            }
+            
+            this.newGrades = this.compareArraysofObjects(this.notes, this.savedReadGrades).more;
+            this.createNewGradesNotifDiv();
+            this.createDashboard();
+            this.attachEventListeners();
+            
+            this.contentFirstLoad = false;
+        }
+
+
+        // MARK: createDashboard
         createDashboard() {
             const container = document.createElement("div");
             container.className = "ecam-dash";
@@ -250,31 +393,35 @@
             const totalNotes = this.notes.length;
             const ueStats = this.getUEStats();
 
+            // Creating the content of the dashboard that don't vary along with the user's actions besides the language selection.
+            // Therefore, the text isn't yet created, but will be in the renderContent() method later on, to regenerate the text in case the language is changed
             container.innerHTML = `
             <div class="dash-header">
                 <div style="display: bloc">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/ECAM-LaSalle-bleu-seul.png" alt="ECAM Logo" style="margin: -136px -444px -121px -43px; height: 141px; width: 148px;">
+                    <img draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/5/51/ECAM-LaSalle-bleu-seul.png" alt="ECAM Logo" style="margin: -136px -444px -121px -43px; height: 141px; width: 148px;">
                     <div style="margin: 0px 40px 0px 100px;">
                         <h1 class="dash-title"></h1>
                         <p class="dash-subtitle"></p>
-                        <div style="display: block">
-                            <button class="lang-btn ${this.lang == "fr" ? "active" : ""}" id="fr-lang-btn">
-                                <image style="width:20px; height:20px" alt="🇫🇷" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAACTUExURUdwTAAkjM7Pzs7OzrMGE74QIMPEx4hTeAAkjQARewAagbIFEgAfhc3NzdDQ0M7PzrYMG8zMzbcMG8EXKcUbLQAMd7UKGLUKGMMWJ7OhrcMVJv///+oPIO4bLgAmoOwWKAAZmQArpO8iNgAfnQATlAIyqLUGFAEoksUSIwAYhgANePnCyMbO6djY2NUWJ+7u7sCep4f8c74AAAAbdFJOUwDL+z19ffsVe3qU1jy51pA+bLyNc+Vrnu+m2KjIWToAAALxSURBVFjD7djJcuIwEIDhAAMOxuwTCAnyKgxOxg7v/3SjtraWDJKTUw60K1Vc+OqX5APK09NjHvOLJxDz3a+t9Mcoeg7DgZrDcrkejUZBL2X7NuYfo4gRZ2MmNZvhYjEHz1EYrHab18tl3LaEEonFnOPT5KtWM1zMhReY27DabUG5ABQ8cyXLTnIy9pz+vcN8seFWPRxC32G7Hf+FGW/3m7fXVmkagJ5NpGXYCOjd5Or6ejGmaRpCctJw6HTqOgaEvM8GT07ynP0RXhTbSqcIzWduDWOIgHBRJqmeELkJtQB34v4QUUs7o8MSC4t7FYECkF2UKYW9Sb2KRI8FqVWB06OI4KJSQRnuyXoUiW0mHUj2iPFAJEdOoiGVE/OV+SCxqLxTpI+LT+GGcE8Cj4AypAiqcEDyrPTSFHSS25zxnMIH6W2GnsQsitVGM8sBEf36AAOOASkDHg+EcuyiWLw+TAHGCdk5EqrOKqhQjgfCJ8ahPxxCx1W0K0tdUG4qCJKrAoMXpd4i7BwFpM+rkJNmbijh7w+xIHRanPFAiXx/khuQ7mFM6i9CzFFAlQiSDHPcRQneoCM8uqhA29NOfB/Sr48MUkWF3uY0bVfmgqyF6aIKHVcqgpxFMETlGHtkrMoDdXKYVMqlqRxhUReUmBuNiro9KXVCcllcOaoiq4emlPaAOJMoaCogHdNSXgg7GEqRRL1FR709FqRzKO0PdYt0D6X+IrWqTlGnh9LzPYgk1rIQlKogqqj70NHYZgR9VN0eJ2Ttj1GkT6udygN1BhVR/vQp6m6RUYRzfl5k1lSeItfSOFBVH3KqCfw8vwPZTRddhAgx1+GE3T6GdW2CN4oYU5Y7gITy8jIIwymfMDzM54tJOy1XC86E2G0GlHKzCxjUIoNwGtmXqGA0Wi+X0uPgVd1DhFGWs/0KvjgFhSGOyyl4su9aGjPbcAWglzDqdd9k99L1ennYzMRs9tvdaqW/GkXfvAbL+/NT8PhXwmN+7/wHgdqiCaxyTNQAAAAASUVORK5CYII=">
-                            </button>
-                            <button class="lang-btn ${this.lang == "en" ? "active" : ""}" id="en-lang-btn">
-                                <image style="width:20px; height:20px" alt="🇬🇧" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAECUExURUdwTL6/w7pOXQcmd3aItpsCC7IaMURBdgAKW8rJy7QIJtPS0gIUZgASY7h7hZ4BDgADTwMofAASYxEka8/KywATZby0uQgda6gFGbpoc6QTIgAHVgAdcrC0v56jsszMzKkCFk1djU1Yg32Prv///8sBGNMHJs8CHdQLLAAegwATeNEDIAAujwAKZtYRMgANa9YgPAAoiP79/cQAEeZ9i+vt89Xc6wEKXPn3+N9vfhg/lOmKlwImfPPKzwIZb83U5fvu8AADTdtGXN9YaoydwxcwgfK8w11zrPfV2UNfovnh5Nk0TOycp7jD2t3d3TFLk6iz0fCttqsBEr0OLcy5vMWboL7jb4MAAAAkdFJOUwD+/X39/3kQfoH+/ShvJ4HW15JNuady6j+76b+/7/FQt331fQrzi9EAAAaxSURBVFjD7Zhpe6JYE4bd2mVMJz0TJ1t30t3zIiIkigjIIkoDsrihifn/f+WtOueAmjhz9XybD/1ovEyE26eqTp0lhcIv/dJ/VzXQWY3oX913fr5HnF1+/OPPL78zffnzj/LHy7Pzn+HVbi5uGwz4tdWqWOPxYHys3+9btxfVm5t/4NXOq9/uSjsE1b62muv1urmJrMHgkTxRCJoVm+ZvoLtvt42ry7Ozo4ghCWeXjVbp+bm0azYK51etNUozFGMaWY+HGlhTzXx5QZTZvJ9dX3+BiOvlj6ByHfJwfV3ZIcdZA6haMl8doHCKwnHGJjnAAEhXVKEnCC8v5ro4m+Tq9+HZf5oFu9Jw6MUcAb28yJ4auhyVHlgZBkRBIMFWpla32x2L4h6XrhxPkoCjrB++E5AsL/zlXCEkZZWZgjxlIEGwOd3qDsgjU6SHC8LhuOKsDqEtZLkHLC9DaRVr8EgfWWgZCCmM9BhoW1mSfOAoWjqqFxrN3Vb1ZIQBipAMMEUrR0CCkDnaY7rpyrV7Eu/jHVr0BKD/BStNmW/NBUQg+6FBMxU9Dvah5Y5yzCDSY5+XBNUlHBFB5bGVVFaa4agEZcY0vMA6cCTsHRFZgYbp6dmMw0BQHysJdCMmqMXSpTlPGYhHDn8IiqauDemRlwrj7EFY6YpuOKa8N6VHp0Fgx4GwJM/hMs4RiKDcrYemtgat3mMG4nPQAC5CO4I5p98m7kHjfCyngTa35Z4gq+QqI0gIiOdzULIyQrQjL8l3TRPCEUdHjrBfyYUwFnwH41emGoB4PnOEX6SCHZ5+zK1SkYEm5b0jK4mCYDM1ONdxnNCh44BDkEAdJRDVEoolyaRa0JgW41jRQ4OCoGorHTuXKX9DQCDJ5jTdDX1hb0cLBgjpzqKN3mwiaJAEU+3g3iPtQZxrL4DDhgekuSsO0qSy0Q1OaRavCuVko9HGmMfh1lZVE6Sq9nLrxHNXUVQpAxlzJ9wu6djgtE0F8qDTBLivpSr02lqBa0Lb92AQYT/wPB3MPXnh+aqXOzo2nf/iOrb3/OGi0FivsdOg6LSpiDC/pOoS+YGHH8auYbyJX3HBgNdrDwloZ6IVMnvlKJ5xmKBSPPozMeIQiho7GKUNd/Lt9rDdRhBMbD3G6b2xk7nBJ1Gn05F4AScvCKDTJgwUcVT97YXZEU7akY4FrDZT/uYtKDOUYagb9rrnEB1S2sMD0GF6hKPcvLHDIJ09Bkk56DDLp5Jz6KZ95Idw2h9yUGaGZhIH1InkUDfv/WBoVQIiww+qy4oLtcXiqr4Hw+sYw0hHfoZtufTaQBDY8O0Q+uHNcDNc6BqvwzBYp3dBIQWWxGaRgHw7dt/3fda01IxnYgtJxyQB1ujtnDVttfRKKYY2XW2CDZuHYggyxmsYSEV/dDibPggaG9p6Tm/VHv4qs6bVVkGUWoNuotNG3C6gKRYwgSlqm8SlUrPKu9kG9jBBOvqBK+1a20TpgM7sZEZRYlOAZlhsXZjrTJoZ9eRkpemrSjLrP/1AULFCKV3RCkhc7lKG9Mr2XMPJH0GQlwxkwCwcQ0qN6WYTRMls0n8CIej7bMJW4nRFzDs+2JHVWNuk4myKoDZxpOnk4xAXLN8xNmkfGYRDQOXJhC58ND1gp9Ph8cKkK2Yg4miabNgXQdVh/tej8VOmQ1BE0gNbA7CzdKcwI4sMRCoOoNk4INe4tgDDxwth0zJ+BxoQjgJbA7QDWwi6zlBQm4H6YjQleQo9MCWYobaqzPIclfsIIuUyMCwwPU264mlQn+UREgCDmjcdQw/SydMIQXUEEY6rCh3JC7VgJoqnQZBeGp5CM4WuXLBFxhGCSFxzk+/w5lyPuuLfg2A7S8PDMTvEVoNtnqE9RN8RRDm+1IGdU74MH4GGWWjgqT+jbaTArgRRQ+ja191Vof6UICf2pM5iq1UO7Ij9U47QFGsAJVYpavjhrlqop0X4I9kwO2y3k3MYCKevQ1Afck57W4ltEiDOkN/voWmdBUwUzirts3Exwhe4IQ/tEISfjSt6ttBuTfkZQdC0XAzY0q4yGb3V5H5deibm9yDaFqOUbRkUY717Ld2Rtd8hB5zK9afPcGSp45GlDkeWz58/ja4fiqUPoOdnU1uNn6gbanvUh02Zoa2bRVDrqoYbduS06Cmq8OYUddW4/XaHqFLxAYbdkd0fo78ekHLf+Ir3NXalu29VONnV/vZkd3NTvbhtPVz/eCdANb6yU+jV7cXNT503zy8vP2LEn5ggD3BWrZ061v7s6blGjpK1X/9K+KX/sP4PsW55UIo2Nb0AAAAASUVORK5CYII=">
-                            </button>
+                        <div style="display: flex; gap: 2px">
+                            <div class="lang-btn ${this.lang == "fr" ? "active" : ""}" id="fr-lang-btn">
+                                <image style="display: flex; margin: 6px 0px 0px 6px; width:20px; height:20px" alt="🇫🇷" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAACTUExURUdwTAAkjM7Pzs7OzrMGE74QIMPEx4hTeAAkjQARewAagbIFEgAfhc3NzdDQ0M7PzrYMG8zMzbcMG8EXKcUbLQAMd7UKGLUKGMMWJ7OhrcMVJv///+oPIO4bLgAmoOwWKAAZmQArpO8iNgAfnQATlAIyqLUGFAEoksUSIwAYhgANePnCyMbO6djY2NUWJ+7u7sCep4f8c74AAAAbdFJOUwDL+z19ffsVe3qU1jy51pA+bLyNc+Vrnu+m2KjIWToAAALxSURBVFjD7djJcuIwEIDhAAMOxuwTCAnyKgxOxg7v/3SjtraWDJKTUw60K1Vc+OqX5APK09NjHvOLJxDz3a+t9Mcoeg7DgZrDcrkejUZBL2X7NuYfo4gRZ2MmNZvhYjEHz1EYrHab18tl3LaEEonFnOPT5KtWM1zMhReY27DabUG5ABQ8cyXLTnIy9pz+vcN8seFWPRxC32G7Hf+FGW/3m7fXVmkagJ5NpGXYCOjd5Or6ejGmaRpCctJw6HTqOgaEvM8GT07ynP0RXhTbSqcIzWduDWOIgHBRJqmeELkJtQB34v4QUUs7o8MSC4t7FYECkF2UKYW9Sb2KRI8FqVWB06OI4KJSQRnuyXoUiW0mHUj2iPFAJEdOoiGVE/OV+SCxqLxTpI+LT+GGcE8Cj4AypAiqcEDyrPTSFHSS25zxnMIH6W2GnsQsitVGM8sBEf36AAOOASkDHg+EcuyiWLw+TAHGCdk5EqrOKqhQjgfCJ8ahPxxCx1W0K0tdUG4qCJKrAoMXpd4i7BwFpM+rkJNmbijh7w+xIHRanPFAiXx/khuQ7mFM6i9CzFFAlQiSDHPcRQneoCM8uqhA29NOfB/Sr48MUkWF3uY0bVfmgqyF6aIKHVcqgpxFMETlGHtkrMoDdXKYVMqlqRxhUReUmBuNiro9KXVCcllcOaoiq4emlPaAOJMoaCogHdNSXgg7GEqRRL1FR709FqRzKO0PdYt0D6X+IrWqTlGnh9LzPYgk1rIQlKogqqj70NHYZgR9VN0eJ2Ttj1GkT6udygN1BhVR/vQp6m6RUYRzfl5k1lSeItfSOFBVH3KqCfw8vwPZTRddhAgx1+GE3T6GdW2CN4oYU5Y7gITy8jIIwymfMDzM54tJOy1XC86E2G0GlHKzCxjUIoNwGtmXqGA0Wi+X0uPgVd1DhFGWs/0KvjgFhSGOyyl4su9aGjPbcAWglzDqdd9k99L1ennYzMRs9tvdaqW/GkXfvAbL+/NT8PhXwmN+7/wHgdqiCaxyTNQAAAAASUVORK5CYII=">
+                            </div>
+                            <div class="lang-btn ${this.lang == "en" ? "active" : ""}" id="en-lang-btn">
+                                <image style="display: flex; margin: 6px 0px 0px 6px; width:20px; height:20px" alt="🇬🇧" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAECUExURUdwTL6/w7pOXQcmd3aItpsCC7IaMURBdgAKW8rJy7QIJtPS0gIUZgASY7h7hZ4BDgADTwMofAASYxEka8/KywATZby0uQgda6gFGbpoc6QTIgAHVgAdcrC0v56jsszMzKkCFk1djU1Yg32Prv///8sBGNMHJs8CHdQLLAAegwATeNEDIAAujwAKZtYRMgANa9YgPAAoiP79/cQAEeZ9i+vt89Xc6wEKXPn3+N9vfhg/lOmKlwImfPPKzwIZb83U5fvu8AADTdtGXN9YaoydwxcwgfK8w11zrPfV2UNfovnh5Nk0TOycp7jD2t3d3TFLk6iz0fCttqsBEr0OLcy5vMWboL7jb4MAAAAkdFJOUwD+/X39/3kQfoH+/ShvJ4HW15JNuady6j+76b+/7/FQt331fQrzi9EAAAaxSURBVFjD7Zhpe6JYE4bd2mVMJz0TJ1t30t3zIiIkigjIIkoDsrihifn/f+WtOueAmjhz9XybD/1ovEyE26eqTp0lhcIv/dJ/VzXQWY3oX913fr5HnF1+/OPPL78zffnzj/LHy7Pzn+HVbi5uGwz4tdWqWOPxYHys3+9btxfVm5t/4NXOq9/uSjsE1b62muv1urmJrMHgkTxRCJoVm+ZvoLtvt42ry7Ozo4ghCWeXjVbp+bm0azYK51etNUozFGMaWY+HGlhTzXx5QZTZvJ9dX3+BiOvlj6ByHfJwfV3ZIcdZA6haMl8doHCKwnHGJjnAAEhXVKEnCC8v5ro4m+Tq9+HZf5oFu9Jw6MUcAb28yJ4auhyVHlgZBkRBIMFWpla32x2L4h6XrhxPkoCjrB++E5AsL/zlXCEkZZWZgjxlIEGwOd3qDsgjU6SHC8LhuOKsDqEtZLkHLC9DaRVr8EgfWWgZCCmM9BhoW1mSfOAoWjqqFxrN3Vb1ZIQBipAMMEUrR0CCkDnaY7rpyrV7Eu/jHVr0BKD/BStNmW/NBUQg+6FBMxU9Dvah5Y5yzCDSY5+XBNUlHBFB5bGVVFaa4agEZcY0vMA6cCTsHRFZgYbp6dmMw0BQHysJdCMmqMXSpTlPGYhHDn8IiqauDemRlwrj7EFY6YpuOKa8N6VHp0Fgx4GwJM/hMs4RiKDcrYemtgat3mMG4nPQAC5CO4I5p98m7kHjfCyngTa35Z4gq+QqI0gIiOdzULIyQrQjL8l3TRPCEUdHjrBfyYUwFnwH41emGoB4PnOEX6SCHZ5+zK1SkYEm5b0jK4mCYDM1ONdxnNCh44BDkEAdJRDVEoolyaRa0JgW41jRQ4OCoGorHTuXKX9DQCDJ5jTdDX1hb0cLBgjpzqKN3mwiaJAEU+3g3iPtQZxrL4DDhgekuSsO0qSy0Q1OaRavCuVko9HGmMfh1lZVE6Sq9nLrxHNXUVQpAxlzJ9wu6djgtE0F8qDTBLivpSr02lqBa0Lb92AQYT/wPB3MPXnh+aqXOzo2nf/iOrb3/OGi0FivsdOg6LSpiDC/pOoS+YGHH8auYbyJX3HBgNdrDwloZ6IVMnvlKJ5xmKBSPPozMeIQiho7GKUNd/Lt9rDdRhBMbD3G6b2xk7nBJ1Gn05F4AScvCKDTJgwUcVT97YXZEU7akY4FrDZT/uYtKDOUYagb9rrnEB1S2sMD0GF6hKPcvLHDIJ09Bkk56DDLp5Jz6KZ95Idw2h9yUGaGZhIH1InkUDfv/WBoVQIiww+qy4oLtcXiqr4Hw+sYw0hHfoZtufTaQBDY8O0Q+uHNcDNc6BqvwzBYp3dBIQWWxGaRgHw7dt/3fda01IxnYgtJxyQB1ujtnDVttfRKKYY2XW2CDZuHYggyxmsYSEV/dDibPggaG9p6Tm/VHv4qs6bVVkGUWoNuotNG3C6gKRYwgSlqm8SlUrPKu9kG9jBBOvqBK+1a20TpgM7sZEZRYlOAZlhsXZjrTJoZ9eRkpemrSjLrP/1AULFCKV3RCkhc7lKG9Mr2XMPJH0GQlwxkwCwcQ0qN6WYTRMls0n8CIej7bMJW4nRFzDs+2JHVWNuk4myKoDZxpOnk4xAXLN8xNmkfGYRDQOXJhC58ND1gp9Ph8cKkK2Yg4miabNgXQdVh/tej8VOmQ1BE0gNbA7CzdKcwI4sMRCoOoNk4INe4tgDDxwth0zJ+BxoQjgJbA7QDWwi6zlBQm4H6YjQleQo9MCWYobaqzPIclfsIIuUyMCwwPU264mlQn+UREgCDmjcdQw/SydMIQXUEEY6rCh3JC7VgJoqnQZBeGp5CM4WuXLBFxhGCSFxzk+/w5lyPuuLfg2A7S8PDMTvEVoNtnqE9RN8RRDm+1IGdU74MH4GGWWjgqT+jbaTArgRRQ+ja191Vof6UICf2pM5iq1UO7Ij9U47QFGsAJVYpavjhrlqop0X4I9kwO2y3k3MYCKevQ1Afck57W4ltEiDOkN/voWmdBUwUzirts3Exwhe4IQ/tEISfjSt6ttBuTfkZQdC0XAzY0q4yGb3V5H5deibm9yDaFqOUbRkUY717Ld2Rtd8hB5zK9afPcGSp45GlDkeWz58/ja4fiqUPoOdnU1uNn6gbanvUh02Zoa2bRVDrqoYbduS06Cmq8OYUddW4/XaHqFLxAYbdkd0fo78ekHLf+Ir3NXalu29VONnV/vZkd3NTvbhtPVz/eCdANb6yU+jV7cXNT503zy8vP2LEn5ggD3BWrZ061v7s6blGjpK1X/9K+KX/sP4PsW55UIo2Nb0AAAAASUVORK5CYII=">
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="header-actions">
-                    <button class="btn btn-import" id="importBtn"></button>
-                    <button class="btn btn-config" id="configBtn"></button>
-                    <button class="btn btn-export" id="exportBtn"></button>
+                <div class="header-actions" style="display:flex; align-items:center">
+                    <button class="btn btn-edit-mode ${this.editMode ? "on" : "off"}" id="editModeBtn"></button>
+                    <div style="display: flex; flex-direction: column; gap: 8px">
+                        <button class="btn btn-import" id="importBtn"></button>
+                        <button class="btn btn-export" id="exportBtn"></button>
+                    </div>
                 </div>
             </div>
 
-            <div class="main-average-card">
+            <div class="main-average-card" id="main-average-card" ${this.editMode ? 'style="cursor:move"' : ""}>
                 <div class="average-display">
                     <div class="average-number">${moyenneGenerale}</div>
                     <div class="average-label"></div>
@@ -284,80 +431,159 @@
                     <div class="stat-item"><div class="stat-value">${Object.keys(this.semestres).length}</div><div class="stat-label"></div></div>
                     <div class="stat-item"><div class="stat-value">${ueStats.validated}/${ueStats.total}</div><div class="stat-label"></div></div>
                 </div>
+                <div class="hitbox" style="position: absolute; display: flex; width: 1781px; height: 101px; top: 347px; left: 39px;"></div>
             </div>
 
-            <div class="filter-title">${this.lang == "fr" ? "Filtre par semestre" : "Filter by semester"}</div>
+
+            <div class="new-grades-card">
+                <div style="display:flex; justify-content: space-between; align-items: center; margin: 5px 0px">
+                    <div class="new-grades-card-title"></div>
+                    <div style="display:flex; font-size: 15px; font-weight: 600; color: #2A2F72" ${this.newGrades.length == 0 ? "hidden='true' disabled='true'" : ""}>
+                        <div class="new-grades-mark-as-read-text" style="display:flex"></div>
+                        <div class="new-grades-mark-as-read" style="margin-right: 10px; cursor:pointer; font-size:25px; display:flex">✅</div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="filter-title"></div>
 
             <div class="controls-bar">
                 <div class="filter-tabs">
-                    <button class="filter-tab" data-filter="all">${this.lang == "fr" ? "Tous les semestres" : "Every semester"}</button>
-                    ${Object.keys(this.semestres).sort().map(s => `<button class="filter-tab ${this.currentSemester == "last" && s == Object.keys(this.semestres).sort().at(-1) ? "active" : ""}${s == this.currentSemester ? "active" : ""}" data-filter="${s}">${this.lang == "fr" ? "Semestre" : "Semester"} ${s}</button>`).join('')}
+                    <button class="filter-tab" id="filter-tab-all-semesters" data-filter="all" ${this.currentSemester == "all" ? "active" : ""}></button>
+                    ${Object.keys(this.semestres).sort((a,b) => a-b).map(s => `<button class="filter-tab ${s == this.currentSemester ? "active" : ""}" id="filter-tab-semester-${s}" data-filter="${s}">S${s}</button>`).join('')}
                 </div>
                 <div class="view-toggle">
-                    <button class="view-btn ${this.defView == "detailed" ? "active" : ""}" data-view="detailed"    title="${this.lang == "fr" ? "Vue détaillée" : "Detailed view"}">📊</button>
-                    <button class="view-btn ${this.defView == "compact" ? "active" : ""}" data-view="compact"     title="${this.lang == "fr" ? "Vue compacte" : "Compact view"}"  >📋</button>
+                    <div style="padding: 0px 5px 0px 8px; font-size: 14px; font-weight: 500"></div>
+                    <button class="view-btn ${this.defView == "detailed" ? "active" : ""}" id="view-btn-detailed" data-view="detailed">📊</button>
+                    <button class="view-btn ${this.defView == "compact" ? "active" :  ""}" id="view-btn-compact"  data-view="compact" >📋</button>
                 </div>
             </div>
             <div class="content-area" id="contentArea"></div>
-            <div class="intranet-collapse"><div class="intranet-text"><div class="intranet-toggle">▲</div><div class="semester-name"> <div class="intranet-subtext">${this.lang == "fr" ? "Afficher le tableau des notes d'Espace ECAM" : "Show ECAM Intranet's Grades Table"}</div> </div><div class="intranet-toggle">▲</div></div></div>
-            <div id="configModal" style="display: none"></div>
+            <div class="intranet-collapse"><div class="intranet-text"><div class="intranet-toggle">▲</div><div class="semester-name"> <div class="intranet-subtext"></div> </div><div class="intranet-toggle">▲</div></div></div>
+            <div class="selected-matiere-card-notif-container"></div>
             `;
 
             const originalTable = document.querySelector("table.greyGridTable");
             if (!originalTable) return;
             originalTable.parentNode.insertBefore(container, originalTable);
             originalTable.style.display = "none";
+
+            this.generalKeyboardEvents();
+
             this.renderContent();
         }
 
-        renderContent() {
-               // Reset all ignored grades if entering compact view mode to ensure all grades are counted
-               if (this.viewMode == "compact") {
-                   this.ignoredGrades = [];
-                   this.saveignoredGrades();
-               }
 
-            // Language Sensitive text in the Dashboard Header and Semester filter tab
-            const dashTitle = document.querySelector(".dash-title");
-            const dashSubtitle = document.querySelector(".dash-subtitle");
-            dashTitle.innerHTML = `${this.lang == "fr" ? 'ECAM Notes Dashboard' : "ECAM Grades Dashboard"}`;
-            dashSubtitle.innerHTML = `${this.lang == "fr" ? 'Vue complète de vos résultats académiques' : "Complete view of your academic results"}`;
 
-            const importBtn = document.getElementById("importBtn");
-            const configBtn = document.getElementById("configBtn");
-            const exportBtn = document.getElementById("exportBtn");
-            importBtn.innerHTML = `${this.lang == "fr" ? "Importer Config"   : "Import Config"     } <span class="btn-icon">⬇️</span>`;
-            configBtn.innerHTML = `<span                 >⚙️</span>${this.lang == "fr" ? "Configurer UE" : "Configurate TU"}`;
-            exportBtn.innerHTML = `<span class="btn-icon">⬆️</span> ${this.lang == "fr" ? "Exporter Config"   : "Export Config"     }`;
+        
+        // MARK: renderRecentGrades
+        renderRecentGrades() {
+            // localStorage.setItem("ECAM_DASHBOARD_SAVED_READ_GRADES",JSON.stringify(this.notes.toSpliced(12,1))); this.savedReadGrades = JSON.parse(localStorage.getItem("ECAM_DASHBOARD_SAVED_READ_GRADES"));
+            const newGradesCard = document.querySelector(".new-grades-card");
+            const grades = {};
+            
+            if (this.newGrades.length > 0) {
 
-            const avgLabel = document.querySelector(".average-label");
-            avgLabel.innerHTML = `/20 ${this.lang == "fr" ? "Moyenne Générale" : "Global Average"}`;
+                // ordering grades per subjects
+                this.newGrades.forEach((note => {
+                    if (!grades[note.matiere]) {
+                        grades[note.matiere] = [note];
+                    }
+                    else {
+                        grades[note.matiere].push(note)
+                    }
+                                    
+                }))
+                
+                let html = `<div class="new-grades-content">`;
+                Object.keys(grades).forEach(subject => {
+                    html += `
+                    <div class="new-grades-matiere-card" id="new-grades-matiere-card-${subject}" data-subject="${subject}" data-semestre="${grades[subject][0].semestre}">
+                        <div class="new-grades-matiere-card-title" data-subject="${subject}" data-semestre="${grades[subject][0].semestre}">
+                            ${subject}
+                        </div>
+                    <table class="new-grades-table">`;
+                    
+                    grades[subject].forEach(grade => {
+                        html +=
+                            `<tr class="new-grades-table-notes" id="new-grade-${subject}-${grade.type}" data-subject="${subject}" data-type="${grade.type}" data-semestre="${grade.semestre}">
+                                <td style="width: 25%;padding: 5px 5px 5px 10px;" data-subject="${subject}" data-semestre="${grade.semestre}">${grade.type}</td>
+                                <td style="width: 9%;"><span class="note-value note-${this.getNoteColor(grade.note)}" data-subject="${subject}" data-semestre="${grade.semestre}">${grade.note}/20</span></td>
+                                <td style="width: 8%;" data-subject="${subject}" data-semestre="${grade.semestre}">${grade.coef}%</td>
+                                <td style="width: 8%;" data-subject="${subject}" data-semestre="${grade.semestre}">${grade.classAvg}/20</td>
+                                <td style="width: 10%;" class="note-date" data-subject="${subject}" data-semestre="${grade.semestre}">${grade.date}</td>
+                                <td style="width: 25%;font-size:12px;color: #999;" data-subject="${subject}" data-semestre="${grade.semestre}">${grade.prof}</td>
+                            </tr>`;
+                    })
+                    html += `</table></div>`;
+                })
+                html += `</div>`;
+                newGradesCard.innerHTML += html;
+            }
 
-            const statLabelsArray = document.querySelectorAll(".stat-label");
-            statLabelsArray[0].innerHTML = `${this.lang == "fr" ? "Notes" : "Grades"}`;
-            statLabelsArray[1].innerHTML = `${this.lang == "fr" ? "Semestres" : "Semesters"}`;
-            statLabelsArray[2].innerHTML = `${this.lang == "fr" ? "UE Validées" : "Validated TU"}`;
+            if (newGradesCard.children.length == 1) {newGradesCard.classList.add("none")}
+            else {newGradesCard.classList.remove("none")}
+        }
 
-            let counter = 0;
-            document.querySelectorAll(".filter-tab").forEach((e) => {
-                switch(counter) {
-                    case 0:
-                        e.innerHTML = `${this.lang == "fr" ? "Tous les semestres" : "Every semester"}`;
-                        e.dataset.filter = "all";
-                        break;
-                    default:
-                        e.innerHTML = `${this.lang == "fr" ? "Semestre" : "Semester"} ${counter}`;
-                        e.dataset.filter = `${counter}`;
+
+
+
+        // MARK: renderContent
+        renderContent(transition=true) {
+
+            {   // Language Sensitive text in the Dashboard Header and Semester filter tab (which don't refresh on calling the renderContent() method)
+                const dashTitle = document.querySelector(".dash-title");
+                const dashSubtitle = document.querySelector(".dash-subtitle");
+                dashTitle.innerHTML = `${this.lang == "fr" ? 'ECAM Notes Dashboard' : "ECAM Grades Dashboard"}`;
+                dashSubtitle.innerHTML = `${this.lang == "fr" ? 'Vue complète de vos résultats académiques' : "Complete view of your academic results"}`;
+
+                const importBtn = document.getElementById("importBtn");
+                const editModeBtn = document.getElementById("editModeBtn");
+                const exportBtn = document.getElementById("exportBtn");
+                importBtn.innerHTML =   `${this.lang == "fr" ? "Importer Config": "Import Config"}<span class="btn-icon">⬇️</span>`;
+                editModeBtn.innerHTML = `<div style="display:flex; flex-direction:column; gap:3px"><span style="font-size:40px">🖊️</span><div>${this.lang == "fr" ? "Mode Édition" : "Edit Mode"}</div><div>${this.lang == "fr" ? "(Maj+E)" : "(Shift+E)"}</div></div>`;
+                if (this.editMode)
+                        {editModeBtn.classList.add('on')}
+                else    {editModeBtn.classList.remove('on')}
+                exportBtn.innerHTML =   `${this.lang == "fr" ? "Exporter Config": "Export Config"}<span class="btn-icon">⬆️</span>`;
+
+                const avgLabel = document.querySelector(".average-label");
+                avgLabel.innerHTML = `/20 ${this.lang == "fr" ? "Moyenne Générale" : "Global Average"}`;
+
+                const statLabelsArray = document.querySelectorAll(".stat-label");
+                statLabelsArray[0].innerHTML = `${this.lang == "fr" ? "Notes" : "Grades"}`;
+                statLabelsArray[1].innerHTML = `${this.lang == "fr" ? "Semestres" : "Semesters"}`;
+                statLabelsArray[2].innerHTML = `${this.lang == "fr" ? "UE Validées" : "Validated TU"}`;
+
+                document.querySelector(".filter-title").innerHTML = `${this.lang == "fr" ? "Filtre par semestre" : "Filter by semester"}`;
+                document.querySelector(".filter-tab").innerHTML = `${this.lang == "fr" ? "Tous" : "All"}`;
+
+                document.querySelector(".view-toggle").children[0].innerHTML = this.lang == "fr" ? `Basculer le mode d'affichage (Maj+D)` : `Display mode toggle (Shift+D)`;
+                const viewBtnsArray = document.querySelectorAll(".view-btn");
+                viewBtnsArray[0].title = this.lang == "fr" ? "Vue détaillée" : "Detailed view";
+                viewBtnsArray[1].title = this.lang == "fr" ? "Vue compacte" : "Compact view";
+
+                const intranetSubtext = document.querySelector(".intranet-subtext");
+                intranetSubtext.innerHTML = `${this.lang == "fr" ? "Afficher le tableau des notes d'Espace ECAM" : "Show ECAM Intranet's Grades Table"}`;
+
+                if (document.querySelector(".new-grades-card").children.length > 1) {document.querySelector(".new-grades-card").children[1].remove()}
+                document.querySelector(".new-grades-card-title").innerHTML = `${this.newGrades.length > 0 ? `${this.lang == "fr" ? `Nouvelle Note${this.newGrades.length > 1 ? "s" : ""} !` : `New Grade${this.newGrades.length > 1 ? "s" : ""}!`}` : `${this.lang == "fr" ? `Pas de nouvelle note` : `No new grade`}` }`;
+                document.querySelector(".new-grades-mark-as-read-text").innerHTML = this.lang == "fr" ? "Marquer comme lu" : "Mark as read";
+                document.querySelector(".new-grades-mark-as-read").title = this.lang == "fr" ? "Marquer comme lu" : "Mark as read";
+
+                if (this.selectedMatiereCards.length > 0) {
+                    let highestWidth = 0;
+                    document.querySelectorAll(".selected-matiere-card-notif-div").forEach(notifDiv => {
+                        notifDiv.children[1].innerHTML = this.lang == "fr" ? `est sélectionné!` : `is selected!`;
+                        if (highestWidth < notifDiv.clientWidth) highestWidth = notifDiv.clientWidth;
+                    })
+                    document.querySelector(".selected-matiere-card-notif-container").style.left = `calc(99.5% - ${100 * highestWidth/document.body.clientWidth}%`;
                 }
-                counter++
-            })
-
-            const viewBtnsArray = document.querySelectorAll(".view-btn");
-            viewBtnsArray[0].title = this.lang == "fr" ? "Vue détaillée" : "Detailed view";
-            viewBtnsArray[1].title = this.lang == "fr" ? "Vue compacte" : "Compact view";
-
-            const intranetSubtext = document.querySelector(".intranet-subtext");
-            intranetSubtext.innerHTML = `${this.lang == "fr" ? "Afficher le tableau des notes d'Espace ECAM" : "Show ECAM Intranet's Grades Table"}`;
+            }
+            
+            // Call renderRecentGrades to... well... render the recent grades' card
+            this.renderRecentGrades()
 
 
             // Content area, refreshing often
@@ -365,8 +591,7 @@
             const validatedEUsStatLabel = document.querySelectorAll(".stat-value")[2];
             validatedEUsStatLabel.innerHTML = `${ueStats.validated}/${ueStats.total}`;
 
-            const contentArea = document.getElementById("contentArea");
-            var semesterKeys = [];
+            let semesterKeys = [];
             if (this.currentSemester === "all") {
                 semesterKeys = Object.keys(this.semestres).sort();
             }
@@ -376,137 +601,812 @@
             else {
                 semesterKeys = [this.currentSemester];
             }
+            this.gradesDatas = {};
+            const contentArea = document.getElementById("contentArea");
             contentArea.innerHTML = "";
             semesterKeys.forEach(sem => {
                 const section = document.createElement("div");
-                section.className = "semester-section fade-in";
+                section.className = `semester-section ${transition ? "fade-in" : ""}`;
                 const moyenneSem = this.moyennePonderee([].concat(...Object.values(this.semestres[sem] || {})));
                 const avgClass = this.getAverageColor(moyenneSem);
+                const unclassified = this.getUnclassifiedMatieres(sem);
                 section.innerHTML = `
                 <div class="semester-header" data-semester="${sem}">
                     <div class="semester-info">
-                    <div class="semester-name">📚 ${this.lang == "fr" ? 'Semestre' : "Semester"} ${sem}</div>
-                    <div class="semester-average ${avgClass}">
-                        <span>${moyenneSem >= 10 ? '✅' : '⚠️'}</span><span>${moyenneSem}/20</span>
-                    </div>
-                    </div>
+                        <div class="semester-name">📚 ${this.lang == "fr" ? 'Semestre' : "Semester"} ${sem}</div>
+                            <div class="semester-average ${avgClass}">
+                                <span>${moyenneSem >= 10 ? '✅' : '⚠️'}</span><span>${moyenneSem}/20</span>
+                            </div>
+                        </div>
                     <div class="semester-toggle open">▲</div>
                 </div>
-                <div class="semester-content show" id="sem-content-${sem}"></div>
+                <div class="semester-content show" id="sem-content-${sem}">
+                    <div class="ue-grid" ${unclassified.length == 0 || !this.ueConfig[sem] || Object.keys(this.ueConfig[sem])[0] == undefined ? `style="gap: 0px"` : ``}>
+                        <div class="modules-section">
+                            <div class="modules-content">
+                                ${this.renderAllUECards(sem)}
+                            </div>
+                        </div>
+                        <div class="unclassified-part" ${unclassified.length > 0 ? `` : `style="display: none"`}>
+                            <div class="unclassified-section">
+                                <div class="unclassified-title">
+                                    ${this.lang == "fr" ? `Matière${unclassified.length > 1 ?  `s` : ``} non classée${unclassified.length > 1 ?  `s` : ``} dans une UE` : `Subject${unclassified.length > 1 ?  `s` : ``} not classified in a TU`}
+                                </div>
+                                <div style="display: flex; flex-direction: row; gap: 8px; align-items: center">
+                                    <div class="unclassified-content">
+                                        ${unclassified.length > 0 ?  `${this.renderAllUnclassifiedMatCard(sem, unclassified)}` : ``}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="drop-matiere-to-create-eu">
+                    </div>
+                </div>
                 `;
                 contentArea.appendChild(section);
-                this.renderSemesterContent(sem);
-            });
-        }
+                const container = document.getElementById(`sem-content-${sem}`)
 
-        renderSemesterContent(sem) {
-            const container = document.getElementById(`sem-content-${sem}`);
-            const ueConfig = this.ueConfig[sem] || {};
-            let html = '<div class="ue-grid">';
-            Object.keys(ueConfig).forEach(ueName => {
-                const ueData = ueConfig[ueName];
-                const ueNotes = this.calculateUENotes(sem, ueData, ueName);
-                const includedNotes = (ueNotes || []).filter(n => this.ignoredGrades.indexOf([sem, n.matiere, n.type+" "+n.date+" "+n.prof].join("\\")) == -1);
-                const moyenne = includedNotes.length ? this.moyennePonderee(includedNotes) : " - ";
-                const hasSim = (this.sim[sem] && this.sim[sem][ueName] && Object.values(this.sim[sem][ueName]).some(arr=>arr.length>0)) ? true : false;
+                // Set the all matiere cards' moyenne
+                document.querySelectorAll(".ue-moyenne").forEach(ueMoy => {
+                    let newMoy = 0;
+                    let totalCoef = 0;
+                    let ignoredMatieres = 0;
+                    const sem = ueMoy.dataset.sem;
+                    const ue = ueMoy.dataset.ue;
 
-                html += `
-                <div class="ue-card ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'validated' : 'failed'}`}">
-                    <div class="ue-header">
-                        <div class="ue-title">${ueName}</div>
-                        <div class="ue-moyenne ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'good' : 'bad'}`}">${moyenne}/20 <div class="ue-toggle open" style="color: #000000">▲</div></div>
-                    </div>
-                    ${hasSim ? `<div style="font-size:12px;color:#374151;background:#eef2ff;border:1px solid #c7d2fe;padding:6px 8px;border-radius:8px;margin-bottom:8px;">${this.lang == "fr" ? "Inclut des notes simulées" : "Includes simulated grades"}</div>` : ``}
-                    ${this.renderNotesTable(ueNotes, ueData, sem, ueName)}
-                </div>
-                `;
-            });
+                    Object.keys(this.gradesDatas[sem][ue].matieres).forEach(matiereName => {
+                        const matiere = this.gradesDatas[sem][ue].matieres[matiereName];
+                        if (matiere.totalDisabledGrades != matiere.grades.length) {
+                            newMoy += matiere.average * parseInt(matiere.coef);
+                            totalCoef += parseInt(matiere.coef);
+                        }
+                        else {ignoredMatieres++}
+                    })
 
-            html += '</div>';
+                    newMoy = Math.round(newMoy/totalCoef*100)/100;
+                    
+                    this.gradesDatas[sem][ue].average = newMoy;
+                    ueMoy.childNodes[0].data = `${newMoy}/20`;
 
-            const unclassified = this.getUnclassifiedMatieres(sem);
-            if (unclassified.length > 0) {
-                html += `
-                <div class="unclassified-section">
-                    <div class="unclassified-title">${this.lang == "fr" ? "Matières non classées dans une UE" : "Subject not classified in a TU"}</div>
-                    ${this.renderUnclassifiedNotes(sem, unclassified)}
-                </div>
-                `;
-            }
-            container.innerHTML = html;
-
-            // listeners des formulaires de suppression de notes simulées
-            container.querySelectorAll('.sim-del-btn').forEach(btn=>{
-                btn.addEventListener('click', (e)=>{
-                    const semX = e.target.dataset.sem;
-                    const ueName = e.target.dataset.uen;
-                    const mat = e.target.dataset.mat;
-                    this.sim[semX][ueName][mat].pop();
-                    this.saveSim();
-                    this.renderContent();
+                    if (ignoredMatieres == Object.keys(this.gradesDatas[sem][ue].matieres).length) 
+                        {ueMoy.classList.remove('bad'); ueMoy.classList.remove('good'); ueMoy.classList.add("unknown"); ueMoy.childNodes[0].data = " - /20"}
+                    else if (newMoy >= 10)
+                        {ueMoy.classList.remove('bad'); ueMoy.classList.add('good'); ueMoy.classList.remove("unknown")}
+                    else
+                        {ueMoy.classList.add('bad'); ueMoy.classList.remove('good'); ueMoy.classList.remove("unknown")}
                 })
-            })
 
-            // listeners des formulaires d'activation des notes
-            this.attachCheckboxListeners(container, sem);
+                // Set all the UE titles' total state text
+                // document.querySelectorAll(".ue-title-state").forEach(ueTitleState => {
+                //     const matiereCard = ueTitleState
+                // })
+                
 
-            // listeners des formulaires d'ajout de notes simulées
-            container.querySelectorAll('.sim-add-btn').forEach(btn=>{
-                btn.addEventListener('click',(e)=>{
-                    const ueName = e.target.dataset.uen;
-                    const semX = e.target.dataset.sem;
-                    const mat = e.target.dataset.mat;
-                    const noteInp = container.querySelector(`.sim-inp-note[data-sem="${semX}"][data-mat="${mat}"]`);
-                    const coefInp = container.querySelector(`.sim-inp-coef[data-sem="${semX}"][data-mat="${mat}"]`);
-                    const dateInp = container.querySelector(`.sim-inp-date[data-sem="${semX}"][data-mat="${mat}"]`);
-                    const typeInp = container.querySelector(`.sim-inp-type[data-sem="${semX}"][data-mat="${mat}"]`);
-                    const note = parseFloat(noteInp?.value||'');
-                    const coef = parseFloat(coefInp?.value||'');
-                    const date = dateInp?.value||'';
-                    const type = typeInp?.value||'';
-                    if(isNaN(note) || isNaN(coef)){ alert(this.lang == "fr" ? "Note et coef requis" : "Grade and coef required"); return; }
-                    this.ensureSimPath(semX, ueName, mat);
-                    this.sim[semX][ueName][mat].push({
-                        note, coef,
-                        type: type||'Simulé',
-                        date: date||new Date().toLocaleDateString(),
-                        prof: '—',
-                        matiere: mat,
-                        semestre: semX,
-                        libelle: `[SIM] ${mat} - ${type||'Simulé'}`,
-                        __sim: true
-                    });
-                    this.saveSim();
-                    this.renderContent();
-                });
-            });
+                // Attach on-click event action for the grades' checkbox
+                this.attachCheckboxListeners(container);
 
-            if (this.viewMode == "compact") {
-                   document.querySelectorAll('.ue-header').forEach(header => {
-                    if (header.nextElementSibling) {
-                        const toggle = header.querySelector('.ue-toggle');
-                        const content = header.nextElementSibling;
-                        const sem = header.parentElement.parentElement.parentElement.previousElementSibling.dataset.semester;
-                        const ueName = header.children[0].innerText;
-                        const ueConfig = this.ueConfig[sem] || {};
-                        const ueData = ueConfig[ueName];
-                        const notes = this.calculateUENotes(sem, ueData, ueName);
-
-                        header.nextElementSibling.innerHTML = this.renderCompactView(notes, ueData, sem, ueName);
-                        content.classList.add('compact');
-                        toggle.classList.remove('open');
+                // Attach on-click event action for the simulated grade addition button
+                container.querySelectorAll('.sim-add-btn').forEach(btn=>{
+                    btn.onclick = (e)=>{
+                        const ueName = e.target.dataset.uen;
+                        const semX = e.target.dataset.sem;
+                        const mat = e.target.dataset.mat;
+                        const id = this.sim[semX][ueName][mat].length;
+                        const typeInp = container.querySelector(`.note-simulee-input.sim-inp-type[data-sem="${semX}"][data-mat="${mat}"]`);
+                        const noteInp = container.querySelector(`.note-simulee-input.sim-inp-note[data-sem="${semX}"][data-mat="${mat}"]`);
+                        const coefInp = container.querySelector(`.note-simulee-input.sim-inp-coef[data-sem="${semX}"][data-mat="${mat}"]`);
+                        const dateInp = container.querySelector(`.note-simulee-input.sim-inp-date[data-sem="${semX}"][data-mat="${mat}"]`);
+                        const type = typeInp?.value||'';
+                        const note = parseFloat(noteInp?.value||'');
+                        const coef = parseFloat(coefInp?.value||'');
+                        const date = dateInp?.value||'';
+                        if(isNaN(note) || isNaN(coef)){ alert(this.lang == "fr" ? "Note et coef requis" : "Grade and coef required"); return; }
+                        this.ensureSimPath(semX, ueName, mat);
+                        this.sim[semX][ueName][mat].push({
+                            note, 
+                            coef,
+                            type: type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`,
+                            date: date||new Date().toLocaleDateString(),
+                            prof: '—',
+                            matiere: mat,
+                            semestre: semX,
+                            libelle: `[SIM] ${mat} - ${type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`}`,
+                            __sim: true,
+                            id
+                        });
+                        this.saveSim();
+                        this.renderContent();
                     }
                 });
-            }
+
+                // Attach on-change event action for simulated grades type/grade/coef/date fields
+                container.querySelectorAll(".note-simulee-input-edit").forEach(input => {
+                    input.onchange = e => {
+                        const ueName = e.target.dataset.uen;
+                        const semX = e.target.dataset.sem;
+                        const mat = e.target.dataset.mat;
+                        const id = e.target.dataset.id;
+                        let noteRow = e.target.parentElement.parentElement;
+                        // const typeInp = container.querySelector(`.note-simulee-input-edit.sim-inp-type[data-sem="${semX}"][data-mat="${mat}"]`);
+                        const typeInp = noteRow.querySelector(`.note-simulee-input-edit.sim-inp-type`)
+                        const noteInp = noteRow.querySelector(`.note-simulee-input-edit.sim-inp-note`);
+                        const coefInp = noteRow.querySelector(`.note-simulee-input-edit.sim-inp-coef`);
+                        const dateInp = noteRow.querySelector(`.note-simulee-input-edit.sim-inp-date`);
+                        const type = typeInp?.value||'';
+                        const newNote = parseFloat(noteInp?.value||'');
+                        const newCoef = parseFloat(coefInp?.value||'');
+                        const date = dateInp?.value||'';
+                        if(isNaN(newNote) || isNaN(newCoef)){ alert(this.lang == "fr" ? "Note et coef requis" : "Grade and coef required"); return; }
+                        this.sim[semX][ueName][mat].forEach((note, index) => {
+                            if (note.id == id) {
+                                this.sim[semX][ueName][mat][index] = {
+                                    note: newNote, 
+                                    coef: newCoef,
+                                    type: type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`,
+                                    date: date||new Date().toLocaleDateString(),
+                                    prof: '—',
+                                    matiere: mat,
+                                    semestre: semX,
+                                    libelle: `[SIM] ${mat} - ${type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`}`,
+                                    __sim: true,
+                                    id
+                                }
+                            }
+                        });
+
+                        this.saveSim();
+                        this.renderContent(false);
+                    }
+                })
+
+                // Attach on-click event action for the simulated grades' deletion button
+                container.querySelectorAll('.sim-del-btn').forEach(btn=>{
+                    btn.onclick = (e) => {
+                        const semX = e.target.dataset.sem;
+                        const ueName = e.target.dataset.uen;
+                        const mat = e.target.dataset.mat;
+                        const type = e.target.dataset.type;
+                        this.sim[semX][ueName][mat].splice(this.sim[semX][ueName][mat].indexOf(type), 1);
+                        this.deleteUnusedSimPath(semX, ueName, mat);
+                        this.saveSim();
+                        this.renderContent(true);
+                    }
+                })
+
+                
+                document.querySelector(".unclassified-content").querySelectorAll(".notes-table").forEach(table => {
+                    table.onmousedown = () => {
+                        if (this.editMode) document.querySelectorAll(".matiere-card.unclassified").forEach(card => {card.draggable = false;})
+                    }
+                    table.onmouseleave = () => {
+                        if (this.editMode) document.querySelectorAll(".matiere-card.unclassified").forEach(card => {card.draggable = true;})
+                    }
+                    table.onmouseup = () => {
+                        if (this.editMode) document.querySelectorAll(".matiere-card.unclassified").forEach(card => {card.draggable = true;})
+                    }
+                })
+
+
+                // After rendering the UE card's content in detailed view, check if the view mode is set to "compact" and if so, render the UE card's content in compact view
+                if (this.viewMode == "compact") {
+                    document.querySelectorAll('.ue-header').forEach(header => {
+                        if (header.nextElementSibling) {
+                            const toggle = header.querySelector('.ue-toggle');
+                            const content = header.nextElementSibling;
+                            const sem = header.dataset.semester;
+                            const ueName = this.editMode ? header.children[0].children[1].value : header.children[0].innerText;
+                            const ueConfig = this.ueConfig[sem] || {};
+                            const ueData = ueConfig[ueName];
+                            
+                            const ueContent = header.parentElement.querySelector(".ue-details");
+                            ueContent.innerHTML = this.renderAllMatCardCompact(ueData, sem, ueName);
+                            content.classList.add('compact');
+                            toggle.classList.remove('open');
+                        }
+                    });
+                }
+
+                this.setNotesTableTotalCoef()
+                this.attachEventListeners();
+
+            });
+        }
+
+
+
+
+        // MARK: renderAllUECards
+        renderAllUECards(sem) {
+            const container = document.getElementById(`sem-content-${sem}`);
+            const ueConfig = this.ueConfig[sem] || {};
+            if(!Object.keys(this.gradesDatas).includes(sem)) this.gradesDatas[sem] = {};
+
+            let html = '';
+
+            Object.keys(ueConfig).forEach(ueName => {
+                html += this.renderUECard(sem, ueName);
+            });
+
+            return html;
 
         }
 
-        attachCheckboxListeners(container, sem) {
+        // MARK: renderUECard
+        renderUECard(sem, ueName) {
+            const ueConfig = this.ueConfig[sem] || {};
+            const ueData = ueConfig[ueName];
+            const ueNotes = this.calculateUENotes(sem, ueData, ueName);
+            const includedNotes = (ueNotes || []).filter(n => this.ignoredGrades.indexOf([sem, n.matiere, n.type+" "+n.date+" "+n.prof].join("\\")) == -1);
+            let weight = 0; includedNotes.forEach(note => {weight += note.coef/100})
+            const moyenne = includedNotes.length ? this.moyennePonderee(includedNotes) : " - ";
+            const hasSim = (this.sim[sem] && this.sim[sem][ueName] && Object.values(this.sim[sem][ueName]).some(arr=>arr.length>0)) ? true : false;
+
+            if (!Object.keys(this.gradesDatas[sem]).includes(ueName)) this.gradesDatas[sem][ueName] = {average: moyenne, matieres:{}};
+            const allMats = this.getAllMatieresForUE(sem, ueData, ueName);
+            allMats.forEach(m => { 
+                if (!Object.keys(this.gradesDatas[sem][ueName].matieres).includes(m)) {
+                    this.gradesDatas[sem][ueName].matieres[m] = {grades: []};
+                } else {
+                    this.gradesDatas[sem][ueName].matieres[m].grades = [];
+                }
+            });
+            ueNotes.forEach(n => {
+                this.gradesDatas[sem][ueName].matieres[n.matiere].grades.push(n);
+            });
+            
+            let html = `
+            <div class="ue-card ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'validated' : 'failed'}`}" id="ue-card-${ueName}-in-semester-${sem}">
+                <div class="ue-header ${this.editMode ? "edit-mode" : ""} ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'validated' : 'failed'}`}" id="ue-header-${ueName}-in-semester${sem}" data-semester="${sem}" data-ue="${ueName}" ${this.editMode ? `draggable="true"` : ""}>
+                    ${this.editMode 
+                        ? 
+                        `<div style="display: flex; align-items: center; justify-content: flex-start; width: 42%;">
+                            <div style="margin-right: 5px;">${this.draggableIcon("ue-card", 29)}</div>
+                            <input type="text" class="ue-title input any-input" id="ue-title-input-${sem}-${ueName}" value="${ueName}" data-semester="${sem}" data-ue="${ueName}" draggable="false"/>
+                            <div class="ue-title-state">
+                            </div>
+                        </div>` 
+                        : 
+                        `<div class="ue-title">${ueName}</div>`
+                    }
+                    <div class="notes-table-coef" style="display:flex; flex-direction: column; width:47%; gap:4px; padding-left: 10px; font-size: 13px">
+                        <div style="font-size: 14px; font-weight: 700">
+                            ${this.lang == "fr" ? `Coef Total de matieres :` : `Total Subjects Coef:`}
+                        </div>
+                        <div class="ue-matiere-total-coef-value" data-sem="${sem}" data-ue="${ueName}"></div>
+                    </div>
+                    <div class="ue-moyenne ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'good' : 'bad'}`}" data-sem="${sem}" data-ue="${ueName}">
+                         - /20 
+                        <div class="ue-toggle open">▲</div>
+                        <button class="ue-delete-btn" ${this.editMode ? `class="display:none"` : ""} id="ue-delete-btn-${ueName}-in-semester-${sem}" data-semester="${sem}" data-ue="${ueName}">🗑️</button>
+                    </div>
+                </div>
+                ${hasSim ? `<div style="width:97%;font-size:12px;color:#374151;background:#eef2ff;border:1px solid #c7d2fe;padding:6px 8px;border-radius:8px; margin:8px 0px;">${this.lang == "fr" ? "Inclut des notes simulées" : "Includes simulated grades"}</div>` : ``}
+                <div class="ue-details" id="ue-details-${ueName}-in-semester${sem}" style="display:flex; flex-direction: column; align-items: center; width: 98%">
+                    ${this.renderAllMatCardDetailed(ueData, sem, ueName)}
+                </div>
+                ${this.editMode ? `
+                <div class="add-a-matiere-card">
+                    <div class="add-a-matiere-card-plus left">+</div>
+                    <div>${this.lang == "fr" ? `Ajouter une matière` : `Add a subject`}</div>
+                    <div class="add-a-matiere-card-plus right">+</div>
+                </div>
+                ` : ""
+                }
+            </div>
+            `;
+
+            return html
+        }
+        
+
+
+
+        // MARK: renderAllMatCardDetailed
+        renderAllMatCardDetailed(ueData, sem, ueName) {
+            return Object.keys(this.gradesDatas[sem][ueName].matieres).map(matiere => {
+                if (matiere != "average") 
+                    {return this.renderMatCardDetailed(ueData, sem, ueName, matiere)}
+            }).join("")
+        }
+
+        // MARK: renderMatCardDetailed
+        renderMatCardDetailed(ueData, sem, ueName, matiere) {
+            const matNotes = this.gradesDatas[sem][ueName].matieres[matiere].grades;
+            const ueMoy = this.gradesDatas[sem][ueName].average;
+            const moyMat = this.moyennePonderee(matNotes);
+            const pct = ueData?.pourcentages?.[matiere] || 0;
+            this.gradesDatas[sem][ueName].matieres[matiere].average = matNotes.length != 0 ? moyMat : " - ";
+            this.gradesDatas[sem][ueName].matieres[matiere].coef = parseInt(pct);
+            
+                let html = `
+                <div class="matiere-card ${ueMoy != " - " && moyMat != 0 ? `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}` : ``}" ${this.editMode ? `style="user-select: none;"` : ``} id="matiere-card-${matiere}-${ueName}-semester${sem}" data-semester="${sem}" data-ue="${ueName}" data-subject="${matiere}">
+                    <div class="matiere-card-header ${ueMoy != " - " && moyMat != 0 ? `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}` : ``}" ${this.editMode ? `draggable="true"` : ``} style="${this.editMode ? `cursor:move; ` : `${matNotes.length > 0 ? `` : `border-radius: 20px; border: none`}`}">
+                        <div style="display: flex; width: 42%; padding-left: ${this.editMode ? `10px` : `50px`}">
+                            <div style="display: flex; justify-content: flex-start; align-items: center; width: 100%; gap:8px; user-select: text">
+                                ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("detailed-matiere-card")}</div>` : ""}
+                                <div style="width: 100%">
+                                    <div class="matiere-name">${matiere}</div>
+                                    <div class="note-type">
+                                        ${this.lang == "fr" ? "Poids UE" : "TU Weight"}: 
+                                        ${this.editMode 
+                                            ? `<input class="matiere-coef-input-box any-input" id="matiere-coef-input-box-${sem}-${ueName}-${matiere}" data-semestre="${sem}" data-ue="${ueName}" data-subject="${matiere}" type="number" placeholder="%" step="5" min="0" max="100" value="${pct}"/>%`
+                                            : `<span style="font-weight: 800;">${pct}%</span>`}
+                                        | 
+                                        ${this.lang == "fr" ? "Moyenne" : "Average"}: 
+                                        <span class="mat-moyenne ${moyMat==0 ? '' : `${moyMat>=10 ? 'good' : 'bad'}`}">${moyMat==0 ? " - " : moyMat}/20</span> 
+                                        ${matNotes.length===0 ? `<span style="margin-left:2px;font-size:12px;color:#6b7280">${this.lang == "fr" ? "(aucune note publiée)" : "(no published grade)"}</span>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="notes-table-coef" style="display:flex; flex-direction: column; width:58%; gap:4px; padding-left: 10px; font-size: 13px">
+                            <div>
+                                ${this.lang == "fr" ? `Coef Total de notes :` : `Total Grades Coef:`}
+                            </div>
+                            <div class="notes-table-matiere-total-coef-value" data-sem="${sem}" data-ue="${ueName}" data-subject="${matiere}"></div>
+                        </div>
+                    </div>
+                    <table class="notes-table ${ueMoy != " - " && moyMat != 0 ? `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}` : ``}" style="${this.editMode ? `user-select: text;` : ``}" id="notes-table-${matiere}-${ueName}-semester${sem}" data-subject="${matiere}">
+
+                        <thead>
+                            ${matNotes.length > 0 || this.editMode
+                                ? `<tr>
+                                    <th class="notes-table-type" style="padding-left: 30px">
+                                        ${this.lang == "fr" ? "Intitulé" : "Title"}
+                                    </th>
+                                    <th class="notes-table-note">
+                                        ${this.lang == "fr" ? "Note" : "Grade"}
+                                    </th>
+                                    <th class="notes-table-coef">
+                                        ${this.lang == "fr" ? "Coef" : "Coef"}
+                                    </th>
+                                    <th class="notes-table-classAvg">
+                                        ${this.lang == "fr" ? "Moy. Classe" : "Class Avg"}
+                                    </th>
+                                    <th class="notes-table-date">
+                                        ${this.lang == "fr" ? "Date" : "Date"}
+                                    </th>
+                                    <th class="notes-table-teacher">
+                                        ${this.lang == "fr" ? "Prof(s)" : "Teacher(s)"}
+                                    </th>
+                                    <th style="width: 1px"></th>
+                                </tr>`
+                                : ``
+                            }
+                        </thead>
+                        <tbody>
+                `;
+
+            let totalCoef = 0;
+            let totalDisabledGrades = 0;
+            let totalSimGrades = 0;
+            matNotes.forEach((note, index) => {
+                const noteClass = this.getNoteColor(note.note);
+                if (note.__sim) totalSimGrades++;
+                const noteIsSim = note.__sim ? "true" : "false";
+                if (this.ignoredGrades.indexOf([sem, matiere, note.type+" "+note.date+" "+note.prof].join("\\")) == -1) {
+                    totalCoef += note.coef;
+                }
+                else
+                {
+                    totalDisabledGrades++
+                }
+
+                html += `
+                        <tr class="note-row ${index == matNotes.length-1 ? `last` : ``} ${note.__sim ? `sim` : ``}" data-sim="${noteIsSim}">
+                            <td class="notes-table-type" style="display: flex; align-items: center; gap: 6px; width: auto">
+                                <input type="checkbox" class="note-checkbox any-input" id="note-checkbox-${note.matiere}-${note.type}-${note.date}-${note.prof}" data-sem="${sem}" data-mat="${matiere}" data-uen="${ueName||''}" data-prof="${note.prof}" data-gradeid="${note.type} ${note.date} ${note.prof}" ${this.ignoredGrades.indexOf([sem, matiere, note.type+" "+note.date+" "+note.prof].join("\\")) == -1 ? "checked" : ""}></input>
+                                ${note.__sim && this.editMode
+                                    ? `<input class="note-type note-simulee-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="note-simulee-input-type-for-${matiere}-from-${ueName}-in-semester${sem}-${note.type}" data-modifType="type" data-id="${totalSimGrades-1}" data-sem="${sem}" data-mat="${matiere}" data-type="${note.type}" data-uen="${ueName||''}" value="${note.type}"/>` 
+                                    : `<label class="note-type" style="width: auto"  id="note-type-${note.type}-${note.date}" for="note-checkbox-${note.matiere}-${note.type}-${note.date}-${note.prof}">${note.type || ''}${note.__sim ? ` • ${this.lang == "fr" ? "Simulée" : "Simulated"}` : ''}</label>`
+                                }
+                            </td>
+                            <td class="note-value note-${noteClass} notes-table-note" data-sim="${noteIsSim}">
+                                ${note.__sim && this.editMode
+                                    ? `<input class="note-simulee-input-edit sim-inp-note any-input" style="width: 100%; max-width: 75px;" id="note-simulee-input-note-for-${matiere}-from-${ueName}-in-semester${sem}-${note.type}" type="number" step="0.5" min="0" max="20" data-id="${totalSimGrades-1}" data-modifType="note" data-sem="${sem}" data-mat="${matiere}" data-type="${note.type}" data-uen="${ueName||''}" style="width:75px; height:25px" value="${note.note}"> /20`
+                                    : `${note.note}/20`
+                                }
+                            </td>
+                            <td class="notes-table-coef" data-sim="${noteIsSim}">
+                                ${note.__sim && this.editMode
+                                    ? `<input class="note-simulee-input-edit sim-inp-coef any-input" style="width: 100%; max-width: 60px;" id="note-simulee-input-coef-for-${matiere}-from-${ueName}-in-semester${sem}-${note.type}" type="number" step="5" min="0" max="100" data-id="${totalSimGrades-1}" data-modifType="coef" data-sem="${sem}" data-mat="${matiere}" data-type="${note.type}" data-uen="${ueName||''}" style="width:60px; height:25px"value="${note.coef}"> %`
+                                    : `${note.coef} %`
+                                }
+                            </td>
+                            <td class="notes-table-classAvg" data-sim="${noteIsSim}">
+                                ${note._sim && this.editMode
+                                    ? ``
+                                    : `${note.__sim ? "" : note.classAvg+"/20"}`
+                                }
+                            </td>
+                            <td class="notes-table-date note-date" data-sim="${noteIsSim}">
+                                ${note.__sim && this.editMode
+                                    ? `<input class="note-simulee-input-edit sim-inp-date any-input" style="width: 100%; max-width: 140px;" id="note-simulee-input-date-for-${matiere}-from-${ueName}-in-semester${sem}-${note.type}" type="date" data-id="${totalSimGrades-1}" data-sem="${sem}" data-mat="${matiere}" data-modifType="date" data-type="${note.type}" data-uen="${ueName||''}" style="width:140px; height:25px"value="${note.date||""}">`
+                                    : `${`${note.__sim ? note.date.split("-").reverse().join("/") : note.date}`||''}`
+                                }
+                            </td>
+                            <td class="notes-table-teacher">
+                                <span>${`${note.prof.split(" / ").length <= 3 ? note.prof : note.prof.split(" / ").slice(0,3).join(" / ") + " / ... "}`||''}</span>
+                            </td>
+                            <td style="width: 52px; padding: 3px">
+                                ${note.__sim 
+                                    ? `<button class="sim-del-btn" data-sem="${sem}" data-mat="${matiere}" data-uen="${ueName||''}" data-type="${note.type}">🗑️</button>` 
+                                    : `<div style="width:32px"></div>`}
+                            </td>
+                        </tr>
+                `;
+            });
+            this.gradesDatas[sem][ueName].matieres[matiere].totalCoef = totalCoef;
+            this.gradesDatas[sem][ueName].matieres[matiere].totalDisabledGrades = totalDisabledGrades;
+            this.gradesDatas[sem][ueName].matieres[matiere].totalSimGrades = totalSimGrades;
+
+            // Formulaire d'ajout de note simulée pour cette matière
+                html += `
+                            <tr ${this.editMode ? "" : "hidden=true"}>
+                                <td class="notes-table-type">
+                                    <div class="note-type" style="display:flex; align-items:center; justify-content: space-between">
+                                        <div style="width: 120px">${this.lang == "fr" ? "Ajouter une note simulée: " : "Add a simulated grade: "}</div>
+                                        <input class="note-simulee-input sim-inp-type any-input" id="note-simulee-input-type-for-${matiere}-from-${ueName}-in-semester${sem}" data-sem="${sem}" data-mat="${matiere}" style="width: 100%; max-width: 250px; height:25px" placeholder="${this.lang == "fr" ? "Titre" : "Title"}" />
+                                    </div>
+                                </td>
+                                <td class="notes-table-note">
+                                    <input class="note-simulee-input sim-inp-note any-input" id="note-simulee-input-note-for-${matiere}-from-${ueName}-in-semester${sem}" type="number" step="0.5" min="0" max="20" data-sem="${sem}" data-mat="${matiere}" style="width: 100%; max-width:75px; height:25px" placeholder="/20"> /20
+                                </td>
+                                <td class="notes-table-coef">
+                                    <input class="note-simulee-input sim-inp-coef any-input" id="note-simulee-input-coef-for-${matiere}-from-${ueName}-in-semester${sem}" type="number" step="5" min="0" max="100" data-sem="${sem}" data-mat="${matiere}" style="width: 100%; max-width:60px; height:25px" placeholder="%"> %
+                                </td>
+                                <td>
+                                </td>
+                                <td class="notes-table-date">
+                                    <input class="note-simulee-input sim-inp-date any-input" id="note-simulee-input-date-for-${matiere}-from-${ueName}-in-semester${sem}" type="date" value="${this.today}" data-sem="${sem}" data-mat="${matiere}" style="width: 100%; max-width:140px; height:25px">
+                                </td>
+                                <td colspan="2">
+                                    <button class="btn-export sim-add-btn" data-sem="${sem}" data-mat="${matiere}" data-uen="${ueName||''}" style="width: 100%; max-width: 140px; padding:6px 10px; height:25px">${this.lang == "fr" ? "Ajouter" : "Add"}</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                `;
+
+            return html;
+        }
+
+
+
+        // MARK: renderAllMatCardCompact
+        renderAllMatCardCompact(ueData, sem, ueName) {
+            return Object.keys(this.gradesDatas[sem][ueName].matieres).map(matiere => {
+                if (matiere != "average") 
+                    {return this.renderMatCardCompact(ueData, sem, ueName, matiere)}
+            }).join("")
+        }
+
+        // MARK: renderMatCardCompact
+        renderMatCardCompact(ueData, sem, ueName, matiere) {
+            const matNotes = this.gradesDatas[sem][ueName].matieres[matiere].grades;
+            const moyMat = this.moyennePonderee(matNotes);
+            const pct = ueData?.pourcentages?.[matiere] || 0;
+            const includedNotesLength = (matNotes || []).filter(n => this.ignoredGrades.indexOf([sem, n.matiere, n.type+" "+n.date+" "+n.prof].join("\\")) == -1).length;
+            const simGradesLength = (matNotes || []).filter(n => n.__sim).length;
+            this.gradesDatas[sem][ueName].matieres[matiere].average = matNotes.length != 0 ? moyMat : " - ";
+            this.gradesDatas[sem][ueName].matieres[matiere].coef = parseInt(pct);
+
+            const html = `
+            <div style="display:flex; margin:10px; gap:6px; flex-direction:column; align-items: center; width: 100%">
+                <div class="matiere-card compact ${this.editMode ? "" : "edit-mode"}" style="${this.editMode ? "cursor:move; user-select: none; " : " "}" draggable=${this.editMode ? "true" : "false"} data-sem="${sem}" data-ue="${ueName}" data-subject="${matiere}">
+                    <div style="display:flex; align-items:center; gap:8px; padding-left: 11px; width:43%">
+                        ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("compact-matiere-card")}</div>` : ""}
+                        <div>
+                            <div class="matiere-name">${matiere}</div>
+                            <div style="font-size:13px;color:#666;">
+                                ${this.editMode 
+                                    ? `<input class="matiere-coef-input-box any-input" id="matiere-coef-input-box-${sem}-${ueName}-${matiere}" data-semestre="${sem}" data-ue="${ueName}" data-subject="${matiere}" type="number" placeholder="%" step="5" min="0" max="100" value="${pct}"/>%`
+                                    : `<span style="font-weight: 800">${pct}%</span>`} ${this.lang == "fr" ? "de l'UE" : "of the TU"} • 
+                                ${matNotes.length===0 ? `${this.lang == "fr" ? "aucune publiée" : "no published grade"}` : `${matNotes.length} ${this.lang == "fr" ? `note${matNotes.length>1?"s":""} au total` : `grade${matNotes.length>1?"s":""} total`}`}
+                                ${matNotes.length>0 
+                                    ? ` • <span ${includedNotesLength<matNotes.length ? `style="color: #df0000"` : ``}>
+                                        <span style="font-weight: 700; ">${includedNotesLength}/${matNotes.length}</span> 
+                                        ${this.lang == "fr" ? `note${includedNotesLength>1?"s":""} activée${includedNotesLength>1?"s":""}` : `grade${includedNotesLength>1?"s":""} activated`}${includedNotesLength<matNotes.length ? `!` : ``}
+                                    </span>` 
+                                    : ``}
+                                ${simGradesLength>0 
+                                    ? ` • ${simGradesLength} ${this.lang == "fr" ? `note${simGradesLength>1?"s":""} simulée${simGradesLength>1?"s":""}` : `simulated grade${simGradesLength>1?"s":""}`}`
+                                    : ``}
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="notes-table-coef" style="display:flex; flex-direction: column; width:50%; gap:6px; padding-left: 10px; font-size: 13px; font-weight: 600">
+                        <div>
+                            ${this.lang == "fr" ? `Coef Total de notes :` : `Total Grades Coef:`}
+                        </div>
+                        <div class="notes-table-matiere-total-coef-value" data-sem="${sem}" data-ue="${ueName}" data-subject="${matiere}"></div>
+                    </div>
+                    <div class="mat-moyenne ${moyMat==0 ? '' : `${moyMat>=10 ? 'good' : 'bad'}`}" style="display: flex; justify-content: flex-end; width: 80px; padding-right: 20px; font-size: 20px">${moyMat==0 ? " - " : moyMat}/20</div>
+                </div>
+            </div>
+            `;
+            return html;
+        }
+
+
+
+        renderAllUnclassifiedMatCard(sem, matieres) {
+            let html = ``;
+            if (!this.gradesDatas[sem]) this.gradesDatas[sem] = {};
+            this.gradesDatas[sem]["unclassified"] = {matieres:{}};
+
+            matieres.forEach(matiere => {
+                const notes = (this.semestres[sem]||{})[matiere]||[];
+                const moyenne = this.moyennePonderee(notes);
+                this.gradesDatas[sem]["unclassified"].average = moyenne;
+                this.gradesDatas[sem]["unclassified"].matieres[matiere] = {grades: []};
+                html += this.renderUnclassifiedMatCard(sem, matiere);
+            })
+            return html
+        }
+        // MARK: renderUnclassifiedMatCard
+        renderUnclassifiedMatCard(sem, matiere) {
+            let html = ``;
+            let totalCoef = 0;
+            let totalClassAvg = 0;
+
+            const notes = (this.semestres[sem]||{})[matiere]||[];
+            const moyMat = this.moyennePonderee(notes);
+            html +=`
+            <div class="matiere-card unclassified ${moyMat >= 10 ? `good` : `bad`}" id="mat-card-semester-${sem}-matiere-${matiere}" ${this.editMode ? `style="user-select: none;"` : ""} ${this.editMode ? `draggable="true"` : ""} data-subject="${matiere}" data-semester="${sem}">
+                <div class="matiere-card-header unclassified  ${moyMat >= 10 ? `good` : `bad`}" style="${this.editMode ? "cursor: move; padding-left: 10px;" : "padding-left: 50px;"}" data-sem="${sem}" data-subject="${matiere}">
+                    ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("unclassified-matiere-card")}</div>` : ""}
+                    <div style="width: 40%">
+                        ${matiere}
+                        <div style="font-size:12px;margin-top:4px;">${this.lang == "fr" ? "Moyenne" : "Average"}: <span class="mat-moyenne ${moyMat>=10 ? 'good' : 'bad'}" >${moyMat}/20</span></div>
+                    </div>
+                    <div class="notes-table-coef" style="display:flex; flex-direction: column; width:58%; gap:4px; padding-left: 10px; font-size: 13px">
+                        <div>
+                            ${this.lang == "fr" ? `Coef Total de notes :` : `Total Grades Coef:`}
+                        </div>
+                        <div class="notes-table-matiere-total-coef-value" data-sem="${sem}" data-ue="unclassified" data-subject="${matiere}"></div>
+                    </div>
+                </div>
+
+                <table class="notes-table ${moyMat >= 10 ? "good" : "bad"}" id="notes-table-${matiere}">
+                    <thead>
+                        ${notes.length > 0 || this.editMode
+                            ? `<tr style="/* border-bottom: 2px solid #d5d5d5; */">
+                                <th class="notes-table-type" style="padding-left: 30px">
+                                    ${this.lang == "fr" ? "Intitulé" : "Title"}
+                                </th>
+                                <th class="notes-table-note">
+                                    ${this.lang == "fr" ? "Note" : "Grade"}
+                                </th>
+                                <th class="notes-table-coef">
+                                    ${this.lang == "fr" ? "Coef" : "Coef"}
+                                </th>
+                                <th class="notes-table-classAvg">
+                                    ${this.lang == "fr" ? "Moy. Classe" : "Class Avg"}
+                                </th>
+                                <th class="notes-table-date">
+                                    ${this.lang == "fr" ? "Date" : "Date"}
+                                </th>
+                                <th class="notes-table-teacher">
+                                    ${this.lang == "fr" ? "Prof(s)" : "Teacher(s)"}
+                                </th>
+                                <th style="width: 1px"></th>
+                            </tr>`
+                            : ``
+                        }
+                    </thead>
+                    <tbody>
+            `;
+            notes.forEach((note, index) => {
+                this.gradesDatas[sem]["unclassified"].matieres[matiere].grades.push(note);
+                totalCoef += note.coef;
+                totalClassAvg += note.classAvg;
+
+                html += `
+                        <tr class="note-row-unsorted-grades ${index == notes.length-1 ? `last` : ``}">
+                            <td class="notes-table-type" style="width: 30%">${note.type}</td>
+                            <td class="notes-table-note"><span class="note-value note-${this.getNoteColor(note.note)}">${note.note}/20</span></td>
+                            <td class="notes-table-coef">${note.coef}%</td>
+                            <td class="notes-table-classAvg">${note.classAvg}</td>
+                            <td class="notes-table-date note-date">${note.date}</td>
+                            <td class="notes-table-teacher" style="font-size:12px;color:#999;">${note.prof}</td>
+                        </tr>
+                `;
+            });
+            this.gradesDatas[sem]["unclassified"].matieres[matiere].average = moyMat;
+            this.gradesDatas[sem]["unclassified"].matieres[matiere].totalCoef = totalCoef;
+            this.gradesDatas[sem]["unclassified"].matieres[matiere].totalDisabledGrades = 0;
+
+            html +=`</tbody></table></div>`;
+            return html;
+        }
+
+
+
+
+        // MARK: Set total coefs
+        setNotesTableTotalCoef() {
+            document.querySelectorAll(".notes-table-matiere-total-coef-value").forEach(totalCoefDiv => {
+                const sem = totalCoefDiv.dataset.sem;
+                const ue = totalCoefDiv.dataset.ue;
+                const subject = totalCoefDiv.dataset.subject;
+                const totalCoef =       this.gradesDatas[sem][ue].matieres[subject].totalCoef;
+                const disabledGrades =  this.gradesDatas[sem][ue].matieres[subject].totalDisabledGrades;
+                const nbSimGrades =     this.gradesDatas[sem][ue].matieres[subject].totalSimGrades;
+                const simulatedGrades = this.gradesDatas[sem][ue].matieres[subject].grades.map(grade => {if(grade.__sim) return grade});
+                let enabledSimulatedGrades = [];
+                if (nbSimGrades > 0) enabledSimulatedGrades = simulatedGrades.filter(n => {if (n) {return this.ignoredGrades.indexOf([sem, n.matiere, n.type+" "+n.date+" "+n.prof].join("\\")) == -1} else {return false}})
+                let totalSimGradesCoef = 0; enabledSimulatedGrades.forEach(grade => {totalSimGradesCoef+=grade.coef});
+                
+                this.gradesDatas[sem][ue].matieres[subject].simulatedGrades = simulatedGrades;
+                this.gradesDatas[sem][ue].matieres[subject].enabledSimulatedGrades = enabledSimulatedGrades;
+                this.gradesDatas[sem][ue].matieres[subject].totalSimGradesCoef = totalSimGradesCoef;
+                
+                let advice = this.lang == `fr` ? `toutes tes notes sont là !` : `all your grades are out!`;
+                let color = ` #10b981`;
+
+                
+                if (totalSimGradesCoef > 0 && totalCoef-totalSimGradesCoef == 100) {
+                    advice = this.lang == `fr` ? `toutes tes notes sont là, mais tu devrais désactiver tes notes simulées` : `all your grades are out, but you should disable your simulated grades`;
+                    color = ` #e90000`;
+                }
+                else if (totalCoef<100) {
+                    if (disabledGrades > 1) {
+                        advice = this.lang == `fr` ? `${disabledGrades} notes sont désactivées` : `${disabledGrades} grades are disabled`;
+                        color = ` #e98c00`;
+                    }
+                    else if (disabledGrades > 0) {
+                        advice = this.lang == `fr` 
+                            ? `une note est désactivée${simulatedGrades.length != enabledSimulatedGrades.length ? `, mais c'est une note simulée, donc toutes tes notes ne sont encore pas là !` : ``}` 
+                            : `a grade is disabled${simulatedGrades.length != enabledSimulatedGrades.length ? `, but it's a simulated grade, so all your grades aren't out yet!` : ``}`;
+                        color = ` #e98c00`;
+                    }
+                    else if (totalCoef == 0) {
+                        advice = this.lang == `fr` ? `pas de notes pour l'instant` : `no grades yet`;
+                        color = ` #7a7a7a`;
+                    }
+                    else {
+                        advice = this.lang == `fr` ? `notes manquantes` : `missing grades`;
+                        color = ` #e90000`;
+                    }
+                }
+                else if (enabledSimulatedGrades.length > 0) {
+                    if (totalSimGradesCoef < 100) {
+                        advice = this.lang == `fr` 
+                            ? `${totalSimGradesCoef}% de ta note est simulée, toutes tes vraies notes ne sont pas encore là !` 
+                            : `${totalSimGradesCoef}% of your grade is simulated, all your actual grades aren't out yet!`
+                        ;
+                        color = ` #e90000`;
+                    }
+                    else if (totalSimGradesCoef == 100) {
+                        advice = this.lang == `fr` 
+                            ? `100% de ta note est simulée, tes vraies notes ne sont pas encore là !` 
+                            : `100% of your grade is simulated, your actual grades aren't out yet!`
+                        ;
+                        color = ` #e90000`;
+
+                    }
+                    else if (totalSimGradesCoef > 100) {
+                        advice = this.lang == `fr` 
+                            ? `${totalSimGradesCoef}% de ta note est simulée... jsp ce que t'as fait, mais tu l'as mal fait, change moi ça...` 
+                            : `${totalSimGradesCoef}% of your grade is simulated... idk what you've done, but do smthg, cuz you did it wrong...`
+                        ;
+                        color = ` #e90000`;
+                    }
+                }
+                else if (totalCoef>100) {
+                    advice = this.lang == `fr` ? `désactivez des notes, svp` : `please disable some grades`;
+                    color = ` #e90000`;
+                    
+                }
+
+                totalCoefDiv.innerHTML = `<span style="color:${color}; font-weight: 900">${totalCoef}%</span>(${advice})`;
+            })
+            document.querySelectorAll(".ue-matiere-total-coef-value").forEach(totalCoefDiv => {
+                const sem = totalCoefDiv.dataset.sem;
+                const ue = totalCoefDiv.dataset.ue;
+                const nbSubjects = Object.keys(this.gradesDatas[sem][ue].matieres).length;
+                let totalCoefSubjects = 0, totalCoefGrades = 0, disabledGrades = 0, nbSimGrades = 0, simulatedGrades = [], enabledSimulatedGrades = [], totalSimGradesCoef = 0, nbSubjectBelow100 = 0, nbSubjectOver100 = 0;
+                Object.keys(this.gradesDatas[sem][ue].matieres).forEach(subjectName => {
+                    const subject = this.gradesDatas[sem][ue].matieres[subjectName];
+                    totalCoefSubjects += subject.coef;
+                    totalCoefGrades += subject.totalCoef;
+                    disabledGrades += subject.totalDisabledGrades;
+                    nbSimGrades += subject.totalSimGrades;
+                    subject.simulatedGrades.forEach(simGrade => {simulatedGrades.push(simGrade)})
+                    subject.enabledSimulatedGrades.forEach(enabledSimGrade => {enabledSimulatedGrades.push(enabledSimGrade)});
+                    totalSimGradesCoef += subject.totalSimGradesCoef;
+                    if (subject.totalCoef < 100) nbSubjectBelow100++;
+                    else if (subject.totalCoef > 100) nbSubjectOver100++;
+                })
+
+                totalCoefGrades = Math.round(totalCoefGrades/nbSubjects*100)/100;
+                
+                let advice = this.lang == `fr` ? `toutes tes notes sont là !` : `all your grades are out!`;
+                let color = ` #10b981`;
+
+                if (totalSimGradesCoef > 0 && totalCoefGrades-totalSimGradesCoef == 100) {
+                    advice = this.lang == `fr` ? `toutes tes notes sont là, mais tu devrais désactiver tes notes simulées` : `all your grades are out, but you should disable your simulated grades`;
+                    color = ` #e90000`;
+                }
+                else if (totalCoefGrades<100) {
+                    if (disabledGrades > 1) {
+                        advice = this.lang == `fr` ? `${disabledGrades} notes sont désactivées` : `${disabledGrades} grades are disabled`;
+                        color = ` #e98c00`;
+                    }
+                    else if (disabledGrades > 0) {
+                        advice = this.lang == `fr` 
+                            ? `une note est désactivée${simulatedGrades.length != enabledSimulatedGrades.length ? `, mais c'est une note simulée, donc toutes tes notes ne sont encore pas là !` : ``}` 
+                            : `a grade is disabled${simulatedGrades.length != enabledSimulatedGrades.length ? `, but it's a simulated grade, so all your grades aren't out yet!` : ``}`;
+                        color = ` #e98c00`;
+                    }
+                    else if (totalCoefGrades == 0) {
+                        advice = this.lang == `fr` ? `pas de notes pour l'instant` : `no grades yet`;
+                        color = ` #7a7a7a`;
+                    }
+                    else if (nbSubjectOver100 == 0) {
+                        advice = this.lang == `fr` 
+                            ? `notes manquantes dans ${nbSubjects-nbSubjectBelow100 > 1 ? nbSubjects-nbSubjectBelow100 : `une`} UE${nbSubjects-nbSubjectBelow100 > 1 ? `s` : ``}` 
+                            : `missing grades in ${nbSubjects-nbSubjectBelow100 > 1 ? nbSubjects-nbSubjectBelow100 : `a`} TU${nbSubjects-nbSubjectBelow100 > 1 ? `'s` : ``}`;
+                        color = ` #e90000`;
+                    }
+                    else {
+                        advice = this.lang == `fr` 
+                            ? `notes manquantes dans ${nbSubjects-nbSubjectBelow100 > 1 ? nbSubjects-nbSubjectBelow100 : `une`} UE${nbSubjects-nbSubjectBelow100 > 1 ? `s` : ``}, et trop de notes dans ${nbSubjects-nbSubjectOver100 > 1 ? nbSubjects-nbSubjectOver100 : `une`} UE${nbSubjects-nbSubjectOver100 > 1 ? `s` : ``}` 
+                            : `missing grades in ${nbSubjects-nbSubjectBelow100 > 1 ? nbSubjects-nbSubjectBelow100 : `a`} TU${nbSubjects-nbSubjectBelow100 > 1 ? `'s` : ``}, and too many grades in ${nbSubjects-nbSubjectOver100 > 1 ? nbSubjects-nbSubjectOver100 : `a`} TU${nbSubjects-nbSubjectOver100 > 1 ? `'s` : ``}`;
+                        color = ` #e90000`;
+                    }
+                }
+                else if (enabledSimulatedGrades.length > 0) {
+                    if (totalSimGradesCoef < 100) {
+                        advice = this.lang == `fr` 
+                            ? `${totalSimGradesCoef}% de ta note est simulée, toutes tes vraies notes ne sont pas encore là !` 
+                            : `${totalSimGradesCoef}% of your grade is simulated, all your actual grades aren't out yet!`
+                        ;
+                        color = ` #e90000`;
+                    }
+                    else if (totalSimGradesCoef == 100) {
+                        advice = this.lang == `fr` 
+                            ? `100% de ta note est simulée, tes vraies notes ne sont pas encore là !` 
+                            : `100% of your grade is simulated, your actual grades aren't out yet!`
+                        ;
+                        color = ` #e90000`;
+
+                    }
+                    else if (totalSimGradesCoef > 100) {
+                        advice = this.lang == `fr` 
+                            ? `${totalSimGradesCoef}% de ta note est simulée... jsp ce que t'as fait, mais tu l'as mal fait, change moi ça...` 
+                            : `${totalSimGradesCoef}% of your grade is simulated... idk what you've done, but do smthg, cuz you did it wrong...`
+                        ;
+                        color = ` #e90000`;
+                    }
+                }
+                else if (totalCoefGrades>100) {
+                    advice = this.lang == `fr` ? `désactivez des notes, svp` : `please disable some grades`;
+                    color = ` #e90000`;
+                    
+                }
+
+                if (totalCoefSubjects!=100) {
+                    advice = this.lang == `fr` ? `vérifie le coef de tes matières, leur somme n'est pas égale à 100% !` : `verify your subjects' coef, their sum is different from 100%!`;
+                    color = ` #e90000`;
+                }
+
+                totalCoefDiv.innerHTML = `<span style="color:${color}; font-weight: 900">${totalCoefGrades}% / ${totalCoefSubjects}%</span>(${advice})`;
+            })
+        }
+
+
+
+
+        attachCheckboxListeners(container) {
             // Reusable method to attach listeners to note checkboxes
             container.querySelectorAll('.note-checkbox').forEach(chbx => {
-                chbx.addEventListener('click', (e) => {
+                chbx.onclick = (e) => {
                     const semX = e.target.dataset.sem;
-                    const ueName = e.target.dataset.uen;
                     const mat = e.target.dataset.mat;
                     const gradeID = e.target.dataset.gradeid;
                     const key = [semX, mat, gradeID].join("\\");
@@ -519,8 +1419,8 @@
                         if (!this.ignoredGrades.includes(key)) this.ignoredGrades.push(key);
                     }
                     this.saveignoredGrades();
-                    this.renderContent();
-                });
+                    this.renderContent(false);
+                }
             });
         }
 
@@ -540,162 +1440,92 @@
             this.saveignoredGrades();
         }
 
-        renderNotesTable(notes, ueData, sem, ueName) {
-            const notesByMatiere = {};
-            const allMats = this.getAllMatieresForUE(sem, ueData, ueName);
-            allMats.forEach(m => { notesByMatiere[m] = []; });
-            notes.forEach(n => {
-                if(!notesByMatiere[n.matiere]) notesByMatiere[n.matiere]=[];
-                notesByMatiere[n.matiere].push(n);
-            });
+        compareArraysofObjects(a, b) {
+            const out = {common:[], more:[], missing:[]};
 
-            let html = `
-            <table class="notes-table">
-                <thead>
-                    <tr>
-                        <th>${this.lang == "fr" ? "Matière / Titre" : "Subject / Title"}</th>
-                        <th>${this.lang == "fr" ? "Note" : "Grade"}</th>
-                        <th>${this.lang == "fr" ? "Coef" : "Coef"}</th>
-                        <th>${this.lang == "fr" ? "Date" : "Date"}</th>
-                        <th>${this.lang == "fr" ? "Prof" : "Teacher"}</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-            `;
+            // turning a in an array of strings, for easier comparison in case the elements of a are objects
+            const aStringified = [];
+            JSON.stringify(a).split("},{").forEach(e => {
+                if (e[0]=="[") {
+                    aStringified.push(e.split("[")[1]+"}")
+                }
+                else if (e.at(-1)=="]") {
+                    aStringified.push("{"+e.split("]")[0])
+                }
+                else
+                {
+                    aStringified.push("{"+e+"}")
+                }
+            })
+            // as a result, "["+aStringified.join(",")+"]" == JSON.stringify(a)
 
-            Object.keys(notesByMatiere).forEach(matiere => {
-                const matNotes = notesByMatiere[matiere];
-                const moyMat = this.moyennePonderee(matNotes);
-                const pct = ueData?.pourcentages?.[matiere] || 0;
-                html += `
-                <tr style="background:#f9fafb; font-weight:600;">
-                    <td colspan="2">
-                        <div class="matiere-name">${matiere}</div>
-                        <div class="note-type">${this.lang == "fr" ? "Moyenne" : "Average"}: <span class="mat-moyenne ${moyMat==0 ? '' : `${moyMat>=10 ? 'good' : 'bad'}`}">${moyMat==0 ? " - " : moyMat}/20</span> | ${this.lang == "fr" ? "Poids UE" : "TU Weight"}: <span style="font-weight: 800">${pct}%</span> ${matNotes.length===0 ? `<span style="margin-left:2px;font-size:12px;color:#6b7280">${this.lang == "fr" ? "(aucune note publiée)" : "(no published grade)"}</span>` : ''}</div>
-                    </td>
-                    <td colspan="4"></td>
-                </tr>
-                `;
-                matNotes.forEach(note => {
-                    const noteClass = this.getNoteColor(note.note);
-                    html += `
-                    <tr style="${note.__sim ? 'background: #eef2ff' : ''}">
-                        <td style="padding-left:30px;">
-                            <span><input type="checkbox" class="note-checkbox" id="note-checkbox-${note.type}-${note.date}-${note.prof}" data-sem="${sem}" data-mat="${matiere}" data-uen="${ueName||''}" data-gradeid="${note.type} ${note.date} ${note.prof}" ${this.ignoredGrades.indexOf([sem, matiere, note.type+" "+note.date+" "+note.prof].join("\\")) == -1 ? "checked" : ""}></input></span><span class="note-type"> <label id="note-type-${note.type}-${note.date}" for="note-checkbox-${note.type}-${note.date}">${note.type || ''}${note.__sim ? ` • ${this.lang == "fr" ? "simulée" : "simulated"}` : ''}</label></span>
-                        </td>
-                        <td><span class="note-value note-${noteClass}">${note.note}/20</span></td>
-                        <td>${note.coefOriginal}%</td>
-                        <td class="note-date">${note.date||''}</td>
-                        <td style="font-size:12px;color:#999;">${`${note.prof.split(" / ").length <= 3 ? note.prof : note.prof.split(" / ").slice(0,3).join(" / ") + " / ... "}`||''}</td>
-                        <td>${note.__sim ? `<button class="sim-del-btn" data-sem="${sem}" data-mat="${matiere}" data-uen="${ueName||''}">🗑️</button>` : ''}
-                    </tr>
-                    `;
-                });
 
-                // Formulaire d'ajout de note simulée pour cette matière
-                html += `
-                <tr>
-                    <td style="padding-left:30px;">
-                        <div class="note-type">${this.lang == "fr" ? "Ajouter une note simulée" : "Add a simulated grade"}</div>
-                    </td>
-                    <td>
-                        <input class="note-simulee-input sim-inp-note" type="number" step="0.5" min="0" max="20" data-sem="${sem}" data-mat="${matiere}" style="width:80px">
-                    </td>
-                    <td>
-                        <input class="note-simulee-input sim-inp-coef" type="number" step="5" min="0" max="100" data-sem="${sem}" data-mat="${matiere}" style="width:80px" placeholder="%">
-                    </td>
-                    <td>
-                        <input class="note-simulee-input sim-inp-date" type="date" data-sem="${sem}" data-mat="${matiere}" style="width:140px">
-                    </td>
-                    <td colspan="2">
-                        <div style="display:flex;gap:6px;align-items:center;">
-                            <input type="text" class="sim-inp-type" data-sem="${sem}" data-mat="${matiere}" placeholder="${this.lang == "fr" ? "Écrire" : "Type"}" style="width:110px">
-                            <button class="btn-export sim-add-btn" data-sem="${sem}" data-mat="${matiere}" data-uen="${ueName||''}" style="padding:6px 10px;">${this.lang == "fr" ? "Ajouter" : "Add"}</button>
-                        </div>
-                    </td>
-                </tr>
-                `;
-            });
-            html += '</tbody></table>';
-            return html;
+            // turning a in an array of strings, for easier comparison in case the elements of a are objects
+            const bStringified = [];
+            JSON.stringify(b).split("},{").forEach(e => {
+                if (e[0]=="[") {
+                    bStringified.push(e.split("[")[1]+"}")
+                }
+                else if (e.at(-1)=="]") {
+                    bStringified.push("{"+e.split("]")[0])
+                }
+                else
+                {
+                    bStringified.push("{"+e+"}")
+                }
+            })
+            // as a result, "["+bStringified.join(",")+"]" == JSON.stringify(b)
+
+            const b2 = [];
+            b.forEach((e) => {b2.push(e)})
+
+            aStringified.forEach((e, index) => {
+                if (bStringified.includes(e)) {
+                    out.common.push(a[index]);
+                    b2.pop(bStringified.indexOf(e));
+                }
+                else
+                {
+                    out.more.push(a[index]);
+                }
+            })
+            
+            out.missing = b2;
+
+            return out;
         }
+        
+        createNewGradesNotifDiv() {
+            if (document.querySelector(".new-grades-notif") == null && !this.ERROR503) 
+            {
+                const notifDiv = document.createElement("div");
+                notifDiv.className = "new-grades-notif";
+                notifDiv.innerHTML = this.lang == "fr" ? `NOUVELLE NOTE${this.newGrades.length>1 ? "S !" : " !"}` : `NEW GRADE${this.newGrades.length>1 ? "S!" : "!"}`;
+                notifDiv.innerHTML += `<button id="closeNewGradesNotif" style="padding-bottom: 3px;font-size: 10px;display: flex;width: 21px;height: 21px;position: fixed;right: calc(5% - -15px);border-radius: 5px;border: 3px solid #e0e6ff;justify-content: center;align-items: center;align-content: center;">❌
+                </button>`;
+                document.querySelector(".portlet-boundary").appendChild(notifDiv);
+                setTimeout(() => {if (this.newGrades.length > 0) {document.querySelector(".new-grades-notif").classList.add("on")}}, 10)
+            }
+            else if (this.ERROR503) {
+                const notifDiv = document.createElement("div");
+                notifDiv.className = "new-grades-notif";
+                notifDiv.innerHTML = `Debug mode: Service is unavailable`;
+                notifDiv.innerHTML += `<button id="closeNewGradesNotif" style="padding-bottom: 3px;font-size: 10px;display: flex;width: 21px;height: 21px;position: fixed;right: calc(5% - -15px);border-radius: 5px;border: 3px solid #e0e6ff;justify-content: center;align-items: center;align-content: center;">❌
+                </button>`;
+                document.body.appendChild(notifDiv);
+                setTimeout(() => {document.querySelector(".new-grades-notif").classList.add("on")}, 10)
+            }
+            else
+            {
+                document.querySelector(".new-grades-notif").innerHTML = this.lang == "fr" ? `NOUVELLE NOTE${this.newGrades.length>1 ? "S !" : " !"}` : `NEW GRADE${this.newGrades.length>1 ? "S!" : "!"}` +
+                `<button id="closeNewGradesNotif" style="padding-bottom: 3px;font-size: 10px;display: flex;width: 21px;height: 21px;position: fixed;right: calc(5% - -15px);border-radius: 5px;border: 3px solid #e0e6ff;justify-content: center;align-items: center;align-content: center;">❌
+                </button>`;
+            }
 
-        renderCompactView(notes, ueData, sem, ueName) {
-            const notesByMatiere = {};
-            const allMats = this.getAllMatieresForUE(sem, ueData, ueName);
-            allMats.forEach(m => { notesByMatiere[m] = []; });
-            notes.forEach(n => {
-                if(!notesByMatiere[n.matiere]) notesByMatiere[n.matiere]=[];
-                notesByMatiere[n.matiere].push(n);
-            });
+            document.querySelector(".new-grades-notif").onclick = () => {
+                document.querySelector(".new-grades-card").scrollIntoView({block: "center"})
+            };
 
-            let html = '<div style="margin-top:16px;">';
-            Object.keys(notesByMatiere).forEach(matiere => {
-                const matNotes = notesByMatiere[matiere];
-                const moyMat = this.moyennePonderee(matNotes);
-                const pct = ueData?.pourcentages?.[matiere] || 0;
-                html += `
-                <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #e5e5e5;">
-                    <div>
-                    <div style="font-weight:500;">${matiere}</div>
-                    <div style="font-size:12px;color:#666;">${matNotes.length===0 ? `• ${this.lang == "fr" ? "aucune publiée" : "no published grade"}` : `${matNotes.length} ${this.lang == "fr" ? "notes" : "grades"}`} • ${pct}% ${this.lang == "fr" ? "de l'UE" : "of the TU"} </div>
-                    </div>
-                    <div class="mat-moyenne ${moyMat==0 ? '' : `${moyMat>=10 ? 'good' : 'bad'}`}">${moyMat==0 ? " - " : moyMat}/20</div>
-                </div>
-                `;
-            });
-            html += '</div>';
-            return html;
-        }
-
-        renderUnclassifiedNotes(sem, matieres) {
-            let html = `
-            <table class="notes-table">
-                <thead>
-                    <tr>
-                        <th>${this.lang == "fr" ? "Matière" : "Subject"}</th>
-                        <th>${this.lang == "fr" ? "Titre" : "Title"}</th>
-                        <th>${this.lang == "fr" ? "Note" : "Grade"}</th>
-                        <th>${this.lang == "fr" ? "Coef" : "Coef"}</th>
-                        <th>${this.lang == "fr" ? "Date" : "Date"}</th>
-                        <th>${this.lang == "fr" ? "Prof" : "Teacher"}</th>
-                    </tr>
-                </thead>
-            <tbody>`;
-            matieres.forEach(matiere => {
-                const notes = (this.semestres[sem]||{})[matiere]||[];
-                const moy = this.moyennePonderee(notes);
-                notes.forEach((note, index) => {
-                    if (index === 0) {
-                        html += `
-                        <tr style="background:#fffbeb;">
-                            <td rowspan="${notes.length}" style="font-weight:600; vertical-align: top;">
-                                ${matiere}
-                                <div style="font-size:12px;color:#666;margin-top:4px;">Moy: ${moy}/20</div>
-                            </td>
-                            <td>${note.type}</td>
-                            <td><span class="note-value note-${this.getNoteColor(note.note)}">${note.note}/20</span></td>
-                            <td>${note.coef}%</td>
-                            <td class="note-date">${note.date}</td>
-                            <td>${note.prof}</td>
-                        </tr>
-                        `;
-                    } else {
-                        html += `
-                        <tr style="background:#fffbeb;">
-                            <td>${note.type}</td>
-                            <td><span class="note-value note-${this.getNoteColor(note.note)}">${note.note}/20</span></td>
-                            <td>${note.coef}%</td>
-                            <td class="note-date">${note.date}</td>
-                            <td>${note.prof}</td>
-                        </tr>
-                        `;
-                    }
-                });
-            });
-            html += '</tbody></table>';
-            return html;
         }
 
         calculateUENotes(sem, ueData, ueName){
@@ -710,8 +1540,8 @@
                 src.forEach(n=>{
                     notes.push({
                         ...n,
-                        coefOriginal: n.coef,
-                        coef: (n.coef||0) * (pct/100),
+                        coef: n.coef,
+                        coefInUE: (n.coef||0) * (pct/100),
                         matiere
                     });
                 });
@@ -732,11 +1562,639 @@
                 Object.keys(this.ueConfig[sem]).forEach(ueName => {
                     const ueNotes = this.calculateUENotes(sem, this.ueConfig[sem][ueName], ueName);
                     const moyenne = this.moyennePonderee(ueNotes);
-                    total++; if (moyenne >= 10) validated++;
+                    if (moyenne != 0 && ueNotes.length > 0) total++; if (moyenne >= 10) validated++;
                 });
             });
             return { validated, total };
         }
+
+        ueHeaderClickEvent(e) {
+            const header = e.target.closest('.ue-header');
+            const toggle = header.querySelector('.ue-toggle');
+            const ueContent = header.parentElement.querySelector(".ue-details");
+            const ueName = header.dataset.ue;
+
+            const sem = header.dataset.semester;
+            const ueConfig = this.ueConfig[sem] || {};
+            const ueData = ueConfig[ueName];
+
+            if (toggle.classList.contains('open')) {
+                ueContent.innerHTML = this.renderAllMatCardCompact(ueData, sem, ueName);
+                ueContent.classList.add('compact');
+                toggle.classList.remove('open');
+                this.setNotesTableTotalCoef()
+            } else {
+                ueContent.innerHTML = this.renderAllMatCardDetailed(ueData, sem, ueName);
+                ueContent.classList.remove('compact');
+                toggle.classList.add('open');
+                this.attachCheckboxListeners(ueContent);
+                this.setNotesTableTotalCoef()
+            }
+        }
+        
+        // MARK: EVENT LISTENERS
+        attachEventListeners() {
+
+            document.onwheel = (e) => {
+                console.log(
+                    "ONWHEEL EVENT\n" + 
+                    "Offset X: " + e.offsetX +      " | Offset Y: " + e.offsetY +       " | over " + e.target.className + "\n" + 
+                    "Delta X:  " + e.deltaX +       " | Delta Y:  " + e.deltaY +        "\n" + 
+                    "WDelta X: " + e.wheelDeltaX +  " | WDelta Y:   " + e.wheelDeltaY + "\n" + 
+                    "The mouse is at the following position:\n" + 
+                    "Client X: " + e.clientX +    " | Client Y: " + e.clientY 
+                )
+            }
+
+            document.onclick = (e) => {
+                // Toggle semestres
+                if (e.target.closest('.semester-header')) {
+                    const header = e.target.closest('.semester-header');
+                    const sem = header.dataset.semester;
+                    const content = document.getElementById(`sem-content-${sem}`);
+                    const toggle = header.querySelector('.semester-toggle');
+                    if (content.classList.contains('show')) {
+                        content.classList.remove('show'); toggle.classList.remove('open'); content.style.display = 'none';
+                    } else {
+                        content.classList.add('show'); toggle.classList.add('open'); content.style.display = 'block';
+                    }
+                }
+
+                // Collapse/Develop (fold/unfold) UEs
+                if (e.target.closest('.ue-header') && !e.target.closest('.ue-title.input') && !e.target.closest('.ue-delete-btn') && !this.ueHeaderNoMove) {
+                    this.ueHeaderClickEvent(e)
+                }
+
+                // Toggle intranet table
+                if (e.target.closest('.intranet-collapse')) {
+                    const header = e.target.closest('.intranet-collapse');
+                    const intranetTable = document.querySelector('.greyGridTable');
+                    const intranetToggle = header.querySelectorAll('.intranet-toggle');
+                    intranetToggle.forEach(t => {
+                        if (t.previousElementSibling == null){
+                            t.classList.toggle('openLeft')
+                        } else {
+                            t.classList.toggle('openRight');
+                        }
+                    });
+
+                    if (intranetTable.style.display == 'none') {
+                        intranetTable.style.display = 'block';
+                    } else {
+                        intranetTable.style.display = 'none';
+                    }
+                }
+            };
+
+
+            document.querySelectorAll(".any-input").forEach(input => {
+                input.onfocus = () => {document.onkeydown = null; document.onkeyup = null}
+                input.onblur = () => {this.generalKeyboardEvents()};
+            })
+            
+
+            document.querySelector(".new-grades-notif").onclick = () => {
+                document.querySelector(".new-grades-card").scrollIntoView({block: "center"})
+            };
+            document.getElementById("closeNewGradesNotif").onmousedown = () => {    // otherwise, clicking the close button of the notif card also clicks on the card itself (behind the button)
+                document.querySelector(".new-grades-notif").onclick = () => {};
+            };
+            document.getElementById("closeNewGradesNotif").onclick = () => {
+                document.querySelector(".new-grades-notif").classList.remove("on");
+            };
+            document.querySelector(".new-grades-mark-as-read").onclick = () => {
+                this.newGrades = [];
+                this.savedReadGrades = [];
+                this.notes.forEach(e => {this.savedReadGrades.push(e)})
+                localStorage.setItem("ECAM_DASHBOARD_SAVED_READ_GRADES", JSON.stringify(this.savedReadGrades))
+
+                if (document.querySelector(".new-grades-card").children.length > 1) {document.querySelector(".new-grades-card").children[1].remove()}
+                document.querySelector(".new-grades-card-title").innerHTML = this.lang == "fr" ? `Pas de nouvelle note` : `No new grade`;
+                document.querySelector(".new-grades-mark-as-read").parentElement.disabled = true;
+                document.querySelector(".new-grades-mark-as-read").parentElement.hidden = true;
+                document.querySelector(".new-grades-notif").classList.remove("on");
+
+                this.renderRecentGrades()
+                this.attachEventListeners()
+            };
+            document.querySelectorAll(".new-grades-matiere-card").forEach(card => {   // Scroll to the corresponding subject/grade on which the user clicked
+                card.onclick = e => {
+                    this.currentSemester = e.target.dataset.semestre;
+                    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                    document.getElementById('filter-tab-semester-'+this.currentSemester).classList.add('active');
+                    this.renderContent(false);
+                    localStorage.setItem("ECAM_DASHBOARD_DEFAULT_SEMESTER", this.currentSemester);
+
+                    document.getElementById("notes-table-"+e.target.dataset.subject).scrollIntoView({block: "center"});
+                    document.getElementById("notes-table-"+e.target.dataset.subject).onscrollend = ((subject) => {
+                        document.getElementById("notes-table-"+subject).classList.add("scroll-to");
+                        document.getElementById("notes-table-"+subject).onanimationend = () => {document.getElementById("notes-table-"+e.target.dataset.subject).classList.remove("scroll-to")}
+                    })(e.target.dataset.subject);
+                    
+                }
+            });
+
+            
+            // Filtres semestre
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.onclick = (e) => {
+                    if (!e.target.classList.contains('active'))
+                    {
+                        document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.currentSemester = e.target.dataset.filter;
+                        this.renderContent();
+                        this.attachEventListeners();
+                        localStorage.setItem("ECAM_DASHBOARD_DEFAULT_SEMESTER", this.currentSemester);
+                    }
+                };
+            });
+
+            // Toggle view mode
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.onclick = (e) => {
+                    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    this.viewMode = e.target.dataset.view;
+                    localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
+                    this.renderContent();
+                };
+            });
+
+            document.querySelectorAll('.matiere-coef-input-box').forEach(inputBox => {
+                inputBox.onchange = e => {
+                    const sem = e.target.dataset.semestre;
+                    const ueName = e.target.dataset.ue;
+                    const matiere = e.target.dataset.subject;
+                    const newCoef = e.target.value;
+                    this.ueConfig[sem][ueName].pourcentages[matiere] = newCoef;
+                    this.gradesDatas[sem][ueName].matieres[matiere].coef = newCoef;
+                    this.saveConfig();
+                    this.renderContent(false);
+                    this.attachEventListeners();
+                };
+            })
+
+            
+            // Attach custom on-drag action for the main average card and the matiere cards
+            /* let startX = 0, startY = 0, cursorX = 0, cursorY = 0;
+            document.querySelector(".main-average-card").onmousedown = (e) => {
+                // e.preventDefault();
+
+                const card = e.target.closest(".main-average-card");
+                const hitbox = card.querySelector(".hitbox");
+                hitbox.outerHTML = `
+                    <div class="hitbox" style="display: flex; position: absolute; width: calc(100% + 7px); height: calc(100% + 6px); top: -3px; left: -4px; z-index: 100"></div>
+                `;
+
+                startX = e.target.offsetLeft;
+                startY = e.target.offsetTop;
+
+                card.style.position = "fixed";
+                card.style.left = e.clientX - startX +"px";
+                card.style.top  = e.clientY - startY +"px";
+                
+                hitbox.onmouseup = (e) => {
+                    // e.preventDefault();
+                    card.style.position = "static";
+                    card.onmousemove = null;
+                    card.onmouseup = null;
+                    card.style.left = "";
+                    card.style.top = "";
+                    this.attachEventListeners();
+                };
+                hitbox.onmousemove = (e) => {
+                    // e.preventDefault();
+
+                    card.style.left = e.clientX - e.offsetX +"px";
+                    card.style.top  = e.clientY - e.offsetY +"px";
+                };
+            }; */
+
+            // ONDRAG cards event
+            const dropArea = document.querySelector(".drop-matiere-to-create-eu");
+            document.querySelectorAll(".matiere-card").forEach(matiereCard => {
+                let draggedElement = ``;
+                const isUnclassified = matiereCard.classList.contains("unclassified");
+                if (isUnclassified || matiereCard.classList.contains("compact")) {draggedElement = matiereCard;}
+                else {draggedElement = matiereCard.querySelector(".matiere-card-header");}
+                
+                draggedElement.ondragstart = (e) => {
+                    if (isUnclassified) {
+                        matiereCard.style.width = "50%";
+                        matiereCard.querySelector(".notes-table").style.display = "none";
+                        matiereCard.querySelector(".matiere-card-header").style.border = "none";
+                        matiereCard.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 20px 20px";
+                        document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, dropArea, tick, true);})
+                    } 
+                    else if (matiereCard.classList.contains("compact")) {
+                        matiereCard.style.width = "50%";
+                        matiereCard.querySelector(".notes-table-coef").style.display = "none";
+                        document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, dropArea, tick);})
+                    }
+                    else {
+                        matiereCard.style.width = "50%";
+                        matiereCard.querySelector(".matiere-card-header").children[0].style.width =                         "50%";
+                        matiereCard.querySelector(".matiere-card-header").querySelector(".notes-table-coef").style.width =  "50%";
+                        matiereCard.querySelector(".notes-table").style.display = "none";
+                        matiereCard.querySelector(".matiere-card-header").style.borderBottom = "none";
+                        matiereCard.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 20px 20px";
+                        document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, dropArea, tick);})
+                    }
+                    document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
+                    document.querySelector(".semester-content").style.gap = "20px";
+                    dropArea.style.border = "4px dashed #7fc2ff";
+                    dropArea.style.width = "30%";
+                    this.selectedMatiereCards = [];
+                    e.dataTransfer.setData("text", isUnclassified ? draggedElement.id : matiereCard.id)
+                };
+
+                draggedElement.ondragend = (e) => {
+                    if (isUnclassified) {
+                        matiereCard.style.width = "99%";
+                        matiereCard.querySelector(".notes-table").style.display = "table";
+                        matiereCard.querySelector(".matiere-card-header").style.border = "none";
+                        matiereCard.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 0px 0px";
+                    }
+                    else if (matiereCard.classList.contains("compact")) {
+                        matiereCard.style.width = "100%";
+                        matiereCard.querySelector(".notes-table-coef").style.display = "flex";
+                    }
+                    else {
+                        matiereCard.style.width = "100%";
+                        matiereCard.querySelector(".matiere-card-header").children[0].style.width =                         "42%";
+                        matiereCard.querySelector(".matiere-card-header").querySelector(".notes-table-coef").style.width =  "58%";
+                        matiereCard.querySelector(".notes-table").style.display = "table";
+                        matiereCard.querySelector(".matiere-card-header").style.borderBottom = "4px solid white";
+                        matiereCard.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 0px 0px";
+                    }
+                    
+                    if (this.selectedMatiereCards.length == 0) {
+                        setTimeout(() => {document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
+                        document.querySelector(".semester-content").style.gap = "0px";
+                        dropArea.style.border = "none";
+                        dropArea.style.width = "0%";
+                    }
+                };
+
+            })
+            if (this.selectedMatiereCards.length > 0) { 
+                this.selectedMatiereCards.forEach(selectedMatiereCard => {
+                    let draggedElement = "";
+                    const isUnclassified = selectedMatiereCard.classList.contains("unclassified");
+                    if (isUnclassified || selectedMatiereCard.classList.contains("compact")) {draggedElement = selectedMatiereCard;}
+                    else {draggedElement = selectedMatiereCard.querySelector(".matiere-card-header");}
+                    
+                    draggedElement.ondragstart = (e) => {
+                        this.selectedMatiereCards.forEach(selectedMatiereCard2 => {
+                            if (selectedMatiereCard2.classList.contains("unclassified")) {
+                                selectedMatiereCard2.style.width = "50%";
+                                setTimeout(() => {selectedMatiereCard2.querySelector(".notes-table").style.display = "none";}, 10)
+                                selectedMatiereCard2.querySelector(".matiere-card-header").style.border = "none";
+                                selectedMatiereCard2.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 20px 20px";
+                            
+                            } 
+                            else if (selectedMatiereCard2.classList.contains("compact")) {
+                                selectedMatiereCard2.style.width = "50%";
+                                selectedMatiereCard2.querySelector(".notes-table-coef").style.display = "none";
+                            }
+                            else {
+                                selectedMatiereCard2.style.width = "50%";
+                                selectedMatiereCard2.querySelector(".matiere-card-header").children[0].style.width =                         "50%";
+                                selectedMatiereCard2.querySelector(".matiere-card-header").querySelector(".notes-table-coef").style.width =  "50%";
+                                setTimeout(() => {selectedMatiereCard2.querySelector(".notes-table").style.display = "none";}, 10)
+                                selectedMatiereCard2.querySelector(".matiere-card-header").style.borderBottom = "none";
+                                selectedMatiereCard2.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 20px 20px";
+                            }
+                        })
+                        document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
+                        document.querySelector(".semester-content").style.gap = "20px";
+                        dropArea.style.border = "4px dashed #7fc2ff";
+                        dropArea.style.width = "30%";
+
+                        e.dataTransfer.setData("text", isUnclassified ? draggedElement.id : selectedMatiereCard.id)
+                    }
+
+                    draggedElement.ondragend = (e) => {
+                        this.selectedMatiereCards.forEach(selectedMatiereCard2 => {
+                            if (selectedMatiereCard2.classList.contains("unclassified")) {
+                                selectedMatiereCard2.style.width = "99%";
+                                selectedMatiereCard2.querySelector(".notes-table").style.display = "table";
+                                selectedMatiereCard2.querySelector(".matiere-card-header").style.border = "none";
+                                selectedMatiereCard2.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 0px 0px";
+                            
+                            } 
+                            else if (selectedMatiereCard2.classList.contains("compact")) {
+                                selectedMatiereCard2.style.width = "100%";
+                                selectedMatiereCard2.querySelector(".notes-table-coef").style.display = "flex";
+                            }
+                            else {
+                                selectedMatiereCard2.style.width = "100%";
+                                selectedMatiereCard2.querySelector(".matiere-card-header").children[0].style.width =                         "42%";
+                                selectedMatiereCard2.querySelector(".matiere-card-header").querySelector(".notes-table-coef").style.width =  "58%";
+                                selectedMatiereCard2.querySelector(".notes-table").style.display = "table";
+                                selectedMatiereCard2.querySelector(".matiere-card-header").style.borderBottom = "4px solid white";
+                                selectedMatiereCard2.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 0px 0px";
+                            }
+                        })
+                    }
+                })
+            }
+            dropArea.ondragover = (e) => {
+                e.preventDefault();
+                e.target.style.background = "#bdb8ff";
+            }
+            dropArea.ondragleave = (e) => {
+                e.preventDefault();
+                e.target.style.background = "";
+            }
+            dropArea.ondrop = (e) => {
+                e.preventDefault(); 
+                this.matiereCardToNewUE(e.dataTransfer.getData("text"));
+            }
+            
+            document.querySelectorAll(".drag-icon-for-detailed-matiere-card").forEach(dragIcon => {
+                dragIcon.onclick = (e) => {
+                    this.dragIconOnClickEvent(e, dropArea, dragIcon, "detailed")
+                };
+            });
+            document.querySelectorAll(".drag-icon-for-compact-matiere-card").forEach(dragIcon => {
+                dragIcon.onclick = (e) => {
+                    this.dragIconOnClickEvent(e, dropArea, dragIcon, "compact")
+                };
+            });
+            document.querySelectorAll(".drag-icon-for-unclassified-matiere-card").forEach(dragIcon => {
+                dragIcon.onclick = (e) => {
+                    this.dragIconOnClickEvent(e, dropArea, dragIcon, "unclassified")
+                };
+            });
+
+            document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {
+                tick.onclick = (e) => {
+                    this.tickIconOnClickEvent(e, dropArea, tick, "detailed")
+                };
+            });
+            document.querySelectorAll(".ticked-compact-matiere-card").forEach(tick => {
+                tick.onclick = (e) => {
+                    this.tickIconOnClickEvent(e, dropArea, tick, "compact")
+                };
+            });
+            document.querySelectorAll(".ticked-unclassified-matiere-card").forEach(tick => {
+                tick.onclick = (e) => {
+                    this.tickIconOnClickEvent(e, dropArea, tick, "unclassified")
+                };
+            });
+
+            document.querySelectorAll(".add-a-matiere-card").forEach(addDiv => {
+                addDiv.onmouseenter = (e) => {
+                    addDiv.querySelector(".add-a-matiere-card-plus.left").style.transform =  "rotate(-90deg)";
+                    addDiv.querySelector(".add-a-matiere-card-plus.right").style.transform = "rotate(90deg)";
+                }
+                addDiv.onmouseleave = (e) => {
+                    addDiv.querySelector(".add-a-matiere-card-plus.left").style.transform =  "";
+                    addDiv.querySelector(".add-a-matiere-card-plus.right").style.transform = "";
+                }
+            })
+
+            // Prevent dragging ue-header when interacting with ue-title input
+            document.querySelectorAll('.ue-header').forEach(header => {
+                header.addEventListener('dragstart', (e) => {
+                    if (e.target.closest('.ue-title.input')) {
+                        e.preventDefault();
+                    }
+                });
+            });
+
+            document.querySelector(".modules-content").querySelectorAll(".ue-delete-btn").forEach(btn => {
+                btn.onclick = e => {
+                    const sem = e.target.dataset.semester;
+                    const ueName = e.target.dataset.ue;
+
+                    delete this.ueConfig[sem][ueName]
+                    if (this.ueConfig[sem] == {}) {delete this.ueConfig[sem]}
+
+                    this.saveConfig()
+                    this.renderContent()
+                    this.attachEventListeners();
+                }
+            })
+
+
+            // Change UEs name
+            document.querySelectorAll(".ue-title.input").forEach(input => {
+                input.onmouseenter = () => {document.querySelectorAll(".ue-header").forEach(card => {card.draggable = false})}
+                input.onmouseleave = () => {document.querySelectorAll(".ue-header").forEach(card => {card.draggable = true;})}
+                input.onchange = (e) => this.ueTitleInputChangeAction(e);
+            });
+
+            // Change to English
+            document.getElementById('en-lang-btn').onclick = () => {
+                if (this.lang == "fr")
+                {
+                    this.lang = "en";
+                    localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
+                    document.getElementById('fr-lang-btn').classList.remove('active')
+                    document.getElementById('en-lang-btn').classList.add('active')
+                    this.renderContent();
+                }
+            };
+
+            // Change to French
+            document.getElementById('fr-lang-btn').onclick = () => {
+                if (this.lang == "en")
+                {
+                    this.lang = "fr";
+                    localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
+                    document.getElementById('fr-lang-btn').classList.add('active')
+                    document.getElementById('en-lang-btn').classList.remove('active')
+                    this.renderContent();
+                }
+            };
+
+            // Import
+            document.getElementById('importBtn').onclick = () => this.importData();
+
+            // Edit mode
+            document.getElementById('editModeBtn').onclick = () => {
+                this.editMode = !this.editMode;
+                this.renderContent();
+                this.attachEventListeners();
+            };
+
+            // Export
+            document.getElementById('exportBtn').onclick = () => this.exportData();
+
+        }
+
+        dragIconOnClickEvent(e, dropArea, dragIcon, type) {
+            let matiereCard =  e.target.parentElement.parentElement.parentElement;
+            if (type=="detailed") 
+                {matiereCard = e.target.parentElement.parentElement.parentElement.parentElement.parentElement;}
+
+            let matiereCardIsAlreadySelected = false;
+            this.selectedMatiereCards.forEach(selectedMatiereCard => {if (selectedMatiereCard == matiereCard) matiereCardIsAlreadySelected = true;})
+            if (!matiereCardIsAlreadySelected) {this.selectedMatiereCards.push(matiereCard)}
+
+            document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
+            document.querySelectorAll(".ue-title.input").forEach(input => {
+                input.parentElement.style.transition = "width 0.3s ease";
+                input.parentElement.style.width = "30%";
+            })
+            document.querySelectorAll(".ue-matiere-total-coef-value").forEach(totalCoef => {
+                totalCoef.parentElement.style.transition = "width 0.3s ease";
+                totalCoef.parentElement.style.width = "56%";
+            })
+            document.querySelector(".semester-content").style.gap = "20px";
+            dropArea.style.border = "4px dashed #7fc2ff";
+            dropArea.style.width = "30%";
+
+            dragIcon.outerHTML = `<div class="ticked-${type}-matiere-card" style="height: 23px; width: 23px; font-size: 35px; color: #004cff; cursor:pointer; user-select:none">✔</div>`;
+
+            const selectionNotifDiv = document.createElement("div");
+            selectionNotifDiv.className = `selected-matiere-card-notif-div`;
+            selectionNotifDiv.id = `selected-matiere-card-notif-div-for-${type}-${matiereCard.dataset.subject}`;
+            selectionNotifDiv.dataset.type = type;
+            selectionNotifDiv.dataset.subject = matiereCard.dataset.subject;
+            selectionNotifDiv.innerHTML = `${">"}<span style="font-weight: 600; font-size: 14px; color: white">${matiereCard.dataset.subject}</span><span>${this.lang == "fr" ? `est sélectionné!` : `is selected!`}</span>`;
+
+            let highestWidth = 0;
+            document.querySelector(".selected-matiere-card-notif-container").appendChild(selectionNotifDiv);
+            document.querySelectorAll(".selected-matiere-card-notif-div").forEach(notifDiv => {if (highestWidth < notifDiv.clientWidth) highestWidth = notifDiv.clientWidth;})
+            document.querySelector(".selected-matiere-card-notif-container").style.left = `calc(99.5% - ${100 * highestWidth/document.body.clientWidth}%`;
+
+            setTimeout(()=>{selectionNotifDiv.classList.add("on")}, 10)
+
+            this.attachEventListeners()
+        }
+
+        tickIconOnClickEvent(e, dropArea, tick, type) {
+            e.preventDefault();
+            let matiereCard = e.target.parentElement.parentElement.parentElement;
+            if (type=="detailed") {matiereCard = e.target.parentElement.parentElement.parentElement.parentElement.parentElement}
+            this.selectedMatiereCards.forEach((selectedMatiereCard, index) => {
+                if (selectedMatiereCard == matiereCard) 
+                    this.selectedMatiereCards.splice(index, 1)
+                }
+            )
+
+            if (this.selectedMatiereCards.length == 0) {
+                setTimeout(() => {document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
+                setTimeout(() => {document.querySelectorAll(".notes-table-classAvg").forEach(classAvg => {classAvg.style.display = "table-cell"})}, 100)
+                document.querySelector(".semester-content").style.gap = "0px";
+                dropArea.style.border = "none";
+                dropArea.style.width = "0%";
+                document.querySelectorAll(".ue-title.input").forEach(input => {
+                    input.parentElement.style.transition = "";
+                    input.parentElement.style.width = "42%";
+                })
+                document.querySelectorAll(".ue-matiere-total-coef-value").forEach(totalCoef => {
+                    totalCoef.parentElement.style.transition = "";
+                    totalCoef.parentElement.style.width = "47%";
+                })
+            }
+
+            document.getElementById(`selected-matiere-card-notif-div-for-${type}-${matiereCard.dataset.subject}`).classList.remove("on");
+            setTimeout(()=>{document.getElementById(`selected-matiere-card-notif-div-for-${type}-${matiereCard.dataset.subject}`).remove();}, 300)
+            setTimeout(()=>{
+                let highestWidth = 0;
+                document.querySelectorAll(".selected-matiere-card-notif-div").forEach(notifDiv => {if (highestWidth < notifDiv.clientWidth) highestWidth = notifDiv.clientWidth;})
+                document.querySelector(".selected-matiere-card-notif-container").style.left = `calc(99.5% - ${100 * highestWidth/document.body.clientWidth}%`;
+            }, 310)
+            
+            tick.outerHTML = this.draggableIcon(`${type}-matiere-card`);
+            this.attachEventListeners();
+        }
+
+        matiereCardToNewUE(cardId) {
+            const card = document.getElementById(cardId);
+            if (card.classList.contains('matiere-card')) {
+                let cardIsSelected = false;
+                this.selectedMatiereCards.forEach(selectedMatiereCard => {if (selectedMatiereCard.id == card.id) cardIsSelected = true;})
+                const sem = card.dataset.semester;
+                let subject, oldUeName, manageSim = true;
+                if (!this.ueConfig[sem]) this.ueConfig[sem] = {}; if (!this.sim[sem]) manageSim = false;
+                let newUeName = "Module 1"; let count = 1;
+                while (this.ueConfig[sem][newUeName]) {count++; newUeName = `Module ${count}`;}
+
+
+                // Adding a [newUeName] property to this.ueConfig as its first property, so that any new module appears first in the module section
+                this.ueConfig[sem] = {[newUeName]: {matieres: [], pourcentages: {}}, ...this.ueConfig[sem]}
+                
+                if (!card.classList.contains("unclassified")) {
+                }
+
+                if (!cardIsSelected) {
+                    subject = card.dataset.subject;
+                    this.ueConfig[sem][newUeName].matieres.push(subject);
+                    this.ueConfig[sem][newUeName].pourcentages[subject] = 100;
+
+                    if (!card.classList.contains("unclassified")) {
+                        oldUeName = card.dataset.ue
+                        subject = card.dataset.subject
+                        const subjectIndex = this.ueConfig[sem][oldUeName].matieres.indexOf(subject);
+                        this.ueConfig[sem][oldUeName].matieres.splice(subjectIndex,1);
+                        delete this.ueConfig[sem][oldUeName].pourcentages[subject];
+                        if (manageSim) {if (!this.sim[sem][oldUeName]) manageSim = false;}
+                        if (manageSim) {
+                            this.sim[sem] = {[newUeName]: {}, ...this.sim[sem]}
+                            this.sim[sem][newUeName][subject] = [];
+                            this.sim[sem][oldUeName][subject].forEach((_, index) => {
+                                this.sim[sem][newUeName][subject].push(this.sim[sem][oldUeName][subject][index].shift())
+                            })
+                            this.deleteUnusedSimPath(sem, oldUeName, subject);
+                            this.saveSim();
+                        }
+                    }
+                }
+                else
+                {
+                    let remainingCoef = 100;
+                    this.selectedMatiereCards.forEach((selectedMatiereCard, index) => {
+                        subject = selectedMatiereCard.dataset.subject;
+
+                        this.ueConfig[sem][newUeName].matieres.push(subject);
+                        this.ueConfig[sem][newUeName].pourcentages[subject] = Math.round(100/this.selectedMatiereCards.length);
+                        if (this.selectedMatiereCards.length == index+1) {
+                            this.ueConfig[sem][newUeName].pourcentages[subject] = remainingCoef;
+                        }
+                        remainingCoef -= this.ueConfig[sem][newUeName].pourcentages[subject];
+
+                        if (!selectedMatiereCard.classList.contains("unclassified")) {
+                            oldUeName = selectedMatiereCard.dataset.ue
+                            subject = selectedMatiereCard.dataset.subject
+                            const subjectIndex = this.ueConfig[sem][oldUeName].matieres.indexOf(subject);
+                            this.ueConfig[sem][oldUeName].matieres.splice(subjectIndex,1);
+                            delete this.ueConfig[sem][oldUeName].pourcentages[subject];
+                            if (manageSim) {if (!this.sim[sem][oldUeName][subject]) manageSim = false}
+                            if (manageSim) {
+                                this.sim[sem][newUeName][subject] = [];
+                                this.sim[sem][oldUeName][subject].forEach((_, index) => {
+                                    this.sim[sem][newUeName][subject].push(this.sim[sem][oldUeName][subject][index].shift())
+                                })
+                                this.deleteUnusedSimPath(sem, oldUeName, subject);
+                                this.saveSim();
+                            }
+                        }
+                    })
+                }
+
+                this.selectedMatiereCards = [];
+                this.saveConfig();
+                this.renderContent();
+                this.attachEventListeners();
+                document.getElementById(`ue-card-${newUeName}-in-semester-${sem}`).scrollIntoView();
+            }
+        }
+
+        ueTitleInputChangeAction(e) {
+            const sem = e.target.dataset.semester;
+            const ueName = e.target.dataset.ue;
+            const regExpExec = RegExp(`${ueName}`, "ig").exec(JSON.stringify(this.ueConfig[sem])); 
+            this.ueConfig[sem] = JSON.parse('{"'+e.target.value+ regExpExec.input.slice(regExpExec.index+regExpExec[0].length,regExpExec.input.length));
+            this.saveConfig()
+            this.renderContent(false)
+        }
+
 
         // ======== MODAL CONFIG ========
         openConfigModal() {
@@ -775,7 +2233,7 @@
                     <div class="config-main">
                         <div class="create-ue-section">
                             <div class="create-ue-header">
-                                <input type="text" class="ue-name-input" id="newUEName" placeholder="Nom de l'UE (ex: UE1 - Sciences)">
+                                <input type="text" class="ue-name-input any-input" id="newUEName" placeholder="Nom de l'UE (ex: UE1 - Sciences)">
                                 <button class="create-ue-btn" id="seedNewUEBtn">Remplir depuis la sélection</button>
                                 <button class="create-ue-btn" id="createUEBtn">Créer l'UE</button>
                             </div>
@@ -841,7 +2299,7 @@
                     ${(ue.matieres||[]).map(m => `
                     <div class="matiere-in-ue" data-matiere="${m}">
                         <div class="matiere-ue-name">${m}</div>
-                        <input type="number" class="percentage-input" value="${ue.pourcentages[m] || 0}" min="0" max="100" data-ue="${ueName}" data-matiere="${m}" data-sem="${sem}">
+                        <input type="number" class="percentage-input any-input" value="${ue.pourcentages[m] || 0}" min="0" max="100" data-ue="${ueName}" data-matiere="${m}" data-sem="${sem}">
                         <button class="remove-matiere-btn" data-ue="${ueName}" data-matiere="${m}" data-sem="${sem}">Retirer</button>
                     </div>
                     `).join('')}
@@ -851,7 +2309,7 @@
                     <button class="auto-adjust-btn" data-ue="${ueName}" data-sem="${sem}">Ajuster à 100%</button>
                 </div>
                 <div style="display:flex;gap:8px;align-items:center;margin-top:8px;">
-                    <input type="text" placeholder="Nouvelle matière (fantôme)" class="ue-ghost-name" data-ue="${ueName}" data-sem="${sem}" style="flex:1;padding:8px;border:1px solid #e5e5e5;border-radius:8px;">
+                    <input type="text" placeholder="Nouvelle matière (fantôme)" class="ue-ghost-name any-input" data-ue="${ueName}" data-sem="${sem}" style="flex:1;padding:8px;border:1px solid #e5e5e5;border-radius:8px;">
                     <button class="auto-adjust-btn ue-ghost-add" data-ue="${ueName}" data-sem="${sem}">Ajouter matière</button>
                 </div>
                 `;
@@ -860,11 +2318,11 @@
 
             // Listeners colonne gauche
             pool.querySelectorAll('.pool-checkbox').forEach(cb => {
-                cb.addEventListener('change', (e) => {
+                cb.onchange = (e) => {
                     const mat = e.target.dataset.matiere;
                     if (e.target.checked) this.tempSelection[sem].add(mat);
                     else this.tempSelection[sem].delete(mat);
-                });
+                }
             });
 
             // Listeners cartes UEs
@@ -873,31 +2331,31 @@
 
         // ======== Listeners Config ========
         attachConfigListeners() {
-            document.getElementById('closeConfig').addEventListener('click', () => {
+            document.getElementById('closeConfig').onclick = () => {
                 document.getElementById('configModal').style.display = 'none';
-                this.renderContent();
-            });
+                this.renderContent(true);
+            };
 
             const semSelect = document.getElementById('configSemSelect');
-            semSelect.addEventListener('change', (e) => this.renderConfigContent(e.target.value));
+            semSelect.onchange = (e) => this.renderConfigContent(e.target.value);
 
             // Sélection tout/aucun
-            document.getElementById('selectAll').addEventListener('click', () => {
+            document.getElementById('selectAll').onclick = () => {
                 const sem = semSelect.value;
                 const cbs = document.querySelectorAll('#matieresPool .pool-checkbox');
                 cbs.forEach(cb => { cb.checked = true; this.tempSelection[sem].add(cb.dataset.matiere); });
-            });
-            document.getElementById('clearAll').addEventListener('click', () => {
+            };
+            document.getElementById('clearAll').onclick = () => {
                 const sem = semSelect.value;
                 const cbs = document.querySelectorAll('#matieresPool .pool-checkbox');
                 cbs.forEach(cb => { cb.checked = false; this.tempSelection[sem].delete(cb.dataset.matiere); });
-            });
+            };
 
             // Supprimer la note simulée
             document.getElementById('')
 
             // Pré-remplir la nouvelle UE avec la sélection
-            document.getElementById('seedNewUEBtn').addEventListener('click', () => {
+            document.getElementById('seedNewUEBtn').onclick = () => {
                 const sem = semSelect.value;
                 const sel = Array.from(this.tempSelection[sem]);
                 const container = document.getElementById('newUEContainer');
@@ -910,7 +2368,7 @@
                 container.innerHTML = sel.map((m, i) => `
                 <div class="matiere-in-ue" data-matiere="${m}">
                     <div class="matiere-ue-name">${m}</div>
-                    <input type="number" class="percentage-input newUE" value="${i === sel.length - 1 ? 100 - pct * (sel.length - 1) : pct}" min="0" max="100">
+                    <input type="number" class="percentage-input newUE any-input" value="${i === sel.length - 1 ? 100 - pct * (sel.length - 1) : pct}" min="0" max="100">
                     <button class="remove-matiere-btn remove-new" data-matiere="${m}">Retirer</button>
                 </div>
                 `).join('');
@@ -918,28 +2376,28 @@
                 document.getElementById('newUETotal').style.display = 'flex';
 
                 container.querySelectorAll('.remove-new').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
+                    btn.onclick = (e) => {
                         const row = e.target.closest('.matiere-in-ue');
                         row.remove();
                         this.updateNewUETotal();
-                    });
+                    };
                 });
                 container.querySelectorAll('.percentage-input.newUE').forEach(inp => {
-                    inp.addEventListener('change', () => this.updateNewUETotal());
+                    inp.onchange = () => this.updateNewUETotal();
                 });
-            });
+            };
 
             // Equalize new UE to 100
-            document.getElementById('newUEAutoAdjust').addEventListener('click', () => {
+            document.getElementById('newUEAutoAdjust').onclick = () => {
                 const inputs = Array.from(document.querySelectorAll('.percentage-input.newUE'));
                 if (inputs.length === 0) return;
                 const pct = Math.floor(100 / inputs.length);
                 inputs.forEach((inp, i) => { inp.value = (i === inputs.length - 1 ? 100 - pct * (inputs.length - 1) : pct); });
                 this.updateNewUETotal();
-            });
+            };
 
             // Créer l’UE
-            document.getElementById('createUEBtn').addEventListener('click', () => {
+            document.getElementById('createUEBtn').onclick = () => {
                 const sem = semSelect.value;
                 const name = document.getElementById('newUEName').value.trim();
                 if (!name) { alert('Nom d’UE requis'); return; }
@@ -964,7 +2422,7 @@
                 document.getElementById('newUETotal').style.display = 'none';
 
                 this.renderConfigContent(sem);
-            });
+            };
         }
 
         updateNewUETotal() {
@@ -978,7 +2436,7 @@
         attachExistingUEListeners() {
             // Ajout de la sélection aux UEs
             document.querySelectorAll('.add-selected-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
+                btn.onclick = (e) => {
                     const sem = e.target.dataset.sem;
                     const ue = e.target.dataset.ue;
                     const selected = Array.from(this.tempSelection[sem] || []);
@@ -999,12 +2457,12 @@
                     });
                     this.saveConfig();
                     this.renderConfigContent(sem);
-                });
+                };
             });
 
             // Supprimer UE
-            document.querySelectorAll('.ue-delete-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
+            document.querySelector(".ue-edit-header").querySelectorAll('.ue-delete-btn').forEach(btn => {
+                btn.onclick = (e) => {
                     const ue = e.target.dataset.ue;
                     const sem = e.target.dataset.sem;
                     if (confirm(`Supprimer l'UE "${ue}" ?`)) {
@@ -1012,12 +2470,12 @@
                         this.saveConfig();
                         this.renderConfigContent(sem);
                     }
-                });
+                };
             });
 
             // Retirer matière d’une UE
             document.querySelectorAll('.remove-matiere-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
+                btn.onclick = (e) => {
                     const ue = e.target.dataset.ue;
                     const sem = e.target.dataset.sem;
                     const mat = e.target.dataset.matiere;
@@ -1036,12 +2494,12 @@
                         this.saveConfig();
                         this.renderConfigContent(sem);
                     }
-                });
+                };
             });
 
             // Modifier pourcentages dans UEs
             document.querySelectorAll('.percentage-input').forEach(input => {
-                input.addEventListener('change', (e) => {
+                input.onchange = (e) => {
                     const ue = e.target.dataset.ue;
                     const matiere = e.target.dataset.matiere;
                     const sem = e.target.dataset.sem;
@@ -1055,12 +2513,12 @@
                         totalDiv.className = `percentage-total ${totalPct === 100 ? 'valid' : 'invalid'}`;
                         totalDiv.querySelector('span').textContent = `Total: ${totalPct}%`;
                     }
-                });
+                };
             });
 
             // Auto adjust à 100%
             document.querySelectorAll('.auto-adjust-btn[data-ue]').forEach(btn => {
-                btn.addEventListener('click', (e) => {
+                btn.onclick = (e) => {
                     const ue = e.target.dataset.ue;
                     const sem = e.target.dataset.sem;
                     const obj = this.ueConfig[sem][ue];
@@ -1072,12 +2530,12 @@
                     });
                     this.saveConfig();
                     this.renderConfigContent(sem);
-                });
+                };
             });
 
             // Ajouter matière fantôme
             document.querySelectorAll('.ue-ghost-add').forEach(btn=>{
-                btn.addEventListener('click',(e)=>{
+                btn.onclick = (e)=>{
                     let sem = e.target.dataset.sem;
                     let ue = e.target.dataset.ue;
                     let inp = e.target.parentElement.querySelector(`.ue-ghost-name[data-ue="${ue}"][data-sem="${sem}"]`);
@@ -1099,142 +2557,10 @@
                     } else {
                         alert('Matière déjà présente');
                     }
-                });
+                };
             });
         }
 
-        attachEventListeners() {
-
-            // Filtres semestre
-            document.querySelectorAll('.filter-tab').forEach(tab => {
-                tab.addEventListener('click', (e) => {
-                    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-                    e.target.classList.add('active');
-                    this.currentSemester = e.target.dataset.filter;
-                    this.renderContent();
-                    localStorage.setItem("ECAM_DEFAULT_SEMESTER", this.currentSemester);
-                });
-            });
-
-            // Toggle vue
-            document.querySelectorAll('.view-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-                    e.target.classList.add('active');
-                    this.viewMode = e.target.dataset.view;
-                    localStorage.setItem("ECAM_DEFAULT_VIEW_MODE", this.viewMode);
-                    this.renderContent();
-                });
-            });
-
-            // Toggle semestres
-            document.addEventListener('click', (e) => {
-                if (e.target.closest('.semester-header')) {
-                    const header = e.target.closest('.semester-header');
-                    const sem = header.dataset.semester;
-                    const content = document.getElementById(`sem-content-${sem}`);
-                    const toggle = header.querySelector('.semester-toggle');
-                    if (content.classList.contains('show')) {
-                        content.classList.remove('show'); toggle.classList.remove('open'); content.style.display = 'none';
-                    } else {
-                        content.classList.add('show'); toggle.classList.add('open'); content.style.display = 'block';
-                    }
-                }
-            });
-
-            // Toggle UEs
-            document.addEventListener('click', (e) => {
-                if (e.target.closest('.ue-header')) {
-                    const header = e.target.closest('.ue-header');
-                    const toggle = header.querySelector('.ue-toggle');
-                    const content = header.nextElementSibling;
-                    const sem = header.parentElement.parentElement.parentElement.previousElementSibling.dataset.semester;
-                    const ueName = header.children[0].innerText;
-                    const ueConfig = this.ueConfig[sem] || {};
-                    const ueData = ueConfig[ueName];
-                    const notes = this.calculateUENotes(sem, ueData, ueName);
-
-                    if (toggle.classList.contains('open')) {
-                        // Switching to compact view
-                        this.clearIgnoredGradesForUE(sem, ueName);
-                        // Recalculate notes with cleared ignored grades
-                        const updatedNotes = this.calculateUENotes(sem, ueData, ueName);
-                        const moyenne = this.moyennePonderee(updatedNotes);
-                        // Update the UE average in the header
-                        const moyenneDiv = header.querySelector('.ue-moyenne');
-                        moyenneDiv.textContent = `${moyenne}/20 `;
-                        moyenneDiv.className = `ue-moyenne ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'good' : 'bad'}`}`;
-                        moyenneDiv.appendChild(toggle);
-                        header.nextElementSibling.innerHTML = this.renderCompactView(updatedNotes, ueData, sem, ueName);
-                        content.classList.add('compact');
-                        toggle.classList.remove('open');
-                    } else {
-                        // Switching back to detailed view
-                        header.nextElementSibling.innerHTML = this.renderNotesTable(notes, ueData, sem, ueName);
-                        content.classList.remove('compact');
-                        toggle.classList.add('open');
-                        // Reattach checkbox listeners for the detailed view
-                        this.attachCheckboxListeners(content, sem);
-                    }
-                }
-            });
-
-            // Toggle intranet table
-            document.addEventListener('click', (e) => {
-                if (e.target.closest('.intranet-collapse')) {
-                    const header = e.target.closest('.intranet-collapse');
-                    const intranetTable = document.querySelector('.greyGridTable');
-                    const intranetToggle = header.querySelectorAll('.intranet-toggle');
-                    intranetToggle.forEach(t => {
-                        if (t.previousElementSibling == null){
-                            t.classList.toggle('openLeft')
-                        } else {
-                            t.classList.toggle('openRight');
-                        }
-                    });
-
-                    if (intranetTable.style.display == 'none') {
-                        intranetTable.style.display = 'block';
-                    } else {
-                        intranetTable.style.display = 'none';
-                    }
-                }
-            });
-
-            // Change language to English
-            document.getElementById('en-lang-btn').addEventListener('click', () => {
-                if (this.lang == "fr")
-                {
-                    this.lang = "en";
-                    localStorage.setItem("ECAM_DEFAULT_LANGUAGE", this.lang)
-                    document.getElementById('fr-lang-btn').classList.remove('active')
-                    document.getElementById('en-lang-btn').classList.add('active')
-                    this.renderContent();
-                }
-            });
-
-            // Change language to French
-            document.getElementById('fr-lang-btn').addEventListener('click', () => {
-                if (this.lang == "en")
-                {
-                    this.lang = "fr";
-                    localStorage.setItem("ECAM_DEFAULT_LANGUAGE", this.lang)
-                    document.getElementById('fr-lang-btn').classList.add('active')
-                    document.getElementById('en-lang-btn').classList.remove('active')
-                    this.renderContent();
-                }
-            });
-
-            // Import
-            document.getElementById('importBtn').addEventListener('click', () => this.importData());
-
-            // Config
-            document.getElementById('configBtn').addEventListener('click', () => this.openConfigModal());
-
-            // Export
-            document.getElementById('exportBtn').addEventListener('click', () => this.exportData());
-        }
-        
         importData(file) {
             return new Promise((resolve, reject) => {
                 const handleText = (text) => {
@@ -1245,7 +2571,7 @@
                         if (parsed && parsed.ueConfig) {
                             try {
                                 this.ueConfig = parsed.ueConfig || {};
-                                localStorage.setItem('ECAM_UE_CONFIG_V2', JSON.stringify(this.ueConfig));
+                                localStorage.setItem('ECAM_DASHBOARD_UE_CONFIG', JSON.stringify(this.ueConfig));
                             } catch (e) {
                                 // ignore storage errors
                             }
@@ -1266,7 +2592,7 @@
                             });
                             // merge with existing sim to preserve structure where file doesn't provide
                             this.sim = Object.assign({}, this.sim || {}, newSim);
-                            try { localStorage.setItem('ECAM_SIM_NOTES_V1', JSON.stringify(this.sim)); } catch (e) {}
+                            try { localStorage.setItem('ECAM_DASHBOARD_SIM_NOTES', JSON.stringify(this.sim)); } catch (e) {}
                         }
 
                         // Re-render dashboard to reflect imported config
@@ -1300,14 +2626,14 @@
                 input.accept = 'application/json,.json';
                 input.style.display = 'none';
                 document.body.appendChild(input);
-                input.addEventListener('change', (e) => {
+                input.onchange = (e) => {
                     const f = e.target.files && e.target.files[0];
                     if (!f) { document.body.removeChild(input); reject(new Error('No file selected')); return; }
                     const reader = new FileReader();
                     reader.onload = (ev) => { handleText(ev.target.result); document.body.removeChild(input); };
                     reader.onerror = (ev) => { document.body.removeChild(input); reject(ev); };
                     reader.readAsText(f);
-                });
+                };
                 input.click();
             });
         }
@@ -1339,7 +2665,91 @@
             a.click();
             URL.revokeObjectURL(url);
         }
+
+
+
+        // MARK: General KBoardEvents
+        generalKeyboardEvents() {
+            document.onkeydown = (e) => {
+                if (e.key === "Shift") {
+                    document.onkeydown = (e) => {
+                        if (e.key === "E") {
+                            this.editMode = !this.editMode;
+
+                            this.scrollToClientHighestElemWithClassWithTimeout("ue-card");
+                            this.renderContent();
+                            this.attachEventListeners();
+                        }
+                        else if (e.key === "D") {
+                            this.viewMode = this.viewMode == "detailed" ? "compact" : "detailed";
+                            if (this.viewMode == "detailed") {
+                                document.getElementById('view-btn-detailed').classList.add("active")
+                                document.getElementById('view-btn-compact').classList.remove("active")
+                            }
+                            else
+                            {
+                                document.getElementById('view-btn-detailed').classList.remove("active")
+                                document.getElementById('view-btn-compact').classList.add("active")
+                            }                            
+                            localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
+
+                            this.scrollToClientHighestElemWithClassWithTimeout("ue-card");
+                            this.renderContent();                      
+                        }
+                        else if (e.key === "L") {
+                            if (this.lang == "fr")
+                            {
+                                this.lang = "en";
+                                localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
+                                document.getElementById('fr-lang-btn').classList.remove('active')
+                                document.getElementById('en-lang-btn').classList.add('active')
+
+                                this.scrollToClientHighestElemWithClassWithTimeout("ue-card");
+                                this.renderContent();
+                            }
+                            else if (this.lang == "en")
+                            {
+                                this.lang = "fr";
+                                localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
+                                document.getElementById('fr-lang-btn').classList.add('active')
+                                document.getElementById('en-lang-btn').classList.remove('active')
+
+                                this.scrollToClientHighestElemWithClassWithTimeout("ue-card");
+                                this.renderContent();
+                            }
+                        }
+                        else if (e.key === "R") {
+                            console.log("alas, nothing happens...")
+                        }
+                    };
+                }
+            };
+
+            document.onkeyup = (e) => {
+                if (e.key === "Shift") this.generalKeyboardEvents();
+            };
+        };
+        
+        scrollToClientHighestElemWithClassWithTimeout(className, timeout=100) {
+            this.scrollToThisElem = ""; let found = false;
+            document.querySelectorAll(`.${className}`).forEach(elem => {
+                const coords = elem.getBoundingClientRect();
+                const meanClientTop = (coords.top + coords.bottom)/2;
+                if ((meanClientTop > 0) && !found) {this.scrollToThisElem = elem.id; found = true;}
+            })
+            setTimeout(() => {document.getElementById(this.scrollToThisElem).scrollIntoView({behavior: "smooth", block: "center"});}, timeout)
+        }
+
+        draggableIcon(source="matiere-card", height=25) {return `<img class="drag-icon-for-${source}" draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/960px-Hamburger_icon.svg.png" alt="☰" style="height:${height}px; cursor:pointer; user-select:none; ${source.match(/-matiere-card/ig) ? "border: 2px solid; border-radius: 8px;" : ""}">`}
     }
 
-    window.addEventListener('load', () => { new ECAMDashboard(); });
+    if (ERROR503) {
+        document.body.children[0].remove(); document.body.children[0].remove(); document.body.children[0].remove(); 
+        new ECAMDashboard();
+    }
+    else
+    {
+        window.onload = () => { new ECAMDashboard(); };
+    }
+    
 })();
