@@ -444,7 +444,7 @@
                     if (this.ueConfig[sem].ues) {
                         this.ueConfig[sem].ues.forEach((ueData, ueIndex) => 
                         {
-                            this.gradesDatas[sem].ues.push({name: ueData.name, average: 0, classAvg: 0, totalMatsCoef: 0, totalGradesCoef: 0, nbDisabledGrades: 0, nbSimGrades: 0, totalSimGradesCoef: 0, nbEnabledSimGrades: 0, matieres: []})
+                            this.gradesDatas[sem].ues.push({name: ueData.name, average: 0, classAvg: 0, totalMatsCoef: 0, totalGradesCoef: 0, nbDisabledGrades: 0, nbSimGrades: 0, totalSimGradesCoef: 0, nbEnabledSimGrades: 0, nbSubjectOver100: 0, nbSubjectBelow100: 0, matieres: []})
                             let ue = this.gradesDatas[sem].ues[ueIndex];
 
                             Object.keys(this.semestres[sem]).forEach((matName, matIndex) => 
@@ -478,12 +478,13 @@
 
                                     ue.average += mat.average*mat.coef/100;
                                     ue.classAvg += mat.classAvg*mat.coef/100;
-                                    ue.totalGradesCoef += mat.totalCoef*ue.matieres.length;
+                                    ue.totalGradesCoef += Math.round(100*mat.totalCoef/ue.matieres.length)/100;
                                     ue.totalMatsCoef += mat.coef;
-                                    
                                 }
                                 else {remainingMatieres[matName] = this.semestres[sem][matName]}
                             })
+                            if (ue.totalCoef > 100) {ue.nbSubjectOver100++}
+                            if (ue.totalCoef < 100) {ue.nbSubjectBelow100++}
                             ue.average = Math.round(100*ue.average)/100;
                             ue.classAvg = Math.round(100*ue.classAvg)/100;
                             s.average += ue.average;
@@ -1573,17 +1574,20 @@
             document.querySelectorAll(".ue-matiere-total-coef-value").forEach(totalCoefDiv => {
                 const sem = totalCoefDiv.dataset.sem;
                 const ueName = totalCoefDiv.dataset.ue;
-                let totalCoefGrades = 0, totalCoefSubjects = 0, disabledGrades = 0, nbSimGrades = 0, totalSimGradesCoef = 0, nbEnabledSimGrades = 0; 
+                let totalCoefGrades = 0, totalCoefSubjects = 0, disabledGrades = 0, nbSimGrades = 0, totalSimGradesCoef = 0, nbEnabledSimGrades = 0, nbSubjectOver100 = 0, nbSubjectBelow100 = 0, nbSubjects = 0; 
 
                 if (ueName != "unclassified") {
-                    let ueIndex = -1; this.gradesDatas[sem].ues.forEach((ue,index) => {if (ue.name==ueName) ueIndex=index});
-                    const ue = this.gradesDatas[sem].ues[ueIndex];
+                    let ueIndex = -1;       this.gradesDatas[sem].ues.forEach((ue,index) => {if (ue.name==ueName) ueIndex=index});
+                    const ue =              this.gradesDatas[sem].ues[ueIndex];
                     totalCoefGrades =       ue.totalGradesCoef;
                     totalCoefSubjects =     ue.totalMatsCoef;
                     disabledGrades =        ue.nbDisabledGrades;
                     nbSimGrades =           ue.nbSimGrades;
                     totalSimGradesCoef =    ue.totalSimGradesCoef;
                     nbEnabledSimGrades =    ue.nbEnabledSimGrades;
+                    nbSubjectOver100 =      ue.nbSubjectOver100;
+                    nbSubjectBelow100 =     ue.nbSubjectBelow100;
+                    nbSubjects =            ue.matieres.length;
                 }
                 else
                 {
@@ -1593,6 +1597,9 @@
                     nbSimGrades =           0;
                     totalSimGradesCoef =    0;
                     nbEnabledSimGrades =    0;
+                    nbSubjectOver100 =      0;
+                    nbSubjectBelow100 =     0;
+                    nbSubjects =            0;
                 }
                 
                 let advice = this.lang == `fr` ? `toutes tes notes sont là !` : `all your grades are out!`;
@@ -1600,6 +1607,12 @@
 
                 if (totalSimGradesCoef > 0 && totalCoefGrades-totalSimGradesCoef == 100) {
                     advice = this.lang == `fr` ? `toutes tes notes sont là, mais tu devrais désactiver tes notes simulées` : `all your grades are out, but you should disable your simulated grades`;
+                    color = ` #e90000`;
+                }
+                else if (nbSubjectBelow100>0 && nbSubjectOver100>0) {
+                    advice = this.lang == `fr` 
+                        ? `notes manquantes dans ${nbSubjectBelow100 > 1 ? nbSubjectBelow100 : `une`} UE${nbSubjectBelow100 > 1 ? `s` : ``}, et trop de notes dans ${nbSubjectOver100 > 1 ? nbSubjectOver100 : `une`} UE${nbSubjectOver100 > 1 ? `s` : ``}` 
+                        : `missing grades in ${nbSubjectBelow100 > 1 ? nbSubjectBelow100 : `a`} TU${nbSubjectBelow100 > 1 ? `'s` : ``}, and too many grades in ${nbSubjectOver100 > 1 ? nbSubjectOver100 : `a`} TU${nbSubjectOver100 > 1 ? `'s` : ``}`;
                     color = ` #e90000`;
                 }
                 else if (totalCoefGrades<100) {
@@ -1617,16 +1630,10 @@
                         advice = this.lang == `fr` ? `pas de notes pour l'instant` : `no grades yet`;
                         color = ` #7a7a7a`;
                     }
-                    else if (nbSubjectOver100 == 0) {
-                        advice = this.lang == `fr` 
-                            ? `notes manquantes dans ${nbSubjects-nbSubjectBelow100 > 1 ? nbSubjects-nbSubjectBelow100 : `une`} UE${nbSubjects-nbSubjectBelow100 > 1 ? `s` : ``}` 
-                            : `missing grades in ${nbSubjects-nbSubjectBelow100 > 1 ? nbSubjects-nbSubjectBelow100 : `a`} TU${nbSubjects-nbSubjectBelow100 > 1 ? `'s` : ``}`;
-                        color = ` #e90000`;
-                    }
                     else {
                         advice = this.lang == `fr` 
-                            ? `notes manquantes dans ${nbSubjects-nbSubjectBelow100 > 1 ? nbSubjects-nbSubjectBelow100 : `une`} UE${nbSubjects-nbSubjectBelow100 > 1 ? `s` : ``}, et trop de notes dans ${nbSubjects-nbSubjectOver100 > 1 ? nbSubjects-nbSubjectOver100 : `une`} UE${nbSubjects-nbSubjectOver100 > 1 ? `s` : ``}` 
-                            : `missing grades in ${nbSubjects-nbSubjectBelow100 > 1 ? nbSubjects-nbSubjectBelow100 : `a`} TU${nbSubjects-nbSubjectBelow100 > 1 ? `'s` : ``}, and too many grades in ${nbSubjects-nbSubjectOver100 > 1 ? nbSubjects-nbSubjectOver100 : `a`} TU${nbSubjects-nbSubjectOver100 > 1 ? `'s` : ``}`;
+                            ? `notes manquantes dans ${nbSubjectBelow100 > 1 ? nbSubjectBelow100 : `une`} UE${nbSubjectBelow100 > 1 ? `s` : ``}` 
+                            : `missing grades in ${nbSubjectBelow100 > 1 ? nbSubjectBelow100 : `a`} TU${nbSubjectBelow100 > 1 ? `'s` : ``}`;
                         color = ` #e90000`;
                     }
                 }
