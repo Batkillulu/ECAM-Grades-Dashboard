@@ -46,7 +46,7 @@
         .btn:disabled                       { opacity: 0.5; cursor: not-allowed; }
 
         .main-average-card { background: linear-gradient(135deg, #ffffff 30%, #514ba2ff 75%); border-radius: 20px; padding: 30px; margin-bottom: 15px; border: 2px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; transition: box-shadow 0.3s ease, border-color 0.3s ease, left 0.3s ease, top 0.3s ease; user-select: none }
-        /* .main-average-card:hover { border-color: #667eea; box-shadow: 3px 5px 5px 0px #00000042; } */
+        .main-average-card:hover { border-color: #667eea; box-shadow: 3px 5px 5px 0px #00000042; }
 
         .average-display { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 7px; }
         .average-number { font-size: 48px; font-weight: 800; -webkit-text-fill-color: #2A2F72; padding-top: 9px; }
@@ -147,7 +147,7 @@
         .matiere-card-header.meh     { background: #ffe8d0; }
         .matiere-card-header.bad     { background: #ffe0e0; }
         .matiere-name                { font-weight: 800; color: #1a1a1a; font-size: 14px }
-        .matiere-card.compact                   { display:flex; flex-direction: row; justify-content:space-between; align-items:center; padding: 7px 0px; border-radius: 16px; border: 3px solid #ffffff; height: 68px; width: 100%; transition: all 0.2s ease; background: none; margin: 0px; }
+        .matiere-card.compact                   { display:flex; flex-direction: row; justify-content:space-between; align-items:center; padding: 7px 0px; border-radius: 16px; border: 3px solid #ffffff; height: 68px; width: 100%; min-width: 380px; transition: all 0.2s ease; background: none; margin: 0px; }
         .matiere-card.compact.edit-mode         {  }
         .matiere-card.compact:hover             { background: #f3f4f6; box-shadow: inset 0px 0px 8px 1px #0032ff42; transform: scale(0.995); }
         .matiere-card.compact.edit-mode:hover   { transform: scale(1); }
@@ -193,6 +193,10 @@
         .note-date      { font-size: 12px; color: #999; }
 		.subject-sim-del-btn        { border: 1px solid #A7CEDF; border-radius: 6px; cursor: pointer; }
         .note-simulee-input         { border-radius: 10px; border-color: #667eea; padding: 2px 10px}
+        .note-simulee-input.sim-inp-type    { width: 55%;  max-width:250px; height:25px }
+        .note-simulee-input.sim-inp-note    { width: 100%; max-width:75px;  height:25px }
+        .note-simulee-input.sim-inp-coef    { width: 100%; max-width:60px;  height:25px }
+        .note-simulee-input.sim-inp-date    { width: 100%; max-width:140px; height:25px }
         .note-simulee-input-edit    { border-radius: 10px; border-color: #667eea; padding: 2px 10px}
 		.note-sim-del-btn           { border: none; border-radius: 6px; cursor: pointer; }
         .note-checkbox  { cursor: pointer; }
@@ -286,7 +290,7 @@
 
             this.mobileVer = false;
 
-            this.ueHeaderNoMove = true;
+            // this.ueHeaderNoMove = true;
             this.selectedMatiereCards = [];
             this.scrollToThisElem = "";
 
@@ -317,6 +321,23 @@
         }
         getNoteColor(note) { if (note >= 12) return 'good'; if (note >= 10) return 'medium'; return 'bad'; }
         getAverageColor(avg) { if (avg >= 12) return 'average-good'; if (avg >= 10) return 'average-medium'; return 'average-bad'; }
+
+        /** 
+        *  Use only in the console: iterating through a long list of objects isn't very optimized. Use it only to obtain the indices pointing at the class you want to change.
+        *  Note for now: the style sheet of this script is located at document.styleSheets[11];
+        * 
+        * @param _class Name of the class to search for
+        * @returns The path in document.styleSheets to to the class of name the param _class (to modify its definition)
+        */
+        getCSSClassCoordInStyleSheet(_class="") {
+            let styleSheetIndex = -1, ruleIndex = -1;
+            Object.keys(document.styleSheets).reverse().forEach(_CSSStyleSheet => {
+                Object.keys(document.styleSheets[_CSSStyleSheet].cssRules).forEach(_CSSRule => {
+                    if (document.styleSheets[_CSSStyleSheet].cssRules[_CSSRule].selectorText == _class) ruleIndex = _CSSRule, styleSheetIndex = _CSSStyleSheet;
+                })
+            })
+            return ` document.styleSheets[${styleSheetIndex}].cssRules[${ruleIndex}] `
+        }
 
         moyennePonderee(arr) {
             if (!arr || arr.length === 0) return 0;
@@ -371,7 +392,7 @@
                 this.notes.forEach(e => {this.savedReadGrades.push(e)})
                 localStorage.setItem("ECAM_DASHBOARD_SAVED_READ_GRADES", JSON.stringify(this.savedReadGrades));
             }
-            if (document.body.clientWidth <= 753) {
+            if (document.body.clientWidth <= 935) {
                 this.mobileVer = true;
             }
             
@@ -871,7 +892,7 @@
                         : 
                         `<div class="ue-title">${ueName}</div>`
                     }
-                    <div class="notes-table-coef" style="display:flex; flex-direction: column; width:47%; gap:4px; padding-left: 10px; font-size: 13px">
+                    <div class="notes-table-coef" style="display:flex; flex-direction: column; width:47%; gap:4px; padding: 0px 10px; font-size: 13px">
                         <div style="font-size: 14px; font-weight: 700">
                             ${this.lang == "fr" ? `Coef Total de matieres :` : `Total Subjects Coef:`}
                         </div>
@@ -943,7 +964,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="notes-table-coef" style="display:flex; flex-direction: column; width:58%; gap:4px; padding-left: 10px; font-size: 13px">
+                        <div class="notes-table-coef" style="display:flex; flex-direction: column; width:58%; gap:4px; padding: 0px 10px; font-size: 13px">
                             <div>
                                 ${this.lang == "fr" ? `Coef Total de notes :` : `Total Grades Coef:`}
                             </div>
@@ -1048,21 +1069,21 @@
                 html += `
                             <tr ${this.editMode ? "" : "hidden=true"}>
                                 <td class="notes-table-type">
-                                    <div class="note-type" style="display:flex; align-items:center; justify-content: space-between">
+                                    <div class="note-type" style="display:flex; align-items:center; justify-content: flex-start">
                                         <div style="width: 120px">${this.lang == "fr" ? "Ajouter une note simulée: " : "Add a simulated grade: "}</div>
-                                        <input class="note-simulee-input sim-inp-type any-input" id="note-simulee-input-type-for-${matiere}-from-${ueName}-in-semester${sem}" data-sem="${sem}" data-mat="${matiere}" style="width: 100%; max-width: 250px; height:25px" placeholder="${this.lang == "fr" ? "Titre" : "Title"}" />
+                                        <input class="note-simulee-input sim-inp-type any-input" id="note-simulee-input-type-for-${matiere}-from-${ueName}-in-semester${sem}" data-sem="${sem}" data-mat="${matiere}" placeholder="${this.lang == "fr" ? "Titre" : "Title"}" />
                                     </div>
                                 </td>
                                 <td class="notes-table-note">
-                                    <input class="note-simulee-input sim-inp-note any-input" id="note-simulee-input-note-for-${matiere}-from-${ueName}-in-semester${sem}" type="number" step="0.5" min="0" max="20" data-sem="${sem}" data-mat="${matiere}" style="width: 100%; max-width:75px; height:25px" placeholder="/20"> /20
+                                    <input class="note-simulee-input sim-inp-note any-input" id="note-simulee-input-note-for-${matiere}-from-${ueName}-in-semester${sem}" type="number" step="0.5" min="0" max="20" data-sem="${sem}" data-mat="${matiere}" placeholder="/20"> /20
                                 </td>
                                 <td class="notes-table-coef">
-                                    <input class="note-simulee-input sim-inp-coef any-input" id="note-simulee-input-coef-for-${matiere}-from-${ueName}-in-semester${sem}" type="number" step="5" min="0" max="100" data-sem="${sem}" data-mat="${matiere}" style="width: 100%; max-width:60px; height:25px" placeholder="%"> %
+                                    <input class="note-simulee-input sim-inp-coef any-input" id="note-simulee-input-coef-for-${matiere}-from-${ueName}-in-semester${sem}" type="number" step="5" min="0" max="100" data-sem="${sem}" data-mat="${matiere}" placeholder="%"> %
                                 </td>
                                 <td>
                                 </td>
                                 <td class="notes-table-date">
-                                    <input class="note-simulee-input sim-inp-date any-input" id="note-simulee-input-date-for-${matiere}-from-${ueName}-in-semester${sem}" type="date" value="${this.today}" data-sem="${sem}" data-mat="${matiere}" style="width: 100%; max-width:140px; height:25px">
+                                    <input class="note-simulee-input sim-inp-date any-input" id="note-simulee-input-date-for-${matiere}-from-${ueName}-in-semester${sem}" type="date" value="${this.today}" data-sem="${sem}" data-mat="${matiere}">
                                 </td>
                                 <td colspan="2">
                                     <button class="btn-export sim-add-btn" data-sem="${sem}" data-mat="${matiere}" data-uen="${ueName||''}" style="width: 100%; max-width: 140px; padding:6px 10px; height:25px">${this.lang == "fr" ? "Ajouter" : "Add"}</button>
@@ -1101,7 +1122,7 @@
             const html = `
             <div style="display:flex; margin:10px; gap:6px; flex-direction:column; align-items: center; width: 100%">
                 <div class="matiere-card compact ${this.editMode ? "" : "edit-mode"}" id="mat-card-semester-${sem}-matiere-${matiere}" style="${this.editMode ? "cursor:move; user-select: none; " : " "}" draggable=${this.editMode ? "true" : "false"} data-sem="${sem}" data-ue="${ueName}" data-subject="${matiere}">
-                    <div style="display:flex; align-items:center; gap:8px; padding-left: 11px; width:43%">
+                    <div style="display:flex; align-items:center; gap:8px; padding-left: 11px; width:43%; min-width: 275px">
                         ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("compact-matiere-card")}</div>` : ""}
                         <div>
                             <div class="matiere-name">${matiere}</div>
@@ -1123,7 +1144,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="notes-table-coef" style="display:flex; flex-direction: column; width:50%; gap:6px; padding-left: 10px; font-size: 13px; font-weight: 600">
+                    <div class="notes-table-coef" style="display:flex; flex-direction: column; width:50%; gap:6px; padding: 0px 10px; font-size: 13px; font-weight: 600">
                         <div>
                             ${this.lang == "fr" ? `Coef Total de notes :` : `Total Grades Coef:`}
                         </div>
@@ -1626,12 +1647,12 @@
                 }
 
                 // Collapse/Develop (fold/unfold) UEs
-                if (e.target.closest('.ue-header') && !e.target.closest('.ue-title.input') && !e.target.closest('.ue-delete-btn') && !this.ueHeaderNoMove) {
+                else if (e.target.closest('.ue-header') && !e.target.closest('.ue-title.input') && !e.target.closest('.ue-delete-btn')/*  && !this.ueHeaderNoMove */) {
                     this.ueHeaderClickEvent(e)
                 }
 
                 // Toggle intranet table
-                if (e.target.closest('.intranet-collapse')) {
+                else if (e.target.closest('.intranet-collapse')) {
                     const header = e.target.closest('.intranet-collapse');
                     const intranetTable = document.querySelector('.greyGridTable');
                     const intranetToggle = header.querySelectorAll('.intranet-toggle');
@@ -1648,6 +1669,44 @@
                     } else {
                         intranetTable.style.display = 'none';
                     }
+                }
+            };
+            document.body.onresize = (e) => {
+                
+                if (document.body.clientWidth <= 935) {
+                    if (this.mobileVer == false) {
+                        this.mobileVer = true;
+                        this.renderContent(false)
+                        // this.getCSSClassCoordInStyleSheet(".notes-table-teacher") == "document.styleSheets[11].cssRules[142]"
+                        // document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
+                        document.styleSheets[11].cssRules[142].style.display = "none";
+                    }
+                }
+                else
+                {
+                    if (this.mobileVer == true) {
+                        this.mobileVer = false;
+                        this.renderContent(false)
+                        document.styleSheets[11].cssRules[142].style.display = "";
+                    }
+                }
+
+                if (document.body.clientWidth <= 1470) {
+                    // this.getCSSClassCoordInStyleSheet(".note-simulee-input") == [11, 153];
+                    // this.getCSSClassCoordInStyleSheet(".note-simulee-input.sim-inp-type") == [11, 154];
+                    // document.styleSheets[11].cssRules[153]
+                }
+
+                if (document.body.clientWidth <= 1530) {
+                    document.querySelectorAll(".ue-matiere-total-coef-value").forEach(ueTotalCoef => {
+                        ueTotalCoef.style.flexDirection = "column"; ueTotalCoef.style.gap = "2px";
+                    })
+                }
+                else
+                {
+                    document.querySelectorAll(".ue-matiere-total-coef-value").forEach(ueTotalCoef => {
+                        ueTotalCoef.style.flexDirection = ""; ueTotalCoef.style.gap = "15px";
+                    })
                 }
             };
 
@@ -2323,7 +2382,7 @@
                             }
                         }
                         else if (e.key === "R") {
-                            console.log("alas, nothing happens...")
+                            console.log("You fell into my breakpoint trap!!"); debugger;
                         }
                     };
                 }
