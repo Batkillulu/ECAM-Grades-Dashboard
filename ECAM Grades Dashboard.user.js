@@ -221,8 +221,6 @@
             .matiere-row.used { background:#eff6ff; border-color:#667eea; opacity:0.8; }
             .create-ue-section { margin-bottom: 24px; }
             .create-ue-header { display: flex; gap: 12px; margin-bottom: 16px; }
-            .ue-name-input              { flex: 1; padding: 10px 14px; background: #d3d3d3ff ; border: 2px solid #a7a7a7ff; border-radius: 10px; font-size: 14px; transition: all 0.2s ease; }
-            .ue-name-input:focus        { outline: none; border-color: #667eea; box-shadow: 3px 5px 5px 0px #00000042; }
             .create-ue-btn { padding: 10px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
             .create-ue-btn:hover { transform: scale(1.1); box-shadow: 3px 5px 5px 0px #00000042; }
             .create-ue-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
@@ -338,13 +336,13 @@
 
         saveConfig() { localStorage.setItem('ECAM_DASHBOARD_UE_CONFIG', JSON.stringify(this.ueConfig)); }
         saveSim() { localStorage.setItem("ECAM_DASHBOARD_SIM_NOTES", JSON.stringify(this.sim)); }
-        saveignoredGrades() { localStorage.setItem("ECAM_DASHBOARD_IGNORED_GRADES", JSON.stringify(this.ignoredGrades)); }
+        saveIgnoredGrades() { localStorage.setItem("ECAM_DASHBOARD_IGNORED_GRADES", JSON.stringify(this.ignoredGrades)); }
         ensureSimPath(sem, ueName, mat) {
             if(!this.sim[sem]) { this.sim[sem]={ues:[]}; }
             let ueIndex = -1; this.sim[sem].ues.forEach((ue,index) => {if (ue.name==ueName) ueIndex=index})
             if(ueIndex==-1) { this.sim[sem].ues.push({name:ueName, matieres:[{name: mat, grades: []}]}); ueIndex = this.sim[sem].ues.length-1; }
             let matIndex = -1;  this.sim[sem].ues[ueIndex].matieres.forEach((matiere, index) => {if (matiere.name==mat) matIndex=index})
-            if(mat !== undefined && matIndex==-1) { this.sim[sem].ues[ueIndex].matieres[matIndex]={name:mat, grades:[]}; }; 
+            if(matIndex==-1 && mat!==undefined) { this.sim[sem].ues[ueIndex].matieres.push({name:mat, grades:[]}) }; 
         }
         deleteUnusedSimPath(sem, ueName, mat) {
             this.ensureSimPath(sem, ueName, mat);
@@ -427,6 +425,37 @@
                 this.semestres[n.semestre][n.matiere].push(n);
             });
         }
+        
+        getGradesDatasIndices(sem=this.currentSemester, ueName="unclassified", matName=undefined, gradeName=undefined, gradeIsSim=false) {
+            let ueIndex = ueName=="unclassified" ? "unclassified" : -1, matIndex = -1, gradeIndex = -1;
+            if (ueName != "unclassified") {
+                this.gradesDatas[sem].ues.forEach((_ue, _index) => {if (_ue.name==ueName) ueIndex=_index})
+                if (matName && ueIndex != -1) {
+                    this.gradesDatas[sem].ues[ueIndex].matieres.forEach((_mat, _index) => {if (_mat.name==matName) matIndex=_index})
+                    if (gradeName && matIndex != -1) {
+                        this.gradesDatas[sem].ues[ueIndex].matieres[matIndex].grades.forEach((_grade, _index) => {if (_grade.type==gradeName) gradeIndex=_index})
+                    }
+                    else { gradeIndex = !gradeName ? "gradeName not given" : "matName isn't classified"; }
+                }
+                else { matIndex = !matName ? "matName not given" : "ueName isn't configured"; gradeIndex = !matName ? "matName not given" : "ueName isn't configured"; }
+            } else {
+                this.gradesDatas[sem].unclassified.forEach((_mat, _index) => {if (_mat.name==matName) matIndex=_index})
+                if (matName && ueIndex != -1) {
+                    this.gradesDatas[sem].ues[ueIndex].matieres.forEach((_mat, _index) => {if (_mat.name==matName) matIndex=_index})
+                    if (gradeName && matIndex != -1) {
+                        if (!gradeIsSim) {
+                            this.gradesDatas[sem].ues[ueIndex].matieres[matIndex].grades.forEach((_grade, _index) => {if (_grade.type==gradeName) gradeIndex=_index})
+                        } else {
+                            this.gradesDatas[sem].ues[ueIndex].matieres[matIndex].simGrades.forEach((_grade, _index) => {if (_grade.type==gradeName) gradeIndex=_index})
+                        }
+                    }
+                    else { gradeIndex = !gradeName ? "gradeName not given" : "matName isn't unclassified"; }
+                }
+                else { matIndex = !matName ? "matName not given" : "ueName isn't unclassified"; gradeIndex = !matName ? "matName not given" : "ueName  isn't unclassified"; }
+            }
+            
+            return {ue: ueIndex, mat: matIndex, grade: gradeIndex, gradeIsSim}
+        }
 
         // MARK: Generate gradesDatas
         generateGradesDatas() {
@@ -472,13 +501,13 @@
                             })
                             let ue = this.gradesDatas[sem].ues[ueIndex];
 
-                            Object.keys(this.semestres[sem]).forEach((matName, matIndex) => 
+                            Object.keys(this.semestres[sem]).forEach((_matName, _matIndex) => 
                             {
                                 let matIsClassified = false;
                                 let matConfigIndex = 0;
                                 let matConfigData = {};
                                 ueData.matieres.forEach((matCfgData, matCfgIndex) => {
-                                    if (matCfgData.name == matName) {matIsClassified = true; matConfigIndex = matCfgIndex; matConfigData = matCfgData; while (matConfigData.length < matCfgIndex) ue.matieres.push({})}
+                                    if (matCfgData.name == _matName) {matIsClassified = true; matConfigIndex = matCfgIndex; matConfigData = matCfgData; while (matConfigData.length < matCfgIndex) ue.matieres.push({})}
                                 })
 
                                 if (matIsClassified) {
@@ -493,20 +522,35 @@
                                         nbSimGrades: 0, 
                                         totalSimGradesCoef: 0, 
                                         nbEnabledSimGrades: 0, 
-                                        grades: []
+                                        grades: [],
+                                        simGrades: []
                                     }
                                     let mat = ue.matieres[matConfigIndex];
                                     
-                                    this.semestres[sem][matConfigData.name].forEach((n, gradeIndex) => 
+                                    this.semestres[sem][mat.name].forEach((n, gradeIndex) => 
                                     {
                                         mat.grades.push(n);
 
-                                        let enabled = true;
-                                        if (this.gradeIsIgnored(n)) {enabled = false}
+                                        let enabled = true; if (this.gradeIsIgnored(n)) {enabled = false}
                                         mat.grades[gradeIndex].enabled = enabled;
                                         mat.grades[gradeIndex].ue = ueData.name;
-                                        mat.grades[gradeIndex].mat = matConfigData.name;
+                                        mat.grades[gradeIndex].mat = mat.name;
                                         mat.totalCoef += n.coef;
+                                    })
+
+                                    this.ensureSimPath(sem, ue.name, mat.name);
+                                    let matSimIndex = -1; this.sim[sem].ues[ueIndex].matieres.forEach((_mat, _index) => {if (_mat.name==mat.name) matSimIndex=_index})
+                                    this.sim[sem].ues[ueIndex].matieres[matSimIndex].grades.forEach((n, gradeIndex) => {
+                                        mat.simGrades.push(n);
+
+                                        let enabled=true; if (this.gradeIsIgnored(n)) {enabled = false}
+                                        mat.simGrades[gradeIndex].enabled = enabled;
+                                        mat.simGrades[gradeIndex].__sim = true;
+                                        mat.simGrades[gradeIndex].ue = ueData.name;
+                                        mat.simGrades[gradeIndex].mat = mat.name;
+                                        mat.totalCoef += n.coef;
+                                        mat.totalSimGradesCoef += n.coef;
+                                        mat.nbSimGrades++;
                                     })
 
                                     const avg = this.moyennePonderee(mat.grades);
@@ -520,7 +564,7 @@
                                     if (mat.totalCoef > 100) {ue.nbSubjectOver100++}
                                     if (mat.totalCoef < 100) {ue.nbSubjectBelow100++}
                                 }
-                                else {remainingMatieres[matName] = this.semestres[sem][matName]}
+                                else {remainingMatieres[_matName] = this.semestres[sem][_matName]}
                             })
                             ue.average = Math.round(100*ue.average)/100;
                             ue.classAvg = Math.round(100*ue.classAvg)/100;
@@ -590,13 +634,16 @@
         }
 
         // MARK: Modify gradesDatas
-        modifyGradesDatas(targetType="move mat", sem, oldMatIndex, newMatIndex, oldUeIndex, newUeIndex) {
-            const unclassified = this.gradesDatas[sem].unclassified;
-            let oldUe = this.gradesDatas[sem].ues[oldUeIndex];
-            let newUe = this.gradesDatas[sem].ues[newUeIndex];
+        modifyGradesDatas({targetType="move mat", sem=-1, oldIndices={}, newIndices={}, oldMatIndex=-1, newMatIndex=-1, oldUeIndex=-1, newUeIndex=-1, simCoords={sem:-1, ue:-1, mat:-1, grade:-1, gradeData:{}}, matId=""}) {
+            let oldUe = {};
+            let newUe = {};
             const editType = /edit (.+)/ig.exec(targetType);
+            if (oldIndices != {}) {oldUeIndex=oldIndices.ueIndex; oldMatIndex=oldIndices.matIndex}
+            if (newIndices != {}) {newUeIndex=newIndices.ueIndex; newMatIndex=newIndices.matIndex}
 
             if (targetType=="move mat") {
+                oldUe = this.gradesDatas[sem].ues[oldUeIndex];
+                newUe = this.gradesDatas[sem].ues[newUeIndex];
                 // insert the mat at index oldMatIndex from the ue at index oldUeIndex to the newMatIndex index of the ue at index newUeIndex 
                 newUe.matieres.splice(newMatIndex, 0, oldUe.matieres.splice(oldMatIndex, 1))
 
@@ -619,6 +666,9 @@
                 })
             }
             else if (targetType=="remove mat") {
+                const unclassified = this.gradesDatas[sem].unclassified;
+                oldUe = this.gradesDatas[sem].ues[oldUeIndex];
+                newUe = this.gradesDatas[sem].ues[newUeIndex];
                 // moving the mat at index oldMatIndex from the ue at index oldUeIndex to the unclassified section
                 this.gradesDatas[sem].unclassified.matieres.push(this.gradesDatas[sem].ues[oldUeIndex].matieres.splice(oldMatIndex, 1))
 
@@ -649,6 +699,7 @@
                 this.gradesDatas[sem].ues.splice(newUeIndex, 0, this.gradesDatas[sem].ues.splice(oldUeIndex, 1))
             }
             else if (targetType=="remove ue") {
+                const unclassified = this.gradesDatas[sem].unclassified;
                 // pushing all grades in the classified section (order doesn't matter)
                 this.gradesDatas[sem].ues[oldUeIndex].matieres.forEach(mat => {
                     unclassified.matieres.push(mat)
@@ -665,8 +716,16 @@
                 unclassified.average = Math.round(100*unclassified.fakeAvg/unclassified.matieres.length)/100;
                 unclassified.classAvg = Math.round(100*unclassified.fakeClassAvg/unclassified.matieres.length)/100;
             }
+            else if (targetType=="add sim" && simCoords) {
+                this.ensureSimPath(simCoords.sem, simCoords.ue, simCoords.mat);
+                this.sim[simCoords.sem].ues[simCoords.ue].matieres[simCoords.mat].grades.push(simCoords.gradeData);
+            }
+            else if (targetType=="del sim" && simCoords) {
+                this.ensureSimPath(simCoords.sem, simCoords.ue, simCoords.mat);
+                this.sim[simCoords.sem].ues[simCoords.ue].matieres[simCoords.mat].grades.splice(simCoords.grade, 1);
+            }
             else if (editType) {
-                // regenerate grades 
+                // regenerate grade
                 Object.keys(this.gradesDatas).forEach(sem => { let s = this.gradesDatas[sem];
                     s.ues.forEach((ue, ueIndex) => {
                         if (targetType == "ue") {this.gradesDatas[sem].ues[ueIndex]}
@@ -679,7 +738,7 @@
                     })
                 })
             }
-            else {console.error(`no targetType isn't of a managed value in modifyGradeData()`); return}
+            else {console.error(`targetType isn't of a managed value in modifyGradeData()`); return}
 
         }
 
@@ -1012,13 +1071,14 @@
                 // Attach on-click event action for the simulated grade addition button
                 container.querySelectorAll('.sim-add-btn').forEach(btn=>{
                     btn.onclick = (e)=>{
-                        const ueName = e.target.dataset.uen;
                         const semX = e.target.dataset.sem;
+                        const ueName = e.target.dataset.ue;
                         const mat = e.target.dataset.mat;
+                        this.ensureSimPath(semX, ueName, mat);
                         let ueIndex = -1; this.sim[sem].ues.forEach((ue,index) => {if (ue.name==ueName) ueIndex=index})
                         let matIndex = -1;  this.sim[sem].ues[ueIndex].matieres.forEach((matiere, index) => {if (matiere.name==mat) matIndex=index})
 
-                        const id = this.sim[semX].ues[ueIndex].matieres[matIndex].length;
+                        const id = this.sim[semX].ues[ueIndex].matieres[matIndex].grades.length;
                         const typeInp = container.querySelector(`.note-simulee-input.sim-inp-type[data-sem="${semX}"][data-mat="${mat}"]`);
                         const noteInp = container.querySelector(`.note-simulee-input.sim-inp-note[data-sem="${semX}"][data-mat="${mat}"]`);
                         const coefInp = container.querySelector(`.note-simulee-input.sim-inp-coef[data-sem="${semX}"][data-mat="${mat}"]`);
@@ -1041,6 +1101,7 @@
                             __sim: true,
                             id
                         });
+                        this.modifyGradesDatas({targetType: "add sim", simCoords: {sem: semX, ue:ueIndex, mat:matIndex, gradeData: this.sim[semX].ues[ueIndex].matieres[matIndex].grades.at(-1)}})
                         this.saveSim();
                         this.renderContent();
                     }
@@ -1049,7 +1110,7 @@
                 // Attach on-change event action for simulated grades type/grade/coef/date fields
                 container.querySelectorAll(".note-simulee-input-edit").forEach(input => {
                     input.onchange = e => {
-                        const ueName = e.target.dataset.uen;
+                        const ueName = e.target.dataset.ue;
                         const semX = e.target.dataset.sem;
                         const mat = e.target.dataset.mat;
                         const id = e.target.dataset.id;
@@ -1093,12 +1154,15 @@
                 container.querySelectorAll('.sim-del-btn').forEach(btn=>{
                     btn.onclick = (e) => {
                         const semX = e.target.dataset.sem;
-                        const ueName = e.target.dataset.uen;
+                        const ueName = e.target.dataset.ue;
                         const mat = e.target.dataset.mat;
                         const type = e.target.dataset.type;
-                        let gradeIndex = -1; this.sim[semX].ues[ueIndex].matieres[matIndex].grades.forEach((grade, index) => {if (grade.type==type) gradeIndex=index})
-                        this.sim[semX].ues[ueIndex].matieres[matIndex].grades.splice(gradeIndex, 1);
-                        this.deleteUnusedSimPath(semX, ueName, mat);
+                        // let ueIndex = -1; this.sim[sem].ues.forEach((ue,index) => {if (ue.name==ueName) ueIndex=index})
+                        // let matIndex = -1;  this.sim[sem].ues[ueIndex].matieres.forEach((matiere, index) => {if (matiere.name==mat) matIndex=index})
+                        // let gradeIndex = -1; this.sim[semX].ues[ueIndex].matieres[matIndex].grades.forEach((grade, index) => {if (grade.type==type) gradeIndex=index})
+                        const indices = this.getGradesDatasIndices(semX, ueName, mat, type, true)
+                        this.modifyGradesDatas({targetType: "del sim", simCoords: {sem: semX, ue: indices.ue, mat: indices.mat, grade: indices.grade}})
+                        // this.deleteUnusedSimPath(semX, ueName, mat);
                         this.saveSim();
                         this.renderContent(true);
                     }
@@ -1226,7 +1290,7 @@
             const ueName = ueData.name;
             let ueIndex = -1; this.gradesDatas[sem].ues.forEach((ue,index) => {if (ue.name==ueName) ueIndex=index})
             let matIndex = -1;  this.gradesDatas[sem].ues[ueIndex].matieres.forEach((mat, index) => {if (mat.name==matiere) matIndex=index})
-            const matNotes = this.gradesDatas[sem].ues[ueIndex].matieres[matIndex].grades;
+            const matNotes = this.gradesDatas[sem].ues[ueIndex].matieres[matIndex].grades.concat(this.gradesDatas[sem].ues[ueIndex].matieres[matIndex].simGrades);
             const ueMoy = this.gradesDatas[sem].ues[ueIndex].average;
             const moyMat = this.gradesDatas[sem].ues[ueIndex].matieres[matIndex].average;
             const coef = this.gradesDatas[sem].ues[ueIndex].matieres[matIndex].coef; // const coef = ueData?.pourcentages?.[matiere] || 0;
@@ -1308,21 +1372,21 @@
                 html += `
                         <tr class="note-row ${index == matNotes.length-1 ? `last` : ``} ${note.__sim ? `sim` : ``}" data-sim="${noteIsSim}">
                             <td class="notes-table-type" style="display: flex; align-items: center; gap: 6px; width: auto">
-                                <input type="checkbox" class="note-checkbox any-input" id="note-checkbox-${note.matiere}-${note.type}-${note.date}-${note.prof}" data-sem="${sem}" data-mat="${matiere}" data-uen="${ueName||''}" data-prof="${note.prof}" data-gradeid="${note.type} ${note.date} ${note.prof}" ${this.ignoredGrades.indexOf([sem, matiere, note.type+" "+note.date+" "+note.prof].join("\\")) == -1 ? "checked" : ""}></input>
+                                <input type="checkbox" class="note-checkbox any-input" id="note-checkbox-${note.matiere}-${note.type}-${note.date}-${note.prof}" data-sem="${sem}" data-mat="${matiere}" data-ue="${ueName||''}" data-prof="${note.prof}" data-gradeid="${note.type} ${note.date} ${note.prof}" ${this.ignoredGrades.indexOf([sem, matiere, note.type+" "+note.date+" "+note.prof].join("\\")) == -1 ? "checked" : ""}></input>
                                 ${note.__sim && this.editMode
-                                    ? `<input class="note-type note-simulee-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="note-simulee-input-type-for-${matiere}-from-${ueName}-in-semester${sem}-${note.type}" data-modifType="type" data-id="${totalSimGrades-1}" data-sem="${sem}" data-mat="${matiere}" data-type="${note.type}" data-uen="${ueName||''}" value="${note.type}"/>` 
+                                    ? `<input class="note-type note-simulee-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="note-simulee-input-type-for-${matiere}-from-${ueName}-in-semester${sem}-${note.type}" data-modifType="type" data-id="${totalSimGrades-1}" data-sem="${sem}" data-mat="${matiere}" data-type="${note.type}" data-ue="${ueName||''}" value="${note.type}"/>` 
                                     : `<label class="note-type" style="width: auto"  id="note-type-${note.type}-${note.date}" for="note-checkbox-${note.matiere}-${note.type}-${note.date}-${note.prof}">${note.type || ''}${note.__sim ? ` • ${this.lang == "fr" ? "Simulée" : "Simulated"}` : ''}</label>`
                                 }
                             </td>
                             <td class="note-value note-${noteClass} notes-table-note" data-sim="${noteIsSim}">
                                 ${note.__sim && this.editMode
-                                    ? `<input class="note-simulee-input-edit sim-inp-note any-input" style="width: 100%; max-width: 75px;" id="note-simulee-input-note-for-${matiere}-from-${ueName}-in-semester${sem}-${note.type}" type="number" step="0.5" min="0" max="20" data-id="${totalSimGrades-1}" data-modifType="note" data-sem="${sem}" data-mat="${matiere}" data-type="${note.type}" data-uen="${ueName||''}" style="width:75px; height:25px" value="${note.note}"> /20`
+                                    ? `<input class="note-simulee-input-edit sim-inp-note any-input" style="width: 100%; max-width: 75px;" id="note-simulee-input-note-for-${matiere}-from-${ueName}-in-semester${sem}-${note.type}" type="number" step="0.5" min="0" max="20" data-id="${totalSimGrades-1}" data-modifType="note" data-sem="${sem}" data-mat="${matiere}" data-type="${note.type}" data-ue="${ueName||''}" style="width:75px; height:25px" value="${note.note}"> /20`
                                     : `${note.note}/20`
                                 }
                             </td>
                             <td class="notes-table-coef" data-sim="${noteIsSim}">
                                 ${note.__sim && this.editMode
-                                    ? `<input class="note-simulee-input-edit sim-inp-coef any-input" style="width: 100%; max-width: 60px;" id="note-simulee-input-coef-for-${matiere}-from-${ueName}-in-semester${sem}-${note.type}" type="number" step="5" min="0" max="100" data-id="${totalSimGrades-1}" data-modifType="coef" data-sem="${sem}" data-mat="${matiere}" data-type="${note.type}" data-uen="${ueName||''}" style="width:60px; height:25px"value="${note.coef}"> %`
+                                    ? `<input class="note-simulee-input-edit sim-inp-coef any-input" style="width: 100%; max-width: 60px;" id="note-simulee-input-coef-for-${matiere}-from-${ueName}-in-semester${sem}-${note.type}" type="number" step="5" min="0" max="100" data-id="${totalSimGrades-1}" data-modifType="coef" data-sem="${sem}" data-mat="${matiere}" data-type="${note.type}" data-ue="${ueName||''}" style="width:60px; height:25px"value="${note.coef}"> %`
                                     : `${note.coef} %`
                                 }
                             </td>
@@ -1334,7 +1398,7 @@
                             </td>
                             <td class="notes-table-date note-date" data-sim="${noteIsSim}">
                                 ${note.__sim && this.editMode
-                                    ? `<input class="note-simulee-input-edit sim-inp-date any-input" style="width: 100%; max-width: 140px;" id="note-simulee-input-date-for-${matiere}-from-${ueName}-in-semester${sem}-${note.type}" type="date" data-id="${totalSimGrades-1}" data-sem="${sem}" data-mat="${matiere}" data-modifType="date" data-type="${note.type}" data-uen="${ueName||''}" style="width:140px; height:25px"value="${note.date||""}">`
+                                    ? `<input class="note-simulee-input-edit sim-inp-date any-input" style="width: 100%; max-width: 140px;" id="note-simulee-input-date-for-${matiere}-from-${ueName}-in-semester${sem}-${note.type}" type="date" data-id="${totalSimGrades-1}" data-sem="${sem}" data-mat="${matiere}" data-modifType="date" data-type="${note.type}" data-ue="${ueName||''}" style="width:140px; height:25px"value="${note.date||""}">`
                                     : `${`${note.__sim ? note.date.split("-").reverse().join("/") : note.date}`||''}`
                                 }
                             </td>
@@ -1343,7 +1407,7 @@
                             </td>
                             <td style="width: 52px; padding: 3px">
                                 ${note.__sim 
-                                    ? `<button class="sim-del-btn" data-sem="${sem}" data-mat="${matiere}" data-uen="${ueName||''}" data-type="${note.type}">🗑️</button>` 
+                                    ? `<button class="sim-del-btn" data-sem="${sem}" data-mat="${matiere}" data-ue="${ueName||''}" data-type="${note.type}">🗑️</button>` 
                                     : `<div style="width:32px"></div>`}
                             </td>
                         </tr>
@@ -1374,7 +1438,7 @@
                                     <input class="note-simulee-input sim-inp-date any-input" id="note-simulee-input-date-for-${matiere}-from-${ueName}-in-semester${sem}" type="date" value="${this.today}" data-sem="${sem}" data-mat="${matiere}" style="width: 100%; max-width:140px; height:25px">
                                 </td>
                                 <td colspan="2">
-                                    <button class="btn-export sim-add-btn" data-sem="${sem}" data-mat="${matiere}" data-uen="${ueName||''}" style="width: 100%; max-width: 140px; padding:6px 10px; height:25px">${this.lang == "fr" ? "Ajouter" : "Add"}</button>
+                                    <button class="btn-export sim-add-btn" data-sem="${sem}" data-mat="${matiere}" data-ue="${ueName||''}" style="width: 100%; max-width: 140px; padding:6px 10px; height:25px">${this.lang == "fr" ? "Ajouter" : "Add"}</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -1399,7 +1463,7 @@
         renderMatCardCompact(ueData, sem, ueName, matiere) {
             let ueIndex = -1; this.gradesDatas[sem].ues.forEach((ue,index) => {if (ue.name==ueName) ueIndex=index})
             let matIndex = -1;  this.gradesDatas[sem].ues[ueIndex].matieres.forEach((matiere, index) => {if (matiere.name==mat) matIndex=index})
-            const matNotes = this.gradesDatas[sem].ues[ueIndex].matieres[matIndex].grades;
+            const matNotes = this.gradesDatas[sem].ues[ueIndex].matieres[matIndex].grades.concat(this.gradesDatas[sem].ues[ueIndex].matieres[matIndex].simGrades);
             const moyMat = this.moyennePonderee(matNotes).average;
             const coef = ueData?.pourcentages?.[matiere] || 0;
             const includedNotesLength = (matNotes || []).filter(n => this.ignoredGrades.indexOf([sem, n.matiere, n.type+" "+n.date+" "+n.prof].join("\\")) == -1).length;
@@ -1721,26 +1785,27 @@
             })
         }
 
-
-
-
         attachCheckboxListeners(container) {
             // Reusable method to attach listeners to note checkboxes
             container.querySelectorAll('.note-checkbox').forEach(chbx => {
                 chbx.onclick = (e) => {
                     const semX = e.target.dataset.sem;
+                    const ue = e.target.dataset.ue;
                     const mat = e.target.dataset.mat;
                     const gradeID = e.target.dataset.gradeid;
                     const key = [semX, mat, gradeID].join("\\");
                     if (e.target.checked) {
                         // remove this specific ignored key if present
                         this.ignoredGrades = (this.ignoredGrades || []).filter(id => id !== key);
+                        const gradesDatasIndices = this.getGradesDatasIndices(semX, ue, mat);
+                        this.gradesDatas[semX]
                     } else {
                         // add ignored key if not already present
                         this.ignoredGrades = this.ignoredGrades || [];
+                        const gradesDatasIndices = this.getGradesDatasIndices(semX, ue, mat);
                         if (!this.ignoredGrades.includes(key)) this.ignoredGrades.push(key);
                     }
-                    this.saveignoredGrades();
+                    this.saveIgnoredGrades();
                     this.renderContent(false);
                 }
             });
@@ -1760,7 +1825,7 @@
                 const mat = parts[1];
                 return semX !== sem || !allMats.includes(mat);
             });
-            this.saveignoredGrades();
+            this.saveIgnoredGrades();
         }
 
         compareArraysofObjects(a, b) {
@@ -1968,8 +2033,11 @@
 
 
             document.querySelectorAll(".any-input").forEach(input => {
-                input.onfocus = () => {document.onkeydown = null; document.onkeyup = null}
+                input.onfocus = () => {document.onkeydown = null; document.onkeyup = null};
                 input.onblur = () => {this.generalKeyboardEvents()};
+                input.ondragover = (e) => {e.preventDefault(); input.style.cursor = "not-allowed"};
+                input.ondragleave = (e) => {e.preventDefault(); input.style.cursor = "unset"};
+                input.onchange = this.setNotesTableTotalCoef();
             })
             
 
@@ -2235,6 +2303,7 @@
                 this.matiereCardToNewUE(e.dataTransfer.getData("text"));
             }
             
+            
             document.querySelectorAll(".drag-icon-for-detailed-matiere-card").forEach(dragIcon => {
                 dragIcon.onclick = (e) => {
                     this.dragIconOnClickEvent(e, dropArea, dragIcon, "detailed")
@@ -2475,7 +2544,7 @@
                             this.sim[sem].ues[oldUeIndex].matieres[0].grades.forEach((_, index) => {
                                 this.sim[sem].ues[newUeIndex].matieres[subjectIndex].push(this.sim[sem].ues[oldUeIndex][subjectIndex][index].shift())
                             })
-                            this.deleteUnusedSimPath(sem, oldUeName, subject);
+                            // this.deleteUnusedSimPath(sem, oldUeName, subject);
                             this.saveSim();
                         }
                     }
@@ -2507,7 +2576,7 @@
                                 this.sim[sem].ues[oldUeIndex].matieres[0].grades.forEach((_, index) => {
                                     this.sim[sem].ues[newUeIndex].matieres[subjectIndex].push(this.sim[sem].ues[oldUeIndex][subjectIndex][index].shift())
                                 })
-                                this.deleteUnusedSimPath(sem, oldUeName, subject);
+                                // this.deleteUnusedSimPath(sem, oldUeName, subject);
                                 this.saveSim();
                             }
                         }
