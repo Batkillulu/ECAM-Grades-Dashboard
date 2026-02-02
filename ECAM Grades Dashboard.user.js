@@ -104,6 +104,9 @@
         .semester-content       { padding: 24px; display: none; }
         .semester-content.show  { display: flex; flex-direction: row; gap: 0px; transition: gap 0.2s ease; }
 
+        
+        .drop-matiere-card-to-create-eu  { display: flex; flex-direction: column; border-radius: 20px; border: 0px dashed #7fc2ff; width: 0%; transition: width 0.2s ease; }
+
         .ue-grid                { display: grid; width: 100%; gap: 20px; }
         .ue-card                { display: flex; flex-direction: column; align-items: center; background: #fafafa; border-radius: 16px; border: 3px solid #e5e5e5; transition: all 0.3s ease; }
         .ue-card.validated      { border-color: #10b981; background: #f0fdf4; }
@@ -117,15 +120,20 @@
         .ue-title                       { font-size: 16px; font-weight: 800; color: #1a1a1a; width:42%; margin-bottom: 2px; }
         .ue-title.input                 { font-size: 16px; font-weight: 800; color: #1a1a1a; width:90%; border-radius: 12px; padding-left: 10px; }
         .ue-matiere-total-coef-value    { display: flex; gap: 15px; font-weight: 600; }
+        .ue-details                     { display: flex; flex-direction: column; align-items: center; width: 98%; margin-top: 10px; }
         .ue-moyenne                     { font-size: 24px; font-weight: 800; display: flex; align-items: center; gap:10px; width: 180px; }
         .ue-moyenne.good                { color: #10b981; }
         .ue-moyenne.bad                 { color: #ef4444; }
         .ue-moyenne.unknown             { color: #6d6d6dff; }
         .ue-toggle                      { width: 24px; height: 24px; font-size: 18px; color: #000000; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; margin-left: 5px; }
         .ue-toggle.open                 { transform: rotate(180deg); }
-        .add-a-matiere-card             { display: flex; align-items: center; justify-content: center; gap: 8px; height: 50px; width: 98%; margin-bottom: 15px; border: 3px dashed #7fc2ff; border-radius: 20px; font-size: 24px; font-weight: 700; color: #7fc2ff; background: aliceblue; cursor: pointer; box-shadow: none; transition: all 0.2s ease }
+
+        .ue-insert-area                 { display: none; flex-direction: column; align-items: center; height: 0px; width: 100%; margin: 0px 0px; border-radius: 20px; border: 4px dashed #7fc2ff; transition: height 0.2s ease; }
+        .ue-insert-area.show            { display: flex; height: 50px; margin: 10px 0px; }
+        .add-a-matiere-card             { display: flex; align-items: center; justify-content: center; gap: 8px; height: 50px; width: 290px; margin-bottom: 15px; border: 3px dashed #7fc2ff; border-radius: 20px; font-size: 24px; font-weight: 700; color: #7fc2ff; background: aliceblue; cursor: pointer; box-shadow: none; user-select:none; transition: all 0.2s ease }
         .add-a-matiere-card:hover       { background: white; font-size: 26px; box-shadow: inset 0px 0px 17px 0px #0400ff38; }
         .add-a-matiere-card-plus        { font-size: 40px; font-weight: 900; height: 20px; transition: transform 0.2s ease; }
+
 
         .modules-section                                { display: flex; flex-direction: row; gap: 0px; align-items: center; width: 100% }
         .modules-content                                { display: grid; gap: 20px; width: 100%; }
@@ -134,9 +142,6 @@
         .unclassified-section                           { display: flex; flex-direction: column; width: 100%; background: #fff8f0; border-radius: 20px; padding: 20px; border: 2px dashed #fbbf24; }
         .unclassified-content                           { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; }
         .unclassified-title                             { font-size: 16px; font-weight: 600; color: #92400e; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-        
-        .drop-matiere-to-create-eu                      { display: flex; flex-direction: column; border-radius: 20px; border: 0px dashed #7fc2ff; width: 0%; transition: width 0.2s ease; }
-
 
         .matiere-card                { display: flex; flex-direction: column; align-items: center; border: 4px solid #ffffffff; border-radius: 20px; width: 100%; background: #c5c5c5; margin: 12px 0px 20px 0px; transition: width 0.3s ease; }
         .matiere-card.good           { background: #f0fdf4; }
@@ -157,6 +162,8 @@
         .matiere-card-header.unclassified       { display:flex; flex-direction: row; align-items:center; border-radius: 20px 20px 0px 0px; border-bottom: 2px solid #e4f3ffff; gap:8px; font-weight:700; height: 60px; width: 100%; vertical-align:top; font-size:15px }
         .matiere-card-header.unclassified.good  { background: #e3ffeb; }
         .matiere-card-header.unclassified.bad   { background: #ffe0e0; }
+        .matiere-insert-area                    { display: flex: flex-direction: column; align-items: center; height: 0px; width: 100%; margin: 0px 0px; transition: height 0.2s ease, margin 0.2s ease; }
+        .matiere-insert-area.show               { height: 50px; margin: 10px 0px; }
         .notes-table-matiere-total-coef-value   { display: flex; gap: 15px }
         .mat-moyenne        { font-size: 16px; font-weight: 800; }
         .mat-moyenne.good   { color: #10b981; }
@@ -192,6 +199,7 @@
         .note-bad       { color: #ef4444; }
         .note-date      { font-size: 12px; color: #999; }
 		.subject-sim-del-btn        { border: 1px solid #A7CEDF; border-radius: 6px; cursor: pointer; }
+        .sim-add-btn                { width: 67px; max-width: 140px; justify-content: center; border-radius: 15px; border: 1px solid; padding: 6px 10px; height: 25px; user-select: none; }
         .note-simulee-input         { border-radius: 10px; border-color: #667eea; padding: 2px 10px}
         .note-simulee-input.sim-inp-type    { width: 55%;  max-width:250px; height:25px }
         .note-simulee-input.sim-inp-note    { width: 100%; max-width:75px;  height:25px }
@@ -200,51 +208,6 @@
         .note-simulee-input-edit    { border-radius: 10px; border-color: #667eea; padding: 2px 10px}
 		.note-sim-del-btn           { border: none; border-radius: 6px; cursor: pointer; }
         .note-checkbox  { cursor: pointer; }
-
-        /* Config modal part */
-            .config-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 10000; backdrop-filter: blur(4px); }
-            .config-content { background: white; border-radius: 24px; width: 90%; max-width: 1000px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 3px 5px 5px 0px #00000042; }
-            .config-header { padding: 24px 30px; border-bottom: 1px solid #e5e5e5; display: flex; justify-content: space-between; align-items: center; }
-            .config-title { font-size: 22px; font-weight: 700; color: #1a1a1a; }
-            .config-close { width: 36px; height: 36px; border-radius: 50%; border: none; background: #f3f4f6; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; font-size: 20px; }
-            .config-close:hover { background: #e5e7eb; transform: scale(1.1); }
-            .config-body { padding: 30px; overflow-y: auto; flex: 1; }
-            .config-layout { display: grid; grid-template-columns: 360px 1fr; gap: 30px; height: 100%; }
-            .config-sidebar { border-right: 1px solid #e5e5e5; padding-right: 30px; }
-            .config-main { overflow-y: auto; }
-            .semester-selector { margin-bottom: 24px; }
-            .semester-selector label { display: block; font-size: 14px; font-weight: 600; color: #666; margin-bottom: 8px; }
-            .semester-select { width: 100%; padding: 10px 14px; border: 2px solid #e5e5e5; border-radius: 10px; font-size: 14px; font-weight: 500; background: white; cursor: pointer; transition: all 0.2s ease; }
-            .semester-select:hover { border-color: #667eea; }
-            .semester-select:focus { outline: none; border-color: #667eea; box-shadow: 3px 5px 5px 0px #00000042; }
-            .matieres-pool { background: #f9fafb; border-radius: 12px; padding: 16px; min-height: 200px; }
-            .pool-title { font-size: 14px; font-weight: 600; color: #666; margin-bottom: 12px; display:flex; align-items:center; justify-content:space-between;}
-            .pool-actions { display:flex; gap:8px;}
-            .matiere-row { display:flex; align-items:center; gap:10px; padding:8px 10px; background:white; border:2px solid #e5e5e5; border-radius:10px; margin:6px 0; }
-            .matiere-row.used { background:#eff6ff; border-color:#667eea; opacity:0.8; }
-            .create-ue-section { margin-bottom: 24px; }
-            .create-ue-header { display: flex; gap: 12px; margin-bottom: 16px; }
-            .ue-name-input              { flex: 1; padding: 10px 14px; background: #d3d3d3ff ; border: 2px solid #a7a7a7ff; border-radius: 10px; font-size: 14px; transition: all 0.2s ease; }
-            .ue-name-input:focus        { outline: none; border-color: #667eea; box-shadow: 3px 5px 5px 0px #00000042; }
-            .create-ue-btn { padding: 10px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
-            .create-ue-btn:hover { transform: scale(1.1); box-shadow: 3px 5px 5px 0px #00000042; }
-            .create-ue-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-            .ue-edit-card { background: white; border: 2px solid #e5e5e5; border-radius: 12px; padding: 16px; margin-bottom: 16px; transition: all 0.2s ease; }
-            .ue-edit-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-            .ue-edit-title { font-size: 16px; font-weight: 600; color: #1a1a1a; }
-            .ue-delete-btn { width: 28px; height: 28px; border-radius: 50%; border: none; background: #fee2e2; color: #ef4444; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
-            .ue-delete-btn:hover { background: #ef4444; color: white; transform: scale(1.1); }
-            .ue-matieres-container { min-height: 60px; background: #f9fafb; border-radius: 8px; padding: 12px; border: 2px solid #e5e5e5; transition: all 0.2s ease; }
-            .matiere-in-ue { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 10px; background: white; border: 1px solid #e5e5e5; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; }
-            .matiere-ue-name { font-size: 14px; font-weight: 500; color: #1a1a1a; }
-            .matiere-coef-input-box { width: 40px; border-radius: 9px; border: 1px solid; text-align: center }
-            .percentage-input { width: 70px; padding: 4px 8px; border: 1px solid #e5e5e5; border-radius: 6px; font-size: 14px; text-align: right; }
-            .remove-matiere-btn { border:none; background:#f3f4f6; border-radius:6px; padding:6px 8px; cursor:pointer; }
-            .percentage-total { margin-top: 12px; padding: 12px; background: #f9fafb; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
-            .percentage-total.valid { background: #f0fdf4; color: #10b981; }
-            .percentage-total.invalid { background: #fef2f2; color: #ef4444; }
-            .auto-adjust-btn, .add-selected-btn { padding: 4px 12px; background: white; border: 1px solid currentColor; border-radius: 6px; font-size: 12px; cursor: pointer; }
-        /**/
 
         /* Animations part */
             .selectable-text-content { cursor:  }
@@ -654,7 +617,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="drop-matiere-to-create-eu">
+                    <div class="drop-matiere-card-to-create-eu">
                     </div>
                 </div>
                 `;
@@ -706,109 +669,6 @@
 
                 // Attach on-click event action for the grades' checkbox
                 this.attachCheckboxListeners(container);
-
-                // Attach on-click event action for the simulated grade addition button
-                container.querySelectorAll('.sim-add-btn').forEach(btn=>{
-                    btn.onclick = (e)=>{
-                        const ueName = e.target.dataset.uen;
-                        const semX = e.target.dataset.sem;
-                        const mat = e.target.dataset.mat;
-                        this.ensureSimPath(semX, ueName, mat);
-                        const id = this.sim[semX][ueName][mat].length;
-                        const typeInp = container.querySelector(`.note-simulee-input.sim-inp-type[data-sem="${semX}"][data-mat="${mat}"]`);
-                        const noteInp = container.querySelector(`.note-simulee-input.sim-inp-note[data-sem="${semX}"][data-mat="${mat}"]`);
-                        const coefInp = container.querySelector(`.note-simulee-input.sim-inp-coef[data-sem="${semX}"][data-mat="${mat}"]`);
-                        const dateInp = container.querySelector(`.note-simulee-input.sim-inp-date[data-sem="${semX}"][data-mat="${mat}"]`);
-                        const type = typeInp?.value||'';
-                        const note = parseFloat(noteInp?.value||'');
-                        const coef = parseFloat(coefInp?.value||'');
-                        const date = dateInp?.value||'';
-                        if(isNaN(note) || isNaN(coef)){ alert(this.lang == "fr" ? "Note et coef requis" : "Grade and coef required"); return; }
-                        this.ensureSimPath(semX, ueName, mat);
-                        this.sim[semX][ueName][mat].push({
-                            note, 
-                            coef,
-                            type: type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`,
-                            date: date||new Date().toLocaleDateString(),
-                            prof: '—',
-                            matiere: mat,
-                            semestre: semX,
-                            libelle: `[SIM] ${mat} - ${type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`}`,
-                            __sim: true,
-                            id
-                        });
-                        this.saveSim();
-                        this.renderContent();
-                    }
-                });
-
-                // Attach on-change event action for simulated grades type/grade/coef/date fields
-                container.querySelectorAll(".note-simulee-input-edit").forEach(input => {
-                    input.onchange = e => {
-                        const ueName = e.target.dataset.uen;
-                        const semX = e.target.dataset.sem;
-                        const mat = e.target.dataset.mat;
-                        const id = e.target.dataset.id;
-                        let noteRow = e.target.parentElement.parentElement;
-                        // const typeInp = container.querySelector(`.note-simulee-input-edit.sim-inp-type[data-sem="${semX}"][data-mat="${mat}"]`);
-                        const typeInp = noteRow.querySelector(`.note-simulee-input-edit.sim-inp-type`)
-                        const noteInp = noteRow.querySelector(`.note-simulee-input-edit.sim-inp-note`);
-                        const coefInp = noteRow.querySelector(`.note-simulee-input-edit.sim-inp-coef`);
-                        const dateInp = noteRow.querySelector(`.note-simulee-input-edit.sim-inp-date`);
-                        const type = typeInp?.value||'';
-                        const newNote = parseFloat(noteInp?.value||'');
-                        const newCoef = parseFloat(coefInp?.value||'');
-                        const date = dateInp?.value||'';
-                        if(isNaN(newNote) || isNaN(newCoef)){ alert(this.lang == "fr" ? "Note et coef requis" : "Grade and coef required"); return; }
-                        this.sim[semX][ueName][mat].forEach((note, index) => {
-                            if (note.id == id) {
-                                this.sim[semX][ueName][mat][index] = {
-                                    note: newNote, 
-                                    coef: newCoef,
-                                    type: type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`,
-                                    date: date||new Date().toLocaleDateString(),
-                                    prof: '—',
-                                    matiere: mat,
-                                    semestre: semX,
-                                    libelle: `[SIM] ${mat} - ${type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`}`,
-                                    __sim: true,
-                                    id
-                                }
-                            }
-                        });
-
-                        this.saveSim();
-                        this.renderContent(false);
-                    }
-                })
-
-                // Attach on-click event action for the simulated grades' deletion button
-                container.querySelectorAll('.sim-del-btn').forEach(btn=>{
-                    btn.onclick = (e) => {
-                        const semX = e.target.dataset.sem;
-                        const ueName = e.target.dataset.uen;
-                        const mat = e.target.dataset.mat;
-                        const type = e.target.dataset.type;
-                        this.sim[semX][ueName][mat].splice(this.sim[semX][ueName][mat].indexOf(type), 1);
-                        this.deleteUnusedSimPath(semX, ueName, mat);
-                        this.saveSim();
-                        this.renderContent(true);
-                    }
-                })
-
-                
-                document.querySelector(".unclassified-content").querySelectorAll(".notes-table").forEach(table => {
-                    table.onmousedown = () => {
-                        if (this.editMode) document.querySelectorAll(".matiere-card.unclassified").forEach(card => {card.draggable = false;})
-                    }
-                    table.onmouseleave = () => {
-                        if (this.editMode) document.querySelectorAll(".matiere-card.unclassified").forEach(card => {card.draggable = true;})
-                    }
-                    table.onmouseup = () => {
-                        if (this.editMode) document.querySelectorAll(".matiere-card.unclassified").forEach(card => {card.draggable = true;})
-                    }
-                })
-
 
                 // After rendering the UE card's content in detailed view, check if the view mode is set to "compact" and if so, render the UE card's content in compact view
                 if (this.viewMode == "compact") {
@@ -879,6 +739,7 @@
             });
             
             let html = `
+            <div class="ue-insert-area">→</div>
             <div class="ue-card ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'validated' : 'failed'}`}" id="ue-card-${ueName}-in-semester-${sem}">
                 <div class="ue-header ${this.editMode ? "edit-mode" : ""} ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'validated' : 'failed'}`}" id="ue-header-${ueName}-in-semester${sem}" data-semester="${sem}" data-ue="${ueName}" ${this.editMode ? `draggable="true"` : ""}>
                     ${this.editMode 
@@ -905,11 +766,11 @@
                     </div>
                 </div>
                 ${hasSim ? `<div style="width:97%;font-size:12px;color:#374151;background:#eef2ff;border:1px solid #c7d2fe;padding:6px 8px;border-radius:8px; margin:8px 0px;">${this.lang == "fr" ? "Inclut des notes simulées" : "Includes simulated grades"}</div>` : ``}
-                <div class="ue-details" id="ue-details-${ueName}-in-semester${sem}" style="display:flex; flex-direction: column; align-items: center; width: 98%">
+                <div class="ue-details" id="ue-details-${ueName}-in-semester${sem}">
                     ${this.renderAllMatCardDetailed(ueData, sem, ueName)}
                 </div>
                 ${this.editMode ? `
-                <div class="add-a-matiere-card">
+                <div class="add-a-matiere-card" id="add-a-matiere-card-for-${ueName}-in-semester-${sem}" data-sem="${sem}" data-ue="${ueName}">
                     <div class="add-a-matiere-card-plus left">+</div>
                     <div>${this.lang == "fr" ? `Ajouter une matière` : `Add a subject`}</div>
                     <div class="add-a-matiere-card-plus right">+</div>
@@ -940,17 +801,21 @@
             const ueMoy = this.gradesDatas[sem][ueName].average;
             const moyMat = this.moyennePonderee(matNotes);
             const pct = ueData?.pourcentages?.[matiere] || 0;
+            const isCustom = ueData?.custom?.[matiere] || false;
             this.gradesDatas[sem][ueName].matieres[matiere].average = matNotes.length != 0 ? moyMat : " - ";
             this.gradesDatas[sem][ueName].matieres[matiere].coef = parseInt(pct);
+            this.gradesDatas[sem][ueName].matieres[matiere].custom = isCustom;
             
                 let html = `
-                <div class="matiere-card ${ueMoy != " - " && moyMat != 0 ? `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}` : ``}" ${this.editMode ? `style="user-select: none;"` : ``} id="mat-card-semester-${sem}-matiere-${matiere}" data-semester="${sem}" data-ue="${ueName}" data-subject="${matiere}">
+                <div class="matiere-card ${ueMoy != " - " && moyMat != 0 ? `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}` : ``}" ${this.editMode ? `style="user-select: none;"` : ``} id="mat-card-semester-${sem}-matiere-${matiere}" data-semester="${sem}" data-ue="${ueName}" data-subject="${matiere}" data-custom="${isCustom}">
                     <div class="matiere-card-header ${ueMoy != " - " && moyMat != 0 ? `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}` : ``}" ${this.editMode ? `draggable="true"` : ``} style="${this.editMode ? `cursor:move; ` : `${matNotes.length > 0 ? `` : `border-radius: 20px; border: none`}`}">
                         <div style="display: flex; width: 42%; padding-left: ${this.editMode ? `10px` : `50px`}">
                             <div style="display: flex; justify-content: flex-start; align-items: center; width: 100%; gap:8px; user-select: text">
                                 ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("detailed-matiere-card")}</div>` : ""}
                                 <div style="width: 100%">
-                                    <div class="matiere-name">${matiere}</div>
+                                    ${isCustom 
+                                        ? `<input type="text" class="matiere-name input any-input" value="${matiere}"/>`
+                                        : `<div class="matiere-name">${matiere}</div>`}
                                     <div class="note-type">
                                         ${this.lang == "fr" ? "Poids UE" : "TU Weight"}: 
                                         ${this.editMode 
@@ -1086,7 +951,7 @@
                                     <input class="note-simulee-input sim-inp-date any-input" id="note-simulee-input-date-for-${matiere}-from-${ueName}-in-semester${sem}" type="date" value="${this.today}" data-sem="${sem}" data-mat="${matiere}">
                                 </td>
                                 <td colspan="2">
-                                    <button class="btn-export sim-add-btn" data-sem="${sem}" data-mat="${matiere}" data-uen="${ueName||''}" style="width: 100%; max-width: 140px; padding:6px 10px; height:25px">${this.lang == "fr" ? "Ajouter" : "Add"}</button>
+                                    <button class="btn-export sim-add-btn" data-sem="${sem}" data-mat="${matiere}" data-uen="${ueName||''}">${this.lang == "fr" ? "Ajouter" : "Add"}</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -1114,18 +979,23 @@
             const matNotes = this.gradesDatas[sem][ueName].matieres[matiere].grades;
             const moyMat = this.moyennePonderee(matNotes);
             const pct = ueData?.pourcentages?.[matiere] || 0;
+            const isCustom = ueData?.custom?.[matiere] || false;
             const includedNotesLength = (matNotes || []).filter(n => this.ignoredGrades.indexOf([sem, n.matiere, n.type+" "+n.date+" "+n.prof].join("\\")) == -1).length;
             const simGradesLength = (matNotes || []).filter(n => n.__sim).length;
             this.gradesDatas[sem][ueName].matieres[matiere].average = matNotes.length != 0 ? moyMat : " - ";
             this.gradesDatas[sem][ueName].matieres[matiere].coef = parseInt(pct);
+            this.gradesDatas[sem][ueName].matieres[matiere].custom = isCustom;
 
             const html = `
             <div style="display:flex; margin:10px; gap:6px; flex-direction:column; align-items: center; width: 100%">
-                <div class="matiere-card compact ${this.editMode ? "" : "edit-mode"}" id="mat-card-semester-${sem}-matiere-${matiere}" style="${this.editMode ? "cursor:move; user-select: none; " : " "}" draggable=${this.editMode ? "true" : "false"} data-sem="${sem}" data-ue="${ueName}" data-subject="${matiere}">
+                <div class="matiere-card compact ${this.editMode ? "" : "edit-mode"}" id="mat-card-semester-${sem}-matiere-${matiere}" style="${this.editMode ? "cursor:move; user-select: none; " : " "}" draggable=${this.editMode ? "true" : "false"} data-sem="${sem}" data-ue="${ueName}" data-subject="${matiere}" data-custom="${isCustom}">
                     <div style="display:flex; align-items:center; gap:8px; padding-left: 11px; width:43%; min-width: 275px">
                         ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("compact-matiere-card")}</div>` : ""}
                         <div>
-                            <div class="matiere-name">${matiere}</div>
+                            ${isCustom 
+                                ? `<input type="text" class="matiere-name input any-input" value="${matiere}"/>`
+                                : `<div class="matiere-name">${matiere}</div>`
+                            }
                             <div style="font-size:13px;color:#666;">
                                 ${this.editMode 
                                     ? `<input class="matiere-coef-input-box any-input" id="matiere-coef-input-box-${sem}-${ueName}-${matiere}" data-semestre="${sem}" data-ue="${ueName}" data-subject="${matiere}" type="number" placeholder="%" step="5" min="0" max="100" value="${pct}"/>%`
@@ -1388,8 +1258,8 @@
                     else if (enabledSimulatedGrades.length > 0) {
                         if (totalSimGradesCoef < 100) {
                             advice = this.lang == `fr` 
-                                ? `${totalSimGradesCoef}% de ta note est simulée, toutes tes vraies notes ne sont pas encore là !` 
-                                : `${totalSimGradesCoef}% of your grade is simulated, all your actual grades aren't out yet!`
+                                ? `${totalSimGradesCoef/this.gradesDatas[sem][ue].matieres.length}% de ta note est simulée, toutes tes vraies notes ne sont pas encore là !` 
+                                : `${totalSimGradesCoef/this.gradesDatas[sem][ue].matieres.length}% of your grade is simulated, all your actual grades aren't out yet!`
                             ;
                             color = ` #e90000`;
                         }
@@ -1403,8 +1273,8 @@
                         }
                         else if (totalSimGradesCoef > 100) {
                             advice = this.lang == `fr` 
-                                ? `${totalSimGradesCoef}% de ta note est simulée... jsp ce que t'as fait, mais tu l'as mal fait, change moi ça...` 
-                                : `${totalSimGradesCoef}% of your grade is simulated... idk what you've done, but do smthg, cuz you did it wrong...`
+                                ? `${totalSimGradesCoef/this.gradesDatas[sem][ue].matieres.length}% de ta note est simulée... jsp ce que t'as fait, mais tu l'as mal fait, change moi ça...` 
+                                : `${totalSimGradesCoef/this.gradesDatas[sem][ue].matieres.length}% of your grade is simulated... idk what you've done, but do smthg, cuz you did it wrong...`
                             ;
                             color = ` #e90000`;
                         }
@@ -1677,9 +1547,9 @@
                     if (this.mobileVer == false) {
                         this.mobileVer = true;
                         this.renderContent(false)
-                        // this.getCSSClassCoordInStyleSheet(".notes-table-teacher") == "document.styleSheets[11].cssRules[142]"
+                        // this.getCSSClassCoordInStyleSheet(".notes-table-teacher") == "document.styleSheets[11].cssRules[147]"
                         // document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
-                        document.styleSheets[11].cssRules[142].style.display = "none";
+                        document.styleSheets[11].cssRules[147].style.display = "none";
                     }
                 }
                 else
@@ -1692,9 +1562,8 @@
                 }
 
                 if (document.body.clientWidth <= 1470) {
-                    // this.getCSSClassCoordInStyleSheet(".note-simulee-input") == [11, 153];
-                    // this.getCSSClassCoordInStyleSheet(".note-simulee-input.sim-inp-type") == [11, 154];
-                    // document.styleSheets[11].cssRules[153]
+                    // this.getCSSClassCoordInStyleSheet(".note-simulee-input") == document.styleSheets[11].cssRules[158];
+                    // this.getCSSClassCoordInStyleSheet(".note-simulee-input.sim-inp-type") == document.styleSheets[11].cssRules[159];
                 }
 
                 if (document.body.clientWidth <= 1530) {
@@ -1714,6 +1583,13 @@
             document.querySelectorAll(".any-input").forEach(input => {
                 input.onfocus = () => {document.onkeydown = null; document.onkeyup = null}
                 input.onblur = () => {this.generalKeyboardEvents()};
+                input.ondragover = (e) => {
+                    e.preventDefault(); 
+                    input.onmouseover = () => {input.style.cursor="default"};
+                    input.onmouseleave = () => {input.style.cursor=""};
+                };
+                input.ondragleave = () => {input.style.cursor=""};
+                input.ondrop = (e) => {e.preventDefault()};
             })
             
 
@@ -1800,146 +1676,166 @@
                 };
             })
 
-            // ONDRAG cards event
-            const dropArea = document.querySelector(".drop-matiere-to-create-eu");
-            document.querySelectorAll(".matiere-card").forEach(matiereCard => {
-                let draggedElement = ``;
-                const isUnclassified = matiereCard.classList.contains("unclassified");
-                if (isUnclassified || matiereCard.classList.contains("compact")) {draggedElement = matiereCard;}
-                else {draggedElement = matiereCard.querySelector(".matiere-card-header");}
-                
-                draggedElement.ondragstart = (e) => {
-                    if (isUnclassified) {
-                        matiereCard.style.width = "50%";
-                        matiereCard.querySelector(".notes-table").style.display = "none";
-                        matiereCard.querySelector(".matiere-card-header").style.border = "none";
-                        matiereCard.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 20px 20px";
-                        document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, dropArea, tick, true);})
-                    } 
-                    else if (matiereCard.classList.contains("compact")) {
-                        matiereCard.style.width = "50%";
-                        matiereCard.querySelector(".notes-table-coef").style.display = "none";
-                        document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, dropArea, tick);})
-                    }
-                    else {
-                        matiereCard.style.width = "50%";
-                        matiereCard.querySelector(".matiere-card-header").children[0].style.width =                         "50%";
-                        matiereCard.querySelector(".matiere-card-header").querySelector(".notes-table-coef").style.width =  "50%";
-                        matiereCard.querySelector(".notes-table").style.display = "none";
-                        matiereCard.querySelector(".matiere-card-header").style.borderBottom = "none";
-                        matiereCard.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 20px 20px";
-                        document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, dropArea, tick);})
-                    }
-                    document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
-                    document.querySelector(".semester-content").style.gap = "20px";
-                    dropArea.style.border = "4px dashed #7fc2ff";
-                    dropArea.style.width = "30%";
-                    this.selectedMatiereCards = [];
-                    e.dataTransfer.setData("text", isUnclassified ? draggedElement.id : matiereCard.id)
-                };
+            
+            {   // ONDRAG cards event
+                const dropArea = document.querySelector(".drop-matiere-card-to-create-eu");
+                const ueInsertAreas = document.querySelectorAll(".ue-insert-area");
+                document.querySelectorAll(".matiere-card").forEach(matiereCard => {
+                    let draggedElement = ``;
+                    const isUnclassified = matiereCard.classList.contains("unclassified");
+                    if (isUnclassified || matiereCard.classList.contains("compact")) {draggedElement = matiereCard;}
+                    else {draggedElement = matiereCard.querySelector(".matiere-card-header");}
 
-                draggedElement.ondragend = (e) => {
-                    if (isUnclassified) {
-                        matiereCard.style.width = "99%";
-                        matiereCard.querySelector(".notes-table").style.display = "table";
-                        matiereCard.querySelector(".matiere-card-header").style.border = "none";
-                        matiereCard.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 0px 0px";
-                    }
-                    else if (matiereCard.classList.contains("compact")) {
-                        matiereCard.style.width = "100%";
-                        matiereCard.querySelector(".notes-table-coef").style.display = "flex";
-                    }
-                    else {
-                        matiereCard.style.width = "100%";
-                        matiereCard.querySelector(".matiere-card-header").children[0].style.width =                         "42%";
-                        matiereCard.querySelector(".matiere-card-header").querySelector(".notes-table-coef").style.width =  "58%";
-                        matiereCard.querySelector(".notes-table").style.display = "table";
-                        matiereCard.querySelector(".matiere-card-header").style.borderBottom = "4px solid white";
-                        matiereCard.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 0px 0px";
-                    }
-                    
-                    if (this.selectedMatiereCards.length == 0) {
-                        setTimeout(() => {document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
-                        document.querySelector(".semester-content").style.gap = "0px";
-                        dropArea.style.border = "none";
-                        dropArea.style.width = "0%";
-                    }
-                };
-
-            })
-            if (this.selectedMatiereCards.length > 0) { 
-                this.selectedMatiereCards.forEach(selectedMatiereCard => {
-                    let draggedElement = "";
-                    const isUnclassified = selectedMatiereCard.classList.contains("unclassified");
-                    if (isUnclassified || selectedMatiereCard.classList.contains("compact")) {draggedElement = selectedMatiereCard;}
-                    else {draggedElement = selectedMatiereCard.querySelector(".matiere-card-header");}
-                    
                     draggedElement.ondragstart = (e) => {
-                        this.selectedMatiereCards.forEach(selectedMatiereCard2 => {
-                            if (selectedMatiereCard2.classList.contains("unclassified")) {
-                                selectedMatiereCard2.style.width = "50%";
-                                setTimeout(() => {selectedMatiereCard2.querySelector(".notes-table").style.display = "none";}, 10)
-                                selectedMatiereCard2.querySelector(".matiere-card-header").style.border = "none";
-                                selectedMatiereCard2.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 20px 20px";
-                            
-                            } 
-                            else if (selectedMatiereCard2.classList.contains("compact")) {
-                                selectedMatiereCard2.style.width = "50%";
-                                selectedMatiereCard2.querySelector(".notes-table-coef").style.display = "none";
-                            }
-                            else {
-                                selectedMatiereCard2.style.width = "50%";
-                                selectedMatiereCard2.querySelector(".matiere-card-header").children[0].style.width =                         "50%";
-                                selectedMatiereCard2.querySelector(".matiere-card-header").querySelector(".notes-table-coef").style.width =  "50%";
-                                setTimeout(() => {selectedMatiereCard2.querySelector(".notes-table").style.display = "none";}, 10)
-                                selectedMatiereCard2.querySelector(".matiere-card-header").style.borderBottom = "none";
-                                selectedMatiereCard2.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 20px 20px";
-                            }
-                        })
+                        if (isUnclassified) {
+                            matiereCard.style.width = "50%";
+                            matiereCard.querySelector(".notes-table").style.display = "none";
+                            matiereCard.querySelector(".matiere-card-header").style.border = "none";
+                            matiereCard.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 20px 20px";
+                            document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, dropArea, tick, true);})
+                        } 
+                        else if (matiereCard.classList.contains("compact")) {
+                            matiereCard.style.width = "50%";
+                            matiereCard.querySelector(".notes-table-coef").style.display = "none";
+                            document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, dropArea, tick);})
+                        }
+                        else {
+                            matiereCard.style.width = "50%";
+                            matiereCard.querySelector(".matiere-card-header").children[0].style.width =                         "50%";
+                            matiereCard.querySelector(".matiere-card-header").querySelector(".notes-table-coef").style.width =  "50%";
+                            matiereCard.querySelector(".notes-table").style.display = "none";
+                            matiereCard.querySelector(".matiere-card-header").style.borderBottom = "none";
+                            matiereCard.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 20px 20px";
+                            document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, dropArea, tick);})
+                        }
                         document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
                         document.querySelector(".semester-content").style.gap = "20px";
                         dropArea.style.border = "4px dashed #7fc2ff";
-                        dropArea.style.width = "30%";
-
-                        e.dataTransfer.setData("text", isUnclassified ? draggedElement.id : selectedMatiereCard.id)
-                    }
+                        dropArea.style.width = "15%";
+                        // ueInsertAreas.forEach(ueInsertArea => {setTimeout(()=>{ueInsertArea.classList.add("show")}, 0)});
+                        // ueInsertAreas.forEach(ueInsertArea => {ueInsertArea.style.display = "flex"; ueInsertArea.style.height = "50px";})
+                        this.selectedMatiereCards = [];
+                        e.dataTransfer.setData("text", isUnclassified ? draggedElement.id : matiereCard.id)
+                    };
 
                     draggedElement.ondragend = (e) => {
-                        this.selectedMatiereCards.forEach(selectedMatiereCard2 => {
-                            if (selectedMatiereCard2.classList.contains("unclassified")) {
-                                selectedMatiereCard2.style.width = "99%";
-                                selectedMatiereCard2.querySelector(".notes-table").style.display = "table";
-                                selectedMatiereCard2.querySelector(".matiere-card-header").style.border = "none";
-                                selectedMatiereCard2.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 0px 0px";
-                            
-                            } 
-                            else if (selectedMatiereCard2.classList.contains("compact")) {
-                                selectedMatiereCard2.style.width = "100%";
-                                selectedMatiereCard2.querySelector(".notes-table-coef").style.display = "flex";
-                            }
-                            else {
-                                selectedMatiereCard2.style.width = "100%";
-                                selectedMatiereCard2.querySelector(".matiere-card-header").children[0].style.width =                         "42%";
-                                selectedMatiereCard2.querySelector(".matiere-card-header").querySelector(".notes-table-coef").style.width =  "58%";
-                                selectedMatiereCard2.querySelector(".notes-table").style.display = "table";
-                                selectedMatiereCard2.querySelector(".matiere-card-header").style.borderBottom = "4px solid white";
-                                selectedMatiereCard2.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 0px 0px";
-                            }
-                        })
+                        if (isUnclassified) {
+                            matiereCard.style.width = "99%";
+                            matiereCard.querySelector(".notes-table").style.display = "table";
+                            matiereCard.querySelector(".matiere-card-header").style.border = "none";
+                            matiereCard.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 0px 0px";
+                        }
+                        else if (matiereCard.classList.contains("compact")) {
+                            matiereCard.style.width = "100%";
+                            matiereCard.querySelector(".notes-table-coef").style.display = "flex";
+                        }
+                        else {
+                            matiereCard.style.width = "100%";
+                            matiereCard.querySelector(".matiere-card-header").children[0].style.width =                         "42%";
+                            matiereCard.querySelector(".matiere-card-header").querySelector(".notes-table-coef").style.width =  "58%";
+                            matiereCard.querySelector(".notes-table").style.display = "table";
+                            matiereCard.querySelector(".matiere-card-header").style.borderBottom = "4px solid white";
+                            matiereCard.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 0px 0px";
+                        }
+                        
+                        if (this.selectedMatiereCards.length == 0) {
+                            setTimeout(() => {document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
+                            document.querySelector(".semester-content").style.gap = "0px";
+                            dropArea.style.border = "none";
+                            dropArea.style.width = "0%";
+                            // ueInsertAreas.forEach(ueInsertArea => {setTimeout(()=>{ueInsertArea.style.display = "none"; ueInsertArea.style.height = "0px";}, 100)})
+                        }
+                    };
+
+                })
+                if (this.selectedMatiereCards.length > 0) { 
+                    this.selectedMatiereCards.forEach(selectedMatiereCard => {
+                        let draggedElement = "";
+                        const isUnclassified = selectedMatiereCard.classList.contains("unclassified");
+                        if (isUnclassified || selectedMatiereCard.classList.contains("compact")) {draggedElement = selectedMatiereCard;}
+                        else {draggedElement = selectedMatiereCard.querySelector(".matiere-card-header");}
+                        
+                        draggedElement.ondragstart = (e) => {
+                            this.selectedMatiereCards.forEach(selectedMatiereCard2 => {
+                                if (selectedMatiereCard2.classList.contains("unclassified")) {
+                                    selectedMatiereCard2.style.width = "50%";
+                                    setTimeout(() => {selectedMatiereCard2.querySelector(".notes-table").style.display = "none";}, 10)
+                                    selectedMatiereCard2.querySelector(".matiere-card-header").style.border = "none";
+                                    selectedMatiereCard2.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 20px 20px";
+                                
+                                } 
+                                else if (selectedMatiereCard2.classList.contains("compact")) {
+                                    selectedMatiereCard2.style.width = "50%";
+                                    selectedMatiereCard2.querySelector(".notes-table-coef").style.display = "none";
+                                }
+                                else {
+                                    selectedMatiereCard2.style.width = "50%";
+                                    selectedMatiereCard2.querySelector(".matiere-card-header").children[0].style.width =                         "50%";
+                                    selectedMatiereCard2.querySelector(".matiere-card-header").querySelector(".notes-table-coef").style.width =  "50%";
+                                    setTimeout(() => {selectedMatiereCard2.querySelector(".notes-table").style.display = "none";}, 10)
+                                    selectedMatiereCard2.querySelector(".matiere-card-header").style.borderBottom = "none";
+                                    selectedMatiereCard2.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 20px 20px";
+                                }
+                            })
+                            document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
+                            document.querySelector(".semester-content").style.gap = "20px";
+                            dropArea.style.border = "4px dashed #7fc2ff";
+                            dropArea.style.width = "30%";
+
+                            e.dataTransfer.setData("text", isUnclassified ? draggedElement.id : selectedMatiereCard.id)
+                        }
+
+                        draggedElement.ondragend = (e) => {
+                            this.selectedMatiereCards.forEach(selectedMatiereCard2 => {
+                                if (selectedMatiereCard2.classList.contains("unclassified")) {
+                                    selectedMatiereCard2.style.width = "99%";
+                                    selectedMatiereCard2.querySelector(".notes-table").style.display = "table";
+                                    selectedMatiereCard2.querySelector(".matiere-card-header").style.border = "none";
+                                    selectedMatiereCard2.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 0px 0px";
+                                
+                                } 
+                                else if (selectedMatiereCard2.classList.contains("compact")) {
+                                    selectedMatiereCard2.style.width = "100%";
+                                    selectedMatiereCard2.querySelector(".notes-table-coef").style.display = "flex";
+                                }
+                                else {
+                                    selectedMatiereCard2.style.width = "100%";
+                                    selectedMatiereCard2.querySelector(".matiere-card-header").children[0].style.width =                         "42%";
+                                    selectedMatiereCard2.querySelector(".matiere-card-header").querySelector(".notes-table-coef").style.width =  "58%";
+                                    selectedMatiereCard2.querySelector(".notes-table").style.display = "table";
+                                    selectedMatiereCard2.querySelector(".matiere-card-header").style.borderBottom = "4px solid white";
+                                    selectedMatiereCard2.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 0px 0px";
+                                }
+                            })
+                        }
+                    })
+                }
+                dropArea.ondragover = (e) => {
+                    e.preventDefault();
+                    e.target.style.background = "#bdb8ff";
+                }
+                dropArea.ondragleave = (e) => {
+                    e.preventDefault();
+                    e.target.style.background = "";
+                }
+                dropArea.ondrop = (e) => {
+                    e.preventDefault(); 
+                    this.matiereCardToNewUE(e.dataTransfer.getData("text"));
+                }
+                ueInsertAreas.forEach(ueInsertArea => {
+                    ueInsertArea.ondragover = (e) => {
+                        e.preventDefault();
+                        e.target.style.background = "#bdb8ff";
+                    }
+                    ueInsertArea.ondragleave = (e) => {
+                        e.preventDefault();
+                        e.target.style.background = "";
+                    }
+                    ueInsertArea.ondrop = (e) => {
+                        e.preventDefault(); 
+                        this.matiereCardToNewUE(e.dataTransfer.getData("text"));
                     }
                 })
-            }
-            dropArea.ondragover = (e) => {
-                e.preventDefault();
-                e.target.style.background = "#bdb8ff";
-            }
-            dropArea.ondragleave = (e) => {
-                e.preventDefault();
-                e.target.style.background = "";
-            }
-            dropArea.ondrop = (e) => {
-                e.preventDefault(); 
-                this.matiereCardToNewUE(e.dataTransfer.getData("text"));
             }
             
             document.querySelectorAll(".drag-icon-for-detailed-matiere-card").forEach(dragIcon => {
@@ -1983,6 +1879,79 @@
                     addDiv.querySelector(".add-a-matiere-card-plus.left").style.transform =  "";
                     addDiv.querySelector(".add-a-matiere-card-plus.right").style.transform = "";
                 }
+                addDiv.onclick = (e) => {
+                    e.preventDefault();
+                    const addDivClicked = e.target.closest(".add-a-matiere-card");
+                    const sem = addDivClicked.dataset.sem;
+                    const ue =  addDivClicked.dataset.ue;
+                    const ueCard = document.getElementById(`ue-card-${ue}-in-semester-${sem}`);
+                    const ueContent = ueCard.querySelector(".ue-details");
+
+                    let newMatName = `${this.lang == "fr" ? "Nouvelle matière" : "New subject"} 1`; let count = 1;
+                    while (this.gradesDatas[sem][ue].matieres[newMatName]) {
+                        count++; newMatName = `${this.lang == "fr" ? "Nouvelle matière" : "New subject"} ${count}`;
+                    }
+
+                    this.ueConfig   [sem][ue].matieres.push(newMatName);
+                    this.ueConfig   [sem][ue].pourcentages [newMatName] = 0;
+                    this.ueConfig   [sem][ue].custom       [newMatName] = true;
+                    this.gradesDatas[sem][ue].matieres     [newMatName] = {grades: [], custom: true};
+
+                    const ueData = this.ueConfig[sem][ue];
+                    if (this.viewMode == "detailed" || !ueCard.classList.contains("compact")) {
+                        ueContent.innerHTML = this.renderAllMatCardDetailed(ueData, sem, ue);
+                    }
+                    else {
+                        ueContent.innerHTML = this.renderAllMatCardCompact(ueData, sem, ue);
+                    }
+
+                    this.attachEventListeners()
+                    this.setNotesTableTotalCoef();
+
+                    // this.saveConfig()
+                }
+            })
+
+            document.querySelectorAll(".matiere-name.input").forEach(input => {
+                input.onmouseover = (e) => {e.preventDefault()};
+                input.onchange = (e) => {
+                    const newMatName = e.target.value;
+                    const matCard = e.target.parentElement.parentElement.parentElement.parentElement.parentElement;
+                    const ueContent = matCard.parentElement;
+                    const sem = matCard.dataset.semester;
+                    const ue = matCard.dataset.ue;
+                    const oldMat = matCard.dataset.subject;
+                    let diffName = true;
+                    this.ueConfig[sem][ue].matieres.forEach(_mat => {if (_mat == newMatName) diffName = false});
+                        
+                    const oldMatIndex = this.ueConfig[sem][ue].matieres.indexOf(oldMat);
+                    this.ueConfig[sem][ue].matieres.splice(oldMatIndex, 1);
+                    const pct = this.ueConfig[sem][ue].pourcentages[oldMat];
+                    const isCustom = this.ueConfig[sem][ue].custom[oldMat];
+                    const matDatas = this.gradesDatas[sem][ue].matieres[oldMat];
+
+                    delete this.ueConfig[sem][ue].pourcentages[oldMat];
+                    delete this.ueConfig[sem][ue].custom[oldMat];
+                    delete this.gradesDatas[sem][ue].matieres[oldMat];
+                    
+                    if (diffName) {
+                        this.ueConfig   [sem][ue].matieres.push(newMatName);
+                        this.ueConfig   [sem][ue].pourcentages [newMatName] = pct;
+                        this.ueConfig   [sem][ue].custom       [newMatName] = false;
+                        this.gradesDatas[sem][ue].matieres     [newMatName] = matDatas;
+                    }
+                    
+                    const ueData = this.ueConfig[sem][ue];
+                    if (this.viewMode == "detailed" || !ueCard.classList.contains("compact")) {
+                        ueContent.innerHTML = this.renderAllMatCardDetailed(ueData, sem, ue);
+                    }
+                    else {
+                        ueContent.innerHTML = this.renderAllMatCardCompact(ueData, sem, ue);
+                    }
+
+                    this.attachEventListeners()
+                    this.setNotesTableTotalCoef();
+                }
             })
 
             // Prevent dragging ue-header when interacting with ue-title input
@@ -2005,6 +1974,110 @@
                     this.saveConfig()
                     this.renderContent()
                     this.attachEventListeners();
+                }
+            })
+
+            
+
+            // Attach on-click event action for the simulated grade addition button
+            document.querySelectorAll('.sim-add-btn').forEach(btn=>{
+                btn.onclick = (e)=>{
+                    const ueName = e.target.dataset.uen;
+                    const semX = e.target.dataset.sem;
+                    const mat = e.target.dataset.mat;
+                    this.ensureSimPath(semX, ueName, mat);
+                    const id = this.sim[semX][ueName][mat].length;
+                    const typeInp = document.querySelector(`.note-simulee-input.sim-inp-type[data-sem="${semX}"][data-mat="${mat}"]`);
+                    const noteInp = document.querySelector(`.note-simulee-input.sim-inp-note[data-sem="${semX}"][data-mat="${mat}"]`);
+                    const coefInp = document.querySelector(`.note-simulee-input.sim-inp-coef[data-sem="${semX}"][data-mat="${mat}"]`);
+                    const dateInp = document.querySelector(`.note-simulee-input.sim-inp-date[data-sem="${semX}"][data-mat="${mat}"]`);
+                    const type = typeInp?.value||'';
+                    const note = parseFloat(noteInp?.value||'');
+                    const coef = parseFloat(coefInp?.value||'');
+                    const date = dateInp?.value||'';
+                    if(isNaN(note) || isNaN(coef)){ alert(this.lang == "fr" ? "Note et coef requis" : "Grade and coef required"); return; }
+                    this.ensureSimPath(semX, ueName, mat);
+                    this.sim[semX][ueName][mat].push({
+                        note, 
+                        coef,
+                        type: type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`,
+                        date: date||new Date().toLocaleDateString(),
+                        prof: '—',
+                        matiere: mat,
+                        semestre: semX,
+                        libelle: `[SIM] ${mat} - ${type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`}`,
+                        __sim: true,
+                        id
+                    });
+                    this.saveSim();
+                    this.renderContent();
+                }
+            });
+
+            // Attach on-change event action for simulated grades type/grade/coef/date fields
+            document.querySelectorAll(".note-simulee-input-edit").forEach(input => {
+                input.onchange = e => {
+                    const ueName = e.target.dataset.uen;
+                    const semX = e.target.dataset.sem;
+                    const mat = e.target.dataset.mat;
+                    const id = e.target.dataset.id;
+                    let noteRow = e.target.parentElement.parentElement;
+                    // const typeInp = document.querySelector(`.note-simulee-input-edit.sim-inp-type[data-sem="${semX}"][data-mat="${mat}"]`);
+                    const typeInp = noteRow.querySelector(`.note-simulee-input-edit.sim-inp-type`)
+                    const noteInp = noteRow.querySelector(`.note-simulee-input-edit.sim-inp-note`);
+                    const coefInp = noteRow.querySelector(`.note-simulee-input-edit.sim-inp-coef`);
+                    const dateInp = noteRow.querySelector(`.note-simulee-input-edit.sim-inp-date`);
+                    const type = typeInp?.value||'';
+                    const newNote = parseFloat(noteInp?.value||'');
+                    const newCoef = parseFloat(coefInp?.value||'');
+                    const date = dateInp?.value||'';
+                    if(isNaN(newNote) || isNaN(newCoef)){ alert(this.lang == "fr" ? "Note et coef requis" : "Grade and coef required"); return; }
+                    this.sim[semX][ueName][mat].forEach((note, index) => {
+                        if (note.id == id) {
+                            this.sim[semX][ueName][mat][index] = {
+                                note: newNote, 
+                                coef: newCoef,
+                                type: type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`,
+                                date: date||new Date().toLocaleDateString(),
+                                prof: '—',
+                                matiere: mat,
+                                semestre: semX,
+                                libelle: `[SIM] ${mat} - ${type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`}`,
+                                __sim: true,
+                                id
+                            }
+                        }
+                    });
+
+                    this.saveSim();
+                    this.renderContent(false);
+                }
+            })
+
+            // Attach on-click event action for the simulated grades' deletion button
+            document.querySelectorAll('.sim-del-btn').forEach(btn=>{
+                btn.onclick = (e) => {
+                    const semX = e.target.dataset.sem;
+                    const ueName = e.target.dataset.uen;
+                    const mat = e.target.dataset.mat;
+                    const type = e.target.dataset.type;
+                    this.sim[semX][ueName][mat].splice(this.sim[semX][ueName][mat].indexOf(type), 1);
+                    this.deleteUnusedSimPath(semX, ueName, mat);
+                    this.saveSim();
+                    this.renderContent(true);
+                }
+            })
+
+            
+            document.querySelector(".unclassified-content").querySelectorAll(".notes-table").forEach(table => {
+                table.onmousedown = () => {
+                    if (this.editMode) document.querySelectorAll(".matiere-card.unclassified").forEach(card => {card.draggable = false;})
+                }
+                table.onmouseleave = () => {
+                    if (this.editMode) document.querySelectorAll(".matiere-card.unclassified").forEach(card => {card.draggable = true;})
+                }
+                table.onmouseup = () => {
+                    if (this.editMode) document.querySelectorAll(".matiere-card.unclassified").forEach(card => {card.draggable = true;})
                 }
             })
 
@@ -2311,10 +2384,11 @@
                 if (!data.semestres[sem]) data.semestres[sem] = { ues: {} };
                 if (this.ueConfig[sem]) {
                     Object.keys(this.ueConfig[sem]).forEach(ue => {
-                        const ueNotes = this.calculateUENotes(sem, this.ueConfig[sem][ue], ue);
+                        // const ueNotes = this.calculateUENotes(sem, this.ueConfig[sem][ue], ue);
                         data.semestres[sem].ues[ue] = {
                             matieres: this.ueConfig[sem][ue].matieres,
                             pourcentages: this.ueConfig[sem][ue].pourcentages,
+                            custom: this.ueConfig[sem][ue].custom,
                             simulees: (this.sim[sem]&&this.sim[sem][ue]) || {}
                         };
                     });

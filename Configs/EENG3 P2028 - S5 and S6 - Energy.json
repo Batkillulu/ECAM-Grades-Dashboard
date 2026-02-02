@@ -10,6 +10,10 @@
         "pourcentages": {
           "Probabilities and Inferential Statistics": 65,
           "Object-Oriented Programming": 35
+        },
+        "custom": {
+          "Probabilities and Inferential Statistics": false,
+          "Object-Oriented Programming": false
         }
       },
       "Control Engineering 6": {
@@ -20,9 +24,13 @@
         "pourcentages": {
           "Introduction to Control Theory": 60,
           "Power Electronics": 40
+        },
+        "custom": {
+          "Introduction to Control Theory": false,
+          "Power Electronics": false
         }
       },
-      "Systtems Engineering 6": {
+      "Systems Engineering 6": {
         "matieres": [
           "Quality",
           "Vibrations"
@@ -30,6 +38,10 @@
         "pourcentages": {
           "Quality": 40,
           "Vibrations": 60
+        },
+        "custom": {
+          "Quality": false,
+          "Vibrations": false
         }
       },
       "Multidisciplinary Project 6": {
@@ -40,6 +52,10 @@
         "pourcentages": {
           "Ecodesign Project Part 2 - Environment": 50,
           "Ecodesign Project Part 2 - Technical": 50
+        },
+        "custom": {
+          "Ecodesign Project Part 2 - Environment": false,
+          "Ecodesign Project Part 2 - Technical": false
         }
       },
       "Society, Management & Entrepreneurship 6": {
@@ -54,6 +70,12 @@
           "Global affairs": 25,
           "Advanced English Skills 6": 35,
           "Professional Project": 15
+        },
+        "custom": {
+          "Principles of Marketing": false,
+          "Global affairs": false,
+          "Advanced English Skills 6": false,
+          "Professional Project": false
         }
       },
       "Sustainable Energy and Environmental Engineering 6": {
@@ -66,6 +88,11 @@
           "Advanced Heat Transfer": 35,
           "Hydraulics": 25,
           "Heating Ventilation & Air Conditioning HVAC": 40
+        },
+        "custom": {
+          "Advanced Heat Transfer": false,
+          "Hydraulics": false,
+          "Heating Ventilation & Air Conditioning HVAC": false
         }
       }
     },
@@ -78,6 +105,10 @@
         "pourcentages": {
           "Mathematics for Engineers 5": 70,
           "Network & Security": 30
+        },
+        "custom": {
+          "Mathematics for Engineers 5": false,
+          "Network & Security": false
         }
       },
       "Mechanical Engineering 5": {
@@ -90,6 +121,11 @@
           "Strength of Materials": 40,
           "Materials 2": 25,
           "Introduction to Heat Transfer": 35
+        },
+        "custom": {
+          "Strength of Materials": false,
+          "Materials 2": false,
+          "Introduction to Heat Transfer": false
         }
       },
       "Electrical Engineering 5": {
@@ -98,6 +134,9 @@
         ],
         "pourcentages": {
           "Electrical Machines": 100
+        },
+        "custom": {
+          "Electrical Machines": false
         }
       },
       "Industrial Organisation 5": {
@@ -108,6 +147,10 @@
         "pourcentages": {
           "Industrial Methods": 30,
           "Industrial Organisation": 70
+        },
+        "custom": {
+          "Industrial Methods": false,
+          "Industrial Organisation": false
         }
       },
       "Multidisciplinary Project 5": {
@@ -118,6 +161,10 @@
         "pourcentages": {
           "Ecodesign Project Part 1 - Environment": 50,
           "Ecodesign Project Part 1 - Technical": 50
+        },
+        "custom": {
+          "Ecodesign Project Part 1 - Environment": false,
+          "Ecodesign Project Part 1 - Technical": false
         }
       },
       "Society, Management & Entrepreneurship 5": {
@@ -130,6 +177,11 @@
           "Professional Engineering Project": 15,
           "Engineering Ethics": 35,
           "Advanced English Skills 5: (IELTS Preparation)": 50
+        },
+        "custom": {
+          "Professional Engineering Project": false,
+          "Engineering Ethics": false,
+          "Advanced English Skills 5: (IELTS Preparation)": false
         }
       }
     }
