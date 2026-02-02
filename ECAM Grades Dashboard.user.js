@@ -433,7 +433,19 @@
             this.gradesDatas = {};
             Object.keys(this.semestres).forEach(sem => 
             {
-                this.gradesDatas[sem] = {ues: [], sem, average: 0, classAvg: 0, unclassified: {average: 0, classAvg: 0, fakeAvg: 0, fakeClassAvg: 0, matieres:[]}};
+                this.gradesDatas[sem] = {
+                    ues: [], 
+                    sem, 
+                    average: 0, 
+                    classAvg: 0, 
+                    unclassified: {
+                        average: 0, 
+                        classAvg: 0, 
+                        fakeAvg: 0, 
+                        fakeClassAvg: 0, 
+                        matieres:[]
+                    }
+                };
                 let s = this.gradesDatas[sem];
                 let remainingMatieres = {};
 
@@ -444,7 +456,20 @@
                     if (this.ueConfig[sem].ues) {
                         this.ueConfig[sem].ues.forEach((ueData, ueIndex) => 
                         {
-                            this.gradesDatas[sem].ues.push({name: ueData.name, average: 0, classAvg: 0, totalMatsCoef: 0, totalGradesCoef: 0, nbDisabledGrades: 0, nbSimGrades: 0, totalSimGradesCoef: 0, nbEnabledSimGrades: 0, nbSubjectOver100: 0, nbSubjectBelow100: 0, matieres: []})
+                            this.gradesDatas[sem].ues.push({
+                                name: ueData.name, 
+                                average: 0, 
+                                classAvg: 0, 
+                                totalMatsCoef: 0, 
+                                totalGradesCoef: 0, 
+                                nbDisabledGrades: 0, 
+                                nbSimGrades: 0, 
+                                totalSimGradesCoef: 0, 
+                                nbEnabledSimGrades: 0, 
+                                nbSubjectOver100: 0, 
+                                nbSubjectBelow100: 0, 
+                                matieres: []
+                            })
                             let ue = this.gradesDatas[sem].ues[ueIndex];
 
                             Object.keys(this.semestres[sem]).forEach((matName, matIndex) => 
@@ -457,7 +482,19 @@
                                 })
 
                                 if (matIsClassified) {
-                                    ue.matieres[matConfigIndex] = {name: matConfigData.name, ue: matConfigData.name, average: 0, classAvg: 0, coef: matConfigData.coef, totalCoef: 0, nbDisabledGrades: 0, nbSimGrades: 0, totalSimGradesCoef: 0, nbEnabledSimGrades: 0, grades: []}
+                                    ue.matieres[matConfigIndex] = {
+                                        name: matConfigData.name, 
+                                        ue: matConfigData.name, 
+                                        average: 0, 
+                                        classAvg: 0, 
+                                        coef: matConfigData.coef, 
+                                        totalCoef: 0, 
+                                        nbDisabledGrades: 0, 
+                                        nbSimGrades: 0, 
+                                        totalSimGradesCoef: 0, 
+                                        nbEnabledSimGrades: 0, 
+                                        grades: []
+                                    }
                                     let mat = ue.matieres[matConfigIndex];
                                     
                                     this.semestres[sem][matConfigData.name].forEach((n, gradeIndex) => 
@@ -480,11 +517,11 @@
                                     ue.classAvg += mat.classAvg*mat.coef/100;
                                     ue.totalGradesCoef += Math.round(100*mat.totalCoef/ue.matieres.length)/100;
                                     ue.totalMatsCoef += mat.coef;
+                                    if (mat.totalCoef > 100) {ue.nbSubjectOver100++}
+                                    if (mat.totalCoef < 100) {ue.nbSubjectBelow100++}
                                 }
                                 else {remainingMatieres[matName] = this.semestres[sem][matName]}
                             })
-                            if (ue.totalCoef > 100) {ue.nbSubjectOver100++}
-                            if (ue.totalCoef < 100) {ue.nbSubjectBelow100++}
                             ue.average = Math.round(100*ue.average)/100;
                             ue.classAvg = Math.round(100*ue.classAvg)/100;
                             s.average += ue.average;
@@ -500,7 +537,15 @@
                     Object.keys(remainingMatieres).forEach((matName, matIndex) => 
                     {
                         s.unclassified.matieres.push(
-                            {name: matName, sem, ue: "unclassified", average: 0, classAvg: 0, totalCoef: 0, grades: []}
+                            {
+                                name: matName, 
+                                sem, 
+                                ue: "unclassified", 
+                                average: 0, 
+                                classAvg: 0, 
+                                totalCoef: 0, 
+                                grades: []
+                            }
                         )
                         let mat = s.unclassified.matieres[matIndex];
 
