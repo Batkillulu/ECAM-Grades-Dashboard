@@ -12,8 +12,8 @@
           "Object-Oriented Programming": 35
         },
         "custom": {
-          "Probabilities and Inferential Statistics": false,
-          "Object-Oriented Programming": false
+          "Probabilities and Inferential Statistics": true,
+          "Object-Oriented Programming": true
         }
       },
       "Control Engineering 6": {
@@ -26,8 +26,8 @@
           "Power Electronics": 40
         },
         "custom": {
-          "Introduction to Control Theory": false,
-          "Power Electronics": false
+          "Introduction to Control Theory": true,
+          "Power Electronics": true
         }
       },
       "Systems Engineering 6": {
@@ -40,8 +40,8 @@
           "Vibrations": 60
         },
         "custom": {
-          "Quality": false,
-          "Vibrations": false
+          "Quality": true,
+          "Vibrations": true
         }
       },
       "Multidisciplinary Project 6": {
@@ -54,8 +54,8 @@
           "Ecodesign Project Part 2 - Technical": 50
         },
         "custom": {
-          "Ecodesign Project Part 2 - Environment": false,
-          "Ecodesign Project Part 2 - Technical": false
+          "Ecodesign Project Part 2 - Environment": true,
+          "Ecodesign Project Part 2 - Technical": true
         }
       },
       "Society, Management & Entrepreneurship 6": {
@@ -72,10 +72,10 @@
           "Professional Project": 15
         },
         "custom": {
-          "Principles of Marketing": false,
-          "Global affairs": false,
-          "Advanced English Skills 6": false,
-          "Professional Project": false
+          "Principles of Marketing": true,
+          "Global affairs": true,
+          "Advanced English Skills 6": true,
+          "Professional Project": true
         }
       },
       "Robotics and Automation Engineering 6": {
@@ -90,9 +90,9 @@
           "Signal Processing + Wireless Communications": 40
         },
         "custom": {
-          "Introduction to Robotics": false,
-          "Sensing & Perception": false,
-          "Signal Processing + Wireless Communications": false
+          "Introduction to Robotics": true,
+          "Sensing & Perception": true,
+          "Signal Processing + Wireless Communications": true
         }
       }
     },
@@ -163,7 +163,7 @@
           "Ecodesign Project Part 1 - Technical": 50
         },
         "custom": {
-          "Ecodesign Project Part 1 - Environment": false,
+          "Ecodesign Project Part 1 - Environment": true,
           "Ecodesign Project Part 1 - Technical": false
         }
       },
