@@ -105,10 +105,11 @@
         .semester-content.show  { display: flex; flex-direction: row; gap: 0px; transition: gap 0.2s ease; }
 
         
-        .drop-matiere-card-to-create-eu  { display: flex; flex-direction: column; border-radius: 20px; border: 0px dashed #7fc2ff; width: 0%; transition: width 0.2s ease; }
+        .drop-matiere-card-to-remove-from-eu { display: flex; flex-direction: column; border-radius: 20px; border: 0px dashed #ff7f7f; width: 0%; transition: width 0.2s ease; }
+        .drop-matiere-card-to-create-eu      { display: flex; flex-direction: column; border-radius: 20px; border: 0px dashed #7fc2ff; width: 0%; transition: width 0.2s ease; }
 
         .ue-grid                { display: grid; width: 100%; gap: 20px; }
-        .ue-card                { display: flex; flex-direction: column; align-items: center; background: #fafafa; border-radius: 16px; border: 3px solid #e5e5e5; transition: all 0.3s ease; }
+        .ue-card                { display: flex; flex-direction: column; align-items: center; background: #fafafa; border-radius: 16px; border: 3px solid #e5e5e5; scroll-margin-top: 70px; transition: all 0.3s ease; }
         .ue-card.validated      { border-color: #10b981; background: #f0fdf4; }
         .ue-card.failed         { border-color: #ef4444; background: #fef2f2; }
         .ue-card.unknown        { border-color: #6d6d6dff; background: #d1d1d1ff; }
@@ -143,15 +144,16 @@
         .unclassified-content                           { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; }
         .unclassified-title                             { font-size: 16px; font-weight: 600; color: #92400e; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
 
-        .matiere-card                { display: flex; flex-direction: column; align-items: center; border: 4px solid #ffffffff; border-radius: 20px; width: 100%; background: #c5c5c5; margin: 12px 0px 20px 0px; transition: width 0.3s ease; }
-        .matiere-card.good           { background: #f0fdf4; }
-        .matiere-card.meh            { background: #fff2e4; }
-        .matiere-card.bad            { background: #fef2f2; }
-        .matiere-card-header         { display: flex; align-items: center; height: 62px; width: 100%; padding: 5px 0px; border-radius: 20px 20px 0px 0px; background: #b8b8b8; font-weight:600; border-bottom: 4px solid white; }
-        .matiere-card-header.good    { background: #e3ffeb; }
-        .matiere-card-header.meh     { background: #ffe8d0; }
-        .matiere-card-header.bad     { background: #ffe0e0; }
-        .matiere-name                { font-weight: 800; color: #1a1a1a; font-size: 14px }
+        .matiere-card               { display: flex; flex-direction: column; align-items: center; border: 4px solid #ffffffff; border-radius: 20px; width: 100%; background: #c5c5c5; scroll-margin-top: 70px; margin: 12px 0px 20px 0px; transition: width 0.3s ease; }
+        .matiere-card.good          { background: #f0fdf4; }
+        .matiere-card.meh           { background: #fff2e4; }
+        .matiere-card.bad           { background: #fef2f2; }
+        .matiere-card-header        { display: flex; align-items: center; height: 62px; width: 100%; padding: 5px 0px; border-radius: 20px 20px 0px 0px; background: #b8b8b8; font-weight:600; border-bottom: 4px solid white; }
+        .matiere-card-header.good   { background: #e3ffeb; }
+        .matiere-card-header.meh    { background: #ffe8d0; }
+        .matiere-card-header.bad    { background: #ffe0e0; }
+        .matiere-name               { font-weight: 800; color: #1a1a1a; font-size: 14px }
+        .matiere-coef-input-box     { padding-left: 5px; width: 48px; border-radius: 8px; }
         .matiere-card.compact                   { display:flex; flex-direction: row; justify-content:space-between; align-items:center; padding: 7px 0px; border-radius: 16px; border: 3px solid #ffffff; height: 68px; width: 100%; min-width: 380px; transition: all 0.2s ease; background: none; margin: 0px; }
         .matiere-card.compact.edit-mode         {  }
         .matiere-card.compact:hover             { background: #f3f4f6; box-shadow: inset 0px 0px 8px 1px #0032ff42; transform: scale(0.995); }
@@ -252,6 +254,7 @@
             this.editMode = true;
 
             this.mobileVer = false;
+            this.clientWidth = 1920;
 
             // this.ueHeaderNoMove = true;
             this.selectedMatiereCards = [];
@@ -299,7 +302,7 @@
                     if (document.styleSheets[_CSSStyleSheet].cssRules[_CSSRule].selectorText == _class) ruleIndex = _CSSRule, styleSheetIndex = _CSSStyleSheet;
                 })
             })
-            return ` document.styleSheets[${styleSheetIndex}].cssRules[${ruleIndex}] `
+            return document.styleSheets[styleSheetIndex].cssRules[ruleIndex]
         }
 
         moyennePonderee(arr) {
@@ -355,7 +358,8 @@
                 this.notes.forEach(e => {this.savedReadGrades.push(e)})
                 localStorage.setItem("ECAM_DASHBOARD_SAVED_READ_GRADES", JSON.stringify(this.savedReadGrades));
             }
-            if (document.body.clientWidth <= 935) {
+            if (this.clientWidth <= 935) {
+                this.clientWidth = 935;
                 this.mobileVer = true;
             }
             
@@ -598,6 +602,8 @@
                     <div class="semester-toggle open">▲</div>
                 </div>
                 <div class="semester-content show" id="sem-content-${sem}">
+                    <div class="drop-matiere-card-to-remove-from-eu">
+                    </div>
                     <div class="ue-grid" ${unclassified.length == 0 || !this.ueConfig[sem] || Object.keys(this.ueConfig[sem])[0] == undefined ? `style="gap: 0px"` : ``}>
                         <div class="modules-section">
                             <div class="modules-content">
@@ -698,7 +704,6 @@
 
 
 
-        // MARK: renderAllUECards
         renderAllUECards(sem) {
             const container = document.getElementById(`sem-content-${sem}`);
             const ueConfig = this.ueConfig[sem] || {};
@@ -713,8 +718,6 @@
             return html;
 
         }
-
-
         // MARK: renderUECard
         renderUECard(sem, ueName) {
             const ueConfig = this.ueConfig[sem] || {};
@@ -786,15 +789,12 @@
 
 
 
-        // MARK: renderAllMatCardDetailed
         renderAllMatCardDetailed(ueData, sem, ueName) {
             return Object.keys(this.gradesDatas[sem][ueName].matieres).map(matiere => {
                 if (matiere != "average") 
                     {return this.renderMatCardDetailed(ueData, sem, ueName, matiere)}
             }).join("")
         }
-
-
         // MARK: renderMatCardDetailed
         renderMatCardDetailed(ueData, sem, ueName, matiere) {
             const matNotes = this.gradesDatas[sem][ueName].matieres[matiere].grades;
@@ -965,15 +965,12 @@
 
 
 
-        // MARK: renderAllMatCardCompact
         renderAllMatCardCompact(ueData, sem, ueName) {
             return Object.keys(this.gradesDatas[sem][ueName].matieres).map(matiere => {
                 if (matiere != "average") 
                     {return this.renderMatCardCompact(ueData, sem, ueName, matiere)}
             }).join("")
         }
-
-
         // MARK: renderMatCardCompact
         renderMatCardCompact(ueData, sem, ueName, matiere) {
             const matNotes = this.gradesDatas[sem][ueName].matieres[matiere].grades;
@@ -1122,137 +1119,206 @@
         }
 
 
+        gradeIsDisabled(n) {
+            return this.ignoredGrades.indexOf([n.semestre, n.matiere, n.type+" "+n.date+" "+n.prof].join("\\")) == -1
+        }
+
         // MARK: Set total coefs
         setNotesTableTotalCoef() {
+            const good="#10b981", meh="#e98c00", bad="#e90000", unknown="#7a7a7a";
+
+            document.querySelectorAll(".notes-table-matiere-total-coef-value").forEach(totalCoefDiv => {
+                const sem = totalCoefDiv.dataset.sem;
+                const ue = totalCoefDiv.dataset.ue;
+                const subject = totalCoefDiv.dataset.subject;
+                const totalCoef =       this.gradesDatas[sem][ue].matieres[subject].totalCoef;
+                const nbDisabledGrades =  this.gradesDatas[sem][ue].matieres[subject].totalDisabledGrades;
+                const nbSimGrades =     this.gradesDatas[sem][ue].matieres[subject].totalSimGrades;
+                const simulatedGrades = this.gradesDatas[sem][ue].matieres[subject].grades.map(grade => {if(grade.__sim) return grade});
+                let enabledSimulatedGrades = [];
+                if (nbSimGrades > 0) enabledSimulatedGrades = simulatedGrades.filter(n => {if (n) {return this.gradeIsDisabled(n)} else {return false}})
+                let totalSimGradesCoef = 0; enabledSimulatedGrades.forEach(grade => {totalSimGradesCoef+=grade.coef});
+                
+                this.gradesDatas[sem][ue].matieres[subject].simulatedGrades = simulatedGrades;
+                this.gradesDatas[sem][ue].matieres[subject].enabledSimulatedGrades = enabledSimulatedGrades;
+                this.gradesDatas[sem][ue].matieres[subject].totalSimGradesCoef = totalSimGradesCoef;
+                
+                let advice = this.lang == `fr` ? `toutes tes notes sont là !` : `all your grades are out!`;
+                let color = ` #10b981`;
+
+                
+                if (totalSimGradesCoef > 0 && totalCoef-totalSimGradesCoef == 100) {
+                    advice = this.lang == `fr` ? `toutes tes notes sont là, mais tu devrais désactiver tes notes simulées` : `all your grades are out, but you should disable your simulated grades`;
+                    color = bad;
+                }
+                else if (totalCoef<100) {
+                    if (nbDisabledGrades > 1) {
+                        advice = this.lang == `fr` ? `${nbDisabledGrades} notes sont désactivées` : `${nbDisabledGrades} grades are disabled`;
+                        color = meh;
+                    }
+                    else if (nbDisabledGrades > 0) {
+                        advice = this.lang == `fr` 
+                            ? `une note est désactivée${enabledSimulatedGrades.length > 0 ? `, mais c'est une note simulée, toutes tes notes ne sont encore pas là !` : ``}` 
+                            : `a grade is disabled${enabledSimulatedGrades.length > 0 ? `, but it's a simulated grade, all your grades aren't out yet!` : ``}`;
+                        color = meh;
+                    }
+                    else if (totalCoef == 0) {
+                        advice = this.lang == `fr` ? `pas de notes pour l'instant` : `no grades yet`;
+                        color = unknown;
+                    }
+                    else {
+                        advice = this.lang == `fr` ? `notes manquantes` : `missing grades`;
+                        color = bad;
+                    }
+                }
+                else if (enabledSimulatedGrades.length > 0) {
+                    if (totalSimGradesCoef < 100) {
+                        advice = this.lang == `fr` 
+                            ? `${totalSimGradesCoef}% de ta note est simulée, toutes tes vraies notes ne sont pas encore là !` 
+                            : `${totalSimGradesCoef}% of your grade is simulated, all your actual grades aren't out yet!`
+                        ;
+                        color = bad;
+                    }
+                    else if (totalSimGradesCoef == 100) {
+                        advice = this.lang == `fr` 
+                            ? `100% de ta note est simulée, tes vraies notes ne sont pas encore là !` 
+                            : `100% of your grade is simulated, your actual grades aren't out yet!`
+                        ;
+                        color = bad;
+
+                    }
+                    else if (totalSimGradesCoef > 100) {
+                        advice = this.lang == `fr` 
+                            ? `${totalSimGradesCoef}% de ta note est simulée... jsp ce que t'as fait, mais tu l'as mal fait, change moi ça...` 
+                            : `${totalSimGradesCoef}% of your grade is simulated... idk what you've done, but do smthg, cuz you did it wrong...`
+                        ;
+                        color = bad;
+                    }
+                }
+                else if (totalCoef>100) {
+                    advice = this.lang == `fr` ? `désactivez des notes, svp` : `please disable some grades`;
+                    color = bad;
+                    
+                }
+                totalCoefDiv.innerHTML = `<span style="color:${color}; font-weight: 900">${totalCoef}%</span>(${advice})`;
+            })
             document.querySelectorAll(".ue-card").forEach(ueCard => {
-                ueCard.querySelectorAll(".notes-table-matiere-total-coef-value").forEach(totalCoefDiv => {
-                    const sem = totalCoefDiv.dataset.sem;
-                    const ue = totalCoefDiv.dataset.ue;
-                    const subject = totalCoefDiv.dataset.subject;
-                    const totalCoef =       this.gradesDatas[sem][ue].matieres[subject].totalCoef;
-                    const disabledGrades =  this.gradesDatas[sem][ue].matieres[subject].totalDisabledGrades;
-                    const nbSimGrades =     this.gradesDatas[sem][ue].matieres[subject].totalSimGrades;
-                    const simulatedGrades = this.gradesDatas[sem][ue].matieres[subject].grades.map(grade => {if(grade.__sim) return grade});
-                    let enabledSimulatedGrades = [];
-                    if (nbSimGrades > 0) enabledSimulatedGrades = simulatedGrades.filter(n => {if (n) {return this.ignoredGrades.indexOf([sem, n.matiere, n.type+" "+n.date+" "+n.prof].join("\\")) == -1} else {return false}})
-                    let totalSimGradesCoef = 0; enabledSimulatedGrades.forEach(grade => {totalSimGradesCoef+=grade.coef});
-                    
-                    this.gradesDatas[sem][ue].matieres[subject].simulatedGrades = simulatedGrades;
-                    this.gradesDatas[sem][ue].matieres[subject].enabledSimulatedGrades = enabledSimulatedGrades;
-                    this.gradesDatas[sem][ue].matieres[subject].totalSimGradesCoef = totalSimGradesCoef;
-                    
-                    let advice = this.lang == `fr` ? `toutes tes notes sont là !` : `all your grades are out!`;
-                    let color = ` #10b981`;
-
-                    
-                    if (totalSimGradesCoef > 0 && totalCoef-totalSimGradesCoef == 100) {
-                        advice = this.lang == `fr` ? `toutes tes notes sont là, mais tu devrais désactiver tes notes simulées` : `all your grades are out, but you should disable your simulated grades`;
-                        color = ` #e90000`;
-                    }
-                    else if (totalCoef<100) {
-                        if (disabledGrades > 1) {
-                            advice = this.lang == `fr` ? `${disabledGrades} notes sont désactivées` : `${disabledGrades} grades are disabled`;
-                            color = ` #e98c00`;
-                        }
-                        else if (disabledGrades > 0) {
-                            advice = this.lang == `fr` 
-                                ? `une note est désactivée${enabledSimulatedGrades.length > 0 ? `, mais c'est une note simulée, toutes tes notes ne sont encore pas là !` : ``}` 
-                                : `a grade is disabled${enabledSimulatedGrades.length > 0 ? `, but it's a simulated grade, all your grades aren't out yet!` : ``}`;
-                            color = ` #e98c00`;
-                        }
-                        else if (totalCoef == 0) {
-                            advice = this.lang == `fr` ? `pas de notes pour l'instant` : `no grades yet`;
-                            color = ` #7a7a7a`;
-                        }
-                        else {
-                            advice = this.lang == `fr` ? `notes manquantes` : `missing grades`;
-                            color = ` #e90000`;
-                        }
-                    }
-                    else if (enabledSimulatedGrades.length > 0) {
-                        if (totalSimGradesCoef < 100) {
-                            advice = this.lang == `fr` 
-                                ? `${totalSimGradesCoef}% de ta note est simulée, toutes tes vraies notes ne sont pas encore là !` 
-                                : `${totalSimGradesCoef}% of your grade is simulated, all your actual grades aren't out yet!`
-                            ;
-                            color = ` #e90000`;
-                        }
-                        else if (totalSimGradesCoef == 100) {
-                            advice = this.lang == `fr` 
-                                ? `100% de ta note est simulée, tes vraies notes ne sont pas encore là !` 
-                                : `100% of your grade is simulated, your actual grades aren't out yet!`
-                            ;
-                            color = ` #e90000`;
-
-                        }
-                        else if (totalSimGradesCoef > 100) {
-                            advice = this.lang == `fr` 
-                                ? `${totalSimGradesCoef}% de ta note est simulée... jsp ce que t'as fait, mais tu l'as mal fait, change moi ça...` 
-                                : `${totalSimGradesCoef}% of your grade is simulated... idk what you've done, but do smthg, cuz you did it wrong...`
-                            ;
-                            color = ` #e90000`;
-                        }
-                    }
-                    else if (totalCoef>100) {
-                        advice = this.lang == `fr` ? `désactivez des notes, svp` : `please disable some grades`;
-                        color = ` #e90000`;
-                        
-                    }
-                    totalCoefDiv.innerHTML = `<span style="color:${color}; font-weight: 900">${totalCoef}%</span>(${advice})`;
-                })
                 ueCard.querySelectorAll(".ue-matiere-total-coef-value").forEach(totalCoefDiv => {
                     const sem = totalCoefDiv.dataset.sem;
                     const ue = totalCoefDiv.dataset.ue;
                     const nbSubjects = Object.keys(this.gradesDatas[sem][ue].matieres).length;
-                    let totalCoefSubjects = 0, totalCoefGrades = 0, disabledGrades = 0, nbSimGrades = 0, simulatedGrades = [], enabledSimulatedGrades = [], totalSimGradesCoef = 0, nbSubjectBelow100 = 0, nbSubjectOver100 = 0;
+                    let totalCoefSubjects = 0, 
+                        totalCoefGrades = 0, 
+                        disabledGrades = [], 
+                        simulatedGrades = [], 
+                        enabledSimulatedGrades = [], 
+                        totalSimGradesCoef = 0, 
+                        subjectsBelow100=[], 
+                        subjectsOver100=[]
+                    ;
+
                     Object.keys(this.gradesDatas[sem][ue].matieres).forEach(subjectName => {
                         const subject = this.gradesDatas[sem][ue].matieres[subjectName];
                         totalCoefSubjects += subject.coef;
-                        totalCoefGrades += subject.totalCoef;
-                        disabledGrades += subject.totalDisabledGrades;
-                        nbSimGrades += subject.totalSimGrades;
+                        totalCoefGrades += subject.totalCoef*subject.coef/100;
+                        subject.grades.forEach(n => {if (!this.gradeIsDisabled(n)) {disabledGrades.push(n);}})
                         subject.simulatedGrades.forEach(simGrade => {simulatedGrades.push(simGrade)})
                         subject.enabledSimulatedGrades.forEach(enabledSimGrade => {enabledSimulatedGrades.push(enabledSimGrade)});
                         totalSimGradesCoef += subject.totalSimGradesCoef;
-                        if (subject.totalCoef < 100) nbSubjectBelow100++;
-                        else if (subject.totalCoef > 100) nbSubjectOver100++;
+                        if (subject.totalCoef < 100) subjectsBelow100.push(subject);
+                        else if (subject.totalCoef > 100) subjectsOver100.push(subject);
                     })
+                    const nbSubjectsBelow100 = subjectsBelow100.length, nbSubjectsOver100 = subjectsOver100.length, nbDisabledGrades = disabledGrades.length, nbSimGrades = simulatedGrades.length;
 
-                    totalCoefGrades = Math.round(totalCoefGrades/nbSubjects*100)/100;
-                    
+                    totalCoefGrades = Math.round(totalCoefGrades*100)/100;
+
+
                     let advice = this.lang == `fr` ? `toutes tes notes sont là !` : `all your grades are out!`;
-                    let color = ` #10b981`;
+                    let color = good;
+
+                    {/* 
+                        Total Subjects Coef != 100                      -> BAD: Wrong Subjects coef setup
+                        Total Grades Coef = 0                           -> UNKNOWN: no grades yet
+                        nbSubjectsBelow100 > 0, nbSubjectsOver100 > 0     -> BAD: nbSubjectsBelow100 subjects are too low, nbSubjectsOver100 subjects are too high
+                        nbSubjectsBelow100 > 0,                          -> BAD: nbSubjectsBelow100 subjects are too low
+                        nbSubjectsOver100 > 0,                           -> BAD: nbSubjectsOver100 subjects are too high
+                        Total Grades Coef = 100, nbSimGrades > 0        -> BAD: Right Grades coef, but it's counting at least one simulated grade: not all grades are out
+                        Total Grades Coef > 100, nbSimGrades > 0        -> BAD: Too low sim grades coef setup, all grades aren't all out either
+                        Total Grades Coef < 100, nbSimGrades > 0        -> BAD: Too high sim grades coef setup
+                        
+                    */
+
+                    /* 
+                    if (totalCoefSubjects != 100) {
+                        advice = this.lang == `fr` ? `Réajuste le coef des matières` : `Readjust the subjects' coef`;
+                        color = bad;
+                    }
+                    else if (totalCoefGrades = 0) {
+                        advice = this.lang == `fr` ? `Pas encore de notes` : `No grades yet`;
+                        color = unknown;
+                    }
+                    else if ((nbSubjectsBelow100 > 0 || nbSubjectsOver100 > 0) && nbSimGrades > 0) {
+                        advice = this.lang == `fr` 
+                            ? `Tes notes simulées fausses le total. Ajuste-les` 
+                            : `Your simulated grades falsify the total. Adjust them`;
+                        color = bad;
+                    }
+                    else if (nbSubjectsBelow100 > 0 && nbSubjectsOver100 > 0) {
+                        advice = this.lang == `fr` 
+                            ? `Notes manquantes dans ${  nbSubjectsBelow100 > 1 ? nbSubjectsBelow100 : `une`} matière${nbSubjectsBelow100 > 1 ? `s`  : ``}, 
+                                et trop de notes dans ${ nbSubjectsOver100  > 1 ? nbSubjectsOver100  : `une`} matière${nbSubjectsOver100  > 1 ? `s`  : ``}` 
+                            : `Missing grades in ${      nbSubjectsBelow100 > 1 ? nbSubjectsBelow100 : `a`  } subject${nbSubjectsBelow100 > 1 ? `'s` : ``}, 
+                                and too many grades in ${nbSubjectsOver100  > 1 ? nbSubjectsOver100  : `a`  } subject${nbSubjectsOver100  > 1 ? `'s` : ``}`;
+                        color = bad;
+                    }
+                    else if (nbSubjectsBelow100 > 0) {
+                        advice = this.lang == `fr` 
+                            ? `Notes manquantes dans ${nbSubjectsBelow100 > 1 ? nbSubjectsBelow100 : `${nbSubjectsBelow100==nbSubjects ? "toutes tes" : "une"}`} matière${nbSubjectsBelow100 > 1 ? `s`  : ``}` 
+                            : `Missing grades in ${    nbSubjectsBelow100 > 1 ? nbSubjectsBelow100 : `${nbSubjectsBelow100==nbSubjects ? "all your" : "a"    }`} subject${nbSubjectsBelow100 > 1 ? `'s` : ``}`;
+                        color = bad;
+                    }
+                    else if (nbSubjectsOver100 > 0) {
+                        advice = this.lang == `fr` 
+                            ? `Trop de notes dans ${nbSubjectsOver100 > 1 ? nbSubjectsOver100 : `${nbSubjectsOver100==nbSubjects ? "toutes tes" : "une"}`} matière${nbSubjectsOver100 > 1 ? `s`  : ``}` 
+                            : `Too many grades in ${nbSubjectsOver100 > 1 ? nbSubjectsOver100 : `${nbSubjectsOver100==nbSubjects ? "all your" : "a"    }`} subject${nbSubjectsOver100 > 1 ? `'s` : ``}`;
+                        color = bad;
+                    } */
+                    }
 
                     if (totalSimGradesCoef > 0 && totalCoefGrades-totalSimGradesCoef == 100) {
                         advice = this.lang == `fr` ? `toutes tes notes sont là, mais tu devrais désactiver tes notes simulées` : `all your grades are out, but you should disable your simulated grades`;
-                        color = ` #e90000`;
+                        color = bad;
                     }
                     else if (totalCoefGrades<100) {
-                        if (disabledGrades > 1) {
-                            advice = this.lang == `fr` ? `${disabledGrades} notes sont désactivées` : `${disabledGrades} grades are disabled`;
-                            color = ` #e98c00`;
-                        }
-                        else if (disabledGrades > 0) {
-                            advice = this.lang == `fr` 
-                                ? `une note est désactivée${enabledSimulatedGrades.length > 0 ? `, mais c'est une note simulée, toutes tes notes ne sont encore pas là !` : ``}` 
-                                : `a grade is disabled${enabledSimulatedGrades.length > 0 ? `, but it's a simulated grade, all your grades aren't out yet!` : ``}`;
-                            color = ` #e98c00`;
-                        }
-                        else if (totalCoefGrades == 0) {
+                        if (totalCoefGrades == 0) {
                             advice = this.lang == `fr` ? `pas de notes pour l'instant` : `no grades yet`;
-                            color = ` #7a7a7a`;
+                            color = unknown;
                         }
-                        else if (nbSubjectOver100 == 0) {
+                        else if (nbSubjectsOver100 == 0) {
                             advice = this.lang == `fr` 
-                                ? `notes manquantes dans ${nbSubjectBelow100 > 1 ? nbSubjectBelow100 : `une`} UE${nbSubjectBelow100 > 1 ? `s` : ``}` 
-                                : `missing grades in ${nbSubjectBelow100 > 1 ? nbSubjectBelow100 : `a`} TU${nbSubjectBelow100 > 1 ? `'s` : ``}`;
-                            color = ` #e90000`;
+                                ? `notes manquantes dans ${nbSubjectsBelow100 > 1 ? nbSubjectsBelow100 : `une`} matière${nbSubjectsBelow100 > 1 ? `s` : ``}` 
+                                : `missing grades in ${nbSubjectsBelow100 > 1 ? nbSubjectsBelow100 : `a`} subject${nbSubjectsBelow100 > 1 ? `'s` : ``}`;
+                            color = bad;
+
+                            let subjectsWithDisabledGradesButWithTotalCoef100 = true;
+                            disabledGrades.forEach(n => {if (this.compareArraysofObjects(disabledGrades, simulatedGrades).more.length == 0) {subjectsWithDisabledGradesButWithTotalCoef100 = false}})
+
+                            if (nbDisabledGrades > 1 && subjectsWithDisabledGradesButWithTotalCoef100) {
+                                advice = this.lang == `fr` ? `${nbDisabledGrades} notes sont désactivées` : `${nbDisabledGrades} grades are disabled`;
+                                color = meh;
+                            }
+                            else if (nbDisabledGrades > 0 && subjectsWithDisabledGradesButWithTotalCoef100) {
+                                advice = this.lang == `fr` 
+                                    ? `une note est désactivée${enabledSimulatedGrades.length > 0 ? `, mais c'est une note simulée, toutes tes notes ne sont encore pas là !` : ``}` 
+                                    : `a grade is disabled${enabledSimulatedGrades.length > 0 ? `, but it's a simulated grade, all your grades aren't out yet!` : ``}`;
+                                color = meh;
+                            }
                         }
                         else {
                             advice = this.lang == `fr` 
-                                ? `notes manquantes dans ${nbSubjectBelow100 > 1 ? nbSubjectBelow100 : `une`} UE${nbSubjectBelow100 > 1 ? `s` : ``}, et trop de notes dans ${nbSubjectOver100 > 1 ? nbSubjectOver100 : `une`} UE${nbSubjectOver100 > 1 ? `s` : ``}` 
-                                : `missing grades in ${-nbSubjectBelow100 > 1 ? nbSubjectBelow100 : `a`} TU${nbSubjectBelow100 > 1 ? `'s` : ``}, and too many grades in ${nbSubjectOver100 > 1 ? nbSubjectOver100 : `a`} TU${nbSubjectOver100 > 1 ? `'s` : ``}`;
-                            color = ` #e90000`;
+                                ? `notes manquantes dans ${nbSubjectsBelow100 > 1 ? nbSubjectsBelow100 : `une`} matière${nbSubjectsBelow100 > 1 ? `s` : ``}, et trop de notes dans ${nbSubjectsOver100 > 1 ? nbSubjectsOver100 : `une`} matière${nbSubjectsOver100 > 1 ? `s` : ``}` 
+                                : `missing grades in ${nbSubjectsBelow100 > 1 ? nbSubjectsBelow100 : `a`} subject${nbSubjectsBelow100 > 1 ? `'s` : ``}, and too many grades in ${nbSubjectsOver100 > 1 ? nbSubjectsOver100 : `a`} subject${nbSubjectsOver100 > 1 ? `'s` : ``}`;
+                            color = bad;
                         }
                     }
                     else if (enabledSimulatedGrades.length > 0) {
@@ -1261,14 +1327,14 @@
                                 ? `${totalSimGradesCoef/this.gradesDatas[sem][ue].matieres.length}% de ta note est simulée, toutes tes vraies notes ne sont pas encore là !` 
                                 : `${totalSimGradesCoef/this.gradesDatas[sem][ue].matieres.length}% of your grade is simulated, all your actual grades aren't out yet!`
                             ;
-                            color = ` #e90000`;
+                            color = bad;
                         }
                         else if (totalSimGradesCoef == 100) {
                             advice = this.lang == `fr` 
                                 ? `100% de ta note est simulée, tes vraies notes ne sont pas encore là !` 
                                 : `100% of your grade is simulated, your actual grades aren't out yet!`
                             ;
-                            color = ` #e90000`;
+                            color = bad;
 
                         }
                         else if (totalSimGradesCoef > 100) {
@@ -1276,21 +1342,21 @@
                                 ? `${totalSimGradesCoef/this.gradesDatas[sem][ue].matieres.length}% de ta note est simulée... jsp ce que t'as fait, mais tu l'as mal fait, change moi ça...` 
                                 : `${totalSimGradesCoef/this.gradesDatas[sem][ue].matieres.length}% of your grade is simulated... idk what you've done, but do smthg, cuz you did it wrong...`
                             ;
-                            color = ` #e90000`;
+                            color = bad;
                         }
                     }
                     else if (totalCoefGrades>100) {
                         advice = this.lang == `fr` ? `désactivez des notes, svp` : `please disable some grades`;
-                        color = ` #e90000`;
+                        color = bad;
                         
                     }
 
                     if (totalCoefSubjects!=100) {
                         advice = this.lang == `fr` ? `vérifie le coef de tes matières, leur somme n'est pas égale à 100% !` : `verify your subjects' coef, their sum is different from 100%!`;
-                        color = ` #e90000`;
+                        color = bad;
                     }
 
-                    totalCoefDiv.innerHTML = `<span style="color:${color}; font-weight: 900">${totalCoefGrades}% / ${totalCoefSubjects}%</span>(${advice})`;
+                    totalCoefDiv.innerHTML = `<span style="color:${color}; font-weight: 900">${totalCoefGrades}% / ${totalCoefSubjects}%</span>${advice}`;
                 })
             })
         }
@@ -1501,7 +1567,6 @@
                     "Client X: " + e.clientX +    " | Client Y: " + e.clientY 
                 )
             } */
-
             document.onclick = (e) => {
                 // Toggle semestres
                 if (e.target.closest('.semester-header')) {
@@ -1543,39 +1608,55 @@
             };
             document.body.onresize = (e) => {
                 
+                if (document.body.clientWidth <= 1530) {
+                    if (this.clientWidth > 1530) {
+                        this.clientWidth = 1530;
+                        document.querySelectorAll(".ue-matiere-total-coef-value").forEach(ueTotalCoef => {
+                            ueTotalCoef.style.flexDirection = "column"; ueTotalCoef.style.gap = "2px";
+                        })
+                    }
+                }
+                else
+                {
+                    if (this.clientWidth <= 1470) {
+                        this.clientWidth = 1920;
+                        document.querySelectorAll(".ue-matiere-total-coef-value").forEach(ueTotalCoef => {
+                            ueTotalCoef.style.flexDirection = ""; ueTotalCoef.style.gap = "15px";
+                        })
+                    }
+                }
+
+                if (document.body.clientWidth <= 1470) {
+                    if (this.clientWidth > 1470) {
+                        this.clientWidth = 1470;
+                    }
+                    // this.getCSSClassCoordInStyleSheet(".note-simulee-input")
+                    // this.getCSSClassCoordInStyleSheet(".note-simulee-input.sim-inp-type")
+                }
+                else
+                {
+                    if (this.clientWidth <= 1470) {
+                        this.clientWidth = 1530;
+                    }
+                }
+
                 if (document.body.clientWidth <= 935) {
                     if (this.mobileVer == false) {
+                        this.clientWidth = 935;
                         this.mobileVer = true;
                         this.renderContent(false)
-                        // this.getCSSClassCoordInStyleSheet(".notes-table-teacher") == "document.styleSheets[11].cssRules[147]"
                         // document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
-                        document.styleSheets[11].cssRules[147].style.display = "none";
+                        // this.getCSSClassCoordInStyleSheet(".notes-table-teacher").style.display = "none";
                     }
                 }
                 else
                 {
                     if (this.mobileVer == true) {
+                        this.clientWidth = 1470;
                         this.mobileVer = false;
                         this.renderContent(false)
-                        document.styleSheets[11].cssRules[142].style.display = "";
+                        // this.getCSSClassCoordInStyleSheet(".notes-table-teacher").style.display = "table-cell";
                     }
-                }
-
-                if (document.body.clientWidth <= 1470) {
-                    // this.getCSSClassCoordInStyleSheet(".note-simulee-input") == document.styleSheets[11].cssRules[158];
-                    // this.getCSSClassCoordInStyleSheet(".note-simulee-input.sim-inp-type") == document.styleSheets[11].cssRules[159];
-                }
-
-                if (document.body.clientWidth <= 1530) {
-                    document.querySelectorAll(".ue-matiere-total-coef-value").forEach(ueTotalCoef => {
-                        ueTotalCoef.style.flexDirection = "column"; ueTotalCoef.style.gap = "2px";
-                    })
-                }
-                else
-                {
-                    document.querySelectorAll(".ue-matiere-total-coef-value").forEach(ueTotalCoef => {
-                        ueTotalCoef.style.flexDirection = ""; ueTotalCoef.style.gap = "15px";
-                    })
                 }
             };
 
@@ -1678,7 +1759,8 @@
 
             
             {   // ONDRAG cards event
-                const dropArea = document.querySelector(".drop-matiere-card-to-create-eu");
+                const dropAreaAdd = document.querySelector(".drop-matiere-card-to-create-eu");
+                const dropAreaRemove = document.querySelector(".drop-matiere-card-to-remove-from-eu");
                 const ueInsertAreas = document.querySelectorAll(".ue-insert-area");
                 document.querySelectorAll(".matiere-card").forEach(matiereCard => {
                     let draggedElement = ``;
@@ -1692,12 +1774,12 @@
                             matiereCard.querySelector(".notes-table").style.display = "none";
                             matiereCard.querySelector(".matiere-card-header").style.border = "none";
                             matiereCard.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 20px 20px";
-                            document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, dropArea, tick, true);})
+                            document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, [dropAreaAdd, dropAreaRemove], tick, true);})
                         } 
                         else if (matiereCard.classList.contains("compact")) {
                             matiereCard.style.width = "50%";
                             matiereCard.querySelector(".notes-table-coef").style.display = "none";
-                            document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, dropArea, tick);})
+                            document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, [dropAreaAdd, dropAreaRemove], tick);})
                         }
                         else {
                             matiereCard.style.width = "50%";
@@ -1706,12 +1788,14 @@
                             matiereCard.querySelector(".notes-table").style.display = "none";
                             matiereCard.querySelector(".matiere-card-header").style.borderBottom = "none";
                             matiereCard.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 20px 20px";
-                            document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, dropArea, tick);})
+                            document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, [dropAreaAdd, dropAreaRemove], tick);})
                         }
                         document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
                         document.querySelector(".semester-content").style.gap = "20px";
-                        dropArea.style.border = "4px dashed #7fc2ff";
-                        dropArea.style.width = "15%";
+                        dropAreaAdd.style.borderWidth = "4px";
+                        dropAreaAdd.style.width = "15%";
+                        dropAreaRemove.style.borderWidth = "4px";
+                        dropAreaRemove.style.width = "15%";
                         // ueInsertAreas.forEach(ueInsertArea => {setTimeout(()=>{ueInsertArea.classList.add("show")}, 0)});
                         // ueInsertAreas.forEach(ueInsertArea => {ueInsertArea.style.display = "flex"; ueInsertArea.style.height = "50px";})
                         this.selectedMatiereCards = [];
@@ -1741,8 +1825,10 @@
                         if (this.selectedMatiereCards.length == 0) {
                             setTimeout(() => {document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
                             document.querySelector(".semester-content").style.gap = "0px";
-                            dropArea.style.border = "none";
-                            dropArea.style.width = "0%";
+                            dropAreaAdd.style.borderWidth = "0px";
+                            dropAreaAdd.style.width = "0%";
+                            dropAreaRemove.style.borderWidth = "0px";
+                            dropAreaRemove.style.width = "0%";
                             // ueInsertAreas.forEach(ueInsertArea => {setTimeout(()=>{ueInsertArea.style.display = "none"; ueInsertArea.style.height = "0px";}, 100)})
                         }
                     };
@@ -1779,8 +1865,10 @@
                             })
                             document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
                             document.querySelector(".semester-content").style.gap = "20px";
-                            dropArea.style.border = "4px dashed #7fc2ff";
-                            dropArea.style.width = "30%";
+                            dropAreaAdd.style.borderWidth = "4px";
+                            dropAreaAdd.style.width = "30%";
+                            dropAreaRemove.style.borderWidth = "4px";
+                            dropAreaRemove.style.width = "30%";
 
                             e.dataTransfer.setData("text", isUnclassified ? draggedElement.id : selectedMatiereCard.id)
                         }
@@ -1810,18 +1898,32 @@
                         }
                     })
                 }
-                dropArea.ondragover = (e) => {
+                dropAreaAdd.ondragover = (e) => {
                     e.preventDefault();
                     e.target.style.background = "#bdb8ff";
                 }
-                dropArea.ondragleave = (e) => {
+                dropAreaAdd.ondragleave = (e) => {
                     e.preventDefault();
                     e.target.style.background = "";
                 }
-                dropArea.ondrop = (e) => {
+                dropAreaAdd.ondrop = (e) => {
                     e.preventDefault(); 
                     this.matiereCardToNewUE(e.dataTransfer.getData("text"));
                 }
+
+                dropAreaRemove.ondragover = (e) => {
+                    e.preventDefault();
+                    e.target.style.background = "#ffb8b8";
+                }
+                dropAreaRemove.ondragleave = (e) => {
+                    e.preventDefault();
+                    e.target.style.background = "";
+                }
+                dropAreaRemove.ondrop = (e) => {
+                    e.preventDefault(); 
+                    this.unclassifyMatCard(e.dataTransfer.getData("text"));
+                }
+
                 ueInsertAreas.forEach(ueInsertArea => {
                     ueInsertArea.ondragover = (e) => {
                         e.preventDefault();
@@ -1833,42 +1935,43 @@
                     }
                     ueInsertArea.ondrop = (e) => {
                         e.preventDefault(); 
-                        this.matiereCardToNewUE(e.dataTransfer.getData("text"));
+                        // this.matiereCardToNewUE(e.dataTransfer.getData("text"));
                     }
                 })
             }
             
             document.querySelectorAll(".drag-icon-for-detailed-matiere-card").forEach(dragIcon => {
                 dragIcon.onclick = (e) => {
-                    this.dragIconOnClickEvent(e, dropArea, dragIcon, "detailed")
+                    this.dragIconOnClickEvent(e, [dropAreaAdd, dropAreaRemove], dragIcon, "detailed")
                 };
             });
             document.querySelectorAll(".drag-icon-for-compact-matiere-card").forEach(dragIcon => {
                 dragIcon.onclick = (e) => {
-                    this.dragIconOnClickEvent(e, dropArea, dragIcon, "compact")
+                    this.dragIconOnClickEvent(e, [dropAreaAdd, dropAreaRemove], dragIcon, "compact")
                 };
             });
             document.querySelectorAll(".drag-icon-for-unclassified-matiere-card").forEach(dragIcon => {
                 dragIcon.onclick = (e) => {
-                    this.dragIconOnClickEvent(e, dropArea, dragIcon, "unclassified")
+                    this.dragIconOnClickEvent(e, [dropAreaAdd, dropAreaRemove], dragIcon, "unclassified")
                 };
             });
 
             document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {
                 tick.onclick = (e) => {
-                    this.tickIconOnClickEvent(e, dropArea, tick, "detailed")
+                    this.tickIconOnClickEvent(e, [dropAreaAdd, dropAreaRemove], tick, "detailed")
                 };
             });
             document.querySelectorAll(".ticked-compact-matiere-card").forEach(tick => {
                 tick.onclick = (e) => {
-                    this.tickIconOnClickEvent(e, dropArea, tick, "compact")
+                    this.tickIconOnClickEvent(e, [dropAreaAdd, dropAreaRemove], tick, "compact")
                 };
             });
             document.querySelectorAll(".ticked-unclassified-matiere-card").forEach(tick => {
                 tick.onclick = (e) => {
-                    this.tickIconOnClickEvent(e, dropArea, tick, "unclassified")
+                    this.tickIconOnClickEvent(e, [dropAreaAdd, dropAreaRemove], tick, "unclassified")
                 };
             });
+
 
             document.querySelectorAll(".add-a-matiere-card").forEach(addDiv => {
                 addDiv.onmouseenter = (e) => {
@@ -1907,10 +2010,10 @@
 
                     this.attachEventListeners()
                     this.setNotesTableTotalCoef();
-
-                    // this.saveConfig()
+                    this.saveConfig()
                 }
             })
+
 
             document.querySelectorAll(".matiere-name.input").forEach(input => {
                 input.onmouseover = (e) => {e.preventDefault()};
@@ -1951,6 +2054,7 @@
 
                     this.attachEventListeners()
                     this.setNotesTableTotalCoef();
+                    this.saveConfig()
                 }
             })
 
@@ -2128,7 +2232,7 @@
 
         }
 
-        dragIconOnClickEvent(e, dropArea, dragIcon, type) {
+        dragIconOnClickEvent(e, dropAreas, dragIcon, type) {
             let matiereCard =  e.target.parentElement.parentElement.parentElement;
             if (type=="detailed") 
                 {matiereCard = e.target.parentElement.parentElement.parentElement.parentElement.parentElement;}
@@ -2147,8 +2251,10 @@
                 totalCoef.parentElement.style.width = "56%";
             })
             document.querySelector(".semester-content").style.gap = "20px";
-            dropArea.style.border = "4px dashed #7fc2ff";
-            dropArea.style.width = "30%";
+            dropAreas[0].style.border = "4px dashed #7fc2ff";
+            dropAreas[0].style.width = "30%";
+            dropAreas[1].style.border = "4px dashed #7fc2ff";
+            dropAreas[1].style.width = "30%";
 
             dragIcon.outerHTML = `<div class="ticked-${type}-matiere-card" style="height: 23px; width: 23px; font-size: 35px; color: #004cff; cursor:pointer; user-select:none">✔</div>`;
 
@@ -2169,7 +2275,7 @@
             this.attachEventListeners()
         }
 
-        tickIconOnClickEvent(e, dropArea, tick, type) {
+        tickIconOnClickEvent(e, dropAreas, tick, type) {
             e.preventDefault();
             let matiereCard = e.target.parentElement.parentElement.parentElement;
             if (type=="detailed") {matiereCard = e.target.parentElement.parentElement.parentElement.parentElement.parentElement}
@@ -2183,8 +2289,10 @@
                 setTimeout(() => {document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
                 setTimeout(() => {document.querySelectorAll(".notes-table-classAvg").forEach(classAvg => {classAvg.style.display = "table-cell"})}, 100)
                 document.querySelector(".semester-content").style.gap = "0px";
-                dropArea.style.border = "none";
-                dropArea.style.width = "0%";
+                dropAreas[0].style.border = "none";
+                dropAreas[0].style.width = "0%";
+                dropAreas[1].style.border = "none";
+                dropAreas[1].style.width = "0%";
                 document.querySelectorAll(".ue-title.input").forEach(input => {
                     input.parentElement.style.transition = "";
                     input.parentElement.style.width = "42%";
@@ -2286,6 +2394,42 @@
                 this.attachEventListeners();
                 document.getElementById(`ue-card-${newUeName}-in-semester-${sem}`).scrollIntoView();
             }
+        }
+
+        unclassifyMatCard(cardId) {
+            const card = document.getElementById(cardId);
+
+            if (card.classList.contains("matiere-card") && !card.classList.contains("unclassified"))
+            {
+                let cardIsSelected = false;
+                this.selectedMatiereCards.forEach(selectedMatiereCard => {if (selectedMatiereCard.id == card.id) cardIsSelected = true;})
+                const sem = card.dataset.semester;
+                const ue = card.dataset.ue;
+                const mat = card.dataset.subject;
+
+                if (!cardIsSelected) {
+                    const matIndex = this.ueConfig[sem][ue].matieres.indexOf(mat);
+                    this.ueConfig[sem][ue].matieres.splice(matIndex, 1);
+                    delete this.ueConfig[sem][ue].pourcentages[mat];
+                    delete this.ueConfig[sem][ue].custom[mat];
+                }
+                else
+                {
+                    let subject = "";
+                    this.selectedMatiereCards.forEach(selectedMatiereCard => {
+                        subject = selectedMatiereCard.dataset.subject;
+                        const matIndex = this.ueConfig[sem][ue].matieres.indexOf(subject);
+
+                        this.ueConfig[sem][ue].matieres.splice(matIndex, 1);
+                        delete this.ueConfig[sem][ue].pourcentages[subject];
+                        delete this.ueConfig[sem][ue].custom[subject];
+                    })
+                }
+            }
+
+            // this.saveConfig();
+            this.renderContent();
+            this.attachEventListeners();
         }
 
         ueTitleInputChangeAction(e) {
@@ -2456,7 +2600,7 @@
                             }
                         }
                         else if (e.key === "R") {
-                            console.log("You fell into my breakpoint trap!!"); debugger;
+                            console.warn("You fell into my breakpoint trap!!"); debugger;
                         }
                     };
                 }
@@ -2485,7 +2629,7 @@
 
             setTimeout(() => {
                 const scrollToThisElem = document.getElementById(this.scrollToThisElem); 
-                scrollToThisElem.scrollIntoView({behavior: smooth ? "smooth" : "instant", block: "center"});
+                scrollToThisElem.scrollIntoView({behavior: smooth ? "smooth" : "instant", block: "start"});
                 setTimeout(() => {
                     document.body.style.overflowX = "";
                     document.body.style.overflowY = "";
@@ -2499,7 +2643,9 @@
 
         }
 
-        draggableIcon(source="matiere-card", height=25) {return `<img class="drag-icon-for-${source}" draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/960px-Hamburger_icon.svg.png" alt="☰" style="height:${height}px; cursor:pointer; user-select:none; ${source.match(/-matiere-card/ig) ? "border: 2px solid; border-radius: 8px;" : ""}">`}
+        draggableIcon(source="matiere-card", height=25) {
+            return `<img class="drag-icon-for-${source}" draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/960px-Hamburger_icon.svg.png" alt="☰" style="height:${height}px; cursor:pointer; user-select:none; ${source.match(/-matiere-card/ig) ? "border: 2px solid; border-radius: 8px;" : ""}">`
+        }
     }
 
     if (ERROR503) {
