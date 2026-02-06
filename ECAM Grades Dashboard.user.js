@@ -45,7 +45,7 @@
         .btn-icon                           { font-size: 20px; margin-bottom: 2px }
         .btn:disabled                       { opacity: 0.5; cursor: not-allowed; }
 
-        .main-average-card { background: linear-gradient(135deg, #ffffff 30%, #514ba2ff 75%); border-radius: 20px; padding: 30px; margin-bottom: 15px; border: 2px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; transition: box-shadow 0.3s ease, border-color 0.3s ease, left 0.3s ease, top 0.3s ease; user-select: none }
+        .main-average-card { background: linear-gradient(135deg, #ffffff 30%, #514ba2ff 75%); border-radius: 20px; padding: 30px; margin-bottom: 15px; border: 2px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; transition: box-shadow 0.3s ease, border-color 0.3s ease; user-select: none }
         .main-average-card:hover { border-color: #667eea; box-shadow: 3px 5px 5px 0px #00000042; }
 
         .average-display { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 7px; }
@@ -154,7 +154,7 @@
         .matiere-card-header.meh    { background: #ffe8d0; }
         .matiere-card-header.bad    { background: #ffe0e0; }
         .matiere-name               { font-weight: 800; color: #1a1a1a; font-size: 14px }
-        .matiere-name.input         { font-weight: 800; color: #1a1a1a; font-size: 14px; border-radius: 15px; padding-left: 8px; width: 100%; }
+        .matiere-name.input         { font-weight: 800; color: #1a1a1a; font-size: 14px; border: 2px solid #797979; border-radius: 15px; padding-left: 8px; width: 100%; height: 25px;}
         .matiere-coef-input-box     { padding-left: 5px; width: 48px; border-radius: 8px; }
         .matiere-card.compact                   { display:flex; flex-direction: row; justify-content:space-between; align-items:center; padding: 7px 0px; border-radius: 16px; border: 3px solid #ffffff; height: 68px; width: 100%; min-width: 380px; transition: all 0.2s ease; background: none; margin: 0px; }
         .matiere-card.compact.edit-mode         {  }
@@ -1611,6 +1611,57 @@
             }
         }
         
+
+        dragElement(elmnt) {
+            var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            if (document.getElementById(elmnt.id + "header")) {
+                /* if present, the header is where you move the DIV from:*/
+                document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+            } else {
+                /* otherwise, move the DIV from anywhere inside the DIV:*/
+                elmnt.onmousedown = (e) => {dragMouseDown(e, elmnt)};
+            }
+
+            function dragMouseDown(e, elmnt) {
+                elmnt.style.position = "fixed";
+                elmnt.style.zIndex = "100";
+                e = e || window.event;
+                e.preventDefault();
+                // get the mouse cursor position at startup:
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+                elmnt.style.top =  (elmnt.offsetTop  - pos2) + "px";
+                console.log(elmnt.style.left + " | " + elmnt.style.top);
+                
+                document.onmouseup = (e) => {closeDragElement(e, elmnt)};
+                // call a function whenever the cursor moves:
+                document.onmousemove = elementDrag;
+            }
+
+            function elementDrag(e, elmt) {
+                e = e || window.event;
+                e.preventDefault();
+                // calculate the new cursor position:
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                // set the element's new position:
+                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+                elmnt.style.top =  (elmnt.offsetTop  - pos2) + "px";
+                console.log(elmnt.style.left + " | " + elmnt.style.top);
+            }
+
+            function closeDragElement(e, elmt) {
+                /* stop moving when mouse button is released:*/
+                document.onmouseup = null;
+                document.onmousemove = null;
+                elmnt.style.position = "static";
+                elmnt.style.zIndex = "";
+            }
+        }
+        
         // MARK: EVENT LISTENERS
         attachEventListeners() {
 
@@ -1716,6 +1767,9 @@
                     }
                 }
             };
+
+            this.dragElement(document.getElementById("main-average-card"));
+            this.dragElement(document.querySelector(".new-grades-card"));
 
 
             document.querySelectorAll(".any-input").forEach(input => {
