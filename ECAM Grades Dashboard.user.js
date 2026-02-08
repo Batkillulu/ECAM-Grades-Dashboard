@@ -65,7 +65,7 @@
         .new-grades-matiere-card-title { border: 2px solid #c1a7ffff; border-radius: 12px; margin: -2px -2px 5px -2px; font-size: 16px; font-weight: 600; background: #c1ceff; padding: 5px 0px 5px 10px; }
         .new-grades-table {  }
         .new-grades-table-notes {  }
-        .new-grades-notif { display: flex; align-items: center; justify-content: center; border-radius: 10px; color: #dafaff; font-weight: 800; font-size: 17px; background: #6554ff; width: 90%; height: 50px; cursor:pointer; position:fixed; left:5%; right:0px; top:-10px; z-index:299; box-shadow: 0 0 5px rgba(0,0,0,0.5);  transition: all 0.5s ease; }
+        .new-grades-notif { display: flex; align-items: center; justify-content: center; border-radius: 10px; color: #dafaff; font-weight: 800; font-size: 17px; background: #6554ff; width: 90%; height: 50px; cursor:pointer; position:fixed; left:5%; right:0px; top:-55px; z-index:299; box-shadow: 0 0 5px rgba(0,0,0,0.5);  transition: all 0.5s ease; }
         .new-grades-notif.on { top:50px }
 
         .controls-bar { background: white; border-radius: 16px; padding: 16px 20px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #e5e5e5; }
@@ -105,12 +105,15 @@
         .semester-content.show  { display: flex; flex-direction: row; gap: 0px; transition: gap 0.2s ease; }
 
         
-        .drop-matiere-card-to-remove-from-eu        { display: flex; flex-direction: column; border-radius: 20px; border: 2px dashed #ff7f7f; border-width: 0px; width: 0%; transition: width 0.2s ease; }
-        .drop-matiere-card-to-remove-from-eu.show   { width: 15%; border-width: 2px; }
-        .drop-matiere-card-to-create-eu             { display: flex; flex-direction: column; border-radius: 20px; border: 2px dashed #7fc2ff; border-width: 0px; width: 0%; transition: width 0.2s ease; }
-        .drop-matiere-card-to-create-eu.show        { width: 15%; border-width: 2px; }
+        .drop-matiere-card-to-remove-from-eu        { display: flex; flex-direction: column; border-radius: 20px; border: 2px dashed #ff7f7f; border-color: #ff7f7f00;width: 0%; transition: width 0.2s ease, border-color 0.2s ease; }
+        .drop-matiere-card-to-remove-from-eu.show   { width: 15%; border-width: 2px; border-color: #ff7f7f; }
+        .drop-matiere-card-to-create-eu             { display: flex; flex-direction: column; border-radius: 20px; border: 2px dashed #7fc2ff; border-color: #7fc2ff00;width: 0%; transition: width 0.2s ease, border-color 0.2s ease; }
+        .drop-matiere-card-to-create-eu.show        { width: 15%; border-width: 2px; border-color: #7fc2ff; }
+        .ue-insert-area             { display: none; flex-direction: column; justify-content: center; align-items: center; color: #6f5fff00; height: 0px; width: 100%; border-radius: 20px; border: 2px dashed #9b9b9b00; border-width: 0px; font-size: 25px; font-weight: 800; user-select: none; cursor: pointer; transition: all 0.2s ease; }
+        .ue-insert-area.show        { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 50px; color: #9b9b9bff; border-color: #9b9b9b; border-width: 2px; }
+        .ue-insert-area.show:hover  { color: #887bffff; border-color: #7fc2ff; }
 
-        .ue-grid                { display: grid; width: 100%; gap: 20px; }
+        .ue-grid                { display: grid; width: 100%; gap: 20px; transition: gap 0.2s ease; }
         .ue-card                { display: flex; flex-direction: column; align-items: center; background: #fafafa; border-radius: 16px; border: 3px solid #e5e5e5; scroll-margin-top: 70px; transition: all 0.3s ease; }
         .ue-card.validated      { border-color: #10b981; background: #f0fdf4; }
         .ue-card.failed         { border-color: #ef4444; background: #fef2f2; }
@@ -120,7 +123,7 @@
         .ue-header.failed       { border-color: #ef4444; background: #ffd9d9ff; }
         .ue-header.unknown      { border-color: #6d6d6dff; background: #acacacff; }
         .ue-header:hover        { background: #f3f4f6; }
-        .ue-delete-btn          { border-radius: 14px; }
+        .ue-delete-btn          { border-radius: 14px; background: transparent; }
         .ue-title                       { font-size: 16px; font-weight: 800; color: #1a1a1a; width:42%; margin-bottom: 2px; }
         .ue-title.input                 { font-size: 16px; font-weight: 800; color: #1a1a1a; width:90%; border-radius: 12px; padding-left: 10px; }
         .ue-matiere-total-coef-value    { display: flex; gap: 15px; font-weight: 600; }
@@ -132,9 +135,6 @@
         .ue-toggle                      { width: 24px; height: 24px; font-size: 18px; color: #000000; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; margin-left: 5px; }
         .ue-toggle.open                 { transform: rotate(180deg); }
 
-        .ue-insert-area             { display: flex; flex-direction: column; justify-content: center; align-items: center; color: #6f5fff00; height: 0px; width: 100%; border-radius: 20px; border: 2px dashed #9b9b9b00; border-width: 0px; font-size: 25px; font-weight: 800; user-select: none; cursor: pointer; transition: height 0.2s ease, color 0.2s ease, border-color 0.2s ease, background 0.2s ease; }
-        .ue-insert-area.show        { height: 50px; color: #9b9b9bff; border-color: #9b9b9b; border-width: 2px; }
-        .ue-insert-area.show:hover  { color: #887bffff; border-color: #7fc2ff; }
         .add-a-matiere-card         { display: flex; align-items: center; justify-content: center; gap: 8px; height: 38px; width: 230px; margin-bottom: 19px; border: 3px dashed #7fc2ff; border-radius: 20px; font-size: 19px; font-weight: 700; color: #7fc2ff; background: aliceblue; cursor: pointer; box-shadow: none; user-select:none; transition: all 0.2s ease }
         .add-a-matiere-card:hover   { background: white; font-size: 20px; box-shadow: inset 0px 0px 17px 0px #0400ff38; }
         .add-a-matiere-card-plus    { font-size: 40px; font-weight: 900; height: 20px; transition: transform 0.2s ease; }
@@ -276,6 +276,22 @@
         }
 
 
+        /** 
+        *  Use only in the console: iterating through a long list of objects isn't very optimized. Use it only to obtain the indices pointing at the class you want to change.
+        *  Note for now: the style sheet of this script is located at document.styleSheets[11];
+        * 
+        * @param _class Name of the class to search for
+        * @returns The path in document.styleSheets to to the class of name the param _class (to modify its definition)
+        */
+        getCSSClassCoordInStyleSheet(_class="") {
+            let styleSheetIndex = -1, ruleIndex = -1;
+            Object.keys(document.styleSheets).reverse().forEach(_CSSStyleSheet => {
+                Object.keys(document.styleSheets[_CSSStyleSheet].cssRules).forEach(_CSSRule => {
+                    if (document.styleSheets[_CSSStyleSheet].cssRules[_CSSRule].selectorText == _class) ruleIndex = _CSSRule, styleSheetIndex = _CSSStyleSheet;
+                })
+            })
+            return document.styleSheets[styleSheetIndex].cssRules[ruleIndex]
+        }
         saveConfig() { localStorage.setItem('ECAM_DASHBOARD_UE_CONFIG', JSON.stringify(this.ueConfig)); }
         saveSim() { localStorage.setItem("ECAM_DASHBOARD_SIM_NOTES", JSON.stringify(this.sim)); }
         saveignoredGrades() { localStorage.setItem("ECAM_DASHBOARD_IGNORED_GRADES", JSON.stringify(this.ignoredGrades)); }
@@ -297,28 +313,9 @@
         }
         getNoteColor(note) { if (note >= 12) return 'good'; if (note >= 10) return 'medium'; return 'bad'; }
         getAverageColor(avg) { if (avg >= 12) return 'average-good'; if (avg >= 10) return 'average-medium'; return 'average-bad'; }
-
-        /** 
-        *  Use only in the console: iterating through a long list of objects isn't very optimized. Use it only to obtain the indices pointing at the class you want to change.
-        *  Note for now: the style sheet of this script is located at document.styleSheets[11];
-        * 
-        * @param _class Name of the class to search for
-        * @returns The path in document.styleSheets to to the class of name the param _class (to modify its definition)
-        */
-        getCSSClassCoordInStyleSheet(_class="") {
-            let styleSheetIndex = -1, ruleIndex = -1;
-            Object.keys(document.styleSheets).reverse().forEach(_CSSStyleSheet => {
-                Object.keys(document.styleSheets[_CSSStyleSheet].cssRules).forEach(_CSSRule => {
-                    if (document.styleSheets[_CSSStyleSheet].cssRules[_CSSRule].selectorText == _class) ruleIndex = _CSSRule, styleSheetIndex = _CSSStyleSheet;
-                })
-            })
-            return document.styleSheets[styleSheetIndex].cssRules[ruleIndex]
-        }
         gradeIsDisabled(n) {
             return this.ignoredGrades.indexOf([n.semestre, n.matiere, n.type+" "+n.date+" "+n.prof].join("\\")) == -1
         }
-
-
         moyennePonderee(arr) {
             if (!arr || arr.length === 0) return 0;
             let total = 0, coeffs = 0;
@@ -363,7 +360,6 @@
         }
 
 
-
         // MARK: init
         init() {
 
@@ -386,7 +382,7 @@
         }
 
 
-        // MARK: createDashboard
+        // MARK: -createDashboard
         createDashboard() {
             const container = document.createElement("div");
             container.className = "ecam-dash";
@@ -623,7 +619,7 @@
                 <div class="semester-content show" id="sem-content-${sem}">
                     <div class="drop-matiere-card-to-remove-from-eu">
                     </div>
-                    <div class="ue-grid" ${unclassified.length == 0 || !this.ueConfig[sem] || Object.keys(this.ueConfig[sem])[0] == undefined ? `style="gap: 0px"` : ``}>
+                    <div class="ue-grid" ${(unclassified.length == 0 || !this.ueConfig[sem] || Object.keys(this.ueConfig[sem])[0] == undefined) ? `style="gap: 0px"` : ``}>
                         <div class="modules-section">
                             <div class="modules-content">
                                 ${this.renderAllUECards(sem)}
@@ -728,28 +724,22 @@
             const ueConfig = this.ueConfig[sem] || {};
             if(!Object.keys(this.gradesDatas).includes(sem)) this.gradesDatas[sem] = {};
 
-            let html = '';
+            let html = `<div class="ue-insert-area" data-semester="${sem}" data-index="0">+</div>`;
 
-            Object.keys(ueConfig).forEach(ueName => {
-                html += this.renderUECard(sem, ueName);
+            Object.keys(ueConfig).forEach((ueName, ueIndex) => {
+                html += this.renderUECard(sem, ueName, ueIndex);
             });
 
-                /* <svg style="border-radius: 20px; width: 100%; height: 100%;">
-                    <path class="ue-insert-path" fill="none" stroke="#9097ff" stroke-width="1px" stroke-dasharray="25 5" d="M 0 0 l 20 15 h 1050 M 0 45 l 20 -15 h 1050"/>
-                </svg> */
-            html += `
-            <div class="ue-insert-area">
-                +
-            </div>
-            `;
+            /* <svg style="border-radius: 20px; width: 100%; height: 100%;">
+                <path class="ue-insert-path" fill="none" stroke="#9097ff" stroke-width="1px" stroke-dasharray="25 5" d="M 0 0 l 20 15 h 1050 M 0 45 l 20 -15 h 1050"/>
+            </svg> */
 
             return html;
         }
         // MARK: renderUECard
-        renderUECard(sem, ueName) {
+        renderUECard(sem, ueName, insertCount=-1) {
             const ueConfig = this.ueConfig[sem] || {};
             const ueData = ueConfig[ueName];
-            const ueIndex = ueData.index;
             const ueNotes = this.calculateUENotes(sem, ueData, ueName);
             const includedNotes = (ueNotes || []).filter(n => this.ignoredGrades.indexOf([sem, n.matiere, n.type+" "+n.date+" "+n.prof].join("\\")) == -1);
             let weight = 0; includedNotes.forEach(note => {weight += note.coef/100})
@@ -773,11 +763,8 @@
                     <path class="ue-insert-path" fill="none" stroke="#9097ff" stroke-width="1px" stroke-dasharray="25 5" d="M 0 0 l 20 15 h 1050 M 0 45 l 20 -15 h 1050"/>
                 </svg> */
             let html = `
-            <div class="ue-insert-area" data-semester="${sem}" data-index="${ueIndex}">
-                +
-            </div>
             <div class="ue-card ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'validated' : 'failed'}`}" id="ue-card-${ueName}-in-semester-${sem}" data-semester="${sem}" data-ue="${ueName}">
-                <div class="ue-header ${this.editMode ? "edit-mode" : ""} ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'validated' : 'failed'}`}" id="ue-header-${ueName}-in-semester${sem}" data-semester="${sem}" data-ue="${ueName}" draggable="true">
+                <div class="ue-header ${this.editMode ? "edit-mode" : ""} ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'validated' : 'failed'}`}" id="ue-header-${ueName}-in-semester${sem}" data-semester="${sem}" data-ue="${ueName}" ${this.editMode ? `draggable="true"` : ""}>
                     ${this.editMode 
                         ? 
                         `<div style="display: flex; align-items: center; justify-content: flex-start; width: 42%;">
@@ -801,7 +788,12 @@
                         <button class="ue-delete-btn" ${this.editMode ? `class="display:none"` : ""} id="ue-delete-btn-${ueName}-in-semester-${sem}" data-semester="${sem}" data-ue="${ueName}">🗑️</button>
                     </div>
                 </div>
-                ${hasSim ? `<div style="width:97%;font-size:12px;color:#374151;background:#eef2ff;border:1px solid #c7d2fe;padding:6px 8px;border-radius:8px; margin:8px 0px;">${this.lang == "fr" ? "Inclut des notes simulées" : "Includes simulated grades"}</div>` : ``}
+                ${hasSim 
+                    ? 
+                    `<div style="width:97%;font-size:12px;color:#374151;background:#eef2ff;border:1px solid #c7d2fe;padding:6px 8px;border-radius:8px; margin:8px 0px;">
+                        ${this.lang == "fr" ? "Inclut des notes simulées" : "Includes simulated grades"}
+                    </div>` 
+                    : ``}
                 <div class="ue-details" id="ue-details-${ueName}-in-semester${sem}">
                     ${this.renderAllMatCardDetailed(ueData, sem, ueName)}
                 </div>
@@ -814,6 +806,11 @@
                 ` : ""
                 }
             </div>
+            ${
+                insertCount > -1
+                ? `<div class="ue-insert-area" data-semester="${sem}" data-index="${insertCount}">+</div>`
+                : ``
+            }
             `;
 
             return html
@@ -1018,7 +1015,7 @@
             this.gradesDatas[sem][ueName].matieres[matiere].custom = isCustom;
 
             const html = `
-            <div class="matiere-card compact ${this.editMode ? "" : "edit-mode"} ${moyMat == 0 && matNotes.length==0 ? "unknown" : `${moyMat>10 ? `${ueMoy>10 ? `good` : `meh`}` : `bad`}`}" id="mat-card-semester-${sem}-matiere-${matiere}" style="${this.editMode ? "cursor:move; user-select: none; " : " "}" draggable=${this.editMode ? "true" : "false"} data-sem="${sem}" data-ue="${ueName}" data-subject="${matiere}" data-custom="${isCustom}">
+            <div class="matiere-card compact ${this.editMode ? "" : "edit-mode"} ${moyMat == 0 && matNotes.length==0 ? "unknown" : `${moyMat>10 ? `${ueMoy>10 ? `good` : `meh`}` : `bad`}`}" id="mat-card-semester-${sem}-matiere-${matiere}" style="${this.editMode ? "cursor:move; user-select: none; " : " "}" ${this.editMode ? `draggable="true"` : ""} data-sem="${sem}" data-ue="${ueName}" data-subject="${matiere}" data-custom="${isCustom}">
                 <div style="display:flex; align-items:center; gap:8px; padding-left: 11px; width:43%; min-width: 275px">
                     ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("compact-matiere-card")}</div>` : ""}
                     <div>
@@ -1151,7 +1148,7 @@
 
 
 
-        // MARK: Set total coefs
+        // MARK: -Set total coefs
         setNotesTableTotalCoef() {
             const good="#10b981", meh="#e98c00", bad="#e90000", unknown="#7a7a7a";
 
@@ -1526,85 +1523,8 @@
         }
 
 
-        // MARK: dragElement
-        dragElement(elmnt) {
 
-            Element.prototype.leftTopScreen = function (parentId) {
-                var x = this.offsetLeft;
-                var y = this.offsetTop;
-
-                var element = this;
-                if (element.localName === "html") {return new Array (x, y)}
-
-                while (element.localName !== "body" && element.localName !== "html") {
-                    if (element.id == parentId) {
-                        element = document.body;
-                    }
-                    else
-                    {
-                        x = parseInt (x) + parseInt (element.offsetLeft);
-                        y = parseInt (y) + parseInt (element.offsetTop);
-
-                        element = element.offsetParent;
-                    }
-                }
-
-                return new Array (x, y);
-            }
-            
-            var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-            if (document.getElementById(elmnt.id + "header")) {
-                /* if present, the header is where you move the DIV from:*/
-                document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
-            } else {
-                /* otherwise, move the DIV from anywhere inside the DIV:*/
-                elmnt.onmousedown = (e) => {dragMouseDown(e, elmnt)};
-            }
-
-            function dragMouseDown(e, elmnt) {
-                let leftTopScreen = e.target.leftTopScreen("main-average-card");
-                e = e || window.event;
-                e.preventDefault();
-                elmnt.style.position = "fixed";
-                elmnt.style.zIndex = "100";
-                // get the mouse cursor position at startup:
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                // elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-                // elmnt.style.top =  (elmnt.offsetTop  - pos2) + "px";
-                elmnt.style.left = (leftTopScreen[0] + e.offsetX) + "px";
-                elmnt.style.top  = (leftTopScreen[1] + e.offsetY) + "px";
-                
-                document.getElementById("currentNote").onmouseup = (e) => {closeDragElement(e, elmnt)};
-                // call a function whenever the cursor moves:
-                document.getElementById("currentNote").onmousemove = elementDrag;
-                
-            }
-
-            function elementDrag(e, elmt) {
-                e = e || window.event;
-                e.preventDefault();
-                // calculate the new cursor position:
-                pos1 = pos3 - e.clientX;
-                pos2 = pos4 - e.clientY;
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                // set the element's new position:
-                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-                elmnt.style.top =  (elmnt.offsetTop  - pos2) + "px";
-            }
-
-            function closeDragElement(e, elmt) {
-                /* stop moving when mouse button is released:*/
-                document.getElementById("currentNote").onmouseup = null;
-                document.getElementById("currentNote").onmousemove = null;
-                elmnt.style.position = "static";
-                elmnt.style.zIndex = "";
-            }
-        }
-        
-
-        // MARK: EVENT LISTENERS
+        // MARK:-EVENT LISTENERS
         attachEventListeners() {
 
             /* document.onwheel = (e) => {
@@ -1617,45 +1537,6 @@
                     "Client X: " + e.clientX +    " | Client Y: " + e.clientY 
                 )
             } */
-            document.onclick = (e) => {
-                // Toggle semestres
-                if (e.target.closest('.semester-header')) {
-                    const header = e.target.closest('.semester-header');
-                    const sem = header.dataset.semester;
-                    const content = document.getElementById(`sem-content-${sem}`);
-                    const toggle = header.querySelector('.semester-toggle');
-                    if (content.classList.contains('show')) {
-                        content.classList.remove('show'); toggle.classList.remove('open'); content.style.display = 'none';
-                    } else {
-                        content.classList.add('show'); toggle.classList.add('open'); content.style.display = 'flex';
-                    }
-                }
-
-                // Collapse/Develop (fold/unfold) UEs
-                else if (e.target.closest('.ue-header') && !e.target.closest('.ue-title.input') && !e.target.closest('.ue-delete-btn')/*  && !this.ueHeaderNoMove */) {
-                    this.ueHeaderClickEvent(e)
-                }
-
-                // Toggle intranet table
-                else if (e.target.closest('.intranet-collapse')) {
-                    const header = e.target.closest('.intranet-collapse');
-                    const intranetTable = document.querySelector('.greyGridTable');
-                    const intranetToggle = header.querySelectorAll('.intranet-toggle');
-                    intranetToggle.forEach(t => {
-                        if (t.previousElementSibling == null){
-                            t.classList.toggle('openLeft')
-                        } else {
-                            t.classList.toggle('openRight');
-                        }
-                    });
-
-                    if (intranetTable.style.display == 'none') {
-                        intranetTable.style.display = 'block';
-                    } else {
-                        intranetTable.style.display = 'none';
-                    }
-                }
-            };
             /* document.onmousemove = (e) => {
                 const leftTopScreen = e.target.leftTopScreen("main-average-card");
                 console.log("lefTopScreen|\tclientCoord \t|\t offsetCoord \t|\t TOTAL");
@@ -1717,8 +1598,50 @@
             }; 
             */
 
+            document.onclick = (e) => {
+                // Toggle semestres
+                if (e.target.closest('.semester-header')) {
+                    const header = e.target.closest('.semester-header');
+                    const sem = header.dataset.semester;
+                    const content = document.getElementById(`sem-content-${sem}`);
+                    const toggle = header.querySelector('.semester-toggle');
+                    if (content.classList.contains('show')) {
+                        content.classList.remove('show'); toggle.classList.remove('open'); content.style.display = 'none';
+                    } else {
+                        content.classList.add('show'); toggle.classList.add('open'); content.style.display = 'flex';
+                    }
+                }
+
+                // Toggle intranet table
+                else if (e.target.closest('.intranet-collapse')) {
+                    const header = e.target.closest('.intranet-collapse');
+                    const intranetTable = document.querySelector('.greyGridTable');
+                    const intranetToggle = header.querySelectorAll('.intranet-toggle');
+                    intranetToggle.forEach(t => {
+                        if (t.previousElementSibling == null){
+                            t.classList.toggle('openLeft')
+                        } else {
+                            t.classList.toggle('openRight');
+                        }
+                    });
+
+                    if (intranetTable.style.display == 'none') {
+                        intranetTable.style.display = 'block';
+                    } else {
+                        intranetTable.style.display = 'none';
+                    }
+                }
+            };
+            
+                // Collapse/Develop (fold/unfold) UEs
+            document.onmousedown = (e) => {
+                if (e.target.closest('.ue-header') && !e.target.closest('.ue-title.input') && !e.target.closest('.ue-delete-btn')) {
+                    this.ueHeaderClickEvent(e)
+                }
+            };
+
             this.dragElement(document.getElementById("main-average-card"));
-            this.dragElement(document.querySelector(".new-grades-card"));
+            // this.dragElement(document.querySelector(".new-grades-card"));
 
 
             document.querySelectorAll(".any-input").forEach(input => {
@@ -1814,39 +1737,39 @@
             })
 
             
-            const dropAreaAdd = document.querySelector(".drop-matiere-card-to-create-eu");
-            const dropAreaRemove = document.querySelector(".drop-matiere-card-to-remove-from-eu");
-            const ueInsertAreas = document.querySelectorAll(".ue-insert-area");
+            // const dropAreaAdd = document.querySelector(".drop-matiere-card-to-create-eu");
+            // const dropAreaRemove = document.querySelector(".drop-matiere-card-to-remove-from-eu");
+            // const ueInsertAreas = document.querySelectorAll(".ue-insert-area");
             
             document.querySelectorAll(".drag-icon-for-detailed-matiere-card").forEach(dragIcon => {
                 dragIcon.onclick = (e) => {
-                    this.dragIconOnClickEvent(e, [dropAreaAdd, dropAreaRemove], dragIcon, "detailed")
+                    this.dragIconOnClickEvent(e, dragIcon, "detailed")
                 };
             });
             document.querySelectorAll(".drag-icon-for-compact-matiere-card").forEach(dragIcon => {
                 dragIcon.onclick = (e) => {
-                    this.dragIconOnClickEvent(e, [dropAreaAdd, dropAreaRemove], dragIcon, "compact")
+                    this.dragIconOnClickEvent(e, dragIcon, "compact")
                 };
             });
             document.querySelectorAll(".drag-icon-for-unclassified-matiere-card").forEach(dragIcon => {
                 dragIcon.onclick = (e) => {
-                    this.dragIconOnClickEvent(e, [dropAreaAdd, dropAreaRemove], dragIcon, "unclassified")
+                    this.dragIconOnClickEvent(e, dragIcon, "unclassified")
                 };
             });
 
             document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {
                 tick.onclick = (e) => {
-                    this.tickIconOnClickEvent(e, [dropAreaAdd, dropAreaRemove], tick, "detailed")
+                    this.tickIconOnClickEvent(e, tick, "detailed")
                 };
             });
             document.querySelectorAll(".ticked-compact-matiere-card").forEach(tick => {
                 tick.onclick = (e) => {
-                    this.tickIconOnClickEvent(e, [dropAreaAdd, dropAreaRemove], tick, "compact")
+                    this.tickIconOnClickEvent(e, tick, "compact")
                 };
             });
             document.querySelectorAll(".ticked-unclassified-matiere-card").forEach(tick => {
                 tick.onclick = (e) => {
-                    this.tickIconOnClickEvent(e, [dropAreaAdd, dropAreaRemove], tick, "unclassified")
+                    this.tickIconOnClickEvent(e, tick, "unclassified")
                 };
             });
 
@@ -2043,13 +1966,10 @@
 
             
             document.querySelector(".unclassified-content").querySelectorAll(".notes-table").forEach(table => {
-                table.onmousedown = () => {
+                table.onmouseenter = () => {
                     if (this.editMode) document.querySelectorAll(".matiere-card.unclassified").forEach(card => {card.draggable = false;})
                 }
                 table.onmouseleave = () => {
-                    if (this.editMode) document.querySelectorAll(".matiere-card.unclassified").forEach(card => {card.draggable = true;})
-                }
-                table.onmouseup = () => {
                     if (this.editMode) document.querySelectorAll(".matiere-card.unclassified").forEach(card => {card.draggable = true;})
                 }
             })
@@ -2064,8 +1984,7 @@
 
             // Change to English
             document.getElementById('en-lang-btn').onclick = () => {
-                if (this.lang == "fr")
-                {
+                if (this.lang == "fr") {
                     this.lang = "en";
                     localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
                     document.getElementById('fr-lang-btn').classList.remove('active')
@@ -2076,8 +1995,7 @@
 
             // Change to French
             document.getElementById('fr-lang-btn').onclick = () => {
-                if (this.lang == "en")
-                {
+                if (this.lang == "en") {
                     this.lang = "fr";
                     localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
                     document.getElementById('fr-lang-btn').classList.add('active')
@@ -2099,35 +2017,53 @@
             // Export
             document.getElementById('exportBtn').onclick = () => this.exportData();
 
-            this.attachOnDragEventListeners();
+            if (this.editMode) {this.attachOnDragEventListeners();} else {this.detachOnDragEventListeners();}
 
         }
 
         
 
         ueHeaderClickEvent(e) {
-            const header = e.target.closest('.ue-header');
-            const toggle = header.querySelector('.ue-toggle');
-            const sem = header.dataset.semester;
-            const ueName = header.dataset.ue;
-            const ueContent = header.parentElement.querySelector(".ue-details");
-            const ueConfig = this.ueConfig[sem] || {};
-            const ueData = ueConfig[ueName];
+            document.body.onmousemove = (e) => {
+                e.preventDefault();
+                document.body.onmouseup = null;
+                this.attachEventListeners();
+            };
+            document.body.onmouseup = (e) => {
+                const header = e.target.closest('.ue-header');
+                const toggle = header.querySelector('.ue-toggle');
+                const sem = header.dataset.semester;
+                const ueName = header.dataset.ue;
+                const ueContent = header.parentElement.querySelector(".ue-details");
+                const ueConfig = this.ueConfig[sem] || {};
+                const ueData = ueConfig[ueName];
 
-            if (toggle.classList.contains('open')) {
-                ueContent.innerHTML = this.renderAllMatCardCompact(ueData, sem, ueName);
-                ueContent.classList.add('compact');
-                toggle.classList.remove('open');
-                this.setNotesTableTotalCoef()
-            } else {
-                ueContent.innerHTML = this.renderAllMatCardDetailed(ueData, sem, ueName);
-                ueContent.classList.remove('compact');
-                toggle.classList.add('open');
-                this.attachCheckboxListeners(ueContent);
-                this.setNotesTableTotalCoef()
+                if (toggle.classList.contains('open')) {
+                    ueContent.innerHTML = this.renderAllMatCardCompact(ueData, sem, ueName);
+                    ueContent.classList.add('compact');
+                    toggle.classList.remove('open');
+                    this.setNotesTableTotalCoef()
+                } else {
+                    ueContent.innerHTML = this.renderAllMatCardDetailed(ueData, sem, ueName);
+                    ueContent.classList.remove('compact');
+                    toggle.classList.add('open');
+                    this.attachCheckboxListeners(ueContent);
+                    this.setNotesTableTotalCoef()
+                }
             }
         }
         
+        ueTitleInputChangeAction(e) {
+            const sem = e.target.dataset.semester;
+            const ueName = e.target.dataset.ue;
+            const regExpExec = RegExp(`${ueName}`, "ig").exec(JSON.stringify(this.ueConfig[sem])); 
+            this.ueConfig[sem] = JSON.parse('{"'+e.target.value+ regExpExec.input.slice(regExpExec.index+regExpExec[0].length,regExpExec.input.length));
+            this.saveConfig()
+            this.renderContent(false)
+        }
+
+
+        // MARK: -Drag events
         attachOnDragEventListeners() {   // ONDRAG cards event
             const dropAreaAdd = document.querySelector(".drop-matiere-card-to-create-eu");
             const dropAreaRemove = document.querySelector(".drop-matiere-card-to-remove-from-eu");
@@ -2146,12 +2082,12 @@
                         matiereCard.querySelector(".notes-table").style.display = "none";
                         matiereCard.querySelector(".matiere-card-header").style.border = "none";
                         matiereCard.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 20px 20px";
-                        document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, [dropAreaAdd, dropAreaRemove], tick, true);})
+                        document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, tick, true);})
                     } 
                     else if (matiereCard.classList.contains("compact")) {
                         matiereCard.style.width = "50%";
                         matiereCard.querySelector(".notes-table-coef").style.display = "none";
-                        document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, [dropAreaAdd, dropAreaRemove], tick);})
+                        document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, tick);})
                     }
                     else {
                         matiereCard.style.width = "50%";
@@ -2160,7 +2096,7 @@
                         matiereCard.querySelector(".notes-table").style.display = "none";
                         matiereCard.querySelector(".matiere-card-header").style.borderBottom = "none";
                         matiereCard.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 20px 20px";
-                        document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, [dropAreaAdd, dropAreaRemove], tick);})
+                        document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, tick);})
                     }
                     document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
                     document.querySelector(".semester-content").style.gap = "20px";
@@ -2215,7 +2151,7 @@
                                 selectedMatiereCard2.style.width = "50%";
                                 setTimeout(() => {selectedMatiereCard2.querySelector(".notes-table").style.display = "none";}, 10)
                                 selectedMatiereCard2.querySelector(".matiere-card-header").style.border = "none";
-                                selectedMatiereCard2.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 20px 20px";
+                                selectedMatiereCard2.querySelector(".matiere-card-header").style.borderRadius = "20px";
                             
                             } 
                             else if (selectedMatiereCard2.classList.contains("compact")) {
@@ -2228,7 +2164,7 @@
                                 selectedMatiereCard2.querySelector(".matiere-card-header").querySelector(".notes-table-coef").style.width =  "50%";
                                 setTimeout(() => {selectedMatiereCard2.querySelector(".notes-table").style.display = "none";}, 10)
                                 selectedMatiereCard2.querySelector(".matiere-card-header").style.borderBottom = "none";
-                                selectedMatiereCard2.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 20px 20px";
+                                selectedMatiereCard2.querySelector(".matiere-card-header").style.borderRadius = "20px";
                             }
                         })
                         document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
@@ -2264,6 +2200,7 @@
                 })
             }
 
+            dropAreaAdd.style.background = "";
             dropAreaAdd.ondragover = (e) => {
                 e.preventDefault();
                 e.target.style.background = "#bdb8ff";
@@ -2273,10 +2210,12 @@
                 e.target.style.background = "";
             }
             dropAreaAdd.ondrop = (e) => {
+                e.target.style.background = "";
                 e.preventDefault(); 
                 this.dropAreaAddAction(e.dataTransfer.getData("text"));
             }
 
+            dropAreaRemove.style.background = "";
             dropAreaRemove.ondragover = (e) => {
                 e.preventDefault();
                 e.target.style.background = "#ffb8b8";
@@ -2286,11 +2225,13 @@
                 e.target.style.background = "";
             }
             dropAreaRemove.ondrop = (e) => {
+                e.target.style.background = "";
                 e.preventDefault(); 
                 this.dropAreaRemoveAction(e.dataTransfer.getData("text"));
             }
 
             ueInsertAreas.forEach(ueInsertArea => {
+                ueInsertArea.style.background = "";
                 ueInsertArea.ondragover = (e) => {
                     e.preventDefault();
                     e.target.style.background = "#bdb8ff";
@@ -2300,6 +2241,7 @@
                     e.target.style.background = "";
                 }
                 ueInsertArea.ondrop = (e) => {
+                    e.target.style.background = "";
                     e.preventDefault(); 
                     // this.dropAreaAddAction(e.dataTransfer.getData("text"));
                 }
@@ -2334,8 +2276,9 @@
             }
         }
 
-        dragIconOnClickEvent(e, dropAreas, dragIcon, type) {
+        dragIconOnClickEvent(e, dragIcon, type) {
             let matiereCard =  e.target.parentElement.parentElement.parentElement;
+            document.querySelector(".ue-grid").style.gap = "20px";
             if (type=="detailed") 
                 {matiereCard = e.target.parentElement.parentElement.parentElement.parentElement.parentElement;}
 
@@ -2357,16 +2300,17 @@
                 totalCoef.parentElement.style.width = "56%";
             })
             document.querySelector(".semester-content").style.gap = "20px";
-            dropAreas[0].classList.add("show");
-            dropAreas[1].classList.add("show");
+            document.querySelector(".drop-matiere-card-to-create-eu").classList.add("show");
+            document.querySelector(".drop-matiere-card-to-remove-from-eu").classList.add("show");
 
             dragIcon.outerHTML = `<div class="ticked-${type}-matiere-card" style="height: 23px; width: 23px; font-size: 35px; color: #004cff; cursor:pointer; user-select:none">✔</div>`;
 
             const selectionNotifDiv = document.createElement("div");
             selectionNotifDiv.className = `selected-matiere-card-notif-div`;
-            selectionNotifDiv.id = `selected-matiere-card-notif-div-for-${type}-${matiereCard.dataset.subject}`;
+            selectionNotifDiv.id = `selected-matiere-card-notif-div-for-${type}-${matiereCard.dataset.subject}-from-semester-${matiereCard.dataset.semester}`;
             selectionNotifDiv.dataset.type = type;
             selectionNotifDiv.dataset.subject = matiereCard.dataset.subject;
+            selectionNotifDiv.dataset.semester = matiereCard.dataset.semester;
             selectionNotifDiv.innerHTML = `${">"}<span style="font-weight: 600; font-size: 14px; color: white">${matiereCard.dataset.subject}</span><span>${this.lang == "fr" ? `est sélectionné!` : `is selected!`}</span>`;
 
             let highestWidth = 0;
@@ -2379,7 +2323,7 @@
             this.attachEventListeners()
         }
 
-        tickIconOnClickEvent(e, dropAreas, tick, type) {
+        tickIconOnClickEvent(e, tick, type) {
             e.preventDefault();
             let matiereCard = e.target.parentElement.parentElement.parentElement;
             if (type=="detailed") {matiereCard = e.target.parentElement.parentElement.parentElement.parentElement.parentElement}
@@ -2388,42 +2332,145 @@
                     this.selectedMatiereCards.splice(index, 1)
                 }
             )
+            const sem = matiereCard.dataset.semester;
+            const subject = matiereCard.dataset.subject;
 
-            if (this.selectedMatiereCards.length == 0) {
-                setTimeout(() => {document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
-                setTimeout(() => {document.querySelectorAll(".notes-table-classAvg").forEach(classAvg => {classAvg.style.display = "table-cell"})}, 100)
-                document.querySelector(".semester-content").style.gap = "0px";
-                dropAreas[0].classList.remove("show");
-                dropAreas[1].classList.remove("show");
-                document.querySelectorAll(".ue-title.input").forEach(input => {
-                    input.parentElement.style.transition = "";
-                    input.parentElement.style.width = "42%";
-                })
-                document.querySelectorAll(".ue-matiere-total-coef-value").forEach(totalCoef => {
-                    totalCoef.parentElement.style.transition = "";
-                    totalCoef.parentElement.style.width = "47%";
-                })
-                document.querySelectorAll(".ue-insert-area").forEach(insertArea => {
-                    insertArea.classList.remove("show");
-                })
-            }
-
-            document.getElementById(`selected-matiere-card-notif-div-for-${type}-${matiereCard.dataset.subject}`).classList.remove("on");
+            document.getElementById(`selected-matiere-card-notif-div-for-${type}-${subject}-from-semester-${sem}`).classList.remove("on");
             setTimeout(()=>{
-                document.getElementById(`selected-matiere-card-notif-div-for-${type}-${matiereCard.dataset.subject}`).remove();
+                document.getElementById(`selected-matiere-card-notif-div-for-${type}-${subject}-from-semester-${sem}`).remove();
                 let highestWidth = 0;
                 document.querySelectorAll(".selected-matiere-card-notif-div").forEach(notifDiv => {if (highestWidth < notifDiv.clientWidth) highestWidth = notifDiv.clientWidth;})
                 document.querySelector(".selected-matiere-card-notif-container").style.left = `calc(99.5% - ${100 * highestWidth/document.body.clientWidth}%`;
             }, 300)
-            // setTimeout(()=>{
-            // }, 301)
+
+            if (this.selectedMatiereCards.length == 0) {
+                this.emptyMatCardSelection();
+            }
+
             
             tick.outerHTML = this.draggableIcon(`${type}-matiere-card`);
             this.attachEventListeners();
         }
 
-        dropAreaInsertAction(cardId, index=-1) {
+        emptyMatCardSelection() {
+            this.selectedMatiereCards = [];
+            document.querySelector(".ue-grid").style.gap = "0px";
+            setTimeout(() => {document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
+            setTimeout(() => {document.querySelectorAll(".notes-table-classAvg").forEach(classAvg => {classAvg.style.display = "table-cell"})}, 100)
+            document.querySelector(".semester-content").style.gap = "0px";
+            document.querySelector(".drop-matiere-card-to-create-eu").classList.remove("show");
+            document.querySelector(".drop-matiere-card-to-remove-from-eu").classList.remove("show");
+            document.querySelectorAll(".ue-title.input").forEach(input => {
+                input.parentElement.style.transition = "";
+                input.parentElement.style.width = "42%";
+            })
+            document.querySelectorAll(".ue-matiere-total-coef-value").forEach(totalCoef => {
+                totalCoef.parentElement.style.transition = "";
+                totalCoef.parentElement.style.width = "47%";
+            })
+            document.querySelectorAll(".ue-insert-area").forEach(insertArea => {
+                insertArea.classList.remove("show");
+            })
 
+            document.querySelectorAll(`.selected-matiere-card-notif-div`).forEach(notifDiv => {
+                const sem = notifDiv.dataset.semester;
+                const subject = notifDiv.dataset.subject;
+                const type = notifDiv.dataset.type;
+                notifDiv.classList.remove("on");
+                setTimeout(()=>{
+                    document.getElementById(`selected-matiere-card-notif-div-for-${type}-${subject}-from-semester-${sem}`).remove();
+                    let highestWidth = 0;
+                    document.querySelectorAll(".selected-matiere-card-notif-div").forEach(notifDiv => {if (highestWidth < notifDiv.clientWidth) highestWidth = notifDiv.clientWidth;})
+                    document.querySelector(".selected-matiere-card-notif-container").style.left = `calc(99.5% - ${100 * highestWidth/document.body.clientWidth}%`;
+                }, 300)
+            })
+        }
+
+        dropAreaInsertAction(cardId, index=-1) {
+            let cardIsSelected = false;
+            this.selectedMatiereCards.forEach(selectedMatiereCard => {if (selectedMatiereCard.id == card.id) cardIsSelected = true;})
+            const sem = card.dataset.semester;
+            let subject, oldUeName, manageSim = true;
+            if (!this.ueConfig[sem]) this.ueConfig[sem] = {}; if (!this.sim[sem]) manageSim = false;
+            let newUeName = "Module 1"; let count = 1;
+            while (this.ueConfig[sem][newUeName]) {count++; newUeName = `Module ${count}`;}
+
+            // Mat card is dropped in the drop area Add
+            // Adding a [newUeName] property to this.ueConfig as its first property, so that any new module appears first in the module section
+            this.ueConfig[sem] = {[newUeName]: {matieres: [], pourcentages: {}, custom: {}}, ...this.ueConfig[sem]};
+
+            if (!cardIsSelected) {
+                subject = card.dataset.subject;
+                if (!card.classList.contains("unclassified")) {
+                    oldUeName = card.dataset.ue;
+                    const subjectIndex = this.ueConfig[sem][oldUeName].matieres.indexOf(subject);
+                    this.ueConfig[sem][oldUeName].matieres.splice(subjectIndex,1);
+                    delete this.ueConfig[sem][oldUeName].pourcentages[subject];
+                    if (manageSim) {if (!this.sim[sem][oldUeName]) manageSim = false;}
+                    if (manageSim) {
+                        this.sim[sem] = {[newUeName]: {}, ...this.sim[sem]}
+                        this.sim[sem][newUeName][subject] = [];
+                        this.sim[sem][oldUeName][subject].forEach((_, index) => {
+                            this.sim[sem][newUeName][subject].push(this.sim[sem][oldUeName][subject][index].shift())
+                        })
+                    }
+                }
+
+                this.ueConfig[sem][newUeName].matieres.splice(index, 0, subject);
+                this.ueConfig[sem][newUeName].pourcentages[subject] = 0;
+                this.ueConfig[sem][newUeName].custom[subject] = false;
+
+                this.deleteUnusedSimPath(sem, oldUeName, subject);
+                this.saveSim();
+            }
+            else
+            {
+                let remainingCoef = 100;
+                const nbCurrSubjects = this.ueConfig[sem][newUeName].matieres.length;
+                const nbNewSubjects = this.selectedMatiereCards.length;
+
+                this.selectedMatiereCards.forEach((selectedMatiereCard, index) => {
+                    subject = selectedMatiereCard.dataset.subject;
+
+                    if (nbCurrSubjects > 0) {
+                        this.ueConfig[sem][newUeName].matieres.forEach(_mat => {
+                            this.ueConfig[sem][newUeName].pourcentages[subject]
+                        })
+                    }
+
+                    this.ueConfig[sem][newUeName].matieres.push(subject);
+                    this.ueConfig[sem][newUeName].pourcentages[subject] = Math.round(100/this.selectedMatiereCards.length);
+                    this.ueConfig[sem][newUeName].custom[subject] = false;
+
+                    if (this.selectedMatiereCards.length == index+1) {
+                        this.ueConfig[sem][newUeName].pourcentages[subject] = remainingCoef;
+                    }
+                    remainingCoef -= this.ueConfig[sem][newUeName].pourcentages[subject];
+
+                    if (!selectedMatiereCard.classList.contains("unclassified")) {
+                        oldUeName = selectedMatiereCard.dataset.ue
+                        subject = selectedMatiereCard.dataset.subject
+                        const subjectIndex = this.ueConfig[sem][oldUeName].matieres.indexOf(subject);
+                        this.ueConfig[sem][oldUeName].matieres.splice(subjectIndex,1);
+                        delete this.ueConfig[sem][oldUeName].pourcentages[subject];
+                        if (manageSim) {if (!this.sim[sem][oldUeName][subject]) manageSim = false}
+                        if (manageSim) {
+                            this.sim[sem][newUeName][subject] = [];
+                            this.sim[sem][oldUeName][subject].forEach((_, index) => {
+                                this.sim[sem][newUeName][subject].push(this.sim[sem][oldUeName][subject][index].shift())
+                            })
+                            this.deleteUnusedSimPath(sem, oldUeName, subject);
+                            this.saveSim();
+                        }
+                    }
+                })
+                document.querySelectorAll(".ue-insert-area").forEach(insertArea => {
+                    insertArea.classList.remove("show");
+                })
+            }
+            
+            this.emptyMatCardSelection();
+                
         }
 
         dropAreaAddAction(cardId) {
@@ -2439,11 +2486,8 @@
 
                 // Mat card is dropped in the drop area Add
                 // Adding a [newUeName] property to this.ueConfig as its first property, so that any new module appears first in the module section
-                this.ueConfig[sem] = {[newUeName]: {matieres: [], pourcentages: {}, custom: {}}, ...this.ueConfig[sem]}
+                this.ueConfig[sem] = {[newUeName]: {matieres: [], pourcentages: {}, custom: {}}, ...this.ueConfig[sem]};
                 
-                if (!card.classList.contains("unclassified")) {
-                }
-
                 if (!cardIsSelected) {
                     subject = card.dataset.subject;
                     this.ueConfig[sem][newUeName].matieres.push(subject);
@@ -2451,8 +2495,8 @@
                     this.ueConfig[sem][newUeName].custom[subject] = false;
 
                     if (!card.classList.contains("unclassified")) {
-                        oldUeName = card.dataset.ue
-                        subject = card.dataset.subject
+                        oldUeName = card.dataset.ue;
+                        subject = card.dataset.subject;
                         const subjectIndex = this.ueConfig[sem][oldUeName].matieres.indexOf(subject);
                         this.ueConfig[sem][oldUeName].matieres.splice(subjectIndex,1);
                         delete this.ueConfig[sem][oldUeName].pourcentages[subject];
@@ -2505,7 +2549,7 @@
                     })
                 }
 
-                this.selectedMatiereCards = [];
+                this.emptyMatCardSelection();
                 this.saveConfig();
                 this.renderContent();
                 this.attachEventListeners();
@@ -2545,23 +2589,99 @@
                 }
 
                 if (this.ueConfig[sem][ue].matieres.length == 0) {delete this.ueConfig[sem][ue]}
+
+                this.emptyMatCardSelection();
+                this.saveConfig();
+                this.renderContent();
+                this.attachEventListeners();
+            }
+            else if (card.classList.contains("unclassified")) {
+
             }
             else if (card.classList.contains("ue-card")) {}
 
-            this.saveConfig();
-            this.renderContent();
-            this.attachEventListeners();
         }
 
-        ueTitleInputChangeAction(e) {
-            const sem = e.target.dataset.semester;
-            const ueName = e.target.dataset.ue;
-            const regExpExec = RegExp(`${ueName}`, "ig").exec(JSON.stringify(this.ueConfig[sem])); 
-            this.ueConfig[sem] = JSON.parse('{"'+e.target.value+ regExpExec.input.slice(regExpExec.index+regExpExec[0].length,regExpExec.input.length));
-            this.saveConfig()
-            this.renderContent(false)
-        }
+        // MARK: dragElement
+        dragElement(elmnt) {
 
+            Element.prototype.leftTopScreen = function (parentId) {
+                var x = this.offsetLeft;
+                var y = this.offsetTop;
+
+                var element = this;
+                if (element.localName === "html") {return new Array (x, y)}
+
+                while (element.localName !== "body" && element.localName !== "html") {
+                    if (element.id == parentId) {
+                        element = document.body;
+                    }
+                    else
+                    {
+                        x = parseInt (x) + parseInt (element.offsetLeft);
+                        y = parseInt (y) + parseInt (element.offsetTop);
+
+                        element = element.offsetParent;
+                    }
+                }
+
+                return new Array (x, y);
+            }
+            
+            var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            if (document.getElementById(elmnt.id + "header")) {
+                /* if present, the header is where you move the DIV from:*/
+                document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+            } else {
+                /* otherwise, move the DIV from anywhere inside the DIV:*/
+                elmnt.onmousedown = (e) => {dragMouseDown(e, elmnt)};
+            }
+
+            function dragMouseDown(e, elmnt) {
+                let leftTopScreen = e.target.leftTopScreen("main-average-card");
+                e = e || window.event;
+                e.preventDefault();
+                elmnt.style.position = "fixed";
+                elmnt.style.zIndex = "100";
+                // get the mouse cursor position at startup:
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                // elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+                // elmnt.style.top =  (elmnt.offsetTop  - pos2) + "px";
+                elmnt.style.left = (leftTopScreen[0] + e.offsetX) + "px";
+                elmnt.style.top  = (leftTopScreen[1] + e.offsetY) + "px";
+                
+                document.getElementById("currentNote").onmouseup = (e) => {closeDragElement(e, elmnt)};
+                // call a function whenever the cursor moves:
+                document.getElementById("currentNote").onmousemove = elementDrag;
+                
+            }
+
+            function elementDrag(e, elmt) {
+                e = e || window.event;
+                e.preventDefault();
+                // calculate the new cursor position:
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                // set the element's new position:
+                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+                elmnt.style.top =  (elmnt.offsetTop  - pos2) + "px";
+            }
+
+            function closeDragElement(e, elmt) {
+                /* stop moving when mouse button is released:*/
+                document.getElementById("currentNote").onmouseup = null;
+                document.getElementById("currentNote").onmousemove = null;
+                elmnt.style.position = "static";
+                elmnt.style.zIndex = "";
+            }
+        }
+        
+
+
+        // MARK: -Data Im/Export
         importData(file) {
             return new Promise((resolve, reject) => {
                 const handleText = (text) => {
@@ -2670,7 +2790,7 @@
 
 
 
-        // MARK: General KBoardEvents
+        // MARK: -General KBoardEvents
         generalKeyboardEvents() {
             document.onkeydown = (e) => {
                 if (e.key === "Shift") {
@@ -2678,7 +2798,7 @@
                         if (e.key === "E") {
                             this.editMode = !this.editMode;
 
-                            this.scrollToClientHighestElemWithClassWithTimeout("ue-card");
+                            this.scrollToClientHighestElemWithClassWithTimeout(".ue-card||.matiere-card.unclassified");
                             this.renderContent();
                             this.attachEventListeners();
                         }
@@ -2695,8 +2815,8 @@
                             }                            
                             localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
 
-                            this.scrollToClientHighestElemWithClassWithTimeout("ue-card");
-                            this.renderContent();                      
+                            this.scrollToClientHighestElemWithClassWithTimeout(".ue-card||.matiere-card.unclassified");
+                            this.renderContent(false);                      
                         }
                         else if (e.key === "L") {
                             if (this.lang == "fr")
@@ -2706,7 +2826,7 @@
                                 document.getElementById('fr-lang-btn').classList.remove('active')
                                 document.getElementById('en-lang-btn').classList.add('active')
 
-                                this.scrollToClientHighestElemWithClassWithTimeout("ue-card");
+                                this.scrollToClientHighestElemWithClassWithTimeout(".ue-card||.matiere-card.unclassified");
                                 this.renderContent();
                             }
                             else if (this.lang == "en")
@@ -2716,7 +2836,7 @@
                                 document.getElementById('fr-lang-btn').classList.add('active')
                                 document.getElementById('en-lang-btn').classList.remove('active')
 
-                                this.scrollToClientHighestElemWithClassWithTimeout("ue-card");
+                                this.scrollToClientHighestElemWithClassWithTimeout(".ue-card||.matiere-card.unclassified");
                                 this.renderContent();
                             }
                         }
@@ -2734,19 +2854,24 @@
         
         scrollToClientHighestElemWithClassWithTimeout(className, timeout=50, smooth=false) {
             this.scrollToThisElem = ""; let found = false;
-            document.querySelectorAll(`.${className}`).forEach(elem => {
-                const coords = elem.getBoundingClientRect();
-                const meanClientTop = (coords.top + coords.bottom)/2;
-                if ((meanClientTop > 0) && !found) {
-                    this.scrollToThisElem = elem.id; 
-                    found = true;
-                }
+
+            className.split("||").forEach(_className => {
+                document.querySelectorAll(`${_className}`).forEach(elem => {
+                    const coords = elem.getBoundingClientRect();
+                    const meanClientTop = (coords.top + coords.bottom)/2;
+                    if ((meanClientTop > 0) && !found) {
+                        this.scrollToThisElem = elem.id; 
+                        found = true;
+                    }
+                })
             })
 
-            setTimeout(() => {
-                const scrollToThisElem = document.getElementById(this.scrollToThisElem); 
-                scrollToThisElem.scrollIntoView({behavior: smooth ? "smooth" : "instant", block: "start"});
-            }, timeout)
+            if (found) {
+                setTimeout(() => {
+                    const scrollToThisElem = document.getElementById(this.scrollToThisElem); 
+                    scrollToThisElem.scrollIntoView({behavior: smooth ? "smooth" : "instant", block: "start"});
+                }, timeout)
+            }
 
         }
 
