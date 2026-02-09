@@ -145,10 +145,10 @@
 
         .unclassified-part                              { display: flex; flex-direction: row; gap: 0px; }
         .unclassified-section                           { display: flex; flex-direction: column; width: 100%; background: #fff8f0; border-radius: 20px; padding: 20px; border: 2px dashed #fbbf24; }
-        .unclassified-content                           { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; }
+        .unclassified-content                           { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 99%; }
         .unclassified-title                             { font-size: 16px; font-weight: 600; color: #92400e; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
 
-        .matiere-card               { display: flex; flex-direction: column; align-items: center; border: 4px solid #ffffffff; border-radius: 20px; width: 100%; background: #c5c5c5; scroll-margin-top: 70px; margin: 12px 0px 20px 0px; transition: width 0.3s ease; }
+        .matiere-card               { display: flex; flex-direction: column; align-items: center; border: 4px solid #ffffffff; border-radius: 20px; width: 100%; background: #c5c5c5; margin: 12px 0px 20px 0px; transition: width 0.3s ease; }
         .matiere-card.good          { background: #f0fdf4; }
         .matiere-card.meh           { background: #fff2e4; }
         .matiere-card.bad           { background: #fef2f2; }
@@ -167,10 +167,10 @@
         .matiere-card.compact.unknown           { background: #c5c5c5; }
         .matiere-card.compact:hover             { background: #f3f4f6; box-shadow: inset 0px 0px 8px 1px #0032ff42; transform: scale(0.995); }
         .matiere-card.compact.edit-mode:hover   { transform: scale(1); }
-        .matiere-card.unclassified              { display: flex; flex-direction: column; align-items: center; border: 2px solid #e4f3ffff; border-radius: 20px; width:99%; background: white; user-select: none; margin: 0px; transition: width 0.3s ease }
+        .matiere-card.unclassified              { display: flex; flex-direction: column; align-items: center; border: 2px solid #ffe4cd; border-radius: 20px; width:100%; background: white; user-select: none; margin: 0px; transition: width 0.3s ease }
         .matiere-card.unclassified.good         { background: #f0fdf4; }
         .matiere-card.unclassified.bad          { background: #fef2f2; }
-        .matiere-card-header.unclassified       { display:flex; flex-direction: row; align-items:center; border-radius: 20px 20px 0px 0px; border-bottom: 2px solid #e4f3ffff; gap:8px; font-weight:700; height: 60px; width: 100%; vertical-align:top; font-size:15px }
+        .matiere-card-header.unclassified       { display:flex; flex-direction: row; align-items:center; border-radius: 20px 20px 0px 0px; border-bottom: 2px solid #ffe4cd; gap:8px; font-weight:700; height: 60px; width: 100%; vertical-align:top; font-size:15px }
         .matiere-card-header.unclassified.good  { background: #e3ffeb; }
         .matiere-card-header.unclassified.bad   { background: #ffe0e0; }
         .matiere-insert-area                    { display: flex: flex-direction: column; align-items: center; height: 0px; width: 100%; margin: 0px 0px; transition: height 0.2s ease, margin 0.2s ease; }
@@ -619,7 +619,7 @@
                 <div class="semester-content show" id="sem-content-${sem}">
                     <div class="drop-matiere-card-to-remove-from-eu">
                     </div>
-                    <div class="ue-grid" ${(unclassified.length == 0 || !this.ueConfig[sem] || Object.keys(this.ueConfig[sem])[0] == undefined) ? `style="gap: 0px"` : ``}>
+                    <div class="ue-grid" ${(unclassified.length == 0 || !this.ueConfig[sem] || Object.keys(this.ueConfig[sem])[0] == undefined) ? `style="gap: ${this.editMode ? `20px` : `0px`}"` : ``}>
                         <div class="modules-section">
                             <div class="modules-content">
                                 ${this.renderAllUECards(sem)}
@@ -630,7 +630,7 @@
                                 <div class="unclassified-title">
                                     ${this.lang == "fr" ? `Matière${unclassified.length > 1 ?  `s` : ``} non classée${unclassified.length > 1 ?  `s` : ``} dans une UE` : `Subject${unclassified.length > 1 ?  `s` : ``} not classified in a TU`}
                                 </div>
-                                <div style="display: flex; flex-direction: row; gap: 8px; align-items: center">
+                                <div style="display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 8px;">
                                     <div class="unclassified-content">
                                         ${unclassified.length > 0 ?  `${this.renderAllUnclassifiedMatCard(sem, unclassified)}` : ``}
                                     </div>
@@ -724,7 +724,7 @@
             const ueConfig = this.ueConfig[sem] || {};
             if(!Object.keys(this.gradesDatas).includes(sem)) this.gradesDatas[sem] = {};
 
-            let html = `<div class="ue-insert-area" data-semester="${sem}" data-index="0">+</div>`;
+            let html = `<div class="ue-insert-area ${this.editMode ? `show` :""}" data-semester="${sem}" data-index="0">+</div>`;
 
             Object.keys(ueConfig).forEach((ueName, ueIndex) => {
                 html += this.renderUECard(sem, ueName, ueIndex);
@@ -808,7 +808,7 @@
             </div>
             ${
                 insertCount > -1
-                ? `<div class="ue-insert-area" data-semester="${sem}" data-index="${insertCount}">+</div>`
+                ? `<div class="ue-insert-area ${this.editMode ? `show` :""}" data-semester="${sem}" data-index="${insertCount}">+</div>`
                 : ``
             }
             `;
@@ -2070,8 +2070,7 @@
             const ueInsertAreas = document.querySelectorAll(".ue-insert-area");
             document.querySelectorAll(".matiere-card").forEach(matiereCard => {
                 let draggedElement = ``;
-                const isUnclassified = matiereCard.classList.contains("unclassified");
-                if (isUnclassified || matiereCard.classList.contains("compact")) {draggedElement = matiereCard;}
+                if (matiereCard.classList.contains("unclassified") || matiereCard.classList.contains("compact")) {draggedElement = matiereCard;}
                 else {draggedElement = matiereCard.querySelector(".matiere-card-header");}
 
                 draggedElement.draggable = true;
@@ -2082,12 +2081,12 @@
                         matiereCard.querySelector(".notes-table").style.display = "none";
                         matiereCard.querySelector(".matiere-card-header").style.border = "none";
                         matiereCard.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 20px 20px";
-                        document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, tick, true);})
+                        // document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, tick, true);})
                     } 
                     else if (matiereCard.classList.contains("compact")) {
                         matiereCard.style.width = "50%";
                         matiereCard.querySelector(".notes-table-coef").style.display = "none";
-                        document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, tick);})
+                        // document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, tick);})
                     }
                     else {
                         matiereCard.style.width = "50%";
@@ -2096,19 +2095,17 @@
                         matiereCard.querySelector(".notes-table").style.display = "none";
                         matiereCard.querySelector(".matiere-card-header").style.borderBottom = "none";
                         matiereCard.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 20px 20px";
-                        document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, tick);})
+                        // document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, tick);})
                     }
                     document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
                     document.querySelector(".semester-content").style.gap = "20px";
                     dropAreaAdd.classList.add("show");
                     dropAreaRemove.classList.add("show");
-                    // ueInsertAreas.forEach(ueInsertArea => {setTimeout(()=>{ueInsertArea.classList.add("show")}, 0)});
-                    // ueInsertAreas.forEach(ueInsertArea => {ueInsertArea.style.display = "flex"; ueInsertArea.style.height = "50px";})
                     this.selectedMatiereCards = [];
                     e.dataTransfer.setData("text", isUnclassified ? draggedElement.id : matiereCard.id)
                 };
                 draggedElement.ondragend = (e) => {
-                    if (isUnclassified) {
+                    if (matiereCard.classList.contains("unclassified")) {
                         matiereCard.style.width = "99%";
                         matiereCard.querySelector(".notes-table").style.display = "table";
                         matiereCard.querySelector(".matiere-card-header").style.border = "none";
@@ -2132,7 +2129,6 @@
                         document.querySelector(".semester-content").style.gap = "0px";
                         dropAreaAdd.classList.remove("show");
                         dropAreaRemove.classList.remove("show");
-                        // ueInsertAreas.forEach(ueInsertArea => {setTimeout(()=>{ueInsertArea.style.display = "none"; ueInsertArea.style.height = "0px";}, 100)})
                     }
                 };
 
@@ -2147,19 +2143,18 @@
                     draggedElement.draggable = true;
                     draggedElement.ondragstart = (e) => {
                         this.selectedMatiereCards.forEach(selectedMatiereCard2 => {
+                            selectedMatiereCard2.style.width = "50%";
+
                             if (selectedMatiereCard2.classList.contains("unclassified")) {
-                                selectedMatiereCard2.style.width = "50%";
                                 setTimeout(() => {selectedMatiereCard2.querySelector(".notes-table").style.display = "none";}, 10)
                                 selectedMatiereCard2.querySelector(".matiere-card-header").style.border = "none";
                                 selectedMatiereCard2.querySelector(".matiere-card-header").style.borderRadius = "20px";
                             
                             } 
                             else if (selectedMatiereCard2.classList.contains("compact")) {
-                                selectedMatiereCard2.style.width = "50%";
                                 selectedMatiereCard2.querySelector(".notes-table-coef").style.display = "none";
                             }
                             else {
-                                selectedMatiereCard2.style.width = "50%";
                                 selectedMatiereCard2.querySelector(".matiere-card-header").children[0].style.width =                         "50%";
                                 selectedMatiereCard2.querySelector(".matiere-card-header").querySelector(".notes-table-coef").style.width =  "50%";
                                 setTimeout(() => {selectedMatiereCard2.querySelector(".notes-table").style.display = "none";}, 10)
@@ -2176,19 +2171,18 @@
                     }
                     draggedElement.ondragend = (e) => {
                         this.selectedMatiereCards.forEach(selectedMatiereCard2 => {
+                            selectedMatiereCard2.style.width = "100%";
+
                             if (selectedMatiereCard2.classList.contains("unclassified")) {
-                                selectedMatiereCard2.style.width = "99%";
                                 selectedMatiereCard2.querySelector(".notes-table").style.display = "table";
                                 selectedMatiereCard2.querySelector(".matiere-card-header").style.border = "none";
                                 selectedMatiereCard2.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 0px 0px";
                             
                             } 
                             else if (selectedMatiereCard2.classList.contains("compact")) {
-                                selectedMatiereCard2.style.width = "100%";
                                 selectedMatiereCard2.querySelector(".notes-table-coef").style.display = "flex";
                             }
                             else {
-                                selectedMatiereCard2.style.width = "100%";
                                 selectedMatiereCard2.querySelector(".matiere-card-header").children[0].style.width =                         "42%";
                                 selectedMatiereCard2.querySelector(".matiere-card-header").querySelector(".notes-table-coef").style.width =  "58%";
                                 selectedMatiereCard2.querySelector(".notes-table").style.display = "table";
@@ -2248,13 +2242,9 @@
             })
         }
         detachOnDragEventListeners() {   // ONDRAG cards event
-            const dropAreaAdd = document.querySelector(".drop-matiere-card-to-create-eu");
-            const dropAreaRemove = document.querySelector(".drop-matiere-card-to-remove-from-eu");
-            const ueInsertAreas = document.querySelectorAll(".ue-insert-area");
             document.querySelectorAll(".matiere-card").forEach(matiereCard => {
                 let draggedElement = ``;
-                const isUnclassified = matiereCard.classList.contains("unclassified");
-                if (isUnclassified || matiereCard.classList.contains("compact")) {draggedElement = matiereCard;}
+                if (matiereCard.classList.contains("unclassified") || matiereCard.classList.contains("compact")) {draggedElement = matiereCard;}
                 else {draggedElement = matiereCard.querySelector(".matiere-card-header");}
 
                 draggedElement.draggable = false;
@@ -2265,8 +2255,7 @@
             if (this.selectedMatiereCards.length > 0) { 
                 this.selectedMatiereCards.forEach(selectedMatiereCard => {
                     let draggedElement = "";
-                    const isUnclassified = selectedMatiereCard.classList.contains("unclassified");
-                    if (isUnclassified || selectedMatiereCard.classList.contains("compact")) {draggedElement = selectedMatiereCard;}
+                    if (selectedMatiereCard.classList.contains("unclassified") || selectedMatiereCard.classList.contains("compact")) {draggedElement = selectedMatiereCard;}
                     else {draggedElement = selectedMatiereCard.querySelector(".matiere-card-header");}
                     
                     draggedElement.draggable = false;
@@ -2276,15 +2265,24 @@
             }
         }
 
+        removeSelectedCardNotifDiv(id) {
+            document.getElementById(id).classList.remove("on");
+            setTimeout(()=>{
+                document.getElementById(id).remove();
+                let highestWidth = 0;
+                const notifDivContainer = document.querySelector(".selected-matiere-card-notif-container");
+                notifDivContainer.style.left = `calc(99.5% - ${100 * highestWidth/document.body.clientWidth}%`;
+                notifDivContainer.querySelectorAll(".selected-matiere-card-notif-div").forEach(notifDiv => {if (highestWidth < notifDiv.clientWidth) highestWidth = notifDiv.clientWidth;})
+            }, 300)
+        }
+
         dragIconOnClickEvent(e, dragIcon, type) {
             let matiereCard =  e.target.parentElement.parentElement.parentElement;
-            document.querySelector(".ue-grid").style.gap = "20px";
-            if (type=="detailed") 
-                {matiereCard = e.target.parentElement.parentElement.parentElement.parentElement.parentElement;}
-
-            document.querySelectorAll(".ue-insert-area").forEach(insertArea => {
-                insertArea.classList.add("show");
-            })
+            const dropAreaAdd = document.querySelector(".drop-matiere-card-to-create-eu");
+            const dropAreaRemove = document.querySelector(".drop-matiere-card-to-remove-from-eu");
+            if (type=="detailed") {
+                matiereCard = e.target.parentElement.parentElement.parentElement.parentElement.parentElement;
+            }
 
             let matiereCardIsAlreadySelected = false;
             this.selectedMatiereCards.forEach(selectedMatiereCard => {if (selectedMatiereCard == matiereCard) matiereCardIsAlreadySelected = true;})
@@ -2300,8 +2298,8 @@
                 totalCoef.parentElement.style.width = "56%";
             })
             document.querySelector(".semester-content").style.gap = "20px";
-            document.querySelector(".drop-matiere-card-to-create-eu").classList.add("show");
-            document.querySelector(".drop-matiere-card-to-remove-from-eu").classList.add("show");
+            dropAreaAdd.classList.add("show");
+            dropAreaRemove.classList.add("show");
 
             dragIcon.outerHTML = `<div class="ticked-${type}-matiere-card" style="height: 23px; width: 23px; font-size: 35px; color: #004cff; cursor:pointer; user-select:none">✔</div>`;
 
@@ -2311,7 +2309,11 @@
             selectionNotifDiv.dataset.type = type;
             selectionNotifDiv.dataset.subject = matiereCard.dataset.subject;
             selectionNotifDiv.dataset.semester = matiereCard.dataset.semester;
-            selectionNotifDiv.innerHTML = `${">"}<span style="font-weight: 600; font-size: 14px; color: white">${matiereCard.dataset.subject}</span><span>${this.lang == "fr" ? `est sélectionné!` : `is selected!`}</span>`;
+            selectionNotifDiv.innerHTML = `
+                ${">"}<span style="font-weight: 600; font-size: 14px; color: white">${matiereCard.dataset.subject}</span>
+                <span>${this.lang == "fr" ? `est sélectionné!` : `is selected!`}</span>
+                <div class="selected-matiere-card-notif-div-del-btn" id="selected-matiere-card-notif-div-del-btn-for-${type}-${matiereCard.dataset.subject}-from-semester-${matiereCard.dataset.semester}">x</div>
+            `;
 
             let highestWidth = 0;
             document.querySelector(".selected-matiere-card-notif-container").appendChild(selectionNotifDiv);
@@ -2335,26 +2337,23 @@
             const sem = matiereCard.dataset.semester;
             const subject = matiereCard.dataset.subject;
 
-            document.getElementById(`selected-matiere-card-notif-div-for-${type}-${subject}-from-semester-${sem}`).classList.remove("on");
-            setTimeout(()=>{
-                document.getElementById(`selected-matiere-card-notif-div-for-${type}-${subject}-from-semester-${sem}`).remove();
-                let highestWidth = 0;
-                document.querySelectorAll(".selected-matiere-card-notif-div").forEach(notifDiv => {if (highestWidth < notifDiv.clientWidth) highestWidth = notifDiv.clientWidth;})
-                document.querySelector(".selected-matiere-card-notif-container").style.left = `calc(99.5% - ${100 * highestWidth/document.body.clientWidth}%`;
-            }, 300)
+            this.removeSelectedCardNotifDiv(`selected-matiere-card-notif-div-for-${type}-${subject}-from-semester-${sem}`);
 
             if (this.selectedMatiereCards.length == 0) {
                 this.emptyMatCardSelection();
             }
-
+            else {
+                tick.outerHTML = this.draggableIcon(`${type}-matiere-card`);
+            }
             
-            tick.outerHTML = this.draggableIcon(`${type}-matiere-card`);
             this.attachEventListeners();
         }
 
         emptyMatCardSelection() {
-            this.selectedMatiereCards = [];
-            document.querySelector(".ue-grid").style.gap = "0px";
+            ["unclassified", "detailed", "comapct"].forEach(type => {
+                document.querySelectorAll(`.ticked-${type}-matiere-card`).forEach(tick => {tick.outerHTML = this.draggableIcon(`${type}-matiere-card`);})
+            })
+            
             setTimeout(() => {document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
             setTimeout(() => {document.querySelectorAll(".notes-table-classAvg").forEach(classAvg => {classAvg.style.display = "table-cell"})}, 100)
             document.querySelector(".semester-content").style.gap = "0px";
@@ -2368,22 +2367,43 @@
                 totalCoef.parentElement.style.transition = "";
                 totalCoef.parentElement.style.width = "47%";
             })
-            document.querySelectorAll(".ue-insert-area").forEach(insertArea => {
-                insertArea.classList.remove("show");
-            })
 
-            document.querySelectorAll(`.selected-matiere-card-notif-div`).forEach(notifDiv => {
-                const sem = notifDiv.dataset.semester;
-                const subject = notifDiv.dataset.subject;
-                const type = notifDiv.dataset.type;
-                notifDiv.classList.remove("on");
-                setTimeout(()=>{
-                    document.getElementById(`selected-matiere-card-notif-div-for-${type}-${subject}-from-semester-${sem}`).remove();
-                    let highestWidth = 0;
-                    document.querySelectorAll(".selected-matiere-card-notif-div").forEach(notifDiv => {if (highestWidth < notifDiv.clientWidth) highestWidth = notifDiv.clientWidth;})
-                    document.querySelector(".selected-matiere-card-notif-container").style.left = `calc(99.5% - ${100 * highestWidth/document.body.clientWidth}%`;
-                }, 300)
-            })
+            if (this.selectedMatiereCards.length > 0) {
+                this.selectedMatiereCards.forEach(selectedMatCard => {
+                    selectedMatCard.style.width = "100%";
+
+                    if (selectedMatCard.classList.contains("unclassified")) {
+                        selectedMatCard.querySelector(".notes-table").style.display = "table";
+                        selectedMatCard.querySelector(".matiere-card-header").style.border = "none";
+                        selectedMatCard.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 0px 0px";
+                    }
+                    else if (selectedMatCard.classList.contains("compact")) {
+                        selectedMatCard.querySelector(".notes-table-coef").style.display = "flex";
+                    }
+                    else {
+                        selectedMatCard.querySelector(".matiere-card-header").children[0].style.width = "42%";
+                        selectedMatCard.querySelector(".matiere-card-header").querySelector(".notes-table-coef").style.width =  "58%";
+                        selectedMatCard.querySelector(".notes-table").style.display = "table";
+                        selectedMatCard.querySelector(".matiere-card-header").style.borderBottom = "4px solid white";
+                        selectedMatCard.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 0px 0px";
+                    }
+                })
+
+                document.querySelectorAll(`.selected-matiere-card-notif-div`).forEach(notifDiv => {
+                    const sem = notifDiv.dataset.semester;
+                    const subject = notifDiv.dataset.subject;
+                    const type = notifDiv.dataset.type;
+                    notifDiv.classList.remove("on");
+                    setTimeout(()=>{
+                        document.getElementById(`selected-matiere-card-notif-div-for-${type}-${subject}-from-semester-${sem}`).remove();
+                        let highestWidth = 0;
+                        document.querySelectorAll(".selected-matiere-card-notif-div").forEach(notifDiv => {if (highestWidth < notifDiv.clientWidth) highestWidth = notifDiv.clientWidth;})
+                        document.querySelector(".selected-matiere-card-notif-container").style.left = `calc(99.5% - ${100 * highestWidth/document.body.clientWidth}%`;
+                    }, 300)
+                })
+            }
+
+            this.selectedMatiereCards = [];
         }
 
         dropAreaInsertAction(cardId, index=-1) {
@@ -2464,9 +2484,6 @@
                         }
                     }
                 })
-                document.querySelectorAll(".ue-insert-area").forEach(insertArea => {
-                    insertArea.classList.remove("show");
-                })
             }
             
             this.emptyMatCardSelection();
@@ -2544,9 +2561,6 @@
                             }
                         }
                     })
-                    document.querySelectorAll(".ue-insert-area").forEach(insertArea => {
-                        insertArea.classList.remove("show");
-                    })
                 }
 
                 this.emptyMatCardSelection();
@@ -2596,7 +2610,7 @@
                 this.attachEventListeners();
             }
             else if (card.classList.contains("unclassified")) {
-
+                this.emptyMatCardSelection();
             }
             else if (card.classList.contains("ue-card")) {}
 
@@ -2681,7 +2695,7 @@
         
 
 
-        // MARK: -Data Im/Export
+        // MARK: -Data Import/Export
         importData(file) {
             return new Promise((resolve, reject) => {
                 const handleText = (text) => {
@@ -2816,7 +2830,7 @@
                             localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
 
                             this.scrollToClientHighestElemWithClassWithTimeout(".ue-card||.matiere-card.unclassified");
-                            this.renderContent(false);                      
+                            this.renderContent();                      
                         }
                         else if (e.key === "L") {
                             if (this.lang == "fr")
@@ -2852,15 +2866,16 @@
             };
         };
         
-        scrollToClientHighestElemWithClassWithTimeout(className, timeout=50, smooth=false) {
+        scrollToClientHighestElemWithClassWithTimeout(className, timeout=50, smooth=false, margin="20px") {
             this.scrollToThisElem = ""; let found = false;
+            if (this.editMode) {margin = "97px"}
 
             className.split("||").forEach(_className => {
                 document.querySelectorAll(`${_className}`).forEach(elem => {
                     const coords = elem.getBoundingClientRect();
                     const meanClientTop = (coords.top + coords.bottom)/2;
                     if ((meanClientTop > 0) && !found) {
-                        this.scrollToThisElem = elem.id; 
+                        this.scrollToThisElem = elem.id;
                         found = true;
                     }
                 })
@@ -2869,6 +2884,7 @@
             if (found) {
                 setTimeout(() => {
                     const scrollToThisElem = document.getElementById(this.scrollToThisElem); 
+                    scrollToThisElem.style.scrollMarginTop = margin;
                     scrollToThisElem.scrollIntoView({behavior: smooth ? "smooth" : "instant", block: "start"});
                 }, timeout)
             }
