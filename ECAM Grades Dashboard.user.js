@@ -114,7 +114,7 @@
         .ue-insert-area.show:hover  { color: #887bffff; border-color: #7fc2ff; }
 
         .ue-grid                { display: grid; width: 100%; gap: 20px; transition: gap 0.2s ease; }
-        .ue-card                { display: flex; flex-direction: column; align-items: center; background: #fafafa; border-radius: 16px; border: 3px solid #e5e5e5; scroll-margin-top: 70px; transition: all 0.3s ease; }
+        .ue-card                { display: flex; flex-direction: column; align-items: center; background: #fafafa; border-radius: 16px; border: 3px solid #e5e5e5; gap: 10px; scroll-margin-top: 70px; transition: all 0.3s ease; }
         .ue-card.validated      { border-color: #10b981; background: #f0fdf4; }
         .ue-card.failed         { border-color: #ef4444; background: #fef2f2; }
         .ue-card.unknown        { border-color: #6d6d6dff; background: #d1d1d1ff; }
@@ -127,7 +127,7 @@
         .ue-title                       { font-size: 16px; font-weight: 800; color: #1a1a1a; width:42%; margin-bottom: 2px; }
         .ue-title.input                 { font-size: 16px; font-weight: 800; color: #1a1a1a; width:90%; border-radius: 12px; padding-left: 10px; }
         .ue-matiere-total-coef-value    { display: flex; gap: 15px; font-weight: 600; }
-        .ue-details                     { display: flex; flex-direction: column; align-items: center; width: 98%; margin-top: 10px; }
+        .ue-details                     { display: flex; flex-direction: column; align-items: center; width: 98%; margin-top: 10px; gap: 5px; }
         .ue-moyenne                     { font-size: 24px; font-weight: 800; display: flex; align-items: center; gap:10px; width: 180px; }
         .ue-moyenne.good                { color: #10b981; }
         .ue-moyenne.bad                 { color: #ef4444; }
@@ -148,7 +148,7 @@
         .unclassified-content                           { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 99%; }
         .unclassified-title                             { font-size: 16px; font-weight: 600; color: #92400e; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
 
-        .matiere-card               { display: flex; flex-direction: column; align-items: center; border: 4px solid #ffffffff; border-radius: 20px; width: 100%; background: #c5c5c5; margin: 12px 0px 20px 0px; transition: width 0.3s ease; }
+        .matiere-card               { display: flex; flex-direction: column; align-items: center; border: 4px solid #ffffffff; border-radius: 20px; width: 100%; background: #c5c5c5; transition: width 0.3s ease; }
         .matiere-card.good          { background: #f0fdf4; }
         .matiere-card.meh           { background: #fff2e4; }
         .matiere-card.bad           { background: #fef2f2; }
@@ -159,7 +159,7 @@
         .matiere-name               { font-weight: 800; color: #1a1a1a; font-size: 14px }
         .matiere-name.input         { font-weight: 800; color: #1a1a1a; font-size: 14px; border: 2px solid #797979; border-radius: 15px; padding-left: 8px; width: 100%; height: 25px;}
         .matiere-coef-input-box     { padding-left: 5px; width: 48px; border-radius: 8px; }
-        .matiere-card.compact                   { display:flex; flex-direction: row; justify-content:space-between; align-items:center; padding: 7px 0px; border-radius: 16px; border: 3px solid #ffffff; height: 68px; width: 100%; min-width: 380px; transition: all 0.2s ease; background: none; margin:10px; }
+        .matiere-card.compact                   { display:flex; flex-direction: row; justify-content:space-between; align-items:center; padding: 7px 0px; border-radius: 16px; border: 3px solid #ffffff; height: 68px; width: 100%; min-width: 380px; transition: all 0.2s ease; background: none; }
         .matiere-card.compact.edit-mode         {  }
         .matiere-card.compact.good              { background: #f0fdf4; }
         .matiere-card.compact.meh               { background: #fff2e4; }
@@ -179,9 +179,11 @@
         .mat-moyenne        { font-size: 16px; font-weight: 800; }
         .mat-moyenne.good   { color: #10b981; }
         .mat-moyenne.bad    { color: #ef4444; }
-        .selected-matiere-card-notif-container  { display: grid; justify-items: end; gap: 10px; position: fixed; top: 50px; left: calc(99.5% - 20%); transition: width 0.3s ease; }
-        .selected-matiere-card-notif-div        { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; position: relative; left: 500px; height: 60px; width: max-content; background: #9696ff; border-radius: 18px; border: 5px solid #d4daff; font-size: 13px; font-weight: 500; color: black; padding: 10px; gap: 5px; transition: left 0.3s ease; }
-        .selected-matiere-card-notif-div.on     { left: 0px }
+        .selected-matiere-card-notif-container          { display: grid; justify-items: end; gap: 10px; position: fixed; top: 50px; left: calc(99.5% - 20%); transition: width 0.3s ease; }
+        .selected-matiere-card-notif-div                { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; position: relative; left: 500px; height: 60px; width: max-content; background: #9696ff; border-radius: 18px; border: 5px solid #d4daff; font-size: 13px; font-weight: 500; color: black; padding: 10px; gap: 5px; transition: left 0.3s ease; }
+        .selected-matiere-card-notif-div.on             { left: 0px }
+        .selected-matiere-card-notif-div-del-btn        { color: #640000; font-size: 20px; height: 20px; cursor: pointer; user-select: none; transition: color 0.2s ease; }
+        .selected-matiere-card-notif-div-del-btn:hover  { color: #ffffff; }
 
         .note-row                           { border-bottom: 1px solid white /* #e4e4e4 */; height: 39px; transition: background 0.3s ease; }
         .note-row.last                      { vertical-align: baseline; border-bottom: none; height: 41px; }
@@ -526,59 +528,67 @@
             else {newGradesCard.classList.remove("none")}
         }
 
+        languageSensitiveContent(fadeIn=true) {
+            // Language Sensitive text in the Dashboard Header and Semester filter tab (which don't refresh on calling the renderContent() method)
+            const dashTitle = document.querySelector(".dash-title");
+            const dashSubtitle = document.querySelector(".dash-subtitle");
+            dashTitle.innerHTML = `${this.lang == "fr" ? 'ECAM Notes Dashboard' : "ECAM Grades Dashboard"}`;
+            dashSubtitle.innerHTML = `${this.lang == "fr" ? 'Vue complète de vos résultats académiques' : "Complete view of your academic results"}`;
+
+            const importBtn = document.getElementById("importBtn");
+            const editModeBtn = document.getElementById("editModeBtn");
+            const exportBtn = document.getElementById("exportBtn");
+            importBtn.innerHTML =   `${this.lang == "fr" ? "Importer Config": "Import Config"}<span class="btn-icon">⬇️</span>`;
+            editModeBtn.innerHTML = `<div style="display:flex; flex-direction:column; gap:3px"><span style="font-size:40px">🖊️</span><div>${this.lang == "fr" ? "Mode Édition" : "Edit Mode"}</div><div>${this.lang == "fr" ? "(Maj+E)" : "(Shift+E)"}</div></div>`;
+            if (this.editMode)
+                    {editModeBtn.classList.add('on')}
+            else    {editModeBtn.classList.remove('on')}
+            exportBtn.innerHTML =   `${this.lang == "fr" ? "Exporter Config": "Export Config"}<span class="btn-icon">⬆️</span>`;
+
+            const avgLabel = document.querySelector(".average-label");
+            avgLabel.innerHTML = `/20 ${this.lang == "fr" ? "Moyenne Générale" : "Global Average"}`;
+
+            const statLabelsArray = document.querySelectorAll(".stat-label");
+            statLabelsArray[0].innerHTML = `${this.lang == "fr" ? "Notes" : "Grades"}`;
+            statLabelsArray[1].innerHTML = `${this.lang == "fr" ? "Semestres" : "Semesters"}`;
+            statLabelsArray[2].innerHTML = `${this.lang == "fr" ? "UE Validées" : "Validated TU"}`;
+
+            document.querySelector(".filter-title").innerHTML = `${this.lang == "fr" ? "Filtre par semestre" : "Filter by semester"}`;
+            document.querySelector(".filter-tab").innerHTML = `${this.lang == "fr" ? "Tous" : "All"}`;
+
+            document.querySelector(".view-toggle").children[0].innerHTML = this.lang == "fr" ? `Basculer le mode d'affichage (Maj+D)` : `Display mode toggle (Shift+D)`;
+            const viewBtnsArray = document.querySelectorAll(".view-btn");
+            viewBtnsArray[0].title = this.lang == "fr" ? "Vue détaillée" : "Detailed view";
+            viewBtnsArray[1].title = this.lang == "fr" ? "Vue compacte" : "Compact view";
+
+            const intranetSubtext = document.querySelector(".intranet-subtext");
+            intranetSubtext.innerHTML = `${this.lang == "fr" ? "Afficher le tableau des notes d'Espace ECAM" : "Show ECAM Intranet's Grades Table"}`;
+
+            if (document.querySelector(".new-grades-card").children.length > 1) {document.querySelector(".new-grades-card").children[1].remove()}
+            document.querySelector(".new-grades-card-title").innerHTML = `${this.newGrades.length > 0 ? `${this.lang == "fr" ? `Nouvelle Note${this.newGrades.length > 1 ? "s" : ""} !` : `New Grade${this.newGrades.length > 1 ? "s" : ""}!`}` : `${this.lang == "fr" ? `Pas de nouvelle note` : `No new grade`}` }`;
+            document.querySelector(".new-grades-mark-as-read-text").innerHTML = this.lang == "fr" ? "Marquer comme lu" : "Mark as read";
+            document.querySelector(".new-grades-mark-as-read").title = this.lang == "fr" ? "Marquer comme lu" : "Mark as read";
+
+            let highestWidth = 0;
+            document.querySelectorAll(".selected-matiere-card-notif-div").forEach(notifDiv => {
+                notifDiv.childNodes[4].data = this.lang == "fr" ? `est sélectionné!` : `is selected!`;
+                if (highestWidth < notifDiv.clientWidth) highestWidth = notifDiv.clientWidth;
+            })
+            document.querySelector(".selected-matiere-card-notif-container").style.left = `calc(99.5% - ${100 * highestWidth/document.body.clientWidth}%`;
+
+            if (fadeIn) {
+                document.body.classList.add("fade-in");
+                setTimeout(() => {
+                    document.body.classList.remove("fade-in")
+                }, 300);
+            }
+            
+        }
 
         // MARK: renderContent
-        renderContent(transition=true) {
+        renderContent(fadeIn=true) {
 
-            {   // Language Sensitive text in the Dashboard Header and Semester filter tab (which don't refresh on calling the renderContent() method)
-                const dashTitle = document.querySelector(".dash-title");
-                const dashSubtitle = document.querySelector(".dash-subtitle");
-                dashTitle.innerHTML = `${this.lang == "fr" ? 'ECAM Notes Dashboard' : "ECAM Grades Dashboard"}`;
-                dashSubtitle.innerHTML = `${this.lang == "fr" ? 'Vue complète de vos résultats académiques' : "Complete view of your academic results"}`;
-
-                const importBtn = document.getElementById("importBtn");
-                const editModeBtn = document.getElementById("editModeBtn");
-                const exportBtn = document.getElementById("exportBtn");
-                importBtn.innerHTML =   `${this.lang == "fr" ? "Importer Config": "Import Config"}<span class="btn-icon">⬇️</span>`;
-                editModeBtn.innerHTML = `<div style="display:flex; flex-direction:column; gap:3px"><span style="font-size:40px">🖊️</span><div>${this.lang == "fr" ? "Mode Édition" : "Edit Mode"}</div><div>${this.lang == "fr" ? "(Maj+E)" : "(Shift+E)"}</div></div>`;
-                if (this.editMode)
-                        {editModeBtn.classList.add('on')}
-                else    {editModeBtn.classList.remove('on')}
-                exportBtn.innerHTML =   `${this.lang == "fr" ? "Exporter Config": "Export Config"}<span class="btn-icon">⬆️</span>`;
-
-                const avgLabel = document.querySelector(".average-label");
-                avgLabel.innerHTML = `/20 ${this.lang == "fr" ? "Moyenne Générale" : "Global Average"}`;
-
-                const statLabelsArray = document.querySelectorAll(".stat-label");
-                statLabelsArray[0].innerHTML = `${this.lang == "fr" ? "Notes" : "Grades"}`;
-                statLabelsArray[1].innerHTML = `${this.lang == "fr" ? "Semestres" : "Semesters"}`;
-                statLabelsArray[2].innerHTML = `${this.lang == "fr" ? "UE Validées" : "Validated TU"}`;
-
-                document.querySelector(".filter-title").innerHTML = `${this.lang == "fr" ? "Filtre par semestre" : "Filter by semester"}`;
-                document.querySelector(".filter-tab").innerHTML = `${this.lang == "fr" ? "Tous" : "All"}`;
-
-                document.querySelector(".view-toggle").children[0].innerHTML = this.lang == "fr" ? `Basculer le mode d'affichage (Maj+D)` : `Display mode toggle (Shift+D)`;
-                const viewBtnsArray = document.querySelectorAll(".view-btn");
-                viewBtnsArray[0].title = this.lang == "fr" ? "Vue détaillée" : "Detailed view";
-                viewBtnsArray[1].title = this.lang == "fr" ? "Vue compacte" : "Compact view";
-
-                const intranetSubtext = document.querySelector(".intranet-subtext");
-                intranetSubtext.innerHTML = `${this.lang == "fr" ? "Afficher le tableau des notes d'Espace ECAM" : "Show ECAM Intranet's Grades Table"}`;
-
-                if (document.querySelector(".new-grades-card").children.length > 1) {document.querySelector(".new-grades-card").children[1].remove()}
-                document.querySelector(".new-grades-card-title").innerHTML = `${this.newGrades.length > 0 ? `${this.lang == "fr" ? `Nouvelle Note${this.newGrades.length > 1 ? "s" : ""} !` : `New Grade${this.newGrades.length > 1 ? "s" : ""}!`}` : `${this.lang == "fr" ? `Pas de nouvelle note` : `No new grade`}` }`;
-                document.querySelector(".new-grades-mark-as-read-text").innerHTML = this.lang == "fr" ? "Marquer comme lu" : "Mark as read";
-                document.querySelector(".new-grades-mark-as-read").title = this.lang == "fr" ? "Marquer comme lu" : "Mark as read";
-
-                if (this.selectedMatiereCards.length > 0) {
-                    let highestWidth = 0;
-                    document.querySelectorAll(".selected-matiere-card-notif-div").forEach(notifDiv => {
-                        notifDiv.children[1].innerHTML = this.lang == "fr" ? `est sélectionné!` : `is selected!`;
-                        if (highestWidth < notifDiv.clientWidth) highestWidth = notifDiv.clientWidth;
-                    })
-                    document.querySelector(".selected-matiere-card-notif-container").style.left = `calc(99.5% - ${100 * highestWidth/document.body.clientWidth}%`;
-                }
-            }
+            this.languageSensitiveContent(fadeIn);
             
             // Call renderRecentGrades to... well... render the recent grades' card
             this.renderRecentGrades()
@@ -604,7 +614,7 @@
             contentArea.innerHTML = "";
             semesterKeys.forEach(sem => {
                 const section = document.createElement("div");
-                section.className = `semester-section ${transition ? "fade-in" : ""}`;
+                section.className = `semester-section ${fadeIn ? "fade-in" : ""}`;
                 const moyenneSem = this.moyennePonderee([].concat(...Object.values(this.semestres[sem] || {})));
                 const avgClass = this.getAverageColor(moyenneSem);
                 const unclassified = this.getUnclassifiedMatieres(sem);
@@ -732,13 +742,13 @@
 
             let html = `<div class="ue-insert-area ${this.editMode ? `show` :""}" data-semester="${sem}" data-index="0">+</div>`;
 
-            Object.keys(ueConfig).forEach((ueName, ueIndex) => {
-                html += this.renderUECard(sem, ueName, ueIndex);
-            });
-
-            /* <svg style="border-radius: 20px; width: 100%; height: 100%;">
-                <path class="ue-insert-path" fill="none" stroke="#9097ff" stroke-width="1px" stroke-dasharray="25 5" d="M 0 0 l 20 15 h 1050 M 0 45 l 20 -15 h 1050"/>
-            </svg> */
+            if (ueConfig.__ues__) {
+                ueConfig.__ues__.forEach((ueName, ueIndex) => {
+                    if (ueName != "__ues__") {
+                        html += this.renderUECard(sem, ueName, ueIndex);
+                    }
+                });
+            }
 
             return html;
         }
@@ -1120,7 +1130,6 @@
                                 <th class="notes-table-teacher">
                                     ${this.lang == "fr" ? "Prof(s)" : "Teacher(s)"}
                                 </th>
-                                <th style="width: 1px"></th>
                             </tr>`
                             : ``
                         }
@@ -1869,8 +1878,12 @@
                 btn.onclick = e => {
                     const sem = e.target.dataset.semester;
                     const ueName = e.target.dataset.ue;
+                    
+                    const ueIndex = this.ueConfig[sem].__ues__.indexOf(ueName);
 
-                    delete this.ueConfig[sem][ueName]
+                    this.ueConfig[sem].__ues__.splice(ueIndex, 1);
+                    delete this.ueConfig[sem][ueName];
+
                     if (this.ueConfig[sem] == {}) {delete this.ueConfig[sem]}
 
                     this.saveConfig()
@@ -1995,7 +2008,7 @@
                     localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
                     document.getElementById('fr-lang-btn').classList.remove('active')
                     document.getElementById('en-lang-btn').classList.add('active')
-                    this.renderContent();
+                    this.languageSensitiveContent();
                 }
             };
 
@@ -2006,7 +2019,7 @@
                     localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
                     document.getElementById('fr-lang-btn').classList.add('active')
                     document.getElementById('en-lang-btn').classList.remove('active')
-                    this.renderContent();
+                    this.languageSensitiveContent();
                 }
             };
 
@@ -2061,9 +2074,15 @@
         
         ueTitleInputChangeAction(e) {
             const sem = e.target.dataset.semester;
-            const ueName = e.target.dataset.ue;
-            const regExpExec = RegExp(`${ueName}`, "ig").exec(JSON.stringify(this.ueConfig[sem])); 
-            this.ueConfig[sem] = JSON.parse('{"'+e.target.value+ regExpExec.input.slice(regExpExec.index+regExpExec[0].length,regExpExec.input.length));
+            const oldUeName = e.target.dataset.ue; 
+            const oldUeIndex = this.ueConfig[sem].__ues__.indexOf(oldUeName);
+            const newUeName = e.target.value;
+            // const regExpExec = RegExp(`${oldUeName}`, "ig").exec(JSON.stringify(this.ueConfig[sem])); 
+            // this.ueConfig[sem] = JSON.parse('{"'+e.target.value+ regExpExec.input.slice(regExpExec.index+regExpExec[0].length,regExpExec.input.length));
+            this.ueConfig[sem][newUeName] = this.ueConfig[sem][oldUeName];
+            delete this.ueConfig[sem][oldUeName];
+            this.ueConfig[sem].__ues__[oldUeIndex] = newUeName;
+
             this.saveConfig()
             this.renderContent(false)
         }
@@ -2083,20 +2102,19 @@
                 draggedElement.draggable = true;
                 draggedElement.ondragstart = (e) => {
                     if (e.target.classList.contains("any-input")) {return};
+                    matiereCard.style.width = "50%";
+
                     if (isUnclassified) {
-                        matiereCard.style.width = "50%";
                         matiereCard.querySelector(".notes-table").style.display = "none";
                         matiereCard.querySelector(".matiere-card-header").style.border = "none";
                         matiereCard.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 20px 20px";
                         // document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, tick, true);})
                     } 
                     else if (matiereCard.classList.contains("compact")) {
-                        matiereCard.style.width = "50%";
                         matiereCard.querySelector(".notes-table-coef").style.display = "none";
                         // document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, tick);})
                     }
                     else {
-                        matiereCard.style.width = "50%";
                         matiereCard.querySelector(".matiere-card-header").children[0].style.width =                         "50%";
                         matiereCard.querySelector(".matiere-card-header").querySelector(".notes-table-coef").style.width =  "50%";
                         matiereCard.querySelector(".notes-table").style.display = "none";
@@ -2112,18 +2130,17 @@
                     e.dataTransfer.setData("text", isUnclassified ? draggedElement.id : matiereCard.id)
                 };
                 draggedElement.ondragend = (e) => {
+                    matiereCard.style.width = "100%";
+
                     if (matiereCard.classList.contains("unclassified")) {
-                        matiereCard.style.width = "99%";
                         matiereCard.querySelector(".notes-table").style.display = "table";
                         matiereCard.querySelector(".matiere-card-header").style.border = "none";
                         matiereCard.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 0px 0px";
                     }
                     else if (matiereCard.classList.contains("compact")) {
-                        matiereCard.style.width = "100%";
                         matiereCard.querySelector(".notes-table-coef").style.display = "flex";
                     }
                     else {
-                        matiereCard.style.width = "100%";
                         matiereCard.querySelector(".matiere-card-header").children[0].style.width =                         "42%";
                         matiereCard.querySelector(".matiere-card-header").querySelector(".notes-table-coef").style.width =  "58%";
                         matiereCard.querySelector(".notes-table").style.display = "table";
@@ -2132,10 +2149,11 @@
                     }
                     
                     if (this.selectedMatiereCards.length == 0) {
-                        setTimeout(() => {document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
+                        setTimeout(() => {document.querySelectorAll(".notes-table-teacher").forEach(teacher => {teacher.style.display = "table-cell"})}, 100)
                         document.querySelector(".semester-content").style.gap = "0px";
                         dropAreaAdd.classList.remove("show");
                         dropAreaRemove.classList.remove("show");
+                        this.emptyMatCardSelection();
                     }
                 };
 
@@ -2320,8 +2338,9 @@
             selectionNotifDiv.dataset.subject = matiereCard.dataset.subject;
             selectionNotifDiv.dataset.semester = matiereCard.dataset.semester;
             selectionNotifDiv.innerHTML = `
-                ${">"}<span style="font-weight: 600; font-size: 14px; color: white">${matiereCard.dataset.subject}</span>
-                <span>${this.lang == "fr" ? `est sélectionné!` : `is selected!`}</span>
+                <span style="font-size: 20px; height: 20px; user-select: none">${">"}</span>
+                <span style="font-weight: 600; font-size: 14px; color: white">${matiereCard.dataset.subject}</span>
+                ${this.lang == "fr" ? `est sélectionné!` : `is selected!`}
                 <div class="selected-matiere-card-notif-div-del-btn" id="selected-matiere-card-notif-div-del-btn-for-${type}-${matiereCard.dataset.subject}-from-semester-${matiereCard.dataset.semester}">x</div>
             `;
 
@@ -2433,12 +2452,15 @@
             while (this.ueConfig[sem][newUeName]) {count++; newUeName = `Module ${count}`;}
 
             // Mat card is dropped in the drop area Add
-            // Adding a [newUeName] property to this.ueConfig as its first property, so that any new module appears first in the module section
-            this.ueConfig[sem] = {[newUeName]: {matieres: [], pourcentages: {}, custom: {}}, ...this.ueConfig[sem]};
+            /* // Adding a [newUeName] property to this.ueConfig as its first property, so that any new module appears first in the module section
+            this.ueConfig[sem] = {[newUeName]: {matieres: [], pourcentages: {}, custom: {}}, ...this.ueConfig[sem]}; */
+            this.ueConfig[sem][newUeName] = {matieres: [], pourcentages: {}, custom: {}};
 
             if (!cardIsSelected) {
                 subject = card.dataset.subject;
                 if (!card.classList.contains("unclassified")) {
+                    // removing the mat card if it was in an ue
+
                     oldUeName = card.dataset.ue;
                     const subjectIndex = this.ueConfig[sem][oldUeName].matieres.indexOf(subject);
                     this.ueConfig[sem][oldUeName].matieres.splice(subjectIndex,1);
@@ -2451,14 +2473,14 @@
                             this.sim[sem][newUeName][subject].push(this.sim[sem][oldUeName][subject][index].shift())
                         })
                     }
+                    this.deleteUnusedSimPath(sem, oldUeName, subject);
+                    this.saveSim();
                 }
 
+                this.ueConfig[sem].__ues__.splice(index, 0, newUeName);
                 this.ueConfig[sem][newUeName].matieres.splice(index, 0, subject);
                 this.ueConfig[sem][newUeName].pourcentages[subject] = 0;
                 this.ueConfig[sem][newUeName].custom[subject] = false;
-
-                this.deleteUnusedSimPath(sem, oldUeName, subject);
-                this.saveSim();
             }
             else
             {
@@ -2521,8 +2543,10 @@
                 while (this.ueConfig[sem][newUeName]) {count++; newUeName = `Module ${count}`;}
 
                 // Mat card is dropped in the drop area Add
-                // Adding a [newUeName] property to this.ueConfig as its first property, so that any new module appears first in the module section
-                this.ueConfig[sem] = {[newUeName]: {matieres: [], pourcentages: {}, custom: {}}, ...this.ueConfig[sem]};
+                /* // Adding a [newUeName] property to this.ueConfig as its first property, so that any new module appears first in the module section
+                this.ueConfig[sem] = {[newUeName]: {matieres: [], pourcentages: {}, custom: {}}, ...this.ueConfig[sem]}; */
+                this.ueConfig[sem][newUeName] = {matieres: [], pourcentages: {}, custom: {}};
+                this.ueConfig[sem].__ues__.unshift(newUeName);
                 
                 if (!cardIsSelected) {
                     subject = card.dataset.subject;
@@ -2533,9 +2557,17 @@
                     if (!card.classList.contains("unclassified")) {
                         oldUeName = card.dataset.ue;
                         subject = card.dataset.subject;
+                        const ueIndex = this.ueConfig[sem].__ues__.indexOf(oldUeName);
                         const subjectIndex = this.ueConfig[sem][oldUeName].matieres.indexOf(subject);
-                        this.ueConfig[sem][oldUeName].matieres.splice(subjectIndex,1);
-                        delete this.ueConfig[sem][oldUeName].pourcentages[subject];
+                                this.ueConfig[sem][oldUeName].matieres.splice(subjectIndex,1);
+                        delete  this.ueConfig[sem][oldUeName].pourcentages[subject];
+                        delete  this.ueConfig[sem][oldUeName].custom[subject];
+
+                        if (this.ueConfig[sem][oldUeName].matieres.length == 0) {
+                            this.ueConfig[sem].__ues__.splice(ueIndex, 1);
+                            delete this.ueConfig[sem][oldUeName];
+                        }
+                        
                         if (manageSim) {if (!this.sim[sem][oldUeName]) manageSim = false;}
                         if (manageSim) {
                             this.sim[sem] = {[newUeName]: {}, ...this.sim[sem]}
@@ -2566,9 +2598,17 @@
                         if (!selectedMatiereCard.classList.contains("unclassified")) {
                             oldUeName = selectedMatiereCard.dataset.ue
                             subject = selectedMatiereCard.dataset.subject
+                            const ueIndex = this.ueConfig[sem].__ues__.indexOf(oldUeName);
                             const subjectIndex = this.ueConfig[sem][oldUeName].matieres.indexOf(subject);
-                            this.ueConfig[sem][oldUeName].matieres.splice(subjectIndex,1);
-                            delete this.ueConfig[sem][oldUeName].pourcentages[subject];
+                                    this.ueConfig[sem][oldUeName].matieres.splice(subjectIndex,1);
+                            delete  this.ueConfig[sem][oldUeName].pourcentages[subject];
+                            delete  this.ueConfig[sem][oldUeName].custom[subject];
+
+                            if (this.ueConfig[sem][oldUeName].matieres.length == 0) {
+                                this.ueConfig[sem].__ues__.splice(ueIndex, 1);
+                                delete this.ueConfig[sem][oldUeName];
+                            }
+
                             if (manageSim) {if (!this.sim[sem][oldUeName][subject]) manageSim = false}
                             if (manageSim) {
                                 this.sim[sem][newUeName][subject] = [];
@@ -2587,6 +2627,7 @@
                 this.renderContent();
                 this.attachEventListeners();
                 document.getElementById(`ue-card-${newUeName}-in-semester-${sem}`).scrollIntoView();
+                this.scrollToClientHighestElemWithClassWithTimeout({id: `ue-card-${newUeName}-in-semester-${sem}`})
                 
             }
         }
@@ -2605,25 +2646,37 @@
                 const mat = card.dataset.subject;
 
                 if (!cardIsSelected) {
-                    const matIndex = this.ueConfig[sem][ue].matieres.indexOf(mat);
-                    this.ueConfig[sem][ue].matieres.splice(matIndex, 1);
-                    delete this.ueConfig[sem][ue].pourcentages[mat];
-                    delete this.ueConfig[sem][ue].custom[mat];
+
+                    const ueIndex = this.ueConfig[sem].__ues__.indexOf(ue);
+                    const subjectIndex = this.ueConfig[sem][ue].matieres.indexOf(mat);
+                            this.ueConfig[sem][ue].matieres.splice(subjectIndex,1);
+                    delete  this.ueConfig[sem][ue].pourcentages[mat];
+                    delete  this.ueConfig[sem][ue].custom[mat];
+
+                    if (this.ueConfig[sem][ue].matieres.length == 0) {
+                        this.ueConfig[sem].__ues__.splice(ueIndex, 1);
+                        delete this.ueConfig[sem][ue];
+                    }
                 }
                 else
                 {
                     let subject = "";
                     this.selectedMatiereCards.forEach(selectedMatiereCard => {
                         subject = selectedMatiereCard.dataset.subject;
-                        const matIndex = this.ueConfig[sem][ue].matieres.indexOf(subject);
+                        const ueIndex = this.ueConfig[sem].__ues__.indexOf(ue);
+                        const subjectIndex = this.ueConfig[sem][ue].matieres.indexOf(subject);
+                                this.ueConfig[sem][ue].matieres.splice(subjectIndex,1);
+                        delete  this.ueConfig[sem][ue].pourcentages[subject];
+                        delete  this.ueConfig[sem][ue].custom[subject];
 
-                        this.ueConfig[sem][ue].matieres.splice(matIndex, 1);
-                        delete this.ueConfig[sem][ue].pourcentages[subject];
-                        delete this.ueConfig[sem][ue].custom[subject];
+                        if (this.ueConfig[sem][ue].matieres.length == 0) {
+                            this.ueConfig[sem].__ues__.splice(ueIndex, 1);
+                            delete this.ueConfig[sem][ue];
+                        }
                     })
                 }
 
-                if (this.ueConfig[sem][ue].matieres.length == 0) {delete this.ueConfig[sem][ue]}
+                if (this.ueConfig[sem].__ues__.length == 0) {delete this.ueConfig[sem]}
 
                 this.emptyMatCardSelection();
                 this.saveConfig();
@@ -2834,7 +2887,7 @@
                         if (e.key === "E") {
                             this.editMode = !this.editMode;
 
-                            this.scrollToClientHighestElemWithClassWithTimeout(".ue-card||.matiere-card.unclassified");
+                            this.scrollToClientHighestElemWithClassWithTimeout({className: ".ue-card||.matiere-card.unclassified"});
                             this.renderContent();
                             this.attachEventListeners();
                         }
@@ -2851,7 +2904,7 @@
                             }                            
                             localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
 
-                            this.scrollToClientHighestElemWithClassWithTimeout(".ue-card||.matiere-card.unclassified");
+                            this.scrollToClientHighestElemWithClassWithTimeout({className: ".ue-card||.matiere-card.unclassified"});
                             this.renderContent();                      
                         }
                         else if (e.key === "L") {
@@ -2862,8 +2915,8 @@
                                 document.getElementById('fr-lang-btn').classList.remove('active')
                                 document.getElementById('en-lang-btn').classList.add('active')
 
-                                this.scrollToClientHighestElemWithClassWithTimeout(".ue-card||.matiere-card.unclassified");
-                                this.renderContent();
+                                this.scrollToClientHighestElemWithClassWithTimeout({className: ".ue-card||.matiere-card.unclassified"});
+                                this.languageSensitiveContent();
                             }
                             else if (this.lang == "en")
                             {
@@ -2872,8 +2925,8 @@
                                 document.getElementById('fr-lang-btn').classList.add('active')
                                 document.getElementById('en-lang-btn').classList.remove('active')
 
-                                this.scrollToClientHighestElemWithClassWithTimeout(".ue-card||.matiere-card.unclassified");
-                                this.renderContent();
+                                this.scrollToClientHighestElemWithClassWithTimeout({className: ".ue-card||.matiere-card.unclassified"});
+                                this.languageSensitiveContent();
                             }
                         }
                         else if (e.key === "R") {
@@ -2888,22 +2941,34 @@
             };
         };
         
-        scrollToClientHighestElemWithClassWithTimeout(className, timeout=50, smooth=false, margin="20px") {
+        scrollToClientHighestElemWithClassWithTimeout({className, id="", timeout=50, smooth=false, margin="35px"}) {
             this.scrollToThisElem = ""; let found = false;
-            if (this.editMode) {margin = "97px"}
+            if (this.editMode) {margin = "107px"}
 
-            className.split("||").forEach(_className => {
-                document.querySelectorAll(`${_className}`).forEach(elem => {
-                    const coords = elem.getBoundingClientRect();
-                    const meanClientTop = (coords.top + coords.bottom)/2;
-                    if ((meanClientTop > 0) && !found) {
-                        this.scrollToThisElem = elem.id;
-                        found = true;
-                    }
+            if (id=="") {
+                className.split("||").forEach(_className => {
+                    document.querySelectorAll(`${_className}`).forEach(elem => {
+                        const coords = elem.getBoundingClientRect();
+                        const meanClientTop = (coords.top + coords.bottom)/2;
+                        if ((meanClientTop > 0) && !found) {
+                            this.scrollToThisElem = elem.id;
+                            found = true;
+                        }
+                    })
                 })
-            })
 
-            if (found) {
+                if (found) {
+                    setTimeout(() => {
+                        const scrollToThisElem = document.getElementById(this.scrollToThisElem); 
+                        scrollToThisElem.style.scrollMarginTop = margin;
+                        scrollToThisElem.scrollIntoView({behavior: smooth ? "smooth" : "instant", block: "start"});
+                    }, timeout)
+                }
+            }
+            else
+            {
+                this.scrollToThisElem = id;
+                
                 setTimeout(() => {
                     const scrollToThisElem = document.getElementById(this.scrollToThisElem); 
                     scrollToThisElem.style.scrollMarginTop = margin;
