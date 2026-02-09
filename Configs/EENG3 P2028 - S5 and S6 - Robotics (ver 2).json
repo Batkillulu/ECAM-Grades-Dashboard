@@ -2,7 +2,7 @@
   "date": "2025-12-20T16:09:17.540Z",
   "ueConfig": {
     "6": {
-      "ues" : ["Mathematics for Engineers 6", "Control Engineering 6", "Systems Engineering 6", "Multidisciplinary Project 6", "Society, Management & Entrepreneurship 6", "Robotics and Automation Engineering 6"],
+      "__ues__" : ["Mathematics for Engineers 6", "Control Engineering 6", "Systems Engineering 6", "Multidisciplinary Project 6", "Society, Management & Entrepreneurship 6", "Robotics and Automation Engineering 6"],
       "Mathematics for Engineers 6": {
         "matieres": [
           "Probabilities and Inferential Statistics",
@@ -98,7 +98,7 @@
       }
     },
     "5": {
-      "ues" : ["Mathematics for Engineers 5", "Mechanical Engineering 5", "Electrical Engineering 5", "Industrial Organisation 5", "Multidisciplinary Project 5", "Society, Management & Entrepreneurship 5"],
+      "__ues__" : ["Mathematics for Engineers 5", "Mechanical Engineering 5", "Electrical Engineering 5", "Industrial Organisation 5", "Multidisciplinary Project 5", "Society, Management & Entrepreneurship 5"],
       "Mathematics for Engineers 5": {
         "matieres": [
           "Mathematics for Engineers 5",
