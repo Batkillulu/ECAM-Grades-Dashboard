@@ -2030,15 +2030,8 @@
 
         notifDelBtnAttachListener(delBtn) {
             delBtn.onclick = (e) => {
-                const matiereCard = document.getElementById(delBtn.dataset.targetid);
-                const dragIcon = document.getElementById();
-
-                this.selectedMatiereCards.forEach((selectedMatiereCard, index) => {
-                    if (selectedMatiereCard == matiereCard) 
-                        this.selectedMatiereCards.splice(index, 1)
-                    }
-                )
-                this.removeSelectedCardNotifDiv(e.target.parentElement);
+                const notifDiv = e.target.parentElement;
+                this.removeSelectedCardNotifDiv(notifDiv);
             };
         }
         
@@ -2307,8 +2300,9 @@
             return selectionNotifDiv;
         }
 
+
         // MARK: removeSelectedCardNotifDiv
-        removeSelectedCardNotifDiv(notifDiv="all") {            
+        removeSelectedCardNotifDiv(notifDiv="all") {
             if (notifDiv=="all") {
                 document.querySelectorAll(".selected-matiere-card-notif-div").forEach(notifDiv => {
                     const matCard = document.getElementById(notifDiv.dataset.targetid);
@@ -2423,14 +2417,7 @@
 
 
         // MARK: emptyMatCardSelection
-        emptyMatCardSelection() {
-            document.querySelectorAll(`.tick-icon`).forEach(tick => {
-                tick.outerHTML = this.draggableIcon(`${tick.dataset.type}-matiere-card`, {targetId: tick.dataset.targetid, type: tick.dataset.type});
-                const matCard = document.getElementById(tick.dataset.targetid);
-                const dragIcon = matCard.querySelector(".drag-icon");
-                dragIcon.onclick = (e) => {this.dragIconOnClickEvent(e, dragIcon)};
-            })
-            
+        emptyMatCardSelection() {            
             setTimeout(() => {document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
             setTimeout(() => {document.querySelectorAll(".notes-table-classAvg").forEach(classAvg => {classAvg.style.display = "table-cell"})}, 100)
             document.querySelector(".semester-content").style.gap = "0px";
@@ -2659,7 +2646,7 @@
                 this.saveConfig();
                 this.renderContent();
                 this.attachEventListeners();
-                document.getElementById(`ue-card-${newUeName}-in-semester-${sem}`).scrollIntoView();
+                // document.getElementById(`ue-card-${newUeName}-in-semester-${sem}`).scrollIntoView();
                 this.scrollToClientHighestElemWithClassWithTimeout({id: `ue-card-${newUeName}-in-semester-${sem}`})
                 
             }
