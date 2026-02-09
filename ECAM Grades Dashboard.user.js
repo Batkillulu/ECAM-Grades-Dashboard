@@ -179,9 +179,9 @@
         .mat-moyenne        { font-size: 16px; font-weight: 800; }
         .mat-moyenne.good   { color: #10b981; }
         .mat-moyenne.bad    { color: #ef4444; }
-        .selected-matiere-card-notif-container          { display: grid; justify-items: end; gap: 10px; position: fixed; top: 50px; left: calc(99.5% - 20%); transition: width 0.3s ease; }
-        .selected-matiere-card-notif-div                { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; position: relative; left: 500px; height: 60px; width: max-content; background: #9696ff; border-radius: 18px; border: 5px solid #d4daff; font-size: 13px; font-weight: 500; color: black; padding: 10px; gap: 5px; transition: left 0.3s ease; }
-        .selected-matiere-card-notif-div.on             { left: 0px }
+        .selected-matiere-card-notif-container          { display: grid; justify-items: end; gap: 10px; position: fixed; top: 50px; left: calc(99% - 20%); z-index: 100; transition: width 0.3s ease; }
+        .selected-matiere-card-notif-div                { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; position: relative; left: 500px; height: 60px; width: max-content; background: #9696ff; border-radius: 18px; border: 5px solid #d4daff; font-size: 13px; font-weight: 500; color: black; padding: 10px; gap: 5px; transition: left 0.3s ease, box-shadow 0.3s ease; }
+        .selected-matiere-card-notif-div.on             { left: 0px; box-shadow: 4px 5px 11px 0px #00000061; }
         .selected-matiere-card-notif-div-del-btn        { color: #640000; font-size: 20px; height: 20px; cursor: pointer; user-select: none; transition: color 0.2s ease; }
         .selected-matiere-card-notif-div-del-btn:hover  { color: #ffffff; }
 
@@ -222,7 +222,9 @@
 		.note-sim-del-btn           { border: none; border-radius: 6px; cursor: pointer; }
         .note-checkbox  { cursor: pointer; }
 
-        .collapse-icon { cursor: pointer; user-select: none; }
+        .collapse-icon  { cursor: pointer; user-select: none; }
+        .drag-icon      { cursor: pointer; user-select: none; }
+        .tick-icon      { height: 23px; width: 23px; font-size: 35px; color: #004cff; cursor:pointer; user-select:none; }
 
         /* Animations part */
             @media (max-width: 768px){ .config-layout { grid-template-columns:1fr; } .config-sidebar { border-right:none; border-bottom:1px solid #e5e5e5; padding-right:0; padding-bottom:20px; } .dash-header { flex-direction:column; align-items:start; gap:16px; } .average-display { flex-direction:column; gap:4px; } .average-number { font-size:36px; } }
@@ -382,6 +384,8 @@
                 this.mobileVer = true;
             }
             
+            this.generalKeyboardEvents();
+
             this.newGrades = this.compareArraysofObjects(this.notes, this.savedReadGrades).more;
             this.createNewGradesNotifDiv();
             this.createDashboard();
@@ -465,15 +469,16 @@
             </div>
             <div class="content-area" id="contentArea"></div>
             <div class="intranet-collapse"><div class="intranet-text"><div class="intranet-toggle collapse-icon">▲</div><div class="semester-name"> <div class="intranet-subtext"></div> </div><div class="intranet-toggle collapse-icon">▲</div></div></div>
-            <div class="selected-matiere-card-notif-container"></div>
             `;
+
+            const notifContainer = document.createElement("div");
+            notifContainer.className = "selected-matiere-card-notif-container";
 
             const originalTable = document.querySelector("table.greyGridTable");
             if (!originalTable) return;
+            originalTable.parentNode.insertBefore(notifContainer, originalTable);
             originalTable.parentNode.insertBefore(container, originalTable);
             originalTable.style.display = "none";
-
-            this.generalKeyboardEvents();
 
             this.renderContent();
         }
@@ -574,13 +579,11 @@
                 notifDiv.childNodes[4].data = this.lang == "fr" ? `est sélectionné!` : `is selected!`;
                 if (highestWidth < notifDiv.clientWidth) highestWidth = notifDiv.clientWidth;
             })
-            document.querySelector(".selected-matiere-card-notif-container").style.left = `calc(99.5% - ${100 * highestWidth/document.body.clientWidth}%`;
+            document.querySelector(".selected-matiere-card-notif-container").style.left = `calc(99% - ${100 * highestWidth/document.body.clientWidth}%`;
 
             if (fadeIn) {
-                document.body.classList.add("fade-in");
-                setTimeout(() => {
-                    document.body.classList.remove("fade-in")
-                }, 300);
+                document.querySelector(".ecam-dash").parentElement.classList.add("fade-in");
+                setTimeout(() => {document.querySelector(".ecam-dash").parentElement.classList.remove("fade-in")}, 300);
             }
             
         }
@@ -614,7 +617,7 @@
             contentArea.innerHTML = "";
             semesterKeys.forEach(sem => {
                 const section = document.createElement("div");
-                section.className = `semester-section ${fadeIn ? "fade-in" : ""}`;
+                section.className = `semester-section`;
                 const moyenneSem = this.moyennePonderee([].concat(...Object.values(this.semestres[sem] || {})));
                 const avgClass = this.getAverageColor(moyenneSem);
                 const unclassified = this.getUnclassifiedMatieres(sem);
@@ -784,7 +787,7 @@
                     ${this.editMode 
                         ? 
                         `<div style="display: flex; align-items: center; justify-content: flex-start; width: 42%;">
-                            <div style="margin-right: 5px;">${this.draggableIcon("ue-card", 29)}</div>
+                            <div style="margin-right: 5px;">${this.draggableIcon("ue-card", {height: 29, type: "ue", targetId: `ue-card-${ueName}-in-semester-${sem}`})}</div>
                             <input type="text" class="ue-title input any-input" id="ue-title-input-${sem}-${ueName}" value="${ueName}" data-semester="${sem}" data-ue="${ueName}" draggable="false"/>
                             <div class="ue-title-state">
                             </div>
@@ -857,7 +860,7 @@
                     <div class="matiere-card-header ${ueMoy != " - " && moyMat != 0 ? `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}` : ``}" ${this.editMode ? `draggable="true"` : ``} style="${this.editMode ? `cursor:move; ` : `${matNotes.length > 0 ? `` : `border-radius: 20px; border: none`}`}">
                         <div style="display: flex; width: 42%; padding-left: ${this.editMode ? `10px` : `50px`}">
                             <div style="display: flex; justify-content: flex-start; align-items: center; width: 100%; gap:8px; user-select: text">
-                                ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("detailed-matiere-card")}</div>` : ""}
+                                ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("detailed-matiere-card", {type:"detailed", targetId:`mat-card-semester-${sem}-matiere-${matiere}`})}</div>` : ""}
                                 <div style="width: 100%">
                                     ${isCustom 
                                         ? `<input type="text" class="matiere-name input any-input" id="matiere-name-input-${sem}-${ueName}-${matiere}" value="${matiere}"/>`
@@ -1033,7 +1036,7 @@
             const html = `
             <div class="matiere-card compact ${this.editMode ? "" : "edit-mode"} ${moyMat == 0 && matNotes.length==0 ? "unknown" : `${moyMat>10 ? `${ueMoy>10 ? `good` : `meh`}` : `bad`}`}" id="mat-card-semester-${sem}-matiere-${matiere}" style="${this.editMode ? "cursor:move; user-select: none; " : " "}" ${this.editMode ? `draggable="true"` : ""} data-sem="${sem}" data-ue="${ueName}" data-subject="${matiere}" data-custom="${isCustom}">
                 <div style="display:flex; align-items:center; gap:8px; padding-left: 11px; width:43%; min-width: 275px">
-                    ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("compact-matiere-card")}</div>` : ""}
+                    ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("compact-matiere-card", {type:"compact", targetId:`mat-card-semester-${sem}-matiere-${matiere}`})}</div>` : ""}
                     <div>
                         ${isCustom 
                             ? `<input type="text" class="matiere-name input any-input" value="${matiere}"/>`
@@ -1095,7 +1098,7 @@
             html +=`
             <div class="matiere-card unclassified ${moyMat >= 10 ? `good` : `bad`}" id="matiere-card-semester-${sem}-matiere-${matiere}" ${this.editMode ? `style="user-select: none;"` : ""} ${this.editMode ? `draggable="true"` : ""} data-subject="${matiere}" data-semester="${sem}">
                 <div class="matiere-card-header unclassified  ${moyMat >= 10 ? `good` : `bad`}" style="${this.editMode ? "cursor: move; padding-left: 10px;" : "padding-left: 50px;"}" data-sem="${sem}" data-subject="${matiere}">
-                    ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("unclassified-matiere-card")}</div>` : ""}
+                    ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("unclassified-matiere-card", {type:"unclassified", targetId:`matiere-card-semester-${sem}-matiere-${matiere}`})}</div>` : ""}
                     <div style="width: 40%">
                         ${matiere}
                         <div style="font-size:12px;margin-top:4px;">${this.lang == "fr" ? "Moyenne" : "Average"}: <span class="mat-moyenne ${moyMat>=10 ? 'good' : 'bad'}" >${moyMat}/20</span></div>
@@ -1756,35 +1759,14 @@
             // const dropAreaRemove = document.querySelector(".drop-matiere-card-to-remove-from-eu");
             // const ueInsertAreas = document.querySelectorAll(".ue-insert-area");
             
-            document.querySelectorAll(".drag-icon-for-detailed-matiere-card").forEach(dragIcon => {
+            document.querySelectorAll(".drag-icon").forEach(dragIcon => {
                 dragIcon.onclick = (e) => {
-                    this.dragIconOnClickEvent(e, dragIcon, "detailed")
+                    this.dragIconOnClickEvent(e, dragIcon)
                 };
             });
-            document.querySelectorAll(".drag-icon-for-compact-matiere-card").forEach(dragIcon => {
-                dragIcon.onclick = (e) => {
-                    this.dragIconOnClickEvent(e, dragIcon, "compact")
-                };
-            });
-            document.querySelectorAll(".drag-icon-for-unclassified-matiere-card").forEach(dragIcon => {
-                dragIcon.onclick = (e) => {
-                    this.dragIconOnClickEvent(e, dragIcon, "unclassified")
-                };
-            });
-
-            document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {
+            document.querySelectorAll(".tick-icon").forEach(tick => {
                 tick.onclick = (e) => {
-                    this.tickIconOnClickEvent(e, tick, "detailed")
-                };
-            });
-            document.querySelectorAll(".ticked-compact-matiere-card").forEach(tick => {
-                tick.onclick = (e) => {
-                    this.tickIconOnClickEvent(e, tick, "compact")
-                };
-            });
-            document.querySelectorAll(".ticked-unclassified-matiere-card").forEach(tick => {
-                tick.onclick = (e) => {
-                    this.tickIconOnClickEvent(e, tick, "unclassified")
+                    this.tickIconOnClickEvent(e, tick)
                 };
             });
 
@@ -2040,6 +2022,25 @@
 
         }
 
+        notifDelBtnAttachListeners() {
+            document.querySelectorAll(".selected-matiere-card-notif-div-del-btn").forEach(delBtn => {
+                notifDelBtnAttachListener(delBtn);
+            })
+        }
+
+        notifDelBtnAttachListener(delBtn) {
+            delBtn.onclick = (e) => {
+                const matiereCard = document.getElementById(delBtn.dataset.targetid);
+                const dragIcon = document.getElementById();
+
+                this.selectedMatiereCards.forEach((selectedMatiereCard, index) => {
+                    if (selectedMatiereCard == matiereCard) 
+                        this.selectedMatiereCards.splice(index, 1)
+                    }
+                )
+                this.removeSelectedCardNotifDiv(e.target.parentElement);
+            };
+        }
         
 
         ueHeaderClickEvent(e) {
@@ -2108,11 +2109,9 @@
                         matiereCard.querySelector(".notes-table").style.display = "none";
                         matiereCard.querySelector(".matiere-card-header").style.border = "none";
                         matiereCard.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 20px 20px";
-                        // document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, tick, true);})
                     } 
                     else if (matiereCard.classList.contains("compact")) {
                         matiereCard.querySelector(".notes-table-coef").style.display = "none";
-                        // document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, tick);})
                     }
                     else {
                         matiereCard.querySelector(".matiere-card-header").children[0].style.width =                         "50%";
@@ -2120,7 +2119,6 @@
                         matiereCard.querySelector(".notes-table").style.display = "none";
                         matiereCard.querySelector(".matiere-card-header").style.borderBottom = "none";
                         matiereCard.querySelector(".matiere-card-header").style.borderRadius = "20px 20px 20px 20px";
-                        // document.querySelectorAll(".ticked-detailed-matiere-card").forEach(tick => {this.tickIconOnClickEvent(e, tick);})
                     }
                     document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
                     document.querySelector(".semester-content").style.gap = "20px";
@@ -2290,24 +2288,88 @@
             }
         }
 
+        // MARK: addSelectedCardNotifDiv
+        addSelectedCardNotifDiv(semester, subject, type, targetId="none") {
+            const selectionNotifDiv = document.createElement("div");
+            selectionNotifDiv.className = `selected-matiere-card-notif-div`;
+            selectionNotifDiv.id = `selected-matiere-card-notif-div-for-${type}-${subject}-from-semester-${semester}`;
+            selectionNotifDiv.dataset.type = type;
+            selectionNotifDiv.dataset.subject = subject;
+            selectionNotifDiv.dataset.semester = semester;
+            selectionNotifDiv.dataset.targetid = targetId;
+            selectionNotifDiv.innerHTML = `
+                <span style="font-size: 20px; height: 20px; user-select: none">${">"}</span>
+                <span style="font-weight: 600; font-size: 14px; color: white">${subject}</span>
+                ${this.lang == "fr" ? `est sélectionné!` : `is selected!`}
+                <div class="selected-matiere-card-notif-div-del-btn" id="selected-matiere-card-notif-div-del-btn-for-${type}-${subject}-from-semester-${semester}" data-targetId="${targetId}">x</div>
+            `;
+
+            return selectionNotifDiv;
+        }
+
         // MARK: removeSelectedCardNotifDiv
-        removeSelectedCardNotifDiv(id) {
-            document.getElementById(id).classList.remove("on");
-            setTimeout(()=>{
-                document.getElementById(id).remove();
-                let highestWidth = 0;
-                const notifDivContainer = document.querySelector(".selected-matiere-card-notif-container");
-                notifDivContainer.style.left = `calc(99.5% - ${100 * highestWidth/document.body.clientWidth}%`;
-                notifDivContainer.querySelectorAll(".selected-matiere-card-notif-div").forEach(notifDiv => {if (highestWidth < notifDiv.clientWidth) highestWidth = notifDiv.clientWidth;})
-            }, 300)
+        removeSelectedCardNotifDiv(notifDiv="all") {            
+            if (notifDiv=="all") {
+                document.querySelectorAll(".selected-matiere-card-notif-div").forEach(notifDiv => {
+                    const matCard = document.getElementById(notifDiv.dataset.targetid);
+                    notifDiv.classList.remove("on");
+                    const notifDivId = notifDiv.id;
+                    setTimeout(() => {document.getElementById(notifDivId).remove()})
+
+                    this.selectedMatiereCards.forEach((selectedMatiereCard, index) => {
+                        if (selectedMatiereCard == matCard) 
+                            this.selectedMatiereCards.splice(index, 1)
+                        }
+                    )
+            
+                    if (this.selectedMatiereCards.length == 0) {
+                        this.emptyMatCardSelection();
+                    }
+                    else {
+                        const tick = matCard.querySelector(".tick-icon");
+                        tick.outerHTML = this.draggableIcon(`${notifDiv.dataset.type}-matiere-card`, {targetId: `${notifDiv.dataset.targetid}`, type: notifDiv.dataset.type});
+                        const dragIcon = matCard.querySelector(".drag-icon");
+                        dragIcon.onclick = (e) => {this.dragIconOnClickEvent(e, dragIcon)};
+                    }
+                })
+            }
+            else {
+                const matCard = document.getElementById(notifDiv.dataset.targetid);
+
+                notifDiv.classList.remove("on");
+                setTimeout(()=>{
+                    notifDiv.remove();
+                    let highestWidth = 0;
+                    const notifDivContainer = document.querySelector(".selected-matiere-card-notif-container");
+                    notifDivContainer.querySelectorAll(".selected-matiere-card-notif-div").forEach(notifDiv => {if (highestWidth < notifDiv.clientWidth) highestWidth = notifDiv.clientWidth;})
+                    notifDivContainer.style.left = `calc(99% - ${100 * highestWidth/document.body.clientWidth}%`;
+                }, 300)
+
+                this.selectedMatiereCards.forEach((selectedMatiereCard, index) => {
+                    if (selectedMatiereCard == matCard) 
+                        this.selectedMatiereCards.splice(index, 1)
+                    }
+                )
+            
+                if (this.selectedMatiereCards.length == 0) {
+                    this.emptyMatCardSelection();
+                }
+                else {
+                    const tick = matCard.querySelector(".tick-icon");
+                    tick.outerHTML = this.draggableIcon(`${notifDiv.dataset.type}-matiere-card`, {targetId: `${notifDiv.dataset.targetid}`, type: notifDiv.dataset.type});
+                    const dragIcon = matCard.querySelector(".drag-icon");
+                    dragIcon.onclick = (e) => {this.dragIconOnClickEvent(e, dragIcon)};
+                }
+            }
         }
 
 
         // MARK: dragIconOnClickEvent
-        dragIconOnClickEvent(e, dragIcon, type) {
+        dragIconOnClickEvent(e, dragIcon) {
             let matiereCard =  e.target.parentElement.parentElement.parentElement;
             const dropAreaAdd = document.querySelector(".drop-matiere-card-to-create-eu");
             const dropAreaRemove = document.querySelector(".drop-matiere-card-to-remove-from-eu");
+            const type = dragIcon.dataset.type;
             if (type=="detailed") {
                 matiereCard = e.target.parentElement.parentElement.parentElement.parentElement.parentElement;
             }
@@ -2329,62 +2391,44 @@
             dropAreaAdd.classList.add("show");
             dropAreaRemove.classList.add("show");
 
-            dragIcon.outerHTML = `<div class="ticked-${type}-matiere-card" style="height: 23px; width: 23px; font-size: 35px; color: #004cff; cursor:pointer; user-select:none">✔</div>`;
+            dragIcon.outerHTML = `<div class="tick-icon for-${type}-matiere-card" data-type="${type}">✔</div>`;
+            const tick = matiereCard.querySelector(".tick-icon");
+            tick.dataset.targetid = matiereCard.id;
+            tick.onclick = (e) => {this.tickIconOnClickEvent(e, tick)};
 
-            const selectionNotifDiv = document.createElement("div");
-            selectionNotifDiv.className = `selected-matiere-card-notif-div`;
-            selectionNotifDiv.id = `selected-matiere-card-notif-div-for-${type}-${matiereCard.dataset.subject}-from-semester-${matiereCard.dataset.semester}`;
-            selectionNotifDiv.dataset.type = type;
-            selectionNotifDiv.dataset.subject = matiereCard.dataset.subject;
-            selectionNotifDiv.dataset.semester = matiereCard.dataset.semester;
-            selectionNotifDiv.innerHTML = `
-                <span style="font-size: 20px; height: 20px; user-select: none">${">"}</span>
-                <span style="font-weight: 600; font-size: 14px; color: white">${matiereCard.dataset.subject}</span>
-                ${this.lang == "fr" ? `est sélectionné!` : `is selected!`}
-                <div class="selected-matiere-card-notif-div-del-btn" id="selected-matiere-card-notif-div-del-btn-for-${type}-${matiereCard.dataset.subject}-from-semester-${matiereCard.dataset.semester}">x</div>
-            `;
+            const selectionNotifDiv = this.addSelectedCardNotifDiv(matiereCard.dataset.semester, matiereCard.dataset.subject, type, matiereCard.id);
 
             let highestWidth = 0;
             document.querySelector(".selected-matiere-card-notif-container").appendChild(selectionNotifDiv);
+            this.notifDelBtnAttachListener(selectionNotifDiv.querySelector(".selected-matiere-card-notif-div-del-btn"));
             document.querySelectorAll(".selected-matiere-card-notif-div").forEach(notifDiv => {if (highestWidth < notifDiv.clientWidth) highestWidth = notifDiv.clientWidth;})
-            document.querySelector(".selected-matiere-card-notif-container").style.left = `calc(99.5% - ${100 * highestWidth/document.body.clientWidth}%`;
+            document.querySelector(".selected-matiere-card-notif-container").style.left = `calc(99% - ${100 * highestWidth/document.body.clientWidth}%`;
 
             setTimeout(()=>{selectionNotifDiv.classList.add("on")}, 10)
-
-            this.attachEventListeners()
         }
 
 
         // MARK: tickIconOnClickEvent
-        tickIconOnClickEvent(e, tick, type) {
+        tickIconOnClickEvent(e, tick) {
             e.preventDefault();
+            const type = e.target.dataset.type;
             let matiereCard = e.target.parentElement.parentElement.parentElement;
             if (type=="detailed") {matiereCard = e.target.parentElement.parentElement.parentElement.parentElement.parentElement}
-            this.selectedMatiereCards.forEach((selectedMatiereCard, index) => {
-                if (selectedMatiereCard == matiereCard) 
-                    this.selectedMatiereCards.splice(index, 1)
-                }
-            )
+            
             const sem = matiereCard.dataset.semester;
             const subject = matiereCard.dataset.subject;
-
-            this.removeSelectedCardNotifDiv(`selected-matiere-card-notif-div-for-${type}-${subject}-from-semester-${sem}`);
-
-            if (this.selectedMatiereCards.length == 0) {
-                this.emptyMatCardSelection();
-            }
-            else {
-                tick.outerHTML = this.draggableIcon(`${type}-matiere-card`);
-            }
-            
-            this.attachEventListeners();
+            const notifDiv = document.getElementById(`selected-matiere-card-notif-div-for-${type}-${subject}-from-semester-${sem}`);
+            this.removeSelectedCardNotifDiv(notifDiv);
         }
 
 
         // MARK: emptyMatCardSelection
         emptyMatCardSelection() {
-            ["unclassified", "detailed", "comapct"].forEach(type => {
-                document.querySelectorAll(`.ticked-${type}-matiere-card`).forEach(tick => {tick.outerHTML = this.draggableIcon(`${type}-matiere-card`);})
+            document.querySelectorAll(`.tick-icon`).forEach(tick => {
+                tick.outerHTML = this.draggableIcon(`${tick.dataset.type}-matiere-card`, {targetId: tick.dataset.targetid, type: tick.dataset.type});
+                const matCard = document.getElementById(tick.dataset.targetid);
+                const dragIcon = matCard.querySelector(".drag-icon");
+                dragIcon.onclick = (e) => {this.dragIconOnClickEvent(e, dragIcon)};
             })
             
             setTimeout(() => {document.querySelectorAll(".notes-table-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
@@ -2422,18 +2466,7 @@
                     }
                 })
 
-                document.querySelectorAll(`.selected-matiere-card-notif-div`).forEach(notifDiv => {
-                    const sem = notifDiv.dataset.semester;
-                    const subject = notifDiv.dataset.subject;
-                    const type = notifDiv.dataset.type;
-                    notifDiv.classList.remove("on");
-                    setTimeout(()=>{
-                        document.getElementById(`selected-matiere-card-notif-div-for-${type}-${subject}-from-semester-${sem}`).remove();
-                        let highestWidth = 0;
-                        document.querySelectorAll(".selected-matiere-card-notif-div").forEach(notifDiv => {if (highestWidth < notifDiv.clientWidth) highestWidth = notifDiv.clientWidth;})
-                        document.querySelector(".selected-matiere-card-notif-container").style.left = `calc(99.5% - ${100 * highestWidth/document.body.clientWidth}%`;
-                    }, 300)
-                })
+                this.removeSelectedCardNotifDiv();
             }
 
             this.selectedMatiereCards = [];
@@ -2887,6 +2920,7 @@
                         if (e.key === "E") {
                             this.editMode = !this.editMode;
 
+                            this.emptyMatCardSelection();
                             this.scrollToClientHighestElemWithClassWithTimeout({className: ".ue-card||.matiere-card.unclassified"});
                             this.renderContent();
                             this.attachEventListeners();
@@ -2978,8 +3012,8 @@
 
         }
 
-        draggableIcon(source="matiere-card", height=25) {
-            return `<img class="drag-icon-for-${source}" draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/960px-Hamburger_icon.svg.png" alt="☰" style="height:${height}px; cursor:pointer; user-select:none; ${source.match(/-matiere-card/ig) ? "border: 2px solid; border-radius: 8px;" : ""}">`
+        draggableIcon(source="matiere-card", {height=25, type="unknown", targetId="none"}={height: 25, type: "unknown", targetId:"none"}) {
+            return `<img class="drag-icon for-${source}" data-targetid="${targetId}" data-type="${type}" draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/960px-Hamburger_icon.svg.png" alt="☰" style="height:${height}px; ${source.match(/-matiere-card/ig) ? "border: 2px solid; border-radius: 8px;" : ""}">`
         }
     }
 
