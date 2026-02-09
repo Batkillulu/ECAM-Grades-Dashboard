@@ -301,9 +301,15 @@
             if(mat !== undefined && !this.sim[sem][ue][mat]) this.sim[sem][ue][mat]=[];
         }
         deleteUnusedSimPath(sem, ue, mat) {
-            if (this.sim[sem][ue][mat].length == 0) {delete this.sim[sem][ue][mat]}
-            if (this.sim[sem][ue] == {}) {delete this.sim[sem][ue]}
-            if (this.sim[sem] == {}) {delete this.sim[sem]}
+            if (this.sim[sem]) {
+                if (this.sim[sem][ue]) {
+                    if (this.sim[sem][ue][mat]) {
+                        if (this.sim[sem][ue][mat].length == 0) {delete this.sim[sem][ue][mat]}
+                    }
+                    if (this.sim[sem][ue] == {}) {delete this.sim[sem][ue]}
+                }
+                if (this.sim[sem] == {}) {delete this.sim[sem]}
+            }
         }
         getSimNotes(sem, ue, mat){ return (this.sim[sem]&&this.sim[sem][ue]&&this.sim[sem][ue][mat])||[]; }
         getAllMatieresForUE(sem, ueData, ueName){
@@ -2070,6 +2076,7 @@
             const ueInsertAreas = document.querySelectorAll(".ue-insert-area");
             document.querySelectorAll(".matiere-card").forEach(matiereCard => {
                 let draggedElement = ``;
+                const isUnclassified = matiereCard.classList.contains("unclassified");
                 if (matiereCard.classList.contains("unclassified") || matiereCard.classList.contains("compact")) {draggedElement = matiereCard;}
                 else {draggedElement = matiereCard.querySelector(".matiere-card-header");}
 
@@ -2237,7 +2244,7 @@
                 ueInsertArea.ondrop = (e) => {
                     e.target.style.background = "";
                     e.preventDefault(); 
-                    // this.dropAreaAddAction(e.dataTransfer.getData("text"));
+                    this.dropAreaInsertAction(e.dataTransfer.getData("text"));
                 }
             })
         }
@@ -2265,6 +2272,7 @@
             }
         }
 
+        // MARK: removeSelectedCardNotifDiv
         removeSelectedCardNotifDiv(id) {
             document.getElementById(id).classList.remove("on");
             setTimeout(()=>{
@@ -2276,6 +2284,8 @@
             }, 300)
         }
 
+
+        // MARK: dragIconOnClickEvent
         dragIconOnClickEvent(e, dragIcon, type) {
             let matiereCard =  e.target.parentElement.parentElement.parentElement;
             const dropAreaAdd = document.querySelector(".drop-matiere-card-to-create-eu");
@@ -2325,6 +2335,8 @@
             this.attachEventListeners()
         }
 
+
+        // MARK: tickIconOnClickEvent
         tickIconOnClickEvent(e, tick, type) {
             e.preventDefault();
             let matiereCard = e.target.parentElement.parentElement.parentElement;
@@ -2349,6 +2361,8 @@
             this.attachEventListeners();
         }
 
+
+        // MARK: emptyMatCardSelection
         emptyMatCardSelection() {
             ["unclassified", "detailed", "comapct"].forEach(type => {
                 document.querySelectorAll(`.ticked-${type}-matiere-card`).forEach(tick => {tick.outerHTML = this.draggableIcon(`${type}-matiere-card`);})
@@ -2406,7 +2420,10 @@
             this.selectedMatiereCards = [];
         }
 
+
+        // MARK: dropAreaInsertAction
         dropAreaInsertAction(cardId, index=-1) {
+            const card = document.getElementById(cardId);
             let cardIsSelected = false;
             this.selectedMatiereCards.forEach(selectedMatiereCard => {if (selectedMatiereCard.id == card.id) cardIsSelected = true;})
             const sem = card.dataset.semester;
@@ -2490,6 +2507,8 @@
                 
         }
 
+
+        // MARK: dropAreaAddAction
         dropAreaAddAction(cardId) {
             const card = document.getElementById(cardId);
             if (card.classList.contains('matiere-card')) {
@@ -2572,6 +2591,8 @@
             }
         }
 
+
+        // MARK: dropAreaRemoveAction
         dropAreaRemoveAction(cardId) {
             const card = document.getElementById(cardId);
 
@@ -2615,6 +2636,7 @@
             else if (card.classList.contains("ue-card")) {}
 
         }
+
 
         // MARK: dragElement
         dragElement(elmnt) {
