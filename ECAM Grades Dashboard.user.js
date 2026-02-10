@@ -369,6 +369,49 @@
                 this.grades = new Array(this.savedReadGrades);
             }
         }
+        setUeCardsAverage() {
+            document.querySelectorAll(".ue-card").forEach(ueCard => {
+                const ueHead = ueCard.querySelector(".ue-header");
+                const ueMoy = ueCard.querySelector(".ue-moyenne");
+
+                let newMoy = 0;
+                let totalCoef = 0;
+                let ignoredSubjects = 0;
+                const sem = ueMoy.dataset.sem;
+                const ue = ueMoy.dataset.ue;
+
+                Object.keys(this.gradesDatas[sem][ue].subjects).forEach(subjectName => {
+                    const subject = this.gradesDatas[sem][ue].subjects[subjectName];
+                    if (subject.totalDisabledGrades != subject.grades.length) {
+                        newMoy += subject.average * parseInt(subject.coef);
+                        totalCoef += parseInt(subject.coef);
+                    }
+                    else {ignoredSubjects++}
+                })
+
+                newMoy = Math.round(newMoy/totalCoef*100)/100;
+                
+                this.gradesDatas[sem][ue].average = newMoy;
+                ueMoy.childNodes[0].data = `${newMoy}/20`;
+
+                if (ignoredSubjects == Object.keys(this.gradesDatas[sem][ue].subjects).length) {
+                    ueMoy.classList.remove('bad'); ueMoy.classList.remove('good'); ueMoy.classList.add("unknown"); ueMoy.childNodes[0].data = " - /20";
+                    ueCard.classList.remove('failed'); ueCard.classList.remove('validated'); ueCard.classList.add("unknown");
+                    ueHead.classList.remove('failed'); ueHead.classList.remove('validated'); ueHead.classList.add("unknown");
+                }
+                else if (newMoy >= 10) {
+                    ueMoy.classList.remove('bad'); ueMoy.classList.add('good'); ueMoy.classList.remove("unknown");
+                    ueCard.classList.remove('failed'); ueCard.classList.add('validated'); ueCard.classList.remove("unknown");
+                    ueHead.classList.remove('failed'); ueHead.classList.add('validated'); ueHead.classList.remove("unknown");
+                }
+                else {
+                    ueMoy.classList.add('bad'); ueMoy.classList.remove('good'); ueMoy.classList.remove("unknown");
+                    ueCard.classList.add('failed'); ueCard.classList.remove('validated'); ueCard.classList.remove("unknown");
+                    ueHead.classList.add('failed'); ueHead.classList.remove('validated'); ueHead.classList.remove("unknown");
+                }
+            })
+        }
+
 
 
         // MARK: init
@@ -668,47 +711,7 @@
                 const container = document.getElementById(`sem-content-${sem}`)
 
                 // Set the all ue cards' moyenne
-                document.querySelectorAll(".ue-card").forEach(ueCard => {
-                    const ueHead = ueCard.querySelector(".ue-header");
-                    const ueMoy = ueCard.querySelector(".ue-moyenne");
-
-                    let newMoy = 0;
-                    let totalCoef = 0;
-                    let ignoredSubjects = 0;
-                    const sem = ueMoy.dataset.sem;
-                    const ue = ueMoy.dataset.ue;
-
-                    Object.keys(this.gradesDatas[sem][ue].subjects).forEach(subjectName => {
-                        const subject = this.gradesDatas[sem][ue].subjects[subjectName];
-                        if (subject.totalDisabledGrades != subject.grades.length) {
-                            newMoy += subject.average * parseInt(subject.coef);
-                            totalCoef += parseInt(subject.coef);
-                        }
-                        else {ignoredSubjects++}
-                    })
-
-                    newMoy = Math.round(newMoy/totalCoef*100)/100;
-                    
-                    this.gradesDatas[sem][ue].average = newMoy;
-                    ueMoy.childNodes[0].data = `${newMoy}/20`;
-
-                    if (ignoredSubjects == Object.keys(this.gradesDatas[sem][ue].subjects).length) {
-                        ueMoy.classList.remove('bad'); ueMoy.classList.remove('good'); ueMoy.classList.add("unknown"); ueMoy.childNodes[0].data = " - /20";
-                        ueCard.classList.remove('failed'); ueCard.classList.remove('validated'); ueCard.classList.add("unknown");
-                        ueHead.classList.remove('failed'); ueHead.classList.remove('validated'); ueHead.classList.add("unknown");
-                    }
-                    else if (newMoy >= 10) {
-                        ueMoy.classList.remove('bad'); ueMoy.classList.add('good'); ueMoy.classList.remove("unknown");
-                        ueCard.classList.remove('failed'); ueCard.classList.add('validated'); ueCard.classList.remove("unknown");
-                        ueHead.classList.remove('failed'); ueHead.classList.add('validated'); ueHead.classList.remove("unknown");
-                    }
-                    else {
-                        ueMoy.classList.add('bad'); ueMoy.classList.remove('good'); ueMoy.classList.remove("unknown");
-                        ueCard.classList.add('failed'); ueCard.classList.remove('validated'); ueCard.classList.remove("unknown");
-                        ueHead.classList.add('failed'); ueHead.classList.remove('validated'); ueHead.classList.remove("unknown");
-                    }
-                })
-                
+                this.setUeCardsAverage();
 
                 // Attach on-click event action for the grades' checkbox
                 this.attachCheckboxListeners(container);
@@ -737,7 +740,6 @@
 
             });
         }
-
 
 
 
@@ -1653,7 +1655,6 @@
             document.ondragend = (e) => {
                 const subjectCard = this.currentlyDraggedSubjCard;
 
-                
                 if (this.draggedElementDroppedInInputArea && subjectCard) {
 
                     // checking if the dragged subject card is selected:
@@ -1719,7 +1720,7 @@
                 this.draggedElementDroppedInInputArea = false; console.log("document: dragend");
             };
             
-            //#region 
+            //#region temp hide
             document.querySelector(".new-grades-notif").onclick = () => {
                 const newGradesCard = document.querySelector(".new-grades-card");
                 newGradesCard.scrollIntoView();
@@ -2196,7 +2197,6 @@
                         this.emptyMatCardSelection();
                     }
                 };
-
             })
             if (this.selectedSubjectCards.length > 0) { 
                 this.selectedSubjectCards.forEach(selectedSubjectCard => {
@@ -2856,6 +2856,7 @@
 
         // MARK: -Data Import/Export
         importData(file) {
+            this.sim = {};
             return new Promise((resolve, reject) => {
                 const handleText = (text) => {
                     try {
