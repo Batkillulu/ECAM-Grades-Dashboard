@@ -2481,9 +2481,9 @@
                         tick.outerHTML = this.draggableIcon(`${selectedSubjectCard.dataset.type}-subject-card`, {targetId: `${selectedSubjectCard.dataset.targetid}`, type: selectedSubjectCard.dataset.type});
                         const dragIcon = selectedSubjectCard.querySelector(".drag-icon");
                         dragIcon.onclick = (e) => {this.dragIconOnClickEvent(e, dragIcon)};
-
-                        this.selectedSubjectCards.splice(index, 1);
                     })
+
+                    this.selectedSubjectCards = [];
                 } 
                 else {      // clear the specifically given notifDiv from the selection
                     let matCard = "";
