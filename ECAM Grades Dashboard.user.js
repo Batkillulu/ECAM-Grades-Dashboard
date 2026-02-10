@@ -1545,7 +1545,7 @@
 
 
 
-        //#region -Region: Ev Listen
+        //#region -Region: Ev Listeners
 
             attachEventListeners() {
 
@@ -2268,13 +2268,13 @@
                     subjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
                 }
                 
-                // if (this.selectedSubjectCards.length == 0) {
-                //     setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher => {teacher.style.display = "table-cell"})}, 100)
-                //     document.querySelector(".semester-content").style.gap = "0px";
-                //     document.querySelector(".drop-subject-card-to-create-eu").classList.remove("show");
-                //     document.querySelector(".drop-subject-card-to-remove-from-eu").classList.remove("show");
-                //     this.removeSubjectCardFromSubjectSelection();
-                // }
+                if (this.selectedSubjectCards.length == 0) {
+                    setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher => {teacher.style.display = "table-cell"})}, 100)
+                    document.querySelector(".semester-content").style.gap = "0px";
+                    document.querySelector(".drop-subject-card-to-create-eu").classList.remove("show");
+                    document.querySelector(".drop-subject-card-to-remove-from-eu").classList.remove("show");
+                    this.removeSubjectCardFromSubjectSelection();
+                }
             }
             draggedSelectedElementOnDragStartEvent(e, {draggedElement, subjectCard}) {
                 this.selectedSubjectCards.forEach(selectedSubjectCard => {
@@ -2430,34 +2430,44 @@
 
 
             // MARK: removeSubjectCardFromSubjectSelection
-            
             /** 
             *  Manage all the actions involving the deletion of a subj card from the selection of subj cards (this.selectedSubjectCards)
             * 
             * @param notifDiv: the div of the notif linked to the selected subject card
-            * @param fromDropArea: true if this method is called from triggering an action linked to a drop area
+            * @param elementDroppedInArea: if this method is called from triggering an ondrop event of a drop area, pass the dropped element in this argument
             */
-            removeSubjectCardFromSubjectSelection({notifDiv="all", fromDropArea=false}= {notifDiv:"all", fromDropArea:false}) {
-                if (notifDiv=="all") {      // clear all subject card selection
+            removeSubjectCardFromSubjectSelection({notifDiv="all", elementDroppedInArea=undefined}={notifDiv:"all", elementDroppedInArea:undefined}) {
+                if (notifDiv=="all") {      // clear all subject card selection as well as their respective notif
                     
-                    this.selectedSubjectCards.forEach(selectedMatCard => {
-                        selectedMatCard.style.width = "100%";
+                    this.selectedSubjectCards.forEach((selectedSubjectCard, index) => {
+                        selectedSubjectCard.style.width = "100%";
 
-                        if (selectedMatCard.classList.contains("unclassified")) {
-                            selectedMatCard.querySelector(".grades-table").style.display = "table";
-                            selectedMatCard.querySelector(".subject-card-header").style.border = "none";
-                            selectedMatCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
+                        if (selectedSubjectCard.classList.contains("unclassified")) {
+                            selectedSubjectCard.querySelector(".grades-table").style.display = "table";
+                            selectedSubjectCard.querySelector(".subject-card-header").style.border = "none";
+                            selectedSubjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
                         }
-                        else if (selectedMatCard.classList.contains("compact")) {
-                            selectedMatCard.querySelector(".grades-table-coef").style.display = "flex";
+                        else if (selectedSubjectCard.classList.contains("compact")) {
+                            selectedSubjectCard.querySelector(".grades-table-coef").style.display = "flex";
                         }
                         else {
-                            selectedMatCard.querySelector(".subject-card-header").children[0].style.width = "42%";
-                            selectedMatCard.querySelector(".subject-card-header").querySelector(".grades-table-coef").style.width =  "58%";
-                            selectedMatCard.querySelector(".grades-table").style.display = "table";
-                            selectedMatCard.querySelector(".subject-card-header").style.borderBottom = "4px solid white";
-                            selectedMatCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
+                            selectedSubjectCard.querySelector(".subject-card-header").children[0].style.width = "42%";
+                            selectedSubjectCard.querySelector(".subject-card-header").querySelector(".grades-table-coef").style.width =  "58%";
+                            selectedSubjectCard.querySelector(".grades-table").style.display = "table";
+                            selectedSubjectCard.querySelector(".subject-card-header").style.borderBottom = "4px solid white";
+                            selectedSubjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
                         }
+                        
+                        const tick = selectedSubjectCard.querySelector(".tick-icon");
+                        tick.outerHTML = this.draggableIcon(`${selectedSubjectCard.dataset.type}-subject-card`, {targetId: `${selectedSubjectCard.dataset.targetid}`, type: selectedSubjectCard.dataset.type});
+                        const dragIcon = selectedSubjectCard.querySelector(".drag-icon");
+                        dragIcon.onclick = (e) => {this.dragIconOnClickEvent(e, dragIcon)};
+
+                        const correspNotifDiv = document.querySelector(`.selected-subject-card-notif-div[data-targetid="${selectedSubjectCard.id}"]`);
+                        correspNotifDiv.classList.remove("on");
+                        setTimeout(()=>{
+                            correspNotifDiv.remove();
+                        }, 300)
                     })
 
                     setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
@@ -2475,19 +2485,11 @@
                         totalCoef.parentElement.style.width = "47%";
                     })
 
-
-                    this.selectedSubjectCards.forEach((selectedSubjectCard, index) => {
-                        const tick = selectedSubjectCard.querySelector(".tick-icon");
-                        tick.outerHTML = this.draggableIcon(`${selectedSubjectCard.dataset.type}-subject-card`, {targetId: `${selectedSubjectCard.dataset.targetid}`, type: selectedSubjectCard.dataset.type});
-                        const dragIcon = selectedSubjectCard.querySelector(".drag-icon");
-                        dragIcon.onclick = (e) => {this.dragIconOnClickEvent(e, dragIcon)};
-                    })
-
                     this.selectedSubjectCards = [];
                 } 
                 else {      // clear the specifically given notifDiv from the selection
                     let matCard = "";
-                    if (!fromDropArea) {
+                    if (!elementDroppedInArea) {
                         matCard = document.getElementById(notifDiv.dataset.targetid);
                     }
                     
@@ -2695,7 +2697,7 @@
                     })
                 }
                 
-                this.removeSubjectCardFromSubjectSelection({fromDropArea:true});
+                this.removeSubjectCardFromSubjectSelection({elementDroppedInArea:card});
                     
             }
 
@@ -2803,7 +2805,7 @@
                         })
                     }
 
-                    this.removeSubjectCardFromSubjectSelection({fromDropArea:true});
+                    this.removeSubjectCardFromSubjectSelection({elementDroppedInArea:card});
                     this.saveConfig();
                     this.renderContent();
                     this.attachEventListeners();
@@ -2817,10 +2819,10 @@
             dropAreaRemoveAction(cardId) {
                 const card = document.getElementById(cardId);
 
-                if (card.classList.contains("subject-card") && !card.classList.contains("unclassified"))
-                {
-                    let cardIsSelected = false;
-                    this.selectedSubjectCards.forEach(selectedSubjectCard => {if (selectedSubjectCard.id == card.id) cardIsSelected = true;})
+                let cardIsSelected = false;
+                this.selectedSubjectCards.forEach(selectedSubjectCard => {if (selectedSubjectCard.id == card.id) cardIsSelected = true;})
+
+                if (card.classList.contains("subject-card") && !card.classList.contains("unclassified")) {
                     const sem = card.dataset.semester;
                     const ue = card.dataset.ue;
                     const subj = card.dataset.subject;
@@ -2838,8 +2840,7 @@
                             delete this.ueConfig[sem][ue];
                         }
                     }
-                    else
-                    {
+                    else {
                         let subject = "";
                         this.selectedSubjectCards.forEach(selectedSubjectCard => {
                             subject = selectedSubjectCard.dataset.subject;
@@ -2858,13 +2859,13 @@
 
                     if (this.ueConfig[sem].__ues__.length == 0) {delete this.ueConfig[sem]}
 
-                    this.removeSubjectCardFromSubjectSelection({fromDropArea:true});
+                    this.removeSubjectCardFromSubjectSelection({elementDroppedInArea:card});
                     this.saveConfig();
                     this.renderContent();
                     this.attachEventListeners();
                 }
-                else if (card.classList.contains("unclassified")) {
-                    this.removeSubjectCardFromSubjectSelection({fromDropArea:true});
+                else if (card.classList.contains("subject-card") && card.classList.contains("unclassified") && cardIsSelected) {
+                    this.removeSubjectCardFromSubjectSelection({elementDroppedInArea:card});
                 }
                 else if (card.classList.contains("ue-card")) {}
 
