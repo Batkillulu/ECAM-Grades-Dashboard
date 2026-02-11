@@ -782,6 +782,8 @@
 
 
 
+
+
         // MARK: -INIT
         init() {
 
@@ -804,6 +806,8 @@
             this.attachEventListeners();
             
         }
+
+
 
 
         //#region -Region: Render
@@ -1127,7 +1131,7 @@
                 if (ueConfig.__ues__) {
                     ueConfig.__ues__.forEach((ueName, ueIndex) => {
                         if (ueName != "__ues__") {
-                            html += this.renderUECard(sem, ueName, ueIndex);
+                            html += this.renderUECard(sem, ueName, ueIndex+1);
                         }
                     });
                 }
@@ -1135,7 +1139,7 @@
                 return html;
             }
             // MARK: renderUECard
-            renderUECard(sem, ueName, insertCount=-1) {
+            renderUECard(sem, ueName, insertIndex=-1) {
                 const ueConfig = this.ueConfig[sem] || {};
                 const ueData = ueConfig[ueName];
                 const ueGrades = this.calculateUEGrades(sem, ueData, ueName);
@@ -1205,8 +1209,8 @@
                     }
                 </div>
                 ${
-                    insertCount > -1
-                    ? `<div class="ue-insert-area ${this.editMode ? `show` :""}" data-semester="${sem}" data-index="${insertCount}">+</div>`
+                    insertIndex > -1
+                    ? `<div class="ue-insert-area ${this.editMode ? `show` :""}" data-semester="${sem}" data-index="${insertIndex}">+</div>`
                     : ``
                 }
                 `;
@@ -1542,6 +1546,8 @@
             }
 
         //#endregion
+
+
 
 
 
@@ -2219,6 +2225,8 @@
 
 
 
+
+
         //#region -Region: Drag events
             draggedElementOnDragStartEvent(e, {draggedElement, subjectCard}) {
                 this.currentlyDraggedElement = draggedElement;
@@ -2371,9 +2379,10 @@
 
                 ueInsertAreas.forEach(ueInsertArea => {
                     ueInsertArea.style.background = "";
+                    const insertIndex = ueInsertArea.dataset.index;
                     ueInsertArea.ondragover = (e) =>    {e.preventDefault(); e.target.style.background = "#bdb8ff";};
                     ueInsertArea.ondragleave = (e) =>   {e.preventDefault(); e.target.style.background = "";};
-                    ueInsertArea.ondrop = (e) =>        {e.target.style.background = ""; e.preventDefault(); this.dropAreaInsertAction(e.dataTransfer.getData("text"));};
+                    ueInsertArea.ondrop = (e) =>        {e.target.style.background = ""; e.preventDefault(); this.dropAreaToNewAction(e.dataTransfer.getData("text"), insertIndex);};
                 })
 
                 this.notifDelBtnAttachListeners();
@@ -2535,6 +2544,9 @@
             }
 
 
+
+
+
             // MARK: dragIconOnClickEvent
             dragIconOnClickEvent(e, dragIcon) {
                 let subjectCard =  e.target.parentElement.parentElement.parentElement;
@@ -2601,6 +2613,8 @@
                 
                 this.removeSubjectCardFromSubjectSelection({notifDiv});
             }
+
+
 
 
 
@@ -2699,7 +2713,7 @@
 
 
             // MARK: dropAreaToNewAction
-            dropAreaToNewAction(cardId, index=-1) {
+            dropAreaToNewAction(cardId, index=0) {
                 const card = document.getElementById(cardId);
                 if (card.classList.contains('subject-card')) {
                     let cardIsSelected = false;
@@ -2727,17 +2741,12 @@
                                 newUeName = oldUeName;
                                 this.ueConfig[sem][newUeName].coefficients[subject] = 100;
                             } else {
-                                this.ueConfig[sem].__ues__.unshift(newUeName);
                                 this.ueConfig[sem][newUeName] = {subjects: [subject], coefficients: {[subject]: 100}, custom: {[subject]: false}};
 
                                 this.ueConfig[sem][oldUeName].subjects.splice(subjectIndex,1);
                                 delete this.ueConfig[sem][oldUeName].coefficients[subject];
                                 delete this.ueConfig[sem][oldUeName].custom[subject];
 
-                                if (this.ueConfig[sem][oldUeName].subjects.length == 0) {
-                                    this.ueConfig[sem].__ues__.splice(ueIndex, 1);
-                                    delete this.ueConfig[sem][oldUeName];
-                                }
 
                                 if (manageSim) {if (!this.sim[sem][oldUeName]) manageSim = false;}
                                 if (manageSim) {
@@ -2749,9 +2758,16 @@
                                     this.deleteUnusedSimPath(sem, oldUeName, subject);
                                     this.saveSim();
                                 }
-                            }      
+                            }
+
+                            this.ueConfig[sem].__ues__.splice(index, 0, newUeName);
+                            if (this.ueConfig[sem][oldUeName].subjects.length == 0) {
+                                this.ueConfig[sem].__ues__.splice(ueIndex, 1);
+                                delete this.ueConfig[sem][oldUeName];
+                            }
+
                         } else {
-                            this.ueConfig[sem].__ues__.unshift(newUeName);
+                            this.ueConfig[sem].__ues__.splice(index, 0, newUeName);
                             this.ueConfig[sem][newUeName] = {subjects: [subject], coefficients: {[subject]: 100}, custom: {[subject]: false}};
                         }
 
@@ -2759,45 +2775,77 @@
                         let remainingCoef = 100;
                         this.ueConfig[sem][newUeName] = {subjects: [], coefficients: {}, custom: {}};
                         this.ueConfig[sem].__ues__.unshift(newUeName);
+                        
+                        oldUeName = this.selectedSubjectCards[0].dataset.ue;
+                        let wholeSelectionIsAWholeModule = true;
 
+                        if (!oldUeName) {wholeSelectionIsAWholeModule = false}
+                        else {
+                            if (this.selectedSubjectCards.length != this.ueConfig[sem][oldUeName].subjects.length) {wholeSelectionIsAWholeModule = false;}
+                            else {
+                                this.selectedSubjectCards.forEach(selectedSubjectCard => {
+                                    if (wholeSelectionIsAWholeModule) {
+                                        if (this.ueConfig[sem][oldUeName].subjects.indexOf(selectedSubjectCard) == -1 || !oldUeName.match(/Module (\d)/)) {
+                                            wholeSelectionIsAWholeModule = false;
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                        
+
+                        if (wholeSelectionIsAWholeModule) {newUeName = oldUeName}
+                        let subjectsList = [];
+                        
                         this.selectedSubjectCards.forEach((selectedSubjectCard, index) => {
                             subject = selectedSubjectCard.dataset.subject;
+                            
+                            const coef = Math.round(100/this.selectedSubjectCards.length);
+                            this.ueConfig[sem][newUeName].coefficients[subject] = coef;
+                            remainingCoef -= coef;
+                            
+                            if (wholeSelectionIsAWholeModule) {
+                                subjectsList.push(subject);
+                            } 
+                            else {
+                                subjectsList.push(subject);
+                                this.ueConfig[sem][newUeName].custom[subject] = false;
 
-                            this.ueConfig[sem][newUeName].subjects.push(subject);
-                            this.ueConfig[sem][newUeName].coefficients[subject] = Math.round(100/this.selectedSubjectCards.length);
-                            this.ueConfig[sem][newUeName].custom[subject] = false;
-
-                            if (this.selectedSubjectCards.length == index+1) {
-                                this.ueConfig[sem][newUeName].subjects[subject] = remainingCoef;
-                            }
-                            remainingCoef -= this.ueConfig[sem][newUeName].subjects[subject];
-
-                            if (!selectedSubjectCard.classList.contains("unclassified")) {
-                                // removing the subject card from its former UE
-                                oldUeName = selectedSubjectCard.dataset.ue
-                                const oldUeIndex = this.ueConfig[sem].__ues__.indexOf(oldUeName);                       // get the old ue's index in the ues ordered array of the semester
-                                const subjectIndexInOldUe = this.ueConfig[sem][oldUeName].subjects.indexOf(subject);    // get the subject's index in the subjects ordered array of the old ue
-                                        this.ueConfig[sem][oldUeName].subjects.splice(subjectIndexInOldUe,1);           // remove the subject from the subjects ordered array of the old ue
-                                delete  this.ueConfig[sem][oldUeName].coefficients[subject];                            // delete coefficient data
-                                delete  this.ueConfig[sem][oldUeName].custom[subject];                                  // delete custom data
-
-                                if (this.ueConfig[sem][oldUeName].subjects.length == 0) {
-                                    // If, after removing the subject card from its former UE, the said UE is empty, we remove it
-                                    this.ueConfig[sem].__ues__.splice(oldUeIndex, 1);
-                                    delete this.ueConfig[sem][oldUeName];
+                                if (index+1 == this.selectedSubjectCards.length) {
+                                    this.ueConfig[sem][newUeName].subjects[subject] = remainingCoef;
                                 }
 
-                                if (manageSim) {if (!this.sim[sem][oldUeName][subject]) manageSim = false} // checking if the subject card had sim grades
-                                if (manageSim) {
-                                    // if the subject card had sim grades, change their path in this.sim to match the ue change
-                                    this.sim[sem][newUeName][subject] = [];
-                                    this.sim[sem][oldUeName][subject].forEach((_, index) => {
-                                        this.sim[sem][newUeName][subject].push(this.sim[sem][oldUeName][subject][index].shift())
-                                    })
-                                    this.deleteUnusedSimPath(sem, oldUeName, subject);
-                                    this.saveSim();
+                                if (!selectedSubjectCard.classList.contains("unclassified")) {
+                                    oldUeName = selectedSubjectCard.dataset.ue;
+                                    this.ueConfig[sem][newUeName].custom[subject] = this.ueConfig[sem][oldUeName].custom[subject];
+
+                                    // removing the subject card from its former UE
+                                    const oldUeIndex = this.ueConfig[sem].__ues__.indexOf(oldUeName);                       // get the old ue's index in the ues ordered array of the semester
+                                    const subjectIndexInOldUe = this.ueConfig[sem][oldUeName].subjects.indexOf(subject);    // get the subject's index in the subjects ordered array of the old ue
+                                            this.ueConfig[sem][oldUeName].subjects.splice(subjectIndexInOldUe,1);           // remove the subject from the subjects ordered array of the old ue
+                                    delete  this.ueConfig[sem][oldUeName].coefficients[subject];                            // delete coefficient data
+                                    delete  this.ueConfig[sem][oldUeName].custom[subject];                                  // delete custom data
+
+                                    if (this.ueConfig[sem][oldUeName].subjects.length == 0) {
+                                        // If, after removing the subject card from its former UE, the said UE is empty, we remove it
+                                        this.ueConfig[sem].__ues__.splice(oldUeIndex, 1);
+                                        delete this.ueConfig[sem][oldUeName];
+                                    }
+
+                                    if (manageSim) {if (!this.sim[sem][oldUeName][subject]) manageSim = false} // checking if the subject card had sim grades
+                                    if (manageSim) {
+                                        // if the subject card had sim grades, change their path in this.sim to match the ue change
+                                        this.sim[sem][newUeName][subject] = [];
+                                        this.sim[sem][oldUeName][subject].forEach((_, index) => {
+                                            this.sim[sem][newUeName][subject].push(this.sim[sem][oldUeName][subject][index].shift())
+                                        })
+                                        this.deleteUnusedSimPath(sem, oldUeName, subject);
+                                        this.saveSim();
+                                    }
                                 }
                             }
+
+                            this.ueConfig[sem][newUeName].subjects = subjectsList;
                         })
                     }
 
@@ -2866,6 +2914,9 @@
                 else if (card.classList.contains("ue-card")) {}
 
             }
+
+
+
 
 
             // MARK: dragElement
