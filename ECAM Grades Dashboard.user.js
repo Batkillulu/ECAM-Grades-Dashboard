@@ -431,7 +431,7 @@
                                 totalSimGradesCoef: 0
                             };
 
-                            const subjectData = semData["unclassified"].subjects[unclassifiedSubjectName];
+                            let subjectData = semData["unclassified"].subjects[unclassifiedSubjectName];
 
 
 
@@ -690,18 +690,13 @@
                     const sem = totalCoefDiv.dataset.sem;
                     const ue = totalCoefDiv.dataset.ue;
                     const subject = totalCoefDiv.dataset.subject;
-                    const totalCoef =           this.gradesDatas[sem][ue].subjects[subject].totalCoef;
-                    const nbDisabledGrades =    this.gradesDatas[sem][ue].subjects[subject].totalDisabledGrades;
-                    const nbSimGrades =         this.gradesDatas[sem][ue].subjects[subject].totalSimGrades;
-                    const simulatedGrades =     this.gradesDatas[sem][ue].subjects[subject].grades.map(grade => {if(grade.__sim) return grade});
-                    let enabledSimulatedGrades = [];
-                    if (nbSimGrades > 0) enabledSimulatedGrades = simulatedGrades.filter(n => {if (n) {return this.gradeIsDisabled(n)} else {return false}})
-                    let totalSimGradesCoef = 0; enabledSimulatedGrades.forEach(grade => {totalSimGradesCoef+=grade.coef});
-                    const nbEnabledSimGrades = enabledSimulatedGrades.length;
+                    const totalCoef =               this.gradesDatas[sem][ue].subjects[subject].totalCoef;
+                    const totalSimGradesCoef =      this.gradesDatas[sem][ue].subjects[subject].totalCoefSimGrades;
+                    const nbDisabledGrades =        this.gradesDatas[sem][ue].subjects[subject].disabledGrades.length;
+                    const nbSimGrades =             this.gradesDatas[sem][ue].subjects[subject].simGrades.length;
+                    const nbEnabledSimGrades =      this.gradesDatas[sem][ue].subjects[subject].enabledSimulatedGrades.length;
                     
-                    this.gradesDatas[sem][ue].subjects[subject].simulatedGrades = simulatedGrades;
-                    this.gradesDatas[sem][ue].subjects[subject].enabledSimulatedGrades = enabledSimulatedGrades;
-                    this.gradesDatas[sem][ue].subjects[subject].totalSimGradesCoef = totalSimGradesCoef;
+                    totalSimGradesCoef;
 
                     
                     let advice = this.lang == `fr` ? `Toutes tes notes sont là !` : `All your grades are out!`;
@@ -719,8 +714,8 @@
                             }
                             else if (nbDisabledGrades > 0) {
                                 advice = this.lang == `fr` 
-                                    ? `Une note est désactivée${simulatedGrades.length-nbEnabledSimGrades > 0 ? `, mais c'est une note simulée, toutes tes notes ne sont encore pas là !` : ``}` 
-                                    : `A grade is disabled${simulatedGrades.length-nbEnabledSimGrades > 0 ? `, but it's a simulated grade, all your grades aren't out yet!` : ``}`;
+                                    ? `Une note est désactivée${nbSimGrades-nbEnabledSimGrades > 0 ? `, mais c'est une note simulée, toutes tes notes ne sont encore pas là !` : ``}` 
+                                    : `A grade is disabled${nbSimGrades-nbEnabledSimGrades > 0 ? `, but it's a simulated grade, all your grades aren't out yet!` : ``}`;
                                 color = meh;
                             }
                             else if (totalCoef == 0) {
