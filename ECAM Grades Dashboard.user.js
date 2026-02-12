@@ -337,6 +337,26 @@
                 const simOnly = Object.keys(((this.sim[sem]||{})[ueName]||{}));
                 return Array.from(new Set([...real, ...simOnly]));
             }
+            calculateUEGrades(sem, ueName){
+                const grades = [];
+                const allMats = this.getAllSubjectsForUE(sem, ueName);
+                allMats.forEach(subject=>{
+                    const pct = this.ueConfig[sem][ueName].coefficients[subject] || 0;
+                    const realGrades = (this.semesters[sem]&&this.semesters[sem][subject]) ? this.semesters[sem][subject] : [];
+                    const simGrades  = this.getSimGrades(sem, ueName, subject).map(n=>({ ...n, __sim:true }));
+
+                    const src = [...realGrades, ...simGrades];
+                    src.forEach(n=>{
+                        grades.push({
+                            ...n,
+                            coef: n.coef,
+                            coefInUE: (n.coef||0) * (pct/100),
+                            subject
+                        });
+                    });
+                });
+                return grades;
+            }
             getGradeColor(grade) { if (grade >= 12) return 'good'; if (grade >= 10) return 'medium'; return 'bad'; }
             getAverageColor(avg) { if (avg >= 12) return 'average-good'; if (avg >= 10) return 'average-medium'; return 'average-bad'; }
             gradeIsDisabled(n) {
@@ -443,7 +463,7 @@
                                 totalCoefEnabledGrades: 0,
                                 totalCoefEnabledSimGrades: 0,
                                 disabledGrades: [],
-                                simulatedGrades: [],
+                                simGrades: [],
                                 enabledSimulatedGrades: [],
                                 subjectsBelow100: [],
                                 subjectsOver100: []
@@ -460,10 +480,11 @@
                             }
                             
                             ueGrades.forEach(n => {
-                                if (!ueData.subjects[n.subject]) {
-                                    ueData.subjects[n.subject] = {grades: []};
+                                const subjectName = n.subject;
+                                if (!ueData.subjects[subjectName]) {
+                                    ueData.subjects[subjectName] = {grades: []};
                                 }
-                                let subjectData = ueData.subjects[n.subject];
+                                let subjectData = ueData.subjects[subjectName];
                                 subjectData.grades.push(n);
                             });
 
@@ -485,12 +506,13 @@
                                 
                                 // FOR EACH GRADE IN SUBJECT
                                 subjectData.grades.forEach(grade => {
-                                    subjectData.average += 100*grade.grade/grade.coef
-                                    subjectData.classAvg += 100*grade.classAvg/grade.coef;
+                                    subjectData.average += grade.grade*grade.coef/100;
+                                    subjectData.classAvg += grade.classAvg*grade.coef/100;
                                     subjectData.totalCoef += grade.coef;
 
                                     if (grade.__sim) {
                                         subjectData.simGrades.push(grade);
+
                                         ueData.simGrades.push(grade);
 
                                         if (this.gradeIsDisabled(grade)) {
@@ -507,6 +529,7 @@
                                     else {
                                         if (this.gradeIsDisabled(grade)){
                                             subjectData.disabledGrades.push(grade);
+
                                             ueData.disabledGrades.push(grade);
                                         }
                                         else {
@@ -514,81 +537,31 @@
                                         }
                                     }
                                 })
+
+                                subjectData.average = Math.round(subjectData.average*100)/100;
+                                subjectData.classAvg = Math.round(subjectData.classAvg*100)/100;
                                 
                                 ueData.average += subjectData.average*subjectData.coef/100;
+                                ueData.classAvg += subjectData.classAvg*subjectData.coef/100;
                                 ueData.totalCoefSubjects += subjectData.coef;
                                 ueData.totalCoefGrades += subjectData.totalCoef*subjectData.coef/100;
-                                ueData.totalSimGradesCoef += subjectData.totalSimGradesCoef;
+                                ueData.totalCoefSimGrades += subjectData.totalCoefSimGrades;
 
                                 if (subjectData.totalCoef < 100) ueData.subjectsBelow100.push(subjectName);
                                 else if (subjectData.totalCoef > 100) ueData.subjectsOver100.push(subjectName);
                             });
+
+                            
+                            ueData.average = Math.round(ueData.average*100)/100;
+                            ueData.classAvg = Math.round(ueData.classAvg*100)/100;
+                            ueData.totalCoefSubjects = Math.round(ueData.totalCoefSubjects);
+                            ueData.totalCoefGrades = Math.round(ueData.totalCoefGrades);
+                            ueData.totalCoefSimGrades = Math.round(ueData.totalCoefSimGrades);
+                            ueData.totalCoefSubjects = Math.round(ueData.totalCoefSubjects);
                         })
                     }
                     
                 })
-            }
-            setUeCardsAverage() {
-                document.querySelectorAll(".ue-card").forEach(ueCard => {
-                    const ueHead = ueCard.querySelector(".ue-header");
-                    const ueMoy = ueCard.querySelector(".ue-moyenne");
-
-                    let newMoy = 0;
-                    let totalCoef = 0;
-                    let ignoredSubjects = 0;
-                    const sem = ueMoy.dataset.sem;
-                    const ue = ueMoy.dataset.ue;
-
-                    Object.keys(this.gradesDatas[sem][ue].subjects).forEach(subjectName => {
-                        const subject = this.gradesDatas[sem][ue].subjects[subjectName];
-                        if (subject.totalDisabledGrades != subject.grades.length) {
-                            newMoy += subject.average * parseInt(subject.coef);
-                            totalCoef += parseInt(subject.coef);
-                        }
-                        else {ignoredSubjects++}
-                    })
-
-                    newMoy = Math.round(newMoy/totalCoef*100)/100;
-                    
-                    this.gradesDatas[sem][ue].average = newMoy;
-                    ueMoy.childNodes[0].data = `${newMoy}/20`;
-
-                    if (ignoredSubjects == Object.keys(this.gradesDatas[sem][ue].subjects).length) {
-                        ueMoy.classList.remove('bad'); ueMoy.classList.remove('good'); ueMoy.classList.add("unknown"); ueMoy.childNodes[0].data = " - /20";
-                        ueCard.classList.remove('failed'); ueCard.classList.remove('validated'); ueCard.classList.add("unknown");
-                        ueHead.classList.remove('failed'); ueHead.classList.remove('validated'); ueHead.classList.add("unknown");
-                    }
-                    else if (newMoy >= 10) {
-                        ueMoy.classList.remove('bad'); ueMoy.classList.add('good'); ueMoy.classList.remove("unknown");
-                        ueCard.classList.remove('failed'); ueCard.classList.add('validated'); ueCard.classList.remove("unknown");
-                        ueHead.classList.remove('failed'); ueHead.classList.add('validated'); ueHead.classList.remove("unknown");
-                    }
-                    else {
-                        ueMoy.classList.add('bad'); ueMoy.classList.remove('good'); ueMoy.classList.remove("unknown");
-                        ueCard.classList.add('failed'); ueCard.classList.remove('validated'); ueCard.classList.remove("unknown");
-                        ueHead.classList.add('failed'); ueHead.classList.remove('validated'); ueHead.classList.remove("unknown");
-                    }
-                })
-            }
-            calculateUEGrades(sem, ueName){
-                const grades = [];
-                const allMats = this.getAllSubjectsForUE(sem, ueName);
-                allMats.forEach(subject=>{
-                    const pct = this.ueConfig[sem][ueName].coefficients[subject] || 0;
-                    const realGrades = (this.semesters[sem]&&this.semesters[sem][subject]) ? this.semesters[sem][subject] : [];
-                    const simGrades  = this.getSimGrades(sem, ueName, subject).map(n=>({ ...n, __sim:true }));
-
-                    const src = [...realGrades, ...simGrades];
-                    src.forEach(n=>{
-                        grades.push({
-                            ...n,
-                            coef: n.coef,
-                            coefInUE: (n.coef||0) * (pct/100),
-                            subject
-                        });
-                    });
-                });
-                return grades;
             }
             getUnclassifiedSubjects(sem) {
                 const classified = new Set();
@@ -1229,9 +1202,6 @@
                     contentArea.appendChild(section);
                     const container = document.getElementById(`sem-content-${sem}`)
 
-                    // Set the all ue cards' moyenne
-                    this.setUeCardsAverage();
-
                     // Attach on-click event action for the grades' checkbox
                     this.attachCheckboxListeners(container);
 
@@ -1285,7 +1255,7 @@
                 const ueGrades = this.calculateUEGrades(sem, ueName);
                 const includedGrades = (ueGrades || []).filter(n => this.ignoredGrades.indexOf([sem, n.subject, n.type+" "+n.date+" "+n.prof].join("\\")) == -1);
                 let weight = 0; includedGrades.forEach(grade => {weight += grade.coef/100})
-                const moyenne = includedGrades.length ? this.moyennePonderee(includedGrades) : " - ";
+                const moyenne = this.gradesDatas[sem][ueName].average;
                 const hasSim = (this.sim[sem] && this.sim[sem][ueName] && Object.values(this.sim[sem][ueName]).some(arr=>arr.length>0)) ? true : false;
 
                 const allMats = this.getAllSubjectsForUE(sem, ueName);
@@ -1324,7 +1294,7 @@
                             <div class="ue-subject-total-coef-value" data-sem="${sem}" data-ue="${ueName}"></div>
                         </div>
                         <div class="ue-moyenne ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'good' : 'bad'}`}" data-sem="${sem}" data-ue="${ueName}">
-                            - /20 
+                            ${moyenne}/20 
                             <div class="ue-toggle open collapse-icon">▲</div>
                             <button class="ue-delete-btn" ${this.editMode ? `class="display:none"` : ""} id="ue-delete-btn-${ueName}-in-semester-${sem}" title="${this.lang == "fr" ? "Supprimer ce module" : "Delete this module"}" data-semester="${sem}" data-ue="${ueName}">🗑️</button>
                         </div>
