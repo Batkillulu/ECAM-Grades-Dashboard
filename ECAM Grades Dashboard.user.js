@@ -332,15 +332,15 @@
                 }
             }
             getSimGrades(sem, ue, subj){ return (this.sim[sem]&&this.sim[sem][ue]&&this.sim[sem][ue][subj])||[]; }
-            getAllSubjectsForUE(sem, ueData, ueName){
-                const real = ueData.subjects || [];
+            getAllSubjectsForUE(sem, ueName){
+                const real = this.ueConfig[sem][ueName].subjects || [];
                 const simOnly = Object.keys(((this.sim[sem]||{})[ueName]||{}));
                 return Array.from(new Set([...real, ...simOnly]));
             }
             getGradeColor(grade) { if (grade >= 12) return 'good'; if (grade >= 10) return 'medium'; return 'bad'; }
             getAverageColor(avg) { if (avg >= 12) return 'average-good'; if (avg >= 10) return 'average-medium'; return 'average-bad'; }
             gradeIsDisabled(n) {
-                return this.ignoredGrades.indexOf([n.semester, n.subject, n.type+" "+n.date+" "+n.prof].join("\\")) == -1
+                return this.ignoredGrades.indexOf([n.semester, n.subject, n.type+" "+n.date+" "+n.prof].join("\\")) > -1
             }
             moyennePonderee(arr) {
                 if (!arr || arr.length === 0) return 0;
@@ -384,6 +384,150 @@
                     this.grades = new Array(this.savedReadGrades);
                 }
             }
+            // MARK:
+            getGradesDatas() {
+                // FOR EACH SEMESTER
+                Object.keys(this.semesters).forEach((semX) => {
+                    this.gradesDatas[semX] = {
+                        unclassified: {subjects: {}}
+                    };
+                    let semData = this.gradesDatas[semX];
+
+                    
+                    // FOR EACH UNCLASSIFIED SUBJECT IN SEMESTER
+                    const unclassified = this.getUnclassifiedSubjects(semX);
+                    if (unclassified.length > 0) {
+                        unclassified.forEach(unclassifiedSubjectName => {
+                            const grades = (this.semesters[semX]||{})[unclassifiedSubjectName]||[];
+                            const moyenne = this.moyennePonderee(grades);
+
+                            semData["unclassified"].subjects[unclassifiedSubjectName] = {
+                                grades: grades,
+                                average: moyenne,
+                                totalClassAvg: 0,
+                                totalCoef: 0,
+                                totalDisabledGrades: 0,
+                                totalSimGrades: 0,
+                                totalSimGradesCoef: 0
+                            };
+
+                            const subjectData = semData["unclassified"].subjects[unclassifiedSubjectName];
+
+
+
+                            // FOR EACH GRADES IN UNCLASSIFIED SUBJECT
+                            grades.forEach(grade => {
+                                subjectData.totalClassAvg += grade.classAvg;
+                                subjectData.totalCoef += grade.coef;
+                                subjectData.totalDisabledGrades += 0;   // CHANGE THIS LATER (add checkboxes to unclassified grades)
+                                subjectData.totalSimGrades += 0;        // CHANGE THIS LATER (add sim grades for unclassified subjects)
+                                subjectData.totalSimGradesCoef += 0;    // CHANGE THIS LATER (add sim grades for unclassified subjects)
+                            })
+                        })
+                    }
+
+
+                    // FOR EACH UE IN SEMESTER (if any)
+                    if (this.ueConfig[semX]?.__ues__) {
+                        this.ueConfig[semX].__ues__.forEach((ueName) => {
+                            const allMats = this.getAllSubjectsForUE(semX, ueName);
+                            const ueGrades = this.calculateUEGrades(semX, ueName);
+
+                            semData[ueName] = {
+                                subjects: {},
+                                average: 0,
+                                classAvg: 0,
+                                totalCoefSubjects: 0,
+                                totalCoefGrades: 0,
+                                totalCoefSimGrades: 0,
+                                totalCoefEnabledGrades: 0,
+                                totalCoefEnabledSimGrades: 0,
+                                disabledGrades: [],
+                                simulatedGrades: [],
+                                enabledSimulatedGrades: [],
+                                subjectsBelow100: [],
+                                subjectsOver100: []
+                            };
+                            
+                            let ueData = semData[ueName];
+
+                            if (this.ueConfig[semX]) {
+                                if (this.ueConfig[semX][ueName]) {
+                                    (this.ueConfig[semX][ueName]?.subjects.length > 0 ? this.ueConfig[semX][ueName].subjects : []).forEach(subject => {
+                                        ueData.subjects[subject] = {grades: []};
+                                    })
+                                }
+                            }
+                            
+                            ueGrades.forEach(n => {
+                                if (!ueData.subjects[n.subject]) {
+                                    ueData.subjects[n.subject] = {grades: []};
+                                }
+                                let subjectData = ueData.subjects[n.subject];
+                                subjectData.grades.push(n);
+                            });
+
+                            
+
+                            // FOR EACH SUBJECT IN UE
+                            allMats.forEach(subjectName => {
+
+                                let subjectData = ueData.subjects[subjectName];
+
+                                subjectData.coef = this.ueConfig[semX][ueName].coefficients[subjectName];
+                                subjectData.average = 0;
+                                subjectData.classAvg = 0;
+                                subjectData.disabledGrades = [];
+                                subjectData.simGrades = [];
+                                subjectData.disabledSimGrades = [];
+                                subjectData.totalCoef = 0;
+                                subjectData.totalCoefSimGrades = 0;
+                                
+                                // FOR EACH GRADE IN SUBJECT
+                                subjectData.grades.forEach(grade => {
+                                    subjectData.average += 100*grade.grade/grade.coef
+                                    subjectData.classAvg += 100*grade.classAvg/grade.coef;
+                                    subjectData.totalCoef += grade.coef;
+
+                                    if (grade.__sim) {
+                                        subjectData.simGrades.push(grade);
+                                        ueData.simGrades.push(grade);
+
+                                        if (this.gradeIsDisabled(grade)) {
+                                            subjectData.disabledSimGrades.push(grade);
+                                            subjectData.totalCoefSimGrades += grade.coef*subjectData.coef/100;
+
+                                            ueData.disabledSimGrades.push(grade);
+                                            ueData.totalCoefSimGrades += grade.coef*subjectData.coef/100;
+                                        }
+                                        else {
+                                            ueData.totalCoefEnabledSimGrades += grade.coef*subjectData.coef/100;
+                                        }
+                                    }
+                                    else {
+                                        if (this.gradeIsDisabled(grade)){
+                                            subjectData.disabledGrades.push(grade);
+                                            ueData.disabledGrades.push(grade);
+                                        }
+                                        else {
+                                            ueData.totalCoefEnabledGrades += grade.coef*subjectData.coef/100;
+                                        }
+                                    }
+                                })
+                                
+                                ueData.average += subjectData.average*subjectData.coef/100;
+                                ueData.totalCoefSubjects += subjectData.coef;
+                                ueData.totalCoefGrades += subjectData.totalCoef*subjectData.coef/100;
+                                ueData.totalSimGradesCoef += subjectData.totalSimGradesCoef;
+
+                                if (subjectData.totalCoef < 100) ueData.subjectsBelow100.push(subjectName);
+                                else if (subjectData.totalCoef > 100) ueData.subjectsOver100.push(subjectName);
+                            });
+                        })
+                    }
+                    
+                })
+            }
             setUeCardsAverage() {
                 document.querySelectorAll(".ue-card").forEach(ueCard => {
                     const ueHead = ueCard.querySelector(".ue-header");
@@ -426,11 +570,11 @@
                     }
                 })
             }
-            calculateUEGrades(sem, ueData, ueName){
+            calculateUEGrades(sem, ueName){
                 const grades = [];
-                const allMats = this.getAllSubjectsForUE(sem, ueData, ueName);
+                const allMats = this.getAllSubjectsForUE(sem, ueName);
                 allMats.forEach(subject=>{
-                    const pct = ueData.coefficients[subject] || 0;
+                    const pct = this.ueConfig[sem][ueName].coefficients[subject] || 0;
                     const realGrades = (this.semesters[sem]&&this.semesters[sem][subject]) ? this.semesters[sem][subject] : [];
                     const simGrades  = this.getSimGrades(sem, ueName, subject).map(n=>({ ...n, __sim:true }));
 
@@ -456,7 +600,7 @@
                 let validated = 0, total = 0;
                 Object.keys(this.ueConfig).forEach(sem => {
                     Object.keys(this.ueConfig[sem]).forEach(ueName => {
-                        const ueGrades = this.calculateUEGrades(sem, this.ueConfig[sem][ueName], ueName);
+                        const ueGrades = this.calculateUEGrades(sem, ueName);
                         const moyenne = this.moyennePonderee(ueGrades);
                         if (moyenne != 0 && ueGrades.length > 0) total++; if (moyenne >= 10) validated++;
                     });
@@ -465,9 +609,7 @@
             }
             clearIgnoredGradesForUE(sem, ueName) {
                 // Clear ignored grades only for the specified UE
-                const ueConfig = this.ueConfig[sem] || {};
-                const ueData = ueConfig[ueName];
-                const allMats = this.getAllSubjectsForUE(sem, ueData, ueName);
+                const allMats = this.getAllSubjectsForUE(sem, ueName);
 
                 // Keep ignored grades that are NOT part of this UE
                 this.ignoredGrades = (this.ignoredGrades || []).filter(ignoredId => {
@@ -578,10 +720,6 @@
                     const totalCoef =           this.gradesDatas[sem][ue].subjects[subject].totalCoef;
                     const nbDisabledGrades =    this.gradesDatas[sem][ue].subjects[subject].totalDisabledGrades;
                     const nbSimGrades =         this.gradesDatas[sem][ue].subjects[subject].totalSimGrades;
-                    // const realGrades =          this.gradesDatas[sem][ue].subjects[subject].grades.map(grade => {if(!grade.__sim) return grade});
-                    // let totalRealGradesCoef = 0; realGrades.forEach(grade => {totalRealGradesCoef += grade.coef});
-                    // let enabledRealGrades = []; realGrades.filter(n => {if (n) {return this.gradeIsDisabled(n)} else {return false}});
-                    // let totalEnabledRealGradesCoef = 0; enabledRealGrades.forEach(grade => {totalRealGradesCoef += grade.coef});
                     const simulatedGrades =     this.gradesDatas[sem][ue].subjects[subject].grades.map(grade => {if(grade.__sim) return grade});
                     let enabledSimulatedGrades = [];
                     if (nbSimGrades > 0) enabledSimulatedGrades = simulatedGrades.filter(n => {if (n) {return this.gradeIsDisabled(n)} else {return false}})
@@ -596,7 +734,7 @@
                     let advice = this.lang == `fr` ? `Toutes tes notes sont là !` : `All your grades are out!`;
                     let color = ` #10b981`;
 
-                    {
+                    { // Conditions part
                         if (totalSimGradesCoef > 0 && totalCoef-totalSimGradesCoef == 100) {
                             advice = this.lang == `fr` ? `Toutes tes notes sont là, mais tu devrais désactiver tes notes simulées` : `All your grades are out, but you should disable your simulated grades`;
                             color = bad;
@@ -1043,6 +1181,7 @@
                     semesterKeys = [this.currentSemester];
                 }
                 this.gradesDatas = {};
+                this.getGradesDatas();
                 const contentArea = document.getElementById("contentArea");
                 contentArea.innerHTML = "";
                 semesterKeys.forEach(sem => {
@@ -1051,10 +1190,6 @@
                     const moyenneSem = this.moyennePonderee([].concat(...Object.values(this.semesters[sem] || {})));
                     const avgClass = this.getAverageColor(moyenneSem);
                     const unclassified = this.getUnclassifiedSubjects(sem);
-                    if (unclassified.length > 0) {
-                        if (!this.gradesDatas[sem]) this.gradesDatas[sem] = {};
-                        this.gradesDatas[sem]["unclassified"] = {subjects:{}};
-                    }
                     section.innerHTML = `
                     <div class="semester-header" data-semester="${sem}">
                         <div class="semester-info">
@@ -1130,7 +1265,6 @@
             renderAllUECards(sem) {
                 const container = document.getElementById(`sem-content-${sem}`);
                 const ueConfig = this.ueConfig[sem] || {};
-                if(!Object.keys(this.gradesDatas).includes(sem)) this.gradesDatas[sem] = {};
 
                 let html = `<div class="ue-insert-area ${this.editMode ? `show` :""}" data-semester="${sem}" data-index="0">+</div>`;
 
@@ -1148,14 +1282,13 @@
             renderUECard(sem, ueName, insertIndex=-1) {
                 const ueConfig = this.ueConfig[sem] || {};
                 const ueData = ueConfig[ueName];
-                const ueGrades = this.calculateUEGrades(sem, ueData, ueName);
+                const ueGrades = this.calculateUEGrades(sem, ueName);
                 const includedGrades = (ueGrades || []).filter(n => this.ignoredGrades.indexOf([sem, n.subject, n.type+" "+n.date+" "+n.prof].join("\\")) == -1);
                 let weight = 0; includedGrades.forEach(grade => {weight += grade.coef/100})
                 const moyenne = includedGrades.length ? this.moyennePonderee(includedGrades) : " - ";
                 const hasSim = (this.sim[sem] && this.sim[sem][ueName] && Object.values(this.sim[sem][ueName]).some(arr=>arr.length>0)) ? true : false;
 
-                if (!Object.keys(this.gradesDatas[sem]).includes(ueName)) this.gradesDatas[sem][ueName] = {average: moyenne, subjects:{}};
-                const allMats = this.getAllSubjectsForUE(sem, ueData, ueName);
+                const allMats = this.getAllSubjectsForUE(sem, ueName);
                 allMats.forEach(m => { 
                     if (!Object.keys(this.gradesDatas[sem][ueName].subjects).includes(m)) {
                         this.gradesDatas[sem][ueName].subjects[m] = {grades: []};
@@ -1314,10 +1447,7 @@
                     if (this.ignoredGrades.indexOf([sem, subject, grade.type+" "+grade.date+" "+grade.prof].join("\\")) == -1) {
                         totalCoef += grade.coef;
                     }
-                    else
-                    {
-                        totalDisabledGrades++
-                    }
+                    else {totalDisabledGrades++}
 
                     html += `
                             <tr class="grade-row ${index == subjGrades.length-1 ? `last` : ``} ${grade.__sim ? `sim` : ``}" data-sim="${gradeIsSim}">
@@ -1580,6 +1710,10 @@
                 }; */
                 document.body.onresize = (e) => {   // grade FOR THE FUTURE: DONT RE-RENDER THE CONTENT ON RESIZE, IT MESSES UP WITH THE SELECTED subject CARDS
                     
+                    let highestWidth = 0;
+                    document.querySelectorAll(".selected-subject-card-notif-div").forEach(notifDiv => {if (highestWidth < notifDiv.clientWidth) highestWidth = notifDiv.clientWidth;})
+                    document.querySelector(".selected-subject-card-notif-container").style.left = `calc(99% - ${100 * highestWidth/document.body.clientWidth}%`;
+
                     /* if (document.body.clientWidth <= 1530) {
                         if (this.clientWidth > 1530) {
                             this.clientWidth = 1530;
@@ -1631,11 +1765,6 @@
                         }
                     } 
                     */
-
-                        
-                    let highestWidth = 0;
-                    document.querySelectorAll(".selected-subject-card-notif-div").forEach(notifDiv => {if (highestWidth < notifDiv.clientWidth) highestWidth = notifDiv.clientWidth;})
-                    document.querySelector(".selected-subject-card-notif-container").style.left = `calc(99% - ${100 * highestWidth/document.body.clientWidth}%`;
                 }; 
                
 
@@ -1734,354 +1863,354 @@
                 document.ondrop = (e) => {this.draggedElementDroppedInInputArea = true; console.log("document: drop")};
                 document.ondragend = (e) => {this.documentOnDragEndEvent(e)};
                 
-                //#region temp hide
 
-                    document.querySelector(".new-grades-notif").onclick = () => {
-                        const newGradesCard = document.querySelector(".new-grades-card");
-                        newGradesCard.scrollIntoView();
-                        newGradesCard.classList.add("myhighlight");
-                        setTimeout(() => {newGradesCard.classList.remove("myhighlight")},200)
-                    };
-                    document.getElementById("closeNewGradesNotif").onmousedown = () => {    // otherwise, clicking the close button of the notif card also clicks on the card itself (behind the button)
-                        document.querySelector(".new-grades-notif").onclick = null;
-                    };
-                    document.getElementById("closeNewGradesNotif").onclick = () => {
-                        document.querySelector(".new-grades-notif").classList.remove("on");
-                    };
-                    document.querySelector(".new-grades-mark-as-read").onclick = () => {
-                        this.newGrades = [];
-                        this.savedReadGrades = [];
-                        this.grades.forEach(e => {this.savedReadGrades.push(e)})
-                        localStorage.setItem("ECAM_DASHBOARD_SAVED_READ_GRADES", JSON.stringify(this.savedReadGrades))
 
-                        if (document.querySelector(".new-grades-card").children.length > 1) {document.querySelector(".new-grades-card").children[1].remove()}
-                        document.querySelector(".new-grades-card-title").innerHTML = this.lang == "fr" ? `Pas de nouvelle grade` : `No new grade`;
-                        document.querySelector(".new-grades-mark-as-read").parentElement.disabled = true;
-                        document.querySelector(".new-grades-mark-as-read").parentElement.hidden = true;
-                        document.querySelector(".new-grades-notif").classList.remove("on");
+                document.querySelector(".new-grades-notif").onclick = () => {
+                    const newGradesCard = document.querySelector(".new-grades-card");
+                    newGradesCard.scrollIntoView();
+                    newGradesCard.classList.add("myhighlight");
+                    setTimeout(() => {newGradesCard.classList.remove("myhighlight")},200)
+                };
+                document.getElementById("closeNewGradesNotif").onmousedown = () => {    // otherwise, clicking the close button of the notif card also clicks on the card itself (behind the button)
+                    document.querySelector(".new-grades-notif").onclick = null;
+                };
+                document.getElementById("closeNewGradesNotif").onclick = () => {
+                    document.querySelector(".new-grades-notif").classList.remove("on");
+                };
+                document.querySelector(".new-grades-mark-as-read").onclick = () => {
+                    this.newGrades = [];
+                    this.savedReadGrades = [];
+                    this.grades.forEach(e => {this.savedReadGrades.push(e)})
+                    localStorage.setItem("ECAM_DASHBOARD_SAVED_READ_GRADES", JSON.stringify(this.savedReadGrades))
 
-                        this.renderRecentGrades()
-                        this.attachEventListeners()
-                    };
-                    document.querySelectorAll(".new-grades-subject-card").forEach(card => {   // Scroll to the corresponding subject/grade on which the user clicked
-                        card.onclick = e => {
-                            this.currentSemester = e.target.dataset.semester;
+                    if (document.querySelector(".new-grades-card").children.length > 1) {document.querySelector(".new-grades-card").children[1].remove()}
+                    document.querySelector(".new-grades-card-title").innerHTML = this.lang == "fr" ? `Pas de nouvelle grade` : `No new grade`;
+                    document.querySelector(".new-grades-mark-as-read").parentElement.disabled = true;
+                    document.querySelector(".new-grades-mark-as-read").parentElement.hidden = true;
+                    document.querySelector(".new-grades-notif").classList.remove("on");
+
+                    this.renderRecentGrades()
+                    this.attachEventListeners()
+                };
+                document.querySelectorAll(".new-grades-subject-card").forEach(card => {   // Scroll to the corresponding subject/grade on which the user clicked
+                    card.onclick = e => {
+                        this.currentSemester = e.target.dataset.semester;
+                        document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                        document.getElementById('filter-tab-semester-'+this.currentSemester).classList.add('active');
+                        this.renderContent(false);
+                        localStorage.setItem("ECAM_DASHBOARD_DEFAULT_SEMESTER", this.currentSemester);
+
+                        const targetElem = document.getElementById(`subject-card-semester-${e.target.dataset.semester}-subject-${e.target.dataset.subject}`);
+                        targetElem.scrollIntoView({block: "center"});
+                        targetElem.onscrollend = ((elem) => {
+                            elem.classList.add("scroll-to");
+                            elem.onanimationend = () => {targetElem.classList.remove("scroll-to")}
+                        })(targetElem);
+                        
+                    }
+                });
+
+                
+                // Filtres semester
+                document.querySelectorAll('.filter-tab').forEach(tab => {
+                    tab.onclick = (e) => {
+                        if (!e.target.classList.contains('active'))
+                        {
                             document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-                            document.getElementById('filter-tab-semester-'+this.currentSemester).classList.add('active');
-                            this.renderContent(false);
-                            localStorage.setItem("ECAM_DASHBOARD_DEFAULT_SEMESTER", this.currentSemester);
-
-                            const targetElem = document.getElementById(`subject-card-semester-${e.target.dataset.semester}-subject-${e.target.dataset.subject}`);
-                            targetElem.scrollIntoView({block: "center"});
-                            targetElem.onscrollend = ((elem) => {
-                                elem.classList.add("scroll-to");
-                                elem.onanimationend = () => {targetElem.classList.remove("scroll-to")}
-                            })(targetElem);
-                            
-                        }
-                    });
-
-                    
-                    // Filtres semester
-                    document.querySelectorAll('.filter-tab').forEach(tab => {
-                        tab.onclick = (e) => {
-                            if (!e.target.classList.contains('active'))
-                            {
-                                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-                                e.target.classList.add('active');
-                                this.currentSemester = e.target.dataset.filter;
-                                this.renderContent();
-                                this.attachEventListeners();
-                                localStorage.setItem("ECAM_DASHBOARD_DEFAULT_SEMESTER", this.currentSemester);
-                            }
-                        };
-                    });
-
-                    // Toggle view mode
-                    document.querySelectorAll('.view-btn').forEach(btn => {
-                        btn.onclick = (e) => {
-                            document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
                             e.target.classList.add('active');
-                            this.viewMode = e.target.dataset.view;
-                            localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
+                            this.currentSemester = e.target.dataset.filter;
                             this.renderContent();
-                        };
-                    });
-
-                    document.querySelectorAll('.subject-coef-input-box').forEach(inputBox => {
-                        inputBox.onchange = e => {
-                            const sem = e.target.dataset.semester;
-                            const ueName = e.target.dataset.ue;
-                            const subject = e.target.dataset.subject;
-                            const newCoef = e.target.value;
-                            this.ueConfig[sem][ueName].coefficients[subject] = newCoef;
-                            this.gradesDatas[sem][ueName].subjects[subject].coef = newCoef;
-                            this.saveConfig();
-                            this.renderContent(false);
                             this.attachEventListeners();
-                        };
-                    })
-
-                    
-                    // const dropAreaAdd = document.querySelector(".drop-subject-card-to-create-eu");
-                    // const dropAreaRemove = document.querySelector(".drop-subject-card-to-remove-from-eu");
-                    // const ueInsertAreas = document.querySelectorAll(".ue-insert-area");
-                    
-                    document.querySelectorAll(".drag-icon").forEach(dragIcon => {
-                        dragIcon.onclick = (e) => {
-                            this.dragIconOnClickEvent(e, dragIcon)
-                        };
-                    });
-                    document.querySelectorAll(".tick-icon").forEach(tick => {
-                        tick.onclick = (e) => {
-                            this.tickIconOnClickEvent(e, tick)
-                        };
-                    });
-
-
-                    document.querySelectorAll(".add-a-subject-card").forEach(addDiv => {
-                        addDiv.onmouseenter = (e) => {
-                            addDiv.querySelector(".add-a-subject-card-plus.left").style.transform =  "rotate(-90deg)";
-                            addDiv.querySelector(".add-a-subject-card-plus.right").style.transform = "rotate(90deg)";
-                        }
-                        addDiv.onmouseleave = (e) => {
-                            addDiv.querySelector(".add-a-subject-card-plus.left").style.transform =  "";
-                            addDiv.querySelector(".add-a-subject-card-plus.right").style.transform = "";
-                        }
-                        addDiv.onclick = (e) => {
-                            e.preventDefault();
-                            const addDivClicked = e.target.closest(".add-a-subject-card");
-                            const sem = addDivClicked.dataset.sem;
-                            const ue =  addDivClicked.dataset.ue;
-                            const ueCard = document.getElementById(`ue-card-${ue}-in-semester-${sem}`);
-                            const ueContent = ueCard.querySelector(".ue-details");
-
-                            let newMatName = `${this.lang == "fr" ? "Nouvelle matière" : "New subject"} 1`; let count = 1;
-                            while (this.gradesDatas[sem][ue].subjects[newMatName]) {
-                                count++; newMatName = `${this.lang == "fr" ? "Nouvelle matière" : "New subject"} ${count}`;
-                            }
-
-                            this.ueConfig   [sem][ue].subjects.push(newMatName);
-                            this.ueConfig   [sem][ue].coefficients [newMatName] = 0;
-                            this.ueConfig   [sem][ue].custom       [newMatName] = true;
-                            this.gradesDatas[sem][ue].subjects     [newMatName] = {grades: [], custom: true};
-
-                            const ueData = this.ueConfig[sem][ue];
-                            if (this.viewMode == "detailed" || !ueCard.classList.contains("compact")) {
-                                ueContent.innerHTML = this.renderAllMatCardDetailed(ueData, sem, ue);
-                            }
-                            else {
-                                ueContent.innerHTML = this.renderAllMatCardCompact(ueData, sem, ue);
-                            }
-
-                            this.attachEventListeners()
-                            this.setGradesTableTotalCoef();
-                            this.saveConfig()
-                        }
-                    })
-
-
-                    document.querySelectorAll(".subject-name.input").forEach(input => {
-                        input.onmouseover = (e) => {e.preventDefault()};
-                        input.onchange = (e) => {
-                            const newMatName = e.target.value;
-                            const matCard = e.target.parentElement.parentElement.parentElement.parentElement.parentElement;
-                            const ueContent = matCard.parentElement;
-                            const sem = matCard.dataset.semester;
-                            const ue = matCard.dataset.ue;
-                            const oldMat = matCard.dataset.subject;
-                            let diffName = true;
-                            this.ueConfig[sem][ue].subjects.forEach(_mat => {if (_mat == newMatName) diffName = false});
-                                
-                            const oldMatIndex = this.ueConfig[sem][ue].subjects.indexOf(oldMat);
-                            this.ueConfig[sem][ue].subjects.splice(oldMatIndex, 1);
-                            const pct = this.ueConfig[sem][ue].coefficients[oldMat];
-                            const isCustom = this.ueConfig[sem][ue].custom[oldMat];
-                            const matDatas = this.gradesDatas[sem][ue].subjects[oldMat];
-
-                            delete this.ueConfig[sem][ue].coefficients[oldMat];
-                            delete this.ueConfig[sem][ue].custom[oldMat];
-                            delete this.gradesDatas[sem][ue].subjects[oldMat];
-                            
-                            if (diffName) {
-                                this.ueConfig   [sem][ue].subjects.push(newMatName);
-                                this.ueConfig   [sem][ue].coefficients [newMatName] = pct;
-                                this.ueConfig   [sem][ue].custom       [newMatName] = false;
-                                this.gradesDatas[sem][ue].subjects     [newMatName] = matDatas;
-                            }
-                            
-                            const ueData = this.ueConfig[sem][ue];
-                            if (this.viewMode == "detailed" || !ueCard.classList.contains("compact")) {
-                                ueContent.innerHTML = this.renderAllMatCardDetailed(ueData, sem, ue);
-                            }
-                            else {
-                                ueContent.innerHTML = this.renderAllMatCardCompact(ueData, sem, ue);
-                            }
-
-                            this.attachEventListeners()
-                            this.setGradesTableTotalCoef();
-                            this.saveConfig()
-                        }
-                    })
-
-                    document.querySelector(".modules-content").querySelectorAll(".ue-delete-btn").forEach(btn => {
-                        btn.onclick = e => {
-                            const sem = e.target.dataset.semester;
-                            const ueName = e.target.dataset.ue;
-                            
-                            const ueIndex = this.ueConfig[sem].__ues__.indexOf(ueName);
-
-                            this.ueConfig[sem].__ues__.splice(ueIndex, 1);
-                            delete this.ueConfig[sem][ueName];
-
-                            if (this.ueConfig[sem] == {}) {delete this.ueConfig[sem]}
-
-                            this.saveConfig()
-                            this.renderContent()
-                            this.attachEventListeners();
-                        }
-                    })
-
-                    
-
-                    // Attach on-click event action for the simulated grade addition button
-                    document.querySelectorAll('.sim-add-btn').forEach(btn=>{
-                        btn.onclick = (e)=>{
-                            const ueName = e.target.dataset.uen;
-                            const semX = e.target.dataset.sem;
-                            const subj = e.target.dataset.subj;
-                            this.ensureSimPath(semX, ueName, subj);
-                            const id = this.sim[semX][ueName][subj].length;
-                            const typeInp = document.querySelector(`.grade-simulee-input.sim-inp-type[data-sem="${semX}"][data-subj="${subj}"]`);
-                            const gradeInp = document.querySelector(`.grade-simulee-input.sim-inp-grade[data-sem="${semX}"][data-subj="${subj}"]`);
-                            const coefInp = document.querySelector(`.grade-simulee-input.sim-inp-coef[data-sem="${semX}"][data-subj="${subj}"]`);
-                            const dateInp = document.querySelector(`.grade-simulee-input.sim-inp-date[data-sem="${semX}"][data-subj="${subj}"]`);
-                            const type = typeInp?.value||'';
-                            const grade = parseFloat(gradeInp?.value||'');
-                            const coef = parseFloat(coefInp?.value||'');
-                            const date = dateInp?.value||'';
-                            if(isNaN(grade) || isNaN(coef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
-                            this.ensureSimPath(semX, ueName, subj);
-                            this.sim[semX][ueName][subj].push({
-                                grade, 
-                                coef,
-                                type: type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`,
-                                date: date||new Date().toLocaleDateString(),
-                                prof: '—',
-                                subject: subj,
-                                semester: semX,
-                                libelle: `[SIM] ${subj} - ${type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`}`,
-                                __sim: true,
-                                id
-                            });
-                            this.saveSim();
-                            this.renderContent();
-                        }
-                    });
-
-                    // Attach on-change event action for simulated grades type/grade/coef/date fields
-                    document.querySelectorAll(".grade-simulee-input-edit").forEach(input => {
-                        input.onchange = e => {
-                            const ueName = e.target.dataset.uen;
-                            const semX = e.target.dataset.sem;
-                            const subj = e.target.dataset.subj;
-                            const id = e.target.dataset.id;
-                            let gradeRow = e.target.parentElement.parentElement;
-                            // const typeInp = document.querySelector(`.grade-simulee-input-edit.sim-inp-type[data-sem="${semX}"][data-subj="${subj}"]`);
-                            const typeInp = gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-type`)
-                            const gradeInp = gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-grade`);
-                            const coefInp = gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-coef`);
-                            const dateInp = gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-date`);
-                            const type = typeInp?.value||'';
-                            const newGrade = parseFloat(gradeInp?.value||'');
-                            const newCoef = parseFloat(coefInp?.value||'');
-                            const date = dateInp?.value||'';
-                            if(isNaN(newGrade) || isNaN(newCoef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
-                            this.sim[semX][ueName][subj].forEach((grade, index) => {
-                                if (grade.id == id) {
-                                    this.sim[semX][ueName][subj][index] = {
-                                        grade: newGrade, 
-                                        coef: newCoef,
-                                        type: type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`,
-                                        date: date||new Date().toLocaleDateString(),
-                                        prof: '—',
-                                        subject: subj,
-                                        semester: semX,
-                                        libelle: `[SIM] ${subj} - ${type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`}`,
-                                        __sim: true,
-                                        id
-                                    }
-                                }
-                            });
-
-                            this.saveSim();
-                            this.renderContent(false);
-                        }
-                    })
-
-                    // Attach on-click event action for the simulated grades' deletion button
-                    document.querySelectorAll('.sim-del-btn').forEach(btn=>{
-                        btn.onclick = (e) => {
-                            const semX = e.target.dataset.sem;
-                            const ueName = e.target.dataset.uen;
-                            const subj = e.target.dataset.subj;
-                            const type = e.target.dataset.type;
-                            this.sim[semX][ueName][subj].splice(this.sim[semX][ueName][subj].indexOf(type), 1);
-                            this.deleteUnusedSimPath(semX, ueName, subj);
-                            this.saveSim();
-                            this.renderContent(true);
-                        }
-                    })
-
-                    
-                    document.querySelector(".unclassified-content").querySelectorAll(".grades-table").forEach(table => {
-                        table.onmouseenter = () => {
-                            if (this.editMode) document.querySelectorAll(".subject-card.unclassified").forEach(card => {card.draggable = false;})
-                        }
-                        table.onmouseleave = () => {
-                            if (this.editMode) document.querySelectorAll(".subject-card.unclassified").forEach(card => {card.draggable = true;})
-                        }
-                    })
-
-
-                    // Change to English
-                    document.getElementById('en-lang-btn').onclick = () => {
-                        if (this.lang == "fr") {
-                            this.lang = "en";
-                            localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
-                            document.getElementById('fr-lang-btn').classList.remove('active')
-                            document.getElementById('en-lang-btn').classList.add('active')
-                            this.languageSensitiveContent();
+                            localStorage.setItem("ECAM_DASHBOARD_DEFAULT_SEMESTER", this.currentSemester);
                         }
                     };
+                });
 
-                    // Change to French
-                    document.getElementById('fr-lang-btn').onclick = () => {
-                        if (this.lang == "en") {
-                            this.lang = "fr";
-                            localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
-                            document.getElementById('fr-lang-btn').classList.add('active')
-                            document.getElementById('en-lang-btn').classList.remove('active')
-                            this.languageSensitiveContent();
-                        }
-                    };
-
-                    // Import
-                    document.getElementById('importBtn').onclick = () => this.importData();
-
-                    // Edit mode
-                    document.getElementById('editModeBtn').onclick = () => {
-                        this.editMode = !this.editMode;
+                // Toggle view mode
+                document.querySelectorAll('.view-btn').forEach(btn => {
+                    btn.onclick = (e) => {
+                        document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.viewMode = e.target.dataset.view;
+                        localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
                         this.renderContent();
+                    };
+                });
+
+                document.querySelectorAll('.subject-coef-input-box').forEach(inputBox => {
+                    inputBox.onchange = e => {
+                        const sem = e.target.dataset.semester;
+                        const ueName = e.target.dataset.ue;
+                        const subject = e.target.dataset.subject;
+                        const newCoef = e.target.value;
+                        this.ueConfig[sem][ueName].coefficients[subject] = newCoef;
+                        this.gradesDatas[sem][ueName].subjects[subject].coef = newCoef;
+                        this.saveConfig();
+                        this.renderContent(false);
                         this.attachEventListeners();
                     };
+                })
 
-                    // Export
-                    document.getElementById('exportBtn').onclick = () => this.exportData();
+                
+                // const dropAreaAdd = document.querySelector(".drop-subject-card-to-create-eu");
+                // const dropAreaRemove = document.querySelector(".drop-subject-card-to-remove-from-eu");
+                // const ueInsertAreas = document.querySelectorAll(".ue-insert-area");
+                
+                document.querySelectorAll(".drag-icon").forEach(dragIcon => {
+                    dragIcon.onclick = (e) => {
+                        this.dragIconOnClickEvent(e, dragIcon)
+                    };
+                });
+                document.querySelectorAll(".tick-icon").forEach(tick => {
+                    tick.onclick = (e) => {
+                        this.tickIconOnClickEvent(e, tick)
+                    };
+                });
 
-                    if (this.editMode) {this.attachOnDragEventListeners();} else {this.detachOnDragEventListeners();}
 
-                //#endregion
+                document.querySelectorAll(".add-a-subject-card").forEach(addDiv => {
+                    addDiv.onmouseenter = (e) => {
+                        addDiv.querySelector(".add-a-subject-card-plus.left").style.transform =  "rotate(-90deg)";
+                        addDiv.querySelector(".add-a-subject-card-plus.right").style.transform = "rotate(90deg)";
+                    }
+                    addDiv.onmouseleave = (e) => {
+                        addDiv.querySelector(".add-a-subject-card-plus.left").style.transform =  "";
+                        addDiv.querySelector(".add-a-subject-card-plus.right").style.transform = "";
+                    }
+                    addDiv.onclick = (e) => {
+                        e.preventDefault();
+                        const addDivClicked = e.target.closest(".add-a-subject-card");
+                        const sem = addDivClicked.dataset.sem;
+                        const ue =  addDivClicked.dataset.ue;
+                        const ueCard = document.getElementById(`ue-card-${ue}-in-semester-${sem}`);
+                        const ueContent = ueCard.querySelector(".ue-details");
+
+                        let newSubjName = `${this.lang == "fr" ? "Nouvelle matière" : "New subject"} 1`; let count = 1;
+                        while (this.gradesDatas[sem][ue].subjects[newSubjName]) {
+                            count++; newSubjName = `${this.lang == "fr" ? "Nouvelle matière" : "New subject"} ${count}`;
+                        }
+
+                        this.ueConfig   [sem][ue].subjects.push(newSubjName);
+                        this.ueConfig   [sem][ue].coefficients [newSubjName] = 0;
+                        this.ueConfig   [sem][ue].custom       [newSubjName] = true;
+                        this.gradesDatas[sem][ue].subjects     [newSubjName] = {grades: [], custom: true};
+
+                        const ueData = this.ueConfig[sem][ue];
+                        if (this.viewMode == "detailed" || !ueCard.classList.contains("compact")) {
+                            ueContent.innerHTML = this.renderAllMatCardDetailed(ueData, sem, ue);
+                        }
+                        else {
+                            ueContent.innerHTML = this.renderAllMatCardCompact(ueData, sem, ue);
+                        }
+
+                        this.attachEventListeners()
+                        this.setGradesTableTotalCoef();
+                        this.saveConfig()
+                    }
+                })
+
+
+                document.querySelectorAll(".subject-name.input").forEach(input => {
+                    input.onmouseover = (e) => {e.preventDefault()};
+                    input.onchange = (e) => {
+                        const newSubjName = e.target.value;
+                        const matCard = e.target.parentElement.parentElement.parentElement.parentElement.parentElement;
+                        const ueContent = matCard.parentElement;
+                        const sem = matCard.dataset.semester;
+                        const ue = matCard.dataset.ue;
+                        const oldSubjName = matCard.dataset.subject;
+                        let diffName = true;
+                        this.ueConfig[sem][ue].subjects.forEach(_mat => {if (_mat == newSubjName) diffName = false});
+                            
+
+                        if (diffName) {
+                            const oldMatIndex = this.ueConfig[sem][ue].subjects.indexOf(oldSubjName);
+                            this.ueConfig[sem][ue].subjects.splice(oldMatIndex, 1);
+                            const pct = this.ueConfig[sem][ue].coefficients[oldSubjName];
+                            const isCustom = this.ueConfig[sem][ue].custom[oldSubjName];
+                            const matDatas = this.gradesDatas[sem][ue].subjects[oldSubjName];
+
+                            delete this.ueConfig[sem][ue].coefficients[oldSubjName];
+                            delete this.ueConfig[sem][ue].custom[oldSubjName];
+                            delete this.gradesDatas[sem][ue].subjects[oldSubjName];
+
+                            this.ueConfig   [sem][ue].subjects.push(newSubjName);
+                            this.ueConfig   [sem][ue].coefficients [newSubjName] = pct;
+                            this.ueConfig   [sem][ue].custom       [newSubjName] = false;
+                            this.gradesDatas[sem][ue].subjects     [newSubjName] = matDatas;
+                        }
+                        
+                        const ueData = this.ueConfig[sem][ue];
+                        if (this.viewMode == "detailed" || !ueCard.classList.contains("compact")) {
+                            ueContent.innerHTML = this.renderAllMatCardDetailed(ueData, sem, ue);
+                        }
+                        else {
+                            ueContent.innerHTML = this.renderAllMatCardCompact(ueData, sem, ue);
+                        }
+
+                        this.attachEventListeners()
+                        this.setGradesTableTotalCoef();
+                        this.saveConfig()
+                    }
+                })
+
+                document.querySelector(".modules-content").querySelectorAll(".ue-delete-btn").forEach(btn => {
+                    btn.onclick = e => {
+                        const sem = e.target.dataset.semester;
+                        const ueName = e.target.dataset.ue;
+                        
+                        const ueIndex = this.ueConfig[sem].__ues__.indexOf(ueName);
+
+                        this.ueConfig[sem].__ues__.splice(ueIndex, 1);
+                        delete this.ueConfig[sem][ueName];
+
+                        if (this.ueConfig[sem] == {}) {delete this.ueConfig[sem]}
+
+                        this.saveConfig()
+                        this.renderContent()
+                        this.attachEventListeners();
+                    }
+                })
+
+                
+
+                // Attach on-click event action for the simulated grade addition button
+                document.querySelectorAll('.sim-add-btn').forEach(btn=>{
+                    btn.onclick = (e)=>{
+                        const ueName = e.target.dataset.uen;
+                        const semX = e.target.dataset.sem;
+                        const subj = e.target.dataset.subj;
+                        this.ensureSimPath(semX, ueName, subj);
+                        const id = this.sim[semX][ueName][subj].length;
+                        const typeInp = document.querySelector(`.grade-simulee-input.sim-inp-type[data-sem="${semX}"][data-subj="${subj}"]`);
+                        const gradeInp = document.querySelector(`.grade-simulee-input.sim-inp-grade[data-sem="${semX}"][data-subj="${subj}"]`);
+                        const coefInp = document.querySelector(`.grade-simulee-input.sim-inp-coef[data-sem="${semX}"][data-subj="${subj}"]`);
+                        const dateInp = document.querySelector(`.grade-simulee-input.sim-inp-date[data-sem="${semX}"][data-subj="${subj}"]`);
+                        const type = typeInp?.value||'';
+                        const grade = parseFloat(gradeInp?.value||'');
+                        const coef = parseFloat(coefInp?.value||'');
+                        const date = dateInp?.value||'';
+                        if(isNaN(grade) || isNaN(coef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
+                        this.ensureSimPath(semX, ueName, subj);
+                        this.sim[semX][ueName][subj].push({
+                            grade, 
+                            coef,
+                            type: type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`,
+                            date: date||new Date().toLocaleDateString(),
+                            prof: '—',
+                            subject: subj,
+                            semester: semX,
+                            libelle: `[SIM] ${subj} - ${type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`}`,
+                            __sim: true,
+                            id
+                        });
+                        this.saveSim();
+                        this.renderContent();
+                    }
+                });
+
+                // Attach on-change event action for simulated grades type/grade/coef/date fields
+                document.querySelectorAll(".grade-simulee-input-edit").forEach(input => {
+                    input.onchange = e => {
+                        const ueName = e.target.dataset.uen;
+                        const semX = e.target.dataset.sem;
+                        const subj = e.target.dataset.subj;
+                        const id = e.target.dataset.id;
+                        let gradeRow = e.target.parentElement.parentElement;
+                        // const typeInp = document.querySelector(`.grade-simulee-input-edit.sim-inp-type[data-sem="${semX}"][data-subj="${subj}"]`);
+                        const typeInp = gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-type`)
+                        const gradeInp = gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-grade`);
+                        const coefInp = gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-coef`);
+                        const dateInp = gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-date`);
+                        const type = typeInp?.value||'';
+                        const newGrade = parseFloat(gradeInp?.value||'');
+                        const newCoef = parseFloat(coefInp?.value||'');
+                        const date = dateInp?.value||'';
+                        if(isNaN(newGrade) || isNaN(newCoef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
+                        this.sim[semX][ueName][subj].forEach((grade, index) => {
+                            if (grade.id == id) {
+                                this.sim[semX][ueName][subj][index] = {
+                                    grade: newGrade, 
+                                    coef: newCoef,
+                                    type: type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`,
+                                    date: date||new Date().toLocaleDateString(),
+                                    prof: '—',
+                                    subject: subj,
+                                    semester: semX,
+                                    libelle: `[SIM] ${subj} - ${type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`}`,
+                                    __sim: true,
+                                    id
+                                }
+                            }
+                        });
+
+                        this.saveSim();
+                        this.renderContent(false);
+                    }
+                })
+
+                // Attach on-click event action for the simulated grades' deletion button
+                document.querySelectorAll('.sim-del-btn').forEach(btn=>{
+                    btn.onclick = (e) => {
+                        const semX = e.target.dataset.sem;
+                        const ueName = e.target.dataset.uen;
+                        const subj = e.target.dataset.subj;
+                        const type = e.target.dataset.type;
+                        this.sim[semX][ueName][subj].splice(this.sim[semX][ueName][subj].indexOf(type), 1);
+                        this.deleteUnusedSimPath(semX, ueName, subj);
+                        this.saveSim();
+                        this.renderContent(true);
+                    }
+                })
+
+                
+                document.querySelector(".unclassified-content").querySelectorAll(".grades-table").forEach(table => {
+                    table.onmouseenter = () => {
+                        if (this.editMode) document.querySelectorAll(".subject-card.unclassified").forEach(card => {card.draggable = false;})
+                    }
+                    table.onmouseleave = () => {
+                        if (this.editMode) document.querySelectorAll(".subject-card.unclassified").forEach(card => {card.draggable = true;})
+                    }
+                })
+
+
+                // Change to English
+                document.getElementById('en-lang-btn').onclick = () => {
+                    if (this.lang == "fr") {
+                        this.lang = "en";
+                        localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
+                        document.getElementById('fr-lang-btn').classList.remove('active')
+                        document.getElementById('en-lang-btn').classList.add('active')
+                        this.languageSensitiveContent();
+                    }
+                };
+
+                // Change to French
+                document.getElementById('fr-lang-btn').onclick = () => {
+                    if (this.lang == "en") {
+                        this.lang = "fr";
+                        localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
+                        document.getElementById('fr-lang-btn').classList.add('active')
+                        document.getElementById('en-lang-btn').classList.remove('active')
+                        this.languageSensitiveContent();
+                    }
+                };
+
+                // Import
+                document.getElementById('importBtn').onclick = () => this.importData();
+
+                // Edit mode
+                document.getElementById('editModeBtn').onclick = () => {
+                    this.editMode = !this.editMode;
+                    this.renderContent();
+                    this.attachEventListeners();
+                };
+
+                // Export
+                document.getElementById('exportBtn').onclick = () => this.exportData();
+
+                if (this.editMode) {this.attachOnDragEventListeners();} else {this.detachOnDragEventListeners();}
+
             }
 
             documentOnDragEndEvent(e) {
@@ -2845,10 +2974,10 @@
                     }
                 }
                 else {
-                    const newMatName = this.lang == "fr" ? "Nouvelle matière" : "New subject";
-                    newUeConfig.subjects.push(newMatName);
-                    newUeConfig.coefficients[newMatName] = 100;
-                    newUeConfig.custom[newMatName] = true;
+                    const newSubjName = this.lang == "fr" ? "Nouvelle matière" : "New subject";
+                    newUeConfig.subjects.push(newSubjName);
+                    newUeConfig.coefficients[newSubjName] = 100;
+                    newUeConfig.custom[newSubjName] = true;
                 }
 
                 this.ueConfig[sem][newUeName] = newUeConfig;
@@ -3196,7 +3325,7 @@
                     if (!data.semesters[sem]) data.semesters[sem] = { ues: {} };
                     if (this.ueConfig[sem]) {
                         Object.keys(this.ueConfig[sem]).forEach(ue => {
-                            // const ueGrades = this.calculateUEGrades(sem, this.ueConfig[sem][ue], ue);
+                            // const ueGrades = this.calculateUEGrades(sem, ue);
                             data.semesters[sem].ues[ue] = {
                                 subjects: this.ueConfig[sem][ue].subjects,
                                 coefficients: this.ueConfig[sem][ue].coefficients,
