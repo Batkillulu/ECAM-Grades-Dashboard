@@ -404,7 +404,7 @@
                     this.grades = new Array(this.savedReadGrades);
                 }
             }
-            // MARK:
+            // MARK: getGradesDatas
             getGradesDatas() {
                 // FOR EACH SEMESTER
                 Object.keys(this.semesters).forEach((semX) => {
@@ -419,29 +419,52 @@
                     if (unclassified.length > 0) {
                         unclassified.forEach(unclassifiedSubjectName => {
                             const grades = (this.semesters[semX]||{})[unclassifiedSubjectName]||[];
-                            const moyenne = this.moyennePonderee(grades);
 
-                            semData["unclassified"].subjects[unclassifiedSubjectName] = {
-                                grades: grades,
-                                average: moyenne,
-                                totalClassAvg: 0,
-                                totalCoef: 0,
-                                totalDisabledGrades: 0,
-                                totalSimGrades: 0,
-                                totalSimGradesCoef: 0
-                            };
+                            semData["unclassified"].subjects[unclassifiedSubjectName] = {};
 
-                            let subjectData = semData["unclassified"].subjects[unclassifiedSubjectName];
+                            let unclassifiedSubjectData = semData["unclassified"].subjects[unclassifiedSubjectName];
+                            
+                            unclassifiedSubjectData.grades = grades;
+                            unclassifiedSubjectData.disabledGrades = [];
+                            unclassifiedSubjectData.simGrades = [];
+                            unclassifiedSubjectData.disabledSimGrades = [];
+                            unclassifiedSubjectData.average = 0;
+                            unclassifiedSubjectData.classAvg = 0;
+                            unclassifiedSubjectData.totalCoef = 0;
+                            unclassifiedSubjectData.totalCoefSimGrades = 0;
+                            unclassifiedSubjectData.totalCoefEnabled = 0;
+                            unclassifiedSubjectData.totalCoefEnabledSimGrades = 0;
 
 
 
                             // FOR EACH GRADES IN UNCLASSIFIED SUBJECT
                             grades.forEach(grade => {
-                                subjectData.totalClassAvg += grade.classAvg;
-                                subjectData.totalCoef += grade.coef;
-                                subjectData.totalDisabledGrades += 0;   // CHANGE THIS LATER (add checkboxes to unclassified grades)
-                                subjectData.totalSimGrades += 0;        // CHANGE THIS LATER (add sim grades for unclassified subjects)
-                                subjectData.totalSimGradesCoef += 0;    // CHANGE THIS LATER (add sim grades for unclassified subjects)
+                                unclassifiedSubjectData.totalCoef += grade.coef;
+
+                                if (grade.__sim) {
+                                    unclassifiedSubjectData.simGrades.push(grade);
+
+                                    if (!this.gradeIsDisabled(grade)) {
+                                        unclassifiedSubjectData.average += grade.grade*grade.coef/100;
+                                        unclassifiedSubjectData.totalSimGrades.push(grade);                                 // CHANGE THIS LATER (add sim grades for unclassified subjects)
+                                        unclassifiedSubjectData.totalCoefEnabledSimGrades += grade.grade*grade.coef/100;    // CHANGE THIS LATER (add sim grades for unclassified subjects)
+                                    }
+                                    else {
+                                        unclassifiedSubjectData.disabledSimGrades.push(grade);
+                                        unclassifiedSubjectData.totalCoefSimGrades += grade.coef;                           // CHANGE THIS LATER (add sim grades for unclassified subjects)
+                                    }
+                                }
+                                else {
+                                    if (!this.gradeIsDisabled(grade)) {
+                                        unclassifiedSubjectData.average += grade.grade*grade.coef/100;
+                                        unclassifiedSubjectData.classAvg += grade.classAvg*grade.coef/100;
+                                        unclassifiedSubjectData.totalCoefEnabled += grade.coef;
+                                    }
+                                    else {
+                                        unclassifiedSubjectData.disabledGrades.push(grade);                                 // CHANGE THIS LATER (add checkboxes to unclassified grades)
+                                    }
+                                }
+                                
                             })
                         })
                     }
@@ -453,23 +476,24 @@
                             const allMats = this.getAllSubjectsForUE(semX, ueName);
                             const ueGrades = this.calculateUEGrades(semX, ueName);
 
-                            semData[ueName] = {
-                                subjects: {},
-                                average: 0,
-                                classAvg: 0,
-                                totalCoefSubjects: 0,
-                                totalCoefGrades: 0,
-                                totalCoefSimGrades: 0,
-                                totalCoefEnabledGrades: 0,
-                                totalCoefEnabledSimGrades: 0,
-                                disabledGrades: [],
-                                simGrades: [],
-                                enabledSimulatedGrades: [],
-                                subjectsBelow100: [],
-                                subjectsOver100: []
-                            };
+                            semData[ueName] = {};
                             
                             let ueData = semData[ueName];
+                            
+                            ueData.subjects = {};
+                            ueData.average = 0;
+                            ueData.classAvg = 0;
+                            ueData.totalCoefSubjects = 0;
+                            ueData.totalCoefGrades = 0;
+                            ueData.totalCoefSimGrades = 0;
+                            ueData.totalCoefEnabled = 0;
+                            ueData.totalCoefEnabledGrades = 0;
+                            ueData.totalCoefEnabledSimGrades = 0;
+                            ueData.disabledGrades = [];
+                            ueData.simGrades = [];
+                            ueData.disabledSimGrades = [];
+                            ueData.subjectsBelow100 = [];
+                            ueData.subjectsOver100 = [];
 
                             if (this.ueConfig[semX]) {
                                 if (this.ueConfig[semX][ueName]) {
@@ -502,53 +526,76 @@
                                 subjectData.simGrades = [];
                                 subjectData.disabledSimGrades = [];
                                 subjectData.totalCoef = 0;
+                                subjectData.totalCoefGrades = 0;
                                 subjectData.totalCoefSimGrades = 0;
+                                subjectData.totalCoefEnabled = 0;
+                                subjectData.totalCoefEnabledGrades = 0;
+                                subjectData.totalCoefEnabledSimGrades = 0;
                                 
                                 // FOR EACH GRADE IN SUBJECT
                                 subjectData.grades.forEach(grade => {
-                                    subjectData.average += grade.grade*grade.coef/100;
-                                    subjectData.classAvg += grade.classAvg*grade.coef/100;
                                     subjectData.totalCoef += grade.coef;
 
                                     if (grade.__sim) {
                                         subjectData.simGrades.push(grade);
+                                        subjectData.totalCoefSimGrades += grade.coef;
 
                                         ueData.simGrades.push(grade);
+                                        ueData.totalCoefSimGrades += grade.coef*subjectData.coef/100;
 
-                                        if (this.gradeIsDisabled(grade)) {
-                                            subjectData.disabledSimGrades.push(grade);
-                                            subjectData.totalCoefSimGrades += grade.coef*subjectData.coef/100;
+                                        if (!this.gradeIsDisabled(grade)) {
+                                            subjectData.average += grade.grade*grade.coef/100;
+                                            subjectData.totalCoefEnabled += grade.coef;
+                                            subjectData.totalCoefEnabledSimGrades += grade.coef;
 
-                                            ueData.disabledSimGrades.push(grade);
-                                            ueData.totalCoefSimGrades += grade.coef*subjectData.coef/100;
+                                            ueData.totalCoefEnabled += grade.coef*subjectData.coef/100;
+                                            ueData.totalCoefEnabledSimGrades += grade.coef*subjectData.coef/100;
                                         }
                                         else {
-                                            ueData.totalCoefEnabledSimGrades += grade.coef*subjectData.coef/100;
+                                            subjectData.disabledSimGrades.push(grade);
+
+                                            ueData.disabledSimGrades.push(grade);
                                         }
                                     }
                                     else {
-                                        if (this.gradeIsDisabled(grade)){
+                                        subjectData.classAvg += grade.classAvg*grade.coef/100;
+                                        subjectData.totalCoefGrades += grade.coef;
+
+                                        if (!this.gradeIsDisabled(grade)){
+                                            subjectData.average += grade.grade*grade.coef/100;
+                                            subjectData.totalCoefEnabled += grade.coef;
+                                            subjectData.totalCoefEnabledGrades += grade.coef;
+
+                                            ueData.totalCoefEnabled += grade.coef*subjectData.coef/100;
+                                            ueData.totalCoefEnabledGrades += grade.coef*subjectData.coef/100;
+                                        }
+                                        else {
                                             subjectData.disabledGrades.push(grade);
 
                                             ueData.disabledGrades.push(grade);
                                         }
-                                        else {
-                                            ueData.totalCoefEnabledGrades += grade.coef*subjectData.coef/100;
-                                        }
                                     }
                                 })
 
-                                subjectData.average = Math.round(subjectData.average*100)/100;
-                                subjectData.classAvg = Math.round(subjectData.classAvg*100)/100;
-                                
-                                ueData.average += subjectData.average*subjectData.coef/100;
-                                ueData.classAvg += subjectData.classAvg*subjectData.coef/100;
-                                ueData.totalCoefSubjects += subjectData.coef;
-                                ueData.totalCoefGrades += subjectData.totalCoef*subjectData.coef/100;
-                                ueData.totalCoefSimGrades += subjectData.totalCoefSimGrades;
+                                if (subjectData.grades.length == 0) {
+                                    subjectData.average =   " - ";
+                                    subjectData.classAvg =  " - ";
+                                }
+                                else {
+                                    subjectData.average =  Math.round(subjectData.average *100)/100;
+                                    subjectData.classAvg = Math.round(subjectData.classAvg*100)/100;
 
-                                if (subjectData.totalCoef < 100) ueData.subjectsBelow100.push(subjectName);
-                                else if (subjectData.totalCoef > 100) ueData.subjectsOver100.push(subjectName);
+                                    ueData.average +=   subjectData.average *subjectData.coef/100;
+                                    ueData.classAvg +=  subjectData.classAvg*subjectData.coef/100;
+                                }
+                                
+                                subjectData.isCustom = this.ueConfig[semX][ueName].custom[subjectName];
+                                
+                                ueData.totalCoefSubjects +=     subjectData.coef;
+                                ueData.totalCoefGrades +=       subjectData.totalCoef*subjectData.coef/100;
+
+                                if      (subjectData.totalCoef < 100) ueData.subjectsBelow100.push(subjectName);
+                                else if (subjectData.totalCoef > 100) ueData.subjectsOver100 .push(subjectName);
                             });
 
                             
@@ -557,7 +604,6 @@
                             ueData.totalCoefSubjects = Math.round(ueData.totalCoefSubjects);
                             ueData.totalCoefGrades = Math.round(ueData.totalCoefGrades);
                             ueData.totalCoefSimGrades = Math.round(ueData.totalCoefSimGrades);
-                            ueData.totalCoefSubjects = Math.round(ueData.totalCoefSubjects);
                         })
                     }
                     
@@ -686,122 +732,36 @@
             setGradesTableTotalCoef() {
                 const good="#10b981", meh="#e98c00", bad="#e90000", unknown="#7a7a7a";
 
-                document.querySelectorAll(".grades-table-subject-total-coef-value").forEach(totalCoefDiv => {
-                    const sem = totalCoefDiv.dataset.sem;
-                    const ue = totalCoefDiv.dataset.ue;
-                    const subject = totalCoefDiv.dataset.subject;
-                    const totalCoef =               this.gradesDatas[sem][ue].subjects[subject].totalCoef;
-                    const totalSimGradesCoef =      this.gradesDatas[sem][ue].subjects[subject].totalCoefSimGrades;
-                    const nbDisabledGrades =        this.gradesDatas[sem][ue].subjects[subject].disabledGrades.length;
-                    const nbSimGrades =             this.gradesDatas[sem][ue].subjects[subject].simGrades.length;
-                    const nbEnabledSimGrades =      this.gradesDatas[sem][ue].subjects[subject].enabledSimulatedGrades.length;
-                    
-                    totalSimGradesCoef;
-
-                    
-                    let advice = this.lang == `fr` ? `Toutes tes notes sont là !` : `All your grades are out!`;
-                    let color = ` #10b981`;
-
-                    { // Conditions part
-                        if (totalSimGradesCoef > 0 && totalCoef-totalSimGradesCoef == 100) {
-                            advice = this.lang == `fr` ? `Toutes tes notes sont là, mais tu devrais désactiver tes notes simulées` : `All your grades are out, but you should disable your simulated grades`;
-                            color = bad;
-                        }
-                        else if (totalCoef<100) {
-                            if (nbDisabledGrades > 1) {
-                                advice = this.lang == `fr` ? `${nbDisabledGrades} notes sont désactivées` : `${nbDisabledGrades} grades are disabled`;
-                                color = meh;
-                            }
-                            else if (nbDisabledGrades > 0) {
-                                advice = this.lang == `fr` 
-                                    ? `Une note est désactivée${nbSimGrades-nbEnabledSimGrades > 0 ? `, mais c'est une note simulée, toutes tes notes ne sont encore pas là !` : ``}` 
-                                    : `A grade is disabled${nbSimGrades-nbEnabledSimGrades > 0 ? `, but it's a simulated grade, all your grades aren't out yet!` : ``}`;
-                                color = meh;
-                            }
-                            else if (totalCoef == 0) {
-                                advice = this.lang == `fr` ? `Pas de notes pour l'instant` : `No grades yet`;
-                                color = unknown;
-                            }
-                            else {
-                                advice = this.lang == `fr` ? `Notes manquantes` : `Missing grades`;
-                                color = bad;
-                            }
-                        }
-                        else if (enabledSimulatedGrades.length > 0) {
-                            if (totalSimGradesCoef < 100) {
-                                advice = this.lang == `fr` 
-                                    ? `${totalSimGradesCoef}% de ta grade est simulée, toutes tes vraies grades ne sont pas encore là !` 
-                                    : `${totalSimGradesCoef}% of your grade is simulated, all your actual grades aren't out yet!`
-                                ;
-                                color = bad;
-                            }
-                            else if (totalSimGradesCoef == 100) {
-                                advice = this.lang == `fr` 
-                                    ? `100% de ta grade est simulée, tes vraies grades ne sont pas encore là !` 
-                                    : `100% of your grade is simulated, your actual grades aren't out yet!`
-                                ;
-                                color = bad;
-
-                            }
-                            else if (totalSimGradesCoef > 100) {
-                                advice = this.lang == `fr` 
-                                    ? `${totalSimGradesCoef}% de ta grade est simulée... jsp ce que t'as fait, mais tu l'as mal fait, change moi ça...` 
-                                    : `${totalSimGradesCoef}% of your grade is simulated... idk what you've done, but do smthg, cuz you did it wrong...`
-                                ;
-                                color = bad;
-                            }
-                        }
-                        else if (totalCoef>100) {
-                            advice = this.lang == `fr` ? `Désactivez des notes, svp` : `Please disable some grades`;
-                            color = bad;
-                            
-                        }
-                    }
-                    
-                    totalCoefDiv.innerHTML = `<span style="color:${color}; font-weight: 900">${totalCoef}%</span>${advice}`;
-                })
                 document.querySelectorAll(".ue-card").forEach(ueCard => {
                     ueCard.querySelectorAll(".ue-subject-total-coef-value").forEach(totalCoefDiv => {
                         const sem = totalCoefDiv.dataset.sem;
                         const ue = totalCoefDiv.dataset.ue;
-                        const nbSubjects = Object.keys(this.gradesDatas[sem][ue].subjects).length;
-                        let totalCoefSubjects = 0, 
-                            totalCoefGrades = 0, 
-                            disabledGrades = [], 
-                            simulatedGrades = [], 
-                            enabledSimulatedGrades = [], 
-                            totalSimGradesCoef = 0, 
-                            subjectsBelow100=[], 
-                            subjectsOver100=[]
+                        const ueData = this.gradesDatas[sem][ue],
+                            nbSubjects = Object.keys(ueData.subjects).length,
+                            totalCoefSubjects =         ueData.totalCoefSubjects, 
+                            totalCoefGrades =           ueData.totalCoefGrades, 
+                            totalCoefEnabledGrades =    ueData.totalCoefEnabledGrades, 
+                            disabledGrades =            ueData.disabledGrades, 
+                            simGrades =                 ueData.simGrades, 
+                            disabledSimGrades =         ueData.disabledSimGrades, 
+                            totalCoefSimGrades =        ueData.totalCoefSimGrades, 
+                            subjectsBelow100 =          ueData.subjectsBelow100, 
+                            subjectsOver100 =           ueData.subjectsOver100,
+                             
+                            nbSubjectsBelow100 =        subjectsBelow100.length, 
+                            nbSubjectsOver100 =         subjectsOver100.length, 
+                            nbDisabledGrades =          disabledGrades.length, 
+                            nbSimGrades =               simGrades.length, 
+                            nbEnabledSimGrades =        nbSimGrades - disabledSimGrades.length
                         ;
-
-                        Object.keys(this.gradesDatas[sem][ue].subjects).forEach(subjectName => {
-                            const subject = this.gradesDatas[sem][ue].subjects[subjectName];
-                            totalCoefSubjects += subject.coef;
-                            totalCoefGrades += subject.totalCoef*subject.coef/100;
-                            subject.grades.forEach(n => {if (!this.gradeIsDisabled(n)) {disabledGrades.push(n);}})
-                            subject.simulatedGrades.forEach(simGrade => {simulatedGrades.push(simGrade)})
-                            subject.enabledSimulatedGrades.forEach(enabledSimGrade => {enabledSimulatedGrades.push(enabledSimGrade)});
-                            totalSimGradesCoef += subject.totalSimGradesCoef;
-                            if (subject.totalCoef < 100) subjectsBelow100.push(subject);
-                            else if (subject.totalCoef > 100) subjectsOver100.push(subject);
-                        })
-                        const nbSubjectsBelow100 = subjectsBelow100.length, 
-                            nbSubjectsOver100 = subjectsOver100.length, 
-                            nbDisabledGrades = disabledGrades.length, 
-                            nbEnabledSimGrades = enabledSimulatedGrades.length, 
-                            nbSimGrades = simulatedGrades.length
-                        ;
-
-                        totalCoefGrades = Math.round(totalCoefGrades*100)/100;
 
 
                         let advice = this.lang == `fr` ? `Toutes tes notes sont là !` : `All your grades are out!`;
                         let color = good;
 
-                        {
+                        {   // Conditions part
 
-                            if (totalCoefSubjects == 100 && totalCoefGrades == 100 && nbEnabledSimGrades > 0) {
+                            if (totalCoefSubjects == 100 && totalCoefEnabledGrades == 100 && nbEnabledSimGrades > 0) {
                                 advice = this.lang == `fr` 
                                     ? `Tu as ${nbEnabledSimGrades} note${nbEnabledSimGrades>1?"s":""} simulée${nbEnabledSimGrades>1?"s":""} activée${nbEnabledSimGrades>1?"s":""}! Toutes tes notes ne sont pas encore là!` 
                                     : `You have ${nbEnabledSimGrades} simulated grade${nbEnabledSimGrades>1?"s":""} enabled! All your grades aren't out yet!`;
@@ -811,7 +771,7 @@
                                 advice = this.lang == `fr` ? `Réajuste le coef des matières` : `Re-adjust the subjects' coef`;
                                 color = bad;
                             }
-                            else if (totalCoefGrades == 0) {
+                            else if (totalCoefEnabledGrades == 0 || totalCoefEnabledGrades == " - ") {
                                 advice = this.lang == `fr` ? `Pas encore de notes` : `No grades yet`;
                                 color = unknown;
                             }
@@ -843,8 +803,82 @@
                             }
                         }
 
-                        totalCoefDiv.innerHTML = `<span style="color:${color}; font-weight: 900">${totalCoefGrades}% / ${totalCoefSubjects}%</span>${advice}`;
+                        totalCoefDiv.innerHTML = `<span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}% / ${totalCoefSubjects}%</span>${advice}`;
                     })
+                })
+                document.querySelectorAll(".grades-table-subject-total-coef-value").forEach(totalCoefDiv => {
+                    const sem = totalCoefDiv.dataset.sem;
+                    const ue = totalCoefDiv.dataset.ue;
+                    const subject = totalCoefDiv.dataset.subject;
+                    const subjectData = this.gradesDatas[sem][ue].subjects[subject];
+                    const totalCoef =                   subjectData.totalCoef;
+                    const totalCoefEnabledGrades =      subjectData.totalCoefEnabledGrades;
+                    const totalCoefSimGrades =          subjectData.totalCoefSimGrades;
+                    const totalCoefEnabledSimGrades =   subjectData.totalCoefEnabledSimGrades;
+                    const nbDisabledGrades =            subjectData.disabledGrades.length;
+                    const nbSimGrades =                 subjectData.simGrades.length;
+                    const nbEnabledSimGrades =          nbSimGrades - subjectData.disabledSimGrades.length;
+                    
+                    
+                    let advice = this.lang == `fr` ? `Toutes tes notes sont là !` : `All your grades are out!`;
+                    let color = ` #10b981`;
+
+                    { // Conditions part
+                        if (totalCoefEnabledSimGrades > 0 && totalCoefEnabledGrades == 100) {
+                            advice = this.lang == `fr` ? `Toutes tes notes sont là, mais tu devrais désactiver tes notes simulées` : `All your grades are out, but you should disable your simulated grades`;
+                            color = bad;
+                        }
+                        else if (totalCoefEnabledGrades<100) {
+                            if (nbDisabledGrades > 1) {
+                                advice = this.lang == `fr` ? `${nbDisabledGrades} notes sont désactivées` : `${nbDisabledGrades} grades are disabled`;
+                                color = meh;
+                            }
+                            else if (nbDisabledGrades > 0) {
+                                advice = this.lang == `fr` 
+                                    ? `Une note est désactivée${nbSimGrades-nbEnabledSimGrades > 0 ? `, mais c'est une note simulée, toutes tes notes ne sont encore pas là !` : ``}` 
+                                    : `A grade is disabled${nbSimGrades-nbEnabledSimGrades > 0 ? `, but it's a simulated grade, all your grades aren't out yet!` : ``}`;
+                                color = meh;
+                            }
+                            else if (totalCoef == 0) {
+                                advice = this.lang == `fr` ? `Pas de notes pour l'instant` : `No grades yet`;
+                                color = unknown;
+                            }
+                            else {
+                                advice = this.lang == `fr` ? `Notes manquantes` : `Missing grades`;
+                                color = bad;
+                            }
+                        }
+                        else if (nbEnabledSimGrades > 0) {
+                            if (totalCoefSimGrades < 100) {
+                                advice = this.lang == `fr` 
+                                    ? `${totalCoefSimGrades}% de ta grade est simulée, toutes tes vraies grades ne sont pas encore là !` 
+                                    : `${totalCoefSimGrades}% of your grade is simulated, all your actual grades aren't out yet!`
+                                ;
+                                color = bad;
+                            }
+                            else if (totalCoefSimGrades == 100) {
+                                advice = this.lang == `fr` 
+                                    ? `100% de ta grade est simulée, tes vraies grades ne sont pas encore là !` 
+                                    : `100% of your grade is simulated, your actual grades aren't out yet!`
+                                ;
+                                color = bad;
+                            }
+                            else if (totalCoefSimGrades > 100) {
+                                advice = this.lang == `fr` 
+                                    ? `${totalCoefSimGrades}% de ta grade est simulée... jsp ce que t'as fait, mais tu l'as mal fait, change ça...` 
+                                    : `${totalCoefSimGrades}% of your grade is simulated... idk what you've done, but do smthg, cuz you did it wrong...`
+                                ;
+                                color = bad;
+                            }
+                        }
+                        else if (totalCoef>100) {
+                            advice = this.lang == `fr` ? `Désactivez des notes, svp` : `Please disable some grades`;
+                            color = bad;
+                            
+                        }
+                    }
+                    
+                    totalCoefDiv.innerHTML = `<span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}%</span>${advice}`;
                 })
             }
             draggableIcon(source="subject-card", {height=25, type="unknown", targetId="none"}={height: 25, type: "unknown", targetId:"none"}) {
@@ -1148,7 +1182,7 @@
                 else {
                     semesterKeys = [this.currentSemester];
                 }
-                this.gradesDatas = {};
+                
                 this.getGradesDatas();
                 const contentArea = document.getElementById("contentArea");
                 contentArea.innerHTML = "";
@@ -1208,11 +1242,9 @@
                                 const content = header.nextElementSibling;
                                 const sem = header.dataset.semester;
                                 const ueName = this.editMode ? header.children[0].children[1].value : header.children[0].innerText;
-                                const ueConfig = this.ueConfig[sem] || {};
-                                const ueData = ueConfig[ueName];
                                 
                                 const ueContent = header.parentElement.querySelector(".ue-details");
-                                ueContent.innerHTML = this.renderAllMatCardCompact(ueData, sem, ueName);
+                                ueContent.innerHTML = this.renderAllMatCardCompact(sem, ueName);
                                 content.classList.add('compact');
                                 toggle.classList.remove('open');
                             }
@@ -1253,18 +1285,6 @@
                 const moyenne = this.gradesDatas[sem][ueName].average;
                 const hasSim = (this.sim[sem] && this.sim[sem][ueName] && Object.values(this.sim[sem][ueName]).some(arr=>arr.length>0)) ? true : false;
 
-                const allMats = this.getAllSubjectsForUE(sem, ueName);
-                allMats.forEach(m => { 
-                    if (!Object.keys(this.gradesDatas[sem][ueName].subjects).includes(m)) {
-                        this.gradesDatas[sem][ueName].subjects[m] = {grades: []};
-                    } else {
-                        this.gradesDatas[sem][ueName].subjects[m].grades = [];
-                    }
-                });
-                ueGrades.forEach(n => {
-                    this.gradesDatas[sem][ueName].subjects[n.subject].grades.push(n);
-                });
-                
                     /* <svg style="border-radius: 20px; width: 100%; height: 100%;">
                         <path class="ue-insert-path" fill="none" stroke="#9097ff" stroke-width="1px" stroke-dasharray="25 5" d="M 0 0 l 20 15 h 1050 M 0 45 l 20 -15 h 1050"/>
                     </svg> */
@@ -1301,7 +1321,7 @@
                         </div>` 
                         : ``}
                     <div class="ue-details" id="ue-details-${ueName}-in-semester${sem}">
-                        ${this.renderAllMatCardDetailed(ueData, sem, ueName)}
+                        ${this.renderAllMatCardDetailed(sem, ueName)}
                     </div>
                     ${this.editMode ? `
                     <div class="add-a-subject-card" id="add-a-subject-card-for-${ueName}-in-semester-${sem}" data-sem="${sem}" data-ue="${ueName}">
@@ -1325,94 +1345,88 @@
 
 
 
-            renderAllMatCardDetailed(ueData, sem, ueName) {
-                return Object.keys(this.gradesDatas[sem][ueName].subjects).map(subject => {
+            renderAllMatCardDetailed(sem, ueName) {
+                const ueData = this.gradesDatas[sem][ueName];
+
+                return Object.keys(ueData.subjects).map(subject => {
                     if (subject != "average") 
-                        {return this.renderMatCardDetailed(ueData, sem, ueName, subject)}
+                        {return this.renderMatCardDetailed(sem, ueName, subject)}
                 }).join("")
             }
             // MARK: renderMatCardDetailed
-            renderMatCardDetailed(ueData, sem, ueName, subject) {
-                const subjGrades = this.gradesDatas[sem][ueName].subjects[subject].grades;
-                const ueMoy = this.gradesDatas[sem][ueName].average;
-                const moyMat = this.moyennePonderee(subjGrades);
-                const pct = ueData?.coefficients?.[subject] || 0;
-                const isCustom = ueData?.custom?.[subject] || false;
-                this.gradesDatas[sem][ueName].subjects[subject].average = subjGrades.length != 0 ? moyMat : " - ";
-                this.gradesDatas[sem][ueName].subjects[subject].coef = parseInt(pct);
-                this.gradesDatas[sem][ueName].subjects[subject].custom = isCustom;
+            renderMatCardDetailed(sem, ueName, subject) {
+                const ueData =  this.gradesDatas[sem][ueName];
+                const subjectData =     ueData.subjects[subject];
+                const subjGrades =      subjectData.grades;
+                const ueMoy =           ueData.average;
+                const moyMat =          subjectData.average;
+                const pct =             subjectData.coef;
+                const isCustom =        subjectData.isCustom;
+                const totalSimGrades =  subjectData.simGrades.length;
                 
-                    let html = `
-                    <div class="subject-card ${ueMoy != " - " && moyMat != 0 ? `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}` : `unknown`}" ${this.editMode ? `style="user-select: none;"` : ``} id="subject-card-semester-${sem}-subject-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}">
-                        <div class="subject-card-header ${ueMoy != " - " && moyMat != 0 ? `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}` : ``}" ${this.editMode ? `draggable="true"` : ``} style="${this.editMode ? `cursor: grab; ` : `${subjGrades.length > 0 ? `` : `border-radius: 20px; border: none`}`}">
-                            <div style="display: flex; width: 42%; padding-left: ${this.editMode ? `10px` : `50px`}">
-                                <div style="display: flex; justify-content: flex-start; align-items: center; width: 100%; gap:8px; user-select: text">
-                                    ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("detailed-subject-card", {type:"detailed", targetId:`subject-card-semester-${sem}-subject-${subject}`})}</div>` : ""}
-                                    <div style="width: 100%">
-                                        ${isCustom 
-                                            ? `<input type="text" onmouseover="event.preventDefault()" class="subject-name input any-input" id="subject-name-input-${sem}-${ueName}-${subject}" value="${subject}"/>`
-                                            : `<div class="subject-name">${subject}</div>`}
-                                        <div class="grade-type">
-                                            ${this.lang == "fr" ? "Poids UE" : "TU Weight"}: 
-                                            ${this.editMode 
-                                                ? `<input class="subject-coef-input-box any-input" id="subject-coef-input-box-${sem}-${ueName}-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" type="number" placeholder="%" step="5" min="0" max="100" value="${pct}"/>%`
-                                                : `<span style="font-weight: 800;">${pct}%</span>`}
-                                            | 
-                                            ${this.lang == "fr" ? "Moyenne" : "Average"}: 
-                                            <span class="subj-moyenne ${moyMat==0 ? '' : `${moyMat>=10 ? 'good' : 'bad'}`}">${moyMat==0 ? " - " : moyMat}/20</span> 
-                                            ${subjGrades.length===0 ? `<span style="margin-left:2px;font-size:12px;color:#6b7280">${this.lang == "fr" ? "(aucune note publiée)" : "(no published grade)"}</span>` : ''}
-                                        </div>
+                let html = `
+                <div class="subject-card ${ueMoy != " - " && moyMat != 0 ? `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}` : `unknown`}" ${this.editMode ? `style="user-select: none;"` : ``} id="subject-card-semester-${sem}-subject-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}">
+                    <div class="subject-card-header ${ueMoy != " - " && moyMat != 0 ? `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}` : ``}" ${this.editMode ? `draggable="true"` : ``} style="${this.editMode ? `cursor: grab; ` : `${subjGrades.length > 0 ? `` : `border-radius: 20px; border: none`}`}">
+                        <div style="display: flex; width: 42%; padding-left: ${this.editMode ? `10px` : `50px`}">
+                            <div style="display: flex; justify-content: flex-start; align-items: center; width: 100%; gap:8px; user-select: text">
+                                ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("detailed-subject-card", {type:"detailed", targetId:`subject-card-semester-${sem}-subject-${subject}`})}</div>` : ""}
+                                <div style="width: 100%">
+                                    ${isCustom 
+                                        ? `<input type="text" onmouseover="event.preventDefault()" class="subject-name input any-input" id="subject-name-input-${sem}-${ueName}-${subject}" value="${subject}"/>`
+                                        : `<div class="subject-name">${subject}</div>`}
+                                    <div class="grade-type">
+                                        ${this.lang == "fr" ? "Poids UE" : "TU Weight"}: 
+                                        ${this.editMode 
+                                            ? `<input class="subject-coef-input-box any-input" id="subject-coef-input-box-${sem}-${ueName}-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" type="number" placeholder="%" step="5" min="0" max="100" value="${pct}"/>%`
+                                            : `<span style="font-weight: 800;">${pct}%</span>`}
+                                        | 
+                                        ${this.lang == "fr" ? "Moyenne" : "Average"}: 
+                                        <span class="subj-moyenne ${moyMat==0 ? '' : `${moyMat>=10 ? 'good' : 'bad'}`}">${moyMat==0 ? " - " : moyMat}/20</span> 
+                                        ${subjGrades.length===0 ? `<span style="margin-left:2px;font-size:12px;color:#6b7280">${this.lang == "fr" ? "(aucune note publiée)" : "(no published grade)"}</span>` : ''}
                                     </div>
                                 </div>
                             </div>
-                            <div class="grades-table-coef" style="display:flex; flex-direction: column; width:58%; gap:4px; padding: 0px 10px; font-size: 13px">
-                                <div style="text-align: left;">
-                                    ${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}
-                                </div>
-                                <div class="grades-table-subject-total-coef-value" data-sem="${sem}" data-ue="${ueName}" data-subject="${subject}"></div>
-                            </div>
                         </div>
-                        <table class="grades-table ${ueMoy != " - " && moyMat != 0 ? `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}` : ``}" style="${this.editMode ? `user-select: text;` : ``}" id="grades-table-${subject}-semester${sem}" data-subject="${subject}">
+                        <div class="grades-table-coef" style="display:flex; flex-direction: column; width:58%; gap:4px; padding: 0px 10px; font-size: 13px">
+                            <div style="text-align: left;">
+                                ${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}
+                            </div>
+                            <div class="grades-table-subject-total-coef-value" data-sem="${sem}" data-ue="${ueName}" data-subject="${subject}"></div>
+                        </div>
+                    </div>
+                    <table class="grades-table ${ueMoy != " - " && moyMat != 0 ? `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}` : ``}" style="${this.editMode ? `user-select: text;` : ``}" id="grades-table-${subject}-semester${sem}" data-subject="${subject}">
 
-                            <thead>
-                                ${subjGrades.length > 0 || this.editMode
-                                    ? `<tr>
-                                        <th class="grades-table-type" style="padding-left: 30px; border-left-width: 0px;">
-                                            ${this.lang == "fr" ? "Intitulé" : "Title"}
-                                        </th>
-                                        <th class="grades-table-grade">
-                                            ${this.lang == "fr" ? "Note" : "Grade"}
-                                        </th>
-                                        <th class="grades-table-coef">
-                                            ${this.lang == "fr" ? "Coef" : "Coef"}
-                                        </th>
-                                        <th class="grades-table-classAvg">
-                                            ${this.lang == "fr" ? "Moy. Classe" : "Class Avg"}
-                                        </th>
-                                        <th class="grades-table-date">
-                                            ${this.lang == "fr" ? "Date" : "Date"}
-                                        </th>
-                                        <th class="grades-table-teacher" style="border-right-width: 0px;" colspan="2">
-                                            ${this.lang == "fr" ? "Prof(s)" : "Teacher(s)"}
-                                        </th>
-                                    </tr>`
-                                    : ``
-                                }
-                            </thead>
-                            <tbody>
-                    `;
+                        <thead>
+                            ${subjGrades.length > 0 || this.editMode
+                                ? `<tr>
+                                    <th class="grades-table-type" style="padding-left: 30px; border-left-width: 0px;">
+                                        ${this.lang == "fr" ? "Intitulé" : "Title"}
+                                    </th>
+                                    <th class="grades-table-grade">
+                                        ${this.lang == "fr" ? "Note" : "Grade"}
+                                    </th>
+                                    <th class="grades-table-coef">
+                                        ${this.lang == "fr" ? "Coef" : "Coef"}
+                                    </th>
+                                    <th class="grades-table-classAvg">
+                                        ${this.lang == "fr" ? "Moy. Classe" : "Class Avg"}
+                                    </th>
+                                    <th class="grades-table-date">
+                                        ${this.lang == "fr" ? "Date" : "Date"}
+                                    </th>
+                                    <th class="grades-table-teacher" style="border-right-width: 0px;" colspan="2">
+                                        ${this.lang == "fr" ? "Prof(s)" : "Teacher(s)"}
+                                    </th>
+                                </tr>`
+                                : ``
+                            }
+                        </thead>
+                        <tbody>
+                `;
 
-                let totalCoef = 0;
-                let totalDisabledGrades = 0;
-                let totalSimGrades = 0;
                 subjGrades.forEach((grade, index) => {
                     const gradeClass = this.getGradeColor(grade.grade);
-                    if (grade.__sim) totalSimGrades++;
                     const gradeIsSim = grade.__sim ? "true" : "false";
-                    if (this.ignoredGrades.indexOf([sem, subject, grade.type+" "+grade.date+" "+grade.prof].join("\\")) == -1) {
-                        totalCoef += grade.coef;
-                    }
-                    else {totalDisabledGrades++}
 
                     html += `
                             <tr class="grade-row ${index == subjGrades.length-1 ? `last` : ``} ${grade.__sim ? `sim` : ``}" data-sim="${gradeIsSim}">
@@ -1458,9 +1472,6 @@
                             </tr>
                     `;
                 });
-                this.gradesDatas[sem][ueName].subjects[subject].totalCoef = totalCoef;
-                this.gradesDatas[sem][ueName].subjects[subject].totalDisabledGrades = totalDisabledGrades;
-                this.gradesDatas[sem][ueName].subjects[subject].totalSimGrades = totalSimGrades;
 
                 // Formulaire d'ajout de grade simulée pour cette matière
                     html += `
@@ -1497,24 +1508,23 @@
 
 
 
-            renderAllMatCardCompact(ueData, sem, ueName) {
+            renderAllMatCardCompact(sem, ueName) {
                 return Object.keys(this.gradesDatas[sem][ueName].subjects).map(subject => {
                     if (subject != "average") 
-                        {return this.renderMatCardCompact(ueData, sem, ueName, subject)}
+                        {return this.renderMatCardCompact(sem, ueName, subject)}
                 }).join("")
             }
             // MARK: renderMatCardCompact
-            renderMatCardCompact(ueData, sem, ueName, subject) {
-                const subjGrades = this.gradesDatas[sem][ueName].subjects[subject].grades;
-                const moyMat = this.moyennePonderee(subjGrades);
-                const ueMoy = this.gradesDatas[sem][ueName].average;
-                const pct = ueData?.coefficients?.[subject] || 0;
-                const isCustom = ueData?.custom?.[subject] || false;
-                const includedGradesLength = (subjGrades || []).filter(n => this.ignoredGrades.indexOf([sem, n.subject, n.type+" "+n.date+" "+n.prof].join("\\")) == -1).length;
-                const simGradesLength = (subjGrades || []).filter(n => n.__sim).length;
-                this.gradesDatas[sem][ueName].subjects[subject].average = subjGrades.length != 0 ? moyMat : " - ";
-                this.gradesDatas[sem][ueName].subjects[subject].coef = parseInt(pct);
-                this.gradesDatas[sem][ueName].subjects[subject].custom = isCustom;
+            renderMatCardCompact(sem, ueName, subject) {
+                const ueData =  this.gradesDatas[sem][ueName];
+                const subjectData =             ueData.subjects[subject];
+                const subjGrades =              subjectData.grades;
+                const ueMoy =                   ueData.average;
+                const moyMat =                  subjectData.average;
+                const pct =                     subjectData.coef;
+                const isCustom =                subjectData.isCustom;
+                const includedGradesLength =    subjGrades.length - subjectData.disabledGrades.length;
+                const totalSimGrades =          subjectData.simGrades.length;
 
                 const html = `
                 <div class="subject-card compact ${this.editMode ? "" : "edit-mode"} ${moyMat == 0 && subjGrades.length==0 ? "unknown" : `${moyMat>10 ? `${ueMoy>10 ? `good` : `meh`}` : `bad`}`}" id="subject-card-semester-${sem}-subject-${subject}" style="${this.editMode ? "cursor: grab; user-select: none; " : " "}" ${this.editMode ? `draggable="true"` : ""} data-sem="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}">
@@ -1536,8 +1546,8 @@
                                         ${this.lang == "fr" ? `note${includedGradesLength>1?"s":""} activée${includedGradesLength>1?"s":""}` : `grade${includedGradesLength>1?"s":""} enabled`}${includedGradesLength<subjGrades.length ? `!` : ``}
                                     </span>` 
                                     : ``}
-                                ${simGradesLength>0 
-                                    ? ` • ${simGradesLength} ${this.lang == "fr" ? `note${simGradesLength>1?"s":""} simulée${simGradesLength>1?"s":""}` : `simulated grade${simGradesLength>1?"s":""}`}`
+                                ${totalSimGrades>0 
+                                    ? ` • ${totalSimGrades} ${this.lang == "fr" ? `note${totalSimGrades>1?"s":""} simulée${totalSimGrades>1?"s":""}` : `simulated grade${totalSimGrades>1?"s":""}`}`
                                     : ``}
                                 
                             </div>
@@ -1562,10 +1572,6 @@
                 let html = ``;
 
                 subjects.forEach(subject => {
-                    const grades = (this.semesters[sem]||{})[subject]||[];
-                    const moyenne = this.moyennePonderee(grades);
-                    this.gradesDatas[sem]["unclassified"].average = moyenne;
-                    this.gradesDatas[sem]["unclassified"].subjects[subject] = {grades: []};
                     html += this.renderUnclassifiedMatCard(sem, subject);
                 })
                 return html
@@ -1638,9 +1644,6 @@
                             </tr>
                     `;
                 });
-                this.gradesDatas[sem]["unclassified"].subjects[subject].average = moyMat;
-                this.gradesDatas[sem]["unclassified"].subjects[subject].totalCoef = totalCoef;
-                this.gradesDatas[sem]["unclassified"].subjects[subject].totalDisabledGrades = 0;
 
                 html +=`</tbody></table></div>`;
                 return html;
@@ -1909,7 +1912,7 @@
                         const subject = e.target.dataset.subject;
                         const newCoef = e.target.value;
                         this.ueConfig[sem][ueName].coefficients[subject] = newCoef;
-                        this.gradesDatas[sem][ueName].subjects[subject].coef = newCoef;
+                        this.getGradesDatas();
                         this.saveConfig();
                         this.renderContent(false);
                         this.attachEventListeners();
@@ -1958,14 +1961,14 @@
                         this.ueConfig   [sem][ue].subjects.push(newSubjName);
                         this.ueConfig   [sem][ue].coefficients [newSubjName] = 0;
                         this.ueConfig   [sem][ue].custom       [newSubjName] = true;
-                        this.gradesDatas[sem][ue].subjects     [newSubjName] = {grades: [], custom: true};
 
-                        const ueData = this.ueConfig[sem][ue];
+                        this.getGradesDatas();
+                        
                         if (this.viewMode == "detailed" || !ueCard.classList.contains("compact")) {
-                            ueContent.innerHTML = this.renderAllMatCardDetailed(ueData, sem, ue);
+                            ueContent.innerHTML = this.renderAllMatCardDetailed(sem, ue);
                         }
                         else {
-                            ueContent.innerHTML = this.renderAllMatCardCompact(ueData, sem, ue);
+                            ueContent.innerHTML = this.renderAllMatCardCompact(sem, ue);
                         }
 
                         this.attachEventListeners()
@@ -2002,15 +2005,15 @@
                             this.ueConfig   [sem][ue].subjects.push(newSubjName);
                             this.ueConfig   [sem][ue].coefficients [newSubjName] = pct;
                             this.ueConfig   [sem][ue].custom       [newSubjName] = false;
-                            this.gradesDatas[sem][ue].subjects     [newSubjName] = matDatas;
                         }
                         
-                        const ueData = this.ueConfig[sem][ue];
+                        this.getGradesDatas();
+
                         if (this.viewMode == "detailed" || !ueCard.classList.contains("compact")) {
-                            ueContent.innerHTML = this.renderAllMatCardDetailed(ueData, sem, ue);
+                            ueContent.innerHTML = this.renderAllMatCardDetailed(sem, ue);
                         }
                         else {
-                            ueContent.innerHTML = this.renderAllMatCardCompact(ueData, sem, ue);
+                            ueContent.innerHTML = this.renderAllMatCardCompact(sem, ue);
                         }
 
                         this.attachEventListeners()
@@ -2280,16 +2283,14 @@
                     const sem = header.dataset.semester;
                     const ueName = header.dataset.ue;
                     const ueContent = header.parentElement.querySelector(".ue-details");
-                    const ueConfig = this.ueConfig[sem] || {};
-                    const ueData = ueConfig[ueName];
 
                     if (toggle.classList.contains('open')) {
-                        ueContent.innerHTML = this.renderAllMatCardCompact(ueData, sem, ueName);
+                        ueContent.innerHTML = this.renderAllMatCardCompact(sem, ueName);
                         ueContent.classList.add('compact');
                         toggle.classList.remove('open');
                         this.setGradesTableTotalCoef()
                     } else {
-                        ueContent.innerHTML = this.renderAllMatCardDetailed(ueData, sem, ueName);
+                        ueContent.innerHTML = this.renderAllMatCardDetailed(sem, ueName);
                         ueContent.classList.remove('compact');
                         toggle.classList.add('open');
                         this.attachCheckboxListeners(ueContent);
