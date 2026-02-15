@@ -138,6 +138,13 @@
         .ue-moyenne.unknown             { color: #6d6d6dff; }
         .ue-toggle                      { width: 24px; height: 24px; font-size: 18px; color: #000000; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; margin-left: 5px; }
         .ue-toggle.open                 { transform: rotate(180deg); }
+        .ue-info                        { display: flex; flex-direction: column; align-items: center; width:97%; font-size:12px; color: #374151; background: #eef2ff; border:1px solid #c7d2fe; padding:6px 8px; border-radius:8px; gap: 5px; }
+        .ue-info.hasSim                 { display: flex; flex-direction: row; justify-content: space-between; align-items: center; width:100%; border:1px solid #c7d2fe; padding:6px 8px; border-radius:8px; }
+        .ue-info.hasDisabledGrades      { display: flex; flex-direction: row; justify-content: space-between; align-items: center; width:100%; border:1px solid #c7d2fe; padding:6px 8px; border-radius:8px; }
+        .ue-info-sim-clear              { display: flex; align-items: center; justify-content: center; font-size: 12px; background: #d7e0ff; border: 2px solid; border-radius: 10px; padding: 2px 7px; user-select: none; width: 172px; margin-right: 8px; cursor: pointer; transition: all 0.2s ease; }
+        .ue-info-sim-clear:hover        { width: 180px; margin-right: 4px; font-size: 11.5px; background: #eef2ff; }
+        .ue-info-disabled-clear         { display: flex; align-items: center; justify-content: center; font-size: 12px; background: #d7e0ff; border: 2px solid; border-radius: 10px; padding: 2px 7px; user-select: none; width: 172px; margin-right: 8px; cursor: pointer; transition: all 0.2s ease; }
+        .ue-info-disabled-clear:hover   { width: 180px; margin-right: 4px; font-size: 11.5px; background: #eef2ff; }
 
         .add-a-subject-card         { display: flex; align-items: center; justify-content: center; gap: 8px; height: 38px; width: 230px; margin-bottom: 19px; border: 3px dashed #7fc2ff; border-radius: 20px; font-size: 19px; font-weight: 700; color: #7fc2ff; background: aliceblue; cursor: pointer; box-shadow: none; user-select:none; transition: all 0.2s ease }
         .add-a-subject-card:hover   { background: white; font-size: 20px; box-shadow: inset 0px 0px 17px 0px #0400ff38; }
@@ -437,6 +444,12 @@
                 this.saveIgnoredGrades();
                 this.getGradesDatas();
             }
+            clearSimGradesForUE(sem, ueName) {
+                delete this.sim[sem][ueName];
+                if (this.sim[sem] == {}) delete this.sim[sem];
+                this.saveSim()
+                this.getGradesDatas();
+            }
             compareArraysofObjects(a, b) {
                 const out = {common:[], more:[], missing:[]};
 
@@ -571,167 +584,165 @@
             setGradesTableTotalCoef() {
                 const good="#10b981", meh="#e98c00", bad="#e90000", unknown="#7a7a7a";
 
-                document.querySelectorAll(".ue-card").forEach(ueCard => {
-                    ueCard.querySelectorAll(".ue-subject-total-coef-value").forEach(totalCoefDiv => {
-                        const 
-                            sem = totalCoefDiv.dataset.sem,
-                            ue = totalCoefDiv.dataset.ue,
-                            ueData = this.gradesDatas[sem][ue],
-                            nbSubjects = Object.keys(ueData.subjects).length,
+                document.querySelectorAll(".ue-subject-total-coef-value").forEach(totalCoefDiv => {
+                    const 
+                        sem = totalCoefDiv.dataset.sem,
+                        ue = totalCoefDiv.dataset.ue,
+                        ueData = this.gradesDatas[sem][ue],
+                        nbSubjects = Object.keys(ueData.subjects).length,
+                        
+                        simGrades =                     ueData.simGrades, 
+                        disabledRealGrades =            ueData.disabledRealGrades, 
+                        disabledSimGrades =             ueData.disabledSimGrades, 
+
+                        totalCoefSubjects =             ueData.totalCoefSubjects, 
+                        totalCoefGrades =               ueData.totalCoefGrades,  
+                        totalCoefRealGrades =           ueData.totalCoefRealGrades, 
+                        totalCoefSimGrades =            ueData.totalCoefSimGrades, 
+                        totalCoefEnabledGrades =        ueData.totalCoefEnabledGrades, 
+                        totalCoefEnabledRealGrades =    ueData.totalCoefEnabledRealGrades, 
+                        totalCoefEnabledSimGrades =     ueData.totalCoefEnabledSimGrades, 
+
+
+                        subjectsBelow100 =              ueData.subjectsBelow100, 
+                        subjectsOver100 =               ueData.subjectsOver100,
+                        subjectsReallyBelow100 =        ueData.subjectsReallyBelow100, 
+                        subjectsReallyOver100 =         ueData.subjectsReallyOver100,
                             
-                            simGrades =                     ueData.simGrades, 
-                            disabledRealGrades =            ueData.disabledRealGrades, 
-                            disabledSimGrades =             ueData.disabledSimGrades, 
-
-                            totalCoefSubjects =             ueData.totalCoefSubjects, 
-                            totalCoefGrades =               ueData.totalCoefGrades,  
-                            totalCoefRealGrades =           ueData.totalCoefRealGrades, 
-                            totalCoefSimGrades =            ueData.totalCoefSimGrades, 
-                            totalCoefEnabledGrades =        ueData.totalCoefEnabledGrades, 
-                            totalCoefEnabledRealGrades =    ueData.totalCoefEnabledRealGrades, 
-                            totalCoefEnabledSimGrades =     ueData.totalCoefEnabledSimGrades, 
-
-
-                            subjectsBelow100 =              ueData.subjectsBelow100, 
-                            subjectsOver100 =               ueData.subjectsOver100,
-                            subjectsReallyBelow100 =        ueData.subjectsReallyBelow100, 
-                            subjectsReallyOver100 =         ueData.subjectsReallyOver100,
-                             
-                            nbSubjectsBelow100 =            subjectsBelow100.length, 
-                            nbSubjectsOver100 =             subjectsOver100.length, 
-                            nbSubjectsReallyBelow100 =      subjectsReallyBelow100.length, 
-                            nbSubjectsReallyOver100 =       subjectsReallyOver100.length, 
-                            nbSubjectsSimBelow100 =         nbSubjectsBelow100-nbSubjectsReallyBelow100, 
-                            nbSubjectsSimOver100 =          nbSubjectsOver100-nbSubjectsReallyOver100, 
-                            nbDisabledRealGrades =          disabledRealGrades.length, 
-                            nbSimGrades =                   simGrades.length, 
-                            nbEnabledSimGrades =            nbSimGrades - disabledSimGrades.length
-                        ;
+                        nbSubjectsBelow100 =            subjectsBelow100.length, 
+                        nbSubjectsOver100 =             subjectsOver100.length, 
+                        nbSubjectsReallyBelow100 =      subjectsReallyBelow100.length, 
+                        nbSubjectsReallyOver100 =       subjectsReallyOver100.length, 
+                        nbSubjectsSimBelow100 =         nbSubjectsBelow100-nbSubjectsReallyBelow100, 
+                        nbSubjectsSimOver100 =          nbSubjectsOver100-nbSubjectsReallyOver100, 
+                        nbDisabledRealGrades =          disabledRealGrades.length, 
+                        nbSimGrades =                   simGrades.length, 
+                        nbEnabledSimGrades =            nbSimGrades - disabledSimGrades.length
+                    ;
 
 
-                        let advice = this.lang == `fr` ? `Toutes tes notes sont là !` : `All your grades are out!`;
-                        let color = good;
+                    let advice = this.lang == `fr` ? `Toutes tes notes sont là !` : `All your grades are out!`;
+                    let color = good;
 
-                        /* 
-                        {   // Conditions part
+                    /* 
+                    {   // Conditions part
 
-                            if (totalCoefSubjects == 100 && totalCoefEnabledGrades == 100 && nbEnabledSimGrades > 0) {
-                                advice = this.lang == `fr` 
-                                    ? `Tu as ${nbEnabledSimGrades} note${nbEnabledSimGrades>1?"s":""} simulée${nbEnabledSimGrades>1?"s":""} activée${nbEnabledSimGrades>1?"s":""}! Toutes tes notes ne sont pas encore là!` 
-                                    : `You have ${nbEnabledSimGrades} simulated grade${nbEnabledSimGrades>1?"s":""} enabled! All your grades aren't out yet!`;
-                                color = meh;
-                            }
-                            else if (totalCoefSubjects != 100) {
-                                advice = this.lang == `fr` ? `Réajuste le coef des matières` : `Re-adjust the subjects' coef`;
-                                color = bad;
-                            }
-                            else if (totalCoefEnabledGrades == 0 || totalCoefEnabledGrades == " - ") {
-                                advice = this.lang == `fr` ? `Pas encore de notes` : `No grades yet`;
-                                color = unknown;
-                            }
-                            else if ((nbSubjectsBelow100 > 0 || nbSubjectsOver100 > 0) && nbEnabledSimGrades > 0) {
-                                advice = this.lang == `fr` 
-                                    ? `Tes grades simulées faussent le total. Ajuste-les` 
-                                    : `Your simulated grades falsify the total. Adjust them`;
-                                color = bad;
-                            }
-                            else if (nbSubjectsBelow100 > 0 && nbSubjectsOver100 > 0) {
-                                advice = this.lang == `fr` 
-                                    ? `Notes manquantes dans ${  nbSubjectsBelow100 > 1 ? nbSubjectsBelow100 : `une`} matière${nbSubjectsBelow100 > 1 ?  `s` : ``}, 
-                                        et trop de notes dans ${ nbSubjectsOver100  > 1 ? nbSubjectsOver100  : `une`} matière${nbSubjectsOver100  > 1 ?  `s` : ``}` 
-                                    : `Missing grades in ${      nbSubjectsBelow100 > 1 ? nbSubjectsBelow100 : `a`  } subject${nbSubjectsBelow100 > 1 ? `'s` : ``}, 
-                                        and too many grades in ${nbSubjectsOver100  > 1 ? nbSubjectsOver100  : `a`  } subject${nbSubjectsOver100  > 1 ? `'s` : ``}`;
-                                color = bad;
-                            }
-                            else if (nbSubjectsBelow100 > 0) {
-                                advice = this.lang == `fr` 
-                                    ? `Notes manquantes dans ${nbSubjectsBelow100 > 1 ? nbSubjectsBelow100 : `${nbSubjectsBelow100==nbSubjects ? "toutes tes" : "une"}`} matière${nbSubjectsBelow100 > 1 ? `s`  : ``}` 
-                                    : `Missing grades in ${    nbSubjectsBelow100 > 1 ? nbSubjectsBelow100 : `${nbSubjectsBelow100==nbSubjects ? "all your" : "a"    }`} subject${nbSubjectsBelow100 > 1 ? `'s` : ``}`;
-                                color = bad;
-                            }
-                            else if (nbSubjectsOver100 > 0) {
-                                advice = this.lang == `fr` 
-                                    ? `Trop de notes dans ${nbSubjectsOver100 > 1 ? nbSubjectsOver100 : `${nbSubjectsOver100==nbSubjects ? "toutes tes" : "une"}`} matière${nbSubjectsOver100 > 1 ? `s`  : ``}` 
-                                    : `Too many grades in ${nbSubjectsOver100 > 1 ? nbSubjectsOver100 : `${nbSubjectsOver100==nbSubjects ? "all your" : "a"    }`} subject${nbSubjectsOver100 > 1 ? `'s` : ``}`;
-                                color = bad;
-                            }
+                        if (totalCoefSubjects == 100 && totalCoefEnabledGrades == 100 && nbEnabledSimGrades > 0) {
+                            advice = this.lang == `fr` 
+                                ? `Tu as ${nbEnabledSimGrades} note${nbEnabledSimGrades>1?"s":""} simulée${nbEnabledSimGrades>1?"s":""} activée${nbEnabledSimGrades>1?"s":""}! Toutes tes notes ne sont pas encore là!` 
+                                : `You have ${nbEnabledSimGrades} simulated grade${nbEnabledSimGrades>1?"s":""} enabled! All your grades aren't out yet!`;
+                            color = meh;
                         }
-                         */
-
-                        if (totalCoefSubjects != 100) {
-                            advice = this.lang == "fr" ? `Réajuste le coef de tes matières, leur somme n'est pas égale à 100% !` : `Readjust your subjects' coef, their sum isn't equal to 100%!`;
+                        else if (totalCoefSubjects != 100) {
+                            advice = this.lang == `fr` ? `Réajuste le coef des matières` : `Re-adjust the subjects' coef`;
                             color = bad;
                         }
-                        else if (totalCoefRealGrades == 0) {
-                            if (totalCoefEnabledSimGrades > 0) {
-                                advice = this.lang == "fr" 
-                                    ? `Toutes tes notes sont simulées, tu n'as pas encore de notes !` 
-                                    : `All your grades are simulated, you don't have any grades yet!`
-                                ;
-                                color = meh;
-                            }
-                            else {
-                                advice = this.lang == "fr" ? `Pas encore de notes` : `No grades yet`;
-                                color = unknown;
-                            }
+                        else if (totalCoefEnabledGrades == 0 || totalCoefEnabledGrades == " - ") {
+                            advice = this.lang == `fr` ? `Pas encore de notes` : `No grades yet`;
+                            color = unknown;
                         }
                         else if ((nbSubjectsBelow100 > 0 || nbSubjectsOver100 > 0) && nbEnabledSimGrades > 0) {
+                            advice = this.lang == `fr` 
+                                ? `Tes grades simulées faussent le total. Ajuste-les` 
+                                : `Your simulated grades falsify the total. Adjust them`;
+                            color = bad;
+                        }
+                        else if (nbSubjectsBelow100 > 0 && nbSubjectsOver100 > 0) {
+                            advice = this.lang == `fr` 
+                                ? `Notes manquantes dans ${  nbSubjectsBelow100 > 1 ? nbSubjectsBelow100 : `une`} matière${nbSubjectsBelow100 > 1 ?  `s` : ``}, 
+                                    et trop de notes dans ${ nbSubjectsOver100  > 1 ? nbSubjectsOver100  : `une`} matière${nbSubjectsOver100  > 1 ?  `s` : ``}` 
+                                : `Missing grades in ${      nbSubjectsBelow100 > 1 ? nbSubjectsBelow100 : `a`  } subject${nbSubjectsBelow100 > 1 ? `'s` : ``}, 
+                                    and too many grades in ${nbSubjectsOver100  > 1 ? nbSubjectsOver100  : `a`  } subject${nbSubjectsOver100  > 1 ? `'s` : ``}`;
+                            color = bad;
+                        }
+                        else if (nbSubjectsBelow100 > 0) {
+                            advice = this.lang == `fr` 
+                                ? `Notes manquantes dans ${nbSubjectsBelow100 > 1 ? nbSubjectsBelow100 : `${nbSubjectsBelow100==nbSubjects ? "toutes tes" : "une"}`} matière${nbSubjectsBelow100 > 1 ? `s`  : ``}` 
+                                : `Missing grades in ${    nbSubjectsBelow100 > 1 ? nbSubjectsBelow100 : `${nbSubjectsBelow100==nbSubjects ? "all your" : "a"    }`} subject${nbSubjectsBelow100 > 1 ? `'s` : ``}`;
+                            color = bad;
+                        }
+                        else if (nbSubjectsOver100 > 0) {
+                            advice = this.lang == `fr` 
+                                ? `Trop de notes dans ${nbSubjectsOver100 > 1 ? nbSubjectsOver100 : `${nbSubjectsOver100==nbSubjects ? "toutes tes" : "une"}`} matière${nbSubjectsOver100 > 1 ? `s`  : ``}` 
+                                : `Too many grades in ${nbSubjectsOver100 > 1 ? nbSubjectsOver100 : `${nbSubjectsOver100==nbSubjects ? "all your" : "a"    }`} subject${nbSubjectsOver100 > 1 ? `'s` : ``}`;
+                            color = bad;
+                        }
+                    }
+                        */
+
+                    if (totalCoefSubjects != 100) {
+                        advice = this.lang == "fr" ? `Réajuste le coef de tes matières, leur somme n'est pas égale à 100% !` : `Readjust your subjects' coef, their sum isn't equal to 100%!`;
+                        color = bad;
+                    }
+                    else if (totalCoefRealGrades == 0) {
+                        if (totalCoefEnabledSimGrades > 0) {
                             advice = this.lang == "fr" 
-                                ? `Tes notes simulées faussent ta moyenne. Désactive/enlève-les !` 
-                                : `Your simulated grades falsify your average. Disable/remove them!`
+                                ? `Toutes tes notes sont simulées, tu n'as pas encore de notes !` 
+                                : `All your grades are simulated, you don't have any grades yet!`
+                            ;
+                            color = meh;
+                        }
+                        else {
+                            advice = this.lang == "fr" ? `Pas encore de notes` : `No grades yet`;
+                            color = unknown;
+                        }
+                    }
+                    else if (totalCoefRealGrades < 100) {
+                        if (totalCoefEnabledSimGrades > 0) {
+                            advice = this.lang == "fr" 
+                                ? `${nbEnabledSimGrades}% de tes notes est simulé, toutes tes notes ne sont encore pas là !` 
+                                : `${nbEnabledSimGrades}% of your grades is simulated, all your grades aren't out yet!`
+                            ;
+                            color = meh;
+                        }
+                        else if (totalCoefEnabledSimGrades == 0) {
+                            advice = this.lang == "fr" ? `Toutes tes notes ne sont encore pas là !` : `All your grades aren't out yet!`;
+                            color = meh;
+                        }
+                    }
+                    else if (totalCoefRealGrades > 100) {
+                        advice = this.lang == "fr" ? `Trop de notes (erreur du côté de l'ECAM), désactive les notes en trop !` : `Too many grades (error on ECAM's side), turn off all irrelevant grades!`;
+                        color = bad;
+                    }
+                    else if ((nbSubjectsBelow100 > 0 || nbSubjectsOver100 > 0) && nbEnabledSimGrades > 0) {
+                        advice = this.lang == "fr" 
+                            ? `Tes notes simulées faussent ta moyenne. Désactive/enlève-les !` 
+                            : `Your simulated grades falsify your average. Disable/remove them!`
+                        ;
+                        color = bad;
+                    }
+                    else if (totalCoefRealGrades == 100) {
+                        if (nbSubjectsBelow100 > 0 && nbSubjectsOver100 > 0) {
+                            advice = this.lang == "fr"
+                                ? `Trop de notes dans ${nbSubjectsOver100} matière${nbSubjectsOver100>1?`s`:``}, et notes manquantes dans ${nbSubjectsBelow100} matières${nbSubjectsBelow100>1?`s`:``} !`
+                                : `Too many grades in ${nbSubjectsOver100} subject${nbSubjectsOver100>1?`s`:``}, and missing grades in ${nbSubjectsBelow100} subject${nbSubjectsBelow100>1?`s`:``}!`
                             ;
                             color = bad;
                         }
-                        else if (totalCoefRealGrades < 100) {
-                            if (totalCoefEnabledSimGrades > 0) {
-                                advice = this.lang == "fr" 
-                                    ? `${nbEnabledSimGrades}% de tes notes est simulé, toutes tes notes ne sont encore pas là !` 
-                                    : `${nbEnabledSimGrades}% of your grades is simulated, all your grades aren't out yet!`
-                                ;
-                                color = meh;
-                            }
-                            else if (totalCoefEnabledSimGrades == 0) {
-                                advice = this.lang == "fr" ? `Toutes tes notes ne sont encore pas là !` : `All your grades aren't out yet!`;
-                                color = meh;
-                            }
+                        if (totalCoefEnabledRealGrades < 100) {
+                            advice = this.lang == "fr" 
+                                ? `Toutes tes notes sont là ! Réactive tes ${nbDisabledRealGrades} notes désactivées pour afficher ta vraie moyenne !` 
+                                : `All your grades are out! Enable your ${nbDisabledRealGrades} disabled grades to display your actual average!`
+                            ;
+                            color = meh;
                         }
-                        else if (totalCoefRealGrades > 100) {
-                            advice = this.lang == "fr" ? `Trop de notes (erreur du côté de l'ECAM), désactive les notes en trop !` : `Too many grades (error on ECAM's side), turn off all irrelevant grades!`;
-                            color = bad;
+                        else if (totalCoefEnabledSimGrades > 0) {
+                            advice = this.lang == "fr" 
+                                ? `Toutes tes notes sont là, mais tu devrais enlever tes ${nbSimGrades} notes simulées !` 
+                                : `All your grades are out, but you should remove your ${nbSimGrades} simulated grades!`
+                            ;
+                            color = meh;
                         }
-                        else if (totalCoefRealGrades == 100) {
-                            if (nbSubjectsBelow100 > 0 && nbSubjectsOver100 > 0) {
-                                advice = this.lang == "fr"
-                                    ? `Trop de notes dans ${nbSubjectsOver100} matière${nbSubjectsOver100>1?`s`:``}, et notes manquantes dans ${nbSubjectsBelow100} matières${nbSubjectsBelow100>1?`s`:``} !`
-                                    : `Too many grades in ${nbSubjectsOver100} subject${nbSubjectsOver100>1?`s`:``}, and missing grades in ${nbSubjectsBelow100} subject${nbSubjectsBelow100>1?`s`:``}!`
-                                ;
-                                color = bad;
-                            }
-                            if (totalCoefEnabledRealGrades < 100) {
-                                advice = this.lang == "fr" 
-                                    ? `Toutes tes notes sont là ! Réactive tes ${nbDisabledRealGrades} notes désactivées pour afficher ta vraie moyenne !` 
-                                    : `All your grades are out! Enable your ${nbDisabledRealGrades} disabled grades to display your actual average!`
-                                ;
-                                color = meh;
-                            }
-                            else if (totalCoefEnabledSimGrades > 0) {
-                                advice = this.lang == "fr" 
-                                    ? `Toutes tes notes sont là, mais tu devrais enlever tes ${nbSimGrades} notes simulées !` 
-                                    : `All your grades are out, but you should remove your ${nbSimGrades} simulated grades!`
-                                ;
-                                color = meh;
-                            }
-                            else if (totalCoefSimGrades > 0) {
-                                advice = this.lang == "fr" 
-                                    ? `Toutes tes notes sont là ! Tu peux enlever tes ${nbSimGrades} notes simulées !` 
-                                    : `All your grades are out! You may remove your ${nbSimGrades} simulated grades!`
-                                ;
-                                color = good;
-                            }
+                        else if (totalCoefSimGrades > 0) {
+                            advice = this.lang == "fr" 
+                                ? `Toutes tes notes sont là ! Tu peux enlever tes ${nbSimGrades} notes simulées !` 
+                                : `All your grades are out! You may remove your ${nbSimGrades} simulated grades!`
+                            ;
+                            color = good;
                         }
+                    }
 
-                        totalCoefDiv.innerHTML = `<span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}% / ${totalCoefSubjects}%</span>${advice}`;
-                    })
+                    totalCoefDiv.innerHTML = `<span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}% / ${totalCoefSubjects}%</span>${advice}`;
                 })
                 document.querySelectorAll(".grades-table-subject-total-coef-value").forEach(totalCoefDiv => {
                     const 
@@ -740,6 +751,7 @@
                         subject = totalCoefDiv.dataset.subject,
                         subjectData = this.gradesDatas[sem][ue].subjects[subject],
 
+                        isCustom                    = subjectData.isCustom,
                         disabledRealGrades          = subjectData.disabledRealGrades,
                         simGrades                   = subjectData.simGrades,
                         disabledSimGrades           = subjectData.disabledSimGrades,
@@ -750,7 +762,9 @@
                         totalCoefEnabledRealGrades  = subjectData.totalCoefEnabledRealGrades,
                         totalCoefEnabledSimGrades   = subjectData.totalCoefEnabledSimGrades,
                         nbSimGrades                 = simGrades.length,
-                        nbEnabledSimGrades          = nbSimGrades - disabledSimGrades;
+                        nbEnabledSimGrades          = nbSimGrades - disabledSimGrades,
+                        nbDisabledRealGrades        = disabledRealGrades.length
+                    ;
                     
                     
                     let advice = this.lang == `fr` ? `Toutes tes notes sont là !` : `All your grades are out!`;
@@ -813,7 +827,59 @@
                     }
                      */
 
-                    if (totalCoefRealGrades == 0)
+                    if (totalCoefRealGrades == 0) {
+                        if (totalCoefEnabledSimGrades > 0) {
+                            advice = this.lang == "fr" 
+                                ? `Toutes tes notes sont simulées, tu n'as pas encore de notes !` 
+                                : `All your grades are simulated, you don't have any grades yet!`
+                            ;
+                            color = meh;
+                        }
+                        else {
+                            advice = this.lang == "fr" ? `Pas encore de notes` : `No grades yet`;
+                            color = unknown;
+                        }
+                    }
+                    else if (totalCoefRealGrades < 100) {
+                        if (totalCoefEnabledSimGrades > 0) {
+                            advice = this.lang == "fr" 
+                                ? `${nbEnabledSimGrades}% de tes notes est simulé, toutes tes notes ne sont encore pas là !` 
+                                : `${nbEnabledSimGrades}% of your grades is simulated, all your grades aren't out yet!`
+                            ;
+                            color = meh;
+                        }
+                        else if (totalCoefEnabledSimGrades == 0) {
+                            advice = this.lang == "fr" ? `Toutes tes notes ne sont encore pas là !` : `All your grades aren't out yet!`;
+                            color = meh;
+                        }
+                    }
+                    else if (totalCoefRealGrades > 100) {
+                        advice = this.lang == "fr" ? `Trop de notes (erreur du côté de l'ECAM), désactive les notes en trop !` : `Too many grades (error on ECAM's side), turn off all irrelevant grades!`;
+                        color = bad;
+                    }
+                    else if (totalCoefRealGrades == 100) {
+                        if (totalCoefEnabledRealGrades < 100) {
+                            advice = this.lang == "fr" 
+                                ? `Toutes tes notes sont là ! Réactive tes ${nbDisabledRealGrades} notes désactivées pour afficher ta vraie moyenne !` 
+                                : `All your grades are out! Enable your ${nbDisabledRealGrades} disabled grades to display your actual average!`
+                            ;
+                            color = meh;
+                        }
+                        else if (totalCoefEnabledSimGrades > 0) {
+                            advice = this.lang == "fr" 
+                                ? `Toutes tes notes sont là, mais tu devrais enlever tes ${nbSimGrades} notes simulées !` 
+                                : `All your grades are out, but you should remove your ${nbSimGrades} simulated grades!`
+                            ;
+                            color = meh;
+                        }
+                        else if (totalCoefSimGrades > 0) {
+                            advice = this.lang == "fr" 
+                                ? `Toutes tes notes sont là ! Tu peux enlever tes ${nbSimGrades} notes simulées !` 
+                                : `All your grades are out! You may remove your ${nbSimGrades} simulated grades!`
+                            ;
+                            color = good;
+                        }
+                    }
                     
                     totalCoefDiv.innerHTML = `<span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}%</span>${advice}`;
                 })
@@ -972,7 +1038,7 @@
                                 subjectData.totalCoefEnabledGrades      = 0;
                                 subjectData.totalCoefEnabledRealGrades  = 0;
                                 subjectData.totalCoefEnabledSimGrades   = 0;
-
+                                
 
                                 ueData.totalCoefSubjects += parseInt(subjectData.coef);
                                 
@@ -1463,7 +1529,8 @@
                 const includedGrades = (ueGrades || []).filter(n => this.ignoredGrades.indexOf([sem, n.subject, n.type+" "+n.date+" "+n.prof].join("\\")) == -1);
                 let weight = 0; includedGrades.forEach(grade => {weight += grade.coef/100})
                 const moyenne = this.gradesDatas[sem][ueName].average;
-                const hasSim = (this.sim[sem] && this.sim[sem][ueName] && Object.values(this.sim[sem][ueName]).some(arr=>arr.length>0)) ? true : false;
+                const hasSim =      this.gradesDatas[sem][ueName].simGrades.length > 0 ? true : false;
+                const hasDisabled = this.gradesDatas[sem][ueName].disabledSimGrades.length + this.gradesDatas[sem][ueName].disabledRealGrades.length > 0 ? true : false;
 
                     /* <svg style="border-radius: 20px; width: 100%; height: 100%;">
                         <path class="ue-insert-path" fill="none" stroke="#9097ff" stroke-width="1px" stroke-dasharray="25 5" d="M 0 0 l 20 15 h 1050 M 0 45 l 20 -15 h 1050"/>
@@ -1494,12 +1561,24 @@
                             <button class="ue-delete-btn" ${this.editMode ? `class="display:none"` : ""} id="ue-delete-btn-${ueName}-in-semester-${sem}" title="${this.lang == "fr" ? "Supprimer ce module" : "Delete this module"}" data-semester="${sem}" data-ue="${ueName}">🗑️</button>
                         </div>
                     </div>
-                    ${hasSim 
-                        ? 
-                        `<div style="width:97%;font-size:12px;color:#374151;background:#eef2ff;border:1px solid #c7d2fe;padding:6px 8px;border-radius:8px; margin:8px 0px;">
-                            ${this.lang == "fr" ? "Inclus des notes simulées" : "Includes simulated grades"}
-                        </div>` 
-                        : ``}
+                    <div class="ue-info">
+                        ${hasDisabled 
+                            ? 
+                            `<div class="ue-info hasDisabledGrades">
+                                <div>${this.lang == "fr" ? "Inclus des notes simulées" : "Includes simulated grades"}</div>
+                                <div class="ue-info-disabled-clear" data-sem="${sem}" data-ue="${ueName}">${this.lang == "fr" ? "Activer toutes ces notes" : "Enabled all these grades"}</div>
+                            </div>` 
+                            : ``
+                        }
+                        ${hasSim 
+                            ? 
+                            `<div class="ue-info hasSim">
+                                <div>${this.lang == "fr" ? "Inclus des notes simulées" : "Includes simulated grades"}</div>
+                                <div class="ue-info-sim-clear" data-sem="${sem}" data-ue="${ueName}">${this.lang == "fr" ? "Effacer ces notes simulées" : "Erase the simulated grades"}</div>
+                            </div>` 
+                            : ``
+                        }
+                    </div>
                     <div class="ue-details ${this.editMode ? "edit-mode": ""}" id="ue-details-${ueName}-in-semester${sem}">
                         ${this.renderAllMatCardDetailed(sem, ueName)}
                     </div>
@@ -2316,6 +2395,9 @@
                         this.renderContent(true);
                     }
                 })
+                
+                document.querySelectorAll(".ue-info-sim-clear").     forEach(simClear => {simClear.onclick = () => {this.clearSimGradesForUE(    simClear.dataset.sem, simClear.dataset.ue)};this.renderContent();});
+                document.querySelectorAll(".ue-info-disabled-clear").forEach(disClear => {disClear.onclick = () => {this.clearIgnoredGradesForUE(disClear.dataset.sem, disClear.dataset.ue)};this.renderContent();});
 
                 
                 document.querySelector(".unclassified-content").querySelectorAll(".grades-table").forEach(table => {
