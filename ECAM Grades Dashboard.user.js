@@ -25,7 +25,7 @@
     const styles = `
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         * { box-sizing: border-box; }
-        .ecam-dash { display: grid; flex-direction: column; justify-content:center; grid-template-columns: 100%; font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; margin: 20px 1.5% 0px 1.5%; color: #1a1a1a; }
+        .ecam-dash          { display: grid; flex-direction: column; justify-content:center; grid-template-columns: 100%; font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; margin: 20px 1.5% 0px 1.5%; width: 97%; color: #1a1a1a; }
         .dash-header { background: linear-gradient(135deg, #5b62bf 0%, #2A2F72 100%); color: white; padding: 30px 40px; border-radius: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 3px 5px 5px 0px #00000042; }
         .dash-title { font-size: 28px; font-weight: 700; margin: 0; }
         .dash-subtitle { font-size: 14px; opacity: 0.95; margin-top: 5px; }
@@ -91,7 +91,7 @@
         .intranet-toggle.openLeft { transform: rotate(-180deg); }
         .intranet-toggle.openRight { transform: rotate(180deg); }
 
-        .semester-section { background: white; border-radius: 24px; overflow: hidden; border: 1px solid #e5e5e5; transition: all 0.3s ease; }
+        .semester-section { display: flex; flex-direction: column; align-items: center; background: white; border-radius: 24px; overflow: hidden; border: 1px solid #e5e5e5; transition: all 0.3s ease; }
         .semester-header { background: #f9fafb; padding: 20px 24px; border-bottom: 1px solid #e5e5e5; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         .semester-header:hover { background: #f3f4f6; }
         .semester-info { display: flex; align-items: center; gap: 12px; }
@@ -102,21 +102,22 @@
         .average-bad { color: #ef4444; border: 1px solid #ef444430; }
         .semester-toggle { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; }
         .semester-toggle.open { transform: rotate(180deg); }
-        .semester-content       { padding: 24px; display: none; }
-        .semester-content.show  { display: flex; flex-direction: row; gap: 0px; transition: gap 0.2s ease; }
+        .semester-content               { padding: 24px; display: none; }
+        .semester-content.show          { display: flex; flex-direction: row; width: 100%; gap: 0px; transition: gap 0.2s ease, width 0.2s ease; }
+        .semester-content.show.dragging { width: 70%; gap: 20px; }
 
         
-        .drop-subject-card-to-remove-from-eu        { display: flex; flex-direction: column; border-radius: 20px; border: 2px dashed #ff7f7f; border-color: #ff7f7f00;width: 0%; transition: width 0.2s ease, border-color 0.2s ease; }
-        .drop-subject-card-to-remove-from-eu.show   { width: 15%; border-width: 2px; border-color: #ff7f7f; }
-        .drop-subject-card-to-create-eu             { display: flex; flex-direction: column; border-radius: 20px; border: 2px dashed #7fc2ff; border-color: #7fc2ff00;width: 0%; transition: width 0.2s ease, border-color 0.2s ease; }
-        .drop-subject-card-to-create-eu.show        { width: 15%; border-width: 2px; border-color: #7fc2ff; }
-        .ue-insert-area                             { display: none; flex-direction: column; justify-content: center; align-items: center; color: #6f5fff00; height: 0px;  width: 100%; border-radius: 20px; border: 2px dashed #9b9b9b00; border-width: 0px; font-size: 25px; font-weight: 800; user-select: none; cursor: pointer; transition: all 0.2s ease; }
+        .drop-subject-card-to-remove-from-ue        { display: flex; flex-direction: column; justify-content: center; align-items: center; position: fixed; top: 5px; left: 5px; height: calc(100% - 10px); width: 0%; border-radius: 20px; border: 2px dashed #ff7f7f; border-color: #ff7f7f00; background: #ffb8b83d; font-size: 50px; font-weight: 800; color: #ff7f7f00; transition: width 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease; }
+        .drop-subject-card-to-remove-from-ue.show   { width: 15%; border-width: 2px; border-color: #ff7f7f; color: #ff7f7f; }
+        .drop-subject-card-to-create-ue             { display: flex; flex-direction: column; justify-content: center; align-items: center; position: fixed; top: 5px; right:5px; height: calc(100% - 10px); width: 0%; border-radius: 20px; border: 2px dashed #7fc2ff; border-color: #7fc2ff00; background: #bdb8ff3d; font-size: 50px; font-weight: 800; color: #7fc2ff00; transition: width 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease; }
+        .drop-subject-card-to-create-ue.show        { width: 15%; border-width: 2px; border-color: #7fc2ff; color: #7fc2ff; }
+        .ue-insert-area                             { display: none; flex-direction: column; justify-content: center; align-items: center; color: #6f5fff00; height: 0px;  width: 100%; border-radius: 20px; border: 2px dashed #9b9b9b00; border-width: 0px; background: #bdb8ff3d; font-size: 25px; font-weight: 800; user-select: none; cursor: pointer; transition: all 0.2s ease; }
         .ue-insert-area.show                        { display: flex; flex-direction: column; justify-content: center; align-items: center; color: #9b9b9bff; height: 50px; border-color: #9b9b9b; border-width: 2px; }
         .ue-insert-area.show.hover                  { color: #887bffff; border-color: #7fc2ff; }
         .ue-insert-area.show:hover                  { color: #887bffff; border-color: #7fc2ff; }
 
         .ue-grid                { display: grid; width: 100%; gap: 20px; transition: gap 0.2s ease; }
-        .ue-card                { display: flex; flex-direction: column; align-items: center; background: #fafafa; border-radius: 16px; border: 3px solid #e5e5e5; gap: 10px; scroll-margin-top: 70px; transition: all 0.3s ease; }
+        .ue-card                { display: flex; flex-direction: column; align-items: center; background: #fafafa; border-radius: 16px; border: 3px solid #e5e5e5; gap: 15px; scroll-margin-top: 70px; transition: all 0.3s ease; }
         .ue-card.validated      { border-color: #10b981; background: #f0fdf4; }
         .ue-card.failed         { border-color: #ef4444; background: #fef2f2; }
         .ue-card.unknown        { border-color: #6d6d6dff; background: #d1d1d1ff; }
@@ -129,7 +130,8 @@
         .ue-title                       { font-size: 16px; font-weight: 800; color: #1a1a1a; width:42%; margin-bottom: 2px; }
         .ue-title.input                 { font-size: 16px; font-weight: 800; color: #1a1a1a; width:90%; border-radius: 12px; padding-left: 10px; }
         .ue-subject-total-coef-value    { display: flex; gap: 15px; font-weight: 600; }
-        .ue-details                     { display: flex; flex-direction: column; align-items: center; width: 98%; margin-top: 10px; gap: 5px; }
+        .ue-details                     { display: flex; flex-direction: column; align-items: center; width: 98%; margin: 10px 0px; gap: 15px; }
+        .ue-details.edit-mode           { gap: 5px; }
         .ue-moyenne                     { font-size: 24px; font-weight: 800; display: flex; align-items: center; gap:10px; width: 180px; }
         .ue-moyenne.good                { color: #10b981; }
         .ue-moyenne.bad                 { color: #ef4444; }
@@ -177,8 +179,8 @@
         .subject-card.compact.meh               { background: #ffe8d0; }
         .subject-card.compact.bad               { background: #ffe0e0; }
         .subject-card.compact.unknown           { background: #c5c5c5; }
-        .subject-card.compact:hover             { background: #f3f4f6; box-shadow: inset 0px 0px 8px 1px #0032ff42; transform: scale(0.995); }
-        .subject-card.compact.edit-mode:hover   { transform: scale(1); }
+        .subject-card.compact:hover             { background: #f3f4f6; box-shadow: inset 0px 0px 8px 1px #0032ff42; }
+        .subject-card.compact.edit-mode:hover   { transform: scale(0.995); }
         .subject-card.unclassified              { display: flex; flex-direction: column; align-items: center; border: 2px solid #ffe4cd; border-radius: 20px; width:100%; background: white; user-select: none; margin: 0px; transition: width 0.3s ease, box-shadow 0.1s ease; }
         .subject-card.unclassified.good         { box-shadow: 0px 0px 0px 0px #39ff8f; background: #f0fdf4; }
         .subject-card.unclassified.good:hover   { box-shadow: 0px 0px 5px 0px #39ff8f; }
@@ -433,6 +435,7 @@
                     return semX !== sem || !allMats.includes(subj);
                 });
                 this.saveIgnoredGrades();
+                this.getGradesDatas();
             }
             compareArraysofObjects(a, b) {
                 const out = {common:[], more:[], missing:[]};
@@ -523,18 +526,61 @@
                 };
 
             }
+            draggableIcon(source="subject-card", {height=25, type="unknown", targetId="none"}={height: 25, type: "unknown", targetId:"none"}) {
+                return `<img class="drag-icon for-${source}" data-targetid="${targetId}" data-type="${type}" draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/960px-Hamburger_icon.svg.png" alt="☰" style="height:${height}px; ${source.match(/-subject-card/ig) ? "border: 2px solid; border-radius: 8px;" : ""}">`
+            }
+            // MARK: Scroll to element
+            scrollToClientHighestElemWithClassWithTimeout({className, id="", timeout=50, smooth=false, margin=23}) {
+                this.scrollToThisElem = ""; let found = false;
+                if (this.editMode) {margin = 93}
+                if (document.body.classList.contains("lfr-dockbar-pinned")) {margin += 45}
+
+                if (id=="") {
+                    className.split("||").forEach(_className => {
+                        document.querySelectorAll(`${_className}`).forEach(elem => {
+                            const coords = elem.getBoundingClientRect();
+                            const meanClientTop = (coords.top + coords.bottom)/2;
+                            if ((meanClientTop > 0) && !found) {
+                                this.scrollToThisElem = elem.id;
+                                found = true;
+                            }
+                        })
+                    })
+
+                    if (found) {
+                        setTimeout(() => {
+                            const scrollToThisElem = document.getElementById(this.scrollToThisElem); 
+                            scrollToThisElem.style.scrollMarginTop = `${margin}px`;
+                            scrollToThisElem.scrollIntoView({behavior: smooth ? "smooth" : "instant", block: "start"});
+                        }, timeout)
+                    }
+                }
+                else
+                {
+                    this.scrollToThisElem = id;
+                    
+                    setTimeout(() => {
+                        const scrollToThisElem = document.getElementById(this.scrollToThisElem); 
+                        scrollToThisElem.style.scrollMarginTop = `${margin}px`;
+                        scrollToThisElem.scrollIntoView({behavior: smooth ? "smooth" : "instant", block: "start"});
+                    }, timeout)
+                }
+
+            }
             // MARK: Set total coefs
             setGradesTableTotalCoef() {
                 const good="#10b981", meh="#e98c00", bad="#e90000", unknown="#7a7a7a";
 
                 document.querySelectorAll(".ue-card").forEach(ueCard => {
                     ueCard.querySelectorAll(".ue-subject-total-coef-value").forEach(totalCoefDiv => {
-                        const sem = totalCoefDiv.dataset.sem;
-                        const ue = totalCoefDiv.dataset.ue;
-                        const ueData = this.gradesDatas[sem][ue],
+                        const 
+                            sem = totalCoefDiv.dataset.sem,
+                            ue = totalCoefDiv.dataset.ue,
+                            ueData = this.gradesDatas[sem][ue],
                             nbSubjects = Object.keys(ueData.subjects).length,
+                            
                             simGrades =                     ueData.simGrades, 
-                            disabledGrades =                ueData.disabledRealGrades, 
+                            disabledRealGrades =            ueData.disabledRealGrades, 
                             disabledSimGrades =             ueData.disabledSimGrades, 
 
                             totalCoefSubjects =             ueData.totalCoefSubjects, 
@@ -548,10 +594,16 @@
 
                             subjectsBelow100 =              ueData.subjectsBelow100, 
                             subjectsOver100 =               ueData.subjectsOver100,
+                            subjectsReallyBelow100 =        ueData.subjectsReallyBelow100, 
+                            subjectsReallyOver100 =         ueData.subjectsReallyOver100,
                              
                             nbSubjectsBelow100 =            subjectsBelow100.length, 
                             nbSubjectsOver100 =             subjectsOver100.length, 
-                            nbDisabledGrades =              disabledGrades.length, 
+                            nbSubjectsReallyBelow100 =      subjectsReallyBelow100.length, 
+                            nbSubjectsReallyOver100 =       subjectsReallyOver100.length, 
+                            nbSubjectsSimBelow100 =         nbSubjectsBelow100-nbSubjectsReallyBelow100, 
+                            nbSubjectsSimOver100 =          nbSubjectsOver100-nbSubjectsReallyOver100, 
+                            nbDisabledRealGrades =          disabledRealGrades.length, 
                             nbSimGrades =                   simGrades.length, 
                             nbEnabledSimGrades =            nbSimGrades - disabledSimGrades.length
                         ;
@@ -560,6 +612,7 @@
                         let advice = this.lang == `fr` ? `Toutes tes notes sont là !` : `All your grades are out!`;
                         let color = good;
 
+                        /* 
                         {   // Conditions part
 
                             if (totalCoefSubjects == 100 && totalCoefEnabledGrades == 100 && nbEnabledSimGrades > 0) {
@@ -603,27 +656,107 @@
                                 color = bad;
                             }
                         }
+                         */
+
+                        if (totalCoefSubjects != 100) {
+                            advice = this.lang == "fr" ? `Réajuste le coef de tes matières, leur somme n'est pas égale à 100% !` : `Readjust your subjects' coef, their sum isn't equal to 100%!`;
+                            color = bad;
+                        }
+                        else if (totalCoefRealGrades == 0) {
+                            if (totalCoefEnabledSimGrades > 0) {
+                                advice = this.lang == "fr" 
+                                    ? `Toutes tes notes sont simulées, tu n'as pas encore de notes !` 
+                                    : `All your grades are simulated, you don't have any grades yet!`
+                                ;
+                                color = meh;
+                            }
+                            else {
+                                advice = this.lang == "fr" ? `Pas encore de notes` : `No grades yet`;
+                                color = unknown;
+                            }
+                        }
+                        else if ((nbSubjectsBelow100 > 0 || nbSubjectsOver100 > 0) && nbEnabledSimGrades > 0) {
+                            advice = this.lang == "fr" 
+                                ? `Tes notes simulées faussent ta moyenne. Désactive/enlève-les !` 
+                                : `Your simulated grades falsify your average. Disable/remove them!`
+                            ;
+                            color = bad;
+                        }
+                        else if (totalCoefRealGrades < 100) {
+                            if (totalCoefEnabledSimGrades > 0) {
+                                advice = this.lang == "fr" 
+                                    ? `${nbEnabledSimGrades}% de tes notes est simulé, toutes tes notes ne sont encore pas là !` 
+                                    : `${nbEnabledSimGrades}% of your grades is simulated, all your grades aren't out yet!`
+                                ;
+                                color = meh;
+                            }
+                            else if (totalCoefEnabledSimGrades == 0) {
+                                advice = this.lang == "fr" ? `Toutes tes notes ne sont encore pas là !` : `All your grades aren't out yet!`;
+                                color = meh;
+                            }
+                        }
+                        else if (totalCoefRealGrades > 100) {
+                            advice = this.lang == "fr" ? `Trop de notes (erreur du côté de l'ECAM), désactive les notes en trop !` : `Too many grades (error on ECAM's side), turn off all irrelevant grades!`;
+                            color = bad;
+                        }
+                        else if (totalCoefRealGrades == 100) {
+                            if (nbSubjectsBelow100 > 0 && nbSubjectsOver100 > 0) {
+                                advice = this.lang == "fr"
+                                    ? `Trop de notes dans ${nbSubjectsOver100} matière${nbSubjectsOver100>1?`s`:``}, et notes manquantes dans ${nbSubjectsBelow100} matières${nbSubjectsBelow100>1?`s`:``} !`
+                                    : `Too many grades in ${nbSubjectsOver100} subject${nbSubjectsOver100>1?`s`:``}, and missing grades in ${nbSubjectsBelow100} subject${nbSubjectsBelow100>1?`s`:``}!`
+                                ;
+                                color = bad;
+                            }
+                            if (totalCoefEnabledRealGrades < 100) {
+                                advice = this.lang == "fr" 
+                                    ? `Toutes tes notes sont là ! Réactive tes ${nbDisabledRealGrades} notes désactivées pour afficher ta vraie moyenne !` 
+                                    : `All your grades are out! Enable your ${nbDisabledRealGrades} disabled grades to display your actual average!`
+                                ;
+                                color = meh;
+                            }
+                            else if (totalCoefEnabledSimGrades > 0) {
+                                advice = this.lang == "fr" 
+                                    ? `Toutes tes notes sont là, mais tu devrais enlever tes ${nbSimGrades} notes simulées !` 
+                                    : `All your grades are out, but you should remove your ${nbSimGrades} simulated grades!`
+                                ;
+                                color = meh;
+                            }
+                            else if (totalCoefSimGrades > 0) {
+                                advice = this.lang == "fr" 
+                                    ? `Toutes tes notes sont là ! Tu peux enlever tes ${nbSimGrades} notes simulées !` 
+                                    : `All your grades are out! You may remove your ${nbSimGrades} simulated grades!`
+                                ;
+                                color = good;
+                            }
+                        }
 
                         totalCoefDiv.innerHTML = `<span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}% / ${totalCoefSubjects}%</span>${advice}`;
                     })
                 })
                 document.querySelectorAll(".grades-table-subject-total-coef-value").forEach(totalCoefDiv => {
-                    const sem = totalCoefDiv.dataset.sem;
-                    const ue = totalCoefDiv.dataset.ue;
-                    const subject = totalCoefDiv.dataset.subject;
-                    const subjectData = this.gradesDatas[sem][ue].subjects[subject];
-                    const totalCoef =                   subjectData.totalCoef;
-                    const totalCoefEnabledGrades =      subjectData.totalCoefEnabledGrades;
-                    const totalCoefSimGrades =          subjectData.totalCoefSimGrades;
-                    const totalCoefEnabledSimGrades =   subjectData.totalCoefEnabledSimGrades;
-                    const nbDisabledGrades =            subjectData.disabledRealGrades.length;
-                    const nbSimGrades =                 subjectData.simGrades.length;
-                    const nbEnabledSimGrades =          nbSimGrades - subjectData.disabledSimGrades.length;
+                    const 
+                        sem = totalCoefDiv.dataset.sem,
+                        ue = totalCoefDiv.dataset.ue,
+                        subject = totalCoefDiv.dataset.subject,
+                        subjectData = this.gradesDatas[sem][ue].subjects[subject],
+
+                        disabledRealGrades          = subjectData.disabledRealGrades,
+                        simGrades                   = subjectData.simGrades,
+                        disabledSimGrades           = subjectData.disabledSimGrades,
+                        totalCoefGrades             = subjectData.totalCoefGrades,
+                        totalCoefRealGrades         = subjectData.totalCoefRealGrades,
+                        totalCoefSimGrades          = subjectData.totalCoefSimGrades,
+                        totalCoefEnabledGrades      = subjectData.totalCoefEnabledGrades,
+                        totalCoefEnabledRealGrades  = subjectData.totalCoefEnabledRealGrades,
+                        totalCoefEnabledSimGrades   = subjectData.totalCoefEnabledSimGrades,
+                        nbSimGrades                 = simGrades.length,
+                        nbEnabledSimGrades          = nbSimGrades - disabledSimGrades;
                     
                     
                     let advice = this.lang == `fr` ? `Toutes tes notes sont là !` : `All your grades are out!`;
                     let color = ` #10b981`;
 
+                    /* 
                     { // Conditions part
                         if (totalCoefEnabledSimGrades > 0 && totalCoefEnabledGrades == 100) {
                             advice = this.lang == `fr` ? `Toutes tes notes sont là, mais tu devrais désactiver tes notes simulées` : `All your grades are out, but you should disable your simulated grades`;
@@ -678,50 +811,12 @@
                             
                         }
                     }
+                     */
+
+                    if (totalCoefRealGrades == 0)
                     
                     totalCoefDiv.innerHTML = `<span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}%</span>${advice}`;
                 })
-            }
-            draggableIcon(source="subject-card", {height=25, type="unknown", targetId="none"}={height: 25, type: "unknown", targetId:"none"}) {
-                return `<img class="drag-icon for-${source}" data-targetid="${targetId}" data-type="${type}" draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/960px-Hamburger_icon.svg.png" alt="☰" style="height:${height}px; ${source.match(/-subject-card/ig) ? "border: 2px solid; border-radius: 8px;" : ""}">`
-            }
-            // MARK: Scroll to element
-            scrollToClientHighestElemWithClassWithTimeout({className, id="", timeout=50, smooth=false, margin=23}) {
-                this.scrollToThisElem = ""; let found = false;
-                if (this.editMode) {margin = 93}
-                if (document.body.classList.contains("lfr-dockbar-pinned")) {margin += 45}
-
-                if (id=="") {
-                    className.split("||").forEach(_className => {
-                        document.querySelectorAll(`${_className}`).forEach(elem => {
-                            const coords = elem.getBoundingClientRect();
-                            const meanClientTop = (coords.top + coords.bottom)/2;
-                            if ((meanClientTop > 0) && !found) {
-                                this.scrollToThisElem = elem.id;
-                                found = true;
-                            }
-                        })
-                    })
-
-                    if (found) {
-                        setTimeout(() => {
-                            const scrollToThisElem = document.getElementById(this.scrollToThisElem); 
-                            scrollToThisElem.style.scrollMarginTop = `${margin}px`;
-                            scrollToThisElem.scrollIntoView({behavior: smooth ? "smooth" : "instant", block: "start"});
-                        }, timeout)
-                    }
-                }
-                else
-                {
-                    this.scrollToThisElem = id;
-                    
-                    setTimeout(() => {
-                        const scrollToThisElem = document.getElementById(this.scrollToThisElem); 
-                        scrollToThisElem.style.scrollMarginTop = `${margin}px`;
-                        scrollToThisElem.scrollIntoView({behavior: smooth ? "smooth" : "instant", block: "start"});
-                    }, timeout)
-                }
-
             }
             // MARK: getGradesDatas
             getGradesDatas({sem=undefined, ue=undefined, subj=undefined}={sem: undefined, ue: undefined, subj: undefined}) {
@@ -798,13 +893,12 @@
 
                                         unclassifiedSubjectData.disabledSimGrades.push(grade);
                                     break;
-                                }
-                                
+                                }                                
                             })
 
                             
-                            unclassifiedSubjectData.average                     = Math.round(unclassifiedSubjectData.average*100)/100;
-                            unclassifiedSubjectData.classAvg                    = Math.round(unclassifiedSubjectData.classAvg*100)/100;
+                            unclassifiedSubjectData.average                     = Math.round(100*unclassifiedSubjectData.average/(unclassifiedSubjectData.totalCoefGrades/100))/100;
+                            unclassifiedSubjectData.classAvg                    = Math.round(100*unclassifiedSubjectData.classAvg/(unclassifiedSubjectData.totalCoefGrades/100))/100;
                             unclassifiedSubjectData.totalCoefGrades             = Math.round(unclassifiedSubjectData.totalCoefGrades);
                             unclassifiedSubjectData.totalCoefRealGrades         = Math.round(unclassifiedSubjectData.totalCoefRealGrades);
                             unclassifiedSubjectData.totalCoefSimGrades          = Math.round(unclassifiedSubjectData.totalCoefSimGrades);
@@ -831,6 +925,8 @@
                             ueData.disabledSimGrades            = [];
                             ueData.subjectsBelow100             = [];
                             ueData.subjectsOver100              = [];
+                            ueData.subjectsReallyBelow100       = [];
+                            ueData.subjectsReallyOver100        = [];
                             ueData.subjectsNoGrade              = [];
                             ueData.average                      = 0;
                             ueData.classAvg                     = 0;
@@ -888,12 +984,11 @@
                                         subjCoef = parseInt(subjectData.coef)
                                     ;
                                     
-                                    subjectData.totalCoef += grade.coef;
+                                    subjectData.totalCoefGrades += grade.coef;
 
                                     switch (`${this.gradeIsDisabled(grade) ? "disabled" : "enabled"} ${grade.__sim ? "sim" : "real"} grade`) {
                                         case `enabled real grade`:
                                             subjectData.classAvg                    += classAvg*coef/100;
-                                            subjectData.totalCoefGrades             += coef;
                                             subjectData.totalCoefRealGrades         += coef;
 
                                             subjectData.average                     += gradeValue*coef/100;
@@ -910,19 +1005,17 @@
 
                                         case `disabled real grade`:
                                             subjectData.classAvg                    += classAvg*coef/100;
-                                            subjectData.totalCoefGrades             += coef;
                                             subjectData.totalCoefRealGrades         += coef;
-                                            subjectData.disabledGrades.push(grade);
+                                            subjectData.disabledRealGrades.push(grade);
 
                                             ueData.totalCoefGrades                  += coef*subjCoef/100;
                                             ueData.totalCoefRealGrades              += coef*subjCoef/100;
 
-                                            ueData.disabledGrades.push(grade);
+                                            ueData.disabledRealGrades.push(grade);
                                         break;
 
                                         case `enabled sim grade`:
                                             subjectData.simGrades.push(grade);
-                                            subjectData.totalCoefGrades             += coef;
                                             subjectData.totalCoefSimGrades          += coef;
 
                                             subjectData.average                     += gradeValue*coef/100;
@@ -940,7 +1033,6 @@
 
                                         case `disabled sim grade`:
                                             subjectData.simGrades.push(grade);
-                                            subjectData.totalCoefGrades             += coef;
                                             subjectData.totalCoefSimGrades          += coef;
                                             subjectData.disabledSimGrades.push(grade);
 
@@ -955,14 +1047,14 @@
                                 
                                 
                                 
-                                if (subjectData.grades.length == 0) {
+                                if (subjectData.totalCoefEnabledGrades == 0) {
                                     subjectData.average  = " - ";
                                     subjectData.classAvg = " - ";
                                     ueData.subjectsNoGrade.push(subjectName);
                                 }
                                 else {
-                                    subjectData.average     =  Math.round(subjectData.average *100)/100;
-                                    subjectData.classAvg    =  Math.round(subjectData.classAvg*100)/100;
+                                    subjectData.average     =  Math.round(100*subjectData.average /(subjectData.totalCoefGrades/100))/100;
+                                    subjectData.classAvg    =  Math.round(100*subjectData.classAvg/(subjectData.totalCoefGrades/100))/100;
 
                                     ueData.average          += subjectData.average *subjectData.coef/100;
                                     ueData.classAvg         += subjectData.classAvg*subjectData.coef/100;
@@ -976,8 +1068,11 @@
                                 subjectData.totalCoefEnabledSimGrades   = Math.round(subjectData.totalCoefEnabledSimGrades);
 
 
-                                if      (subjectData.totalCoef < 100) ueData.subjectsBelow100.push(subjectName);
-                                else if (subjectData.totalCoef > 100) ueData.subjectsOver100 .push(subjectName);
+                                if      (subjectData.totalCoefGrades < 100) ueData.subjectsBelow100.push(subjectName);
+                                else if (subjectData.totalCoefGrades > 100) ueData.subjectsOver100 .push(subjectName);
+
+                                if      (subjectData.totalCoefRealGrades < 100) ueData.subjectsReallyBelow100.push(subjectName);
+                                else if (subjectData.totalCoefRealGrades > 100) ueData.subjectsReallyOver100 .push(subjectName);
                             });
 
 
@@ -985,22 +1080,19 @@
                                 ueData.average  = " - ";
                                 ueData.classAvg = " - ";
                             }
+                            // else if (ueData.subjectsNoGrade.length > 0) {
+                            //     const ratio = (Object.keys(ueData.subjects).length/ueData.subjectsNoGrade.length);
+                            //     ueData.average                      *= ratio;
+                            //     ueData.classAvg                     *= ratio;
 
-                            if (ueData.subjectsNoGrade.length > 0) {
-                                const ratio = (Object.keys(ueData.subjects).length/ueData.subjectsNoGrade.length);
-                                ueData.average                      /= ratio;
-                                ueData.classAvg                     /= ratio;
-                                ueData.totalCoefSubjects            /= ratio;
-                                ueData.totalCoefGrades              /= ratio;
-                                ueData.totalCoefRealGrades          /= ratio;
-                                ueData.totalCoefSimGrades           /= ratio;
-                                ueData.totalCoefEnabledGrades       /= ratio;
-                                ueData.totalCoefEnabledRealGrades   /= ratio;
-                                ueData.totalCoefEnabledSimGrades    /= ratio;
+                            // }
+
+                            if (!isNaN(Number(ueData.average))) {
+                                ueData.average                          =  Math.round(100*ueData.average/(ueData.totalCoefSubjects/100))/100;
+                                ueData.classAvg                         =  Math.round(100*ueData.classAvg/(ueData.totalCoefSubjects/100))/100;
                             }
                             
-                            ueData.average                          =  Math.round(ueData.average*100)/100;
-                            ueData.classAvg                         =  Math.round(ueData.classAvg*100)/100;
+
                             ueData.totalCoefSubjects                =  Math.round(ueData.totalCoefSubjects);
                             ueData.totalCoefGrades                  =  Math.round(ueData.totalCoefGrades);
                             ueData.totalCoefRealGrades              =  Math.round(ueData.totalCoefRealGrades);
@@ -1008,6 +1100,7 @@
                             ueData.totalCoefEnabledGrades           =  Math.round(ueData.totalCoefEnabledGrades);
                             ueData.totalCoefEnabledRealGrades       =  Math.round(ueData.totalCoefEnabledRealGrades);
                             ueData.totalCoefEnabledSimGrades        =  Math.round(ueData.totalCoefEnabledSimGrades);
+                            
                         })
                     }
                     
@@ -1294,8 +1387,7 @@
                         <div class="semester-toggle open collapse-icon">▲</div>
                     </div>
                     <div class="semester-content show ${fadeIn ? "fade-in" : ""}" id="sem-content-${sem}">
-                        <div class="drop-subject-card-to-remove-from-eu">
-                        </div>
+                        <div class="drop-subject-card-to-remove-from-ue">-</div>
                         <div class="ue-grid" ${(unclassified.length == 0 || !this.ueConfig[sem] || Object.keys(this.ueConfig?.[sem])[0] == undefined) ? `style="gap: ${this.editMode ? `20px` : `0px`}"` : ``}>
                             <div class="modules-section">
                                 <div class="modules-content">
@@ -1315,8 +1407,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="drop-subject-card-to-create-eu">
-                        </div>
+                        <div class="drop-subject-card-to-create-ue">+</div>
                     </div>
                     `;
                     contentArea.appendChild(section);
@@ -1368,8 +1459,6 @@
             }
             // MARK: renderUECard
             renderUECard(sem, ueName, insertIndex=-1) {
-                const ueConfig = this.ueConfig[sem] || {};
-                const ueData = ueConfig[ueName];
                 const ueGrades = this.calculateUEGrades(sem, ueName);
                 const includedGrades = (ueGrades || []).filter(n => this.ignoredGrades.indexOf([sem, n.subject, n.type+" "+n.date+" "+n.prof].join("\\")) == -1);
                 let weight = 0; includedGrades.forEach(grade => {weight += grade.coef/100})
@@ -1411,7 +1500,7 @@
                             ${this.lang == "fr" ? "Inclus des notes simulées" : "Includes simulated grades"}
                         </div>` 
                         : ``}
-                    <div class="ue-details" id="ue-details-${ueName}-in-semester${sem}">
+                    <div class="ue-details ${this.editMode ? "edit-mode": ""}" id="ue-details-${ueName}-in-semester${sem}">
                         ${this.renderAllMatCardDetailed(sem, ueName)}
                     </div>
                     ${this.editMode ? `
@@ -1456,8 +1545,8 @@
                 const totalSimGrades =  subjectData.simGrades.length;
                 
                 let html = `
-                <div class="subject-card ${ueMoy != " - " && moyMat != 0 ? `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}` : `unknown`}" ${this.editMode ? `style="user-select: none;"` : ``} id="subject-card-semester-${sem}-subject-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}">
-                    <div class="subject-card-header ${ueMoy != " - " && moyMat != 0 ? `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}` : ``}" ${this.editMode ? `draggable="true"` : ``} style="${this.editMode ? `cursor: grab; ` : `${subjGrades.length > 0 ? `` : `border-radius: 20px; border: none`}`}">
+                <div class="subject-card ${moyMat == " - " ? `unknown` : `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" ${this.editMode ? `style="user-select: none;"` : ``} id="subject-card-semester-${sem}-subject-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}">
+                    <div class="subject-card-header ${moyMat == " - " ? `unknown` : `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" ${this.editMode ? `draggable="true"` : ``} style="${this.editMode ? `cursor: grab; ` : `${subjGrades.length > 0 ? `` : `border-radius: 20px; border: none`}`}">
                         <div style="display: flex; width: 42%; padding-left: ${this.editMode ? `10px` : `50px`}">
                             <div style="display: flex; justify-content: flex-start; align-items: center; width: 100%; gap:8px; user-select: text">
                                 ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("detailed-subject-card", {type:"detailed", targetId:`subject-card-semester-${sem}-subject-${subject}`})}</div>` : ""}
@@ -1472,7 +1561,7 @@
                                             : `<span style="font-weight: 800;">${pct}%</span>`}
                                         | 
                                         ${this.lang == "fr" ? "Moyenne" : "Average"}: 
-                                        <span class="subj-moyenne ${moyMat==0 ? '' : `${moyMat>=10 ? 'good' : 'bad'}`}">${moyMat==0 ? " - " : moyMat}/20</span> 
+                                        <span class="subj-moyenne ${moyMat == " - " ? '' : `${moyMat>=10 ? 'good' : 'bad'}`}">${moyMat}/20</span> 
                                         ${subjGrades.length===0 ? `<span style="margin-left:2px;font-size:12px;color:#6b7280">${this.lang == "fr" ? "(aucune note publiée)" : "(no published grade)"}</span>` : ''}
                                     </div>
                                 </div>
@@ -1485,7 +1574,7 @@
                             <div class="grades-table-subject-total-coef-value" data-sem="${sem}" data-ue="${ueName}" data-subject="${subject}"></div>
                         </div>
                     </div>
-                    <table class="grades-table ${ueMoy != " - " && moyMat != 0 ? `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}` : ``}" style="${this.editMode ? `user-select: text;` : ``}" id="grades-table-${subject}-semester${sem}" data-subject="${subject}">
+                    <table class="grades-table ${moyMat == " - " ? `unknown` : `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" style="${this.editMode ? `user-select: text;` : ``}" id="grades-table-${subject}-semester${sem}" data-subject="${subject}">
 
                         <thead>
                             ${subjGrades.length > 0 || this.editMode
@@ -1614,16 +1703,16 @@
                 const moyMat =                  subjectData.average;
                 const pct =                     subjectData.coef;
                 const isCustom =                subjectData.isCustom;
-                const includedGradesLength =    subjGrades.length - subjectData.disabledGrades.length;
+                const includedGradesLength =    subjGrades.length - subjectData.disabledRealGrades.length - subjectData.disabledSimGrades.length;
                 const totalSimGrades =          subjectData.simGrades.length;
 
                 const html = `
-                <div class="subject-card compact ${this.editMode ? "" : "edit-mode"} ${moyMat == 0 && subjGrades.length==0 ? "unknown" : `${moyMat>10 ? `${ueMoy>10 ? `good` : `meh`}` : `bad`}`}" id="subject-card-semester-${sem}-subject-${subject}" style="${this.editMode ? "cursor: grab; user-select: none; " : " "}" ${this.editMode ? `draggable="true"` : ""} data-sem="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}">
+                <div class="subject-card compact ${this.editMode ? "" : "edit-mode"} ${moyMat == " - " ? "unknown" : `${moyMat>10 ? `${ueMoy>10 ? `good` : `meh`}` : `bad`}`}" id="subject-card-semester-${sem}-subject-${subject}" style="${this.editMode ? "cursor: grab; user-select: none; " : " "}" ${this.editMode ? `draggable="true"` : ""} data-sem="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}">
                     <div style="display:flex; align-items:center; gap:8px; padding-left: 11px; width:43%; min-width: 275px">
                         ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("compact-subject-card", {type:"compact", targetId:`subject-card-semester-${sem}-subject-${subject}`})}</div>` : ""}
-                        <div>
+                        <div style="width: 87%">
                             ${isCustom 
-                                ? `<input type="text" class="subject-name input any-input" value="${subject}"/>`
+                                ? `<input type="text" class="subject-name input any-input" id="subject-name-input-${sem}-${ueName}-${subject}" value="${subject}"/>`
                                 : `<div class="subject-name">${subject}</div>`
                             }
                             <div style="font-size:13px;color:#666;">
@@ -1650,7 +1739,7 @@
                         </div>
                         <div class="grades-table-subject-total-coef-value" data-sem="${sem}" data-ue="${ueName}" data-subject="${subject}"></div>
                     </div>
-                    <div class="subj-moyenne ${moyMat==0 ? '' : `${moyMat>=10 ? 'good' : 'bad'}`}" style="display: flex; justify-content: flex-end; width: 80px; padding-right: 20px; font-size: 20px">${moyMat==0 ? " - " : moyMat}/20</div>
+                    <div class="subj-moyenne ${moyMat == " - " ? '' : `${moyMat>=10 ? 'good' : 'bad'}`}" style="display: flex; justify-content: flex-end; width: 80px; padding-right: 20px; font-size: 20px">${moyMat}/20</div>
                 </div>
                 `;
                 return html;
@@ -1919,8 +2008,8 @@
                         input.onmouseleave = () =>  { this.attachOnDragEventListeners(); };
                     }
                 })
-                document.ondrop = (e) => {this.draggedElementDroppedInInputArea = true; console.log("document: drop")};
-                document.ondragend = (e) => {this.documentOnDragEndEvent(e)};
+                document.ondrop = (e) => {this.draggedElementDroppedInInputArea = true; console.log("document: drop"); this.documentOnDragEndEvent(e)};
+                document.ondragend = (e) => {console.log("document: dragend"); this.documentOnDragEndEvent(e); this.draggedElementDroppedInInputArea = false;};
                 
 
 
@@ -2003,16 +2092,16 @@
                         const subject = e.target.dataset.subject;
                         const newCoef = e.target.value;
                         this.ueConfig[sem][ueName].coefficients[subject] = newCoef;
-                        this.getGradesDatas({sem, ueName, subject});
                         this.saveConfig();
+                        this.getGradesDatas({sem, ueName, subject});
                         this.renderContent(false);
                         this.attachEventListeners();
                     };
                 })
 
                 
-                // const dropAreaAdd = document.querySelector(".drop-subject-card-to-create-eu");
-                // const dropAreaRemove = document.querySelector(".drop-subject-card-to-remove-from-eu");
+                // const dropAreaAdd = document.querySelector(".drop-subject-card-to-create-ue");
+                // const dropAreaRemove = document.querySelector(".drop-subject-card-to-remove-from-ue");
                 // const ueInsertAreas = document.querySelectorAll(".ue-insert-area");
                 
                 document.querySelectorAll(".drag-icon").forEach(dragIcon => {
@@ -2065,6 +2154,7 @@
                         this.attachEventListeners()
                         this.setGradesTableTotalCoef();
                         this.saveConfig()
+                        this.getGradesDatas();
                     }
                 })
 
@@ -2110,6 +2200,7 @@
                         this.attachEventListeners()
                         this.setGradesTableTotalCoef();
                         this.saveConfig()
+                        this.getGradesDatas();
                     }
                 })
 
@@ -2125,8 +2216,9 @@
 
                         if (this.ueConfig[sem] == {}) {delete this.ueConfig[sem]}
 
-                        this.saveConfig()
-                        this.renderContent()
+                        this.saveConfig();
+                        this.getGradesDatas();
+                        this.renderContent();
                         this.attachEventListeners();
                     }
                 })
@@ -2164,6 +2256,7 @@
                             id
                         });
                         this.saveSim();
+                        this.getGradesDatas();
                         this.renderContent();
                     }
                 });
@@ -2204,6 +2297,7 @@
                         });
 
                         this.saveSim();
+                        this.getGradesDatas();
                         this.renderContent(false);
                     }
                 })
@@ -2218,6 +2312,7 @@
                         this.sim[semX][ueName][subj].splice(this.sim[semX][ueName][subj].indexOf(type), 1);
                         this.deleteUnusedSimPath(semX, ueName, subj);
                         this.saveSim();
+                        this.getGradesDatas();
                         this.renderContent(true);
                     }
                 })
@@ -2284,8 +2379,8 @@
                     }
 
                     if (!draggedSubjectCardIsSelected) {
-                        const dropAreaAdd = document.querySelector(".drop-subject-card-to-create-eu");
-                        const dropAreaRemove = document.querySelector(".drop-subject-card-to-remove-from-eu");
+                        const dropAreaAdd = document.querySelector(".drop-subject-card-to-create-ue");
+                        const dropAreaRemove = document.querySelector(".drop-subject-card-to-remove-from-ue");
                         subjectCard.style.width = "100%";
 
                         if (subjectCard.classList.contains("unclassified")) {
@@ -2306,7 +2401,7 @@
 
                         if (this.selectedSubjectCards.length == 0) {
                             setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher => {teacher.style.display = "table-cell"})}, 100)
-                            document.querySelector(".semester-content").style.gap = "0px";
+                            document.querySelector(".semester-content").classList.remove("dragging");
                             dropAreaAdd.classList.remove("show");
                             dropAreaRemove.classList.remove("show");
                             this.removeSubjectCardFromSubjectSelection();
@@ -2337,7 +2432,6 @@
                     }
                     
                 }
-                this.draggedElementDroppedInInputArea = false; console.log("document: dragend");
             }
             
             attachCheckboxListeners(container) {
@@ -2403,6 +2497,7 @@
                 this.ueConfig[sem].__ues__[oldUeIndex] = newUeName;
 
                 this.saveConfig()
+                this.getGradesDatas();
                 this.renderContent(false)
             }
 
@@ -2449,9 +2544,9 @@
                     this.currentlyDraggedSubjCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 20px 20px";
                 }
                 document.querySelectorAll(".grades-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
-                document.querySelector(".semester-content").style.gap = "20px";
-                document.querySelector(".drop-subject-card-to-create-eu").classList.add("show");
-                document.querySelector(".drop-subject-card-to-remove-from-eu").classList.add("show");
+                document.querySelector(".semester-content").classList.add("dragging");
+                document.querySelector(".drop-subject-card-to-create-ue").classList.add("show");
+                document.querySelector(".drop-subject-card-to-remove-from-ue").classList.add("show");
                 e.dataTransfer.setData("text", this.currentlyDraggedSubjCard.id)
             };
             draggedElementOnDragEndEvent(e, {draggedElement, subjectCard}) {
@@ -2477,9 +2572,9 @@
                 
                 if (this.selectedSubjectCards.length == 0) {
                     setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher => {teacher.style.display = "table-cell"})}, 100)
-                    document.querySelector(".semester-content").style.gap = "0px";
-                    document.querySelector(".drop-subject-card-to-create-eu").classList.remove("show");
-                    document.querySelector(".drop-subject-card-to-remove-from-eu").classList.remove("show");
+                    document.querySelector(".semester-content").classList.remove("dragging");
+                    document.querySelector(".drop-subject-card-to-create-ue").classList.remove("show");
+                    document.querySelector(".drop-subject-card-to-remove-from-ue").classList.remove("show");
                 }
             }
             draggedSelectedElementOnDragStartEvent(e, {draggedElement, subjectCard}) {
@@ -2504,9 +2599,9 @@
                     }
                 })
                 document.querySelectorAll(".grades-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
-                document.querySelector(".semester-content").style.gap = "20px";
-                document.querySelector(".drop-subject-card-to-create-eu").classList.add("show");
-                document.querySelector(".drop-subject-card-to-remove-from-eu").classList.add("show");
+                document.querySelector(".semester-content").classList.add("dragging");
+                document.querySelector(".drop-subject-card-to-create-ue").classList.add("show");
+                document.querySelector(".drop-subject-card-to-remove-from-ue").classList.add("show");
 
                 e.dataTransfer.setData("text", subjectCard.id)
             };
@@ -2539,8 +2634,8 @@
 
             // MARK: Attach ondrag events
             attachOnDragEventListeners() {   // Add ONDRAG cards event
-                const dropAreaAdd =     document.querySelector(".drop-subject-card-to-create-eu");
-                const dropAreaRemove =  document.querySelector(".drop-subject-card-to-remove-from-eu");
+                const dropAreaAdd =     document.querySelector(".drop-subject-card-to-create-ue");
+                const dropAreaRemove =  document.querySelector(".drop-subject-card-to-remove-from-ue");
                 const ueInsertAreas =   document.querySelectorAll(".ue-insert-area");
                 const subjInsertAreas = document.querySelectorAll(".subj-insert-area");
 
@@ -2553,6 +2648,8 @@
                     draggedElement.ondragstart = (e) => {this.draggedElementOnDragStartEvent(e, {draggedElement, subjectCard})};
                     draggedElement.ondragend =   (e) => {this.draggedElementOnDragEndEvent(e, {draggedElement, subjectCard})};
                 })
+
+                
                 if (this.selectedSubjectCards.length > 0) { 
                     this.selectedSubjectCards.forEach(selectedSubjectCard => {
                         let draggedElement = "";
@@ -2567,14 +2664,14 @@
                 }
 
                 dropAreaAdd.style.background = "";
-                dropAreaAdd.ondragover =    (e) => {e.preventDefault(); e.target.style.background = "#bdb8ff";};
+                dropAreaAdd.ondragover =    (e) => {e.preventDefault(); e.target.style.background = "#bdb8ffce";};
                 dropAreaAdd.ondragleave =   (e) => {e.preventDefault(); e.target.style.background = "";};
                 dropAreaAdd.ondrop =        (e) => {
                     e.target.style.background = ""; 
                     e.preventDefault(); 
                     this.dropAreaToNewAction(e.dataTransfer.getData("text"));
                 };
-                dropAreaAdd.onmouseenter =  (e) => {if (e.target.classList.contains("show")) {e.preventDefault(); e.target.style.background = "#bdb8ff";}};
+                dropAreaAdd.onmouseenter =  (e) => {if (e.target.classList.contains("show")) {e.preventDefault(); e.target.style.background = "#bdb8ffce";}};
                 dropAreaAdd.onmouseleave =  (e) => {if (e.target.classList.contains("show")) {e.preventDefault(); e.target.style.background = "";}};
                 dropAreaAdd.onclick =       (e) => {if (e.target.classList.contains("show")) {
                     e.target.style.background = ""; e.preventDefault(); 
@@ -2584,14 +2681,14 @@
                 }};
 
                 dropAreaRemove.style.background = "";
-                dropAreaRemove.ondragover =    (e) => {e.preventDefault(); e.target.style.background = "#ffb8b8";};
+                dropAreaRemove.ondragover =    (e) => {e.preventDefault(); e.target.style.background = "#ffb8b8ce";};
                 dropAreaRemove.ondragleave =   (e) => {e.preventDefault(); e.target.style.background = "";};
                 dropAreaRemove.ondrop =        (e) => {
                     e.target.style.background = ""; 
                     e.preventDefault(); 
                     this.dropAreaRemoveAction(e.dataTransfer.getData("text"));
                 };
-                dropAreaRemove.onmouseenter =  (e) => {if (e.target.classList.contains("show")) {e.preventDefault(); e.target.style.background = "#ffb8b8";}};
+                dropAreaRemove.onmouseenter =  (e) => {if (e.target.classList.contains("show")) {e.preventDefault(); e.target.style.background = "#ffb8b8ce";}};
                 dropAreaRemove.onmouseleave =  (e) => {if (e.target.classList.contains("show")) {e.preventDefault(); e.target.style.background = "";}};
                 dropAreaRemove.onclick =       (e) => {if (e.target.classList.contains("show")) {
                     e.target.style.background = ""; e.preventDefault(); 
@@ -2603,7 +2700,7 @@
                 ueInsertAreas.forEach(ueInsertArea => {
                     ueInsertArea.style.background = "";
                     const insertIndex = ueInsertArea.dataset.index;
-                    ueInsertArea.ondragover =     (e) => {e.preventDefault(); e.target.style.background = "#bdb8ff";};
+                    ueInsertArea.ondragover =     (e) => {e.preventDefault(); e.target.style.background = "#bdb8ffce";};
                     ueInsertArea.ondragleave =    (e) => {e.preventDefault(); e.target.style.background = "";};
                     ueInsertArea.ondrop =         (e) => {
                         e.target.style.background = ""; 
@@ -2739,9 +2836,9 @@
                     setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
                     setTimeout(() => {document.querySelectorAll(".grades-table-classAvg").forEach(classAvg => {classAvg.style.display = "table-cell"})}, 100)
                     
-                    document.querySelector(".semester-content").style.gap = "0px";
-                    document.querySelector(".drop-subject-card-to-create-eu").classList.remove("show");
-                    document.querySelector(".drop-subject-card-to-remove-from-eu").classList.remove("show");
+                    document.querySelector(".semester-content").classList.remove("dragging");
+                    document.querySelector(".drop-subject-card-to-create-ue").classList.remove("show");
+                    document.querySelector(".drop-subject-card-to-remove-from-ue").classList.remove("show");
                     document.querySelectorAll(".ue-title.input").forEach(input => {
                         input.parentElement.style.transition = "";
                         input.parentElement.style.width = "42%";
@@ -2777,7 +2874,7 @@
                     )
                     Object.keys(this.selectedSubjectCardsSortedByUe).forEach((ueName, ueIndex) => {
                         this.selectedSubjectCardsSortedByUe[ueName].forEach((selectedSubjectCard, subjIndex) => {
-                            selectedSubjectCard.splice(subjIndex, 1);
+                            this.selectedSubjectCardsSortedByUe[ueName].splice(subjIndex, 1);
                         })
                         if (this.selectedSubjectCardsSortedByUe[ueName].length == 0) {
                             delete this.selectedSubjectCardsSortedByUe[ueName];
@@ -2788,9 +2885,9 @@
                         setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
                         setTimeout(() => {document.querySelectorAll(".grades-table-classAvg").forEach(classAvg => {classAvg.style.display = "table-cell"})}, 100)
                         
-                        document.querySelector(".semester-content").style.gap = "0px";
-                        document.querySelector(".drop-subject-card-to-create-eu").classList.remove("show");
-                        document.querySelector(".drop-subject-card-to-remove-from-eu").classList.remove("show");
+                        document.querySelector(".semester-content").classList.remove("dragging");
+                        document.querySelector(".drop-subject-card-to-create-ue").classList.remove("show");
+                        document.querySelector(".drop-subject-card-to-remove-from-ue").classList.remove("show");
                         document.querySelectorAll(".ue-title.input").forEach(input => {
                             input.parentElement.style.transition = "";
                             input.parentElement.style.width = "42%";
@@ -2818,8 +2915,8 @@
             dragIconOnClickEvent(e, dragIcon) {
                 let subjectCard =  e.target.parentElement.parentElement.parentElement;
                 let draggableElement = subjectCard;
-                const dropAreaAdd = document.querySelector(".drop-subject-card-to-create-eu");
-                const dropAreaRemove = document.querySelector(".drop-subject-card-to-remove-from-eu");
+                const dropAreaAdd = document.querySelector(".drop-subject-card-to-create-ue");
+                const dropAreaRemove = document.querySelector(".drop-subject-card-to-remove-from-ue");
                 const type = dragIcon.dataset.type;
                 if (type=="detailed") {
                     subjectCard = e.target.parentElement.parentElement.parentElement.parentElement.parentElement;
@@ -2848,9 +2945,9 @@
                     totalCoef.parentElement.style.transition = "width 0.3s ease";
                     totalCoef.parentElement.style.width = "56%";
                 })
-                document.querySelector(".semester-content").style.gap = "20px";
                 dropAreaAdd.classList.add("show");
                 dropAreaRemove.classList.add("show");
+                document.querySelector(".semester-content").classList.add("dragging");
 
                 dragIcon.outerHTML = `<div class="tick-icon for-${type}-subject-card" data-type="${type}">✔</div>`;
                 const tick = subjectCard.querySelector(".tick-icon");
@@ -3050,6 +3147,7 @@
 
                 this.removeSubjectCardFromSubjectSelection();
                 this.saveConfig();
+                this.getGradesDatas();
                 this.renderContent();
                 this.attachEventListeners();
                 this.scrollToClientHighestElemWithClassWithTimeout({id: `ue-card-${newUeName}-in-semester-${sem}`, smooth: true})
@@ -3102,6 +3200,7 @@
 
                     this.removeSubjectCardFromSubjectSelection({elementDroppedInArea:card});
                     this.saveConfig();
+                    this.getGradesDatas();
                     this.renderContent();
                     this.attachEventListeners();
                 }
@@ -3200,6 +3299,8 @@
                     }
                     
                     this.removeSubjectCardFromSubjectSelection({elementDroppedInArea:card});
+                    this.saveConfig();
+                    this.getGradesDatas();
                     this.renderContent(true);
                     this.attachEventListeners();
                     this.scrollToClientHighestElemWithClassWithTimeout({id: `ue-card-${newUeName}-in-semester-${sem}`, smooth: true})
