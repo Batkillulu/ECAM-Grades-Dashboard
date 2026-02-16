@@ -117,19 +117,28 @@
         .drop-subject-card.create-ue.show               { width: 15%; border-width: 2px; border-color: #7fc2ff; color: #7fc2ff; background: #bdb8ff3d; }
         .drop-subject-card.insert-to-new-ue             { height: 50px; width: 100%; color: #9b9b9bff; border: 2px dashed #9b9b9b; background: #bdb8ff3d; font-size: 25px; font-weight: 800; user-select: none; cursor: pointer; transition: all 0.2s ease; }
         .drop-subject-card.insert-to-new-ue:hover       { color: #887bffff; border-color: #7fc2ff; }
-        .drop-subject-card.subj-insert-area             { height: 30px; width: 100%; color: #9b9b9bbd; border: 2px dashed #9b9b9b54; background: #bdb8ff1a; font-size: 25px; font-weight: 800; user-select: none; cursor: pointer; overflow: hidden; transition: all 0.2s ease; }
+
+        .drop-subject-card.subj-insert-area             { display: flex; flex-direction: column; justify-content: flex-start; height: 30px; width: 100%; color: #9b9b9bff; border: 2px dashed #9b9b9b54; background: #bdb8ff1a; font-size: 25px; font-weight: 800; user-select: none; cursor: pointer; transition: all 0.2s ease; }
         .drop-subject-card.subj-insert-area:hover       { color: #887bffff; border-color: #7fc2ff; }
-        .drop-subject-card-arrow                        { transform: translate(-9%); font-size: 250px; display: flex; align-items: flex-start; justify-content: center; overflow: hidden; height: 100%; width: 100%; transition: transform 0.5s cubic-bezier(0, 1, 0.25, 1); }
-        .drop-subject-card-arrow.hover                  { transform: translate(0%); }
+        .drop-subject-card.subj-insert-area.hover       { color: #887bffff; border-color: #7fc2ff; }
+        .drop-subject-card-insert-content               { width: 100%; height: 100%; }
+        .drop-subject-card-arrow                        { transform: translateX(-9%); font-size: 280px; display: flex; align-items: flex-start; justify-content: center; height: 100%; width: 100%; background: transparent; overflow: hidden; transition: transform 0.5s cubic-bezier(0, 1, 0.25, 1); }
+        .drop-subject-card-arrow.hover                  { transform: translateX(0%); }
+        .drop-subject-card-plus                         {  }
+        .drop-subject-card-plus.hover                   {  }
+        .drop-subject-card-insert-text                  { display: flex; justify-content: flex-start; align-items: center; position: relative; top: -90%; left: 30%; overflow-x: clip; text-wrap: nowrap; width: 0px; height: 30px; background: transparent; transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+        .drop-subject-card-insert-text.insert.hover     { width: 80px; }
+        .drop-subject-card-insert-text.add.hover        { width: 300px; }
+        .drop-subject-card-insert-hitbox                { display: flex; position: relative; top: -28px; width: calc(100% - -4px); min-height: 30px; border-radius: 20px; }
 
         .ue-grid                { display: grid; width: 100%; gap: 20px; transition: gap 0.2s ease; }
         .ue-card                { display: flex; flex-direction: column; align-items: center; width: 100%; background: #fafafa; border-radius: 25px; border: 3px solid #e5e5e5; scroll-margin-top: 70px; transition: all 0.3s ease; }
-        .ue-card.validated      { border-color: #10b981; background: #f0fdf4; }
-        .ue-card.failed         { border-color: #ef4444; background: #fef2f2; }
+        .ue-card.validated      { border-color: #10b981ff; background: #f0fdf4ff; }
+        .ue-card.failed         { border-color: #ef4444ff; background: #fef2f2ff; }
         .ue-card.unknown        { border-color: #6d6d6dff; background: #d1d1d1ff; }
         .ue-header              { display: flex; align-items: center; padding: 20px 20px 18px 20px; border-bottom: 3px solid #e5e5e5; border-radius: 22px 22px 0px 0px; width: 100%; cursor: pointer; }
-        .ue-header.validated    { border-color: #10b981; background: #e0ffeaff; }
-        .ue-header.failed       { border-color: #ef4444; background: #ffd9d9ff; }
+        .ue-header.validated    { border-color: #10b981ff; background: #e0ffeaff; }
+        .ue-header.failed       { border-color: #ef4444ff; background: #ffd9d9ff; }
         .ue-header.unknown      { border-color: #6d6d6dff; background: #acacacff; }
         .ue-header:hover        { background: #f3f4f6; }
         .ue-delete-btn          { border-radius: 14px; background: transparent; }
@@ -152,13 +161,12 @@
         .ue-info-disabled-clear         { display: flex; align-items: center; justify-content: center; font-size: 12px; background: #d7e0ff; border: 2px solid; border-radius: 10px; padding: 2px 7px; user-select: none; width: 172px; margin-right: 8px; cursor: pointer; transition: all 0.2s ease; }
         .ue-info-disabled-clear:hover   { width: 180px; margin-right: 4px; font-size: 11.5px; background: #eef2ff; }
 
-        .add-a-subject-card         { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 38px; width: 320px; margin-bottom: 18px; border: 3px dashed #7fc2ff; border-radius: 20px; font-size: 19px; font-weight: 700; color: #7fc2ff; background: aliceblue; cursor: pointer; box-shadow: none; user-select:none; transition: all 0.2s ease }
+        .add-a-subject-card         { display: none; align-items: center; justify-content: space-between; gap: 8px; height: 38px; width: 320px; margin-bottom: 18px; border: 3px dashed #7fc2ff; border-radius: 20px; font-size: 19px; font-weight: 700; color: #7fc2ff; background: aliceblue; cursor: pointer; box-shadow: none; user-select:none; transition: all 0.2s ease }
         .add-a-subject-card:hover   { background: white; font-size: 20px; box-shadow: inset 0px 0px 17px 0px #0400ff38; }
         .add-a-subject-card-plus    { font-size: 40px; font-weight: 900; height: 20px; margin: 0px 8px; transition: transform 0.2s ease; }
 
 
-        .unclassified-part                              { display: flex; flex-direction: row; gap: 0px; }
-        .unclassified-section                           { display: flex; flex-direction: column; width: 100%; background: #fff8f0; border-radius: 20px; padding: 20px; border: 2px dashed #fbbf24; }
+        .unclassified-section                           { display: flex; flex-direction: column; width: 100%; background: #fff8f0; border-radius: 20px; padding: 20px; border: 2px dashed #fbbf24; transition: height 0.2s ease; }
         .unclassified-content                           { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 99%; }
         .unclassified-title                             { font-size: 16px; font-weight: 600; color: #92400e; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
 
@@ -365,7 +373,7 @@
                 });
                 return grades;
             }
-            getGradeColor(grade) { if (grade >= 12) return 'good'; if (grade >= 10) return 'medium'; return 'bad'; }
+            getGradeColor(grade) { if (grade >= 10) return 'good'; /* if (grade >= 10) return 'medium'; */ return 'bad'; }
             getAverageColor(avg) { if (avg >= 12) return 'average-good'; if (avg >= 10) return 'average-medium'; return 'average-bad'; }
             gradeIsDisabled(n) {
                 return this.ignoredGrades.indexOf([n.semester, n.subject, n.type+" "+n.date+" "+n.prof].join("\\")) > -1
@@ -1461,15 +1469,13 @@
                             <div class="modules-section">
                                 ${this.renderAllUECards(sem)}
                             </div>
-                            <div class="unclassified-part" ${unclassified.length > 0 ? `` : `style="display: none"`}>
-                                <div class="unclassified-section">
-                                    <div class="unclassified-title">
-                                        ${this.lang == "fr" ? `Matière${unclassified.length > 1 ?  `s` : ``} non classée${unclassified.length > 1 ?  `s` : ``} dans une UE` : `Subject${unclassified.length > 1 ?  `s` : ``} not classified in a TU`}
-                                    </div>
-                                    <div style="display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 8px;">
-                                        <div class="unclassified-content">
-                                            ${unclassified.length > 0 ?  `${this.renderAllUnclassifiedMatCard(sem, unclassified)}` : ``}
-                                        </div>
+                            <div class="unclassified-section" style="height: 100%${unclassified.length > 0 ? `` : `; display: none`}">
+                                <div class="unclassified-title">
+                                    ${this.lang == "fr" ? `Matière${unclassified.length > 1 ?  `s` : ``} non classée${unclassified.length > 1 ?  `s` : ``} dans une UE` : `Subject${unclassified.length > 1 ?  `s` : ``} not classified in a TU`}
+                                </div>
+                                <div style="display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 8px;">
+                                    <div class="unclassified-content">
+                                        ${unclassified.length > 0 ?  `${this.renderAllUnclassifiedMatCard(sem, unclassified)}` : ``}
                                     </div>
                                 </div>
                             </div>
@@ -1478,7 +1484,18 @@
                     </div>
                     `;
                     contentArea.appendChild(section);
+
+                    // Set a fixed height for the unclassified section, so that when dragging a subject card, the unclassified section doesn't change height upon the grades tables disappearing
+                    const unclassifiedSection = document.querySelector(".unclassified-section");
+                    const currentUnclassifiedSectionHeight = new Number(unclassifiedSection.clientHeight);
+                    unclassifiedSection.style.height = `${currentUnclassifiedSectionHeight+4}px`;
+
                     const container = document.getElementById(`sem-content-${sem}`)
+                    // container.querySelectorAll(".subject-card").forEach(subjCard => {
+                    //     this.selectedSubjectCards.forEach(selectedSubjCard => {
+                    //         if (selectedSubjCard.id == subjCard.id)
+                    //     })
+                    // })
 
                     // Attach on-click event action for the grades' checkbox
                     this.attachCheckboxListeners(container);
@@ -1615,12 +1632,32 @@
             renderAllMatCardDetailed(sem, ueName) {
                 const ueData = this.gradesDatas[sem][ueName];
 
-                let html = `${this.editMode ? `<div class="drop-subject-card subj-insert-area" data-sem="${sem}" data-ue="${ueName}" data-index="0"><div class="drop-subject-card-arrow">→</div></div>` : ``}`;
+                let html = `${this.editMode ? `<div class="drop-subject-card subj-insert-area" data-sem="${sem}" data-ue="${ueName}" data-index="0">
+                    <div class="drop-subject-card-insert-content">
+                        <div class="drop-subject-card-arrow">→</div>
+                        <div class="drop-subject-card-insert-text">${
+                            this.selectedSubjectCards.length == 0 
+                                ? `${this.lang == "fr" ? "Ajouter une matière ici" : "Add a subject here"}` 
+                                : `${this.lang == "fr" ? "Insérer ici" : "Insert here"}`
+                        }</div>
+                    </div>
+                    <div class="drop-subject-card-insert-hitbox"></div>
+                </div>` : ``}`;
 
                 Object.values(ueData.subjects).forEach((_value, _index) => {
-                    html += this.renderMatCardDetailed(sem, ueName, _value.subjName);
+                    html += this.renderMatCardDetailed(sem, ueName, _value.subjName, _index);
                     html += this.editMode
-                        ? `<div class="drop-subject-card subj-insert-area" data-sem="${sem}" data-ue="${ueName}" data-index="${_index+1}"><div class="drop-subject-card-arrow">→</div></div>` 
+                        ? `<div class="drop-subject-card subj-insert-area" data-sem="${sem}" data-ue="${ueName}" data-index="${_index+1}">
+                            <div class="drop-subject-card-insert-content">
+                                <div class="drop-subject-card-arrow">→</div>
+                                <div class="drop-subject-card-insert-text">${
+                                    this.selectedSubjectCards.length == 0 
+                                        ? `${this.lang == "fr" ? "Ajouter une matière ici" : "Add a subject here"}` 
+                                        : `${this.lang == "fr" ? "Insérer ici" : "Insert here"}`
+                                }</div>
+                            </div>
+                            <div class="drop-subject-card-insert-hitbox"></div>
+                        </div>` 
                         : ``
                     ;       
                 })
@@ -1628,7 +1665,7 @@
                 return html;
             }
             // MARK: renderMatCardDetailed
-            renderMatCardDetailed(sem, ueName, subject) {
+            renderMatCardDetailed(sem, ueName, subject, index=-1) {
                 const ueData =  this.gradesDatas[sem][ueName];
                 const subjectData =     ueData.subjects[subject];
                 const subjGrades =      subjectData.grades;
@@ -1639,7 +1676,7 @@
                 const totalSimGrades =  subjectData.simGrades.length;
                 
                 let html = `
-                <div class="subject-card ${moyMat == " - " ? `unknown` : `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" ${this.editMode ? `style="user-select: none;"` : ``} id="subject-card-semester-${sem}-subject-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}">
+                <div class="subject-card ${moyMat == " - " ? `unknown` : `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" ${this.editMode ? `style="user-select: none;"` : ``} id="subject-card-semester-${sem}-subject-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
                     <div class="subject-card-header ${moyMat == " - " ? `unknown` : `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" ${this.editMode ? `draggable="true"` : ``} style="${this.editMode ? `cursor: grab; ` : `${subjGrades.length > 0 ? `` : `border-radius: 20px; border: none`}`}">
                         <div style="display: flex; width: 42%; padding-left: ${this.editMode ? `10px` : `50px`}">
                             <div style="display: flex; justify-content: flex-start; align-items: center; width: 100%; gap:8px; user-select: text">
@@ -1783,13 +1820,42 @@
 
 
             renderAllMatCardCompact(sem, ueName) {
-                return Object.keys(this.gradesDatas[sem][ueName].subjects).map(subject => {
-                    if (subject != "average") 
-                        {return this.renderMatCardCompact(sem, ueName, subject)}
-                }).join("")
+                const ueData = this.gradesDatas[sem][ueName];
+
+                let html = `${this.editMode ? `<div class="drop-subject-card subj-insert-area" data-sem="${sem}" data-ue="${ueName}" data-index="0">
+                    <div class="drop-subject-card-insert-content">
+                        <div class="drop-subject-card-arrow">→</div>
+                        <div class="drop-subject-card-insert-text">${
+                            this.selectedSubjectCards.length == 0 
+                                ? `${this.lang == "fr" ? "Ajouter une matière ici" : "Add a subject here"}` 
+                                : `${this.lang == "fr" ? "Insérer ici" : "Insert here"}`
+                        }</div>
+                    </div>
+                    <div class="drop-subject-card-insert-hitbox"></div>
+                </div>` : ``}`;
+
+                Object.values(ueData.subjects).forEach((_value, _index) => {
+                    html += this.renderMatCardCompact(sem, ueName, _value.subjName, _index);
+                    html += this.editMode
+                        ? `<div class="drop-subject-card subj-insert-area" data-sem="${sem}" data-ue="${ueName}" data-index="${_index+1}">
+                            <div class="drop-subject-card-insert-content">
+                                <div class="drop-subject-card-arrow">→</div>
+                                <div class="drop-subject-card-insert-text">${
+                                    this.selectedSubjectCards.length == 0 
+                                        ? `${this.lang == "fr" ? "Ajouter une matière ici" : "Add a subject here"}` 
+                                        : `${this.lang == "fr" ? "Insérer ici" : "Insert here"}`
+                                }</div>
+                            </div>
+                            <div class="drop-subject-card-insert-hitbox"></div>
+                        </div>` 
+                        : ``
+                    ;       
+                })
+
+                return html;
             }
             // MARK: renderMatCardCompact
-            renderMatCardCompact(sem, ueName, subject) {
+            renderMatCardCompact(sem, ueName, subject, index=-1) {
                 const ueData =  this.gradesDatas[sem][ueName];
                 const subjectData =             ueData.subjects[subject];
                 const subjGrades =              subjectData.grades;
@@ -1801,7 +1867,7 @@
                 const totalSimGrades =          subjectData.simGrades.length;
 
                 const html = `
-                <div class="subject-card compact ${this.editMode ? "" : "edit-mode"} ${moyMat == " - " ? "unknown" : `${moyMat>10 ? `${ueMoy>10 ? `good` : `meh`}` : `bad`}`}" id="subject-card-semester-${sem}-subject-${subject}" style="${this.editMode ? "cursor: grab; user-select: none; " : " "}" ${this.editMode ? `draggable="true"` : ""} data-sem="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}">
+                <div class="subject-card compact ${this.editMode ? "" : "edit-mode"} ${moyMat == " - " ? "unknown" : `${moyMat>10 ? `${ueMoy>10 ? `good` : `meh`}` : `bad`}`}" id="subject-card-semester-${sem}-subject-${subject}" style="${this.editMode ? "cursor: grab; user-select: none; " : " "}" ${this.editMode ? `draggable="true"` : ""} data-sem="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
                     <div style="display:flex; align-items:center; gap:8px; padding-left: 11px; width:43%; min-width: 275px">
                         ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("compact-subject-card", {type:"compact", targetId:`subject-card-semester-${sem}-subject-${subject}`})}</div>` : ""}
                         <div style="width: 87%">
@@ -2010,8 +2076,7 @@
                     } 
                     */
                 }; 
-               
-
+                
                 document.onclick = (e) => {
                     // Toggle semesters
                     if (e.target.closest('.semester-header')) {
@@ -2223,7 +2288,7 @@
                     }
                     addDiv.onclick = (e) => {
                         e.preventDefault();
-                        this.dropAreaSubjectInsertAction({methodCaller:e.target.closest(".add-a-subject-card")});
+                        this.dropAreaSubjectInsertAction(null, e.target.closest(".add-a-subject-card"));
                     }
                 })
 
@@ -2437,6 +2502,7 @@
 
                 if (this.editMode) {this.attachOnDragEventListeners(); this.attachDropAreasEventListeners()} else {this.detachOnDragEventListeners();}
 
+
             }
 
             documentOnDragEndEvent(e) {
@@ -2453,7 +2519,7 @@
                     if (!draggedSubjectCardIsSelected) {
                         const dropAreaAdd = document.querySelector(".drop-subject-card.create-ue");
                         const dropAreaRemove = document.querySelector(".drop-subject-card.remove-from-ue");
-                        subjectCard.style.width = "100%";
+                        subjectCard.style.width = "";
 
                         if (subjectCard.classList.contains("unclassified")) {
                             subjectCard.querySelector(".grades-table").style.display = "table";
@@ -2481,7 +2547,7 @@
                         
                     } else {
                         this.selectedSubjectCards.forEach(selectedSubjectCard2 => {
-                            selectedSubjectCard2.style.width = "100%";
+                            selectedSubjectCard2.style.width = "";
 
                             if (selectedSubjectCard2.classList.contains("unclassified")) {
                                 selectedSubjectCard2.querySelector(".grades-table").style.display = "table";
@@ -2604,13 +2670,14 @@
                     this.currentlyDraggedSubjCard.querySelector(".grades-table").style.display = "none";
                     this.currentlyDraggedSubjCard.querySelector(".subject-card-header").style.border = "none";
                     this.currentlyDraggedSubjCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 20px 20px";
+                    
                 } 
                 else if (subjectCard.classList.contains("compact")) {
                     this.currentlyDraggedSubjCard.querySelector(".grades-table-coef").style.display = "none";
                 }
                 else {
-                    this.currentlyDraggedSubjCard.querySelector(".subject-card-header").children[0].style.width =                         "50%";
-                    this.currentlyDraggedSubjCard.querySelector(".subject-card-header").querySelector(".grades-table-coef").style.width =  "50%";
+                    this.currentlyDraggedSubjCard.querySelector(".subject-card-header").children[0].style.width =                           "50%";
+                    this.currentlyDraggedSubjCard.querySelector(".subject-card-header").querySelector(".grades-table-coef").style.width =   "50%";
                     this.currentlyDraggedSubjCard.querySelector(".grades-table").style.display = "none";
                     this.currentlyDraggedSubjCard.querySelector(".subject-card-header").style.borderBottom = "none";
                     this.currentlyDraggedSubjCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 20px 20px";
@@ -2619,14 +2686,39 @@
                 document.querySelector(".semester-content").classList.add("dragging");
                 document.querySelector(".drop-subject-card.create-ue").classList.add("show");
                 document.querySelector(".drop-subject-card.remove-from-ue").classList.add("show");
+
+                if (!subjectCard.classList.contains("unclassified")) {
+                    const sem = subjectCard.dataset.semester;
+                    const ue = subjectCard.dataset.ue;
+                    const index = subjectCard.dataset.index;
+                    const upperInsertArea = document.querySelector(`.drop-subject-card.subj-insert-area[data-sem="${sem}"][data-ue="${ue}"][data-index="${index}"]`)
+                    const lowerInsertArea = document.querySelector(`.drop-subject-card.subj-insert-area[data-sem="${sem}"][data-ue="${ue}"][data-index="${parseInt(index)+1}"]`)
+
+                    upperInsertArea.style.height = "0px";
+                    upperInsertArea.style.margin = "-6px 0px";
+                    upperInsertArea.style.margin = "-6px 0px";
+                    upperInsertArea.style.borderColor = "#9b9b9b00";
+                    upperInsertArea.querySelector(".drop-subject-card-insert-hitbox").ondragover = (e) => {e.preventDefault()};
+
+                    lowerInsertArea.style.height = "0px";
+                    lowerInsertArea.style.margin = "-6px 0px";
+                    lowerInsertArea.style.borderColor = "#9b9b9b00";
+                    lowerInsertArea.querySelector(".drop-subject-card-insert-hitbox").ondragover = (e) => {e.preventDefault()};
+
+                    setTimeout(() => {
+                        upperInsertArea.style.display = "none";
+                        lowerInsertArea.style.display = "none";
+                    }, 200)
+                }                
+
                 e.dataTransfer.setData("text", this.currentlyDraggedSubjCard.id)
             };
             draggedElementOnDragEndEvent(e, {draggedElement, subjectCard}) {
-                subjectCard.style.width = "100%";
+                subjectCard.style.width = "";
                 this.currentlyDraggedElement = undefined;
                 this.currentlyDraggedSubjCard = undefined;
 
-                if (subjectCard.classList.contains("unclassified")) {
+                if (subjectCard.classList.contains("unclassified")) {                    
                     subjectCard.querySelector(".grades-table").style.display = "table";
                     subjectCard.querySelector(".subject-card-header").style.border = "none";
                     subjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
@@ -2647,6 +2739,62 @@
                     document.querySelector(".semester-content").classList.remove("dragging");
                     document.querySelector(".drop-subject-card.create-ue").classList.remove("show");
                     document.querySelector(".drop-subject-card.remove-from-ue").classList.remove("show");
+                }
+                
+                const unclassifiedSection = document.querySelector(".unclassified-section");
+
+                setTimeout(() => {
+                    unclassifiedSection.style.height = "100%";
+                    const currentUnclassifiedSectionHeight = new Number(unclassifiedSection.clientHeight);
+                    unclassifiedSection.style.height = `${currentUnclassifiedSectionHeight+4}px`;}
+                , 100)
+
+                if (!subjectCard.classList.contains("unclassified")) {
+                    const sem = subjectCard.dataset.semester;
+                    const ue = subjectCard.dataset.ue;
+                    const index = subjectCard.dataset.index;
+                    const upperInsertArea = document.querySelector(`.drop-subject-card.subj-insert-area[data-sem="${sem}"][data-ue="${ue}"][data-index="${index}"]`)
+                    const lowerInsertArea = document.querySelector(`.drop-subject-card.subj-insert-area[data-sem="${sem}"][data-ue="${ue}"][data-index="${parseInt(index)+1}"]`)
+
+                    if (upperInsertArea) {
+                        upperInsertArea.style.display = "";
+                        upperInsertArea.style.height = "30px";
+                        upperInsertArea.style.margin = "";
+                        upperInsertArea.style.borderColor = "";
+                        upperInsertArea.querySelector(".drop-subject-card-insert-hitbox").ondragover = (e) => {
+                            const subjInsertAreaHitbox = e.target;
+                            const subjInsertArea = subjInsertAreaHitbox.parentElement;
+                            const subjInsertAreaArrow = subjInsertArea.querySelector(".drop-subject-card-arrow");
+                            const subjInsertAreaText = subjInsertArea.querySelector(".drop-subject-card-insert-text");
+                            e.preventDefault(); 
+                            subjInsertArea.classList.add("hover");
+                            subjInsertAreaArrow.classList.add("hover"); 
+
+                            subjInsertAreaText.innerHTML = this.lang == "fr" ? "Insérer ici" : "Insert here";
+                            subjInsertAreaText.style.width = this.lang == "fr" ? "400px" : "300px";
+                            subjInsertAreaText.style.left = "30%";
+                        };
+                    }
+                    
+                    if (lowerInsertArea) {
+                        lowerInsertArea.style.display = "";
+                        lowerInsertArea.style.height = "30px";
+                        lowerInsertArea.style.margin = "";
+                        lowerInsertArea.style.borderColor = "";
+                        lowerInsertArea.querySelector(".drop-subject-card-insert-hitbox").ondragover = (e) => {
+                            const subjInsertAreaHitbox = e.target;
+                            const subjInsertArea = subjInsertAreaHitbox.parentElement;
+                            const subjInsertAreaArrow = subjInsertArea.querySelector(".drop-subject-card-arrow");
+                            const subjInsertAreaText = subjInsertArea.querySelector(".drop-subject-card-insert-text");
+                            e.preventDefault(); 
+                            subjInsertArea.classList.add("hover");
+                            subjInsertAreaArrow.classList.add("hover"); 
+
+                            subjInsertAreaText.innerHTML = this.lang == "fr" ? "Insérer ici" : "Insert here";
+                            subjInsertAreaText.style.width = this.lang == "fr" ? "400px" : "300px";
+                            subjInsertAreaText.style.left = "30%";
+                        };
+                    }
                 }
             }
             draggedSelectedElementOnDragStartEvent(e, {draggedElement, subjectCard}) {
@@ -2681,7 +2829,7 @@
                 console.log("selection draggedElement: dragend");
 
                 this.selectedSubjectCards.forEach(selectedSubjectCard => {
-                    selectedSubjectCard.style.width = "100%";
+                    selectedSubjectCard.style.width = "";
 
                     if (selectedSubjectCard.classList.contains("unclassified")) {
                         selectedSubjectCard.querySelector(".grades-table").style.display = "table";
@@ -2705,10 +2853,10 @@
 
             // MARK: drop Areas ev listen
             attachDropAreasEventListeners() {
-                const dropAreaAdd =     document.querySelector(     ".drop-subject-card.create-ue");
-                const dropAreaRemove =  document.querySelector(     ".drop-subject-card.remove-from-ue");
-                const ueInsertAreas =   document.querySelectorAll(  ".drop-subject-card.insert-to-new-ue");
-                const subjInsertAreas = document.querySelectorAll(  ".drop-subject-card.subj-insert-area");
+                const dropAreaAdd =             document.querySelector(   ".drop-subject-card.create-ue");
+                const dropAreaRemove =          document.querySelector(   ".drop-subject-card.remove-from-ue");
+                const ueInsertAreas =           document.querySelectorAll(".drop-subject-card.insert-to-new-ue");
+                const subjInsertAreaHitboxes =  document.querySelectorAll(".drop-subject-card-insert-hitbox");
                 
                 dropAreaAdd.style.background = "";
                 dropAreaAdd.ondragover =    (e) => {e.preventDefault(); e.target.style.background = "#bdb8ffce";};
@@ -2766,30 +2914,74 @@
                     };
                 })
 
-                subjInsertAreas.forEach(subjInsertArea => {
-                    const insertIndex = subjInsertArea.dataset.index;
+                subjInsertAreaHitboxes.forEach(subjInsertAreaHitbox => {
+                    const subjInsertArea = subjInsertAreaHitbox.parentElement;
                     const subjInsertAreaArrow = subjInsertArea.querySelector(".drop-subject-card-arrow");
-                    subjInsertArea.ondragover =     (e) => {e.preventDefault(); e.target.style.background = "#bdb8ff"; subjInsertAreaArrow.classList.add("hover");};
-                    subjInsertArea.ondragleave =    (e) => {e.preventDefault(); e.target.style.background = ""; subjInsertAreaArrow.classList.remove("hover");};
-                    subjInsertArea.ondrop =         (e) => {
-                        e.target.style.background = ""; 
-                        e.preventDefault(); 
-                        this.dropAreaSubjectInsertAction({cardId:e.dataTransfer.getData("text"), methodCaller:subjInsertArea, index:insertIndex});
-                    };
+                    const subjInsertAreaText = subjInsertArea.querySelector(".drop-subject-card-insert-text");
 
-                    subjInsertArea.onmouseover =    (e) => {
-                        subjInsertAreaArrow.classList.add("hover");
+                    subjInsertAreaHitbox.ondragover =     (e) => {
+                        e.preventDefault(); 
+                        subjInsertArea.classList.add("hover");
+                        subjInsertAreaArrow.classList.add("hover"); 
+
+                        subjInsertAreaText.innerHTML = this.lang == "fr" ? "Insérer ici" : "Insert here";
+                        subjInsertAreaText.style.width = this.lang == "fr" ? "400px" : "300px";
+                        subjInsertAreaText.style.left = "30%";
                     };
-                    subjInsertArea.onmouseleave =    (e) => {
-                        subjInsertAreaArrow.classList.remove("hover");
-                    };
-                    subjInsertArea.onclick =        (e) => {
-                        e.target.style.background = ""; e.preventDefault(); 
-                        if (this.selectedSubjectCards.length > 0) {
-                            this.dropAreaSubjectInsertAction({cardId:this.selectedSubjectCards[0].id, methodCaller:subjInsertArea, index:insertIndex});
+                    subjInsertAreaHitbox.ondragleave =    (e) => {
+                        e.preventDefault(); 
+                        subjInsertArea.classList.remove("hover");
+                        subjInsertAreaArrow.classList.remove("hover"); 
+                        if (this.selectedSubjectCards.length == 0) {
+                            subjInsertAreaText.innerHTML = this.lang == "fr" ? "Ajouter une matière ici" : "Add a subject here";
+                            subjInsertAreaText.style.width = "0px";
+                            subjInsertAreaText.style.left = "";
                         }
                         else {
-                            this.dropAreaSubjectInsertAction({cardId:null, methodCaller:subjInsertArea, index:insertIndex})
+                            subjInsertAreaText.innerHTML = this.lang == "fr" ? "Insérer ici" : "Insert here";
+                            subjInsertAreaText.style.width = "0px";
+                            subjInsertAreaText.style.left = "";
+                        }
+                    };
+                    subjInsertAreaHitbox.ondrop =         (e) => {
+                        subjInsertArea.style.background = ""; 
+                        e.preventDefault(); 
+                        this.dropAreaSubjectInsertAction(e.dataTransfer.getData("text"), subjInsertArea);
+                    };
+
+                    subjInsertAreaHitbox.onmouseenter =    (e) => {
+                        subjInsertAreaArrow.classList.add("hover"); 
+                        if (this.selectedSubjectCards.length == 0) {
+                            subjInsertAreaText.innerHTML = this.lang == "fr" ? "Ajouter une matière ici" : "Add a subject here";
+                            subjInsertAreaText.style.width = this.lang == "fr" ? "400px" : "300px";
+                            subjInsertAreaText.style.left = this.lang == "fr" ? "27%" : "30%";
+                        }
+                        else {
+                            subjInsertAreaText.innerHTML = this.lang == "fr" ? "Insérer ici" : "Insert here";
+                            subjInsertAreaText.style.width = "200px";
+                            subjInsertAreaText.style.left = "30%";
+                        }
+                    };
+                    subjInsertAreaHitbox.onmouseleave =    (e) => {
+                        subjInsertAreaArrow.classList.remove("hover");
+                        if (this.selectedSubjectCards.length == 0) {
+                            subjInsertAreaText.innerHTML = this.lang == "fr" ? "Ajouter une matière ici" : "Add a subject here";
+                            subjInsertAreaText.style.width = "0px";
+                            subjInsertAreaText.style.left = "";
+                        }
+                        else {
+                            subjInsertAreaText.innerHTML = this.lang == "fr" ? "Insérer ici" : "Insert here";
+                            subjInsertAreaText.style.width = "0px";
+                            subjInsertAreaText.style.left = "";
+                        }
+                    };
+                    subjInsertAreaHitbox.onclick =        (e) => {
+                        subjInsertArea.style.background = ""; e.preventDefault(); 
+                        if (this.selectedSubjectCards.length > 0) {
+                            this.dropAreaSubjectInsertAction(this.selectedSubjectCards[0].id, subjInsertArea);
+                        }
+                        else {
+                            this.dropAreaSubjectInsertAction(null, subjInsertArea)
                         }
                     };
                 })
@@ -2886,7 +3078,7 @@
                 if (notifDiv=="all") {      // clear all subject card selection as well as their respective notif
                     
                     this.selectedSubjectCards.forEach((selectedSubjectCard, index) => {
-                        selectedSubjectCard.style.width = "100%";
+                        selectedSubjectCard.style.width = "";
 
                         if (selectedSubjectCard.classList.contains("unclassified")) {
                             selectedSubjectCard.querySelector(".grades-table").style.display = "table";
@@ -3244,7 +3436,7 @@
                 let cardIsSelected = false;
                 this.selectedSubjectCards.forEach(selectedSubjectCard => {if (selectedSubjectCard.id == card.id) cardIsSelected = true;})
 
-                if (card.classList.contains("subject-card") && !card.classList.contains("unclassified")) {
+                if (card?.classList?.contains("subject-card") && !card?.classList?.contains("unclassified")) {
                     const sem = card.dataset.semester;
                     const ue = card.dataset.ue;
                     const subj = card.dataset.subject;
@@ -3287,76 +3479,82 @@
                     this.renderContent();
                     this.attachEventListeners();
                 }
-                else if (card.classList.contains("subject-card") && card.classList.contains("unclassified") && cardIsSelected) {
+                else if (card?.classList?.contains("subject-card") && card?.classList?.contains("unclassified") && cardIsSelected) {
                     this.removeSubjectCardFromSubjectSelection({elementDroppedInArea:card});
                 }
-                else if (card.classList.contains("ue-card")) {}
+                else if (card?.classList?.contains("ue-card")) {}
 
             }
 
 
             // MARK: dropAreaSubjectInsertAction
-            dropAreaSubjectInsertAction({cardId=null, methodCaller=null, index=-1}={cardId:null, methodCaller:null, index:-1}) {
+            dropAreaSubjectInsertAction(cardId=null, methodCaller=null) {
                 const sem = this.currentSemester;
                 
-                if (cardId) {
+                if (cardId) {   // When dropping a subject card on a ".add-a-subject-card" class div or a ".drop-subject-card.subj-insert-area" class div
                     const card = document.getElementById(cardId);
 
-                    if (card.classList.contains('subject-card')) {
+                    if (card?.classList?.contains('subject-card')) {
                         let cardIsSelected = false;
                         this.selectedSubjectCards.forEach(selectedSubjectCard => {if (selectedSubjectCard == card) cardIsSelected = true;});
 
-                        let subject, oldUeName, manageSim = true;
-                        if (!this.sim[sem]) manageSim = false;
+                        const targetUeName = methodCaller.dataset.ue;
+                        const insertionIndex = methodCaller.dataset.index;
+
+                        let subject, oldUeName;
                         
                         if (!cardIsSelected) {  // 1 unselected subj card dropped in the drop area "add"
                             subject = card.dataset.subject;
                             oldUeName = card.dataset.ue;
                             const ueIndex = this.ueConfig[sem].__ues__.indexOf(oldUeName);
+                            const subjectIndex = this.ueConfig?.[sem]?.[oldUeName]?.subjects?.indexOf(subject);
+                        
+                            // CASE 1: subject card from unclassified section to a UE (default case)
+                            // CASE 2: subject card from a UE to another UE (moving case)
+                            // CASE 3: subject card from a UE to the same UE at a different index (reordering case)
+                            // CASE 4: subject card from a UE to the same UE at the same index (a no-use case, so nothing happens)
 
-                            if (!card.classList.contains("unclassified")) { // If the subj card doesn't come from the unclassified container:
-                                // We get its index in its UE configured in ueConfig
-                                const subjectIndex = this.ueConfig[sem][oldUeName].subjects.indexOf(subject);
+                            switch (`
+                                subject card comes from ${oldUeName 
+                                    ? `a UE and is ${targetUeName==oldUeName 
+                                        ? `reorganized to ${subjectIndex == insertionIndex || subjectIndex+1 == insertionIndex 
+                                            ? "the same index" 
+                                            : "a different index"}` 
+                                        : "moved to a different UE"}` 
+                                    : "the unclassified section"}
+                            `.trim()) {
+                                case "subject card comes from the unclassified section":
+                                    this.ueConfig[sem][targetUeName].subjects.splice(insertionIndex, 0, subject);
+                                    this.ueConfig[sem][targetUeName].coefficients[subject] = 0;
+                                    this.ueConfig[sem][targetUeName].custom[subject] = false;
+                                break;
 
-                                if (this.ueConfig[sem][oldUeName].subjects.toSpliced(subjectIndex,1).length == 0 && oldUeName.match(/Module (\d)/)) {
-                                    // If the action of removing the subject's name from the list of subject names of the ue empties the list, then we don't delete anything at all:
-                                    // the subj card was the only subj card of its previous ue card, therefore we don't need to create nor make a new one, we just set the subject's coef to 100%.
-                                    // This case is only to avoid taking a subj card from a UE named "Module [X]", putting it in a new UE named "Module [X+1]", deleting "Module [X]",
-                                    // and realizing that it was pointless lol
-                                    newUeName = oldUeName;
-                                    newUeConfig.coefficients[subject] = 100;
-                                } 
-                                else {
-                                    newUeConfig = {subjects: [subject], coefficients: {[subject]: 100}, custom: {[subject]: false}};
+                                case "subject card comes from a UE and is moved to a different UE":
+                                    // We move the datas without having to pay attention to anything
+                                    this.ueConfig[sem][targetUeName].subjects.splice(insertionIndex, 0, subject);
+                                    this.ueConfig[sem][targetUeName].coefficients[subject] = new Number(this.ueConfig[sem][oldUeName].coefficients[subject]);
+                                    this.ueConfig[sem][targetUeName].custom[subject] =      new Boolean(this.ueConfig[sem][oldUeName].custom[subject]);
 
-                                    this.ueConfig[sem][oldUeName].subjects.splice(subjectIndex,1);
+                                    this.ueConfig[sem][oldUeName].subjects.splice(subjectIndex, 1);
                                     delete this.ueConfig[sem][oldUeName].coefficients[subject];
                                     delete this.ueConfig[sem][oldUeName].custom[subject];
+                                break;
 
+                                case "subject card comes from a UE and is reorganized to a different index":
+                                    // We move the datas while paying attention to at which index was the original subject before moving it
+                                    this.ueConfig[sem][targetUeName].subjects.splice(insertionIndex, 0, subject);
+                                    this.ueConfig[sem][targetUeName].coefficients[subject] = new Number(this.ueConfig[sem][oldUeName].coefficients[subject]);
+                                    this.ueConfig[sem][targetUeName].custom[subject] =      new Boolean(this.ueConfig[sem][oldUeName].custom[subject]);
 
-                                    if (manageSim) {if (!this.sim[sem][oldUeName]) manageSim = false;}
-                                    if (manageSim) {
-                                        this.sim[sem] = {[newUeName]: {}, ...this.sim[sem]}
-                                        this.sim[sem][newUeName][subject] = [];
-                                        this.sim[sem][oldUeName][subject].forEach((_, index) => {
-                                            this.sim[sem][newUeName][subject].push(this.sim[sem][oldUeName][subject][index].shift())
-                                        })
-                                        this.deleteUnusedSimPath(sem, oldUeName, subject);
-                                        this.saveSim();
-                                    }
-                                }
+                                    const subjectNewIndex = subjectIndex + (insertionIndex<=subjectIndex && this.ueConfig[sem][targetUeName].subjects.includes(subject) ? 1 : 0)
+                                    this.ueConfig[sem][oldUeName].subjects.splice(subjectNewIndex, 1);
+                                break;
 
-                                if (this.ueConfig[sem][oldUeName].subjects.length == 0) {
-                                    this.ueConfig[sem].__ues__.splice(ueIndex, 1);
-                                    delete this.ueConfig[sem][oldUeName];
-                                }
-
-                            } 
-                            else {
-                                newUeConfig = {subjects: [subject], coefficients: {[subject]: 100}, custom: {[subject]: false}};
+                                case "subject card comes from a UE and is reorganized to the same index":
+                                    "Alas, nothing happens...";
+                                break;
                             }
-
-                        } else {  // mutliple subj cards dropped through selection in the drop area "add"
+                        } /* else {  // mutliple subj cards dropped through selection in the drop area "add"
                             let remainingCoef = 100;
                             
                             // Scanning through all the ues of the selected matiere cards to get the name of the ue of name "Module [x]", so that instead of creating a new Module,
@@ -3433,10 +3631,16 @@
                             // this the last step, so that if the new module has the same same as an old module that gets deleted (in order to replace it, "Module [x]" case), we don't remove the wrong one
                             this.ueConfig[sem][newUeName] = newUeConfig;
                             this.ueConfig[sem].__ues__.splice(index, 0, newUeName);
-                        }
+                        } */
+
+                        this.saveConfig();
+                        this.getGradesDatas();
+                        this.renderContent();
+                        this.attachEventListeners();
+                        this.setGradesTableTotalCoef();
                     }
                 }
-                else {
+                else {          // When clicking on a ".add-a-subject-card" class div or a ".drop-subject-card.subj-insert-area" class div
                     const addDivClicked = methodCaller;
                     const sem = addDivClicked.dataset.sem;
                     const ue =  addDivClicked.dataset.ue;
@@ -3448,7 +3652,7 @@
                         count++; newSubjName = `${this.lang == "fr" ? "Nouvelle matière" : "New subject"} ${count}`;
                     }
 
-                    const insertionIndex = index ? index : this.ueConfig[sem][ue].subjects.length;
+                    const insertionIndex = methodCaller ? methodCaller.dataset.index : this.ueConfig[sem][ue].subjects.length;
 
                     this.ueConfig   [sem][ue].subjects.splice(insertionIndex, 0, newSubjName);
                     this.ueConfig   [sem][ue].coefficients [newSubjName] = 0;
