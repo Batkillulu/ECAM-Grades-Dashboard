@@ -1239,7 +1239,7 @@
                 document.querySelector(".site-breadcrumbs").remove();
                 document.querySelector(".portlet-topper").remove();
 
-                // Creating the content of the dashboard that don't vary along with the user's actions besides the language selection.
+                // Creating the content of the dashboard that doesn't vary along with the user's actions besides the language selection.
                 // Therefore, the text isn't yet created, but will be in the renderContent() method later on, to regenerate the text in case the language is changed
                 container.innerHTML = `
                 <div class="dash-header">
@@ -1261,8 +1261,8 @@
                     <div class="header-actions" style="display:flex; align-items:center">
                         <button class="btn btn-edit-mode ${this.editMode ? "on" : "off"}" id="editModeBtn"></button>
                         <div style="display: flex; flex-direction: column; gap: 8px">
-                            <button class="btn btn-import" id="importBtn"></button>
                             <button class="btn btn-export" id="exportBtn"></button>
+                            <button class="btn btn-import" id="importBtn"></button>
                         </div>
                     </div>
                 </div>
