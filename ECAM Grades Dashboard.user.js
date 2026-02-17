@@ -154,12 +154,11 @@
         .ue-toggle                      { width: 24px; height: 24px; font-size: 18px; color: #000000; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; margin-left: 5px; }
         .ue-toggle.open                 { transform: rotate(180deg); }
         .ue-info                        { display: flex; flex-direction: row; justify-content: space-around;  align-items: center; width:97%; background: #eef2ff; border:1px solid #c7d2fe; padding:6px 8px; border-radius:8px; }
-        .ue-info.hasDisabledGrades      { display: flex; flex-direction: row; justify-content: space-between; align-items: center; width:48%; padding:6px 8px; border-radius:8px; }
-        .ue-info.hasSim                 { display: flex; flex-direction: row; justify-content: space-between; align-items: center; width:48%; padding:6px 8px; border-radius:8px; }
-        .ue-info-sim-clear              { display: flex; align-items: center; justify-content: center; font-size: 12px; background: #d7e0ff; border: 2px solid; border-radius: 10px; padding: 2px 7px; user-select: none; width: 172px; margin-right: 8px; cursor: pointer; transition: all 0.2s ease; }
-        .ue-info-sim-clear:hover        { width: 180px; margin-right: 4px; font-size: 11.5px; background: #eef2ff; }
-        .ue-info-disabled-clear         { display: flex; align-items: center; justify-content: center; font-size: 12px; background: #d7e0ff; border: 2px solid; border-radius: 10px; padding: 2px 7px; user-select: none; width: 172px; margin-right: 8px; cursor: pointer; transition: all 0.2s ease; }
-        .ue-info-disabled-clear:hover   { width: 180px; margin-right: 4px; font-size: 11.5px; background: #eef2ff; }
+        .ue-info.bar                    { width:48%; padding: 3px 8px; }
+        .ue-info-clear                  { display: flex; align-items: center; justify-content: center; font-size: 12px; background: #d7e0ff; border: 2px solid; border-radius: 10px; padding: 2px 7px; user-select: none; width: 220px; margin-right: 8px; cursor: pointer; transition: all 0.2s ease; }
+        .ue-info-clear:hover            { width: 240px; margin-right: 4px; font-size: 11.5px; background: #eef2ff; }
+        .ue-info-clear.disabled         {  }
+        .ue-info-clear.sim              {  }
 
         .add-a-subject-card         { display: none; align-items: center; justify-content: space-between; gap: 8px; height: 38px; width: 320px; margin-bottom: 18px; border: 3px dashed #7fc2ff; border-radius: 20px; font-size: 19px; font-weight: 700; color: #7fc2ff; background: aliceblue; cursor: pointer; box-shadow: none; user-select:none; transition: all 0.2s ease }
         .add-a-subject-card:hover   { background: white; font-size: 20px; box-shadow: inset 0px 0px 17px 0px #0400ff38; }
@@ -310,7 +309,7 @@
             this.init();
         }
 
-        //#region -Region: Misc methods
+        //#region -REGION: Misc methods
 
             /** 
             *  Use only in the console: iterating through a long list of objects isn't very optimized. Use it only to obtain the indices pointing at the class you want to change.
@@ -631,52 +630,7 @@
                     let advice = this.lang == `fr` ? `Toutes tes notes sont là !` : `All your grades are out!`;
                     let color = good;
 
-                    /* 
-                    {   // Conditions part
-
-                        if (totalCoefSubjects == 100 && totalCoefEnabledGrades == 100 && nbEnabledSimGrades > 0) {
-                            advice = this.lang == `fr` 
-                                ? `Tu as ${nbEnabledSimGrades} note${nbEnabledSimGrades>1?"s":""} simulée${nbEnabledSimGrades>1?"s":""} activée${nbEnabledSimGrades>1?"s":""}! Toutes tes notes ne sont pas encore là!` 
-                                : `You have ${nbEnabledSimGrades} simulated grade${nbEnabledSimGrades>1?"s":""} enabled! All your grades aren't out yet!`;
-                            color = meh;
-                        }
-                        else if (totalCoefSubjects != 100) {
-                            advice = this.lang == `fr` ? `Réajuste le coef des matières` : `Re-adjust the subjects' coef`;
-                            color = bad;
-                        }
-                        else if (totalCoefEnabledGrades == 0 || totalCoefEnabledGrades == " - ") {
-                            advice = this.lang == `fr` ? `Pas encore de notes` : `No grades yet`;
-                            color = unknown;
-                        }
-                        else if ((nbSubjectsBelow100 > 0 || nbSubjectsOver100 > 0) && nbEnabledSimGrades > 0) {
-                            advice = this.lang == `fr` 
-                                ? `Tes grades simulées faussent le total. Ajuste-les` 
-                                : `Your simulated grades falsify the total. Adjust them`;
-                            color = bad;
-                        }
-                        else if (nbSubjectsBelow100 > 0 && nbSubjectsOver100 > 0) {
-                            advice = this.lang == `fr` 
-                                ? `Notes manquantes dans ${  nbSubjectsBelow100 > 1 ? nbSubjectsBelow100 : `une`} matière${nbSubjectsBelow100 > 1 ?  `s` : ``}, 
-                                    et trop de notes dans ${ nbSubjectsOver100  > 1 ? nbSubjectsOver100  : `une`} matière${nbSubjectsOver100  > 1 ?  `s` : ``}` 
-                                : `Missing grades in ${      nbSubjectsBelow100 > 1 ? nbSubjectsBelow100 : `a`  } subject${nbSubjectsBelow100 > 1 ? `'s` : ``}, 
-                                    and too many grades in ${nbSubjectsOver100  > 1 ? nbSubjectsOver100  : `a`  } subject${nbSubjectsOver100  > 1 ? `'s` : ``}`;
-                            color = bad;
-                        }
-                        else if (nbSubjectsBelow100 > 0) {
-                            advice = this.lang == `fr` 
-                                ? `Notes manquantes dans ${nbSubjectsBelow100 > 1 ? nbSubjectsBelow100 : `${nbSubjectsBelow100==nbSubjects ? "toutes tes" : "une"}`} matière${nbSubjectsBelow100 > 1 ? `s`  : ``}` 
-                                : `Missing grades in ${    nbSubjectsBelow100 > 1 ? nbSubjectsBelow100 : `${nbSubjectsBelow100==nbSubjects ? "all your" : "a"    }`} subject${nbSubjectsBelow100 > 1 ? `'s` : ``}`;
-                            color = bad;
-                        }
-                        else if (nbSubjectsOver100 > 0) {
-                            advice = this.lang == `fr` 
-                                ? `Trop de notes dans ${nbSubjectsOver100 > 1 ? nbSubjectsOver100 : `${nbSubjectsOver100==nbSubjects ? "toutes tes" : "une"}`} matière${nbSubjectsOver100 > 1 ? `s`  : ``}` 
-                                : `Too many grades in ${nbSubjectsOver100 > 1 ? nbSubjectsOver100 : `${nbSubjectsOver100==nbSubjects ? "all your" : "a"    }`} subject${nbSubjectsOver100 > 1 ? `'s` : ``}`;
-                            color = bad;
-                        }
-                    }
-                        */
-
+                    
                     if (totalCoefSubjects != 100) {
                         advice = this.lang == "fr" ? `Réajuste le coef de tes matières, leur somme n'est pas égale à 100% !` : `Readjust your subjects' coef, their sum isn't equal to 100%!`;
                         color = bad;
@@ -860,8 +814,11 @@
                             color = meh;
                         }
                     }
-                    else if (totalCoefRealGrades > 100) {
-                        advice = this.lang == "fr" ? `Trop de notes (erreur du côté de l'ECAM), désactive les notes en trop !` : `Too many grades (error on ECAM's side), turn off all irrelevant grades!`;
+                    else if (totalCoefEnabledRealGrades > 100) {
+                        advice = this.lang == "fr" 
+                            ? `Trop de notes (erreur du côté de l'ECAM), désactive les notes en trop !` 
+                            : `Too many grades (error on ECAM's side), turn off all irrelevant grades!`
+                        ;
                         color = bad;
                     }
                     else if (totalCoefRealGrades == 100) {
@@ -1218,7 +1175,7 @@
 
 
 
-        //#region -Region: Render
+        //#region -REGION: Render
 
             // MARK: -createDashboard
             createDashboard() {
@@ -1586,17 +1543,17 @@
                         <div class="ue-info">
                             ${hasDisabled 
                                 ? 
-                                `<div class="ue-info hasDisabledGrades">
+                                `<div class="ue-info bar">
                                     <div style="font-weight: 700">${this.lang == "fr" ? "Inclus des notes désactivées" : "Includes disabled grades"}</div>
-                                    <div class="ue-info-disabled-clear" data-sem="${sem}" data-ue="${ueName}">${this.lang == "fr" ? "Activer toutes ces notes" : "Enable all the grades"}</div>
+                                    <div class="ue-info-clear disabled" data-sem="${sem}" data-ue="${ueName}">${this.lang == "fr" ? "Activer toutes ces notes" : "Enable all the grades"}</div>
                                 </div>` 
                                 : ``
                             }
                             ${hasSim 
                                 ? 
-                                `<div class="ue-info hasSim">
+                                `<div class="ue-info bar">
                                     <div style="font-weight: 700">${this.lang == "fr" ? "Inclus des notes simulées" : "Includes simulated grades"}</div>
-                                    <div class="ue-info-sim-clear" data-sem="${sem}" data-ue="${ueName}">${this.lang == "fr" ? "Effacer ces notes simulées" : "Erase the simulated grades"}</div>
+                                    <div class="ue-info-clear sim" data-sem="${sem}" data-ue="${ueName}">${this.lang == "fr" ? "Effacer toutes ces notes simulées" : "Erase all the simulated grades"}</div>
                                 </div>` 
                                 : ``
                             }
@@ -1998,7 +1955,7 @@
 
 
 
-        //#region -Region: Ev Listeners
+        //#region -REGION: Ev Listeners
 
             attachEventListeners() {
 
@@ -2264,7 +2221,11 @@
                 // const dropAreaAdd = document.querySelector(".drop-subject-card.create-ue");
                 // const dropAreaRemove = document.querySelector(".drop-subject-card.remove-from-ue");
                 // const ueInsertAreas = document.querySelectorAll(".drop-subject-card.insert-to-new-ue");
-                
+                this.selectedSubjectCards.forEach(selectedSubjectCard => {
+                    const subjectCard = document.getElementById(selectedSubjectCard.id);
+                    const dragIcon = subjectCard.querySelector(".drag-icon");
+                    this.dragIconOnClickEvent(subjectCard, dragIcon, true);
+                })
                 document.querySelectorAll(".drag-icon").forEach(dragIcon => {
                     dragIcon.onclick = (e) => {
                         this.dragIconOnClickEvent(e, dragIcon)
@@ -2451,8 +2412,8 @@
                     }
                 })
                 
-                document.querySelectorAll(".ue-info-sim-clear").     forEach(simClear => {simClear.onclick = () => {this.clearSimGradesForUE(    simClear.dataset.sem, simClear.dataset.ue);this.renderContent();}});
-                document.querySelectorAll(".ue-info-disabled-clear").forEach(disClear => {disClear.onclick = () => {this.clearIgnoredGradesForUE(disClear.dataset.sem, disClear.dataset.ue);this.renderContent();}});
+                document.querySelectorAll(".ue-info-clear.sim").     forEach(simClear => {simClear.onclick = () => {this.clearSimGradesForUE(    simClear.dataset.sem, simClear.dataset.ue);this.renderContent();}});
+                document.querySelectorAll(".ue-info-clear.disabled").forEach(disClear => {disClear.onclick = () => {this.clearIgnoredGradesForUE(disClear.dataset.sem, disClear.dataset.ue);this.renderContent();}});
 
                 
                 document.querySelector(".unclassified-content").querySelectorAll(".grades-table").forEach(table => {
@@ -2659,7 +2620,8 @@
 
 
 
-        //#region -Region: Drag events
+        //#region -REGION: Drag events
+
             draggedElementOnDragStartEvent(e, {draggedElement, subjectCard}) {
                 this.currentlyDraggedElement = draggedElement;
                 this.currentlyDraggedSubjCard = subjectCard;
@@ -2953,12 +2915,12 @@
                         subjInsertAreaArrow.classList.add("hover"); 
                         if (this.selectedSubjectCards.length == 0) {
                             subjInsertAreaText.innerHTML = this.lang == "fr" ? "Ajouter une matière ici" : "Add a subject here";
-                            subjInsertAreaText.style.width = this.lang == "fr" ? "400px" : "300px";
-                            subjInsertAreaText.style.left = this.lang == "fr" ? "27%" : "30%";
+                            subjInsertAreaText.style.width = this.lang == "fr" ? "250px" : "230px";
+                            subjInsertAreaText.style.left = this.lang == "fr" ? "29%" : "30%";
                         }
                         else {
                             subjInsertAreaText.innerHTML = this.lang == "fr" ? "Insérer ici" : "Insert here";
-                            subjInsertAreaText.style.width = "200px";
+                            subjInsertAreaText.style.width = this.lang == "fr" ? "130px" : "140px";
                             subjInsertAreaText.style.left = "30%";
                         }
                     };
@@ -3187,13 +3149,13 @@
 
 
             // MARK: dragIconOnClickEvent
-            dragIconOnClickEvent(e, dragIcon) {
-                let subjectCard =  e.target.parentElement.parentElement.parentElement;
+            dragIconOnClickEvent(e, dragIcon, dontAddToSelection) {
+                let subjectCard = e?.target ? e.target.parentElement.parentElement.parentElement : e;
                 let draggableElement = subjectCard;
                 const dropAreaAdd =     document.querySelector(".drop-subject-card.create-ue");
                 const dropAreaRemove =  document.querySelector(".drop-subject-card.remove-from-ue");
                 const type = dragIcon.dataset.type;
-                if (type=="detailed") {
+                if (type=="detailed" && e?.target) {
                     subjectCard = e.target.parentElement.parentElement.parentElement.parentElement.parentElement;
                 }
                 if (type != "compact") {
@@ -3201,15 +3163,25 @@
                 }
                 
                 draggableElement.draggable = true;
-                draggableElement.ondragstart = (e) => {this.draggedSelectedElementOnDragStartEvent(e, {draggedElement: draggableElement, subjectCard})};
-                draggableElement.ondragend = (e) => {this.draggedSelectedElementOnDragEndEvent(e, {draggedElement: draggableElement, subjectCard})};
+                draggableElement.ondragstart = (e) =>   {this.draggedSelectedElementOnDragStartEvent(e, {draggedElement: draggableElement, subjectCard})};
+                draggableElement.ondragend = (e) =>     {this.draggedSelectedElementOnDragEndEvent(e, {draggedElement: draggableElement, subjectCard})};
 
-                // let subjectCardIsAlreadySelected = false;
-                // this.selectedSubjectCards.forEach(selectedSubjectCard => {if (selectedSubjectCard == subjectCard) subjectCardIsAlreadySelected = true;})
-                // if (!subjectCardIsAlreadySelected) {}
-                this.selectedSubjectCards.push(subjectCard);
-                if (!this.selectedSubjectCardsSortedByUe[subjectCard.dataset.ue]) { this.selectedSubjectCardsSortedByUe[subjectCard.dataset.ue] = []; };
-                this.selectedSubjectCardsSortedByUe[subjectCard.dataset.ue].push({subjectCard, selectionIndex: this.selectedSubjectCards.length-1});
+                if (!dontAddToSelection) {
+                    this.selectedSubjectCards.push(subjectCard);
+                    if (!this.selectedSubjectCardsSortedByUe[subjectCard.dataset.ue]) { this.selectedSubjectCardsSortedByUe[subjectCard.dataset.ue] = []; };
+                    this.selectedSubjectCardsSortedByUe[subjectCard.dataset.ue].push({subjectCard, selectionIndex: this.selectedSubjectCards.length-1});
+
+                    const selectionNotifDiv = this.addSelectedCardNotifDiv(subjectCard.dataset.semester, subjectCard.dataset.subject, type, subjectCard.id);
+
+                    document.querySelector(".selected-subject-card-notif-container").appendChild(selectionNotifDiv);
+                    this.notifDelBtnAttachListener(selectionNotifDiv.querySelector(".selected-subject-card-notif-div-del-btn"));
+
+                    let highestWidth = 0;
+                    document.querySelectorAll(".selected-subject-card-notif-div").forEach(notifDiv => {if (highestWidth < notifDiv.clientWidth) highestWidth = notifDiv.clientWidth;})
+                    document.querySelector(".selected-subject-card-notif-container").style.left = `calc(99% - ${100 * highestWidth/document.body.clientWidth}%`;
+
+                    setTimeout(()=>{selectionNotifDiv.classList.add("on")}, 10)
+                }
 
                 document.querySelectorAll(".grades-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
                 document.querySelectorAll(".ue-title.input").forEach(input => {
@@ -3229,16 +3201,6 @@
                 tick.dataset.targetid = subjectCard.id;
                 tick.onclick = (e) => {this.tickIconOnClickEvent(e, tick)};
 
-                const selectionNotifDiv = this.addSelectedCardNotifDiv(subjectCard.dataset.semester, subjectCard.dataset.subject, type, subjectCard.id);
-
-                document.querySelector(".selected-subject-card-notif-container").appendChild(selectionNotifDiv);
-                this.notifDelBtnAttachListener(selectionNotifDiv.querySelector(".selected-subject-card-notif-div-del-btn"));
-
-                let highestWidth = 0;
-                document.querySelectorAll(".selected-subject-card-notif-div").forEach(notifDiv => {if (highestWidth < notifDiv.clientWidth) highestWidth = notifDiv.clientWidth;})
-                document.querySelector(".selected-subject-card-notif-container").style.left = `calc(99% - ${100 * highestWidth/document.body.clientWidth}%`;
-
-                setTimeout(()=>{selectionNotifDiv.classList.add("on")}, 10)
             }
 
 
@@ -3762,7 +3724,7 @@
 
 
 
-        //#region -Region: Data ↓Imp/Exp↑
+        //#region -REGION: Data ↓Imp/Exp↑
 
             importData(file) {
                 this.sim = {};
