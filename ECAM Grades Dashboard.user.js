@@ -369,8 +369,11 @@
     const styleSheet = document.createElement("style");
     styleSheet.textContent = styles;
     document.head.appendChild(styleSheet);
+    if (ERROR503) {
+        document.body.children[0].remove(); document.body.children[0].remove();
+    }
 
-    //MARK: -class ECAMDashboard
+    //MARK: -
     class ECAMDashboard {
         constructor() {
             this.grades = [];
@@ -1221,6 +1224,10 @@
 
         //#region -REGION: Render
 
+
+
+
+        
             // MARK: -createDashboard
             createDashboard() {
                 const container = document.createElement("div");
@@ -1645,7 +1652,7 @@
                                     : `${this.lang == "fr" ? "Insérer ici" : "Insert here"}`
                             }</div>
                         </div>
-                        <div class="drop-subject-card-insert-hitbox" data-index="0"></div>
+                        <div class="drop-subject-card-insert-hitbox"></div>
                     </div>` 
                     : ``
                 ;
@@ -1654,10 +1661,10 @@
                     html += this.renderMatCardDetailed(sem, ueName, _value.subjName, _index);
                     html += this.editMode 
                         ? `<div class="drop-subject-card subj-insert-area show" data-semester="${sem}" data-ue="${ueName}" data-index="${_index+1}">
-                            <div class="drop-subject-card-insert-content plus"${select ? ` style=display: none` : ""}>
+                            <div class="drop-subject-card-insert-content plus"${select ? "" : ` style="display: none"`}>
                                 <div class="drop-subject-card-insert-plus">+</div>
                             </div>
-                            <div class="drop-subject-card-insert-content arrow"${select ? "" : ` style=display: none`}>
+                            <div class="drop-subject-card-insert-content arrow"${select ? ` style="display: none"` : ""}>
                                 <div class="drop-subject-card-insert-arrow">→</div>
                             </div>
                             <div class="drop-subject-card-insert-content ${select ? "text-plus" : "text-arrow"}">
@@ -1667,7 +1674,7 @@
                                         : `${this.lang == "fr" ? "Insérer ici" : "Insert here"}`
                                 }</div>
                             </div>
-                            <div class="drop-subject-card-insert-hitbox" data-index="${_index}"></div>
+                            <div class="drop-subject-card-insert-hitbox"></div>
                         </div>` 
                         : ``
                     ;
@@ -1832,13 +1839,14 @@
 
             renderAllMatCardCompact(sem, ueName) {
                 const ueData = this.gradesDatas[sem][ueName];
+                const select = this.selectedSubjectCards.length == 0;
 
                 let html = this.editMode 
                     ? `<div class="drop-subject-card subj-insert-area show" data-semester="${sem}" data-ue="${ueName}" data-index="0">
-                        <div class="drop-subject-card-insert-content plus"${select ? ` style=display: none` : ""}>
+                        <div class="drop-subject-card-insert-content plus"${select ? "" : ` style="display: none"`}>
                             <div class="drop-subject-card-insert-plus">+</div>
                         </div>
-                        <div class="drop-subject-card-insert-content arrow"${select ? "" : ` style=display: none`}>
+                        <div class="drop-subject-card-insert-content arrow"${select ? ` style="display: none"` : ""}>
                             <div class="drop-subject-card-insert-arrow">→</div>
                         </div>
                         <div class="drop-subject-card-insert-content ${select ? "text-plus" : "text-arrow"}">
@@ -1848,7 +1856,7 @@
                                     : `${this.lang == "fr" ? "Insérer ici" : "Insert here"}`
                             }</div>
                         </div>
-                        <div class="drop-subject-card-insert-hitbox" data-index="0"></div>
+                        <div class="drop-subject-card-insert-hitbox"></div>
                     </div>` 
                     : ``
                 ;
@@ -1857,10 +1865,10 @@
                     html += this.renderMatCardCompact(sem, ueName, _value.subjName, _index);
                     html += this.editMode 
                         ? `<div class="drop-subject-card subj-insert-area show" data-semester="${sem}" data-ue="${ueName}" data-index="${_index+1}">
-                            <div class="drop-subject-card-insert-content plus"${select ? ` style=display: none` : ""}>
+                            <div class="drop-subject-card-insert-content plus"${select ? "" : ` style="display: none"`}>
                                 <div class="drop-subject-card-insert-plus">+</div>
                             </div>
-                            <div class="drop-subject-card-insert-content arrow"${select ? "" : ` style=display: none`}>
+                            <div class="drop-subject-card-insert-content arrow"${select ? ` style="display: none"` : ""}>
                                 <div class="drop-subject-card-insert-arrow">→</div>
                             </div>
                             <div class="drop-subject-card-insert-content ${select ? "text-plus" : "text-arrow"}">
@@ -1870,7 +1878,7 @@
                                         : `${this.lang == "fr" ? "Insérer ici" : "Insert here"}`
                                 }</div>
                             </div>
-                            <div class="drop-subject-card-insert-hitbox" data-index="${_index}"></div>
+                            <div class="drop-subject-card-insert-hitbox"></div>
                         </div>` 
                         : ``
                     ;
@@ -2144,7 +2152,7 @@
                     }
                     else if (e.target.closest(".subject-card-header") || e.target.closest(".subject-card.compact")) {
                         if (this.editMode) {
-                            const isCompact = e?.target?.classList?.contains(".compact");
+                            const isCompact = e.target?.closest(".subject-card.compact")?.classList?.contains("compact");
                             const subjectCard = isCompact ? e.target.closest(".subject-card.compact") : e.target.closest(".subject-card-header");
                             subjectCard.style.cursor = "grabbing";
                             this.clickedSubjectCardHeader = subjectCard;
@@ -2327,10 +2335,14 @@
                     input.onchange = (e) => {
                         const subjNewName = e.target.value;
                         const matCard = e.target.parentElement.parentElement.parentElement.parentElement.parentElement;
-                        const ueContent = matCard.parentElement;
                         const sem = matCard.dataset.semester;
                         const ue = matCard.dataset.ue;
                         const subjOldName = matCard.dataset.subject;
+                        const ueContent = matCard.parentElement;
+                        const ueCard = ueContent.parentElement;
+
+                        let isCustom = true;
+                        Object.keys(this.semesters[this.currentSemester]).forEach(subjectName => {if (subjectName == subjNewName) isCustom = false})
 
                         let diffName = true;
                         this.ueConfig[sem][ue].subjects.forEach(_mat => {if (_mat == subjNewName) diffName = false});
@@ -2340,7 +2352,6 @@
                             const oldMatIndex = this.ueConfig[sem][ue].subjects.indexOf(subjOldName);
                             this.ueConfig[sem][ue].subjects.splice(oldMatIndex, 1);
                             const pct       = new Number(   this.ueConfig[sem][ue].coefficients [subjOldName]);
-                            const isCustom  = new Boolean(  this.ueConfig[sem][ue].custom       [subjOldName]);
 
                             this.ueConfig[sem][ue].subjects.splice(oldMatIndex, 1, subjNewName);    // Replace the subject's old name by the subject's new name
                             delete  this.ueConfig[sem][ue].coefficients [subjOldName];
@@ -2511,7 +2522,7 @@
                         localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
                         document.getElementById('fr-lang-btn').classList.remove('active')
                         document.getElementById('en-lang-btn').classList.add('active')
-                        this.languageSensitiveContent();
+                        this.renderContent(false);
                     }
                 };
 
@@ -2522,7 +2533,7 @@
                         localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
                         document.getElementById('fr-lang-btn').classList.add('active')
                         document.getElementById('en-lang-btn').classList.remove('active')
-                        this.languageSensitiveContent();
+                        this.renderContent(false);
                     }
                 };
 
@@ -2711,7 +2722,6 @@
                 this.currentlyDraggedSubjCard = subjectCard;
                 if (e.target.classList.contains("any-input")) {return};
                 this.currentlyDraggedSubjCard.style.width = "50%";
-                const subjectInsertAreaTexts = document.querySelectorAll(".drop-subject-card-insert-text");
 
                 if (subjectCard.classList.contains("unclassified")) {
                     this.currentlyDraggedSubjCard.querySelector(".grades-table").style.display = "none";
@@ -2914,7 +2924,7 @@
             // #region subject insertion events
 
             subjInsertAreaHitboxOnDragOverEvent(e) {
-                const subjInsertArea = e.target.closest(".drop-subject-card-insert-hitbox").parentElement;
+                const subjInsertArea = e.target.closest(".drop-subject-card.subj-insert-area");
                 const subjInsertAreaArrow = subjInsertArea.querySelector(".drop-subject-card-insert-arrow");
                 const subjInsertAreaPlus = subjInsertArea.querySelector(".drop-subject-card-insert-plus");
                 const subjInsertAreaText = subjInsertArea.querySelector(".drop-subject-card-insert-text");
@@ -2928,7 +2938,7 @@
                 subjInsertAreaText.style.left = "30%";
             }
             subjInsertAreaHitboxOnDragLeaveEvent(e) {
-                const subjInsertArea = e.target.closest(".drop-subject-card-insert-hitbox").parentElement;
+                const subjInsertArea = e.target.closest(".drop-subject-card.subj-insert-area");
                 const subjInsertAreaArrow = subjInsertArea.querySelector(".drop-subject-card-insert-arrow");
                 const subjInsertAreaPlus = subjInsertArea.querySelector(".drop-subject-card-insert-plus");
                 const subjInsertAreaText = subjInsertArea.querySelector(".drop-subject-card-insert-text");
@@ -2949,7 +2959,7 @@
                 }
             }
             subjInsertAreaHitboxOnDropEvent(e) {
-                const subjInsertArea = e.target.closest(".drop-subject-card-insert-hitbox").parentElement;
+                const subjInsertArea = e.target.closest(".drop-subject-card.subj-insert-area");
                 const subjInsertAreaArrow = subjInsertArea.querySelector(".drop-subject-card-insert-arrow");
                 const subjInsertAreaPlus = subjInsertArea.querySelector(".drop-subject-card-insert-plus");
                 const subjInsertAreaText = subjInsertArea.querySelector(".drop-subject-card-insert-text");
@@ -2958,7 +2968,7 @@
                 this.dropAreaSubjectInsertAction(e.dataTransfer.getData("text"), subjInsertArea);
             }
             subjInsertAreaHitboxOnMouseEnterEvent(e) {
-                const subjInsertArea = e.target.closest(".drop-subject-card-insert-hitbox").parentElement;
+                const subjInsertArea = e.target.closest(".drop-subject-card.subj-insert-area");
                 const subjInsertAreaArrow = subjInsertArea.querySelector(".drop-subject-card-insert-arrow");
                 const subjInsertAreaPlus = subjInsertArea.querySelector(".drop-subject-card-insert-plus");
                 const subjInsertAreaText = subjInsertArea.querySelector(".drop-subject-card-insert-text");
@@ -2982,7 +2992,7 @@
                 }
             }
             subjInsertAreaHitboxOnMouseLeaveEvent(e) {
-                const subjInsertArea = e.target.closest(".drop-subject-card-insert-hitbox").parentElement;
+                const subjInsertArea = e.target.closest(".drop-subject-card.subj-insert-area");
                 const subjInsertAreaArrow = subjInsertArea.querySelector(".drop-subject-card-insert-arrow");
                 const subjInsertAreaPlus = subjInsertArea.querySelector(".drop-subject-card-insert-plus");
                 const subjInsertAreaText = subjInsertArea.querySelector(".drop-subject-card-insert-text");
@@ -3007,7 +3017,7 @@
                 }
             }
             subjInsertAreaHitboxOnClickEvent(e) {
-                const subjInsertArea = e.target.closest(".drop-subject-card-insert-hitbox").parentElement;
+                const subjInsertArea = e.target.closest(".drop-subject-card.subj-insert-area");
                 const subjInsertAreaArrow = subjInsertArea.querySelector(".drop-subject-card-insert-arrow");
                 const subjInsertAreaPlus = subjInsertArea.querySelector(".drop-subject-card-insert-plus");
                 const subjInsertAreaText = subjInsertArea.querySelector(".drop-subject-card-insert-text");
@@ -3679,8 +3689,8 @@
                                 case "subject card comes from a UE and is moved to a different UE":
                                     // We move the datas without having to pay attention to anything
                                     this.ueConfig[sem][targetUeName].subjects.splice(insertionIndex, 0, subject);
-                                    this.ueConfig[sem][targetUeName].coefficients[subject] = new Number(this.ueConfig[sem][oldUeName].coefficients[subject]);
-                                    this.ueConfig[sem][targetUeName].custom[subject] =      new Boolean(this.ueConfig[sem][oldUeName].custom[subject]);
+                                    this.ueConfig[sem][targetUeName].coefficients[subject] = new Number( this.ueConfig[sem][oldUeName].coefficients[subject]);
+                                    this.ueConfig[sem][targetUeName].custom[subject] =       new Boolean(this.ueConfig[sem][oldUeName].custom[subject]);
 
                                     this.ueConfig[sem][oldUeName].subjects.splice(subjectIndex, 1);
                                     delete this.ueConfig[sem][oldUeName].coefficients[subject];
@@ -3690,8 +3700,8 @@
                                 case "subject card comes from a UE and is reorganized to a different index":
                                     // We move the datas while paying attention to at which index was the original subject before moving it
                                     this.ueConfig[sem][targetUeName].subjects.splice(insertionIndex, 0, subject);
-                                    this.ueConfig[sem][targetUeName].coefficients[subject] = new Number(this.ueConfig[sem][oldUeName].coefficients[subject]);
-                                    this.ueConfig[sem][targetUeName].custom[subject] =      new Boolean(this.ueConfig[sem][oldUeName].custom[subject]);
+                                    this.ueConfig[sem][targetUeName].coefficients[subject] = new Number( this.ueConfig[sem][oldUeName].coefficients[subject]);
+                                    this.ueConfig[sem][targetUeName].custom[subject] =       new Boolean(this.ueConfig[sem][oldUeName].custom[subject]);
 
                                     const subjectNewIndex = subjectIndex + (insertionIndex<=subjectIndex && this.ueConfig[sem][targetUeName].subjects.includes(subject) ? 1 : 0);
                                     this.ueConfig[sem][oldUeName].subjects.splice(subjectNewIndex, 1);
@@ -3710,85 +3720,74 @@
                                     delete this.ueConfig[sem]
                                 }
                             }
-                        } /* else {  // mutliple subj cards dropped through selection in the drop area "add"
-                            let remainingCoef = 100;
+                        } else {  // mutliple subj cards dropped through selection in the drop area "add"
+                            this.selectedSubjectCards.forEach(selectedSubjectCardId => {
+                                const selectedSubjectCard = document.getElementById(selectedSubjectCardId);
+
+                                subject = selectedSubjectCard.dataset.subject;
+                                oldUeName = selectedSubjectCard.dataset.ue;
+                                const oldUeIndex = this.ueConfig[sem].__ues__.indexOf(oldUeName);
+                                const subjectIndex = this.ueConfig?.[sem]?.[oldUeName]?.subjects?.indexOf(subject);
                             
-                            // Scanning through all the ues of the selected matiere cards to get the name of the ue of name "Module [x]", so that instead of creating a new Module,
-                            // we replace the ue with the lowest x that would have been deleted
-                            let lowestModuleIndexNameToReplace = -1;
-                            Object.keys(this.selectedSubjectCardsSortedByUe).forEach((_ueName, _ueIndex) => {
-                                const _ueSelection = this.selectedSubjectCardsSortedByUe[_ueName];
-                                const match = _ueName.match(/Module (\d+)/);
+                                // CASE 1: subject card comes from unclassified section to a UE             -> (default/easy case)
+                                // CASE 2: subject card comes from a UE to another UE                       -> (moving case)
+                                // CASE 3: subject card comes from a UE to the same UE at a different index -> (reordering case)
+                                // CASE 4: subject card comes from a UE to the same UE at the same index    -> (a no-use case, so nothing happens)
 
-                                // if the name matches "Module [x]" (1st condition) 
-                                // and if the selection of subj cards of same ue that will be removed from their ue matches the number of subj in the said ue (cond 2): 
-                                // we save the number of the module
-                                if (match && _ueSelection.length == this.ueConfig[sem][_ueName].subjects.length) {
-                                    lowestModuleIndexNameToReplace = match[1];
+                                switch (`
+                                    subject card comes from ${oldUeName 
+                                        ? `a UE and is ${targetUeName==oldUeName 
+                                            ? `reorganized to ${subjectIndex == insertionIndex || subjectIndex+1 == insertionIndex 
+                                                ? "the same index" 
+                                                : "a different index"}` 
+                                            : "moved to a different UE"}` 
+                                        : "the unclassified section"}
+                                `.trim()) {
+                                    case "subject card comes from the unclassified section":
+                                        this.ueConfig[sem][targetUeName].subjects.splice(insertionIndex, 0, subject);
+                                        this.ueConfig[sem][targetUeName].coefficients[subject] = 0;
+                                        this.ueConfig[sem][targetUeName].custom[subject] = false;
+                                    break;
+
+                                    case "subject card comes from a UE and is moved to a different UE":
+                                        // We move the datas without having to pay attention to anything
+                                        this.ueConfig[sem][targetUeName].subjects.splice(insertionIndex, 0, subject);
+                                        this.ueConfig[sem][targetUeName].coefficients[subject] = new Number( this.ueConfig[sem][oldUeName].coefficients[subject]);
+                                        this.ueConfig[sem][targetUeName].custom[subject] =       new Boolean(this.ueConfig[sem][oldUeName].custom[subject]);
+
+                                        this.ueConfig[sem][oldUeName].subjects.splice(subjectIndex, 1);
+                                        delete this.ueConfig[sem][oldUeName].coefficients[subject];
+                                        delete this.ueConfig[sem][oldUeName].custom[subject];
+                                    break;
+
+                                    case "subject card comes from a UE and is reorganized to a different index":
+                                        // We move the datas while paying attention to at which index was the original subject before moving it
+                                        this.ueConfig[sem][targetUeName].subjects.splice(insertionIndex, 0, subject);
+                                        this.ueConfig[sem][targetUeName].coefficients[subject] = new Number( this.ueConfig[sem][oldUeName].coefficients[subject]);
+                                        this.ueConfig[sem][targetUeName].custom[subject] =       new Boolean(this.ueConfig[sem][oldUeName].custom[subject]);
+
+                                        const subjectNewIndex = subjectIndex + (insertionIndex<=subjectIndex && this.ueConfig[sem][targetUeName].subjects.includes(subject) ? 1 : 0);
+                                        this.ueConfig[sem][oldUeName].subjects.splice(subjectNewIndex, 1);
+                                    break;
+
+                                    case "subject card comes from a UE and is reorganized to the same index":
+                                        "Alas, nothing happens...";
+                                    break;
                                 }
-                            })
 
-                            if (lowestModuleIndexNameToReplace > -1) {
-                                newUeName = "Module "+lowestModuleIndexNameToReplace;
-                            }
+                                if (this.ueConfig[sem]?.[oldUeIndex]?.subjects?.length == 0) {
+                                    this.ueConfig[sem]?.__ues__?.splice(oldUeIndex, 1);
+                                    delete this.ueConfig[sem][oldUeIndex];
 
-                            Object.keys(this.selectedSubjectCardsSortedByUe).forEach((_ueName, _ueIndex) => {
-                                oldUeName = _ueName;
-                                const _ueSelection = this.selectedSubjectCardsSortedByUe[oldUeName];
-
-
-                                _ueSelection.forEach((selectedSubjectCard, _subjIndex) => {
-                                    const subjectCard = selectedSubjectCard.subjectCard;
-                                    const selectionIndex = selectedSubjectCard.selectionIndex;
-                                    subject = subjectCard.dataset.subject;
-
-                                    if (selectionIndex+1 == this.selectedSubjectCards.length) {
-                                        newUeConfig.coefficients[subject] = remainingCoef;
-                                    } else {
-                                        const coef = Math.round(100/this.selectedSubjectCards.length);
-                                        newUeConfig.coefficients[subject] = coef;
-                                        remainingCoef -= coef;
+                                    if (this.ueConfig?.[sem]?.__ues__?.length == 0) {
+                                        delete this.ueConfig[sem]
                                     }
-
-                                    newUeConfig.custom[subject] = false;
-                                    newUeConfig.subjects[selectionIndex] = subject;
-                                    
-
-                                    if (!subjectCard.classList.contains("unclassified")) {
-                                        newUeConfig.custom[subject] = this.ueConfig[sem][oldUeName].custom[subject];
-
-                                        // removing the subject card from its former UE
-                                        const oldUeIndex = this.ueConfig[sem].__ues__.indexOf(oldUeName);                       // get the old ue's index in the ues ordered array of the semester
-                                        const subjectIndexInOldUe = this.ueConfig[sem][oldUeName].subjects.indexOf(subject);    // get the subject's index in the subjects ordered array of the old ue
-                                        delete  this.ueConfig[sem][oldUeName].coefficients[subject];                            // delete coefficient data
-                                        delete  this.ueConfig[sem][oldUeName].custom[subject];                                  // delete custom data
-                                                this.ueConfig[sem][oldUeName].subjects.splice(subjectIndexInOldUe,1);           // remove the subject from the subjects ordered array of the old ue
-
-                                        if (this.ueConfig[sem][oldUeName].subjects.length == 0) {
-                                            // If, after removing the subject card from its former UE, the said UE is empty, we remove it
-                                            delete this.ueConfig[sem][oldUeName];
-                                            this.ueConfig[sem].__ues__.splice(oldUeIndex, 1);
-                                        }
-
-                                        if (manageSim) {if (!this.sim[sem][oldUeName][subject]) manageSim = false} // checking if the subject card had sim grades
-                                        if (manageSim) {
-                                            // if the subject card had sim grades, change their path in this.sim to match the ue change
-                                            this.sim[sem][newUeName][subject] = [];
-                                            this.sim[sem][oldUeName][subject].forEach((_, index) => {
-                                                this.sim[sem][newUeName][subject].push(this.sim[sem][oldUeName][subject][index].shift())
-                                            })
-                                            this.deleteUnusedSimPath(sem, oldUeName, subject);
-                                            this.saveSim();
-                                        }
-                                    }
-                                })
+                                }
+                                
                             })
+                        }
 
-                            // this the last step, so that if the new module has the same same as an old module that gets deleted (in order to replace it, "Module [x]" case), we don't remove the wrong one
-                            this.ueConfig[sem][newUeName] = newUeConfig;
-                            this.ueConfig[sem].__ues__.splice(index, 0, newUeName);
-                        } */
-
+                        this.removeSubjectCardFromSubjectSelection();
                         this.saveConfig();
                         this.getGradesDatas();
                         this.renderContent();
@@ -4071,8 +4070,8 @@
                                 document.getElementById('en-lang-btn').classList.add('active')
 
                                 this.scrollToClientHighestElemWithClassWithTimeout({className: ".ue-card||.subject-card.unclassified"});
-                                this.languageSensitiveContent(true);
-                                this.renderContent();
+                                // this.languageSensitiveContent();
+                                this.renderContent(false);
                             }
                             else if (this.lang == "en")
                             {
@@ -4082,8 +4081,8 @@
                                 document.getElementById('en-lang-btn').classList.remove('active')
 
                                 this.scrollToClientHighestElemWithClassWithTimeout({className: ".ue-card||.subject-card.unclassified"});
-                                this.languageSensitiveContent(true);
-                                this.renderContent();
+                                // this.languageSensitiveContent();
+                                this.renderContent(false);
                             }
                         }
                         else if (e.key === "R") {
@@ -4100,13 +4099,6 @@
     }
 
 
-    if (ERROR503) {
-        document.body.children[0].remove(); document.body.children[0].remove();
-        window.onload = () => { new ECAMDashboard(); };
-    }
-    else
-    {
-        window.onload = () => { new ECAMDashboard(); };
-    }
+    window.onload = () => { new ECAMDashboard(); };
     
 })();
