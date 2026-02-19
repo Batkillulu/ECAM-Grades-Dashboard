@@ -157,15 +157,7 @@
         // MARK: drop areas
         styles += `
             
-            .drop-field { 
-                display: flex; 
-                flex-direction: column; 
-                justify-content: center; 
-                align-items: center; 
-                border-radius: 20px; 
-                mix-blend-mode: multiply; 
-                user-select: none;
-            }
+            .drop-field     { display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 20px; mix-blend-mode: multiply; user-select: none; }
 
             .drop-field.remove-from-ue                      { position: fixed; top: 50px; left: 10px; height: calc(100% - 100px); width: 0%; border: 2px dashed #ff7f7f; border-color: #ff7f7f00; background: #ffb8b800; font-size: 50px; font-weight: 800; color: #ff7f7f00; z-index: 301; transition: all 0.2s ease; }
             .drop-field.remove-from-ue.show                 { width: 15%; border-width: 2px; border-color: #ff7f7f; color: #ff7f7f; background: #ffb8b83d; }
@@ -187,26 +179,26 @@
             .drop-ue-card-insert-content.plus                   {  }
             .drop-ue-card-insert-content.arrow                  {  }
             .drop-ue-card-insert-content.text                   { overflow: visible; top: -52px }
-            .drop-ue-card-insert-arrow                          { transform: translateX(-9%); font-size: 280px; display: flex; align-items: flex-start; justify-content: center; height: 50px; width: 100%; background: transparent;                            transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
-            .drop-ue-card-insert-arrow.hover                    { transform: translateX(0%) ; }
-            .drop-ue-card-insert-plus                           { transform: translate(-9%, 14px) rotate(0deg); font-size: 50px ;  position: relative; left: 0px; display: flex; justify-content: center; height: 50px; width: 100%; background: transparent;   transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
-            .drop-ue-card-insert-plus.hover                     { transform: translate(0%, 50%) rotate(180deg); font-size: 280px; }
+            .drop-ue-card-insert-arrow                          { transform: translate(0%, 0px); font-size: 280px; display: flex; align-items: flex-start; justify-content: center; height: 50px; width: 100%; background: transparent;                            transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+            .drop-ue-card-insert-arrow.hover                    { transform: translate(9%, 0px) ; }
+            .drop-ue-card-insert-plus                           { transform: translate(0%, 14px) rotate(0deg);  font-size: 50px ;  position: relative; left: 0px; display: flex; justify-content: center; height: 50px; width: 100%; background: transparent;   transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+            .drop-ue-card-insert-plus.hover                     { transform: translate(9%, 50%) rotate(180deg); font-size: 280px; }
 
             .drop-ue-card-insert-text                           { display: flex; justify-content: flex-start; align-items: center; position: relative; overflow-x: clip; text-wrap: nowrap; width: 0px; height: 50px; background: transparent;                  transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
 
             .drop-ue-card-insert-text.fr.add::before            { content: "Ajouter une UE ici"; }
-            .drop-ue-card-insert-text.fr.add                    { width: 000px; left: calc(32.0% - 50px); }
-            .drop-ue-card-insert-text.fr.add.hover              { width: 279px; left: calc(32.0% - 00px); }
+            .drop-ue-card-insert-text.fr.add                    { width: 000px; left: calc(41.0% - 50px); }
+            .drop-ue-card-insert-text.fr.add.hover              { width: 279px; left: calc(41.0% - 00px); }
             .drop-ue-card-insert-text.fr.insert::before         { content: "Insérer vers nouvelle UE ici"; }
-            .drop-ue-card-insert-text.fr.insert                 { width: 000px; left: calc(13.0% - 50px); }
-            .drop-ue-card-insert-text.fr.insert.hover           { width: 335px; left: calc(13.0% - 0px); }
+            .drop-ue-card-insert-text.fr.insert                 { width: 000px; left: calc(22.0% - 50px); }
+            .drop-ue-card-insert-text.fr.insert.hover           { width: 335px; left: calc(22.0% - 0px); }
 
             .drop-ue-card-insert-text.en.add::before            { content: "Add a TU here"; }
-            .drop-ue-card-insert-text.en.add                    { width: 000px; left: calc(34.0% - 50px); }
-            .drop-ue-card-insert-text.en.add.hover              { width: 173px; left: calc(34.0% - 00px); }
+            .drop-ue-card-insert-text.en.add                    { width: 000px; left: calc(43.0% - 50px); }
+            .drop-ue-card-insert-text.en.add.hover              { width: 173px; left: calc(43.0% - 00px); }
             .drop-ue-card-insert-text.en.insert::before         { content: "Insert to new TU here"; }
-            .drop-ue-card-insert-text.en.insert                 { width: 000px; left: calc(19.0% - 50px); }
-            .drop-ue-card-insert-text.en.insert.hover           { width: 263px; left: calc(19.0% - 00px); }
+            .drop-ue-card-insert-text.en.insert                 { width: 000px; left: calc(28.0% - 50px); }
+            .drop-ue-card-insert-text.en.insert.hover           { width: 263px; left: calc(28.0% - 00px); }
 
             .drop-ue-card-insert-hitbox                         { display: flex; position: relative; top: -102px; width: calc(100% - -4px); min-height: 50px; border-radius: 20px; cursor: pointer; }
             
@@ -215,26 +207,26 @@
             .drop-subject-card-insert-content.plus              {  }
             .drop-subject-card-insert-content.arrow             {  }
             .drop-subject-card-insert-content.text              { overflow: visible; top: -32px }
-            .drop-subject-card-insert-arrow                     { transform: translateX(-9%); font-size: 280px; display: flex; align-items: flex-start; justify-content: center; height: 30px; width: 100%; background: transparent;                            transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
-            .drop-subject-card-insert-arrow.hover               { transform: translateX(0%) ; }
-            .drop-subject-card-insert-plus                      { transform: translate(-9%, 4px) rotate(0deg)  ;  font-size: 50px;  position: relative; left: 0px; display: flex; justify-content: center; height: 30px; width: 100%; background: transparent;  transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
-            .drop-subject-card-insert-plus.hover                { transform: translate(0%, 100%) rotate(180deg); font-size: 280px; }
+            .drop-subject-card-insert-arrow                     { transform: translate(0%, 0px); font-size: 280px; display: flex; align-items: flex-start; justify-content: center; height: 30px; width: 100%; background: transparent;                        transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+            .drop-subject-card-insert-arrow.hover               { transform: translate(9%, 0px) ; }
+            .drop-subject-card-insert-plus                      { transform: translate(0%, 4px) rotate(0deg)   ; font-size: 50px;  position: relative; left: 0px; display: flex; justify-content: center; height: 30px; width: 100%; background: transparent;  transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+            .drop-subject-card-insert-plus.hover                { transform: translate(9%, 100%) rotate(180deg); font-size: 280px; }
 
-            .drop-subject-card-insert-text                      { display: flex; justify-content: flex-start; align-items: center; position: relative; left: 28%; overflow-x: clip; text-wrap: nowrap; width: 0px; height: 30px; background: transparent;       transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+            .drop-subject-card-insert-text                      { display: flex; justify-content: flex-start; align-items: center; position: relative; overflow-x: clip; text-wrap: nowrap; width: 0px; height: 30px; background: transparent;                 transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
             
             .drop-subject-card-insert-text.fr.add::before       { content: "Ajouter une matière ici"; }
-            .drop-subject-card-insert-text.fr.add               { width: 000px; left: calc(28.5% - 50px); }
-            .drop-subject-card-insert-text.fr.add.hover         { width: 279px; left: calc(28.5% - 00px); }
+            .drop-subject-card-insert-text.fr.add               { width: 000px; left: calc(37.5% - 50px); }
+            .drop-subject-card-insert-text.fr.add.hover         { width: 279px; left: calc(37.5% - 00px); }
             .drop-subject-card-insert-text.fr.insert::before    { content: "Insérer ici"; }
-            .drop-subject-card-insert-text.fr.insert            { width: 000px; left: calc(31.0% - 50px); }
-            .drop-subject-card-insert-text.fr.insert.hover      { width: 123px; left: calc(31.0% - 00px); }
+            .drop-subject-card-insert-text.fr.insert            { width: 000px; left: calc(40.0% - 50px); }
+            .drop-subject-card-insert-text.fr.insert.hover      { width: 123px; left: calc(40.0% - 00px); }
 
             .drop-subject-card-insert-text.en.add::before       { content: "Add a subject here"; }
-            .drop-subject-card-insert-text.en.add               { width: 000px; left: calc(31.5% - 50px); }
-            .drop-subject-card-insert-text.en.add.hover         { width: 300px; left: calc(31.5% - 00px); }
+            .drop-subject-card-insert-text.en.add               { width: 000px; left: calc(40.5% - 50px); }
+            .drop-subject-card-insert-text.en.add.hover         { width: 300px; left: calc(40.5% - 00px); }
             .drop-subject-card-insert-text.en.insert::before    { content: "Insert here"; }
-            .drop-subject-card-insert-text.en.insert            { width: 000px; left: calc(30.0% - 50px); }
-            .drop-subject-card-insert-text.en.insert.hover      { width: 135px; left: calc(30.0% - 00px); }
+            .drop-subject-card-insert-text.en.insert            { width: 000px; left: calc(39.0% - 50px); }
+            .drop-subject-card-insert-text.en.insert.hover      { width: 135px; left: calc(39.0% - 00px); }
 
             .drop-subject-card-insert-hitbox                    { display: flex; position: relative; top: -62px; width: calc(100% - -4px); min-height: 30px; border-radius: 20px; cursor: pointer; }
             
@@ -266,9 +258,9 @@
             .ue-moyenne.unknown             { color: #6d6d6dff; }
             .ue-toggle                      { width: 24px; height: 24px; font-size: 18px; color: #000000; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; margin-left: 5px; }
             .ue-toggle.open                 { transform: rotate(180deg); }
-            .ue-info                        { display: flex; flex-direction: row; justify-content: space-around;  align-items: center; width:97%; background: #eef2ff; border:1px solid #c7d2fe; padding:6px 8px; border-radius:8px; }
-            .ue-info.bar                    { width:48%; padding: 3px 8px; }
-            .ue-info-clear                  { display: flex; align-items: center; justify-content: center; font-size: 12px; background: #d7e0ff; border: 2px solid; border-radius: 10px; padding: 2px 7px; user-select: none; width: 220px; margin-right: 8px; cursor: pointer; transition: all 0.2s ease; }
+            .ue-info                        { display: flex; flex-direction: row; justify-content: space-around; align-items: center; width:97%; background: #eef2ff00; border:1px solid #c7d2fe00; padding: 0px 8px 3px 8px; border-radius: 0px 0px 8px 8px; margin-top: -1px; height: 36px; }
+            .ue-info-bar                    { display: flex; flex-direction: row; justify-content: space-around; align-items: center; width:48%; background: #eef2ff;   border:1px solid #c7d2fe;   padding: 3px 8px 3px 8px; border-radius: 0px 0px 8px 8px; }
+            .ue-info-clear                  { display: flex; flex-direction: row; justify-content: center; align-items: center; font-size: 12px; background: #d7e0ff; border: 2px solid; border-radius: 10px; padding: 2px 7px; user-select: none; width: 220px; margin-right: 8px; cursor: pointer; transition: all 0.2s ease; }
             .ue-info-clear:hover            { width: 240px; margin-right: 4px; font-size: 11.5px; background: #eef2ff; }
             .ue-info-clear.disabled         {  }
             .ue-info-clear.sim              {  }
@@ -1036,8 +1028,8 @@
                             })
 
                             
-                            unclassifiedSubjectData.average                     = Math.round(100*unclassifiedSubjectData.average/(unclassifiedSubjectData.totalCoefGrades/100))/100;
-                            unclassifiedSubjectData.classAvg                    = Math.round(100*unclassifiedSubjectData.classAvg/(unclassifiedSubjectData.totalCoefGrades/100))/100;
+                            unclassifiedSubjectData.average                     = Math.round(100*unclassifiedSubjectData.average /(unclassifiedSubjectData.totalCoefEnabledGrades/100))/100;
+                            unclassifiedSubjectData.classAvg                    = Math.round(100*unclassifiedSubjectData.classAvg/(unclassifiedSubjectData.totalCoefEnabledGrades/100))/100;
                             unclassifiedSubjectData.totalCoefGrades             = Math.round(unclassifiedSubjectData.totalCoefGrades);
                             unclassifiedSubjectData.totalCoefRealGrades         = Math.round(unclassifiedSubjectData.totalCoefRealGrades);
                             unclassifiedSubjectData.totalCoefSimGrades          = Math.round(unclassifiedSubjectData.totalCoefSimGrades);
@@ -1196,8 +1188,8 @@
                                     ueData.coefSubjectsNoGrade += subjectData.coef;
                                 }
                                 else {
-                                    subjectData.average     =  Math.round(100*subjectData.average /(subjectData.totalCoefGrades/100))/100;
-                                    subjectData.classAvg    =  Math.round(100*subjectData.classAvg/(subjectData.totalCoefGrades/100))/100;
+                                    subjectData.average     =  Math.round(100*subjectData.average /(subjectData.totalCoefEnabledGrades/100))/100;
+                                    subjectData.classAvg    =  Math.round(100*subjectData.classAvg/(subjectData.totalCoefEnabledGrades/100))/100;
 
                                     ueData.average          += subjectData.average *subjectData.coef/100;
                                     ueData.classAvg         += subjectData.classAvg*subjectData.coef/100;
@@ -1335,7 +1327,7 @@
                         <div class="average-label"></div>
                     </div>
                     <div class="average-stats">
-                        <div class="stat-item"><div class="stat-value">${totalGrades                        }</div><div class="stat-label"></div></div>
+                        <div class="stat-item"><div class="stat-value">${totalGrades                       }</div><div class="stat-label"></div></div>
                         <div class="stat-item"><div class="stat-value">${Object.keys(this.semesters).length}</div><div class="stat-label"></div></div>
                         <div class="stat-item"><div class="stat-value">${ueStats.validated}/${ueStats.total}</div><div class="stat-label"></div></div>
                     </div>
@@ -1428,8 +1420,12 @@
                     newGradesCard.innerHTML += html;
                 }
 
-                if (newGradesCard.children.length == 1) {newGradesCard.classList.add("none")}
-                else {newGradesCard.classList.remove("none")}
+                if (newGradesCard.children.length == 1) {
+                    newGradesCard.classList.add("none")
+                }
+                else {
+                    newGradesCard.classList.remove("none")
+                }
             }
 
 
@@ -1571,21 +1567,21 @@
                     this.attachCheckboxListeners(container);
 
                     // After rendering the UE card's content in detailed view, check if the view mode is set to "compact" and if so, render the UE card's content in compact view
-                    if (this.viewMode == "compact") {
-                        document.querySelectorAll('.ue-header').forEach(header => {
-                            if (header.nextElementSibling) {
-                                const toggle = header.querySelector('.ue-toggle');
-                                const content = header.nextElementSibling;
-                                const sem = header.dataset.semester;
-                                const ueName = this.editMode ? header.children[0].children[1].value : header.children[0].innerText;
+                    // if (this.viewMode == "compact") {
+                    //     document.querySelectorAll('.ue-header').forEach(header => {
+                    //         if (header.nextElementSibling) {
+                    //             const toggle = header.querySelector('.ue-toggle');
+                    //             const content = header.nextElementSibling;
+                    //             const sem = header.dataset.semester;
+                    //             const ueName = this.editMode ? header.children[0].children[1].value : header.children[0].innerText;
                                 
-                                const ueContent = header.parentElement.querySelector(".ue-details");
-                                ueContent.innerHTML = this.renderAllMatCardCompact(sem, ueName);
-                                content.classList.add('compact');
-                                toggle.classList.remove('open');
-                            }
-                        });
-                    }
+                    //             const ueContent = header.parentElement.querySelector(".ue-details");
+                    //             ueContent.innerHTML = this.renderAllMatCardCompact(sem, ueName);
+                    //             content.classList.add('compact');
+                    //             toggle.classList.remove('open');
+                    //         }
+                    //     });
+                    // }
 
                     this.setGradesTableTotalCoef();
                     this.attachEventListeners();
@@ -1646,29 +1642,27 @@
                         </div>
                     </div>
                     
-                    ${hasSim || hasDisabled ? `
-                        <div class="ue-info">
-                            ${hasDisabled 
-                                ? 
-                                `<div class="ue-info bar">
-                                    <div style="font-weight: 700">${this.lang == "fr" ? "Inclus des notes désactivées" : "Includes disabled grades"}</div>
-                                    <div class="ue-info-clear disabled" data-semester="${sem}" data-ue="${ueName}">${this.lang == "fr" ? "Activer toutes ces notes" : "Enable all the grades"}</div>
-                                </div>` 
-                                : ``
-                            }
-                            ${hasSim 
-                                ? 
-                                `<div class="ue-info bar">
-                                    <div style="font-weight: 700">${this.lang == "fr" ? "Inclus des notes simulées" : "Includes simulated grades"}</div>
-                                    <div class="ue-info-clear sim" data-semester="${sem}" data-ue="${ueName}">${this.lang == "fr" ? "Effacer toutes ces notes simulées" : "Erase all the simulated grades"}</div>
-                                </div>` 
-                                : ``
-                            }
-                        </div>
-                    ` : ""}
+                    <div class="ue-info">
+                        ${hasDisabled 
+                            ? 
+                            `<div class="ue-info-bar">
+                                <div style="font-weight: 700">${this.lang == "fr" ? "Inclus des notes désactivées" : "Includes disabled grades"}</div>
+                                <div class="ue-info-clear disabled" data-semester="${sem}" data-ue="${ueName}">${this.lang == "fr" ? "Activer toutes ces notes" : "Enable all the grades"}</div>
+                            </div>` 
+                            : ``
+                        }
+                        ${hasSim 
+                            ? 
+                            `<div class="ue-info-bar">
+                                <div style="font-weight: 700">${this.lang == "fr" ? "Inclus des notes simulées" : "Includes simulated grades"}</div>
+                                <div class="ue-info-clear sim" data-semester="${sem}" data-ue="${ueName}">${this.lang == "fr" ? "Effacer toutes ces notes simulées" : "Erase all the simulated grades"}</div>
+                            </div>` 
+                            : ``
+                        }
+                    </div>
 
                     <div class="ue-details ${this.editMode ? "edit-mode": ""}" id="ue-details-${ueName}-in-semester${sem}">
-                        ${this.renderAllMatCardDetailed(sem, ueName)}
+                        ${this.viewMode == "detailed" ? this.renderAllMatCardDetailed(sem, ueName) : this.renderAllMatCardCompact(sem, ueName)}
                     </div>
 
                 </div>
@@ -1754,8 +1748,10 @@
                                     <th class="grades-table-date">
                                         ${this.lang == "fr" ? "Date" : "Date"}
                                     </th>
-                                    <th class="grades-table-teacher" style="border-right-width: 0px;${this.selectedSubjectCards.length > 0 ? " display: none;" : ""}" colspan="2">
+                                    <th class="grades-table-teacher" style="border-right-width: 0px;${this.selectedSubjectCards.length > 0 ? " display: none;" : ""}">
                                         ${this.lang == "fr" ? "Prof(s)" : "Teacher(s)"}
+                                    </th>
+                                    <th style="border-right-width: 0px; border-left-width: 0px;">
                                     </th>
                                 </tr>`
                                 : ``
@@ -1766,46 +1762,46 @@
 
                 subjGrades.forEach((grade, index) => {
                     const gradeClass = this.getGradeColor(grade.grade);
-                    const gradeIsSim = grade.__sim ? "true" : "false";
+                    const gradeIsSim = grade.__sim ? true : false;
 
                     html += `
-                            <tr class="grade-row ${index == subjGrades.length-1 ? `last` : ``} ${grade.__sim ? `sim` : ``}" data-sim="${gradeIsSim}">
+                            <tr class="grade-row ${index == subjGrades.length-1 ? `last` : ``} ${gradeIsSim ? `sim` : ``}" data-sim="${gradeIsSim}">
                                 <td class="grades-table-type" style="display: flex; align-items: center; gap: 6px; width: auto">
                                     <input type="checkbox" class="grade-checkbox any-input" id="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}" data-semester="${sem}" data-subj="${subject}" data-uen="${ueName||''}" data-prof="${grade.prof}" data-gradeid="${grade.type} ${grade.date} ${grade.prof}" ${this.ignoredGrades.indexOf([sem, subject, grade.type+" "+grade.date+" "+grade.prof].join("\\")) == -1 ? "checked" : ""}></input>
-                                    ${grade.__sim && this.editMode
+                                    ${gradeIsSim && this.editMode
                                         ? `<input class="grade-type grade-simulee-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="grade-simulee-input-type-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" data-modifType="type" data-id="${totalSimGrades-1}" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-uen="${ueName||''}" value="${grade.type}"/>` 
-                                        : `<label class="grade-type" style="width: auto"  id="grade-type-${grade.type}-${grade.date}" for="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}">${grade.type || ''}${grade.__sim ? ` • ${this.lang == "fr" ? "Simulée" : "Simulated"}` : ''}</label>`
+                                        : `<label class="grade-type" style="width: auto"  id="grade-type-${grade.type}-${grade.date}" for="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}">${grade.type || ''}${gradeIsSim ? ` • ${this.lang == "fr" ? "Simulée" : "Simulated"}` : ''}</label>`
                                     }
                                 </td>
                                 <td class="grade-value grade-${gradeClass} grades-table-grade" data-sim="${gradeIsSim}">
-                                    ${grade.__sim && this.editMode
+                                    ${gradeIsSim && this.editMode
                                         ? `<input class="grade-simulee-input-edit sim-inp-grade any-input" style="width: 100%; max-width: 75px;" id="grade-simulee-input-grade-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="number" step="0.5" min="0" max="20" data-id="${totalSimGrades-1}" data-modifType="grade" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-uen="${ueName||''}" style="width:75px; height:25px" value="${grade.grade}"> /20`
                                         : `${grade.grade}/20`
                                     }
                                 </td>
                                 <td class="grades-table-coef" data-sim="${gradeIsSim}">
-                                    ${grade.__sim && this.editMode
+                                    ${gradeIsSim && this.editMode
                                         ? `<input class="grade-simulee-input-edit sim-inp-coef any-input" style="width: 100%; max-width: 60px;" id="grade-simulee-input-coef-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="number" step="5" min="0" max="100" data-id="${totalSimGrades-1}" data-modifType="coef" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-uen="${ueName||''}" style="width:60px; height:25px"value="${grade.coef}"> %`
                                         : `${grade.coef} %`
                                     }
                                 </td>
                                 <td class="grades-table-classAvg" data-sim="${gradeIsSim}">
-                                    ${grade._sim && this.editMode
-                                        ? ``
-                                        : `${grade.__sim ? "" : grade.classAvg+"/20"}`
+                                    ${gradeIsSim
+                                        ? `<span style="width: 100%; display: flex; justify-content: center;"> — </span>`
+                                        : `${grade.classAvg}/20`
                                     }
                                 </td>
                                 <td class="grades-table-date grade-date" data-sim="${gradeIsSim}">
-                                    ${grade.__sim && this.editMode
-                                        ? `<input class="grade-simulee-input-edit sim-inp-date any-input" style="width: 100%; max-width: 140px;" id="grade-simulee-input-date-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="date" data-id="${totalSimGrades-1}" data-semester="${sem}" data-subj="${subject}" data-modifType="date" data-type="${grade.type}" data-uen="${ueName||''}" style="width:140px; height:25px"value="${grade.date||""}">`
-                                        : `${`${grade.__sim ? grade.date.split("-").reverse().join("/") : grade.date}`||''}`
+                                    ${gradeIsSim
+                                        ? `<span style="width: 100%; display: flex; justify-content: center;"> — </span>` // <input class="grade-simulee-input-edit sim-inp-date any-input" style="width: 100%; max-width: 140px;" id="grade-simulee-input-date-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="date" data-id="${totalSimGrades-1}" data-semester="${sem}" data-subj="${subject}" data-modifType="date" data-type="${grade.type}" data-uen="${ueName||''}" style="width:140px; height:25px"value="${grade.date||""}">
+                                        : `${grade.date}`
                                     }
                                 </td>
                                 <td class="grades-table-teacher" ${this.selectedSubjectCards.length > 0 ? `style="display: none;"` : ""}>
                                     <span>${`${grade.prof.split(" / ").length <= 3 ? grade.prof : grade.prof.split(" / ").slice(0,3).join(" / ") + " / ... "}`||''}</span>
                                 </td>
-                                <td class="grades-table-add-sim-cell" style="${grade.__sim ? `width: 52px; padding: 3px` : ``}">
-                                    ${grade.__sim 
+                                <td class="grades-table-add-sim-cell" style="${gradeIsSim ? `width: 52px; padding: 3px; text-align: center;` : ``}">
+                                    ${gradeIsSim 
                                         ? `<button class="sim-del-btn" data-semester="${sem}" data-subj="${subject}" data-uen="${ueName||''}" data-type="${grade.type}">🗑️</button>` 
                                         : `<div style="width:32px"></div>`}
                                 </td>
@@ -1828,12 +1824,9 @@
                                     <td class="grades-table-coef">
                                         <input class="grade-simulee-input sim-inp-coef any-input" id="grade-simulee-input-coef-for-${subject}-from-${ueName}-in-semester${sem}" type="number" step="5" min="0" max="100" data-semester="${sem}" data-subj="${subject}" placeholder="%"> %
                                     </td>
+                                    <td colspan="3">
+                                    </td>
                                     <td>
-                                    </td>
-                                    <td class="grades-table-date">
-                                        <input class="grade-simulee-input sim-inp-date any-input" id="grade-simulee-input-date-for-${subject}-from-${ueName}-in-semester${sem}" type="date" value="${this.today}" data-semester="${sem}" data-subj="${subject}">
-                                    </td>
-                                    <td colspan="2">
                                         <button class="btn-export sim-add-btn" data-semester="${sem}" data-subj="${subject}" data-uen="${ueName||''}">${this.lang == "fr" ? "Ajouter" : "Add"}</button>
                                     </td>
                                 </tr>
@@ -1969,8 +1962,10 @@
                                     <th class="grades-table-date">
                                         ${this.lang == "fr" ? "Date" : "Date"}
                                     </th>
-                                    <th class="grades-table-teacher" style="border-right-width: 0px;${this.selectedSubjectCards.length > 0 ? " display: none;" : ""}" colspan="2">
+                                    <th class="grades-table-teacher" style="border-right-width: 0px;${this.selectedSubjectCards.length > 0 ? " display: none;" : ""}">
                                         ${this.lang == "fr" ? "Prof(s)" : "Teacher(s)"}
+                                    </th>
+                                    <th>
                                     </th>
                                 </tr>`
                                 : ``
@@ -2406,8 +2401,9 @@
                         this.sim[semX][ueName][subj].push({
                             grade, 
                             coef,
+                            classAvg: '—',
                             type: type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`,
-                            date: date||new Date().toLocaleDateString(),
+                            date: '—',
                             prof: '—',
                             subject: subj,
                             semester: semX,
@@ -2444,8 +2440,9 @@
                                 this.sim[semX][ueName][subj][index] = {
                                     grade: newGrade, 
                                     coef: newCoef,
+                                    classAvg: '—',
                                     type: type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`,
-                                    date: date||new Date().toLocaleDateString(),
+                                    date: '—',
                                     prof: '—',
                                     subject: subj,
                                     semester: semX,
@@ -2473,7 +2470,7 @@
                         this.deleteUnusedSimPath(semX, ueName, subj);
                         this.saveSim();
                         this.getGradesDatas();
-                        this.renderContent(true);
+                        this.renderContent(false);
                     }
                 })
                 
