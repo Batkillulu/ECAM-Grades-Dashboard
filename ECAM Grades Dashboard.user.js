@@ -296,9 +296,9 @@
         // MARK: -UNCLASSIFIED SECTION
         styles += `
 
-            .unclassified-section                           { display: flex; flex-direction: column; width: 100%; background: #fff8f0; border-radius: 20px; padding: 20px; border: 2px dashed #fbbf24; transition: height 0.2s ease; }
+            .unclassified-section                           { display: flex; flex-direction: column; align-items: center; width: 100%; background: #fff8f0; border-radius: 20px; padding: 20px; border: 2px dashed #fbbf24; transition: height 0.2s ease; }
             .unclassified-content                           { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 99%; height: 100%; }
-            .unclassified-title                             { font-size: 16px; font-weight: 600; color: #92400e; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+            .unclassified-title                             { display: flex; align-items: center; gap: 8px; width: 97%; font-size: 16px; font-weight: 600; color: #92400e; margin-bottom: 16px; }
         `;
             
 
@@ -716,7 +716,7 @@
 
                 document.querySelector(".new-grades-notif").onclick = () => {
                     const newGradesCard = document.querySelector(".new-grades-card");
-                    newGradesCard.scrollIntoView();
+                    newGradesCard.scrollIntoView({behavior: "instant"});
                     newGradesCard.classList.add("myhighlight");
                     setTimeout(() => {newGradesCard.classList.remove("myhighlight")},200)
                 };
@@ -725,45 +725,145 @@
             draggableIcon(source="subject-card", {height=25, type="unknown", targetId="none"}={height: 25, type: "unknown", targetId:"none"}) {
                 return `<img class="drag-icon for-${source}" data-targetid="${targetId}" data-type="${type}" draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/960px-Hamburger_icon.svg.png" alt="☰" style="height:${height}px; ${source.match(/-subject-card/) ? "border: 2px solid; border-radius: 8px;" : ""}">`
             }
-            // MARK: Scroll to element
-            /**
-             * Scrolls to the highest element in client view
-             * @param {*} className Name of the class of the element to scroll to
-             * @param id Id of the 
-             */
-            scrollToClientHighestElemWithClassWithTimeout({className, id="", timeout=50, smooth=false, margin=23}) {
-                this.scrollToThisElem = ""; let found = false;
-                if (this.editMode) {margin = 93}
-                if (document.body.classList.contains("lfr-dockbar-pinned")) {margin += 45}
 
-                if (id=="") {
-                    className.split("||").forEach(_className => {
-                        document.querySelectorAll(`${_className}`).forEach(elem => {
-                            const coords = elem.getBoundingClientRect();
-                            const meanClientTop = (coords.top + coords.bottom)/2;
-                            if ((meanClientTop > 0) && !found) {
-                                this.scrollToThisElem = elem.id;
-                                found = true;
+            /**
+             * This is **`myMethod()`**
+             * @param  {...Objects} items 
+             * @returns nothing
+             */
+            myMethod(...items) {
+                return items
+            }
+
+            // MARK: scrollToClientHighestElem
+            /**
+             * Scan through all element of all classes classNames given, 
+             * and scroll to the first element of the first class className who's middle hasn't passed the top of the screen,
+             * UNLESS, if clientIsHigherThanHigherElem is set to true, scroll to the first element of the first class className who's top is 
+             * below the top of the screen instead
+             * @param {Hoho} troll
+             * @param {Array} className Name of the class of the element to scroll to. Handles multiple inputs with ".className1||.className2||...||.classNameX". 
+             *  Has an order of importance (if the highest element of className1 is detected first, it will scroll to it and ignore the other classNames)
+             * @param {Array} id Id of the element to scroll to, no matter what. Overrides className and clientIsHigherThanHigherElem parameters (none by default)
+             * @param {Number} timeout Time before the scroll happens (in ms, 50 by default)
+             * @param {Boolean} smooth If true, change the scroll property to a smooth scroll instead of an instanteneous (false by default)
+             * @param {Number} margin Offset the y coordinate ot which this method will scroll (in px, 23 by default). 
+             *  Handles multiple inputs if passing the number in a list of length X (same as the number of classNames)
+             * @param {Boolean} clientIsHigherThanHigherElem If true, checks if the first element returned by document.querySelector("className") has its top 
+             *  that went off screen from the top (false by default)
+             */
+            scrollToClientHighestElem({className, id="", timeout=50, smooth=false, margin=undefined, editSensitive=true, clientIsHigherThanHigherElem=false}={className:"", id:"", timeout:50, smooth:false, margin:NaN, editSensitive:true, clientIsHigherThanHigherElem:true}) {
+                {// HOW IT WORKS:
+                //     IF id == "":
+                //         IF clientIsHigherThanHigherElem == true:
+                //             SCAN through classNames -> _className
+                //                 FORMAT _className -> _formatedClassName
+                //                 GET first Element1 of class _className with document.querySelector(_formatedClassName)
+                //                 GET first Element1's top coordinate in the screen
+                // 
+                //                 IF (Element1's top coordinate - margin < 0) OR (clientIsHigherThanHigherElem == true): 
+                //                 // ELEMENT1'S TOP IS OFF SCREEN FROM THE TOP, SEARCH FOR WHAT ELEMENT WE SCROLL TO
+                // 
+                //                     SCAN through all Elements of class _formatedClassName with document.querySelectorAll(_formatedClassName) -> elem
+                //                         GET elem's middle coord ( (coods.top + coords.bottom)/2 ) -> middleCoord
+                //                    
+                //                         IF middleCoord <= 0: 
+                //                         // elem's middle is off screen from the top, we ignore it
+                //                         ELSE: 
+                //                         // elem's middle is the first Element on screen, from top to bottom
+                //                             GET elem's id -> this.scrollToThisElem
+                // 
+                //                 ELSE: 
+                //                 // ELEMENT1'S TOP IS ON SCREEN OR OFF SCREEN FROM THE BOTTOM, WE SCROLL TO IT
+                //                     GET Element1's id -> this.scrollToThisElem
+                //        
+                //                 SET Element with document.getElementById(id) -> scrollToThisElement
+                //                 SET its style.scrollMarginTop
+                //                 Scroll to scrollToThisElement
+                // 
+                //         ELSE:
+                // 
+                // 
+                //     ELSE:
+                //         SET id -> this.scrollToThisElem
+                //         GET Element with document.getElementById(id) -> scrollToThisElement
+                //         SET its style.scrollMarginTop
+                //         Scroll to scrollToThisElement
+                }
+
+                this.scrollToThisElem = ""; let found = false, classIndex = -1, effectiveMargin;
+                if (isNaN(margin) && margin instanceof Array) {
+                    margin = 23
+                    if (editSensitive && this.editMode) {margin += 70}
+                }
+                
+
+                if (id=="" || !document.getElementById(id)) {   // no id is given or invalid id given
+                    className.split("||").forEach((_className, _classIndex) => {    // scanning through every classNames
+                        if (!found) {   // ensuring the priority to the first element of the first class _className found
+
+                            // use the margin parameter properly, according to if it's an array or not
+                            effectiveMargin = margin instanceof Array ? margin[_classIndex] : margin;
+
+                            // formating the _className, in case the _className doesn't start with a point or has extra blank spaces around
+                            const _formatedClassName = `${_className.trim()[0]=="." ? "" : "."}${_className.trim()}`;
+
+                            // getting the highest element of class _formatedClassName, as well as its top coordinate in the screen
+                            const highestElem = document.querySelector(_formatedClassName);
+                            const highestElemTopCoord = highestElem?.getBoundingClientRect().top || effectiveMargin;
+
+                            // if highestElemTopCoord < margin, then it means that the top of the highest element of class _formatedClassName 
+                            // has passed the top of the screen + margin
+
+                            if ((clientIsHigherThanHigherElem && highestElemTopCoord - effectiveMargin <= 0) || !clientIsHigherThanHigherElem) {
+                                // CASE WHERE WE DON'T WANT TO SCROLL TO THE HIGHEST ELEMENT WITH ITS TOP COORD BELOW THE TOP OF THE SCREEN:
+                                // WE WANT TO SCROLL TO THE HIGHEST ELEMENT WITH ITS MIDDLE COORD ON SCREEN:
+                                // if the highest elem of class _formatedClassName has passed the top of the screen + margin IF clientIsHigherThanHigherElem is true,
+                                // or if clientIsHigherThanHigherElem is false:
+
+                                document.querySelectorAll(_formatedClassName).forEach(elem => {
+                                    const coords = elem.getBoundingClientRect();
+                                    const meanClientTop = (coords.top + coords.bottom)/2;
+
+                                    if ((meanClientTop > 0) && !found) {    // ensuring the priority to the first element of the first class _className found
+                                        this.scrollToThisElem = String(elem.id);
+                                        found = true;
+                                        classIndex = _classIndex;
+                                    }
+                                })
                             }
-                        })
+                            else if (clientIsHigherThanHigherElem && highestElemTopCoord - effectiveMargin > 0) { 
+                                // if the highest elem of class _formatedClassNae is below the top of the screen AND clientIsHigherThanHigherElem is true:
+
+                                this.scrollToThisElem = String(highestElem.id);
+                                found = true;
+                                classIndex = _classIndex;
+                            }
+                        }
                     })
 
                     if (found) {
+                        if (document.body.classList.contains("lfr-dockbar-pinned")) {effectiveMargin += 45}
                         setTimeout(() => {
-                            const scrollToThisElem = document.getElementById(this.scrollToThisElem); 
-                            scrollToThisElem.style.scrollMarginTop = `${margin}px`;
+                            const scrollToThisElem = document.getElementById(this.scrollToThisElem) ? document.getElementById(this.scrollToThisElem) : document.querySelector(`${className.split("||")[classIndex].trim()[0]=="." ? "" : "."}${className.split("||")[classIndex].trim()}`); 
+                            scrollToThisElem.style.scrollMarginTop = `${effectiveMargin}px`;
                             scrollToThisElem.scrollIntoView({behavior: smooth ? "smooth" : "instant", block: "start"});
+                            this.scrollToThisElem = "";
                         }, timeout)
                     }
                 }
                 else
                 {
+                    effectiveMargin = margin;
+                    if (document.body.classList.contains("lfr-dockbar-pinned")) {effectiveMargin += 45}
+
                     this.scrollToThisElem = id;
                     
                     setTimeout(() => {
                         const scrollToThisElem = document.getElementById(this.scrollToThisElem); 
-                        scrollToThisElem.style.scrollMarginTop = `${margin}px`;
+                        scrollToThisElem.style.scrollMarginTop = `${effectiveMargin}px`;
                         scrollToThisElem.scrollIntoView({behavior: smooth ? "smooth" : "instant", block: "start"});
+                        this.scrollToThisElem = "";
                     }, timeout)
                 }
 
@@ -1563,7 +1663,7 @@
                             <div class="modules-section">
                                 ${this.renderAllUECards(sem)}
                             </div>
-                            <div class="unclassified-section" style="height: 100%${unclassified.length > 0 ? `` : `; display: none`}">
+                            <div class="unclassified-section" id="unclassified-section" style="height: 100%${unclassified.length > 0 ? `` : `; display: none`}">
                                 <div class="unclassified-title">
                                     ${this.lang == "fr" ? `Matière${unclassified.length > 1 ?  `s` : ``} non classée${unclassified.length > 1 ?  `s` : ``} dans un module` : `Subject${unclassified.length > 1 ?  `s` : ``} not classified in a module`}
                                 </div>
@@ -1579,8 +1679,10 @@
 
                     // Set a fixed height for the unclassified section, so that when dragging a subject card, the unclassified section doesn't change height upon the grades tables disappearing
                     const unclassifiedSection = document.querySelector(".unclassified-section");
-                    const currentUnclassifiedSectionHeight = new Number(unclassifiedSection.clientHeight);
-                    unclassifiedSection.style.height = `${currentUnclassifiedSectionHeight+4}px`;
+                    setTimeout(() => {
+                        const currentUnclassifiedSectionHeight = new Number(unclassifiedSection.clientHeight); 
+                        unclassifiedSection.style.height = `${currentUnclassifiedSectionHeight+4}px`;
+                    }, 100)
 
                     const container = document.getElementById(`sem-content-${sem}`)
                     // container.querySelectorAll(".subject-card").forEach(subjectCard => {
@@ -2194,7 +2296,7 @@
 
                 document.querySelector(".new-grades-notif").onclick = () => {
                     const newGradesCard = document.querySelector(".new-grades-card");
-                    newGradesCard.scrollIntoView();
+                    newGradesCard.scrollIntoView({behavior: "instant"});
                     newGradesCard.classList.add("myhighlight");
                     setTimeout(() => {newGradesCard.classList.remove("myhighlight")},200)
                 };
@@ -2228,7 +2330,7 @@
                         localStorage.setItem("ECAM_DASHBOARD_DEFAULT_SEMESTER", this.currentSemester);
 
                         const targetElem = document.getElementById(`subject-card-semester-${e.target.dataset.semester}-subject-${e.target.dataset.subject}`);
-                        targetElem.scrollIntoView({block: "center"});
+                        targetElem.scrollIntoView({behavior: "instant",block: "center"});
                         targetElem.onscrollend = ((elem) => {
                             elem.classList.add("scroll-to");
                             elem.onanimationend = () => {targetElem.classList.remove("scroll-to")}
@@ -3597,7 +3699,7 @@
                     this.getGradesDatas();
                     this.renderContent();
                     this.attachEventListeners();
-                    this.scrollToClientHighestElemWithClassWithTimeout({id: `ue-card-${newUeName}-in-semester-${sem}`, smooth: true})
+                    this.scrollToClientHighestElem({id: `ue-card-${newUeName}-in-semester-${sem}`, smooth: true})
                 }
 
 
@@ -4019,9 +4121,13 @@
                     document.onkeydown = (e) => {
                         if (e.key === "E") {
                             this.editMode = !this.editMode;
-
+                            
                             this.removeSubjectCardFromSubjectSelection();
-                            this.scrollToClientHighestElemWithClassWithTimeout({className: ".ue-card||.subject-card.unclassified"});
+                            this.scrollToClientHighestElem({
+                                className: ".unclassified-section||.ue-card||.subject-card.unclassified", 
+                                margin: [10, 23, 10], 
+                                clientIsHigherThanHigherElem:true
+                            });
                             this.renderContent();
                         }
                         else if (e.key === "D") {
@@ -4037,8 +4143,12 @@
                             }                            
                             localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
 
-                            this.scrollToClientHighestElemWithClassWithTimeout({className: ".ue-card||.subject-card.unclassified"});
-                            this.renderContent(false);                      
+                            this.scrollToClientHighestElem({
+                                className: ".unclassified-section||.ue-card||.subject-card.unclassified", 
+                                margin: [10, 23, 10], 
+                                clientIsHigherThanHigherElem:true
+                            });
+                            this.renderContent(false);
                         }
                         else if (e.key === "L") {
                             if (this.lang == "fr")
@@ -4048,8 +4158,11 @@
                                 document.getElementById('fr-lang-btn').classList.remove('active')
                                 document.getElementById('en-lang-btn').classList.add('active')
 
-                                this.scrollToClientHighestElemWithClassWithTimeout({className: ".ue-card||.subject-card.unclassified"});
-                                // this.languageSensitiveContent();
+                                this.scrollToClientHighestElem({
+                                    className: ".unclassified-section||.ue-card||.subject-card.unclassified", 
+                                    margin: [10, 23, 10], 
+                                    clientIsHigherThanHigherElem:true
+                                });
                                 this.renderContent(false);
                             }
                             else if (this.lang == "en")
@@ -4058,9 +4171,12 @@
                                 localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
                                 document.getElementById('fr-lang-btn').classList.add('active')
                                 document.getElementById('en-lang-btn').classList.remove('active')
-
-                                this.scrollToClientHighestElemWithClassWithTimeout({className: ".ue-card||.subject-card.unclassified"});
-                                // this.languageSensitiveContent();
+                                
+                                this.scrollToClientHighestElem({
+                                    className: ".unclassified-section||.ue-card||.subject-card.unclassified", 
+                                    margin: [10, 23, 10], 
+                                    clientIsHigherThanHigherElem:true
+                                });
                                 this.renderContent(false);
                             }
                         }
