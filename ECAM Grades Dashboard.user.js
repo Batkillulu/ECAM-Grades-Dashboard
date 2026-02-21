@@ -260,7 +260,7 @@
         // MARK: ue grid
         styles += `
 
-            .ue-grid                { display: grid; width: 100%; gap: 20px; transition: gap 0.2s ease; }
+            .semester-grid                { display: grid; width: 100%; gap: 20px; transition: gap 0.2s ease; }
             .ue-card                { display: flex; flex-direction: column; align-items: center; width: 100%; background: #fafafa; border-radius: 25px; border: 3px solid #e5e5e5; scroll-margin-top: 70px; transition: all 0.3s ease; }
             .ue-card.validated      { border-color: #10b981ff; background: #f0fdf4ff; }
             .ue-card.failed         { border-color: #ef4444ff; background: #fef2f2ff; }
@@ -452,6 +452,7 @@
             this.grades = [];
             this.semesters = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{}, 7:{}, 8:{}, 9:{}, 10:{}};
 
+            this.configVersion = 2;
             this.gradesDatas = {};
             this.ueConfig =         JSON.parse( localStorage.getItem("ECAM_DASHBOARD_UE_CONFIG")) || {};
             this.sim =              JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SIM_gradeS")) || {};
@@ -728,141 +729,17 @@
 
             // MARK: scrollToClientHighestElem
             /**
-             * Scan through all element of all classes classNames given, 
-             * and scroll to the first element of the first class className who's middle hasn't passed the top of the screen,
-             * UNLESS, if highestElemInPageHandleType is set to true, scroll to the first element of the first class className who's top is 
-             * below the top of the screen instead
-             * @deprecated Currently working on a new version, it's just here for backups
-             */
-            scrollToClientHighestElemOLD({className, id="", timeout=50, smooth=false, margin=undefined, editSensitive=true, highestElemInPageHandleType=false}={className:"", id:"", timeout:50, smooth:false, margin:NaN, editSensitive:true, highestElemInPageHandleType:true}) {
-                {// HOW IT WORKS:
-                //     IF id == "":
-                //         IF highestElemInPageHandleType == true:
-                //             SCAN through classNames -> _className
-                //                 FORMAT _className -> _formatedClassName
-                //                 GET first Element1 of class _className with document.querySelector(_formatedClassName)
-                //                 GET first Element1's top coordinate in the screen
-                // 
-                //                 IF (Element1's top coordinate - margin < 0) OR (highestElemInPageHandleType == true): 
-                //                 // ELEMENT1'S TOP IS OFF SCREEN FROM THE TOP, SEARCH FOR WHAT ELEMENT WE SCROLL TO
-                // 
-                //                     SCAN through all Elements of class _formatedClassName with document.querySelectorAll(_formatedClassName) -> elem
-                //                         GET elem's middle coord ( (coods.top + coords.bottom)/2 ) -> middleCoord
-                //                    
-                //                         IF middleCoord <= 0: 
-                //                         // elem's middle is off screen from the top, we ignore it
-                //                         ELSE: 
-                //                         // elem's middle is the first Element on screen, from top to bottom
-                //                             GET elem's id -> this.scrollToThisElem
-                // 
-                //                 ELSE: 
-                //                 // ELEMENT1'S TOP IS ON SCREEN OR OFF SCREEN FROM THE BOTTOM, WE SCROLL TO IT
-                //                     GET Element1's id -> this.scrollToThisElem
-                //        
-                //                 SET Element with document.getElementById(id) -> scrollToThisElement
-                //                 SET its style.scrollMarginTop
-                //                 Scroll to scrollToThisElement
-                // 
-                //         ELSE:
-                // 
-                // 
-                //     ELSE:
-                //         SET id -> this.scrollToThisElem
-                //         GET Element with document.getElementById(id) -> scrollToThisElement
-                //         SET its style.scrollMarginTop
-                //         Scroll to scrollToThisElement
-                }
-
-                this.scrollToThisElem = ""; let found = false, classIndex = -1, effectiveMargin;
-                if (isNaN(margin) && margin instanceof Array) {
-                    margin = 23
-                    if (editSensitive && this.editMode) {margin += 70}
-                }
-                
-
-                if (id=="" || !document.getElementById(id)) {   // no id is given or invalid id given
-                    className.split("||").forEach((_className, _classIndex) => {    // scanning through every classNames
-                        if (!found) {   // ensuring the priority to the first element of the first class _className found
-
-                            // use the margin parameter properly, according to if it's an array or not
-                            effectiveMargin = margin instanceof Array ? margin[_classIndex] : margin;
-
-                            // formating the _className, in case the _className doesn't start with a point or has extra blank spaces around
-                            const _formatedClassName = `${_className.trim()[0]=="." ? "" : "."}${_className.trim()}`;
-
-                            // getting the highest element of class _formatedClassName, as well as its top coordinate in the screen
-                            const highestElem = document.querySelector(_formatedClassName);
-                            const highestElemTopCoord = highestElem?.getBoundingClientRect().top || effectiveMargin;
-
-                            // if highestElemTopCoord < margin, then it means that the top of the highest element of class _formatedClassName 
-                            // has passed the top of the screen + margin
-
-                            if ((highestElemInPageHandleType && highestElemTopCoord - effectiveMargin <= 0) || !highestElemInPageHandleType) {
-                                // CASE WHERE WE DON'T WANT TO SCROLL TO THE HIGHEST ELEMENT WITH ITS TOP COORD BELOW THE TOP OF THE SCREEN:
-                                // WE WANT TO SCROLL TO THE HIGHEST ELEMENT WITH ITS MIDDLE COORD ON SCREEN:
-                                // if the highest elem of class _formatedClassName has passed the top of the screen + margin IF highestElemInPageHandleType is true,
-                                // or if highestElemInPageHandleType is false:
-
-                                document.querySelectorAll(_formatedClassName).forEach(elem => {
-                                    const coords = elem.getBoundingClientRect();
-                                    const meanClientTop = (coords.top + coords.bottom)/2;
-
-                                    if ((meanClientTop > 0) && !found) {    // ensuring the priority to the first element of the first class _className found
-                                        this.scrollToThisElem = String(elem.id);
-                                        found = true;
-                                        classIndex = _classIndex;
-                                    }
-                                })
-                            }
-                            else if (highestElemInPageHandleType && highestElemTopCoord - effectiveMargin > 0) { 
-                                // if the highest elem of class _formatedClassNae is below the top of the screen AND highestElemInPageHandleType is true:
-
-                                this.scrollToThisElem = String(highestElem.id);
-                                found = true;
-                                classIndex = _classIndex;
-                            }
-                        }
-                    })
-
-                    if (found) {
-                        if (document.body.classList.contains("lfr-dockbar-pinned")) {effectiveMargin += 45}
-                        setTimeout(() => {
-                            const scrollToThisElem = document.getElementById(this.scrollToThisElem) ? document.getElementById(this.scrollToThisElem) : document.querySelector(`${className.split("||")[classIndex].trim()[0]=="." ? "" : "."}${className.split("||")[classIndex].trim()}`); 
-                            scrollToThisElem.style.scrollMarginTop = `${effectiveMargin}px`;
-                            scrollToThisElem.scrollIntoView({behavior: smooth ? "smooth" : "instant", block: "start"});
-                            this.scrollToThisElem = "";
-                        }, timeout)
-                    }
-                }
-                else
-                {
-                    effectiveMargin = margin;
-                    if (document.body.classList.contains("lfr-dockbar-pinned")) {effectiveMargin += 45}
-
-                    this.scrollToThisElem = id;
-                    
-                    setTimeout(() => {
-                        const scrollToThisElem = document.getElementById(this.scrollToThisElem); 
-                        scrollToThisElem.style.scrollMarginTop = `${effectiveMargin}px`;
-                        scrollToThisElem.scrollIntoView({behavior: smooth ? "smooth" : "instant", block: "start"});
-                        this.scrollToThisElem = "";
-                    }, timeout)
-                }
-
-            }
-
-            /**
              * Scroll to an element depending on the target element datas passed as argument under the form of an object. If using the className method and not the id method, please make sure the elements of class className are in column.
              * 
              * Priority order defined by parameter `priority`. Scan through all the given classNames. If no match is found on a className: 
              * - **"first"**: **moves onto the next one**. The method will scroll to the **first** data matching the conditions, and skip the rest.
              * - **"last"**:  **skip the rest**. The method will scroll to the **last** data matching the conditions, and skip the rest. If no match is found at all, doesn't scroll.
              * 
-             * Behavior changes along with **`highestElemInPageHandleType`**'s value. Scan through all target element datas given, and:
+             * Behavior changes along with **`highestElemInPageHandleType`**'s value. Scan through all target element datas given, and (with X being an int between 0 and 100):
              * - **"none"**:                   scroll to the top of the first element - *out of all the others* - (who's class name matches the `targetElementDatas`'s property `className`) **SUCH THAT** it's the highest element in the current window view who's center doesn't go out of the screen from the top (respecting the `margin` property of the same `targetElementDatas`)
-             * - **"toolow"**:                 scroll to the top of the first element - *out of all the others* - (who's class name matches the `targetElementDatas`'s property `className`) **SUCH THAT** it's the highest element in the current window view who's center doesn't go out of the screen from the top (respecting the `margin` property of the same `targetElementDatas`) **IFF** the first - *and only the first, so the highest* - element of same class is above the top of the screen
-             * - **"partial"/"partial X%"**:   scroll to the top of the first - *and only the first*    - element (who's class name matches the `targetElementDatas`'s property `className`) **IF** its top edge is above the center of the screen **AND** still in the view
-             * - **"absolute"/"absolute X%"**: scroll to the top of the first - *and only the first*    - element (who's class name matches the `targetElementDatas`'s property `className`) **IF** its top edge is above the center of the screen
+             * - **"above"/"above X%"**:       scroll to the top of the first element - *out of all the others* - (who's class name matches the `targetElementDatas`'s property `className`) **SUCH THAT** it's the highest element in the current window view who's center doesn't go out of the screen from the top (respecting the `margin` property of the same `targetElementDatas`) **IFF** the first - *and only the first, so the highest* - element of same class is above X% (default 50%) of the screen
+             * - **"partial"/"partial X%"**:   scroll to the top of the first - *and only the first*    - element (who's class name matches the `targetElementDatas`'s property `className`) **IF** its top edge is above X% (default 50%) of the screen **AND** still in the view
+             * - **"absolute"/"absolute X%"**: scroll to the top of the first - *and only the first*    - element (who's class name matches the `targetElementDatas`'s property `className`) **IF** its top edge is above X% (default 50%) of the screen
              * - **"force"**:                  scroll to the top of the first - *and only the first*    - element (who's class name matches the `targetElementDatas`'s property `className`). No condition, just forces the scroll to the top of this element
              * 
              * In any case, the scroll is executed (after the `timeout` property of the same `targetElementDatas`) with respects to the `margin` property of the same `targetElementDatas` (it will be attributed as `marginScrollTop` style property of the element to scroll to)
@@ -881,27 +758,28 @@
              * 
              * **`smooth?`**                        {@link https://github.com Boolean}, default: false —           if true, the page will smoothly scroll to the element targeted
              * 
-             * **`highestElemInPageHandleType?`**   {@link https://github.com String},  default: "none" —          can be "force", "partial" or "none". Any other value will be considered as "none"
+             * **`highestElemInPageHandleType?`**   {@link https://github.com String},  default: "none" —          can be "force", "absolute", "absolute X%", "partial", "partial X%", "above", "above X%" or "none" (with X being an int between 0 and 100). Any other value will be considered as "none"
              */
             scrollToClientHighestElem(priority, ...{className= ".subject-card", id="", margin=23, timeout=50, smooth=false, highestElemInPageHandleType="none"}) {
                 let debugging = true;
                 // debugging = false;
-                if (debugging) {debugger};
+                if (debugging) {debugger /* Starting to execute scrollToClientHighestElem() */};
 
                 if (!(arguments?.length > 0)) {
-                    let priority = "first";
+                    let priority = "first"; // in case priority wasn't given as argument
                 }
                 else {
-                    priority = priority?.toLowerCase()?.trim();
+                    priority = priority?.toLowerCase()?.trim(); // formatting priority correctly
                 }
                 
                 if (!priority?.match(/first|last/i)) {
-                    priority = "first"; if (debugging) {debugger}
+                    priority = "first"; if (debugging) {debugger /* Making sure that priority has a correct value */}
                 }
 
+                const abovePattern  = /above( (100)%| (\d{1,2})%|)/;
                 const partialPattern  = /partial( (100)%| (\d{1,2})%|)/;
                 const absolutePattern = /absolute( (100)%| (\d{1,2})%|)/;
-                const highestElemInPageHandleTypePattern = RegExp("none|toolow|" + partialPattern.source + "|" + absolutePattern.source);
+                const highestElemInPageHandleTypePattern = RegExp("none|" + abovePattern.source + "|" + partialPattern.source + "|" + absolutePattern.source);
                 
                 this.scrollToThisElem = ""; let targetDataIndex = -1;
 
@@ -913,15 +791,15 @@
                         {className, id, margin, timeout, smooth, highestElemInPageHandleType}
                     ]
                 ).forEach((targetElemData, targetIndex) => {
-                    if (debugging) {debugger}   // Scanning through the target datas objects given, or the default objects if no object is given
+                    if (debugging) {debugger /* Scanning through the target datas objects given, or the default objects if no object is given */}
 
                     if ((targetDataIndex < 0 && (priority.toLowerCase()||"first") == "first") || (targetDataIndex == targetIndex-1 && priority.toLowerCase()=="last")) { // ensuring the priority to the first element of the first class className found
                         
-                        if (debugging) {debugger}   // Element: not found yet if priority = first, previous was found if priority = "last"
+                        if (debugging) {debugger /* Element: not found yet if priority = first, previous was found if priority = "last" */} 
 
                         targetElemData.highestElemInPageHandleType = targetElemData?.highestElemInPageHandleType?.toLowerCase()?.trim();
-                        if (targetElemData?.highestElemInPageHandleType?.match(highestElemInPageHandleTypePattern)) {
-                            targetElemData.highestElemInPageHandleType = "none"; if(debugging) {debugger};
+                        if (!targetElemData?.highestElemInPageHandleType?.match(highestElemInPageHandleTypePattern)) {
+                            targetElemData.highestElemInPageHandleType = "none"; if(debugging) {debugger /* Making sure highestElemInPageHandleType has a correct value */};
                         }
 
 
@@ -934,81 +812,114 @@
                             // if highestElemTopCoord < margin, then it means that the top of the highest element of class className has passed the top of the screen
 
 
-                            if(debugging) {debugger};       // We check for classNames
+                            if(debugging) {debugger /* We check for classNames */};
                             
-                            if ( 
-                                //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-                                targetElemData?.highestElemInPageHandleType?.toLowerCase() == "force" 
-                                || 
-                                (
-                                    targetElemData?.highestElemInPageHandleType?.match(partialPattern) 
-                                    && 
-                                    highestElemTopCoord < window.innerHeight* (targetElemData?.highestElemInPageHandleType?.match(partialPattern)?.[2] || 0.5) 
-                                    && 
-                                    highestElemTopCoord >= (targetElemData?.margin || margin)
-                                )
-                                || 
-                                (
-                                    targetElemData?.highestElemInPageHandleType?.match(absolutePattern) 
-                                    && 
-                                    highestElemTopCoord < window.innerHeight* (targetElemData?.highestElemInPageHandleType?.match(absolutePattern)?.[2] || 0.5)
-                                )
-                                //////////////////////////////////////////////////////////////////////////////////////////////////////
+                            if ( // The highest elem case
+                                (//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                                    /* Force case */
+                                    targetElemData?.highestElemInPageHandleType?.toLowerCase() == "force"
+                                    || 
+                                    ( /* Partial case */
+                                        targetElemData?.highestElemInPageHandleType?.match(partialPattern)
+                                        &&  /* Is the top coordinate of the highest element of class className: */
+                                        /* Above the required height (percentage of the total height)? */
+                                        highestElemTopCoord < window.innerHeight* (targetElemData?.highestElemInPageHandleType?.match(partialPattern)?.[2] || 0.5)
+                                        && 
+                                        /* Below the top of the screen, taking into account the margin? */
+                                        highestElemTopCoord >= (targetElemData?.margin || margin)
+                                    )
+                                    || 
+                                    ( /* Absolute case */
+                                        targetElemData?.highestElemInPageHandleType?.match(absolutePattern) 
+                                        && /* Is the top coordinate of the highest element of class className: */
+                                        /* Above the required height (percentage of the total height)? */
+                                        highestElemTopCoord < window.innerHeight* (targetElemData?.highestElemInPageHandleType?.match(absolutePattern)?.[2] || 0.5)
+                                    )
+                                    ||
+                                    ( /* Above case */
+                                        targetElemData?.highestElemInPageHandleType?.match(abovePattern)
+                                        && /* Is the top coordinate of the highest element of class className: */
+                                        /* Above the required height (percentage of the total height)? */
+                                        highestElemTopCoord < window.innerHeight* (targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[2] || 0.5)
+                                        &&
+                                        /* Below the top of the screen, taking into account the margin? */
+                                        highestElemTopCoord >= (targetElemData?.margin || margin)
+                                    )
+                                )//////////////////////////////////////////////////////////////////////////////////////////////////////
                             ) { 
 
                                 this.scrollToThisElem = highestElem.id;
                                 targetDataIndex = targetIndex;
-                                if(debugging) {debugger};   // The highest element of class className fits the conditions of its handle type!
+                                if(debugging) {debugger /* The highest element of class className fits the conditions of its handle type! */};
 
                             }
-                            else if (
-                                //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-                                targetElemData?.highestElemInPageHandleType?.toLowerCase() == "none"
-                                || 
-                                (
-                                    targetElemData?.highestElemInPageHandleType?.match(absolutePattern) 
-                                    && 
-                                    highestElemTopCoord >= (window.innerHeight*targetElemData?.highestElemInPageHandleType?.match(absolutePattern)?.[2] || 0.5)
-                                )
-                                //////////////////////////////////////////////////////////////////////////////////////////////////////
+                            else if (   // Get the first elem satisfying the condition.s corresponding to the className's highestElemInPageHandleType prop
+                                (//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                                    /* None case */
+                                    targetElemData?.highestElemInPageHandleType?.toLowerCase() == "none"
+                                    || 
+                                    ( /* Above case */
+                                        targetElemData?.highestElemInPageHandleType?.match(abovePattern)
+                                        && /* Is the top coordinate of the highest element of class className: */
+                                        /* Below the top of the screen, taking into account the margin? */
+                                        highestElemTopCoord >= (targetElemData?.margin || margin)
+                                    )
+                                )//////////////////////////////////////////////////////////////////////////////////////////////////////
                             ) {
 
-                                document.querySelectorAll(targetElemData?.className || className).forEach(elem => {
-                                    const coords = elem.getBoundingClientRect();
-                                    const meanClientTop = (coords.top + coords.bottom)/2;
+                                document.querySelectorAll(targetElemData?.className || className).forEach((elem, _index) => {
+                                    const elemCoordsClient = elem.getBoundingClientRect();
+                                    const elemCenterClient = (elemCoordsClient.top + elemCoordsClient.bottom)/2;
+                                    if(debugging && _index==0) {debugger /* Scanning through all elements of class className */};
 
                                     if (
-                                        //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-                                        meanClientTop >= 0 
-                                        && 
-                                        (
-                                            (targetDataIndex < 0 && (priority.toLowerCase()||"first") == "first") 
-                                            || 
-                                            (targetDataIndex == targetIndex-1 && priority.toLowerCase()=="last")
-                                        )
-                                        //////////////////////////////////////////////////////////////////////////////////////////////////////
-                                    ) {    // ensuring the priority to the first element of the first class className found
+                                        (//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                                            
+                                            ( /* ensuring the priority to the first element of the first class className found */
+                                                (
+                                                    targetDataIndex < 0 
+                                                    && (priority.toLowerCase()||"first") == "first"
+                                                ) 
+                                                || 
+                                                (
+                                                    targetDataIndex == targetIndex-1 
+                                                    && (priority.toLowerCase()||"last") == "last"
+                                                )
+                                            )
+                                            &&
+                                            ( /* Checking if the element satisfies the conditions corresponding to its highestElemInPageHandleType */
+                                                ( /* None case */
+                                                    targetElemData?.highestElemInPageHandleType?.toLowerCase() == "none" 
+                                                    && elemCenterClient >= 0 
+                                                )
+                                                || 
+                                                ( /* Above case */
+                                                    targetElemData?.highestElemInPageHandleType?.match(abovePattern)
+                                                    && elemCoordsClient.top >= window.clientHeight* (targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[2] || 0.5)
+                                                )
+                                            )
+                                        )//////////////////////////////////////////////////////////////////////////////////////////////////////
+                                    ) {
 
                                         this.scrollToThisElem = elem.id;
                                         targetDataIndex = targetIndex;
-                                        if(debugging) {debugger};   // An element of class className that fits its handle type was found!
+                                        if(debugging) {debugger /* An element of class className that fits its handle type was found! */};
                                                     
                                     }
                                 })
-                                
                             }
                         }
                         else {
                             this.scrollToThisElem = targetElemData?.id || id;
                             targetDataIndex = targetIndex;
-                            if(debugging) {debugger};  // Using the id provided to target
+                            if(debugging) {debugger /* Using the id provided to target */};
                         }
                     }
                 })
 
                 if (targetDataIndex >= 0 || arguments?.length == 0) {
-                    const targetElemData = arguments?.length > 0 ? arguments[targetDataIndex] : {className, id, margin, timeout, smooth, highestElemInPageHandleType};
-                    if(debugging) {debugger};   // Now scrolling!
+                    const targetElemData = arguments?.length > 0 ? arguments[targetDataIndex+1] : {className, id, margin, timeout, smooth, highestElemInPageHandleType};
+                    if(debugging) {debugger /* Now scrolling! */};
 
                     setTimeout(() => {
                         const scrollToThisElem = document.getElementById(this.scrollToThisElem) || document.querySelector(this.scrollToThisElem); 
@@ -1376,7 +1287,7 @@
 
                                 subjectData.subjName                    = subjectName;
                                 subjectData.coef                        = this.ueConfig[semX][ueName].coefficients[subjectName];
-                                subjectData.isCustom                    = this.ueConfig[semX][ueName].custom[subjectName];
+                                subjectData.isCustom                    = true;
                                 subjectData.disabledRealGrades          = [];
                                 subjectData.simGrades                   = [];
                                 subjectData.disabledSimGrades           = [];
@@ -1392,6 +1303,7 @@
 
                                 ueData.totalCoefSubjects += parseInt(subjectData.coef);
                                 
+                                
                                 // FOR EACH GRADE IN SUBJECT
                                 subjectData.grades.forEach(grade => {
                                     const gradeValue = parseFloat(grade.grade),
@@ -1401,6 +1313,7 @@
                                     ;
                                     
                                     subjectData.totalCoefGrades += grade.coef;
+                                    subjectData.isCustom = false;
 
                                     switch (`${this.gradeIsDisabled(grade) ? "disabled" : "enabled"} ${grade.__sim ? "sim" : "real"} grade`) {
                                         case `enabled real grade`:
@@ -1814,16 +1727,16 @@
                     </div>
                     <div class="semester-content show${this.selectedSubjectCards.length > 0 ? " dragging" : ""}${fadeIn ? " fade-in" : ""}" id="sem-content-${sem}">
                         <div class="drop-field remove-from-ue${this.selectedSubjectCards.length > 0 ? " show" : ""}">-</div>
-                        <div class="ue-grid" ${(unclassified.length == 0 || !this.ueConfig[sem] || Object.keys(this.ueConfig?.[sem])[0] == undefined) ? `style="gap: ${this.editMode ? `20px` : `0px`}"` : ``}>
+                        <div class="semester-grid" ${(unclassified.length == 0 || !this.ueConfig[sem] || Object.keys(this.ueConfig?.[sem])[0] == undefined) ? `style="gap: ${this.editMode ? `20px` : `0px`}"` : ``}>
                             <div class="modules-section">
-                                ${this.renderAllUECards(sem)}
+                                ${this.createAllUECards(sem)}
                             </div>
                             <div class="unclassified-section" id="unclassified-section" style="height: 100%${unclassified.length > 0 ? `` : `; display: none`}">
                                 <div class="unclassified-title">
                                     ${this.lang == "fr" ? `Matière${unclassified.length > 1 ?  `s` : ``} non classée${unclassified.length > 1 ?  `s` : ``} dans un module` : `Subject${unclassified.length > 1 ?  `s` : ``} not classified in a module`}
                                 </div>
                                 <div class="unclassified-content">
-                                    ${unclassified.length > 0 ?  `${this.renderAllUnclassifiedMatCard(sem)}` : ``}
+                                    ${unclassified.length > 0 ?  `${this.createAllUnclassifiedSubjCard(sem)}` : ``}
                                 </div>
                             </div>
                         </div>
@@ -1859,7 +1772,7 @@
                     //             const ueName = this.editMode ? header.children[0].children[1].value : header.children[0].innerText;
                                 
                     //             const ueContent = header.parentElement.querySelector(".ue-details");
-                    //             ueContent.innerHTML = this.renderAllMatCardCompact(sem, ueName);
+                    //             ueContent.innerHTML = this.createAllSubjCardCompact(sem, ueName);
                     //             content.classList.add('compact');
                     //             toggle.classList.remove('open');
                     //         }
@@ -1874,22 +1787,22 @@
 
 
 
-            // MARK: renderUECard
-            renderAllUECards(sem) {
+            // MARK: createUECard
+            createAllUECards(sem) {
                 const ueConfig = this.ueConfig?.[sem] || {};
 
                 let html =  this.editMode ? this.createDropAreaInsertionField("ue", {sem, index:0}) : "";
                 // let html = this.editMode ? `<div class="drop-field insert-area" data-semester="${sem}" data-index="0">+</div>` : "";
 
                 ueConfig?.__ues__?.forEach((ueName, ueIndex) => {
-                    html += this.renderUECard(sem, ueName, ueIndex);
+                    html += this.createUECard(sem, ueName, ueIndex);
                     html += this.editMode ? this.createDropAreaInsertionField("ue", {sem, index:ueIndex+1}) : "";
                     // html += this.editMode ? `<div class="drop-field insert-area" data-semester="${sem}" data-index="${ueIndex+1}">+</div>` : ``;
                 });
 
                 return html;
             }
-            renderUECard(sem, ueName, ueIndex=-1) {
+            createUECard(sem, ueName, ueIndex=-1) {
                 const ueGrades = this.calculateUEGrades(sem, ueName);
                 const includedGrades = (ueGrades || []).filter(n => this.ignoredGrades.indexOf([sem, n.subject, n.type+" "+n.date+" "+n.prof].join("\\")) == -1);
                 let weight = 0; includedGrades.forEach(grade => {weight += grade.coef/100})
@@ -1945,7 +1858,7 @@
                     </div>
 
                     <div class="ue-details ${this.editMode ? "edit-mode": ""}" id="ue-details-${ueName}-in-semester${sem}">
-                        ${this.viewMode == "detailed" ? this.renderAllMatCardDetailed(sem, ueName) : this.renderAllMatCardCompact(sem, ueName)}
+                        ${this.viewMode == "detailed" ? this.createAllSubjCardDetailed(sem, ueName) : this.createAllSubjCardCompact(sem, ueName)}
                     </div>
 
                 </div>
@@ -1957,22 +1870,22 @@
 
 
 
-            // MARK: renderMatCardDetailed
-            renderAllMatCardDetailed(sem, ueName) {
+            // MARK: createSubjCardDetailed
+            createAllSubjCardDetailed(sem, ueName) {
                 const ueData = this.gradesDatas[sem][ueName];
                 const select = this.selectedSubjectCards.length == 0;
 
                 let html =  this.editMode ? this.createDropAreaInsertionField("subject", {sem, ueName, index:0}) : "";
 
                 Object.values(ueData.subjects).forEach((_value, _index) => {
-                    html += this.renderMatCardDetailed(sem, ueName, _value.subjName, _index);
+                    html += this.createSubjCardDetailed(sem, ueName, _value.subjName, _index);
                     html += this.editMode ? this.createDropAreaInsertionField("subject", {sem, ueName, index:_index+1}) : "";
                 })
 
                 return html;
             }
-            renderMatCardDetailed(sem, ueName, subject, index=-1) {
-                const ueData =  this.gradesDatas[sem][ueName];
+            createSubjCardDetailed(sem, ueName, subject, index=-1) {
+                const ueData =          this.gradesDatas[sem][ueName];
                 const subjectData =     ueData.subjects[subject];
                 const subjGrades =      subjectData.grades;
                 const ueMoy =           ueData.average;
@@ -2129,21 +2042,21 @@
 
 
 
-            // MARK: renderMatCardCompact
-            renderAllMatCardCompact(sem, ueName) {
+            // MARK: createSubjCardCompact
+            createAllSubjCardCompact(sem, ueName) {
                 const ueData = this.gradesDatas[sem][ueName];
                 const select = this.selectedSubjectCards.length == 0;
 
                 let html =  this.editMode ? this.createDropAreaInsertionField("subject", {sem, ueName, index:0}) : "";
 
                 Object.values(ueData.subjects).forEach((_value, _index) => {
-                    html += this.renderMatCardCompact(sem, ueName, _value.subjName, _index);
+                    html += this.createSubjCardCompact(sem, ueName, _value.subjName, _index);
                     html += this.editMode ? this.createDropAreaInsertionField("subject", {sem, ueName, index:_index+1}) : "";
                 })
 
                 return html;
             }
-            renderMatCardCompact(sem, ueName, subject, index=-1) {
+            createSubjCardCompact(sem, ueName, subject, index=-1) {
                 const ueData =  this.gradesDatas[sem][ueName];
                 const subjectData =             ueData.subjects[subject];
                 const subjGrades =              subjectData.grades;
@@ -2198,17 +2111,17 @@
 
 
 
-            // MARK: renderUnclassifiedMatCard
-            renderAllUnclassifiedMatCard(sem) {
+            // MARK: createUnclassifiedSubjCard
+            createAllUnclassifiedSubjCard(sem) {
                 const unclassified = this.getUnclassifiedSubjects(sem);
                 let html = ``;
 
                 unclassified.forEach(subject => {
-                    html += this.renderUnclassifiedMatCard(sem, subject);
+                    html += this.createUnclassifiedSubjCard(sem, subject);
                 })
                 return html
             }
-            renderUnclassifiedMatCard(sem, subject) {
+            createUnclassifiedSubjCard(sem, subject) {
                 let html = ``;
                 let totalCoef = 0;
                 let totalClassAvg = 0;
@@ -2584,9 +2497,6 @@
                         const ueContent     = subjectCard.parentElement;
                         const ueCard        = ueContent.parentElement;
 
-                        // check if the new name given to the custom subject matches the name of a grade's subject name: in this case, the custom subject will no longer be custom
-                        let isCustom = true;
-                        Object.keys(this.semesters[this.currentSemester]).forEach(subjectName => {if (subjectName == subjNewName) isCustom = false})
 
                         let diffName = true;
                         this.ueConfig[sem][ue].subjects.forEach(_mat => {if (_mat == subjNewName) diffName = false});
@@ -2610,24 +2520,22 @@
 
                             this.ueConfig[sem][ue].subjects[oldMatIndex]=subjNewName ;    // Replace the subject's old name by the subject's new name
                             delete  this.ueConfig[sem][ue].coefficients [subjOldName];
-                            delete  this.ueConfig[sem][ue].custom       [subjOldName];
 
                                     this.ueConfig[sem][ue].coefficients [subjNewName] = pct;
-                                    this.ueConfig[sem][ue].custom       [subjNewName] = isCustom;
                                         
                             this.getGradesDatas();
 
                             if (this.viewMode == "detailed" || !ueCard.classList.contains("compact")) {
-                                ueContent.innerHTML = this.renderAllMatCardDetailed(sem, ue);
+                                ueContent.innerHTML = this.createAllSubjCardDetailed(sem, ue);
                             }
                             else {
-                                ueContent.innerHTML = this.renderAllMatCardCompact(sem, ue);
+                                ueContent.innerHTML = this.createAllSubjCardCompact(sem, ue);
                             }
 
                             const unclassifiedSection = document.querySelector(".unclassified-section");
                             const unclassifiedContent = unclassifiedSection.querySelector(".unclassified-content");
                             unclassifiedSection.style.height = "100%";
-                            unclassifiedContent.innerHTML = this.renderAllUnclassifiedMatCard(sem);
+                            unclassifiedContent.innerHTML = this.createAllUnclassifiedSubjCard(sem);
 
                             setTimeout(() => {
                                 const currentUnclassifiedSectionHeight = new Number(unclassifiedSection.clientHeight);
@@ -2647,7 +2555,7 @@
                     }
                 })
 
-                document.querySelector(".modules-section").querySelectorAll(".ue-delete-btn").forEach(btn => {
+                document.querySelectorAll(".ue-delete-btn").forEach(btn => {
                     btn.onclick = e => {
                         const sem = e.target.dataset.semester;
                         const ueName = e.target.dataset.ue;
@@ -2922,12 +2830,12 @@
                     const ueContent = header.parentElement.querySelector(".ue-details");
 
                     if (toggle.classList.contains('open')) {
-                        ueContent.innerHTML = this.renderAllMatCardCompact(sem, ueName);
+                        ueContent.innerHTML = this.createAllSubjCardCompact(sem, ueName);
                         ueContent.classList.add('compact');
                         toggle.classList.remove('open');
                         this.setGradesTableTotalCoef()
                     } else {
-                        ueContent.innerHTML = this.renderAllMatCardDetailed(sem, ueName);
+                        ueContent.innerHTML = this.createAllSubjCardDetailed(sem, ueName);
                         ueContent.classList.remove('compact');
                         toggle.classList.add('open');
                         this.attachCheckboxListeners(ueContent);
@@ -3728,7 +3636,6 @@
 
                                         this.ueConfig[sem][oldUeName].subjects.splice(subjectIndex,1);
                                         delete this.ueConfig[sem][oldUeName].coefficients[subject];
-                                        delete this.ueConfig[sem][oldUeName].custom[subject];
 
 
                                         if (manageSim) {if (!this.sim[sem][oldUeName]) manageSim = false;}
@@ -3793,18 +3700,15 @@
                                             remainingCoef -= coef;
                                         }
 
-                                        newUeConfig.custom[subject] = false;
                                         newUeConfig.subjects[selectionIndex] = subject;
                                         
 
                                         if (!subjectCard.classList.contains("unclassified")) {
-                                            newUeConfig.custom[subject] = this.ueConfig[sem][oldUeName].custom[subject];
 
                                             // removing the subject card from its former UE
                                             const oldUeIndex = this.ueConfig[sem].__ues__.indexOf(oldUeName);                       // get the old ue's index in the ues ordered array of the semester
                                             const subjectIndexInOldUe = this.ueConfig[sem][oldUeName].subjects.indexOf(subject);    // get the subject's index in the subjects ordered array of the old ue
                                             delete  this.ueConfig[sem][oldUeName].coefficients[subject];                            // delete coefficient data
-                                            delete  this.ueConfig[sem][oldUeName].custom[subject];                                  // delete custom data
                                                     this.ueConfig[sem][oldUeName].subjects.splice(subjectIndexInOldUe,1);           // remove the subject from the subjects ordered array of the old ue
 
                                             if (this.ueConfig[sem][oldUeName].subjects.length == 0) {
@@ -3837,7 +3741,6 @@
                         const newSubjName = this.lang == "fr" ? "Nouvelle matière" : "New subject";
                         newUeConfig.subjects.push(newSubjName);
                         newUeConfig.coefficients[newSubjName] = 100;
-                        newUeConfig.custom[newSubjName] = true;
                     }
 
                     this.ueConfig[sem][newUeName] = newUeConfig;
@@ -3877,7 +3780,6 @@
                             const subjectIndex = this.ueConfig[sem][ue].subjects.indexOf(subj);
                                     this.ueConfig[sem][ue].subjects.splice(subjectIndex,1);
                             delete  this.ueConfig[sem][ue].coefficients[subj];
-                            delete  this.ueConfig[sem][ue].custom[subj];
 
                             if (this.ueConfig[sem][ue].subjects.length == 0) {
                                 this.ueConfig[sem].__ues__.splice(ueIndex, 1);
@@ -3894,7 +3796,6 @@
                                 const subjectIndex = this.ueConfig[sem][ue].subjects.indexOf(subject);
                                         this.ueConfig[sem][ue].subjects.splice(subjectIndex,1);
                                 delete  this.ueConfig[sem][ue].coefficients[subject];
-                                delete  this.ueConfig[sem][ue].custom[subject];
 
                                 if (this.ueConfig[sem][ue].subjects.length == 0) {
                                     this.ueConfig[sem].__ues__.splice(ueIndex, 1);
@@ -3961,25 +3862,21 @@
                                         // Just set the unclassified subject in the ueConfig
                                         this.ueConfig[sem][targetUeName].subjects.splice(insertionIndex, 0, subject);
                                         this.ueConfig[sem][targetUeName].coefficients[subject] = 0;
-                                        this.ueConfig[sem][targetUeName].custom[subject] = false;
                                     break;
 
                                     case "subject card comes from a UE and is moved to a different UE":
                                         // We move the datas from the old UE to the new UE
                                         this.ueConfig[sem][targetUeName].subjects.splice(insertionIndex, 0, subject);
                                         this.ueConfig[sem][targetUeName].coefficients[subject]  = Number (this.ueConfig[sem][oldUeName].coefficients[subject]);
-                                        this.ueConfig[sem][targetUeName].custom[subject]        = Boolean(this.ueConfig[sem][oldUeName].custom[subject]);
 
                                         this.ueConfig[sem][oldUeName].subjects.splice(subjectOldIndex, 1);
                                         delete this.ueConfig[sem][oldUeName].coefficients[subject];
-                                        delete this.ueConfig[sem][oldUeName].custom[subject];
                                     break;
 
                                     case "subject card comes from a UE and is reorganized to a different index":
                                         // We move the datas while paying attention to at which index was the original subject before moving it (in order to not mess up with the insertion index)
                                         this.ueConfig[sem][targetUeName].subjects.splice(insertionIndex, 0, subject);
                                         this.ueConfig[sem][targetUeName].coefficients[subject]  = Number (this.ueConfig[sem][oldUeName].coefficients[subject]);
-                                        this.ueConfig[sem][targetUeName].custom[subject]        = Boolean(this.ueConfig[sem][oldUeName].custom[subject]);
 
                                         const subjectCorrectOldIndex = subjectOldIndex + (insertionIndex<=subjectOldIndex && this.ueConfig[sem][targetUeName].subjects.includes(subject) ? 1 : 0);
                                         this.ueConfig[sem][oldUeName].subjects.splice(subjectCorrectOldIndex, 1);
@@ -4025,16 +3922,15 @@
 
                         this.ueConfig   [sem][ue].subjects.splice(insertionIndex, 0, newSubjName);
                         this.ueConfig   [sem][ue].coefficients [newSubjName] = 0;
-                        this.ueConfig   [sem][ue].custom       [newSubjName] = true;
 
                         this.saveConfig();
                         this.getGradesDatas();
                         
                         if (this.viewMode == "detailed" || !ueCard.classList.contains("compact")) {
-                            ueContent.innerHTML = this.renderAllMatCardDetailed(sem, ue);
+                            ueContent.innerHTML = this.createAllSubjCardDetailed(sem, ue);
                         }
                         else {
-                            ueContent.innerHTML = this.renderAllMatCardCompact(sem, ue);
+                            ueContent.innerHTML = this.createAllSubjCardCompact(sem, ue);
                         }
 
                         this.attachEventListeners()
@@ -4163,7 +4059,7 @@
                             const parsed = JSON.parse(text);
 
                             // If parsed contains ueConfig, apply it to the dashboard and persist
-                            if (parsed && parsed.ueConfig) {
+                            if (parsed?.ueConfig && parsed?.version == this.configVersion) {
                                 try {
                                     this.ueConfig = parsed.ueConfig || {};
                                     localStorage.setItem('ECAM_DASHBOARD_UE_CONFIG', JSON.stringify(this.ueConfig));
@@ -4171,23 +4067,11 @@
                                     // ignore storage errors
                                 }
                             }
-
-                            // If parsed contains semesters with simulated grades, apply them to this.sim
-                            if (parsed && parsed.semesters) {
-                                // Reset current sim and populate from file where available
-                                const newSim = {};
-                                Object.keys(parsed.semesters).forEach(sem => {
-                                    const semObj = parsed.semesters[sem] || {};
-                                    const uesObj = semObj.ues || {};
-                                    Object.keys(uesObj).forEach(ueName => {
-                                        const simulees = uesObj[ueName].simulees || {};
-                                        if (!newSim[sem]) newSim[sem] = {};
-                                        newSim[sem][ueName] = simulees;
-                                    });
-                                });
-                                // merge with existing sim to preserve structure where file doesn't provide
-                                this.sim = Object.assign({}, this.sim || {}, newSim);
-                                try { localStorage.setItem('ECAM_DASHBOARD_SIM_gradeS', JSON.stringify(this.sim)); } catch (e) {}
+                            else if (parsed?.version != this.configVersion) {
+                                alert(this.lang == "fr" 
+                                    ? `Ce fichier de configuration n'est pas de la bonne version ! Assure-toi de télécharger la dernière version ! (Ce fichier est de version "${parsed?.version}", alors que la version de fichier attendue est "${this.configVersion}")`
+                                    : `This configuration file isn't of the right version! Make sure you download the latest version! (This file's version is "${parsed?.version}", whereas the file's version expected is "${this.configVersion}")`
+                                )
                             }
 
                             // Re-render dashboard to reflect imported config
@@ -4235,24 +4119,8 @@
 
             exportData() {
                 const data = {
-                    date: new Date().toISOString(),
-                    ueConfig: this.ueConfig,
-                    semesters: {}
+                    ueConfig: this.ueConfig
                 };
-                Object.keys(this.semesters).forEach(sem => {
-                    if (!data.semesters[sem]) data.semesters[sem] = { ues: {} };
-                    if (this.ueConfig[sem]) {
-                        Object.keys(this.ueConfig[sem]).forEach(ue => {
-                            // const ueGrades = this.calculateUEGrades(sem, ue);
-                            data.semesters[sem].ues[ue] = {
-                                subjects: this.ueConfig[sem][ue].subjects,
-                                coefficients: this.ueConfig[sem][ue].coefficients,
-                                custom: this.ueConfig[sem][ue].custom,
-                                simulees: (this.sim[sem]&&this.sim[sem][ue]) || {}
-                            };
-                        });
-                    }
-                });
                 const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -4281,7 +4149,7 @@
                             this.scrollToClientHighestElem(
                                 {className: ".unclassified-section",    margin: 10, highestElemInPageHandleType:"force"},
                                 {className: ".ue-card",                 margin: 23, highestElemInPageHandleType:"none"},
-                                {className: ".subject-card",            margin: 10, highestElemInPageHandleType:"none"}
+                                {className: ".subject-card",            margin: 10, highestElemInPageHandleType:"none"},
                             );
                             this.renderContent();
                         }
@@ -4295,7 +4163,7 @@
                             {
                                 document.getElementById('view-btn-detailed').classList.remove("active")
                                 document.getElementById('view-btn-compact').classList.add("active")
-                            }                            
+                            }
                             localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
 
                             this.scrollToClientHighestElem();
@@ -4315,9 +4183,9 @@
                             }
 
                             this.scrollToClientHighestElem("first",
-                                {className: ".ue-card",                 margin: 23, highestElemInPageHandleType:"none"},
-                                {className: ".subject-card",            margin: 10, highestElemInPageHandleType:"none"},
-                                {className: ".unclassified-section",    margin: 10, highestElemInPageHandleType:"partial"}
+                                {className: ".modules-section",         margin: 23, highestElemInPageHandleType:"partial"},
+                                {className: ".ue-card",                 margin: 23, highestElemInPageHandleType:"above"},
+                                {className: ".subject-card",            margin: 10, highestElemInPageHandleType:"above"},
                             );
                             this.renderContent(false);
                             
