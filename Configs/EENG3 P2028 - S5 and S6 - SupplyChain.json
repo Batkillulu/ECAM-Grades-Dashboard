@@ -1,55 +1,63 @@
 {
-  "date": "2025-12-20T16:09:17.540Z",
+  "version": "2",
   "ueConfig": {
     "6": {
+      "__ues__" : [
+        "Mathematics for Engineers 6", 
+        "Control Engineering 6", 
+        "Systems Engineering 6", 
+        "Multidisciplinary Project 6", 
+        "Society, Management & Entrepreneurship 6", 
+        "Industrial Engineering & Supply Chain Management 6"
+      ],
       "Mathematics for Engineers 6": {
-        "matieres": [
+        "subjects": [
           "Probabilities and Inferential Statistics",
           "Object-Oriented Programming"
         ],
-        "pourcentages": {
+        "coefficients": {
           "Probabilities and Inferential Statistics": 65,
           "Object-Oriented Programming": 35
         }
       },
       "Control Engineering 6": {
-        "matieres": [
+        "subjects": [
           "Introduction to Control Theory",
           "Power Electronics"
         ],
-        "pourcentages": {
+        "coefficients": {
           "Introduction to Control Theory": 60,
           "Power Electronics": 40
         }
       },
-      "Systtems Engineering 6": {
-        "matieres": [
+      "Systems Engineering 6": {
+        "subjects": [
           "Quality",
           "Vibrations"
         ],
-        "pourcentages": {
+        "coefficients": {
           "Quality": 40,
           "Vibrations": 60
         }
       },
       "Multidisciplinary Project 6": {
-        "matieres": [
+        "subjects": [
           "Ecodesign Project Part 2 - Environment",
           "Ecodesign Project Part 2 - Technical"
         ],
-        "pourcentages": {
+        "coefficients": {
           "Ecodesign Project Part 2 - Environment": 50,
           "Ecodesign Project Part 2 - Technical": 50
         }
       },
       "Society, Management & Entrepreneurship 6": {
-        "matieres": [
+        "subjects": [
           "Principles of Marketing",
           "Global affairs",
           "Advanced English Skills 6",
           "Professional Project"
         ],
-        "pourcentages": {
+        "coefficients": {
           "Principles of Marketing": 25,
           "Global affairs": 25,
           "Advanced English Skills 6": 35,
@@ -57,12 +65,12 @@
         }
       },
       "Industrial Engineering & Supply Chain Management 6": {
-        "matieres": [
+        "subjects": [
           "Introduction to Supply Chain Management",
           "The Fresh Connection",
           "Industrial Engineering & Project Management"
         ],
-        "pourcentages": {
+        "coefficients": {
           "Introduction to Supply Chain Management": 35,
           "The Fresh Connection": 25,
           "Industrial Engineering & Project Management": 40
@@ -70,85 +78,76 @@
       }
     },
     "5": {
+      "__ues__" : [
+        "Mathematics for Engineers 5",
+        "Mechanical Engineering 5",
+        "Electrical Engineering 5",
+        "Industrial Organisation 5",
+        "Multidisciplinary Project 5",
+        "Society, Management & Entrepreneurship 5"
+      ],
       "Mathematics for Engineers 5": {
-        "matieres": [
+        "subjects": [
           "Mathematics for Engineers 5",
           "Network & Security"
         ],
-        "pourcentages": {
+        "coefficients": {
           "Mathematics for Engineers 5": 70,
           "Network & Security": 30
         }
       },
       "Mechanical Engineering 5": {
-        "matieres": [
+        "subjects": [
           "Strength of Materials",
           "Materials 2",
           "Introduction to Heat Transfer"
         ],
-        "pourcentages": {
+        "coefficients": {
           "Strength of Materials": 40,
           "Materials 2": 25,
           "Introduction to Heat Transfer": 35
         }
       },
       "Electrical Engineering 5": {
-        "matieres": [
+        "subjects": [
           "Electrical Machines"
         ],
-        "pourcentages": {
+        "coefficients": {
           "Electrical Machines": 100
         }
       },
       "Industrial Organisation 5": {
-        "matieres": [
+        "subjects": [
           "Industrial Methods",
           "Industrial Organisation"
         ],
-        "pourcentages": {
+        "coefficients": {
           "Industrial Methods": 30,
           "Industrial Organisation": 70
         }
       },
       "Multidisciplinary Project 5": {
-        "matieres": [
+        "subjects": [
           "Ecodesign Project Part 1 - Environment",
           "Ecodesign Project Part 1 - Technical"
         ],
-        "pourcentages": {
+        "coefficients": {
           "Ecodesign Project Part 1 - Environment": 50,
           "Ecodesign Project Part 1 - Technical": 50
         }
       },
       "Society, Management & Entrepreneurship 5": {
-        "matieres": [
+        "subjects": [
           "Professional Engineering Project",
           "Engineering Ethics",
           "Advanced English Skills 5: (IELTS Preparation)"
         ],
-        "pourcentages": {
+        "coefficients": {
           "Professional Engineering Project": 15,
           "Engineering Ethics": 35,
           "Advanced English Skills 5: (IELTS Preparation)": 50
         }
       }
-    }
-  },
-  "semestres": {
-    "1": {
-      "ues": {}
-    },
-    "2": {
-      "ues": {}
-    },
-    "3": {
-      "ues": {}
-    },
-    "4": {
-      "ues": {}
-    },
-    "5": {
-      "ues": {}
     }
   }
 }
