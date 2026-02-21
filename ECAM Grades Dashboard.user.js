@@ -852,21 +852,23 @@
             }
 
             /**
-             * Scroll to an element depending on the target element datas passed as argument under the form of an object. 
-             * Priority order defined by parameter `priority`: 
-             * - "first": the method will scroll to the first data matching the conditions, and skip the rest.
-             * - "next": the method will scan 
+             * Scroll to an element depending on the target element datas passed as argument under the form of an object. If using the className method and not the id method, please make sure the elements of class className are in column.
+             * 
+             * Priority order defined by parameter `priority`. Scan through all the given classNames. If no match is found on a className: 
+             * - **"first"**: **moves onto the next one**. The method will scroll to the **first** data matching the conditions, and skip the rest.
+             * - **"last"**:  **skip the rest**. The method will scroll to the **last** data matching the conditions, and skip the rest. If no match is found at all, doesn't scroll.
              * 
              * Behavior changes along with **`highestElemInPageHandleType`**'s value. Scan through all target element datas given, and:
-             * - "none": scroll to the top of the first - *among all others* - elements (who's class name matches the `targetElementDatas`'s property `className`) **SUCH THAT** it's the highest element in the current window view who's center doesn't go out of the screen from the top (respecting the `margin` property of the same `targetElementDatas`)
-             * - "partial"/"partial X%": scroll to the top of the first - *and only the first* - element (who's class name matches the `targetElementDatas`'s property `className`) **IF** its top edge is above the center of the screen **AND** still in the view
-             * - "absolute"/"absolute X%": scroll to the top of the first - *and only the first* - element (who's class name matches the `targetElementDatas`'s property `className`) **IF** its top edge is above the center of the screen
-             * - "force": scroll to the top of the first - *and only the first* - element (who's class name matches the `targetElementDatas`'s property `className`). No condition, just forces the scroll to the top of this element
+             * - **"none"**:                   scroll to the top of the first element - *out of all the others* - (who's class name matches the `targetElementDatas`'s property `className`) **SUCH THAT** it's the highest element in the current window view who's center doesn't go out of the screen from the top (respecting the `margin` property of the same `targetElementDatas`)
+             * - **"toolow"**:                 scroll to the top of the first element - *out of all the others* - (who's class name matches the `targetElementDatas`'s property `className`) **SUCH THAT** it's the highest element in the current window view who's center doesn't go out of the screen from the top (respecting the `margin` property of the same `targetElementDatas`) **IFF** the first - *and only the first, so the highest* - element of same class is above the top of the screen
+             * - **"partial"/"partial X%"**:   scroll to the top of the first - *and only the first*    - element (who's class name matches the `targetElementDatas`'s property `className`) **IF** its top edge is above the center of the screen **AND** still in the view
+             * - **"absolute"/"absolute X%"**: scroll to the top of the first - *and only the first*    - element (who's class name matches the `targetElementDatas`'s property `className`) **IF** its top edge is above the center of the screen
+             * - **"force"**:                  scroll to the top of the first - *and only the first*    - element (who's class name matches the `targetElementDatas`'s property `className`). No condition, just forces the scroll to the top of this element
              * 
              * In any case, the scroll is executed (after the `timeout` property of the same `targetElementDatas`) with respects to the `margin` property of the same `targetElementDatas` (it will be attributed as `marginScrollTop` style property of the element to scroll to)
              * 
              * @returns The element that was scrolled to, or null if no element was scrolled to
-             * @param {String} priority             {@link https://github.com String},  default: "first" — Defines how multiple `targetElementDatas` input are managed. Can be "first", "next" or "strict"
+             * @param {String} priority             {@link https://github.com String},  default: "first" — Defines how multiple `targetElementDatas` input are managed. Can be "first" or "last"
              * @param targetElementDatas Any amount of objects. If ommited, uses a default object. Objects should all have the following properties (if any is omitted, they are given their default value):
              * 
              * **`className?`**                     {@link https://github.com String},  default: ".subject-card" — name of the class to target, if you want to target a category of elements
@@ -881,19 +883,44 @@
              * 
              * **`highestElemInPageHandleType?`**   {@link https://github.com String},  default: "none" —          can be "force", "partial" or "none". Any other value will be considered as "none"
              */
-            scrollToClientHighestElem(priority="first", ...{className= ".subject-card", id="", margin=23, timeout=50, smooth=false, highestElemInPageHandleType="none"}) {
+            scrollToClientHighestElem(priority, ...{className= ".subject-card", id="", margin=23, timeout=50, smooth=false, highestElemInPageHandleType="none"}) {
                 let debugging = true;
-                debugging = false;
+                // debugging = false;
+                if (debugging) {debugger};
 
-                const partialPattern  = /partial( 100%| \d{1,2}%|)/;
-                const absolutePattern = /absolute( 100%| \d{1,2}%|)/;
+                if (!(arguments?.length > 0)) {
+                    let priority = "first";
+                }
+                else {
+                    priority = priority?.toLowerCase()?.trim();
+                }
+                
+                if (!priority?.match(/first|last/i)) {
+                    priority = "first"; if (debugging) {debugger}
+                }
 
+                const partialPattern  = /partial( (100)%| (\d{1,2})%|)/;
+                const absolutePattern = /absolute( (100)%| (\d{1,2})%|)/;
+                const highestElemInPageHandleTypePattern = RegExp("none|toolow|" + partialPattern.source + "|" + absolutePattern.source);
+                
                 this.scrollToThisElem = ""; let targetDataIndex = -1;
 
-                Object.values(arguments.length > 0 ? arguments : [{className:".unclassified-content", id, margin, timeout, smooth, highestElemInPageHandleType: "partial"}, {className, id, margin, timeout, smooth, highestElemInPageHandleType}]).forEach((targetElemData, targetIndex) => {
-                    if (targetDataIndex < 0) { // ensuring the priority to the first element of the first class className found
+                (arguments?.length > 1 
+                    ? Object.values(arguments).splice(1,Object.values(arguments).length) 
+                    : [
+                        {className:".unclassified-content", id, margin, timeout, smooth, highestElemInPageHandleType: "partial"}, 
+                        {className:".ue-card", id, margin, timeout, smooth, highestElemInPageHandleType},
+                        {className, id, margin, timeout, smooth, highestElemInPageHandleType}
+                    ]
+                ).forEach((targetElemData, targetIndex) => {
+                    if (debugging) {debugger}   // Scanning through the target datas objects given, or the default objects if no object is given
 
-                        if ((targetElemData?.highestElemInPageHandleType.toLowerCase() != "force" && !targetElemData?.highestElemInPageHandleType.match(absolutePattern) && !targetElemData?.highestElemInPageHandleType.match(partialPattern) && targetElemData?.highestElemInPageHandleType.toLowerCase() != "none") || !targetElemData?.highestElemInPageHandleType) {
+                    if ((targetDataIndex < 0 && (priority.toLowerCase()||"first") == "first") || (targetDataIndex == targetIndex-1 && priority.toLowerCase()=="last")) { // ensuring the priority to the first element of the first class className found
+                        
+                        if (debugging) {debugger}   // Element: not found yet if priority = first, previous was found if priority = "last"
+
+                        targetElemData.highestElemInPageHandleType = targetElemData?.highestElemInPageHandleType?.toLowerCase()?.trim();
+                        if (targetElemData?.highestElemInPageHandleType?.match(highestElemInPageHandleTypePattern)) {
                             targetElemData.highestElemInPageHandleType = "none"; if(debugging) {debugger};
                         }
 
@@ -907,54 +934,81 @@
                             // if highestElemTopCoord < margin, then it means that the top of the highest element of class className has passed the top of the screen
 
 
-                            if(debugging) {debugger};
-                            if (
-                                targetElemData?.highestElemInPageHandleType.toLowerCase() == "force" 
-                                || (
+                            if(debugging) {debugger};       // We check for classNames
+                            
+                            if ( 
+                                //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                                targetElemData?.highestElemInPageHandleType?.toLowerCase() == "force" 
+                                || 
+                                (
                                     targetElemData?.highestElemInPageHandleType?.match(partialPattern) 
-                                    && highestElemTopCoord < (window.innerHeight*targetElemData?.highestElemInPageHandleType?.match(partialPattern)?.[1] || 0.5) 
-                                    && highestElemTopCoord >= (targetElemData?.margin || margin)
+                                    && 
+                                    highestElemTopCoord < window.innerHeight* (targetElemData?.highestElemInPageHandleType?.match(partialPattern)?.[2] || 0.5) 
+                                    && 
+                                    highestElemTopCoord >= (targetElemData?.margin || margin)
                                 )
-                                || (
+                                || 
+                                (
                                     targetElemData?.highestElemInPageHandleType?.match(absolutePattern) 
-                                    && highestElemTopCoord < (window.innerHeight*targetElemData?.highestElemInPageHandleType?.match(absolutePattern)[1] || 0.5)
+                                    && 
+                                    highestElemTopCoord < window.innerHeight* (targetElemData?.highestElemInPageHandleType?.match(absolutePattern)?.[2] || 0.5)
                                 )
+                                //////////////////////////////////////////////////////////////////////////////////////////////////////
                             ) { 
+
                                 this.scrollToThisElem = highestElem.id;
                                 targetDataIndex = targetIndex;
-                                if(debugging) {debugger};
+                                if(debugging) {debugger};   // The highest element of class className fits the conditions of its handle type!
+
                             }
                             else if (
-                                targetElemData?.highestElemInPageHandleType.toLowerCase() == "none"
-                                || (
+                                //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                                targetElemData?.highestElemInPageHandleType?.toLowerCase() == "none"
+                                || 
+                                (
                                     targetElemData?.highestElemInPageHandleType?.match(absolutePattern) 
-                                    && highestElemTopCoord >= (window.innerHeight*targetElemData?.highestElemInPageHandleType?.match(absolutePattern)[1] || 0.5)
+                                    && 
+                                    highestElemTopCoord >= (window.innerHeight*targetElemData?.highestElemInPageHandleType?.match(absolutePattern)?.[2] || 0.5)
                                 )
+                                //////////////////////////////////////////////////////////////////////////////////////////////////////
                             ) {
 
                                 document.querySelectorAll(targetElemData?.className || className).forEach(elem => {
                                     const coords = elem.getBoundingClientRect();
                                     const meanClientTop = (coords.top + coords.bottom)/2;
 
-                                    if ((meanClientTop >= 0) && targetDataIndex < 0) {    // ensuring the priority to the first element of the first class className found
+                                    if (
+                                        //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                                        meanClientTop >= 0 
+                                        && 
+                                        (
+                                            (targetDataIndex < 0 && (priority.toLowerCase()||"first") == "first") 
+                                            || 
+                                            (targetDataIndex == targetIndex-1 && priority.toLowerCase()=="last")
+                                        )
+                                        //////////////////////////////////////////////////////////////////////////////////////////////////////
+                                    ) {    // ensuring the priority to the first element of the first class className found
+
                                         this.scrollToThisElem = elem.id;
                                         targetDataIndex = targetIndex;
-                                        if(debugging) {debugger};
+                                        if(debugging) {debugger};   // An element of class className that fits its handle type was found!
+                                                    
                                     }
                                 })
+                                
                             }
                         }
                         else {
                             this.scrollToThisElem = targetElemData?.id || id;
                             targetDataIndex = targetIndex;
-                            if(debugging) {debugger};
+                            if(debugging) {debugger};  // Using the id provided to target
                         }
                     }
                 })
 
-                if (targetDataIndex >= 0 || arguments.length == 0) {
-                    const targetElemData = arguments.length > 0 ? arguments[targetDataIndex] : {className, id, margin, timeout, smooth, highestElemInPageHandleType};
-                    if(debugging) {debugger};
+                if (targetDataIndex >= 0 || arguments?.length == 0) {
+                    const targetElemData = arguments?.length > 0 ? arguments[targetDataIndex] : {className, id, margin, timeout, smooth, highestElemInPageHandleType};
+                    if(debugging) {debugger};   // Now scrolling!
 
                     setTimeout(() => {
                         const scrollToThisElem = document.getElementById(this.scrollToThisElem) || document.querySelector(this.scrollToThisElem); 
@@ -4260,10 +4314,10 @@
                                 document.getElementById('en-lang-btn').classList.add('active')
                             }
 
-                            this.scrollToClientHighestElem(
-                                {className: ".unclassified-section",    margin: 10, highestElemInPageHandleType:"partial"},
+                            this.scrollToClientHighestElem("first",
                                 {className: ".ue-card",                 margin: 23, highestElemInPageHandleType:"none"},
-                                {className: ".subject-card",            margin: 10, highestElemInPageHandleType:"none"}
+                                {className: ".subject-card",            margin: 10, highestElemInPageHandleType:"none"},
+                                {className: ".unclassified-section",    margin: 10, highestElemInPageHandleType:"partial"}
                             );
                             this.renderContent(false);
                             
