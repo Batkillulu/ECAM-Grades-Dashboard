@@ -25,26 +25,37 @@
 
     //#region -======= STYLES CSS =======
 
-
+        let styles = ``;
 
 
         // MARK: -DASHBOARD
-        let styles = `
+        styles += `
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
             * { box-sizing: border-box; }
-            .ecam-dash          { display: grid; flex-direction: column; justify-content:center; grid-template-columns: 100%; font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; margin: 20px 1.5% 0px 1.5%; width: 97%; color: #1a1a1a; }
+            .ecam-dash { 
+                display: grid; 
+                flex-direction: column; 
+                justify-content:center; 
+                width: 97%; 
+                grid-template-columns: 100%; 
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; 
+                margin: 20px 1.5% 0px 1.5%; 
+                color: #1a1a1a; 
+            }
+
             .dash-header { background: linear-gradient(135deg, #5b62bf 0%, #2A2F72 100%); color: white; padding: 30px 40px; border-radius: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 3px 5px 5px 0px #00000042; }
             .dash-title { font-size: 24px; font-weight: 700; margin: 0; }
             .dash-subtitle { font-size: 14px; opacity: 0.95; margin-top: 5px; }
+        `;
+        
+        
+        // MARK: buttons
+        styles += `
             .lang-btn           { border: 2px solid #000000ff; background: #6f79ff; border-radius: 18px; width: 36px; height: 36px; }
             .lang-btn.active    { border: 2px solid #ceefffff; }
             .lang-btn:hover     { border: 2px solid #afe4ffff; background: #a6acff; }
+
             .header-actions         { display: flex; gap: 12px; }
-        `;
-
-
-        // MARK: buttons
-        styles += `
             .btn                                { display: flex; justify-content: center; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-size: 14px; }
             .btn-edit-mode:hover:not(:disabled) { transform: scale(0.95); background: linear-gradient(135deg, #7d92eeff 0%, #8e5ebeff 100%); }
             .btn-edit-mode                      { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: grid; width: 126px; height: 108px; transition: all 0.2s ease }
@@ -167,58 +178,55 @@
 
 
 
-            .drop-field.insert-area.ue                      { justify-content: flex-start; height: 0px; width: 100%; color: #9b9b9b00; border: 2px dashed #9b9b9b00; background: #bdb8ff00; font-size: 25px; font-weight: 800; user-select: none; margin: -6px 0px; cursor: pointer; transition: all 0.2s ease; }
+            .drop-field.insert-area.ue                      { justify-content: flex-start; height: 0px; width: 100%; color: #9b9b9b00; border: 2px dashed #9b9b9b00; background: #bdb8ff00; font-size: 25px; font-weight: 800; user-select: none; margin: -6px 0px; transition: all 0.2s ease; }
             .drop-field.insert-area.ue.show                 { color: #9b9b9bff; border-color: #9b9b9bff; background: #bdb8ff3d; height: 50px; margin: 0px; }
             .drop-field.insert-area.ue.show.hover           { color: #887bffff; border-color: #7fc2ffff; background: #bdb8ff3d; }
 
-            .drop-field.insert-area.subject                 { justify-content: flex-start; height: 0px; width: 100%; color: #9b9b9b00; border: 2px dashed #9b9b9b00; background: #bdb8ff00; font-size: 25px; font-weight: 800; user-select: none; margin: -6px 0px; cursor: pointer; transition: all 0.2s ease; }
+            .drop-field.insert-area.subject                 { justify-content: flex-start; height: 0px; width: 100%; color: #9b9b9b00; border: 2px dashed #9b9b9b00; background: #bdb8ff00; font-size: 25px; font-weight: 800; user-select: none; margin: -6px 0px; transition: all 0.2s ease; }
             .drop-field.insert-area.subject.show            { color: #9b9b9bff; border-color: #9b9b9b54; background: #bdb8ff1a; height: 30px; margin: 0px; }
             .drop-field.insert-area.subject.show.hover      { color: #887bffff; border-color: #7fc2ff; }
             
-            .drop-ue-card-insert-content                        { position: relative; display: flex; align-items: center; width: 100%; height: 50px; overflow: clip; top:-2px; }
+            .drop-ue-card-insert-content                        { position: relative; display: flex; justify-content: center; align-items: center; width: 100%; height: 50px; overflow: clip; top:-2px; }
             .drop-ue-card-insert-content.plus                   {  }
             .drop-ue-card-insert-content.arrow                  { top: -52px; }
             .drop-ue-card-insert-content.text                   { overflow: visible; top: -102px }
+            .drop-ue-card-insert-content.text.add               { justify-content: center; }
+            .drop-ue-card-insert-content.text.insert            { justify-content: flex-start; }
 
-            .drop-ue-card-insert-arrow                          { transform: translate(6%, 5px); font-size: 500px; display: flex; align-items: flex-start; justify-content: center; height: 50px; width: 100%; background: transparent; opacity: 0;                         transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+            .drop-ue-card-insert-arrow                          { transform: translate(70px,  5px); font-size: 500px; display: flex; align-items: flex-start; justify-content: center; height: 50px; width: 100%; background: transparent; opacity: 0;                         transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
             .drop-ue-card-insert-arrow.show                     { opacity: 1; }
-            .drop-ue-card-insert-arrow.show.hover               { transform: translate(14%, 5px); }
+            .drop-ue-card-insert-arrow.show.hover               { transform: translate(170px, 5px); }
 
-            .drop-ue-card-insert-plus                           { transform: translate(0%, 14px) rotate(0deg);  font-size: 50px ;  position: relative; left: 0px; display: flex; justify-content: center; height: 50px; width: 100%; background: transparent; opacity: 0;   transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+            .drop-ue-card-insert-plus                           { transform: translate(  0px, 14px) rotate(  0deg); font-size: 50px ;  position: relative; left: 0px; display: flex; justify-content: center; height: 50px; width: 100%; background: transparent; opacity: 0;   transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
             .drop-ue-card-insert-plus.show                      { opacity: 1; }
-            .drop-ue-card-insert-plus.show.hover                { transform: translate(9%, 50%) rotate(180deg); font-size: 280px; }
+            .drop-ue-card-insert-plus.show.hover                { transform: translate(130px, 30px) rotate(180deg); font-size: 280px; }
 
             .drop-ue-card-insert-text                           { display: flex; justify-content: flex-start; align-items: center; position: relative; overflow-x: clip; text-wrap: nowrap; width: 0px; height: 50px; background: transparent;                              transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
 
-            .drop-ue-card-insert-text.fr { 
-                --x-translation-add:    39%; 
-                --x-translation-arrow:  15%; 
-            }
-            .drop-ue-card-insert-text.fr.add::before            { content: "Ajouter un module ici"; }
-            .drop-ue-card-insert-text.fr.add                    { width: 000px; left: calc(var(--x-translation-add) - 50px); }
-            .drop-ue-card-insert-text.fr.add.hover              { width: 262px; left: calc(var(--x-translation-add) - 00px); }
-            .drop-ue-card-insert-text.fr.insert::before         { content: "Insérer vers un nouveau module ici"; }
-            .drop-ue-card-insert-text.fr.insert                 { width: 000px; left: calc(var(--x-translation-arrow) - 50px); }
-            .drop-ue-card-insert-text.fr.insert.hover           { width: 431px; left: calc(var(--x-translation-arrow) - 00px); }
+            .drop-ue-card-insert-text.add.fr                { --width: 263px; --x-translation: calc(0.5*var(--width) - 20px); }
+            .drop-ue-card-insert-text.add.en                { --width: 230px; --x-translation: calc(0.5*var(--width) - 20px); }
+            .drop-ue-card-insert-text.insert.fr             { --width: 430px; --x-translation:  50px; }
+            .drop-ue-card-insert-text.insert.en             { --width: 340px; --x-translation:  50px; }
 
-            .drop-ue-card-insert-text.en { 
-                --x-translation-add:    41%; 
-                --x-translation-arrow:  23%; 
-            }
-            .drop-ue-card-insert-text.en.add::before            { content: "Add a module here";}
-            .drop-ue-card-insert-text.en.add                    { width: 000px; left: calc(var(--x-translation-add) - 50px); }
-            .drop-ue-card-insert-text.en.add.hover              { width: 230px; left: calc(var(--x-translation-add) - 00px); }
-            .drop-ue-card-insert-text.en.insert::before         { content: "Insert to a new module here"; }
-            .drop-ue-card-insert-text.en.insert                 { width: 000px; left: calc(var(--x-translation-arrow) - 50px); }
-            .drop-ue-card-insert-text.en.insert.hover           { width: 340px; left: calc(var(--x-translation-arrow) - 00px); }
+            .drop-ue-card-insert-text.add.fr::before            { content: "Ajouter un module ici";}
+            .drop-ue-card-insert-text.add.en::before            { content: "Add a module here";}
+            .drop-ue-card-insert-text.add                       { width: 0px; right: 0px; }
+            .drop-ue-card-insert-text.add.hover                 { width: var(--width); right: var(--x-translation); }
+            
+            .drop-ue-card-insert-text.insert.fr::before         { content: "Insérer vers un nouveau module ici"; }
+            .drop-ue-card-insert-text.insert.en::before         { content: "Insert to a new module here"; }
+            .drop-ue-card-insert-text.insert                    { width: 0px; right: calc(var(--x-translation) + var(--width) - 50%); }
+            .drop-ue-card-insert-text.insert.hover              { width: var(--width); right: calc(var(--width) - 50%); }
 
-            .drop-ue-card-insert-hitbox                         { display: flex; position: relative; top: -152px; width: calc(100% - -4px); min-height: 50px; border-radius: 20px; cursor: pointer; }
+            .drop-ue-card-insert-hitbox                     { display: flex; position: relative; top: -152px; width: calc(100% - -4px); min-height: 50px; border-radius: 20px; cursor: pointer; }
             
 
             .drop-subject-card-insert-content                   { position: relative; display: flex; align-items: center; width: 100%; height: 30px; overflow: clip; top:-2px; }
             .drop-subject-card-insert-content.plus              {  }
             .drop-subject-card-insert-content.arrow             { top: -32px; }
             .drop-subject-card-insert-content.text              { overflow: visible; top: -62px }
+            .drop-subject-card-insert-content.text.add          { justify-content: center; }
+            .drop-subject-card-insert-content.text.insert       { justify-content: flex-start; }
             
             .drop-subject-card-insert-arrow                     { transform: translate(0%, 0px); font-size: 280px; display: flex; align-items: flex-start; justify-content: center; height: 30px; width: 100%; background: transparent; opacity: 0;                        transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
             .drop-subject-card-insert-arrow.show                { opacity: 1; }
@@ -228,31 +236,24 @@
             .drop-subject-card-insert-plus.show                 { opacity: 1; }
             .drop-subject-card-insert-plus.show.hover           { transform: translate(9%, 80%) rotate(180deg); font-size: 200px; }
 
-            .drop-subject-card-insert-text                      { display: flex; justify-content: flex-start; align-items: center; position: relative; overflow-x: clip; text-wrap: nowrap; width: 0px; height: 30px; background: transparent;                 transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+            .drop-subject-card-insert-text                      { display: flex; justify-content: flex-start; align-items: center; position: relative; overflow-x: clip; text-wrap: nowrap; width: 0px; height: 50px; background: transparent;                              transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+
+            .drop-subject-card-insert-text.add.fr           { --width: 280px; --x-translation: calc(0.5*var(--width) - 20px); }
+            .drop-subject-card-insert-text.add.en           { --width: 230px; --x-translation: calc(0.5*var(--width) - 20px); }
+            .drop-subject-card-insert-text.insert.fr        { --width: 123px; --x-translation:  50px; }
+            .drop-subject-card-insert-text.insert.en        { --width: 135px; --x-translation:  50px; }
+
+            .drop-subject-card-insert-text.add.fr::before       { content: "Ajouter une matière ici";}
+            .drop-subject-card-insert-text.add.en::before       { content: "Add a subject here";}
+            .drop-subject-card-insert-text.add                  { width: 0px; right: 0px; }
+            .drop-subject-card-insert-text.add.hover            { width: var(--width); right: var(--x-translation); }
             
-            .drop-subject-card-insert-text.fr { 
-                --x-translation-add:    37.5%; 
-                --x-translation-arrow:  40.0%; 
-            }
-            .drop-subject-card-insert-text.fr.add::before       { content: "Ajouter une matière ici"; }
-            .drop-subject-card-insert-text.fr.add               { width: 000px; left: calc(var(--x-translation-add) - 50px); }
-            .drop-subject-card-insert-text.fr.add.hover         { width: 279px; left: calc(var(--x-translation-add) - 00px); }
-            .drop-subject-card-insert-text.fr.insert::before    { content: "Insérer ici"; }
-            .drop-subject-card-insert-text.fr.insert            { width: 000px; left: calc(var(--x-translation-arrow) - 50px); }
-            .drop-subject-card-insert-text.fr.insert.hover      { width: 123px; left: calc(var(--x-translation-arrow) - 00px); }
+            .drop-subject-card-insert-text.insert.fr::before    { content: "Insérer ici"; }
+            .drop-subject-card-insert-text.insert.en::before    { content: "Insert here"; }
+            .drop-subject-card-insert-text.insert               { width: 0px; right: calc(var(--x-translation) + var(--width) - 50%); }
+            .drop-subject-card-insert-text.insert.hover         { width: var(--width); right: calc(var(--width) - 50%); }
 
-            .drop-subject-card-insert-text.en { 
-                --x-translation-add:    40.5%; 
-                --x-translation-arrow:  39.0%; 
-            }
-            .drop-subject-card-insert-text.en.add::before       { content: "Add a subject here"; }
-            .drop-subject-card-insert-text.en.add               { width: 000px; left: calc(var(--x-translation-add) - 50px); }
-            .drop-subject-card-insert-text.en.add.hover         { width: 300px; left: calc(var(--x-translation-add) - 00px); }
-            .drop-subject-card-insert-text.en.insert::before    { content: "Insert here"; }
-            .drop-subject-card-insert-text.en.insert            { width: 000px; left: calc(var(--x-translation-arrow) - 50px); }
-            .drop-subject-card-insert-text.en.insert.hover      { width: 135px; left: calc(var(--x-translation-arrow) - 00px); }
-
-            .drop-subject-card-insert-hitbox                    { display: flex; position: relative; top: -92px; width: calc(100% - -4px); min-height: 30px; border-radius: 20px; cursor: pointer; }
+            .drop-subject-card-insert-hitbox                { display: flex; position: relative; top: -92px; width: calc(100% - -4px); min-height: 30px; border-radius: 20px; cursor: pointer; }
             
         `;
             
@@ -761,8 +762,15 @@
              * **`highestElemInPageHandleType?`**   {@link https://github.com String},  default: "none" —          can be "force", "absolute", "absolute X%", "partial", "partial X%", "above", "above X%" or "none" (with X being an int between 0 and 100). Any other value will be considered as "none"
              */
             scrollToClientHighestElem(priority, ...{className= ".subject-card", id="", margin=23, timeout=50, smooth=false, highestElemInPageHandleType="none"}) {
+                const defaultTargetElementDatas = [
+                    {className: ".modules-section", margin: 23, highestElemInPageHandleType:"partial"},
+                    {className: ".ue-card",         margin: 23, highestElemInPageHandleType:"above"},
+                    {className: ".subject-card",    margin: 10, highestElemInPageHandleType:"above"}
+                ];
+
                 let debugging = true;
-                // debugging = false;
+                debugging = false;
+
                 if (debugging) {debugger /* Starting to execute scrollToClientHighestElem() */};
 
                 if (!(arguments?.length > 0)) {
@@ -785,11 +793,7 @@
 
                 (arguments?.length > 1 
                     ? Object.values(arguments).splice(1,Object.values(arguments).length) 
-                    : [
-                        {className:".unclassified-content", id, margin, timeout, smooth, highestElemInPageHandleType: "partial"}, 
-                        {className:".ue-card", id, margin, timeout, smooth, highestElemInPageHandleType},
-                        {className, id, margin, timeout, smooth, highestElemInPageHandleType}
-                    ]
+                    : defaultTargetElementDatas
                 ).forEach((targetElemData, targetIndex) => {
                     if (debugging) {debugger /* Scanning through the target datas objects given, or the default objects if no object is given */}
 
@@ -862,7 +866,7 @@
                                         targetElemData?.highestElemInPageHandleType?.match(abovePattern)
                                         && /* Is the top coordinate of the highest element of class className: */
                                         /* Below the top of the screen, taking into account the margin? */
-                                        highestElemTopCoord >= (targetElemData?.margin || margin)
+                                        highestElemTopCoord >= window.innerHeight* (targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[2] || 0.5)
                                     )
                                 )//////////////////////////////////////////////////////////////////////////////////////////////////////
                             ) {
@@ -895,7 +899,7 @@
                                                 || 
                                                 ( /* Above case */
                                                     targetElemData?.highestElemInPageHandleType?.match(abovePattern)
-                                                    && elemCoordsClient.top >= window.clientHeight* (targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[2] || 0.5)
+                                                    && elemCoordsClient.top < window.clientHeight* (targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[2] || 0.5)
                                                 )
                                             )
                                         )//////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -918,16 +922,16 @@
                 })
 
                 if (targetDataIndex >= 0 || arguments?.length == 0) {
-                    const targetElemData = arguments?.length > 0 ? arguments[targetDataIndex+1] : {className, id, margin, timeout, smooth, highestElemInPageHandleType};
+                    const targetElemData = arguments?.length > 0 ? arguments[targetDataIndex+1] : defaultTargetElementDatas[targetDataIndex];
                     if(debugging) {debugger /* Now scrolling! */};
 
                     setTimeout(() => {
-                        const scrollToThisElem = document.getElementById(this.scrollToThisElem) || document.querySelector(this.scrollToThisElem); 
+                        const scrollToThisElem = document.getElementById(this.scrollToThisElem) || document.querySelector(targetElemData.className); 
                         scrollToThisElem.style.scrollMarginTop = `${document.body.classList.contains("lfr-dockbar-pinned") ? (targetElemData?.margin || margin)+45 : (targetElemData?.margin || margin)}px`;
                         scrollToThisElem.scrollIntoView({behavior: (targetElemData?.smooth || smooth) ? "smooth" : "instant", block: "start"});
                         this.scrollToThisElem = "";
                     }, (targetElemData?.timeout || timeout))
-                    return document.getElementById(this.scrollToThisElem) || document.querySelector(this.scrollToThisElem)
+                    return document.getElementById(this.scrollToThisElem) || document.querySelector(targetElemData.className)
                 }
 
                 return null
@@ -1728,7 +1732,7 @@
                     <div class="semester-content show${this.selectedSubjectCards.length > 0 ? " dragging" : ""}${fadeIn ? " fade-in" : ""}" id="sem-content-${sem}">
                         <div class="drop-field remove-from-ue${this.selectedSubjectCards.length > 0 ? " show" : ""}">-</div>
                         <div class="semester-grid" ${(unclassified.length == 0 || !this.ueConfig[sem] || Object.keys(this.ueConfig?.[sem])[0] == undefined) ? `style="gap: ${this.editMode ? `20px` : `0px`}"` : ``}>
-                            <div class="modules-section">
+                            <div class="modules-section" id="modules-section">
                                 ${this.createAllUECards(sem)}
                             </div>
                             <div class="unclassified-section" id="unclassified-section" style="height: 100%${unclassified.length > 0 ? `` : `; display: none`}">
@@ -2459,12 +2463,16 @@
                     const dragIcon = subjectCard.querySelector(".drag-icon");
                     this.dragIconOnClickEvent(subjectCard, dragIcon, true); // Trigger the dragIcon onClick event to simulate the default drag icon being clicked
                 })
-                document.querySelectorAll(".drag-icon").forEach(dragIcon => {
-                    dragIcon.onclick = (e) => { this.dragIconOnClickEvent(e, dragIcon) };
-                });
-                document.querySelectorAll(".tick-icon").forEach(tick => {
-                    tick.onclick = (e) => { this.tickIconOnClickEvent(e, tick) };
-                });
+                document.querySelectorAll(".subject-card").forEach(subjCard => {
+                    if (subjCard.querySelector(".drag-icon")) {
+                        const dragIcon = subjCard.querySelector(".drag-icon");
+                        dragIcon.onclick = (e) => { this.dragIconOnClickEvent(e, dragIcon) };
+                    }
+                    else if (subjCard.querySelector(".tick-icon")) {
+                        const tick = subjCard.querySelector(".tick-icon");
+                        tick.onclick = (e) => { this.tickIconOnClickEvent(e, tick) };
+                    }
+                })
 
 
                 // Attach listeners for every input of class ".any-input"
@@ -2820,6 +2828,7 @@
                 document.body.onmousemove = (e) => {
                     e.preventDefault();
                     document.body.onmouseup = null;
+                    document.body.onmousemove = null;
                     this.attachEventListeners();
                 };
                 document.body.onmouseup = (e) => {
@@ -2841,6 +2850,9 @@
                         this.attachCheckboxListeners(ueContent);
                         this.setGradesTableTotalCoef()
                     }
+
+                    document.body.onmousemove = null;
+                    document.body.onmouseup = null;
                 }
             }
             
@@ -2921,6 +2933,7 @@
                 const insertAreaTexts = document.querySelectorAll(".drop-ue-card-insert-text,  .drop-subject-card-insert-text");
                 insertAreaTexts.forEach(insertAreaText => {
                     insertAreaText.classList.replace("add", "insert");
+                    insertAreaText.parentElement.classList.replace("add", "insert");
                 })
 
                 if (!subjectCard.classList.contains("unclassified")) {
@@ -2981,6 +2994,7 @@
                     const insertAreaTexts = document.querySelectorAll(".drop-ue-card-insert-text,  .drop-subject-card-insert-text");
                     insertAreaTexts.forEach(insertAreaText => {
                         insertAreaText.classList.replace("insert", "add");
+                        insertAreaText.parentElement.classList.replace("insert", "add");
                     })
                 }
                 
@@ -3437,11 +3451,13 @@
                         subjInsertArea.querySelector(".drop-ue-card-insert-plus , .drop-subject-card-insert-plus ").classList.add("show");
                         subjInsertArea.querySelector(".drop-ue-card-insert-arrow, .drop-subject-card-insert-arrow").classList.remove("show");
                         subjInsertArea.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").classList.replace("insert", "add");
+                        subjInsertArea.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").parentElement.classList.replace("insert", "add");
                     }
                     else {
                         subjInsertArea.querySelector(".drop-ue-card-insert-plus , .drop-subject-card-insert-plus ").classList.remove("show");
                         subjInsertArea.querySelector(".drop-ue-card-insert-arrow, .drop-subject-card-insert-arrow").classList.add("show");
                         subjInsertArea.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").classList.replace("add", "insert");
+                        subjInsertArea.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").parentElement.classList.replace("add", "insert");
                     }
                 });
             }
@@ -3491,11 +3507,13 @@
                             subjInsertArea.querySelector(".drop-ue-card-insert-plus , .drop-subject-card-insert-plus ").classList.add("show");
                             subjInsertArea.querySelector(".drop-ue-card-insert-arrow, .drop-subject-card-insert-arrow").classList.remove("show");
                             subjInsertArea.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").classList.replace("insert", "add");
+                            subjInsertArea.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").parentElement.classList.replace("insert", "add");
                         }
                         else {
                             subjInsertArea.querySelector(".drop-ue-card-insert-plus , .drop-subject-card-insert-plus ").classList.remove("show");
                             subjInsertArea.querySelector(".drop-ue-card-insert-arrow, .drop-subject-card-insert-arrow").classList.add("show");
                             subjInsertArea.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").classList.replace("add", "insert");
+                            subjInsertArea.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").parentElement.classList.replace("add", "insert");
                         }
                     });
                 }
@@ -3951,8 +3969,8 @@
                             <div class="drop-${type}-card-insert-content arrow">
                                 <div class="drop-${type}-card-insert-arrow${thereIsSelection ?  " show" : ""}">→</div>
                             </div>
-                            <div class="drop-${type}-card-insert-content text" data-type="${type}">
-                                <div class="drop-${type}-card-insert-text ${this.lang} ${thereIsSelection ? "insert" : "add"}"></div>
+                            <div class="drop-${type}-card-insert-content text ${thereIsSelection ? "insert" : "add"}" data-type="${type}">
+                                <div class="drop-${type}-card-insert-text ${thereIsSelection ? "insert" : "add"} ${this.lang}"></div>
                             </div>
                             <div class="drop-${type}-card-insert-hitbox" data-type="${type}" data-index="${index}"></div>
                         </div>`
@@ -4183,9 +4201,9 @@
                             }
 
                             this.scrollToClientHighestElem("first",
-                                {className: ".modules-section",         margin: 23, highestElemInPageHandleType:"partial"},
-                                {className: ".ue-card",                 margin: 23, highestElemInPageHandleType:"above"},
-                                {className: ".subject-card",            margin: 10, highestElemInPageHandleType:"above"},
+                                {className: ".modules-section", margin: 23, highestElemInPageHandleType:"partial"},
+                                {className: ".ue-card",         margin: 23, highestElemInPageHandleType:"above"},
+                                {className: ".subject-card",    margin: 10, highestElemInPageHandleType:"above"},
                             );
                             this.renderContent(false);
                             
