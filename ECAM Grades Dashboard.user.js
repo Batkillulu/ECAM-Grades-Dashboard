@@ -470,7 +470,7 @@
 
             this.lang =                         localStorage.getItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE") || "en";
             this.tempSelection = {};
-            this.draggedMatId = "";
+            this.draggedSubjId = "";
             this.today = new Date().toISOString().split('T')[0];
             this.editMode = true;
 
@@ -802,8 +802,8 @@
             }
             calculateUEGrades(sem, ueName){
                 const grades = [];
-                const allMats = this.getAllSubjectsForUE(sem, ueName);
-                allMats.forEach(subject=>{
+                const allSubjs = this.getAllSubjectsForUE(sem, ueName);
+                allSubjs.forEach(subject=>{
                     const pct =         this.ueConfig?.[sem]?.[ueName]?.coefficients?.[subject] || 0;
                     const realGrades =  this.semesters?.[sem]?.[subject] || [];
                     const simGrades  =  this.getSimGrades(sem, ueName, subject).map(n=>({ ...n, __sim:true }));
@@ -820,16 +820,16 @@
                 });
                 return grades;
             }
-            getGradeColor(grade) { if (grade >= 10) return 'good'; /* if (grade >= 10) return 'medium'; */ return 'bad'; }
+            getGradeColor(grade) { if (grade >= 10) return 'good'; return 'bad'; }
             getAverageColor(avg) { if (avg >= 12) return 'average-good'; if (avg >= 10) return 'average-medium'; return 'average-bad'; }
             gradeIsDisabled(n) {
-                return this.ignoredGrades.indexOf([n.semester, n.subject, n.type+" "+n.date+" "+n.prof].join("\\")) > -1
+                return this.ignoredGrades?.includes([n.semester, n.subject, (n?.id || n.type + " " + n.date + " " + n.prof)].join("\\"))
             }
             moyennePonderee(arr) {
                 if (!arr || arr.length === 0) return 0;
                 let total = 0, coeffs = 0;
                 arr.forEach(n => { 
-                    if (this.ignoredGrades.indexOf([n.semester, n.subject, n.type+" "+n.date+" "+n.prof].join("\\")) == -1) {
+                    if (!this.gradeIsDisabled(n)) {
                         total += n.grade * (n.coef||0); 
                         coeffs += (n.coef||0); 
                     }
@@ -886,14 +886,14 @@
             }
             clearIgnoredGradesForUE(sem, ueName) {
                 // Clear ignored grades only for the specified UE
-                const allMats = this.getAllSubjectsForUE(sem, ueName);
+                const allSubjs = this.getAllSubjectsForUE(sem, ueName);
 
                 // Keep ignored grades that are NOT part of this UE
-                this.ignoredGrades = (this.ignoredGrades || []).filter(ignoredId => {
+                this.ignoredGrades = this.ignoredGrades?.filter(ignoredId => {
                     const parts = ignoredId.split("\\");
                     const semX = parts[0];
                     const subj = parts[1];
-                    return semX !== sem || !allMats.includes(subj);
+                    return semX !== sem || !allSubjs.includes(subj);
                 });
                 this.saveIgnoredGrades();
                 this.getGradesDatas();
@@ -1201,7 +1201,7 @@
                 // FOR EACH SEMESTER
                 (sem && this.ueConfig[sem] ? [sem] : Object.keys(this.semesters)).forEach((semX) => {
                     this.gradesDatas[semX] = {
-                        unclassified: {subjects: {}}
+                        "__#unclassified#__": {subjects: {}}
                     };
                     let semData = this.gradesDatas[semX];
 
@@ -1211,14 +1211,16 @@
                     if (unclassified.length > 0) {
                         (subj && unclassified.includes(subj) ? [subj] : unclassified).forEach(unclassifiedSubjectName => {
 
-                            semData["unclassified"].subjects[unclassifiedSubjectName] = {};
+                            semData["__#unclassified#__"].subjects[unclassifiedSubjectName] = {};
+                            const realGrades = Array(...(this.semesters[semX]||{})[unclassifiedSubjectName])||[];
+                            const simGrades = this.sim?.[semX]?.["__#unclassified#__"]?.[unclassifiedSubjectName] || [];
 
-                            let unclassifiedSubjectData = semData["unclassified"].subjects[unclassifiedSubjectName];
+                            let unclassifiedSubjectData = semData["__#unclassified#__"].subjects[unclassifiedSubjectName];
                             
                             unclassifiedSubjectData.subjName                    = unclassifiedSubjectName;
-                            unclassifiedSubjectData.grades                      = new Array(...(this.semesters[semX]||{})[unclassifiedSubjectName])||[];
+                            unclassifiedSubjectData.grades                      = (realGrades).concat(simGrades);
                             unclassifiedSubjectData.disabledRealGrades          = [];
-                            unclassifiedSubjectData.simGrades                   = this.sim?.[semX]?.["__#unclassified#__"]?.[unclassifiedSubjectName] || [];
+                            unclassifiedSubjectData.simGrades                   = simGrades;
                             unclassifiedSubjectData.disabledSimGrades           = [];
                             unclassifiedSubjectData.average                     = 0;
                             unclassifiedSubjectData.classAvg                    = 0;
@@ -1232,7 +1234,7 @@
 
 
                             // FOR EACH GRADES AND SIM GRADES IN UNCLASSIFIED SUBJECT
-                            (unclassifiedSubjectData.grades.concat(unclassifiedSubjectData.simGrades)).forEach(grade => {
+                            (unclassifiedSubjectData.grades).forEach(grade => {
                                 const gradeValue = parseFloat(grade.grade),
                                     classAvg = parseFloat(grade.classAvg),
                                     coef = parseInt(grade.coef)
@@ -1289,7 +1291,7 @@
                     // FOR EACH UE IN SEMESTER (if any)
                     if (this.ueConfig?.[semX]?.__ues__) {
                         (ue && this.ueConfig?.[sem]?.__ues__.includes(ue) ? [ue] : this.ueConfig[semX].__ues__).forEach((ueName) => {
-                            const allMats = this.getAllSubjectsForUE(semX, ueName);
+                            const allSubjs = this.getAllSubjectsForUE(semX, ueName);
                             const ueGrades = this.calculateUEGrades(semX, ueName);
 
                             semData[ueName] = {};
@@ -1336,7 +1338,7 @@
                             
 
                             // FOR EACH SUBJECT IN UE
-                            (subj && this.ueConfig?.[sem]?.[ue]?.subjects?.includes(subj) ? [subj] : allMats).forEach(subjectName => {
+                            (subj && this.ueConfig?.[sem]?.[ue]?.subjects?.includes(subj) ? [subj] : allSubjs).forEach(subjectName => {
 
                                 let subjectData = ueData.subjects[subjectName];
 
@@ -1859,7 +1861,7 @@
             }
             createUECard(sem, ueName, ueIndex=-1) {
                 const ueGrades = this.calculateUEGrades(sem, ueName);
-                const includedGrades = (ueGrades || []).filter(n => this.ignoredGrades.indexOf([sem, n.subject, n.type+" "+n.date+" "+n.prof].join("\\")) == -1);
+                const includedGrades = (ueGrades || []).filter(n => !this.gradeIsDisabled(n));
                 let weight = 0; includedGrades.forEach(grade => {weight += grade.coef/100})
                 const moyenne = this.gradesDatas[sem][ueName].average;
                 const hasSim =      this.gradesDatas[sem][ueName].simGrades.length > 0 ? true : false;
@@ -1944,14 +1946,15 @@
                 const subjectData =     ueData.subjects[subject];
                 const subjGrades =      subjectData.grades;
                 const ueMoy =           ueData.average;
-                const moyMat =          subjectData.average;
+                const subjAvg =          subjectData.average;
                 const pct =             subjectData.coef;
                 const isCustom =        subjectData.isCustom;
-                const totalSimGrades =  subjectData.simGrades.length;
+                const nbGrades =        subjGrades.length;
+                const nbSimGrades =     subjectData.simGrades.length;
                 
                 let html = `
-                <div class="subject-card ${moyMat == " - " ? `unknown` : `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" ${this.editMode ? `style="user-select: none;"` : ``} id="subject-card-semester-${sem}-subject-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
-                    <div class="subject-card-header ${moyMat == " - " ? `unknown` : `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" ${this.editMode ? `draggable="true"` : ``} style="${this.editMode ? `cursor: grab; ` : `${subjGrades.length > 0 ? `` : `border-radius: 20px; border: none`}`}">
+                <div class="subject-card ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" ${this.editMode ? `style="user-select: none;"` : ``} id="subject-card-semester-${sem}-subject-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
+                    <div class="subject-card-header ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" ${this.editMode ? `draggable="true"` : ``} style="${this.editMode ? `cursor: grab; ` : `${nbGrades > 0 ? `` : `border-radius: 20px; border: none`}`}">
                         <div style="display: flex; width: 42%; padding-left: ${this.editMode ? `10px` : `50px`}">
                             <div style="display: flex; justify-content: flex-start; align-items: center; width: 100%; gap:8px; user-select: text">
                                 ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("detailed-subject-card", {type:"detailed", targetId:`subject-card-semester-${sem}-subject-${subject}`})}</div>` : ""}
@@ -1966,8 +1969,8 @@
                                             : `<span style="font-weight: 800;">${pct}%</span>`}
                                         | 
                                         ${this.lang == "fr" ? "Moyenne" : "Average"}: 
-                                        <span class="subj-moyenne ${moyMat == " - " ? '' : `${moyMat>=10 ? 'good' : 'bad'}`}">${moyMat}/20</span> 
-                                        ${subjGrades.length===0 ? `<span style="margin-left:2px;font-size:12px;color:#6b7280">${this.lang == "fr" ? "(aucune note publiée)" : "(no published grade)"}</span>` : ''}
+                                        <span class="subj-moyenne ${subjAvg == " - " ? '' : `${subjAvg>=10 ? 'good' : 'bad'}`}">${subjAvg}/20</span> 
+                                        ${nbGrades===0 ? `<span style="margin-left:2px;font-size:12px;color:#6b7280">${this.lang == "fr" ? "(aucune note publiée)" : "(no published grade)"}</span>` : ''}
                                     </div>
                                 </div>
                             </div>
@@ -1979,10 +1982,10 @@
                             <div class="grades-table-subject-total-coef-value" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}"></div>
                         </div>
                     </div>
-                    <table class="grades-table ${moyMat == " - " ? `unknown` : `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" style="${this.editMode ? `user-select: text;` : ``}" id="grades-table-${subject}-semester${sem}" data-subject="${subject}">
+                    <table class="grades-table ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" style="${this.editMode ? `user-select: text;` : ``}" id="grades-table-${subject}-semester${sem}" data-subject="${subject}">
 
                         <thead>
-                            ${subjGrades.length > 0 || this.editMode
+                            ${nbGrades > 0 || this.editMode
                                 ? `<tr>
                                     <th class="grades-table-type" style="padding-left: 30px; border-left-width: 0px;">
                                         ${this.lang == "fr" ? "Intitulé" : "Title"}
@@ -2016,23 +2019,23 @@
                     const gradeIsSim = grade.__sim ? true : false;
 
                     html += `
-                            <tr class="grade-row ${index == subjGrades.length-1 ? `last` : ``} ${gradeIsSim ? `sim` : ``}" data-sim="${gradeIsSim}">
+                            <tr class="grade-row ${index == nbGrades-1 ? `last` : ``} ${gradeIsSim ? `sim` : ``}" data-sim="${gradeIsSim}">
                                 <td class="grades-table-type" style="display: flex; align-items: center; gap: 6px; width: auto">
-                                    <input type="checkbox" class="grade-checkbox any-input" id="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}" data-semester="${sem}" data-subj="${subject}" data-uen="${ueName||''}" data-prof="${grade.prof}" data-gradeid="${grade.type} ${grade.date} ${grade.prof}" ${this.ignoredGrades.indexOf([sem, subject, grade.type+" "+grade.date+" "+grade.prof].join("\\")) == -1 ? "checked" : ""}></input>
+                                    <input type="checkbox" class="grade-checkbox any-input" id="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}" data-semester="${sem}" data-subj="${subject}" data-ue="${ueName||''}" data-prof="${grade.prof}" data-gradeid="${grade.type + " " + grade.date + " " + grade.prof}" ${gradeIsSim ? `data-simtimestamp="${grade.id}"` : ""} ${!this.gradeIsDisabled(grade) ? "checked" : ""}></input>
                                     ${gradeIsSim && this.editMode
-                                        ? `<input class="grade-type grade-simulee-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="grade-simulee-input-type-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" data-modifType="type" data-id="${totalSimGrades-1}" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-uen="${ueName||''}" value="${grade.type}"/>` 
+                                        ? `<input class="grade-type grade-simulee-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="grade-simulee-input-type-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" data-modifType="type" data-simid="${nbSimGrades-1}" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-ue="${ueName||''}" value="${grade.type}"/>` 
                                         : `<label class="grade-type" style="width: auto"  id="grade-type-${grade.type}-${grade.date}" for="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}">${grade.type || ''}${gradeIsSim ? ` • ${this.lang == "fr" ? "Simulée" : "Simulated"}` : ''}</label>`
                                     }
                                 </td>
                                 <td class="grade-value grade-${gradeClass} grades-table-grade" data-sim="${gradeIsSim}">
                                     ${gradeIsSim && this.editMode
-                                        ? `<input class="grade-simulee-input-edit sim-inp-grade any-input" style="width: 100%; max-width: 75px;" id="grade-simulee-input-grade-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="number" step="0.5" min="0" max="20" data-id="${totalSimGrades-1}" data-modifType="grade" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-uen="${ueName||''}" style="width:75px; height:25px" value="${grade.grade}"> /20`
+                                        ? `<input class="grade-simulee-input-edit sim-inp-grade any-input" style="width: 100%; max-width: 75px;" id="grade-simulee-input-grade-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="number" step="0.5" min="0" max="20" data-simid="${nbSimGrades-1}" data-modifType="grade" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-ue="${ueName||''}" style="width:75px; height:25px" value="${grade.grade}"> /20`
                                         : `${grade.grade}/20`
                                     }
                                 </td>
                                 <td class="grades-table-coef" data-sim="${gradeIsSim}">
                                     ${gradeIsSim && this.editMode
-                                        ? `<input class="grade-simulee-input-edit sim-inp-coef any-input" style="width: 100%; max-width: 60px;" id="grade-simulee-input-coef-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="number" step="5" min="0" max="100" data-id="${totalSimGrades-1}" data-modifType="coef" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-uen="${ueName||''}" style="width:60px; height:25px"value="${grade.coef}"> %`
+                                        ? `<input class="grade-simulee-input-edit sim-inp-coef any-input" style="width: 100%; max-width: 60px;" id="grade-simulee-input-coef-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="number" step="5" min="0" max="100" data-simid="${nbSimGrades-1}" data-modifType="coef" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-ue="${ueName||''}" style="width:60px; height:25px"value="${grade.coef}"> %`
                                         : `${grade.coef} %`
                                     }
                                 </td>
@@ -2057,7 +2060,7 @@
                                 <td class="grades-table-add-sim-cell" style="${gradeIsSim ? `width: 52px; padding: 3px; text-align: center;` : ``}">
                                     ${
                                         gradeIsSim 
-                                        ? `<button class="sim-del-btn" data-semester="${sem}" data-subj="${subject}" data-uen="${ueName||''}" data-type="${grade.type}">🗑️</button>` 
+                                        ? `<button class="sim-del-btn" data-semester="${sem}" data-subj="${subject}" data-ue="${ueName||''}" data-type="${grade.type}">🗑️</button>` 
                                         : `<div style="width:32px"></div>`
                                     }
                                 </td>
@@ -2083,7 +2086,7 @@
                                 <td colspan="3">
                                 </td>
                                 <td>
-                                    <button class="btn-export sim-add-btn" data-semester="${sem}" data-subj="${subject}" data-uen="${ueName||''}">${this.lang == "fr" ? "Ajouter" : "Add"}</button>
+                                    <button class="btn-export sim-add-btn" data-semester="${sem}" data-subj="${subject}" data-ue="${ueName||''}">${this.lang == "fr" ? "Ajouter" : "Add"}</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -2116,14 +2119,15 @@
                 const subjectData =             ueData.subjects[subject];
                 const subjGrades =              subjectData.grades;
                 const ueMoy =                   ueData.average;
-                const moyMat =                  subjectData.average;
+                const subjAvg =                  subjectData.average;
                 const pct =                     subjectData.coef;
                 const isCustom =                subjectData.isCustom;
-                const includedGradesLength =    subjGrades.length - subjectData.disabledRealGrades.length - subjectData.disabledSimGrades.length;
-                const totalSimGrades =          subjectData.simGrades.length;
+                const nbGrades =                subjGrades.length;
+                const includedGradesLength =    nbGrades - subjectData.disabledRealGrades.length - subjectData.disabledSimGrades.length;
+                const nbSimGrades =          subjectData.simGrades.length;
 
                 const html = `
-                <div class="subject-card compact ${this.editMode ? "" : "edit-mode"} ${moyMat == " - " ? "unknown" : `${moyMat>10 ? `${ueMoy>10 ? `good` : `meh`}` : `bad`}`}" id="subject-card-semester-${sem}-subject-${subject}" style="${this.editMode ? "cursor: grab; user-select: none; " : " "}" ${this.editMode ? `draggable="true"` : ""} data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
+                <div class="subject-card compact ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? "unknown" : `${subjAvg>10 ? `${ueMoy>10 ? `good` : `meh`}` : `bad`}`}" id="subject-card-semester-${sem}-subject-${subject}" style="${this.editMode ? "cursor: grab; user-select: none; " : " "}" ${this.editMode ? `draggable="true"` : ""} data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
                     <div style="display:flex; align-items:center; gap:8px; padding-left: 11px; width:43%; min-width: 275px">
                         ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("compact-subject-card", {type:"compact", targetId:`subject-card-semester-${sem}-subject-${subject}`})}</div>` : ""}
                         <div style="width: 87%">
@@ -2137,15 +2141,15 @@
                                     ? `<input class="subject-coef-input-box any-input" id="subject-coef-input-box-${sem}-${ueName}-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" type="number" placeholder="%" step="5" min="0" max="100" value="${pct}"/>%`
                                     : `<span style="font-weight: 800">${pct}%</span>`
                                 } • 
-                                ${subjGrades.length===0 ? `${this.lang == "fr" ? "aucune note publiée" : "no published grade"}` : `${subjGrades.length} ${this.lang == "fr" ? `note${subjGrades.length>1?"s":""} au total` : `grade${subjGrades.length>1?"s":""} total`}`}
-                                ${subjGrades.length>0 
-                                    ? ` • <span ${includedGradesLength<subjGrades.length ? `style="color: #df0000"` : ``}>
+                                ${nbGrades===0 ? `${this.lang == "fr" ? "aucune note publiée" : "no published grade"}` : `${nbGrades} ${this.lang == "fr" ? `note${nbGrades>1?"s":""} au total` : `grade${nbGrades>1?"s":""} total`}`}
+                                ${nbGrades>0 
+                                    ? ` • <span ${includedGradesLength<nbGrades ? `style="color: #df0000"` : ``}>
                                         <span style="font-weight: 700; ">${includedGradesLength}/${subjGrades.length}</span> 
                                         ${this.lang == "fr" ? `note${includedGradesLength>1?"s":""} activée${includedGradesLength>1?"s":""}` : `grade${includedGradesLength>1?"s":""} enabled`}${includedGradesLength<subjGrades.length ? `!` : ``}
                                     </span>` 
                                     : ``}
-                                ${totalSimGrades>0 
-                                    ? ` • ${totalSimGrades} ${this.lang == "fr" ? `note${totalSimGrades>1?"s":""} simulée${totalSimGrades>1?"s":""}` : `simulated grade${totalSimGrades>1?"s":""}`}`
+                                ${nbSimGrades>0 
+                                    ? ` • ${nbSimGrades} ${this.lang == "fr" ? `note${nbSimGrades>1?"s":""} simulée${nbSimGrades>1?"s":""}` : `simulated grade${nbSimGrades>1?"s":""}`}`
                                     : ``}
                                 
                             </div>
@@ -2157,7 +2161,7 @@
                         </div>
                         <div class="grades-table-subject-total-coef-value" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}"></div>
                     </div>
-                    <div class="subj-moyenne ${moyMat == " - " ? '' : `${moyMat>=10 ? 'good' : 'bad'}`}" style="display: flex; justify-content: flex-end; width: 80px; padding-right: 20px; font-size: 20px">${moyMat}/20</div>
+                    <div class="subj-moyenne ${subjAvg == " - " ? '' : `${subjAvg>=10 ? 'good' : 'bad'}`}" style="display: flex; justify-content: flex-end; width: 80px; padding-right: 20px; font-size: 20px">${subjAvg}/20</div>
                 </div>
                 `;
                 return html;
@@ -2181,31 +2185,33 @@
                 let totalCoef = 0;
                 let totalClassAvg = 0;
                 const ueName = "__#unclassified#__";
-
-                const grades = this.semesters?.[sem]?.[subject] || [];
-                const simGrades = this.sim?.[sem]?.[ueName]?.[subject] || [];
-                const moyMat = this.moyennePonderee(grades);
-                const totalSimGrades =  simGrades.length;
+                const subjData =    this.gradesDatas?.[sem]?.[ueName]?.subjects?.[subject] || {};
+                const grades =          subjData?.grades || [];
+                const simGrades =       subjData?.simGrades || [];
+                const subjAvg =          subjData?.average || " - ";
+                const nbGrades =        grades.length;
+                const nbSimGrades =     simGrades.length;
+                const nbRealGrades =    nbGrades - nbSimGrades;
 
                 html +=`
-                <div class="subject-card unclassified ${moyMat >= 10 ? `good` : `bad`}" id="subject-card-semester-${sem}-subject-${subject}" ${this.editMode ? `style="user-select: none;"` : ""} ${this.editMode ? `draggable="true"` : ""} data-subject="${subject}" data-semester="${sem}">
-                    <div class="subject-card-header unclassified  ${moyMat >= 10 ? `good` : `bad`}" style="${this.editMode ? "cursor: grab; padding-left: 10px;" : "padding-left: 50px;"}" data-semester="${sem}" data-subject="${subject}">
+                <div class="subject-card unclassified ${subjAvg >= 10 ? `good` : `bad`}" id="subject-card-semester-${sem}-subject-${subject}" ${this.editMode ? `style="user-select: none;"` : ""} ${this.editMode ? `draggable="true"` : ""} data-subject="${subject}" data-semester="${sem}">
+                    <div class="subject-card-header unclassified  ${subjAvg >= 10 ? `good` : `bad`}" style="${this.editMode ? "cursor: grab; padding-left: 10px;" : "padding-left: 50px;"}" data-semester="${sem}" data-subject="${subject}">
                         ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("unclassified-subject-card", {type:"unclassified", targetId:`subject-card-semester-${sem}-subject-${subject}`})}</div>` : ""}
                         <div style="width: 40%">
                             ${subject}
-                            <div style="font-size:12px;margin-top:4px;">${this.lang == "fr" ? "Moyenne" : "Average"}: <span class="subj-moyenne ${moyMat>=10 ? 'good' : 'bad'}" >${moyMat}/20</span></div>
+                            <div style="font-size:12px;margin-top:4px;">${this.lang == "fr" ? "Moyenne" : "Average"}: <span class="subj-moyenne ${subjAvg>=10 ? 'good' : 'bad'}" >${subjAvg}/20</span></div>
                         </div>
                         <div class="grades-table-coef" style="display:flex; flex-direction: column; width:58%; gap:4px; padding-left: 10px; font-size: 13px">
                             <div style="text-align: left;">
                                 ${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}
                             </div>
-                            <div class="grades-table-subject-total-coef-value" data-semester="${sem}" data-ue="unclassified" data-subject="${subject}"></div>
+                            <div class="grades-table-subject-total-coef-value" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}"></div>
                         </div>
                     </div>
 
-                    <table class="grades-table ${moyMat >= 10 ? "good" : "bad"}" id="grades-table-${subject}-semester${sem}">
+                    <table class="grades-table ${subjAvg >= 10 ? "good" : "bad"}" id="grades-table-${subject}-semester${sem}">
                         <thead>
-                            ${grades.length > 0 || this.editMode
+                            ${nbGrades > 0 || this.editMode
                                 ? `<tr style="/* border-bottom: 2px solid #d5d5d5; */">
                                     <th class="grades-table-type" style="padding-left: 30px; border-left-width: 0px;">
                                         ${this.lang == "fr" ? "Intitulé" : "Title"}
@@ -2233,42 +2239,31 @@
                         </thead>
                         <tbody>
                 `;
-                grades.concat(simGrades).forEach((grade, index) => {
+                grades.forEach((grade, index) => {
                     totalCoef += grade.coef;
                     totalClassAvg += grade.classAvg;
-
-                    // html += `
-                    //         <tr class="grade-row-unsorted-grades ${index == grades.length-1 ? `last` : ``}">
-                    //             <td class="grades-table-type" style="width: 30%">${grade.type}</td>
-                    //             <td class="grades-table-grade"><span class="grade-value grade-${this.getGradeColor(grade.grade)}">${grade.grade}/20</span></td>
-                    //             <td class="grades-table-coef">${grade.coef}%</td>
-                    //             <td class="grades-table-classAvg">${grade.classAvg}</td>
-                    //             <td class="grades-table-date grade-date">${grade.date}</td>
-                    //             <td class="grades-table-teacher" style="font-size:12px;color:#999;${this.selectedSubjectCards.length > 0 ? " display: none;" : ""}">${grade.prof}</td>
-                    //         </tr>
-                    // `;
 
                     const gradeClass = this.getGradeColor(grade.grade);
                     const gradeIsSim = grade.__sim ? true : false;
 
                     html += `
-                            <tr class="grade-row-unsorted-grades ${index == grades.length-1 ? `last` : ``} ${gradeIsSim ? `sim` : ``}" data-sim="${gradeIsSim}">
+                            <tr class="grade-row-unsorted-grades ${index == nbRealGrades-1 ? `last` : ``} ${gradeIsSim ? `sim` : ``}" data-sim="${gradeIsSim}">
                                 <td class="grades-table-type" style="display: flex; align-items: center; gap: 6px; width: auto">
-                                    <input type="checkbox" class="grade-checkbox any-input" id="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}" data-semester="${sem}" data-subj="${subject}" data-uen="${ueName||''}" data-prof="${grade.prof}" data-gradeid="${grade.type} ${grade.date} ${grade.prof}" ${this.ignoredGrades.indexOf([sem, subject, grade.type+" "+grade.date+" "+grade.prof].join("\\")) == -1 ? "checked" : ""}></input>
+                                    <input type="checkbox" class="grade-checkbox any-input" id="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}-${index-nbRealGrades}" data-semester="${sem}" data-subj="${subject}" data-ue="${ueName||''}" data-prof="${grade.prof}" data-gradeid="${grade.type + " " + grade.date + " " + grade.prof}" ${gradeIsSim ? `data-simtimestamp="${grade.id}"` : ""} ${!this.gradeIsDisabled(grade) ? "checked" : ""}></input>
                                     ${gradeIsSim && this.editMode
-                                        ? `<input class="grade-type grade-simulee-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="grade-simulee-input-type-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" data-modifType="type" data-id="${totalSimGrades-1}" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-uen="${ueName||''}" value="${grade.type}"/>` 
-                                        : `<label class="grade-type" style="width: auto"  id="grade-type-${grade.type}-${grade.date}" for="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}">${grade.type || ''}${gradeIsSim ? ` • ${this.lang == "fr" ? "Simulée" : "Simulated"}` : ''}</label>`
+                                        ? `<input class="grade-type grade-simulee-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="grade-simulee-input-type-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" data-modifType="type" data-simid="${index-nbRealGrades}" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-ue="${ueName||''}" value="${grade.type}"/>` 
+                                        : `<label class="grade-type" style="width: auto"  id="grade-type-${grade.type}-${grade.date}" for="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}-${index-nbRealGrades}">${grade.type || ''}${gradeIsSim ? ` • ${this.lang == "fr" ? "Simulée" : "Simulated"}` : ''}</label>`
                                     }
                                 </td>
                                 <td class="grade-value grade-${gradeClass} grades-table-grade" data-sim="${gradeIsSim}">
                                     ${gradeIsSim && this.editMode
-                                        ? `<input class="grade-simulee-input-edit sim-inp-grade any-input" style="width: 100%; max-width: 75px;" id="grade-simulee-input-grade-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="number" step="0.5" min="0" max="20" data-id="${totalSimGrades-1}" data-modifType="grade" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-uen="${ueName||''}" style="width:75px; height:25px" value="${grade.grade}"> /20`
+                                        ? `<input class="grade-simulee-input-edit sim-inp-grade any-input" style="width: 100%; max-width: 75px;" id="grade-simulee-input-grade-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="number" step="0.5" min="0" max="20" data-simid="${index-nbRealGrades}" data-modifType="grade" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-ue="${ueName||''}" style="width:75px; height:25px" value="${grade.grade}"> /20`
                                         : `${grade.grade}/20`
                                     }
                                 </td>
                                 <td class="grades-table-coef" data-sim="${gradeIsSim}">
                                     ${gradeIsSim && this.editMode
-                                        ? `<input class="grade-simulee-input-edit sim-inp-coef any-input" style="width: 100%; max-width: 60px;" id="grade-simulee-input-coef-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="number" step="5" min="0" max="100" data-id="${totalSimGrades-1}" data-modifType="coef" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-uen="${ueName||''}" style="width:60px; height:25px"value="${grade.coef}"> %`
+                                        ? `<input class="grade-simulee-input-edit sim-inp-coef any-input" style="width: 100%; max-width: 60px;" id="grade-simulee-input-coef-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="number" step="5" min="0" max="100" data-simid="${index-nbRealGrades}" data-modifType="coef" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-ue="${ueName||''}" style="width:60px; height:25px"value="${grade.coef}"> %`
                                         : `${grade.coef} %`
                                     }
                                 </td>
@@ -2293,7 +2288,7 @@
                                 <td class="grades-table-add-sim-cell" style="${gradeIsSim ? `width: 52px; padding: 3px; text-align: center;` : ``}">
                                     ${
                                         gradeIsSim 
-                                        ? `<button class="sim-del-btn" data-semester="${sem}" data-subj="${subject}" data-uen="${ueName||''}" data-type="${grade.type}">🗑️</button>` 
+                                        ? `<button class="sim-del-btn" data-semester="${sem}" data-subj="${subject}" data-ue="${ueName||''}" data-type="${grade.type}" data-simid="${index-nbRealGrades}">🗑️</button>` 
                                         : `<div style="width:32px"></div>`
                                     }
                                 </td>
@@ -2318,7 +2313,7 @@
                                 <td colspan="3">
                                 </td>
                                 <td>
-                                    <button class="btn-export sim-add-btn" data-semester="${sem}" data-subj="${subject}" data-uen="${ueName||''}">${this.lang == "fr" ? "Ajouter" : "Add"}</button>
+                                    <button class="btn-export sim-add-btn" data-semester="${sem}" data-subj="${subject}" data-ue="${ueName||''}">${this.lang == "fr" ? "Ajouter" : "Add"}</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -2638,7 +2633,7 @@
 
 
                         let diffName = true;
-                        this.ueConfig[sem][ue].subjects.forEach(_mat => {if (_mat == subjNewName) diffName = false});
+                        this.ueConfig[sem][ue].subjects.forEach(_subj => {if (_subj == subjNewName) diffName = false});
 
                         this.ueConfig[sem].__ues__.forEach(ueName => {
                             this.ueConfig[sem][ueName].subjects.forEach(_subj => {
@@ -2654,10 +2649,10 @@
                             
 
                         if (diffName) {
-                            const oldMatIndex =    this.ueConfig[sem][ue].subjects.indexOf(subjOldName);
+                            const oldSubjIndex =    this.ueConfig[sem][ue].subjects.indexOf(subjOldName);
                             const pct = new Number(this.ueConfig[sem][ue].coefficients    [subjOldName]);
 
-                            this.ueConfig[sem][ue].subjects[oldMatIndex]=subjNewName ;    // Replace the subject's old name by the subject's new name
+                            this.ueConfig[sem][ue].subjects[oldSubjIndex]=subjNewName ;    // Replace the subject's old name by the subject's new name
                             delete  this.ueConfig[sem][ue].coefficients [subjOldName];
 
                                     this.ueConfig[sem][ue].coefficients [subjNewName] = pct;
@@ -2719,33 +2714,49 @@
                 // Attach on-click event action for the simulated grade addition button
                 document.querySelectorAll('.sim-add-btn').forEach(btn=>{
                     btn.onclick = (e)=>{
-                        const ueName = e.target.dataset.uen;
+                        const ueName = e.target.dataset.ue;
                         const semX = e.target.dataset.semester;
                         const subj = e.target.dataset.subj;
                         this.ensureSimPath(semX, ueName, subj);
-                        const id = this.sim[semX][ueName][subj].length;
-                        const typeInp = document.querySelector(`.grade-simulee-input.sim-inp-type[data-semester="${semX}"][data-subj="${subj}"]`);
+                        const typeInp =  document.querySelector(`.grade-simulee-input.sim-inp-type[data-semester="${semX}"][data-subj="${subj}"]`);
                         const gradeInp = document.querySelector(`.grade-simulee-input.sim-inp-grade[data-semester="${semX}"][data-subj="${subj}"]`);
-                        const coefInp = document.querySelector(`.grade-simulee-input.sim-inp-coef[data-semester="${semX}"][data-subj="${subj}"]`);
-                        const dateInp = document.querySelector(`.grade-simulee-input.sim-inp-date[data-semester="${semX}"][data-subj="${subj}"]`);
-                        const type = typeInp?.value||'';
+                        const coefInp =  document.querySelector(`.grade-simulee-input.sim-inp-coef[data-semester="${semX}"][data-subj="${subj}"]`);
+                        const dateInp =  document.querySelector(`.grade-simulee-input.sim-inp-date[data-semester="${semX}"][data-subj="${subj}"]`);
+                        const type = typeInp?.value||`${this.lang=="fr"? 'Simulé' : "Simulated"}`;
                         const grade = parseFloat(gradeInp?.value||'');
                         const coef = parseFloat(coefInp?.value||'');
                         const date = dateInp?.value||'';
                         if(isNaN(grade) || isNaN(coef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
+
                         this.ensureSimPath(semX, ueName, subj);
+
+                        // Making sure the automatically generated name (if the user didn't input any type name) isn't the same as one that already exists 
+                        // (incrementing an index every time it's the case and add it at the end of the new sim grade's name)
+                        let newName = type, validNewName = newName != type, count = 2;
+
+                        while (!validNewName && this.sim[semX][ueName][subj].length > 0) {
+                            validNewName = true;
+                            this.sim[semX][ueName][subj].forEach((_grade, _index) => {
+                                if (_grade.type == newName && validNewName) {
+                                    validNewName = false;
+                                    newName = type + ` (${count})`;
+                                    count++;
+                                }
+                            })
+                        }
+
                         this.sim[semX][ueName][subj].push({
                             grade, 
                             coef,
                             classAvg: '—',
-                            type: type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`,
+                            type: newName,
                             date: '—',
                             prof: '—',
                             subject: subj,
                             semester: semX,
-                            libelle: `[SIM] ${subj} - ${type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`}`,
+                            libelle: `[SIM] ${subj} - ${type}`,
                             __sim: true,
-                            id
+                            id: new Date().getYear() + "" + new Date().getMonth() + "" + new Date().getDay() + "" + new Date().getHours() + "" + new Date().getMinutes() + "" + new Date().getSeconds() + "" + new Date().getMilliseconds()
                         });
                         this.saveSim();
                         this.getGradesDatas();
@@ -2753,62 +2764,44 @@
                     }
                 });
 
-                // Attach on-change event action for simulated grades type/grade/coef/date fields
-                document.querySelectorAll(".grade-simulee-input-edit").forEach(input => {
-                    input.onchange = e => {
-                        const ueName = e.target.dataset.uen;
-                        const semX = e.target.dataset.semester;
-                        const subj = e.target.dataset.subj;
-                        const id = e.target.dataset.id;
-                        let gradeRow = e.target.parentElement.parentElement;
-                        // const typeInp = document.querySelector(`.grade-simulee-input-edit.sim-inp-type[data-semester="${semX}"][data-subj="${subj}"]`);
-                        const typeInp = gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-type`)
-                        const gradeInp = gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-grade`);
-                        const coefInp = gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-coef`);
-                        const dateInp = gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-date`);
-                        const type = typeInp?.value||'';
-                        const newGrade = parseFloat(gradeInp?.value||'');
-                        const newCoef = parseFloat(coefInp?.value||'');
-                        const date = dateInp?.value||'';
-                        if(isNaN(newGrade) || isNaN(newCoef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
-                        this.sim[semX][ueName][subj].forEach((grade, index) => {
-                            if (grade.id == id) {
-                                this.sim[semX][ueName][subj][index] = {
-                                    grade: newGrade, 
-                                    coef: newCoef,
-                                    classAvg: '—',
-                                    type: type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`,
-                                    date: '—',
-                                    prof: '—',
-                                    subject: subj,
-                                    semester: semX,
-                                    libelle: `[SIM] ${subj} - ${type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`}`,
-                                    __sim: true,
-                                    id
-                                }
-                            }
-                        });
-
-                        this.saveSim();
-                        this.getGradesDatas();
-                        this.renderContent(false);
-                    }
-                })
-
                 // Attach on-click event action for the simulated grades' deletion button
                 document.querySelectorAll('.sim-del-btn').forEach(btn=>{
                     btn.onclick = (e) => {
                         const semX = e.target.dataset.semester;
-                        const ueName = e.target.dataset.uen;
+                        const ueName = e.target.dataset.ue;
                         const subj = e.target.dataset.subj;
-                        const type = e.target.dataset.type;
-                        this.sim[semX][ueName][subj].splice(this.sim[semX][ueName][subj].indexOf(type), 1);
+                        const id = e.target.dataset.simid;
+                        this.sim[semX][ueName][subj].splice(id, 1);
+
                         this.deleteUnusedSimPath(false, semX, ueName, subj);
                         this.saveSim();
                         this.getGradesDatas();
                         this.renderContent(false);
                     }
                 })
+
+                // Attach on-change event action for simulated grades type/grade/coef/date fields
+                document.querySelectorAll(".grade-simulee-input-edit").forEach(input => {
+                    input.onchange = e => {
+                        const ueName = e.target.dataset.ue;
+                        const semX = e.target.dataset.semester;
+                        const subj = e.target.dataset.subj;
+                        const id = e.target.dataset.simid;
+                        const gradeRow = e.target.parentElement.parentElement;
+                        const gradeInp = gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-grade`);
+                        const coefInp =  gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-coef `);
+                        const newGrade = parseFloat(gradeInp?.value||'');
+                        const newCoef = parseFloat(coefInp?.value||'');
+
+                        if(isNaN(newGrade) || isNaN(newCoef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
+                        this.sim[semX][ueName][subj][id][e.target.dataset.modiftype] = e.target.value;
+
+                        this.saveSim();
+                        this.getGradesDatas();
+                        this.renderContent(false);
+                    }
+                })
+
                 
                 document.querySelectorAll(".ue-info-clear.sim").     forEach(simClear => {
                     simClear.onclick = () => {this.clearSimGradesForUE(    simClear.dataset.semester, simClear.dataset.ue);this.renderContent();}
@@ -2939,15 +2932,15 @@
                     chbx.onclick = (e) => {
                         const semX = e.target.dataset.semester;
                         const subj = e.target.dataset.subj;
-                        const gradeID = e.target.dataset.gradeid;
-                        const key = [semX, subj, gradeID].join("\\");
+                        const simTimeStamp = e.target.dataset?.simtimestamp;
+                        const gradeId = e.target.dataset?.gradeid;
+                        const ignoredKey = [semX, subj, simTimeStamp || gradeId].join("\\");
                         if (e.target.checked) {
                             // remove this specific ignored key if present
-                            this.ignoredGrades = (this.ignoredGrades || []).filter(id => id !== key);
+                            this.ignoredGrades = this.ignoredGrades?.filter(id => id !== ignoredKey);
                         } else {
                             // add ignored key if not already present
-                            this.ignoredGrades = this.ignoredGrades || [];
-                            if (!this.ignoredGrades.includes(key)) this.ignoredGrades.push(key);
+                            if (!this.ignoredGrades?.includes(ignoredKey)) this.ignoredGrades.push(ignoredKey);
                         }
                         this.saveIgnoredGrades();
                         // this.getGradesDatas({semX, ue:undefined, subj});
@@ -2994,8 +2987,7 @@
                 const oldUeName = e.target.dataset.ue; 
                 const oldUeIndex = this.ueConfig[sem].__ues__.indexOf(oldUeName);
                 const newUeName = e.target.value;
-                // const regExpExec = RegExp(`${oldUeName}`, "ig").exec(JSON.stringify(this.ueConfig[sem])); 
-                // this.ueConfig[sem] = JSON.parse('{"'+e.target.value+ regExpExec.input.slice(regExpExec.index+regExpExec[0].length,regExpExec.input.length));
+                
                 this.ueConfig[sem][newUeName] = this.ueConfig[sem][oldUeName];
                 delete this.ueConfig[sem][oldUeName];
                 this.ueConfig[sem].__ues__[oldUeIndex] = newUeName;
@@ -4335,6 +4327,9 @@
                         }
                         else if (e.key === "R") {
                             console.warn("You fell into my breakpoint trap!!"); debugger;
+                        }
+                        else if (e.key === "Ctrl") {
+                            this.generalKeyboardEvents();
                         }
                     };
                 }
