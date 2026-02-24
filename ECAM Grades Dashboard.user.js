@@ -168,13 +168,42 @@
         // MARK: drop areas
         styles += `
             
-            .drop-field     { display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 20px; mix-blend-mode: multiply; user-select: none; }
+            .drop-field     { display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 20px; mix-blend-mode: multiply; overflow: clip; user-select: none; }
 
-            .drop-field.remove-from-ue                      { position: fixed; top: 50px; left: 10px; height: calc(100% - 100px); width: 0%; border: 2px dashed #ff7f7f; border-color: #ff7f7f00; background: #ffb8b800; font-size: 50px; font-weight: 800; color: #ff7f7f00; z-index: 301; transition: all 0.2s ease; }
-            .drop-field.remove-from-ue.show                 { width: 15%; border-width: 2px; border-color: #ff7f7f; color: #ff7f7f; background: #ffb8b83d; }
+            .drop-field.create-ue                           { position: fixed; top: 50px; right:10px; height: calc(100% - 100px); width: 0%; border: 2px dashed #7fc2ff; border-color: #7fc2ff00; background: #bdb8ff00; font-weight: 800; color: #7fc2ff00; z-index: 301; transition: all 0.2s ease; }
+            .drop-field.create-ue.show                      { width: 15%; border-width: 2px; border-color: #7fc2ff; color: #7fc2ff; background: #bdb8ff3d; cursor: pointer; }
+            .drop-field.create-ue.hover                     { background: #d3d0ffce; }
+            .drop-field-create-ue-plus                      { position: relative; font-size: 50px; transform: rotate( 0deg); transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+            .drop-field-create-ue-plus.hover                { right: 4px; font-size: 90px; transform: rotate(-90deg); }
+            .drop-field-create-ue-text                      { font-size: 25px; position: relative; overflow-x: clip; text-wrap-mode: nowrap; transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+            .drop-field-create-ue-text.top                  { bottom:  10px; right:0px; }
+            .drop-field-create-ue-text.bottom               { top:     10px; left: 0px; }
+            .drop-field-create-ue-text.top.hover            { bottom:  30px; right:20px; font-size: 30px; }
+            .drop-field-create-ue-text.bottom.hover         { top:     30px; left: 20px; font-size: 30px; }
 
-            .drop-field.create-ue                           { position: fixed; top: 50px; right:10px; height: calc(100% - 100px); width: 0%; border: 2px dashed #7fc2ff; border-color: #7fc2ff00; background: #bdb8ff00; font-size: 50px; font-weight: 800; color: #7fc2ff00; z-index: 301; transition: all 0.2s ease; }
-            .drop-field.create-ue.show                      { width: 15%; border-width: 2px; border-color: #7fc2ff; color: #7fc2ff; background: #bdb8ff3d; }
+            .drop-field-create-ue-text.top.fr::before       { content: "Créer un"; }
+            .drop-field-create-ue-text.bottom.fr::after     { content: "nouveau module"; }
+            .drop-field-create-ue-text.top.en::before       { content: "Create a"; }
+            .drop-field-create-ue-text.bottom.en::after     { content: "new module"; }
+            
+
+            
+            .drop-field.remove-from-ue                      { position: fixed; top: 50px; left: 10px; height: calc(100% - 100px); width: 0%; border: 2px dashed #ff7f7f; border-color: #ff7f7f00; background: #ffb8b800; font-weight: 800; color: #ff7f7f00; z-index: 301; transition: all 0.2s ease; }
+            .drop-field.remove-from-ue.show                 { width: 15%; border-width: 2px; border-color: #ff7f7f; color: #ff7f7f; background: #ffb8b83d; cursor: pointer; }
+            .drop-field.remove-from-ue.hover                     { background: #ffb8b8ce; }
+            .drop-field-remove-from-ue-minus                     { position: relative; font-size: 50px; transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+            .drop-field-remove-from-ue-minus.hover               { font-size: 90px; animation: 0.3s shakeMinusText ease; }
+            .drop-field-remove-from-ue-text                      { font-size: 25px; position: relative; overflow-x: clip; text-wrap-mode: nowrap; transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+            .drop-field-remove-from-ue-text.top                  { bottom:  10px; left: 0px; }
+            .drop-field-remove-from-ue-text.bottom               { top:     10px; right:0px; }
+            .drop-field-remove-from-ue-text.top.hover            { bottom:  30px; left: 20px; font-size: 30px; }
+            .drop-field-remove-from-ue-text.bottom.hover         { top:     30px; right:20px; font-size: 30px; }
+
+            .drop-field-remove-from-ue-text.top.fr::before       { content: "Enlever"; }
+            .drop-field-remove-from-ue-text.bottom.fr::after     { content: "du module"; }
+            .drop-field-remove-from-ue-text.top.en::before       { content: "Remove"; }
+            .drop-field-remove-from-ue-text.bottom.en::after     { content: "from module"; }
+            @keyframes shakeMinusText { 0% {left: 0px} 25% {left: 3px} 50% {left: -3px} 75% {left: 3px} 100% {left: 0px} }
 
 
 
@@ -741,7 +770,7 @@
                         const scrollToThisElem = document.getElementById(this.scrollToThisElem) || document.querySelector(targetElemData.className); 
                         scrollToThisElem.style.scrollMarginTop = `${(targetElemData?.margin || margin) + (document.body.classList.contains("lfr-dockbar-pinned") ? 45 : 0)}px`;
                         scrollToThisElem.scrollIntoView({behavior: (targetElemData?.smooth || smooth) ? "smooth" : "instant", block: "start"});
-                        console.log(scrollToThisElem);
+                        // console.log(scrollToThisElem);
                         this.scrollToThisElem = "";
                     }, (targetElemData?.timeout || timeout))
 
@@ -1783,7 +1812,11 @@
                         <div class="semester-toggle open collapse-icon">▲</div>
                     </div>
                     <div class="semester-content show${this.selectedSubjectCards.length > 0 ? " dragging" : ""}${fadeIn ? " fade-in" : ""}" id="sem-content-${sem}">
-                        <div class="drop-field remove-from-ue${this.selectedSubjectCards.length > 0 ? " show" : ""}">-</div>
+                        <div class="drop-field remove-from-ue${this.selectedSubjectCards.length > 0 ? " show" : ""}">
+                            <div class="drop-field-remove-from-ue-text top${this.lang == "fr" ? " fr" : " en"}"></div>
+                            <div class="drop-field-remove-from-ue-minus">-</div>
+                            <div class="drop-field-remove-from-ue-text bottom${this.lang == "fr" ? " fr" : " en"}"></div>
+                        </div>
                         <div class="semester-grid" ${(unclassified.length == 0 || !this.ueConfig[sem] || Object.keys(this.ueConfig?.[sem])[0] == undefined) ? `style="gap: ${this.editMode ? `20px` : `0px`}"` : ``}>
                             <div class="modules-section" id="modules-section">
                                 ${this.createAllUECards(sem)}
@@ -1797,7 +1830,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="drop-field create-ue${this.selectedSubjectCards.length > 0 ? " show" : ""}">+</div>
+                        <div class="drop-field create-ue${this.lang == "fr" ? " fr" : " en"}${this.selectedSubjectCards.length > 0 ? " show" : ""}">
+                            <div class="drop-field-create-ue-text top${this.lang == "fr" ? " fr" : " en"}"></div>
+                            <div class="drop-field-create-ue-plus">+</div>
+                            <div class="drop-field-create-ue-text bottom${this.lang == "fr" ? " fr" : " en"}"></div>
+                        </div>
                     </div>
                     `;
                     contentArea.appendChild(section);
@@ -3696,18 +3733,37 @@
                     
 
                     dropAreaAdd.style.background = "";
-                    dropAreaAdd.ondragover =    (e) => {e.preventDefault(); e.target.style.background = "#bdb8ffce";};
-                    dropAreaAdd.ondragleave =   (e) => {e.preventDefault(); e.target.style.background = "";};
-                    dropAreaAdd.ondrop =        (e) => {
-                        e.target.style.background = ""; 
+                    dropAreaAdd.ondragover =    (e) => {
                         e.preventDefault(); 
+                        e.target.classList.add("hover");
+                        e.target.querySelectorAll(".drop-field-create-ue-text, .drop-field-create-ue-plus").forEach(text => {text.classList.add("hover");})
+                    };
+                    dropAreaAdd.ondragleave =   (e) => {
+                        e.preventDefault(); 
+                        e.target.classList.remove("hover");
+                        e.target.querySelectorAll(".drop-field-create-ue-text, .drop-field-create-ue-plus").forEach(text => {text.classList.remove("hover");})
+                    };
+                    dropAreaAdd.ondrop =        (e) => {
+                        e.preventDefault(); 
+                        e.target.classList.remove("hover");
+                        e.target.querySelectorAll(".drop-field-create-ue-text, .drop-field-create-ue-plus").forEach(text => {text.classList.remove("hover");})
                         this.dropAreaToNewUEAction(e.dataTransfer.getData("text"));
                     };
                     // Custom :hover event, cuz otherwise it would trigger when the fields are not shown
-                    dropAreaAdd.onmouseenter =  (e) => {if (e.target.classList.contains("show")) {e.preventDefault(); e.target.style.background = "#bdb8ffce";}};
-                    dropAreaAdd.onmouseleave =  (e) => {if (e.target.classList.contains("show")) {e.preventDefault(); e.target.style.background = "";}};
+                    dropAreaAdd.onmouseenter =  (e) => {if (e.target.classList.contains("show")) {
+                        e.preventDefault(); 
+                        e.target.classList.add("hover");
+                        e.target.querySelectorAll(".drop-field-create-ue-text, .drop-field-create-ue-plus").forEach(text => {text.classList.add("hover");})
+                    }};
+                    dropAreaAdd.onmouseleave =  (e) => {if (e.target.classList.contains("show")) {
+                        e.preventDefault(); 
+                        e.target.classList.remove("hover");
+                        e.target.querySelectorAll(".drop-field-create-ue-text, .drop-field-create-ue-plus").forEach(text => {text.classList.remove("hover");})
+                    }};
                     dropAreaAdd.onclick =       (e) => {if (e.target.classList.contains("show")) {
-                        e.target.style.background = ""; e.preventDefault(); 
+                        e.preventDefault(); 
+                        e.target.classList.remove("hover");
+                        e.target.querySelectorAll(".drop-field-create-ue-text, .drop-field-create-ue-plus").forEach(text => {text.classList.remove("hover");})
                         if (this.selectedSubjectCards.length > 0) {
                             this.dropAreaToNewUEAction(this.selectedSubjectCards[0]);
                         }
@@ -3715,18 +3771,37 @@
 
 
                     dropAreaRemove.style.background = "";
-                    dropAreaRemove.ondragover =    (e) => {e.preventDefault(); e.target.style.background = "#ffb8b8ce";};
-                    dropAreaRemove.ondragleave =   (e) => {e.preventDefault(); e.target.style.background = "";};
-                    dropAreaRemove.ondrop =        (e) => {
-                        e.target.style.background = ""; 
+                    dropAreaRemove.ondragover =    (e) => {
                         e.preventDefault(); 
+                        e.target.classList.add("hover");
+                        e.target.querySelectorAll(".drop-field-remove-from-ue-text, .drop-field-remove-from-ue-minus").forEach(text => {text.classList.add("hover");})
+                    };
+                    dropAreaRemove.ondragleave =   (e) => {
+                        e.preventDefault(); 
+                        e.target.classList.remove("hover");
+                        e.target.querySelectorAll(".drop-field-remove-from-ue-text, .drop-field-remove-from-ue-minus").forEach(text => {text.classList.remove("hover");})
+                    };
+                    dropAreaRemove.ondrop =        (e) => {
+                        e.preventDefault(); 
+                        e.target.classList.remove("hover");
                         this.dropAreaRemoveAction(e.dataTransfer.getData("text"));
+                        e.target.querySelectorAll(".drop-field-remove-from-ue-text, .drop-field-remove-from-ue-minus").forEach(text => {text.classList.remove("hover");})
                     };
                     // Custom :hover event, cuz otherwise it would trigger when the fields are not shown
-                    dropAreaRemove.onmouseenter =  (e) => {if (e.target.classList.contains("show")) {e.preventDefault(); e.target.style.background = "#ffb8b8ce";}};
-                    dropAreaRemove.onmouseleave =  (e) => {if (e.target.classList.contains("show")) {e.preventDefault(); e.target.style.background = "";}};
+                    dropAreaRemove.onmouseenter =  (e) => {if (e.target.classList.contains("show")) {
+                        e.preventDefault(); 
+                        e.target.classList.add("hover");
+                        e.target.querySelectorAll(".drop-field-remove-from-ue-text, .drop-field-remove-from-ue-minus").forEach(text => {text.classList.add("hover");})
+                    }};
+                    dropAreaRemove.onmouseleave =  (e) => {if (e.target.classList.contains("show")) {
+                        e.preventDefault(); 
+                        e.target.classList.remove("hover");
+                        e.target.querySelectorAll(".drop-field-remove-from-ue-text, .drop-field-remove-from-ue-minus").forEach(text => {text.classList.remove("hover");})
+                    }};
                     dropAreaRemove.onclick =       (e) => {if (e.target.classList.contains("show")) {
-                        e.target.style.background = ""; e.preventDefault(); 
+                        e.preventDefault(); 
+                        e.target.classList.remove("hover");
+                        e.target.querySelectorAll(".drop-field-remove-from-ue-text, .drop-field-remove-from-ue-minus").forEach(text => {text.classList.remove("hover");})
                         if (this.selectedSubjectCards.length > 0) {
                             this.dropAreaRemoveAction(this.selectedSubjectCards[0]);
                         }
@@ -4282,62 +4357,60 @@
 
         // MARK: -Keyboard Events
         generalKeyboardEvents() {
-            document.onkeydown = (e) => {
-                if (e.key === "Shift") {
-                    document.onkeydown = (e) => {
-                        if (e.key === "E") {
-                            this.editMode = !this.editMode;
-                            
-                            this.removeSubjectCardFromSubjectSelection();
-                            this.scrollToClientHighestElem();
-                            this.renderContent();
-                        }
-                        else if (e.key === "D") {
-                            this.viewMode = this.viewMode == "detailed" ? "compact" : "detailed";   // Inverse the stored view mode value
-                            if (this.viewMode == "detailed") {
-                                document.getElementById('view-btn-detailed').classList.add("active")
-                                document.getElementById('view-btn-compact').classList.remove("active")
-                            }
-                            else
-                            {
-                                document.getElementById('view-btn-detailed').classList.remove("active")
-                                document.getElementById('view-btn-compact').classList.add("active")
-                            }
-                            localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
+            let debug = false;
+            // debug = true;
 
-                            this.scrollToClientHighestElem();
-                            this.renderContent(false);
+            if (debug) {
+                document.onkeydown = (e) => {if (!e.repeat) {console.log(e)}}
+                document.onkeyup   = (e) => {if (!e.repeat) {console.log(e)}}
+            }
+            else {
+                document.onkeydown = (e) => {
+                    if (e.key === "E" && e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey && !e.repeat) {
+                        this.editMode = !this.editMode;
+                        
+                        this.removeSubjectCardFromSubjectSelection();
+                        this.scrollToClientHighestElem();
+                        this.renderContent();
+                    }
+                    else if (e.key === "D" && e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey && !e.repeat) {
+                        this.viewMode = this.viewMode == "detailed" ? "compact" : "detailed";   // Inverse the stored view mode value
+                        if (this.viewMode == "detailed") {
+                            document.getElementById('view-btn-detailed').classList.add("active")
+                            document.getElementById('view-btn-compact').classList.remove("active")
                         }
-                        else if (e.key === "L") {
-                            
-                            this.lang = this.lang == "fr" ? "en" : "fr";
-                            localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
-                            if (this.lang == "fr") {
-                                document.getElementById('fr-lang-btn').classList.add('active')
-                                document.getElementById('en-lang-btn').classList.remove('active')
-                            }
-                            else {
-                                document.getElementById('fr-lang-btn').classList.remove('active')
-                                document.getElementById('en-lang-btn').classList.add('active')
-                            }
+                        else
+                        {
+                            document.getElementById('view-btn-detailed').classList.remove("active")
+                            document.getElementById('view-btn-compact').classList.add("active")
+                        }
+                        localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
 
-                            this.scrollToClientHighestElem();
-                            this.renderContent(false);
-                            
+                        this.scrollToClientHighestElem();
+                        this.renderContent(false);
+                    }
+                    else if (e.key === "L" && e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey && !e.repeat) {
+                        
+                        this.lang = this.lang == "fr" ? "en" : "fr";
+                        localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
+                        if (this.lang == "fr") {
+                            document.getElementById('fr-lang-btn').classList.add('active')
+                            document.getElementById('en-lang-btn').classList.remove('active')
                         }
-                        else if (e.key === "R") {
-                            console.warn("You fell into my breakpoint trap!!"); debugger;
+                        else {
+                            document.getElementById('fr-lang-btn').classList.remove('active')
+                            document.getElementById('en-lang-btn').classList.add('active')
                         }
-                        else if (e.key === "Ctrl") {
-                            this.generalKeyboardEvents();
-                        }
-                    };
-                }
-            };
 
-            document.onkeyup = (e) => {
-                if (e.key === "Shift") this.generalKeyboardEvents();
-            };
+                        this.scrollToClientHighestElem();
+                        this.renderContent(false);
+                        
+                    }
+                    else if (e.key === "R" && e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey && !e.repeat) {
+                        console.warn("You fell into my breakpoint trap!!"); debugger;
+                    }
+                };
+            }
         };
     }
 
