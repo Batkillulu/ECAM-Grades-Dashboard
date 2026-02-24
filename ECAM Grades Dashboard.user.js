@@ -495,23 +495,23 @@
         constructor() {
             this.grades = [];
             this.semesters = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{}, 7:{}, 8:{}, 9:{}, 10:{}};
-            this.gitConfigs = {
+            this.gitConfigs = {/* 
                 eeng:   {
-                    P2028: {
-                        eeng1: {},
-                        eeng2: {},
-                        eeng3: {
+                    eeng1: {},
+                    eeng2: {},
+                    eeng3: {
+                        P2028: {
                             robotics:   "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/feature-BETTER-COEF-SETUP/Configs/EENG/P2028/EENG3/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Robotics.json?token=GHSAT0AAAAAADTGROUFHFTLZFIIJT3VXCYQ2M5SCRA",
                             supply:     "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/feature-BETTER-COEF-SETUP/Configs/EENG/P2028/EENG3/EENG3%20P2028%20-%20S5%20and%20S6%20-%20SupplyChain.json?token=GHSAT0AAAAAADTGROUEHZFA5TYPHAL44KKA2M5SCRQ",
                             energy:     "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/feature-BETTER-COEF-SETUP/Configs/EENG/P2028/EENG3/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Energy.json?token=GHSAT0AAAAAADTGROUFAATGYJJEIRMFKZZ42M5SCPA",
                             mecha:      "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/feature-BETTER-COEF-SETUP/Configs/EENG/P2028/EENG3/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Mecha.json?token=GHSAT0AAAAAADTGROUFTWIH7R25Z7TN3CZQ2M5SH3A",
-                        },
-                        eeng4: {},
-                        eeng5: {}
+                        }
                     },
+                    eeng4: {},
+                    eeng5: {},
                 },
-                am:     {},
-                nbCfgs: 0,
+                am:     {},*/
+                nbCfgs: 0, 
             };
 
             this.configVersion = 2;
@@ -813,119 +813,137 @@
             }
 
             getConfigsFromRepo(repoUrl) {
-                const xhttp = new XMLHttpRequest();
-                xhttp.onload = () => {
-                    if (JSON.parse(xhttp.response)?.status == "404") {this.getConfigsFromRepo("https://api.github.com/repos/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/contents")}
+                let debug = false;
+                // debug = true;
 
-                    Object.values(JSON.parse(xhttp.response)).forEach(dir => {
+                let nope;
+
+                let xhttp = new XMLHttpRequest();
+                xhttp.onload = () => {
+                    if (debug) {debugger}
+                    // If not working, try again with the test repo Miscelleneous_Tempermonkey_UserScripts
+                    if (xhttp?.status == "404") {return}
+                    nope = "No 'config' folder found in repo";
+
+                    Object.values(JSON.parse(xhttp.response)).forEach(dir => {// For every file in root
+                        if (debug) {debugger}
 
                         if (dir?.name.match(/\bconfigs\b/i)) {
-                            this.cfgPathArr = [];
+                            // if the name of the dir is "configs"
+                            nope = undefined;
+                            if (debug) {debugger}
 
-                            Object.values(dir).forEach(dir => {
-                                if (dir?.name.match(/\beeng(1|2|3|4|5)\b|\bam(1|2|3|4|5)\b/i)) {
-                                    cfgPathArr.push(dir.name);
-                                    this.gitConfigs[dir.name] = {nbCfgs: 0};
-
-                                    const newXhttp = new XMLHttpRequest();
-                                    newXhttp.open("GET", dir?.url, true);
-                                    newXhttp.send();
-                                    newXhttp.onload = () => {
-                                        Object.values(JSON.parse(newXhttp.response)).forEach(dir => {
-                                            if (dir?.name.match(/\beeng\b|\bam\b/i)) {
-                                                cfgPathArr.push(dir.name);
-                                                this.gitConfigs[cfgPathArr[0]][dir.name] = {nbCfgs: 0};
-
-                                                const newXhttp = new XMLHttpRequest();
-                                                newXhttp.open("GET", dir?.url, true);
-                                                newXhttp.send();
-                                                newXhttp.onload = () => {
-                                                    Object.values(JSON.parse(newXhttp.response)).forEach(dir => {
-                                                        if (dir?.name.match(/\bP(\d{4})\b/)) {
-                                                            cfgPathArr.push(dir.name);
-                                                            this.gitConfigs[cfgPathArr[0]][cfgPathArr[1]][dir.name] = {nbCfgs: 0};
+                            const newXhttp = new XMLHttpRequest();
+                            newXhttp.open("GET", dir?.url, true);
+                            newXhttp.send();
+                            newXhttp.onload = () => {
+                                Object.values(JSON.parse(newXhttp.response)).forEach(dir => {// For every section
+                                    if (debug) {debugger}
+    
+                                    if (dir?.name.match(/\beeng\b|\bam\b/i)) {
+                                        this.gitConfigs[dir.name] = {nbCfgs: 0};
+                                        if (debug) {debugger}
+    
+                                        const newXhttp = new XMLHttpRequest();
+                                        newXhttp.open("GET", dir?.url, true);
+                                        newXhttp.send();
+                                        newXhttp.onload = () => {
+                                            Object.values(JSON.parse(newXhttp.response)).forEach(dir => {// For every year
+                                                if (debug) {debugger}
+    
+                                                if (dir?.name.match(/\beeng( |)(1|2|3|4|5)\b|\bam( |)(1|2|3|4|5)\b/i)) {
+                                                    const path = dir?.path?.split("/");
+                                                    this.gitConfigs[path[1]][path[2]] = {nbCfgs: 0};
+                                                    if (debug) {debugger}
+                                                    
+                                                    const newXhttp = new XMLHttpRequest();
+                                                    newXhttp.open("GET", dir?.url, true);
+                                                    newXhttp.send();
+                                                    newXhttp.onload = () => {
+                                                        Object.values(JSON.parse(newXhttp.response)).forEach(dir => {// For every prom
+                                                            if (debug) {debugger}
                                                             
-                                                            const newXhttp = new XMLHttpRequest();
-                                                            newXhttp.open("GET", dir?.url, true);
-                                                            newXhttp.send();
-                                                            newXhttp.onload = () => {
-                                                                Object.values(JSON.parse(newXhttp.response)).forEach(dir => {
-                                                                    if (dir?.type == "file") {
-                                                                        this.gitConfigs[cfgPathArr[0]][cfgPathArr[1]][cfgPathArr[2]][dir?.name] = dir?.url;
-                                                                        this.gitConfigs[cfgPathArr[0]][cfgPathArr[1]][cfgPathArr[2]].nbCfgs++
-                                                                        this.gitConfigs[cfgPathArr[0]][cfgPathArr[1]].nbCfgs++
-                                                                        this.gitConfigs[cfgPathArr[0]].nbCfgs++
-                                                                        this.gitConfigs.nbCfgs++
-                                                                    }
-                                                                    else if (dir?.type == "dir") {
-                                                                        cfgPathArr.push(dir.name);
-                                                                        this.gitConfigs[cfgPathArr[0]][cfgPathArr[1]][cfgPathArr[2]][cfgPathArr[3]][dir.name] = {nbCfgs: 0};
+                                                            if (dir?.name.match(/\bP(\d{4})\b/i)) {
+                                                                const path = dir?.path?.split("/");
+                                                                this.gitConfigs[path[1]][path[2]][path[3]] = {nbCfgs: 0};
+                                                                if (debug) {debugger}
+                                                                
+                                                                const newXhttp = new XMLHttpRequest();
+                                                                newXhttp.open("GET", dir?.url, true);
+                                                                newXhttp.send();
+                                                                newXhttp.onload = () => {
+                                                                    Object.values(JSON.parse(newXhttp.response)).forEach(dir => {// For every pathway, or straight up the config itself
+                                                                        if (debug) {debugger}
                                                                         
-                                                                        const newXhttp = new XMLHttpRequest();
-                                                                        newXhttp.open("GET", dir?.url, true);
-                                                                        newXhttp.send();
-                                                                        newXhttp.onload = () => {
-                                                                            Object.values(JSON.parse(newXhttp.response)).forEach(dir => {
-                                                                                if (dir?.type == "file") {
-                                                                                    this.gitConfigs[cfgPathArr[0]][cfgPathArr[1]][cfgPathArr[2]][cfgPathArr[3]][dir?.name] = dir?.url;
-                                                                                    this.gitConfigs[cfgPathArr[0]][cfgPathArr[1]][cfgPathArr[2]][cfgPathArr[3]].nbCfgs++
-                                                                                    this.gitConfigs[cfgPathArr[0]][cfgPathArr[1]][cfgPathArr[2]].nbCfgs++
-                                                                                    this.gitConfigs[cfgPathArr[0]][cfgPathArr[1]].nbCfgs++
-                                                                                    this.gitConfigs[cfgPathArr[0]].nbCfgs++
-                                                                                    this.gitConfigs.nbCfgs++
-                                                                                }
-                                                                                else {
-                                                                                    console.warn("Configs\\"+cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path")
-                                                                                }
-                                                                            })
-                                                                        };
-                                                                    }
-                                                                    else {
-                                                                        console.warn("Configs\\"+cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path")
-                                                                    }
-                                                                })
-                                                            };
-
-                                                            cfgPathArr.pop();
-                                                        }
-                                                        else {
-                                                            console.warn("Configs\\"+cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path")
-                                                        }
-                                                    })
-                                                };
-                                                cfgPathArr.pop();
-                                            }
-                                            else {
-                                                console.warn("Configs\\"+cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path")
-                                            }
-                                        })
-                                    };
-                                    cfgPathArr.pop();
-                                }
-                                else {
-                                    console.warn("Configs\\"+dir?.name+" isn't an expected path")
-                                }
-
-                            })
+                                                                        if (dir?.type == "file" && dir?.name.match(/(.+).json/)) {
+                                                                            const path = dir?.path?.split("/");
+                                                                            this.gitConfigs[path[1]][path[2]][path[3]][path[4]] = dir?.url;
+                                                                            this.gitConfigs[path[1]][path[2]][path[3]].nbCfgs++;
+                                                                            this.gitConfigs[path[1]][path[2]].nbCfgs++;
+                                                                            this.gitConfigs[path[1]].nbCfgs++;
+                                                                            this.gitConfigs.nbCfgs++;
+                                                                            if (debug) {debugger}
+                                                                        }
+                                                                        else if (dir?.type == "dir") {
+                                                                            const path = dir?.path?.split("/");
+                                                                            this.gitConfigs[path[1]][path[2]][path[3]][path[4]][path[5]] = {nbCfgs: 0};
+                                                                            if (debug) {debugger}
+                                                                            
+                                                                            const newXhttp = new XMLHttpRequest();
+                                                                            newXhttp.open("GET", dir?.url, true);
+                                                                            newXhttp.send();
+                                                                            newXhttp.onload = () => {
+                                                                                Object.values(JSON.parse(newXhttp.response)).forEach(dir => {// For every file in pathway
+                                                                                    if (debug) {debugger}
+                                                                                    
+                                                                                    if (dir?.type == "file" && dir?.name.match(/(.+).json/)) {
+                                                                                        const path = dir?.path?.split("/");
+                                                                                        this.gitConfigs[path[1]][path[2]][path[3]][path[4]][path[5]] = dir?.url;
+                                                                                        this.gitConfigs[path[1]][path[2]][path[3]][path[4]].nbCfgs++;
+                                                                                        this.gitConfigs[path[1]][path[2]][path[3]].nbCfgs++;
+                                                                                        this.gitConfigs[path[1]][path[2]].nbCfgs++;
+                                                                                        this.gitConfigs[path[1]].nbCfgs++;
+                                                                                        this.gitConfigs.nbCfgs++;
+                                                                                        if (debug) {debugger}
+                                                                                    }
+                                                                                    else {
+                                                                                        console.warn("Configs\\"+this.cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path, was expecting a file with a .json extension")
+                                                                                    }
+                                                                                })
+                                                                            };
+                                                                        }
+                                                                        else {
+                                                                            console.warn("Configs\\"+this.cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path, was expecting a file with a .json extension or a folder with the name of a pathway")
+                                                                        }
+                                                                    })
+                                                                };
+                                                            }
+                                                            else {
+                                                                console.warn("Configs\\"+this.cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path, was expecting the name of the prom, like 'P2028'")
+                                                            }
+                                                        })
+                                                    };
+                                                }
+                                                else {
+                                                    console.warn("Configs\\"+this.cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path, was expecting the name of a year, like 'eeng3'")
+                                                }
+                                            })
+                                        };
+                                    }
+                                    else {
+                                        console.warn("'Configs\\"+dir?.name+"' isn't an expected path, was expecting something the name of a section, like 'eeng'")
+                                    }
+    
+                                })
+                            }
                         }
-                        else {
-                            console.warn("No config folder found in repo")
-                        }
-
                     })
+
+                    if (nope) {console.warn(nope)}
                 };
-                xhttp.open("GET", repoUrl, true);
+                xhttp.open("GET", repoUrl, true);   // Fetch repo
                 xhttp.send();
-            }
-            incrementialGitRepoDirScan(url, parentDir, matchCondition) {
-                const xhttp = new XMLHttpRequest();
-                xhttp.open("GET", url, true);
-                xhttp.send();
-                xhttp.onload = () => {
-                    Object.values(JSON.parse(xhttp.response)).forEach(data => {
-                        this.tempArrDirs.push(data.url);
-                    })
-                }
+                if (debug) {debugger}
             }
 
             /** 
@@ -1679,6 +1697,7 @@
         init() {
             document.getElementById("dockbar").remove();
             this.getConfigsFromRepo("https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/contents")
+            this.getConfigsFromRepo("https://api.github.com/repos/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/contents")
 
             this.parseGrades();
             this.getGradesDatas();
