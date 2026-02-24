@@ -504,13 +504,14 @@
                             robotics:   "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/feature-BETTER-COEF-SETUP/Configs/EENG/P2028/EENG3/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Robotics.json?token=GHSAT0AAAAAADTGROUFHFTLZFIIJT3VXCYQ2M5SCRA",
                             supply:     "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/feature-BETTER-COEF-SETUP/Configs/EENG/P2028/EENG3/EENG3%20P2028%20-%20S5%20and%20S6%20-%20SupplyChain.json?token=GHSAT0AAAAAADTGROUEHZFA5TYPHAL44KKA2M5SCRQ",
                             energy:     "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/feature-BETTER-COEF-SETUP/Configs/EENG/P2028/EENG3/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Energy.json?token=GHSAT0AAAAAADTGROUFAATGYJJEIRMFKZZ42M5SCPA",
-                            mecha:      "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/feature-BETTER-COEF-SETUP/Configs/EENG/P2028/EENG3/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Mecha.json?token=GHSAT0AAAAAADTGROUED6S7GQABI3VVCIKO2M5SCQA",
+                            mecha:      "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/feature-BETTER-COEF-SETUP/Configs/EENG/P2028/EENG3/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Mecha.json?token=GHSAT0AAAAAADTGROUFTWIH7R25Z7TN3CZQ2M5SH3A",
                         },
                         eeng4: {},
                         eeng5: {}
                     },
                 },
                 am:     {},
+                nbCfgs: 0,
             };
 
             this.configVersion = 2;
@@ -811,6 +812,121 @@
                 return;
             }
 
+            getConfigsFromRepo(repoUrl) {
+                const xhttp = new XMLHttpRequest();
+                xhttp.onload = () => {
+                    if (JSON.parse(xhttp.response)?.status == "404") {this.getConfigsFromRepo("https://api.github.com/repos/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/contents")}
+
+                    Object.values(JSON.parse(xhttp.response)).forEach(dir => {
+
+                        if (dir?.name.match(/\bconfigs\b/i)) {
+                            this.cfgPathArr = [];
+
+                            Object.values(dir).forEach(dir => {
+                                if (dir?.name.match(/\beeng(1|2|3|4|5)\b|\bam(1|2|3|4|5)\b/i)) {
+                                    cfgPathArr.push(dir.name);
+                                    this.gitConfigs[dir.name] = {nbCfgs: 0};
+
+                                    const newXhttp = new XMLHttpRequest();
+                                    newXhttp.open("GET", dir?.url, true);
+                                    newXhttp.send();
+                                    newXhttp.onload = () => {
+                                        Object.values(JSON.parse(newXhttp.response)).forEach(dir => {
+                                            if (dir?.name.match(/\beeng\b|\bam\b/i)) {
+                                                cfgPathArr.push(dir.name);
+                                                this.gitConfigs[cfgPathArr[0]][dir.name] = {nbCfgs: 0};
+
+                                                const newXhttp = new XMLHttpRequest();
+                                                newXhttp.open("GET", dir?.url, true);
+                                                newXhttp.send();
+                                                newXhttp.onload = () => {
+                                                    Object.values(JSON.parse(newXhttp.response)).forEach(dir => {
+                                                        if (dir?.name.match(/\bP(\d{4})\b/)) {
+                                                            cfgPathArr.push(dir.name);
+                                                            this.gitConfigs[cfgPathArr[0]][cfgPathArr[1]][dir.name] = {nbCfgs: 0};
+                                                            
+                                                            const newXhttp = new XMLHttpRequest();
+                                                            newXhttp.open("GET", dir?.url, true);
+                                                            newXhttp.send();
+                                                            newXhttp.onload = () => {
+                                                                Object.values(JSON.parse(newXhttp.response)).forEach(dir => {
+                                                                    if (dir?.type == "file") {
+                                                                        this.gitConfigs[cfgPathArr[0]][cfgPathArr[1]][cfgPathArr[2]][dir?.name] = dir?.url;
+                                                                        this.gitConfigs[cfgPathArr[0]][cfgPathArr[1]][cfgPathArr[2]].nbCfgs++
+                                                                        this.gitConfigs[cfgPathArr[0]][cfgPathArr[1]].nbCfgs++
+                                                                        this.gitConfigs[cfgPathArr[0]].nbCfgs++
+                                                                        this.gitConfigs.nbCfgs++
+                                                                    }
+                                                                    else if (dir?.type == "dir") {
+                                                                        cfgPathArr.push(dir.name);
+                                                                        this.gitConfigs[cfgPathArr[0]][cfgPathArr[1]][cfgPathArr[2]][cfgPathArr[3]][dir.name] = {nbCfgs: 0};
+                                                                        
+                                                                        const newXhttp = new XMLHttpRequest();
+                                                                        newXhttp.open("GET", dir?.url, true);
+                                                                        newXhttp.send();
+                                                                        newXhttp.onload = () => {
+                                                                            Object.values(JSON.parse(newXhttp.response)).forEach(dir => {
+                                                                                if (dir?.type == "file") {
+                                                                                    this.gitConfigs[cfgPathArr[0]][cfgPathArr[1]][cfgPathArr[2]][cfgPathArr[3]][dir?.name] = dir?.url;
+                                                                                    this.gitConfigs[cfgPathArr[0]][cfgPathArr[1]][cfgPathArr[2]][cfgPathArr[3]].nbCfgs++
+                                                                                    this.gitConfigs[cfgPathArr[0]][cfgPathArr[1]][cfgPathArr[2]].nbCfgs++
+                                                                                    this.gitConfigs[cfgPathArr[0]][cfgPathArr[1]].nbCfgs++
+                                                                                    this.gitConfigs[cfgPathArr[0]].nbCfgs++
+                                                                                    this.gitConfigs.nbCfgs++
+                                                                                }
+                                                                                else {
+                                                                                    console.warn("Configs\\"+cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path")
+                                                                                }
+                                                                            })
+                                                                        };
+                                                                    }
+                                                                    else {
+                                                                        console.warn("Configs\\"+cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path")
+                                                                    }
+                                                                })
+                                                            };
+
+                                                            cfgPathArr.pop();
+                                                        }
+                                                        else {
+                                                            console.warn("Configs\\"+cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path")
+                                                        }
+                                                    })
+                                                };
+                                                cfgPathArr.pop();
+                                            }
+                                            else {
+                                                console.warn("Configs\\"+cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path")
+                                            }
+                                        })
+                                    };
+                                    cfgPathArr.pop();
+                                }
+                                else {
+                                    console.warn("Configs\\"+dir?.name+" isn't an expected path")
+                                }
+
+                            })
+                        }
+                        else {
+                            console.warn("No config folder found in repo")
+                        }
+
+                    })
+                };
+                xhttp.open("GET", repoUrl, true);
+                xhttp.send();
+            }
+            incrementialGitRepoDirScan(url, parentDir, matchCondition) {
+                const xhttp = new XMLHttpRequest();
+                xhttp.open("GET", url, true);
+                xhttp.send();
+                xhttp.onload = () => {
+                    Object.values(JSON.parse(xhttp.response)).forEach(data => {
+                        this.tempArrDirs.push(data.url);
+                    })
+                }
+            }
 
             /** 
             *  Use only in the console: iterating through a long list of objects isn't very optimized. Use it only to obtain the indices pointing at the class you want to change.
@@ -1561,7 +1677,8 @@
 
         // MARK: -INIT
         init() {
-            // document.getElementById("dockbar").remove();
+            document.getElementById("dockbar").remove();
+            this.getConfigsFromRepo("https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/contents")
 
             this.parseGrades();
             this.getGradesDatas();
@@ -2798,7 +2915,7 @@
                         this.ueConfig[sem].__ues__.splice(ueIndex, 1);
                         delete this.ueConfig[sem][ueName];
 
-                        if (this.ueConfig[sem] == {}) {delete this.ueConfig[sem]}
+                        if (this.ueConfig[sem].__ues__.length == 0) {delete this.ueConfig[sem]}
                         
                         this.clearSimGradesForUE(sem, ueName);
                         this.saveConfig();
