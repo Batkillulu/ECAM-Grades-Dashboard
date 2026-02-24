@@ -1,4 +1,5 @@
 {
+  "date": "2026-02-01",
   "version": "2",
   "ueConfig": {
     "6": {
@@ -8,7 +9,7 @@
         "Systems Engineering 6", 
         "Multidisciplinary Project 6", 
         "Society, Management & Entrepreneurship 6", 
-        "Robotics and Automation Engineering 6"
+        "Sustainable Energy and Environmental Engineering 6"
       ],
       "Mathematics for Engineers 6": {
         "subjects": [
@@ -64,21 +65,20 @@
           "Professional Project": 15
         }
       },
-      "Robotics and Automation Engineering 6": {
+      "Sustainable Energy and Environmental Engineering 6": {
         "subjects": [
-          "Introduction to Robotics",
-          "Sensing & Perception",
-          "Signal Processing + Wireless Communications"
+          "Advanced Heat Transfer",
+          "Hydraulics",
+          "Heating Ventilation & Air Conditioning HVAC"
         ],
         "coefficients": {
-          "Introduction to Robotics": 35,
-          "Sensing & Perception": 25,
-          "Signal Processing + Wireless Communications": 40
+          "Advanced Heat Transfer": 35,
+          "Hydraulics": 25,
+          "Heating Ventilation & Air Conditioning HVAC": 40
         }
       }
     },
     "5": {
-      "__ues__" : ["Mathematics for Engineers 5", "Mechanical Engineering 5", "Electrical Engineering 5", "Industrial Organisation 5", "Multidisciplinary Project 5", "Society, Management & Entrepreneurship 5"],
       "Mathematics for Engineers 5": {
         "subjects": [
           "Mathematics for Engineers 5",

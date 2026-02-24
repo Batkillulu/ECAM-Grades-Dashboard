@@ -287,10 +287,11 @@
         `;
             
 
-        // MARK: ue grid
+
+        // MARK: -UE CARDS
         styles += `
 
-            .semester-grid                { display: grid; width: 100%; gap: 20px; transition: gap 0.2s ease; }
+            .semester-grid      { display: grid; width: 100%; gap: 20px; transition: gap 0.2s ease; }
             .ue-card                { display: flex; flex-direction: column; align-items: center; width: 100%; background: #fafafa; border-radius: 25px; border: 3px solid #e5e5e5; scroll-margin-top: 70px; transition: all 0.3s ease; }
             .ue-card.validated      { border-color: #10b981ff; background: #f0fdf4ff; }
             .ue-card.failed         { border-color: #ef4444ff; background: #fef2f2ff; }
@@ -304,7 +305,26 @@
             .ue-title                       { font-size: 16px; font-weight: 800; color: #1a1a1a; width:42%; margin-bottom: 2px; }
             .ue-title.input                 { font-size: 16px; font-weight: 800; color: #1a1a1a; width:90%; border-radius: 12px; padding-left: 10px; }
             .ue-subject-total-coef-value    { display: flex; gap: 15px; font-weight: 600; }
-            .ue-details                     { display: flex; flex-direction: column; align-items: center; width: 98%; margin: 8px 0px 18px 0px; gap: 15px; }
+
+            .ue-card-content            { display: flex; flex-direction: row; width: 98%; height: 100%; align-items: center; gap: 0px; margin: 8px 0px 18px 0px; }
+            .ue-card-content.edit-mode  { gap: 1% }
+
+
+            .ue-coef-slider                     { display: flex; flex-direction: row; justify-content: flex-start; align-items: flex-start; height: 95%; width: 0px; overflow: clip; }
+            .ue-coef-slider.edit-mode           { height: calc(100% - 85px); width: 20px; background: #ffb6b6; border-radius: 20px; border: 2px solid white; }
+            .ue-coef-slider-block               { position: relative; }
+            .ue-coef-slider-handle              { position: relative; height: 5px;  min-width: 20px; cursor: row-resize; }
+            .ue-coef-slider-handle-text         { position: relative; text-wrap: nowrap; text-align: center; }
+
+
+            .ue-info                        { display: flex; flex-direction: row; justify-content: space-around; align-items: center; width:97%; background: #eef2ff00; border:1px solid #c7d2fe00; padding: 0px 8px 3px 8px; border-radius: 0px 0px 8px 8px; margin-top: -1px; height: 36px; }
+            .ue-info-bar                    { display: flex; flex-direction: row; justify-content: space-around; align-items: center; width:48%; background: #eef2ff;   border:1px solid #c7d2fe;   padding: 3px 8px 3px 8px; border-radius: 0px 0px 8px 8px; }
+            .ue-info-clear                  { display: flex; flex-direction: row; justify-content: center; align-items: center; font-size: 12px; background: #d7e0ff; border: 2px solid; border-radius: 10px; padding: 2px 7px; user-select: none; width: 220px; margin-right: 8px; cursor: pointer; transition: all 0.2s ease; }
+            .ue-info-clear:hover            { width: 240px; margin-right: 4px; font-size: 11.5px; background: #eef2ff; }
+            .ue-info-clear.disabled         {  }
+            .ue-info-clear.sim              {  }
+
+            .ue-details                     { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 15px; }
             .ue-details.edit-mode           { gap: 8px; }
             .ue-moyenne                     { font-size: 24px; font-weight: 800; display: flex; align-items: center; gap:10px; width: 180px; }
             .ue-moyenne.good                { color: #10b981; }
@@ -312,12 +332,6 @@
             .ue-moyenne.unknown             { color: #6d6d6dff; }
             .ue-toggle                      { width: 24px; height: 24px; font-size: 18px; color: #000000; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; margin-left: 5px; }
             .ue-toggle.open                 { transform: rotate(180deg); }
-            .ue-info                        { display: flex; flex-direction: row; justify-content: space-around; align-items: center; width:97%; background: #eef2ff00; border:1px solid #c7d2fe00; padding: 0px 8px 3px 8px; border-radius: 0px 0px 8px 8px; margin-top: -1px; height: 36px; }
-            .ue-info-bar                    { display: flex; flex-direction: row; justify-content: space-around; align-items: center; width:48%; background: #eef2ff;   border:1px solid #c7d2fe;   padding: 3px 8px 3px 8px; border-radius: 0px 0px 8px 8px; }
-            .ue-info-clear                  { display: flex; flex-direction: row; justify-content: center; align-items: center; font-size: 12px; background: #d7e0ff; border: 2px solid; border-radius: 10px; padding: 2px 7px; user-select: none; width: 220px; margin-right: 8px; cursor: pointer; transition: all 0.2s ease; }
-            .ue-info-clear:hover            { width: 240px; margin-right: 4px; font-size: 11.5px; background: #eef2ff; }
-            .ue-info-clear.disabled         {  }
-            .ue-info-clear.sim              {  }
 
         `;
             
@@ -481,6 +495,23 @@
         constructor() {
             this.grades = [];
             this.semesters = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{}, 7:{}, 8:{}, 9:{}, 10:{}};
+            this.gitConfigs = {
+                eeng:   {
+                    P2028: {
+                        eeng1: {},
+                        eeng2: {},
+                        eeng3: {
+                            robotics:   "",
+                            suuply:     "",
+                            energy:     "",
+                            mecha:      "",
+                        },
+                        eeng4: {},
+                        eeng5: {}
+                    },
+                },
+                am:     {},
+            };
 
             this.configVersion = 2;
             this.gradesDatas = {};
@@ -552,7 +583,7 @@
              * 
              * **`highestElemInPageHandleType?`**   {@link https://github.com String},  default: "none" —          can be "force", "absolute", "absolute X%", "partial", "partial X%", "above", "above X%" or "none" (with X being an int between 0 and 100). Any other value will be considered as "none"
              */
-            scrollToClientHighestElem(priority="first", ...{className= ".subject-card", id="", margin=this.editMode ? 90 : 20, timeout=50, smooth=false, highestElemInPageHandleType="none"}) {
+            scrollToClientHighestElem(priority="first", ...{className= ".subject-card", id="", margin=this.editMode ? 90 : 20, timeout=20, smooth=false, highestElemInPageHandleType="none"}) {
                 const defaultTargetElementDatas = [
                     {className: ".modules-section",         margin: 20,                        highestElemInPageHandleType:"partial"}, 
                     {className: ".ue-card",                 margin: this.editMode ? 90 : 20,   highestElemInPageHandleType:"above"},
@@ -1950,9 +1981,12 @@
                             : ``
                         }
                     </div>
-
-                    <div class="ue-details ${this.editMode ? "edit-mode": ""}" id="ue-details-${ueName}-in-semester${sem}">
-                        ${this.viewMode == "detailed" ? this.createAllSubjCardDetailed(sem, ueName) : this.createAllSubjCardCompact(sem, ueName)}
+                    
+                    <div class="ue-card-content ${this.editMode ? "edit-mode": ""}">
+                        <div class="ue-coef-slider ${this.editMode ? "edit-mode": ""}"></div>
+                        <div class="ue-details ${this.editMode ? "edit-mode": ""}" id="ue-details-${ueName}-in-semester${sem}">
+                            ${this.viewMode == "detailed" ? this.createAllSubjCardDetailed(sem, ueName) : this.createAllSubjCardCompact(sem, ueName)}
+                        </div>
                     </div>
 
                 </div>
@@ -2360,6 +2394,34 @@
 
                 // html +=`</tbody></table></div>`;
                 return html;
+            }
+
+            
+            createAllCoefSliders(sem) {
+
+            }
+            createCoefSliders(sem, ueName) {
+                document.querySelectorAll("ue-coef-slider").forEach(slider => {
+                    const width         = slider.clientWidth;
+                    const borderWidth   = slider.offsetWidth - slider.clientWidth;
+                    const subjNames     = Object.keys(this.gradesDatas?.[sem]?.[ueName]?.subjects || {});
+                    const nbSubjects    = subjNames.length;
+
+                    let html = ``;
+
+                    subjNames.forEach((subj, index) => {
+                        const subjectData = this.gradesDatas?.[sem]?.[ueName]?.subjects?.[subj];
+                        const coef = subjectData.coef;
+
+                        html += `
+                            <div class="ue-coef-slider-block" style="height: ${coef}%; top: ${coef}%; min-width: calc(${width} - 2*${borderWidth}); left: calc(${width} - 2*${borderWidth});" data-semester="${sem}" data-ue="${ueName}" data-subject="${subj}">
+                            </div>
+                            <div class="ue-coef-slider-handle" style="top: ${coef}%; left: calc(2 * (${width} - 2 * ${borderWidth}));" data-semester="${sem}" data-ue="${ueName}" data-subject="${subj}">
+                                <div class="ue-coef-slider-handle-text" data-semester="${sem}" data-ue="${ueName}" data-subject="${subj}">${subj}</div>
+                            </div>
+                        `;
+                    })
+                })
             }
 
         //#endregion
@@ -4357,60 +4419,51 @@
 
         // MARK: -Keyboard Events
         generalKeyboardEvents() {
-            let debug = false;
-            // debug = true;
+            document.onkeydown = (e) => {
+                if (e.key === "E" && e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey && !e.repeat) {
+                    this.editMode = !this.editMode;
+                    
+                    this.removeSubjectCardFromSubjectSelection();
+                    this.scrollToClientHighestElem();
+                    this.renderContent();
+                }
+                else if (e.key === "D" && e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey && !e.repeat) {
 
-            if (debug) {
-                document.onkeydown = (e) => {if (!e.repeat) {console.log(e)}}
-                document.onkeyup   = (e) => {if (!e.repeat) {console.log(e)}}
-            }
-            else {
-                document.onkeydown = (e) => {
-                    if (e.key === "E" && e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey && !e.repeat) {
-                        this.editMode = !this.editMode;
-                        
-                        this.removeSubjectCardFromSubjectSelection();
-                        this.scrollToClientHighestElem();
-                        this.renderContent();
+                    this.viewMode = this.viewMode == "detailed" ? "compact" : "detailed";   // Inverse the stored view mode value
+                    localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
+                    if (this.viewMode == "detailed") {
+                        document.getElementById('view-btn-detailed').classList.add("active")
+                        document.getElementById('view-btn-compact').classList.remove("active")
                     }
-                    else if (e.key === "D" && e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey && !e.repeat) {
-                        this.viewMode = this.viewMode == "detailed" ? "compact" : "detailed";   // Inverse the stored view mode value
-                        if (this.viewMode == "detailed") {
-                            document.getElementById('view-btn-detailed').classList.add("active")
-                            document.getElementById('view-btn-compact').classList.remove("active")
-                        }
-                        else
-                        {
-                            document.getElementById('view-btn-detailed').classList.remove("active")
-                            document.getElementById('view-btn-compact').classList.add("active")
-                        }
-                        localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
+                    else
+                    {
+                        document.getElementById('view-btn-detailed').classList.remove("active")
+                        document.getElementById('view-btn-compact').classList.add("active")
+                    }
 
-                        this.scrollToClientHighestElem();
-                        this.renderContent(false);
+                    this.scrollToClientHighestElem();
+                    this.renderContent();
+                }
+                else if (e.key === "L" && e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey && !e.repeat) {
+                    
+                    this.lang = this.lang == "fr" ? "en" : "fr";
+                    localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
+                    if (this.lang == "fr") {
+                        document.getElementById('fr-lang-btn').classList.add('active')
+                        document.getElementById('en-lang-btn').classList.remove('active')
                     }
-                    else if (e.key === "L" && e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey && !e.repeat) {
-                        
-                        this.lang = this.lang == "fr" ? "en" : "fr";
-                        localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
-                        if (this.lang == "fr") {
-                            document.getElementById('fr-lang-btn').classList.add('active')
-                            document.getElementById('en-lang-btn').classList.remove('active')
-                        }
-                        else {
-                            document.getElementById('fr-lang-btn').classList.remove('active')
-                            document.getElementById('en-lang-btn').classList.add('active')
-                        }
+                    else {
+                        document.getElementById('fr-lang-btn').classList.remove('active')
+                        document.getElementById('en-lang-btn').classList.add('active')
+                    }
 
-                        this.scrollToClientHighestElem();
-                        this.renderContent(false);
-                        
-                    }
-                    else if (e.key === "R" && e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey && !e.repeat) {
-                        console.warn("You fell into my breakpoint trap!!"); debugger;
-                    }
-                };
-            }
+                    this.scrollToClientHighestElem();
+                    this.renderContent(false);
+                }
+                else if (e.key === "R" && e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey && !e.repeat) {
+                    console.warn("You fell into my breakpoint trap!!"); debugger;
+                }
+            };
         };
     }
 

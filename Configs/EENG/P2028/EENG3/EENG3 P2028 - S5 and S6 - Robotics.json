@@ -1,15 +1,16 @@
 {
+  "date": "2026-02-01",
   "version": "2",
   "ueConfig": {
     "6": {
       "__ues__" : [
-        "Mathematics for Engineers 6",
+        "Mathematics for Engineers 6", 
         "Control Engineering 6", 
         "Systems Engineering 6", 
         "Multidisciplinary Project 6", 
         "Society, Management & Entrepreneurship 6", 
-        "Mechanical Engineering 6"
-        ],
+        "Robotics and Automation Engineering 6"
+      ],
       "Mathematics for Engineers 6": {
         "subjects": [
           "Probabilities and Inferential Statistics",
@@ -64,20 +65,21 @@
           "Professional Project": 15
         }
       },
-      "Mechanical Engineering 6": {
+      "Robotics and Automation Engineering 6": {
         "subjects": [
-          "Advanced Heat Transfer",
-          "Hydraulics",
-          "Materials 3"
+          "Introduction to Robotics",
+          "Sensing & Perception",
+          "Signal Processing + Wireless Communications"
         ],
         "coefficients": {
-          "Advanced Heat Transfer": 35,
-          "Hydraulics": 25,
-          "Materials 3": 40
+          "Introduction to Robotics": 35,
+          "Sensing & Perception": 25,
+          "Signal Processing + Wireless Communications": 40
         }
       }
     },
     "5": {
+      "__ues__" : ["Mathematics for Engineers 5", "Mechanical Engineering 5", "Electrical Engineering 5", "Industrial Organisation 5", "Multidisciplinary Project 5", "Society, Management & Entrepreneurship 5"],
       "Mathematics for Engineers 5": {
         "subjects": [
           "Mathematics for Engineers 5",
