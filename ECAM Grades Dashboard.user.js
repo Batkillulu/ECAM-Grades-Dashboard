@@ -501,10 +501,10 @@
                         eeng1: {},
                         eeng2: {},
                         eeng3: {
-                            robotics:   "",
-                            suuply:     "",
-                            energy:     "",
-                            mecha:      "",
+                            robotics:   "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/feature-BETTER-COEF-SETUP/Configs/EENG/P2028/EENG3/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Robotics.json?token=GHSAT0AAAAAADTGROUFHFTLZFIIJT3VXCYQ2M5SCRA",
+                            supply:     "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/feature-BETTER-COEF-SETUP/Configs/EENG/P2028/EENG3/EENG3%20P2028%20-%20S5%20and%20S6%20-%20SupplyChain.json?token=GHSAT0AAAAAADTGROUEHZFA5TYPHAL44KKA2M5SCRQ",
+                            energy:     "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/feature-BETTER-COEF-SETUP/Configs/EENG/P2028/EENG3/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Energy.json?token=GHSAT0AAAAAADTGROUFAATGYJJEIRMFKZZ42M5SCPA",
+                            mecha:      "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/feature-BETTER-COEF-SETUP/Configs/EENG/P2028/EENG3/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Mecha.json?token=GHSAT0AAAAAADTGROUED6S7GQABI3VVCIKO2M5SCQA",
                         },
                         eeng4: {},
                         eeng5: {}
