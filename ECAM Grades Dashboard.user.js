@@ -60,6 +60,7 @@
             .import-menu-btn        { display: flex; justify-content: center; align-items: center; text-align: center; user-select: none; cursor: pointer; border-radius: 12px; border: 2px solid; height: 30px; width: 45%; padding: 5px; }
             .import-menu-btn.file   {  }
             .import-menu-btn.online {  }
+            
 
             .online-cfg-picker-menu         { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 40%; display: flex; flex-direction: column; justify-content: flex-start; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; z-index: 1000; border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0; transition: all 0.3s ease; }
             .online-cfg-picker-menu.show    { 
@@ -68,11 +69,23 @@
                 border: 8px solid #ffffff; 
                 opacity: 1;
             }
-            .online-cfg-picker-menu-header      { display: flex; justify-content: flex-end; height: 26px; align-items: center; }
-            .online-cfg-picker-menu-close-btn       { text-align: center; width: 20px; height: 20px; border-radius: 10px; border: 2px solid; user-content: none; cursor: pointer; margin-right: 3px; }
-            .online-cfg-picker-menu-body        { display: flex; flex-direction: row; justify-content: center; align-items: center; height: calc(100% - 26px); width: 100%; }
-            .online-cfg-picker-menu-div-card        { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 50px; width: 0px; position: relative; transition: all 0.3s ease; }
-            .online-cfg-picker-menu-div-card.open   { width: 200px; left: 0px; }
+            .online-cfg-picker-menu-header          { display: flex; justify-content: flex-end; height: 40px; align-items: center; }
+            .online-cfg-picker-menu-close-btn           { display: flex; justify-content: center; align-items: center; width: 30px; height: 30px; border-radius: 15px; border: 2px solid; font-size: 20px; user-select: none; cursor: pointer; margin-right: 3px; transition: all 0.2s ease; }
+            .online-cfg-picker-menu-close-btn:hover     { width: 40px; height: 40px; border-radius: 20px; font-size: 30px; margin-right: -2px; gap: 5px; }
+
+            .online-cfg-picker-menu-body            { display: flex; flex-direction: row; justify-content: center; align-items: center; height: calc(100% - 40px); width: 100%; }
+            .online-cfg-picker-menu-dir-tree            { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 50px; width: 0px; position: relative; color: transparent; border-radius: 16px; border: 2px solid; background: white; overflow: clip; opacity: 0; transition: all 0.3s ease; }
+            .online-cfg-picker-menu-dir-tree.open       { width: 150px; left: 0px; color: black; opacity: 1; }
+            .online-cfg-picker-menu-dir-tree.section    { z-index: 1004; }
+            .online-cfg-picker-menu-dir-tree.year       { z-index: 1003; }
+            .online-cfg-picker-menu-dir-tree.prom       { z-index: 1002; }
+            .online-cfg-picker-menu-dir-tree.config     { z-index: 1001; }
+            .online-cfg-picker-menu-dir-tree-header     { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 20px; width: 100%; font-size: 15px; padding: 5px; }
+            .online-cfg-picker-menu-dir-tree-body       { display: flex; flex-direction: column; justify-content: center; align-items: center; height: calc(100% - 20px); width: 100%; gap: 5px; }
+
+            .online-cfg-picker-menu-dir-card                { display: flex; justify-content: center; align-items: center; height: 50px; width: 0px; position: relative; border-radius: 16px; overflow: clip; padding: 5px; user-select: none; opacity: 0; transition: all 0.3s ease; }
+            .online-cfg-picker-menu-dir-card.open           { width: 140px; left: 0px; border: 2px solid; background: white; cursor: pointer; opacity: 1; }
+
             
             .header-actions                 { display: flex; gap: 12px; }
             .btn                                { display: flex; justify-content: center; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-size: 14px; }
@@ -522,6 +535,7 @@
             };
             this.lastGitFetchState = -1;
             this.gitFetchScanDoneArray = [];
+            this.gitParentDirData = {};
             this.gitConfigs = {/* 
                 eeng:   {
                     eeng1: {},
@@ -1759,7 +1773,7 @@
             this.newGrades = this.compareArraysofObjects(this.grades, this.savedReadGrades).more;
             this.createNewGradesNotifDiv();
             this.createDashboard();
-            this.openOnlineCfgPicker();
+            // this.openOnlineCfgPicker();
         }
 
 
@@ -1806,7 +1820,7 @@
                         <div style="display: flex; flex-direction: column; gap: 8px">
                             <button class="btn btn-export" id="exportBtn"></button>
                             <button class="btn btn-import" id="importBtn"></button>
-                            <div class="import-menu" id="importMenu">
+                            <div class="import-menu" id="importMenu" style="display: none">
                                 <div class="import-menu-btn file"></div>
                                 <div class="import-menu-btn online"></div>
                             </div>
@@ -2726,6 +2740,11 @@
                             intranetTable.style.display = 'none';
                         }
                     }
+
+                    if (!e.target.closest(".import-menu") && document.getElementById("importMenu").classList.contains("show")) {
+                        document.getElementById("importMenu").classList.remove("show");
+                        setTimeout(() => {document.getElementById("importMenu").style.display = "none"}, 300);
+                    }
                 };
                 
                     // Collapse/Develop (fold/unfold) UEs
@@ -3133,7 +3152,7 @@
                 };
                 
                 // Import
-                document.getElementById('importBtn').onclick = () => this.openImportMenu();
+                document.getElementById('importBtn').onclick = () => this.toggleImportMenu();
 
                 // Export
                 document.getElementById('exportBtn').onclick = () => this.exportData();
@@ -4514,25 +4533,33 @@
 
         //#region -REGION: Data ↓Imp/Exp↑
 
-            openImportMenu() {
+            toggleImportMenu(open=undefined) {
                 const importMenu    = document.getElementById("importMenu");
                 const importFile    = importMenu.querySelector(".import-menu-btn.file");
                 const importOnline  = importMenu.querySelector(".import-menu-btn.online");
 
                 importFile.innerHTML   = this.lang == "fr" ? "Importer fichier de configuration .json"   : "Import .json configuration file";
                 importOnline.innerHTML = this.lang == "fr" ? "Obtenir fichier de configuration en ligne" : "Fetch online configuration file";
-                importMenu.classList.toggle("show");
-
-                if (importMenu.classList.contains("show")) {
-                    importFile.onclick = () => this.importData();
+                
+                if (!importMenu.classList.contains("show") || open == true) {
+                    importMenu.style.display = "";
+                    setTimeout(() => {importMenu.classList.add("show")}, 10)
+                    importFile.onclick   = () => this.importData();
                     importOnline.onclick = () => {
                         this.getConfigsFromRepo("https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/contents", this.getLastGitFetchState, () => {this.openOnlineCfgPicker()})
                     };
+                }
+                else if (importMenu.classList.contains("show") || open == false) {
+                    importMenu.classList.remove("show");
+                    importFile.onclick   = null;
+                    importOnline.onclick = null;
+                    setTimeout(() => {importMenu.style.display = "none"}, 300);
                 }
             }
 
             openOnlineCfgPicker() {
                 document.getElementById("importMenu").classList.remove("show");
+                document.getElementById("importMenu").hidden
                 const pickerMenu     = document.createElement("div");
                 pickerMenu.id        = "pickerMenu";
                 pickerMenu.className = "online-cfg-picker-menu";
@@ -4541,22 +4568,23 @@
                         <div class="online-cfg-picker-menu-close-btn">❌</div>
                     </div>
                     <div class="online-cfg-picker-menu-body">
-                        ${ "" +
-                            Object.keys(this.gitConfigs).map(key => {if (key != "nbCfgs") {return key}}).filter(value => {return value}).map((name, index, array) => {                  // Section
-                                const parentDivData = this.gitConfigs[name];
+                        ${
+                            Object.keys(this.gitConfigs).map(key => {if (key != "nbCfgs" && key != "path") {return key}}).filter(value => {return value}).map((name, index, array) => {                  // Section
+                                this.gitParentDirData = this.gitConfigs[name];
+                                // this.generateOnlineCfgPickerMenuDirTree(this.gitConfigs[name]);
 
-                                return `<div class="online-cfg-picker-menu-div-card section" id="online-cfg-picker-menu-div-card-section-${name}" data-path="${parentDivData.path}">${name}</div>` + 
-                                Object.keys(parentDivData[name]).map(key => {if (key != "nbCfgs") {return key}}).filter(value => {return value}).map((name, index, array) => {          // Year
-                                    const parentDivData = parentDivData[name];
+                                return `<div class="online-cfg-picker-menu-dir-card section open" id="online-cfg-picker-menu-dir-card-section-${name}" data-path="${this.gitParentDirData.path}">${name}</div>` + 
+                                Object.keys(this.gitParentDirData).map(key => {if (key != "nbCfgs" && key != "path") {return key}}).filter(value => {return value}).map((name, index, array) => {          // Year
+                                    this.gitParentDirData = this.gitParentDirData[name];
 
-                                    return `<div class="online-cfg-picker-menu-div-card year" id="online-cfg-picker-menu-div-card-year-${name}" data-path="${parentDivData.path}">${name}</div>` + 
-                                    Object.keys(parentDivData[name]).map(key => {if (key != "nbCfgs") {return key}}).filter(value => {return value}).map((name, index, array) => {      // Prom
-                                        const parentDivData = parentDivData[name];
+                                    return `<div class="online-cfg-picker-menu-dir-card year" id="online-cfg-picker-menu-dir-card-year-${name}" data-path="${this.gitParentDirData.path}">${name}</div>` + 
+                                    Object.keys(this.gitParentDirData).map(key => {if (key != "nbCfgs" && key != "path") {return key}}).filter(value => {return value}).map((name, index, array) => {      // Prom
+                                        this.gitParentDirData = this.gitParentDirData[name];
 
-                                        return `<div class="online-cfg-picker-menu-div-card prom" id="online-cfg-picker-menu-div-card-prom-${name}" data-path="${parentDivData.path}">${name}</div>` + 
-                                        Object.keys(parentDivData[name]).map(key => {if (key != "nbCfgs") {return key}}).filter(value => {return value}).map((name, index, array) => {  // Config
+                                        return `<div class="online-cfg-picker-menu-dir-card prom" id="online-cfg-picker-menu-dir-card-prom-${name}" data-path="${this.gitParentDirData.path}">${name}</div>` + 
+                                        Object.keys(this.gitParentDirData).map(key => {if (key != "nbCfgs" && key != "path") {return key}}).filter(value => {return value}).map((name, index, array) => {  // Config
 
-                                            return `<div class="online-cfg-picker-menu-div-card config" id="online-cfg-picker-menu-div-card-config-${name}" data-link="${parentDivData[name]}">${name}</div>`;
+                                            return `<div class="online-cfg-picker-menu-dir-card config" id="online-cfg-picker-menu-dir-card-config-${name}" data-link="${this.gitParentDirData[name]}">${name}</div>`;
                                         }).join("");
                                     }).join("");
                                 }).join("");
@@ -4568,11 +4596,61 @@
                 document.querySelector(".ecam-dash").appendChild(pickerMenu);
                 setTimeout(() => {pickerMenu.classList.add("show");}, 10)
                 
-                pickerMenu.querySelector(".online-cfg-picker-menu-close-btn").onclick = () => {
-                    pickerMenu.classList.remove("show");
-                    setTimeout(() => {pickerMenu.remove()}, 300);
-                }
+                pickerMenu.querySelector(".online-cfg-picker-menu-close-btn").onclick = () => {pickerMenu.classList.remove("show"); setTimeout(() => {pickerMenu.remove()}, 300);}
             }
+
+            generateOnlineCfgPickerMenuDirTree(dirData) {
+                const path = dirData.path, splitPath = path.split("/"), name = splitPath.at(-1);
+                this.gitDirData = dirData;
+
+                let type = "section";
+                switch (path.split("/").length) {
+                    case 2: 
+                        type = "year";
+                    break;
+                    case 3: 
+                        type = "prom";
+                    break;
+                    case 4: 
+                        type = "config";
+                    break;
+                    default:
+                }
+
+                let html = `
+                    <div class="online-cfg-picker-menu-dir-tree ${type}" id="online-cfg-picker-menu-dir-card-${type}-${name}" data-path="${path}">
+                        <div class="online-cfg-picker-menu-dir-tree-header">Nb configs: ${dirData.nbCfgs}</div>
+                        <div class="online-cfg-picker-menu-dir-tree-body">
+                `;
+
+                const childDirNames = Object.keys(dirData).map(key => {if (key != "nbCfgs" && key != "path") {return key}}).filter(value=>{return value});
+
+                childDirNames.forEach(name => {
+                    html += this.generateOnlineCfgPickerMenuDirCard((this.gitDirData?.path+"/"||"")+this.gitDirData[name]);
+                });
+
+                html += `</div></div>`;
+            }
+            generateOnlineCfgPickerMenuDirCard(path) {
+                const splitPath = path.split("/"), name = splitPath.at(-1);
+
+                let type = "section";
+                switch (path.split("/").length) {
+                    case 2: 
+                        type = "year";
+                    break;
+                    case 3: 
+                        type = "prom";
+                    break;
+                    case 4: 
+                        type = "config";
+                    break;
+                    default:
+                }
+                
+                return `<div class="online-cfg-picker-menu-dir-card ${type}" id="online-cfg-picker-menu-dir-card-${type}-${name}" data-path="${path}" ${type == "config" ? `data-link="${this.gitConfigs[splitPath[1]][splitPath[2]][splitPath[3]][name]}"`:``}>${name}</div>`;
+            }
+
 
             importData(file) {
                 this.sim = {};
