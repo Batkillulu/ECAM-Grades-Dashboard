@@ -69,8 +69,11 @@
                 opacity: 1;
             }
             .online-cfg-picker-menu-header      { display: flex; justify-content: flex-end; height: 26px; align-items: center; }
-            .online-cfg-picker-menu-close-btn   { text-align: center; width: 20px; height: 20px; border-radius: 10px; border: 2px solid; user-content: none; cursor: pointer; margin-right: 3px; }
-
+            .online-cfg-picker-menu-close-btn       { text-align: center; width: 20px; height: 20px; border-radius: 10px; border: 2px solid; user-content: none; cursor: pointer; margin-right: 3px; }
+            .online-cfg-picker-menu-body        { display: flex; flex-direction: row; justify-content: center; align-items: center; height: calc(100% - 26px); width: 100%; }
+            .online-cfg-picker-menu-div-card        { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 50px; width: 0px; position: relative; transition: all 0.3s ease; }
+            .online-cfg-picker-menu-div-card.open   { width: 200px; left: 0px; }
+            
             .header-actions                 { display: flex; gap: 12px; }
             .btn                                { display: flex; justify-content: center; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-size: 14px; }
             .btn-edit-mode:hover:not(:disabled) { transform: scale(0.95); background: linear-gradient(135deg, #7d92eeff 0%, #8e5ebeff 100%); }
@@ -842,7 +845,6 @@
             async getConfigsFromRepo(repoUrl, callback, endActionCallback) {
                 let debug = false;
                 // debug = true;
-                debugger;
 
                 let nope;
                 this.gitFetchScanDoneArray = [];
@@ -865,7 +867,7 @@
                     }
                     nope = "No 'config' folder found in repo";
 
-                    Object.values(JSON.parse(xhttp.response)).forEach(dir => {// For every file in root
+                    Object.values(JSON.parse(xhttp.response)).forEach(dir => { // For every file in root
                         if (debug) {debugger}
 
                         if (dir?.name.match(/\bconfigs\b/i)) {
@@ -877,48 +879,48 @@
                             newXhttp.open("GET", dir?.url, true);
                             newXhttp.send();
                             newXhttp.onload = () => {
-                                Object.values(JSON.parse(newXhttp.response)).forEach((dir, index, array) => {// For every section
+                                Object.values(JSON.parse(newXhttp.response)).forEach((dir, index, array) => { // For every section
                                     if (debug) {debugger}
     
                                     if (dir?.name.match(/\beeng\b|\bam\b/i)) {
-                                        this.gitConfigs[dir.name] = {nbCfgs: 0};
+                                        this.gitConfigs[dir.name] = {nbCfgs: 0, path: dir.path};
                                         if (debug) {debugger}
     
                                         const newXhttp = new XMLHttpRequest();
                                         newXhttp.open("GET", dir?.url, true);
                                         newXhttp.send();
                                         newXhttp.onload = () => {
-                                            Object.values(JSON.parse(newXhttp.response)).forEach((dir, index, array) => {// For every year
+                                            Object.values(JSON.parse(newXhttp.response)).forEach((dir, index, array) => { // For every year
                                                 if (debug) {debugger}
     
                                                 if (dir?.name.match(/\beeng( |)(1|2|3|4|5)\b|\bam( |)(1|2|3|4|5)\b/i)) {
                                                     const path = dir?.path?.split("/");
-                                                    this.gitConfigs[path[1]][path[2]] = {nbCfgs: 0};
+                                                    this.gitConfigs[path[1]][path[2]] = {nbCfgs: 0, path: dir.path};
                                                     if (debug) {debugger}
                                                     
                                                     const newXhttp = new XMLHttpRequest();
                                                     newXhttp.open("GET", dir?.url, true);
                                                     newXhttp.send();
                                                     newXhttp.onload = () => {
-                                                        Object.values(JSON.parse(newXhttp.response)).forEach((dir, index, array) => {// For every prom
+                                                        Object.values(JSON.parse(newXhttp.response)).forEach((dir, index, array) => { // For every prom
                                                             if (debug) {debugger}
                                                             
                                                             if (dir?.name.match(/\bP(\d{4})\b/i)) {
                                                                 const path = dir?.path?.split("/");
-                                                                this.gitConfigs[path[1]][path[2]][path[3]] = {nbCfgs: 0};
+                                                                this.gitConfigs[path[1]][path[2]][path[3]] = {nbCfgs: 0, path: dir.path};
                                                                 if (debug) {debugger}
                                                                 
                                                                 const newXhttp = new XMLHttpRequest();
                                                                 newXhttp.open("GET", dir?.url, true);
                                                                 newXhttp.send();
                                                                 newXhttp.onload = () => {
-                                                                    Object.values(JSON.parse(newXhttp.response)).forEach((dir, index, array) => {// For every pathway, or straight up the config itself
+                                                                    Object.values(JSON.parse(newXhttp.response)).forEach((dir, index, array) => { // For every pathway, or straight up the config itself
                                                                         if (debug) {debugger}
                                                                         
                                                                         if (dir?.type == "file" && dir?.name.match(/(.+).json/)) {
                                                                             const path = dir?.path?.split("/");
 
-                                                                            if (dir.name.match(/(.+).json/)[1].split(" - ").at(-1).match(/\bconfig\b/i)) {// is the file's name of format "EENG[X] - P[YYYY] - config.json"?
+                                                                            if (dir.name.match(/(.+).json/)[1].split(" - ").at(-1).match(/\bconfig\b/i)) { // is the file's name of format "EENG[X] - P[YYYY] - config.json"?
                                                                                 this.gitConfigs[path[1]][path[2]][path[3]]["__url__"] = dir?.url;
                                                                                 this.gitConfigs[path[1]][path[2]][path[3]].nbCfgs++;
                                                                                 this.gitConfigs[path[1]][path[2]].nbCfgs++;
@@ -941,15 +943,11 @@
                                                                         }
 
 
-                                                                        debugger;
                                                                         if (index == array.length-1 && endActionCallback instanceof Function) {
-                                                                            debugger;
                                                                             let end = true;
                                                                             this.gitFetchScanDoneArray.forEach(dirIsDone => {
-                                                                                debugger;
                                                                                 if (!dirIsDone) {
                                                                                     end = false;
-                                                                                    debugger;
                                                                                 }
                                                                             })
     
@@ -4526,9 +4524,9 @@
                 importMenu.classList.toggle("show");
 
                 if (importMenu.classList.contains("show")) {
-                    importFile.onclick = this.importData();
+                    importFile.onclick = () => this.importData();
                     importOnline.onclick = () => {
-                        this.getConfigsFromRepo("https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/contents", this.getLastGitFetchState, () => {debugger; this.openOnlineCfgPicker()})
+                        this.getConfigsFromRepo("https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/contents", this.getLastGitFetchState, () => {this.openOnlineCfgPicker()})
                     };
                 }
             }
@@ -4541,6 +4539,29 @@
                 pickerMenu.innerHTML = `
                     <div class="online-cfg-picker-menu-header">
                         <div class="online-cfg-picker-menu-close-btn">❌</div>
+                    </div>
+                    <div class="online-cfg-picker-menu-body">
+                        ${ "" +
+                            Object.keys(this.gitConfigs).map(key => {if (key != "nbCfgs") {return key}}).filter(value => {return value}).map((name, index, array) => {                  // Section
+                                const parentDivData = this.gitConfigs[name];
+
+                                return `<div class="online-cfg-picker-menu-div-card section" id="online-cfg-picker-menu-div-card-section-${name}" data-path="${parentDivData.path}">${name}</div>` + 
+                                Object.keys(parentDivData[name]).map(key => {if (key != "nbCfgs") {return key}}).filter(value => {return value}).map((name, index, array) => {          // Year
+                                    const parentDivData = parentDivData[name];
+
+                                    return `<div class="online-cfg-picker-menu-div-card year" id="online-cfg-picker-menu-div-card-year-${name}" data-path="${parentDivData.path}">${name}</div>` + 
+                                    Object.keys(parentDivData[name]).map(key => {if (key != "nbCfgs") {return key}}).filter(value => {return value}).map((name, index, array) => {      // Prom
+                                        const parentDivData = parentDivData[name];
+
+                                        return `<div class="online-cfg-picker-menu-div-card prom" id="online-cfg-picker-menu-div-card-prom-${name}" data-path="${parentDivData.path}">${name}</div>` + 
+                                        Object.keys(parentDivData[name]).map(key => {if (key != "nbCfgs") {return key}}).filter(value => {return value}).map((name, index, array) => {  // Config
+
+                                            return `<div class="online-cfg-picker-menu-div-card config" id="online-cfg-picker-menu-div-card-config-${name}" data-link="${parentDivData[name]}">${name}</div>`;
+                                        }).join("");
+                                    }).join("");
+                                }).join("");
+                            }).join("")
+                        }
                     </div>
                 `;
 
