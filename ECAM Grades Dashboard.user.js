@@ -55,7 +55,23 @@
             .lang-btn.active    { border: 2px solid #ceefffff; }
             .lang-btn:hover     { border: 2px solid #afe4ffff; background: #a6acff; }
 
-            .header-actions         { display: flex; gap: 12px; }
+            .import-menu        { display: flex; justify-content: space-around; position: absolute; right: 4%; top: 220px; background: transparent; color: transparent; box-shadow: 0px 0px 20px 0px #00000000; font-size: 15px; border-radius: 13px; min-height: 60px; width: 30%; align-items: center; transition: all 0.2s ease; }
+            .import-menu.show   { background: white; color: black; top: 230px; box-shadow: 5px 4px 20px 0px #00000066; }
+            .import-menu-btn        { display: flex; justify-content: center; align-items: center; text-align: center; user-select: none; cursor: pointer; border-radius: 12px; border: 2px solid; height: 30px; width: 45%; padding: 5px; }
+            .import-menu-btn.file   {  }
+            .import-menu-btn.online {  }
+
+            .online-cfg-picker-menu         { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 40%; display: flex; flex-direction: column; justify-content: flex-start; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; z-index: 1000; border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0; transition: all 0.3s ease; }
+            .online-cfg-picker-menu.show    { 
+                height: calc(100% - 60px); width: calc(100% - 60px); 
+                top: 30px; left: 30px; 
+                border: 8px solid #ffffff; 
+                opacity: 1;
+            }
+            .online-cfg-picker-menu-header      { display: flex; justify-content: flex-end; height: 26px; align-items: center; }
+            .online-cfg-picker-menu-close-btn   { text-align: center; width: 20px; height: 20px; border-radius: 10px; border: 2px solid; user-content: none; cursor: pointer; margin-right: 3px; }
+
+            .header-actions                 { display: flex; gap: 12px; }
             .btn                                { display: flex; justify-content: center; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-size: 14px; }
             .btn-edit-mode:hover:not(:disabled) { transform: scale(0.95); background: linear-gradient(135deg, #7d92eeff 0%, #8e5ebeff 100%); }
             .btn-edit-mode                      { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: grid; width: 126px; height: 108px; transition: all 0.2s ease }
@@ -495,23 +511,34 @@
         constructor() {
             this.grades = [];
             this.semesters = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{}, 7:{}, 8:{}, 9:{}, 10:{}};
+            this.getLastGitFetchState = (state, fallback) => {
+                this.lastGitFetchState = state;
+                if (state == 404) {
+                    this.getConfigsFromRepo("https://api.github.com/repos/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/contents", this.getLastGitFetchState, fallback)
+                }
+            };
+            this.lastGitFetchState = -1;
+            this.gitFetchScanDoneArray = [];
             this.gitConfigs = {/* 
                 eeng:   {
                     eeng1: {},
                     eeng2: {},
                     eeng3: {
                         P2028: {
-                            robotics:   "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/feature-BETTER-COEF-SETUP/Configs/EENG/P2028/EENG3/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Robotics.json?token=GHSAT0AAAAAADTGROUFHFTLZFIIJT3VXCYQ2M5SCRA",
-                            supply:     "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/feature-BETTER-COEF-SETUP/Configs/EENG/P2028/EENG3/EENG3%20P2028%20-%20S5%20and%20S6%20-%20SupplyChain.json?token=GHSAT0AAAAAADTGROUEHZFA5TYPHAL44KKA2M5SCRQ",
-                            energy:     "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/feature-BETTER-COEF-SETUP/Configs/EENG/P2028/EENG3/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Energy.json?token=GHSAT0AAAAAADTGROUFAATGYJJEIRMFKZZ42M5SCPA",
-                            mecha:      "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/feature-BETTER-COEF-SETUP/Configs/EENG/P2028/EENG3/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Mecha.json?token=GHSAT0AAAAAADTGROUFTWIH7R25Z7TN3CZQ2M5SH3A",
-                        }
+                            energy:     "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Energy.json",
+                            mecha:      "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Mecha.json",
+                            robotics:   "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Robotics.json",
+                            supply:     "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20P2028%20-%20S5%20and%20S6%20-%20SupplyChain.json",
+                            nbCfgs: 4, 
+                        },
+                        nbCfgs: 4, 
                     },
                     eeng4: {},
                     eeng5: {},
+                    nbCfgs: 4, 
                 },
-                am:     {},*/
-                nbCfgs: 0, 
+                am:     {}, 
+                nbCfgs: 4, */
             };
 
             this.configVersion = 2;
@@ -526,7 +553,7 @@
             this.defSem =                       localStorage.getItem("ECAM_DASHBOARD_DEFAULT_SEMESTER") || "all";
             this.currentSemester = this.defSem;
 
-            this.defView =                      /* localStorage.getItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE") || */ "detailed";
+            this.defView =                      localStorage.getItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE") || "detailed";
             this.viewMode = this.defView;
 
             this.lang =                         localStorage.getItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE") || "en";
@@ -812,17 +839,30 @@
                 return;
             }
 
-            getConfigsFromRepo(repoUrl) {
+            async getConfigsFromRepo(repoUrl, callback, endActionCallback) {
                 let debug = false;
                 // debug = true;
+                debugger;
 
                 let nope;
+                this.gitFetchScanDoneArray = [];
+                this.gitConfigs = {nbCfgs: 0}
 
                 let xhttp = new XMLHttpRequest();
+                xhttp.open("GET", repoUrl, true);   // Fetch repo
+                xhttp.send();
+                if (debug) {debugger}
+
                 xhttp.onload = () => {
                     if (debug) {debugger}
                     // If not working, try again with the test repo Miscelleneous_Tempermonkey_UserScripts
-                    if (xhttp?.status == "404") {return}
+                    if (xhttp?.status == "404") {
+                        callback(xhttp?.status, endActionCallback);
+                        return
+                    }
+                    else {
+                        callback(xhttp?.status);
+                    }
                     nope = "No 'config' folder found in repo";
 
                     Object.values(JSON.parse(xhttp.response)).forEach(dir => {// For every file in root
@@ -837,7 +877,7 @@
                             newXhttp.open("GET", dir?.url, true);
                             newXhttp.send();
                             newXhttp.onload = () => {
-                                Object.values(JSON.parse(newXhttp.response)).forEach(dir => {// For every section
+                                Object.values(JSON.parse(newXhttp.response)).forEach((dir, index, array) => {// For every section
                                     if (debug) {debugger}
     
                                     if (dir?.name.match(/\beeng\b|\bam\b/i)) {
@@ -848,7 +888,7 @@
                                         newXhttp.open("GET", dir?.url, true);
                                         newXhttp.send();
                                         newXhttp.onload = () => {
-                                            Object.values(JSON.parse(newXhttp.response)).forEach(dir => {// For every year
+                                            Object.values(JSON.parse(newXhttp.response)).forEach((dir, index, array) => {// For every year
                                                 if (debug) {debugger}
     
                                                 if (dir?.name.match(/\beeng( |)(1|2|3|4|5)\b|\bam( |)(1|2|3|4|5)\b/i)) {
@@ -860,7 +900,7 @@
                                                     newXhttp.open("GET", dir?.url, true);
                                                     newXhttp.send();
                                                     newXhttp.onload = () => {
-                                                        Object.values(JSON.parse(newXhttp.response)).forEach(dir => {// For every prom
+                                                        Object.values(JSON.parse(newXhttp.response)).forEach((dir, index, array) => {// For every prom
                                                             if (debug) {debugger}
                                                             
                                                             if (dir?.name.match(/\bP(\d{4})\b/i)) {
@@ -872,63 +912,72 @@
                                                                 newXhttp.open("GET", dir?.url, true);
                                                                 newXhttp.send();
                                                                 newXhttp.onload = () => {
-                                                                    Object.values(JSON.parse(newXhttp.response)).forEach(dir => {// For every pathway, or straight up the config itself
+                                                                    Object.values(JSON.parse(newXhttp.response)).forEach((dir, index, array) => {// For every pathway, or straight up the config itself
                                                                         if (debug) {debugger}
                                                                         
                                                                         if (dir?.type == "file" && dir?.name.match(/(.+).json/)) {
                                                                             const path = dir?.path?.split("/");
-                                                                            this.gitConfigs[path[1]][path[2]][path[3]][path[4]] = dir?.url;
-                                                                            this.gitConfigs[path[1]][path[2]][path[3]].nbCfgs++;
-                                                                            this.gitConfigs[path[1]][path[2]].nbCfgs++;
-                                                                            this.gitConfigs[path[1]].nbCfgs++;
-                                                                            this.gitConfigs.nbCfgs++;
-                                                                            if (debug) {debugger}
-                                                                        }
-                                                                        else if (dir?.type == "dir") {
-                                                                            const path = dir?.path?.split("/");
-                                                                            this.gitConfigs[path[1]][path[2]][path[3]][path[4]][path[5]] = {nbCfgs: 0};
-                                                                            if (debug) {debugger}
-                                                                            
-                                                                            const newXhttp = new XMLHttpRequest();
-                                                                            newXhttp.open("GET", dir?.url, true);
-                                                                            newXhttp.send();
-                                                                            newXhttp.onload = () => {
-                                                                                Object.values(JSON.parse(newXhttp.response)).forEach(dir => {// For every file in pathway
-                                                                                    if (debug) {debugger}
-                                                                                    
-                                                                                    if (dir?.type == "file" && dir?.name.match(/(.+).json/)) {
-                                                                                        const path = dir?.path?.split("/");
-                                                                                        this.gitConfigs[path[1]][path[2]][path[3]][path[4]][path[5]] = dir?.url;
-                                                                                        this.gitConfigs[path[1]][path[2]][path[3]][path[4]].nbCfgs++;
-                                                                                        this.gitConfigs[path[1]][path[2]][path[3]].nbCfgs++;
-                                                                                        this.gitConfigs[path[1]][path[2]].nbCfgs++;
-                                                                                        this.gitConfigs[path[1]].nbCfgs++;
-                                                                                        this.gitConfigs.nbCfgs++;
-                                                                                        if (debug) {debugger}
-                                                                                    }
-                                                                                    else {
-                                                                                        console.warn("Configs\\"+this.cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path, was expecting a file with a .json extension")
-                                                                                    }
-                                                                                })
-                                                                            };
+
+                                                                            if (dir.name.match(/(.+).json/)[1].split(" - ").at(-1).match(/\bconfig\b/i)) {// is the file's name of format "EENG[X] - P[YYYY] - config.json"?
+                                                                                this.gitConfigs[path[1]][path[2]][path[3]]["__url__"] = dir?.url;
+                                                                                this.gitConfigs[path[1]][path[2]][path[3]].nbCfgs++;
+                                                                                this.gitConfigs[path[1]][path[2]].nbCfgs++;
+                                                                                this.gitConfigs[path[1]].nbCfgs++;
+                                                                                this.gitConfigs.nbCfgs++;
+                                                                                if (debug) {debugger}
+                                                                            }
+                                                                            else {// else, then it's a pathway's config
+                                                                                const pathwayName = dir.name.match(/(.+).json/)[1].split(" - ").at(-1);
+                                                                                this.gitConfigs[path[1]][path[2]][path[3]][pathwayName] = dir?.url;
+                                                                                this.gitConfigs[path[1]][path[2]][path[3]].nbCfgs++;
+                                                                                this.gitConfigs[path[1]][path[2]].nbCfgs++;
+                                                                                this.gitConfigs[path[1]].nbCfgs++;
+                                                                                this.gitConfigs.nbCfgs++;
+                                                                                if (debug) {debugger}
+                                                                            }
                                                                         }
                                                                         else {
                                                                             console.warn("Configs\\"+this.cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path, was expecting a file with a .json extension or a folder with the name of a pathway")
                                                                         }
+
+
+                                                                        debugger;
+                                                                        if (index == array.length-1 && endActionCallback instanceof Function) {
+                                                                            debugger;
+                                                                            let end = true;
+                                                                            this.gitFetchScanDoneArray.forEach(dirIsDone => {
+                                                                                debugger;
+                                                                                if (!dirIsDone) {
+                                                                                    end = false;
+                                                                                    debugger;
+                                                                                }
+                                                                            })
+    
+                                                                            if (end) {endActionCallback()}
+                                                                        }
                                                                     })
+
                                                                 };
+                                                                
+                                                                if (index == array.length-1) {this.gitFetchScanDoneArray.push(true)}
+
                                                             }
                                                             else {
                                                                 console.warn("Configs\\"+this.cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path, was expecting the name of the prom, like 'P2028'")
                                                             }
                                                         })
                                                     };
+
+                                                    if (index == array.length-1) {this.gitFetchScanDoneArray.push(true)}
+
                                                 }
                                                 else {
                                                     console.warn("Configs\\"+this.cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path, was expecting the name of a year, like 'eeng3'")
                                                 }
                                             })
                                         };
+
+                                        if (index == array.length-1) {this.gitFetchScanDoneArray.push(true)}
                                     }
                                     else {
                                         console.warn("'Configs\\"+dir?.name+"' isn't an expected path, was expecting something the name of a section, like 'eeng'")
@@ -941,9 +990,6 @@
 
                     if (nope) {console.warn(nope)}
                 };
-                xhttp.open("GET", repoUrl, true);   // Fetch repo
-                xhttp.send();
-                if (debug) {debugger}
             }
 
             /** 
@@ -1695,12 +1741,11 @@
 
         // MARK: -INIT
         init() {
-            document.getElementById("dockbar").remove();
-            this.getConfigsFromRepo("https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/contents")
-            this.getConfigsFromRepo("https://api.github.com/repos/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/contents")
+            // document.getElementById("dockbar").remove();
 
             this.parseGrades();
             this.getGradesDatas();
+
             if (this.savedReadGrades.length == 0) {
                 this.newGrades = [];
                 this.grades.forEach(e => {this.savedReadGrades.push(e)})
@@ -1716,8 +1761,7 @@
             this.newGrades = this.compareArraysofObjects(this.grades, this.savedReadGrades).more;
             this.createNewGradesNotifDiv();
             this.createDashboard();
-            // this.attachEventListeners();
-            
+            this.openOnlineCfgPicker();
         }
 
 
@@ -1764,6 +1808,10 @@
                         <div style="display: flex; flex-direction: column; gap: 8px">
                             <button class="btn btn-export" id="exportBtn"></button>
                             <button class="btn btn-import" id="importBtn"></button>
+                            <div class="import-menu" id="importMenu">
+                                <div class="import-menu-btn file"></div>
+                                <div class="import-menu-btn online"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2119,15 +2167,16 @@
                     </div>
                     
                     <div class="ue-card-content ${this.editMode ? "edit-mode": ""}">
-                        <div class="ue-coef-slider ${this.editMode ? "edit-mode": ""}"></div>
-                        <div class="ue-details ${this.editMode ? "edit-mode": ""}" id="ue-details-${ueName}-in-semester${sem}">
-                            ${this.viewMode == "detailed" ? this.createAllSubjCardDetailed(sem, ueName) : this.createAllSubjCardCompact(sem, ueName)}
-                        </div>
+                    <div class="ue-details ${this.editMode ? "edit-mode": ""}" id="ue-details-${ueName}-in-semester${sem}">
+                    ${this.viewMode == "detailed" ? this.createAllSubjCardDetailed(sem, ueName) : this.createAllSubjCardCompact(sem, ueName)}
                     </div>
-
-                </div>
+                    </div>
+                    
+                    </div>
                 `;
 
+                // <div class="ue-coef-slider ${this.editMode ? "edit-mode": ""}"></div>
+                    
                 return html
             }
             
@@ -3077,16 +3126,16 @@
                         this.renderContent(false);
                     }
                 };
-
-                // Import
-                document.getElementById('importBtn').onclick = () => this.importData();
-
+                
                 // Edit mode
                 document.getElementById('editModeBtn').onclick = () => {
                     this.editMode = !this.editMode;
                     this.renderContent();
                     this.attachEventListeners();
                 };
+                
+                // Import
+                document.getElementById('importBtn').onclick = () => this.openImportMenu();
 
                 // Export
                 document.getElementById('exportBtn').onclick = () => this.exportData();
@@ -4467,6 +4516,43 @@
 
         //#region -REGION: Data ↓Imp/Exp↑
 
+            openImportMenu() {
+                const importMenu    = document.getElementById("importMenu");
+                const importFile    = importMenu.querySelector(".import-menu-btn.file");
+                const importOnline  = importMenu.querySelector(".import-menu-btn.online");
+
+                importFile.innerHTML   = this.lang == "fr" ? "Importer fichier de configuration .json"   : "Import .json configuration file";
+                importOnline.innerHTML = this.lang == "fr" ? "Obtenir fichier de configuration en ligne" : "Fetch online configuration file";
+                importMenu.classList.toggle("show");
+
+                if (importMenu.classList.contains("show")) {
+                    importFile.onclick = this.importData();
+                    importOnline.onclick = () => {
+                        this.getConfigsFromRepo("https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/contents", this.getLastGitFetchState, () => {debugger; this.openOnlineCfgPicker()})
+                    };
+                }
+            }
+
+            openOnlineCfgPicker() {
+                document.getElementById("importMenu").classList.remove("show");
+                const pickerMenu     = document.createElement("div");
+                pickerMenu.id        = "pickerMenu";
+                pickerMenu.className = "online-cfg-picker-menu";
+                pickerMenu.innerHTML = `
+                    <div class="online-cfg-picker-menu-header">
+                        <div class="online-cfg-picker-menu-close-btn">❌</div>
+                    </div>
+                `;
+
+                document.querySelector(".ecam-dash").appendChild(pickerMenu);
+                setTimeout(() => {pickerMenu.classList.add("show");}, 10)
+                
+                pickerMenu.querySelector(".online-cfg-picker-menu-close-btn").onclick = () => {
+                    pickerMenu.classList.remove("show");
+                    setTimeout(() => {pickerMenu.remove()}, 300);
+                }
+            }
+
             importData(file) {
                 this.sim = {};
                 return new Promise((resolve, reject) => {
@@ -4510,8 +4596,14 @@
 
                     // If a JSON string was passed, try to parse directly
                     if (typeof file === 'string') {
-                        // treat as raw JSON string
-                        try { handleText(file); } catch (err) { reject(err); }
+                        if (file.match(/https:\/\/api.github.com\/repos\/(.+)\/contents/)) {
+                            // treat as a url to send a request to
+                            this.getConfigsFromRepo(file, () => {this.pickOnlineCfg()})
+                        }
+                        else {
+                            // treat as raw JSON string
+                            try { handleText(file); } catch (err) { reject(err); }
+                        }
                         return;
                     }
 
@@ -4556,14 +4648,17 @@
         // MARK: -Keyboard Events
         generalKeyboardEvents() {
             document.onkeydown = (e) => {
-                if (e.key === "E" && e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey && !e.repeat) {
+                const key = `${e.altKey ? "alt" : "no-alt"} + ${e.ctrlKey ? "ctrl" : "no-ctrl"} + ${e.shiftKey ? "shift" : "no-shift"} + ${e.metaKey ? "meta" : "no-meta"} + ${e.key} (${e.repeat ? "repeat" : "no-repeat"})`;
+
+
+                if (key === "no-alt + no-ctrl + shift + no-meta + E (no-repeat)") {
                     this.editMode = !this.editMode;
                     
                     this.removeSubjectCardFromSubjectSelection();
                     this.scrollToClientHighestElem();
                     this.renderContent();
                 }
-                else if (e.key === "D" && e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey && !e.repeat) {
+                else if (key === "no-alt + no-ctrl + shift + no-meta + D (no-repeat)") {
 
                     this.viewMode = this.viewMode == "detailed" ? "compact" : "detailed";   // Inverse the stored view mode value
                     localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
@@ -4580,7 +4675,7 @@
                     this.scrollToClientHighestElem();
                     this.renderContent();
                 }
-                else if (e.key === "L" && e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey && !e.repeat) {
+                else if (key === "no-alt + no-ctrl + shift + no-meta + L (no-repeat)") {
                     
                     this.lang = this.lang == "fr" ? "en" : "fr";
                     localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
@@ -4596,7 +4691,7 @@
                     this.scrollToClientHighestElem();
                     this.renderContent(false);
                 }
-                else if (e.key === "R" && e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey && !e.repeat) {
+                else if (key === "no-alt + no-ctrl + shift + no-meta + R (no-repeat)") {
                     console.warn("You fell into my breakpoint trap!!"); debugger;
                 }
             };
