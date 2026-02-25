@@ -25,26 +25,53 @@
 
     //#region -======= STYLES CSS =======
 
-
+        let styles = ``;
 
 
         // MARK: -DASHBOARD
-        let styles = `
+        styles += `
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
             * { box-sizing: border-box; }
-            .ecam-dash          { display: grid; flex-direction: column; justify-content:center; grid-template-columns: 100%; font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; margin: 20px 1.5% 0px 1.5%; width: 97%; color: #1a1a1a; }
+            .ecam-dash { 
+                display: grid; 
+                flex-direction: column; 
+                justify-content:center; 
+                width: 97%; 
+                grid-template-columns: 100%; 
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; 
+                margin: 20px 1.5% 0px 1.5%; 
+                color: #1a1a1a; 
+            }
+
             .dash-header { background: linear-gradient(135deg, #5b62bf 0%, #2A2F72 100%); color: white; padding: 30px 40px; border-radius: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 3px 5px 5px 0px #00000042; }
             .dash-title { font-size: 24px; font-weight: 700; margin: 0; }
             .dash-subtitle { font-size: 14px; opacity: 0.95; margin-top: 5px; }
+        `;
+        
+        
+        // MARK: buttons
+        styles += `
             .lang-btn           { border: 2px solid #000000ff; background: #6f79ff; border-radius: 18px; width: 36px; height: 36px; }
             .lang-btn.active    { border: 2px solid #ceefffff; }
             .lang-btn:hover     { border: 2px solid #afe4ffff; background: #a6acff; }
-            .header-actions         { display: flex; gap: 12px; }
-        `;
 
+            .import-menu        { display: flex; justify-content: space-around; position: absolute; right: 4%; top: 220px; background: transparent; color: transparent; box-shadow: 0px 0px 20px 0px #00000000; font-size: 15px; border-radius: 13px; min-height: 60px; width: 30%; align-items: center; transition: all 0.2s ease; }
+            .import-menu.show   { background: white; color: black; top: 230px; box-shadow: 5px 4px 20px 0px #00000066; }
+            .import-menu-btn        { display: flex; justify-content: center; align-items: center; text-align: center; user-select: none; cursor: pointer; border-radius: 12px; border: 2px solid; height: 30px; width: 45%; padding: 5px; }
+            .import-menu-btn.file   {  }
+            .import-menu-btn.online {  }
 
-        // MARK: buttons
-        styles += `
+            .online-cfg-picker-menu         { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 40%; display: flex; flex-direction: column; justify-content: flex-start; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; z-index: 1000; border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0; transition: all 0.3s ease; }
+            .online-cfg-picker-menu.show    { 
+                height: calc(100% - 60px); width: calc(100% - 60px); 
+                top: 30px; left: 30px; 
+                border: 8px solid #ffffff; 
+                opacity: 1;
+            }
+            .online-cfg-picker-menu-header      { display: flex; justify-content: flex-end; height: 26px; align-items: center; }
+            .online-cfg-picker-menu-close-btn   { text-align: center; width: 20px; height: 20px; border-radius: 10px; border: 2px solid; user-content: none; cursor: pointer; margin-right: 3px; }
+
+            .header-actions                 { display: flex; gap: 12px; }
             .btn                                { display: flex; justify-content: center; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-size: 14px; }
             .btn-edit-mode:hover:not(:disabled) { transform: scale(0.95); background: linear-gradient(135deg, #7d92eeff 0%, #8e5ebeff 100%); }
             .btn-edit-mode                      { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: grid; width: 126px; height: 108px; transition: all 0.2s ease }
@@ -141,8 +168,8 @@
             .semester-toggle { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; }
             .semester-toggle.open { transform: rotate(180deg); }
             .semester-content               { padding: 24px; display: none; }
-            .semester-content.show          { display: flex; flex-direction: row; width: 100%; gap: 0px; transition: gap 0.2s ease, width 0.2s ease; }
-            .semester-content.show.dragging { width: 70%; gap: 20px; }
+            .semester-content.show          { display: flex; flex-direction: row; width: 100%; gap: 0px; transition: width 0.2s ease, gap 0.2s ease; }
+            .semester-content.show.dragging { width: 73%; gap: 20px; }
         `;
             
 
@@ -157,67 +184,130 @@
         // MARK: drop areas
         styles += `
             
-            .drop-field                                     { display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 20px; mix-blend-mode: multiply; user-select: none; }
+            .drop-field     { display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 20px; mix-blend-mode: multiply; overflow: clip; user-select: none; }
 
-            .drop-field.remove-from-ue                      { position: fixed; top: 50px; left: 10px; height: calc(100% - 100px); width: 0%; border: 2px dashed #ff7f7f; border-color: #ff7f7f00; background: #ffb8b800; font-size: 50px; font-weight: 800; color: #ff7f7f00; z-index: 301; transition: all 0.2s ease; }
-            .drop-field.remove-from-ue.show                 { width: 15%; border-width: 2px; border-color: #ff7f7f; color: #ff7f7f; background: #ffb8b83d; }
+            .drop-field.create-ue                           { position: fixed; top: 50px; right:10px; height: calc(100% - 100px); width: 0%; border: 2px dashed #7fc2ff; border-color: #7fc2ff00; background: #bdb8ff00; font-weight: 800; color: #7fc2ff00; z-index: 301; transition: all 0.2s ease; }
+            .drop-field.create-ue.show                      { width: 15%; border-width: 2px; border-color: #7fc2ff; color: #7fc2ff; background: #bdb8ff3d; cursor: pointer; }
+            .drop-field.create-ue.hover                     { background: #d3d0ffce; }
+            .drop-field-create-ue-plus                      { position: relative; font-size: 50px; transform: rotate( 0deg); transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+            .drop-field-create-ue-plus.hover                { right: 4px; font-size: 90px; transform: rotate(-90deg); }
+            .drop-field-create-ue-text                      { font-size: 25px; position: relative; overflow-x: clip; text-wrap-mode: nowrap; transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+            .drop-field-create-ue-text.top                  { bottom:  10px; right:0px; }
+            .drop-field-create-ue-text.bottom               { top:     10px; left: 0px; }
+            .drop-field-create-ue-text.top.hover            { bottom:  30px; right:20px; font-size: 30px; }
+            .drop-field-create-ue-text.bottom.hover         { top:     30px; left: 20px; font-size: 30px; }
 
-            .drop-field.create-ue                           { position: fixed; top: 50px; right:10px; height: calc(100% - 100px); width: 0%; border: 2px dashed #7fc2ff; border-color: #7fc2ff00; background: #bdb8ff00; font-size: 50px; font-weight: 800; color: #7fc2ff00; z-index: 301; transition: all 0.2s ease; }
-            .drop-field.create-ue.show                      { width: 15%; border-width: 2px; border-color: #7fc2ff; color: #7fc2ff; background: #bdb8ff3d; }
+            .drop-field-create-ue-text.top.fr::before       { content: "Créer un"; }
+            .drop-field-create-ue-text.bottom.fr::after     { content: "nouveau module"; }
+            .drop-field-create-ue-text.top.en::before       { content: "Create a"; }
+            .drop-field-create-ue-text.bottom.en::after     { content: "new module"; }
+            
+
+            
+            .drop-field.remove-from-ue                      { position: fixed; top: 50px; left: 10px; height: calc(100% - 100px); width: 0%; border: 2px dashed #ff7f7f; border-color: #ff7f7f00; background: #ffb8b800; font-weight: 800; color: #ff7f7f00; z-index: 301; transition: all 0.2s ease; }
+            .drop-field.remove-from-ue.show                 { width: 15%; border-width: 2px; border-color: #ff7f7f; color: #ff7f7f; background: #ffb8b83d; cursor: pointer; }
+            .drop-field.remove-from-ue.hover                     { background: #ffb8b8ce; }
+            .drop-field-remove-from-ue-minus                     { position: relative; font-size: 50px; transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+            .drop-field-remove-from-ue-minus.hover               { font-size: 90px; animation: 0.3s shakeMinusText ease; }
+            .drop-field-remove-from-ue-text                      { font-size: 25px; position: relative; overflow-x: clip; text-wrap-mode: nowrap; transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+            .drop-field-remove-from-ue-text.top                  { bottom:  10px; left: 0px; }
+            .drop-field-remove-from-ue-text.bottom               { top:     10px; right:0px; }
+            .drop-field-remove-from-ue-text.top.hover            { bottom:  30px; left: 20px; font-size: 30px; }
+            .drop-field-remove-from-ue-text.bottom.hover         { top:     30px; right:20px; font-size: 30px; }
+
+            .drop-field-remove-from-ue-text.top.fr::before       { content: "Enlever"; }
+            .drop-field-remove-from-ue-text.bottom.fr::after     { content: "du module"; }
+            .drop-field-remove-from-ue-text.top.en::before       { content: "Remove"; }
+            .drop-field-remove-from-ue-text.bottom.en::after     { content: "from module"; }
+            @keyframes shakeMinusText { 0% {left: 0px} 25% {left: 3px} 50% {left: -3px} 75% {left: 3px} 100% {left: 0px} }
 
 
 
-            .drop-field.insert-area.ue                      { justify-content: flex-start; height: 0px; width: 100%; color: #9b9b9b00; border: 2px dashed #9b9b9b00; background: #bdb8ff00; font-size: 25px; font-weight: 800; user-select: none; margin: -6px 0px; cursor: pointer; transition: all 0.2s ease; }
+            .drop-field.insert-area.ue                      { justify-content: flex-start; height: 0px; width: 100%; color: #9b9b9b00; border: 2px dashed #9b9b9b00; background: #bdb8ff00; font-size: 25px; font-weight: 800; user-select: none; margin: -6px 0px; transition: all 0.2s ease; }
             .drop-field.insert-area.ue.show                 { color: #9b9b9bff; border-color: #9b9b9bff; background: #bdb8ff3d; height: 50px; margin: 0px; }
             .drop-field.insert-area.ue.show.hover           { color: #887bffff; border-color: #7fc2ffff; background: #bdb8ff3d; }
 
-            .drop-field.insert-area.subject                 { justify-content: flex-start; height: 0px; width: 100%; color: #9b9b9b00; border: 2px dashed #9b9b9b00; background: #bdb8ff00; font-size: 25px; font-weight: 800; user-select: none; margin: -6px 0px; cursor: pointer; transition: all 0.2s ease; }
+            .drop-field.insert-area.subject                 { justify-content: flex-start; height: 0px; width: 100%; color: #9b9b9b00; border: 2px dashed #9b9b9b00; background: #bdb8ff00; font-size: 25px; font-weight: 800; user-select: none; margin: -6px 0px; transition: all 0.2s ease; }
             .drop-field.insert-area.subject.show            { color: #9b9b9bff; border-color: #9b9b9b54; background: #bdb8ff1a; height: 30px; margin: 0px; }
             .drop-field.insert-area.subject.show.hover      { color: #887bffff; border-color: #7fc2ff; }
             
-            .drop-ue-card-insert-content                    { position: relative; display: flex; align-items: center; width: 100%; height: 50px; overflow: clip; top:-2px; }
-            .drop-ue-card-insert-content.plus               {  }
-            .drop-ue-card-insert-content.arrow              {  }
-            .drop-ue-card-insert-content.text               { overflow: visible; top: -52px }
-            .drop-ue-card-insert-arrow                      { transform: translateX(-9%); font-size: 280px; display: flex; align-items: flex-start; justify-content: center; height: 50px; width: 100%; background: transparent; transition: transform 0.5s cubic-bezier(0, 1, 0.25, 1); }
-            .drop-ue-card-insert-arrow.hover                { transform: translateX(0%) ; }
-            .drop-ue-card-insert-plus                       { transform: translate(-9%, 14px) rotate(0deg); font-size: 50px ;  position: relative; left: 0px; display: flex; justify-content: center; height: 50px; width: 100%; background: transparent; transition: transform 0.5s cubic-bezier(0, 1, 0.25, 1), font-size 0.5s cubic-bezier(0, 1, 0.25, 1); }
-            .drop-ue-card-insert-plus.hover                 { transform: translate(0%, 50%) rotate(180deg); font-size: 280px; }
-            .drop-ue-card-insert-text                       { display: flex; justify-content: flex-start; align-items: center; position: relative; overflow-x: clip; text-wrap: nowrap; width: 0px; height: 50px; background: transparent; transition: width 0.5s cubic-bezier(0, 1, 0.25, 1), left 0.5s cubic-bezier(0, 1, 0.25, 1); }
-            .drop-ue-card-insert-text.fr.add                { left: 26%; }
-            .drop-ue-card-insert-text.fr.add.hover          { left: 29%; width: 280px; }
-            .drop-ue-card-insert-text.fr.insert             { left: 28%; }
-            .drop-ue-card-insert-text.fr.insert.hover       { left: 31%; width: 122px; }
-            .drop-ue-card-insert-text.en.add                { left: 32%; }
-            .drop-ue-card-insert-text.en.add.hover          { left: 35%; width: 172px; }
-            .drop-ue-card-insert-text.en.insert             { left: 17%; }
-            .drop-ue-card-insert-text.en.insert.hover       { left: 20%; width: 263px; }
-            .drop-ue-card-insert-hitbox                     { display: flex; position: relative; top: -102px; width: calc(100% - -4px); min-height: 50px; border-radius: 20px; cursor: pointer; }
-            
-            .drop-subject-card-insert-content               { position: relative; display: flex; align-items: center; width: 100%; height: 30px; overflow: clip; top:-2px; }
-            .drop-subject-card-insert-content.plus          {  }
-            .drop-subject-card-insert-content.arrow         {  }
-            .drop-subject-card-insert-content.text          { overflow: visible; top: -32px }
-            .drop-subject-card-insert-arrow                 { transform: translateX(-9%); font-size: 280px; display: flex; align-items: flex-start; justify-content: center; height: 30px; width: 100%; background: transparent; transition: transform 0.5s cubic-bezier(0, 1, 0.25, 1); }
-            .drop-subject-card-insert-arrow.hover           { transform: translateX(0%) ; }
-            .drop-subject-card-insert-plus                  { transform: translate(-9%, 4px) rotate(0deg)  ;  font-size: 50px;  position: relative; left: 0px; display: flex; justify-content: center; height: 30px; width: 100%; background: transparent; transition: transform 0.5s cubic-bezier(0, 1, 0.25, 1), font-size 0.5s cubic-bezier(0, 1, 0.25, 1); }
-            .drop-subject-card-insert-plus.hover            { transform: translate(0%, 100%) rotate(180deg); font-size: 280px; }
-            .drop-subject-card-insert-text                  { display: flex; justify-content: flex-start; align-items: center; position: relative; left: 28%; overflow-x: clip; text-wrap: nowrap; width: 0px; height: 30px; background: transparent; transition: width 0.5s cubic-bezier(0, 1, 0.25, 1), left 0.5s cubic-bezier(0, 1, 0.25, 1); }
-            .drop-subject-card-insert-text.fr.add           { width: 000px; left: 26.0%; }
-            .drop-subject-card-insert-text.fr.add.hover     { width: 279px; left: 28.5%; }
-            .drop-subject-card-insert-text.fr.insert.hover  { width: 140px; left: 35.0%; }
-            .drop-subject-card-insert-text.en.add           { width: 000px; left: 28.0%; }
-            .drop-subject-card-insert-text.en.add.hover     { width: 300px; left: 31.5%; }
-            .drop-subject-card-insert-text.en.insert.hover  { width: 140px; left: 35.0%; }
-            .drop-subject-card-insert-hitbox                { display: flex; position: relative; top: -62px; width: calc(100% - -4px); min-height: 30px; border-radius: 20px; cursor: pointer; }
+            .drop-ue-card-insert-content                        { position: relative; display: flex; justify-content: center; align-items: center; width: 100%; height: 50px; overflow: clip; top:-2px; }
+            .drop-ue-card-insert-content.plus                   {  }
+            .drop-ue-card-insert-content.arrow                  { top: -52px; }
+            .drop-ue-card-insert-content.text                   { overflow: visible; top: -102px }
+            .drop-ue-card-insert-content.text.add               { justify-content: center; }
+            .drop-ue-card-insert-content.text.insert            { justify-content: flex-start; }
 
+            .drop-ue-card-insert-arrow                          { transform: translate(70px,  5px); font-size: 500px; display: flex; align-items: flex-start; justify-content: center; height: 50px; width: 100%; background: transparent; opacity: 0;                         transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+            .drop-ue-card-insert-arrow.show                     { opacity: 1; }
+            .drop-ue-card-insert-arrow.show.hover               { transform: translate(170px, 5px); }
+
+            .drop-ue-card-insert-plus                           { transform: translate(  0px, 14px) rotate(  0deg); font-size: 50px ;  position: relative; left: 0px; display: flex; justify-content: center; height: 50px; width: 100%; background: transparent; opacity: 0;   transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+            .drop-ue-card-insert-plus.show                      { opacity: 1; }
+            .drop-ue-card-insert-plus.show.hover                { transform: translate(130px, 30px) rotate(180deg); font-size: 280px; }
+
+            .drop-ue-card-insert-text                           { display: flex; justify-content: flex-start; align-items: center; position: relative; overflow-x: clip; text-wrap: nowrap; width: 0px; height: 50px; background: transparent;                              transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+
+            .drop-ue-card-insert-text.add.fr                { --width: 263px; --x-translation: calc(0.5*var(--width) - 20px); }
+            .drop-ue-card-insert-text.add.en                { --width: 230px; --x-translation: calc(0.5*var(--width) - 20px); }
+            .drop-ue-card-insert-text.insert.fr             { --width: 430px; --x-translation:  50px; }
+            .drop-ue-card-insert-text.insert.en             { --width: 340px; --x-translation:  50px; }
+
+            .drop-ue-card-insert-text.add.fr::before            { content: "Ajouter un module ici";}
+            .drop-ue-card-insert-text.add.en::before            { content: "Add a module here";}
+            .drop-ue-card-insert-text.add                       { width: 0px; right: 0px; }
+            .drop-ue-card-insert-text.add.hover                 { width: var(--width); right: var(--x-translation); }
+            
+            .drop-ue-card-insert-text.insert.fr::before         { content: "Insérer vers un nouveau module ici"; }
+            .drop-ue-card-insert-text.insert.en::before         { content: "Insert to a new module here"; }
+            .drop-ue-card-insert-text.insert                    { width: 0px; right: calc(var(--x-translation) + var(--width) - 50%); }
+            .drop-ue-card-insert-text.insert.hover              { width: var(--width); right: calc(var(--width) - 50%); }
+
+            .drop-ue-card-insert-hitbox                     { display: flex; position: relative; top: -152px; width: calc(100% - -4px); min-height: 50px; border-radius: 20px; cursor: pointer; }
+            
+
+            .drop-subject-card-insert-content                   { position: relative; display: flex; align-items: center; width: 100%; height: 30px; overflow: clip; top:-2px; }
+            .drop-subject-card-insert-content.plus              {  }
+            .drop-subject-card-insert-content.arrow             { top: -32px; }
+            .drop-subject-card-insert-content.text              { overflow: visible; top: -62px }
+            .drop-subject-card-insert-content.text.add          { justify-content: center; }
+            .drop-subject-card-insert-content.text.insert       { justify-content: flex-start; }
+            
+            .drop-subject-card-insert-arrow                     { transform: translate(0%, 0px); font-size: 280px; display: flex; align-items: flex-start; justify-content: center; height: 30px; width: 100%; background: transparent; opacity: 0;                        transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+            .drop-subject-card-insert-arrow.show                { opacity: 1; }
+            .drop-subject-card-insert-arrow.show.hover          { transform: translate(9%, 0px) ; }
+
+            .drop-subject-card-insert-plus                      { transform: translate(0%, 4px) rotate(0deg)   ; font-size: 50px;  position: relative; left: 0px; display: flex; justify-content: center; height: 30px; width: 100%; background: transparent; opacity: 0;  transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+            .drop-subject-card-insert-plus.show                 { opacity: 1; }
+            .drop-subject-card-insert-plus.show.hover           { transform: translate(9%, 80%) rotate(180deg); font-size: 200px; }
+
+            .drop-subject-card-insert-text                      { display: flex; justify-content: flex-start; align-items: center; position: relative; overflow-x: clip; text-wrap: nowrap; width: 0px; height: 50px; background: transparent;                              transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+
+            .drop-subject-card-insert-text.add.fr           { --width: 280px; --x-translation: calc(0.5*var(--width) - 20px); }
+            .drop-subject-card-insert-text.add.en           { --width: 230px; --x-translation: calc(0.5*var(--width) - 20px); }
+            .drop-subject-card-insert-text.insert.fr        { --width: 123px; --x-translation:  50px; }
+            .drop-subject-card-insert-text.insert.en        { --width: 135px; --x-translation:  50px; }
+
+            .drop-subject-card-insert-text.add.fr::before       { content: "Ajouter une matière ici";}
+            .drop-subject-card-insert-text.add.en::before       { content: "Add a subject here";}
+            .drop-subject-card-insert-text.add                  { width: 0px; right: 0px; }
+            .drop-subject-card-insert-text.add.hover            { width: var(--width); right: var(--x-translation); }
+            
+            .drop-subject-card-insert-text.insert.fr::before    { content: "Insérer ici"; }
+            .drop-subject-card-insert-text.insert.en::before    { content: "Insert here"; }
+            .drop-subject-card-insert-text.insert               { width: 0px; right: calc(var(--x-translation) + var(--width) - 50%); }
+            .drop-subject-card-insert-text.insert.hover         { width: var(--width); right: calc(var(--width) - 50%); }
+
+            .drop-subject-card-insert-hitbox                { display: flex; position: relative; top: -92px; width: calc(100% - -4px); min-height: 30px; border-radius: 20px; cursor: pointer; }
+            
         `;
             
 
-        // MARK: ue grid
+
+        // MARK: -UE CARDS
         styles += `
 
-            .ue-grid                { display: grid; width: 100%; gap: 20px; transition: gap 0.2s ease; }
+            .semester-grid      { display: grid; width: 100%; gap: 20px; transition: gap 0.2s ease; }
             .ue-card                { display: flex; flex-direction: column; align-items: center; width: 100%; background: #fafafa; border-radius: 25px; border: 3px solid #e5e5e5; scroll-margin-top: 70px; transition: all 0.3s ease; }
             .ue-card.validated      { border-color: #10b981ff; background: #f0fdf4ff; }
             .ue-card.failed         { border-color: #ef4444ff; background: #fef2f2ff; }
@@ -231,7 +321,26 @@
             .ue-title                       { font-size: 16px; font-weight: 800; color: #1a1a1a; width:42%; margin-bottom: 2px; }
             .ue-title.input                 { font-size: 16px; font-weight: 800; color: #1a1a1a; width:90%; border-radius: 12px; padding-left: 10px; }
             .ue-subject-total-coef-value    { display: flex; gap: 15px; font-weight: 600; }
-            .ue-details                     { display: flex; flex-direction: column; align-items: center; width: 98%; margin: 18px 0px; gap: 15px; }
+
+            .ue-card-content            { display: flex; flex-direction: row; width: 98%; height: 100%; align-items: center; gap: 0px; margin: 8px 0px 18px 0px; }
+            .ue-card-content.edit-mode  { gap: 1% }
+
+
+            .ue-coef-slider                     { display: flex; flex-direction: row; justify-content: flex-start; align-items: flex-start; height: 95%; width: 0px; overflow: clip; }
+            .ue-coef-slider.edit-mode           { height: calc(100% - 85px); width: 20px; background: #ffb6b6; border-radius: 20px; border: 2px solid white; }
+            .ue-coef-slider-block               { position: relative; }
+            .ue-coef-slider-handle              { position: relative; height: 5px;  min-width: 20px; cursor: row-resize; }
+            .ue-coef-slider-handle-text         { position: relative; text-wrap: nowrap; text-align: center; }
+
+
+            .ue-info                        { display: flex; flex-direction: row; justify-content: space-around; align-items: center; width:97%; background: #eef2ff00; border:1px solid #c7d2fe00; padding: 0px 8px 3px 8px; border-radius: 0px 0px 8px 8px; margin-top: -1px; height: 36px; }
+            .ue-info-bar                    { display: flex; flex-direction: row; justify-content: space-around; align-items: center; width:48%; background: #eef2ff;   border:1px solid #c7d2fe;   padding: 3px 8px 3px 8px; border-radius: 0px 0px 8px 8px; }
+            .ue-info-clear                  { display: flex; flex-direction: row; justify-content: center; align-items: center; font-size: 12px; background: #d7e0ff; border: 2px solid; border-radius: 10px; padding: 2px 7px; user-select: none; width: 220px; margin-right: 8px; cursor: pointer; transition: all 0.2s ease; }
+            .ue-info-clear:hover            { width: 240px; margin-right: 4px; font-size: 11.5px; background: #eef2ff; }
+            .ue-info-clear.disabled         {  }
+            .ue-info-clear.sim              {  }
+
+            .ue-details                     { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 15px; }
             .ue-details.edit-mode           { gap: 8px; }
             .ue-moyenne                     { font-size: 24px; font-weight: 800; display: flex; align-items: center; gap:10px; width: 180px; }
             .ue-moyenne.good                { color: #10b981; }
@@ -239,12 +348,6 @@
             .ue-moyenne.unknown             { color: #6d6d6dff; }
             .ue-toggle                      { width: 24px; height: 24px; font-size: 18px; color: #000000; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; margin-left: 5px; }
             .ue-toggle.open                 { transform: rotate(180deg); }
-            .ue-info                        { display: flex; flex-direction: row; justify-content: space-around;  align-items: center; width:97%; background: #eef2ff; border:1px solid #c7d2fe; padding:6px 8px; border-radius:8px; }
-            .ue-info.bar                    { width:48%; padding: 3px 8px; }
-            .ue-info-clear                  { display: flex; align-items: center; justify-content: center; font-size: 12px; background: #d7e0ff; border: 2px solid; border-radius: 10px; padding: 2px 7px; user-select: none; width: 220px; margin-right: 8px; cursor: pointer; transition: all 0.2s ease; }
-            .ue-info-clear:hover            { width: 240px; margin-right: 4px; font-size: 11.5px; background: #eef2ff; }
-            .ue-info-clear.disabled         {  }
-            .ue-info-clear.sim              {  }
 
         `;
             
@@ -253,9 +356,9 @@
         // MARK: -UNCLASSIFIED SECTION
         styles += `
 
-            .unclassified-section                           { display: flex; flex-direction: column; width: 100%; background: #fff8f0; border-radius: 20px; padding: 20px; border: 2px dashed #fbbf24; transition: height 0.2s ease; }
-            .unclassified-content                           { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 99%; height: 100%; }
-            .unclassified-title                             { font-size: 16px; font-weight: 600; color: #92400e; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+            .unclassified-section   { display: flex; flex-direction: column; align-items: center; width: 100%; background: #fff8f0; border-radius: 20px; padding: 20px; border: 2px dashed #fbbf24; transition: height 0.2s ease; }
+            .unclassified-content   { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 99%; height: 100%; }
+            .unclassified-title     { display: flex; align-items: center; gap: 8px; width: 97%; font-size: 16px; font-weight: 600; color: #92400e; margin-bottom: 16px; }
         `;
             
 
@@ -364,14 +467,20 @@
         // MARK: Animations
         styles += `
 
-            @media (max-width: 768px){ .config-layout { grid-template-columns:1fr; } .config-sidebar { border-right:none; border-bottom:1px solid #e5e5e5; padding-right:0; padding-bottom:20px; } .dash-header { flex-direction:column; align-items:start; gap:16px; } .average-display { flex-direction:column; gap:4px; } .average-number { font-size:36px; } }
-            .loading { text-align: center; padding: 40px; color: #999; }
-            @keyframes dots { 0%,20%{content:'.';} 40%{content:'..';} 60%,100%{content:'...';} }
-            .loading::after { content: '...'; animation: dots 1.5s steps(4, end) infinite; }
-            @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-            .fade-in { animation: fadeIn 0.3s ease; }
+            @media (max-width: 768px)   { 
+                .config-layout { grid-template-columns:1fr; } 
+                .config-sidebar { border-right:none; border-bottom:1px solid #e5e5e5; padding-right:0; padding-bottom:20px; } 
+                .dash-header { flex-direction:column; align-items:start; gap:16px; } 
+                .average-display { flex-direction:column; gap:4px; } .average-number { font-size:36px; } 
+            }
+            .loading            { text-align: center; padding: 40px; color: #999; }
+            @keyframes dots     { 0%,20%{content:'.';} 40%{content:'..';} 60%,100%{content:'...';} }
+            .loading::after     { content: '...'; animation: dots 1.5s steps(4, end) infinite; }
+
+            @keyframes fadeIn   { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+            .fade-in            { animation: fadeIn 0.3s ease; }
             @keyframes scrollTo { 15% {scale: 100% 100%;} 100% {scale: 105% 105%; border: 5px solid #5f77ff} }
-            .scroll-to { animation: 0.3s 2 alternate scrollTo ease }
+            .scroll-to          { animation: 0.3s 2 alternate scrollTo ease }
         `;
 
 
@@ -402,7 +511,37 @@
         constructor() {
             this.grades = [];
             this.semesters = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{}, 7:{}, 8:{}, 9:{}, 10:{}};
+            this.getLastGitFetchState = (state, fallback) => {
+                this.lastGitFetchState = state;
+                if (state == 404) {
+                    this.getConfigsFromRepo("https://api.github.com/repos/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/contents", this.getLastGitFetchState, fallback)
+                }
+            };
+            this.lastGitFetchState = -1;
+            this.gitFetchScanDoneArray = [];
+            this.gitConfigs = {/* 
+                eeng:   {
+                    eeng1: {},
+                    eeng2: {},
+                    eeng3: {
+                        P2028: {
+                            energy:     "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Energy.json",
+                            mecha:      "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Mecha.json",
+                            robotics:   "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Robotics.json",
+                            supply:     "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20P2028%20-%20S5%20and%20S6%20-%20SupplyChain.json",
+                            nbCfgs: 4, 
+                        },
+                        nbCfgs: 4, 
+                    },
+                    eeng4: {},
+                    eeng5: {},
+                    nbCfgs: 4, 
+                },
+                am:     {}, 
+                nbCfgs: 4, */
+            };
 
+            this.configVersion = 2;
             this.gradesDatas = {};
             this.ueConfig =         JSON.parse( localStorage.getItem("ECAM_DASHBOARD_UE_CONFIG")) || {};
             this.sim =              JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SIM_gradeS")) || {};
@@ -414,12 +553,12 @@
             this.defSem =                       localStorage.getItem("ECAM_DASHBOARD_DEFAULT_SEMESTER") || "all";
             this.currentSemester = this.defSem;
 
-            this.defView =                      /* localStorage.getItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE") || */ "detailed";
+            this.defView =                      localStorage.getItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE") || "detailed";
             this.viewMode = this.defView;
 
             this.lang =                         localStorage.getItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE") || "en";
             this.tempSelection = {};
-            this.draggedMatId = "";
+            this.draggedSubjId = "";
             this.today = new Date().toISOString().split('T')[0];
             this.editMode = true;
 
@@ -439,6 +578,420 @@
 
         //#region -REGION: Misc methods
 
+            // MARK: scrollToClientHighestElem
+            /**
+             * Scroll to an element depending on the target element datas passed as argument under the form of an object. If using the className method and not the id method, please make sure the elements of class className are in column.
+             * 
+             * Priority order defined by parameter `priority`. Scan through all the given classNames. If no match is found on a className: 
+             * - **"first"**: **moves onto the next one**. The method will scroll to the **first** data matching the conditions, and skip the rest.
+             * - **"last"**:  **skip the rest**. The method will scroll to the **last** data matching the conditions, and skip the rest. If no match is found at all, doesn't scroll.
+             * 
+             * Behavior changes along with **`highestElemInPageHandleType`**'s value. Scan through all target element datas given, and (with X being an int between 0 and 100):
+             * - **"none"**:                   scroll to the top of the first element - *out of all the others* - (who's class name matches the `targetElementDatas`'s property `className`) **SUCH THAT** it's the highest element in the current window view who's center doesn't go out of the screen from the top
+             * - **"above"/"above X%"**:       scroll to the top of the first element - *out of all the others* - (who's class name matches the `targetElementDatas`'s property `className`) **SUCH THAT** it's the highest element in the current window view who's center doesn't go out of the screen from the top **IFF** the first - *and only the first, so the highest* - element of same class is above X% (default 50%) of the screen
+             * - **"partial"/"partial X%"**:   scroll to the top of the first - *and only the first*    - element (who's class name matches the `targetElementDatas`'s property `className`) **IF** its top edge is above X% (default 50%) of the screen **AND** still in the view
+             * - **"absolute"/"absolute X%"**: scroll to the top of the first - *and only the first*    - element (who's class name matches the `targetElementDatas`'s property `className`) **IF** its top edge is above X% (default 50%) of the screen
+             * - **"force"**:                  scroll to the top of the first - *and only the first*    - element (who's class name matches the `targetElementDatas`'s property `className`). No condition, just forces the scroll to the top of this element
+             * 
+             * In any case, the scroll is executed (after the `timeout` property of the same `targetElementDatas`) with respects to the `margin` property of the same `targetElementDatas` (it will be attributed as `marginScrollTop` style property of the element to scroll to)
+             * 
+             * @returns The element that was scrolled to, or null if no element was scrolled to
+             * @param {String} priority             {@link https://github.com String},  default: "first" — Defines how multiple `targetElementDatas` input are managed. Can be "first" or "last"
+             * @param targetElementDatas Any amount of objects. If ommited, uses a default object. Objects should all have the following properties (if any is omitted, they are given their default value):
+             * 
+             * **`className?`**                     {@link https://github.com String},  default: ".subject-card" — name of the class to target, if you want to target a category of elements
+             * 
+             * **`id?`**                            {@link https://github.com String},  default: "" —              ID of the element to target, if you want to target a specific element (ensure your element has an ID tho)
+             * 
+             * **`margin?`**                        {@link https://github.com Number},  default: 23 (in px) —      used for define the marginScrollTop CSS style property of the element targeted
+             * 
+             * **`timeout?`**                       {@link https://github.com Number},  default: 50 (in ms) —      timer before the scroll action is triggered
+             * 
+             * **`smooth?`**                        {@link https://github.com Boolean}, default: false —           if true, the page will smoothly scroll to the element targeted
+             * 
+             * **`highestElemInPageHandleType?`**   {@link https://github.com String},  default: "none" —          can be "force", "absolute", "absolute X%", "partial", "partial X%", "above", "above X%" or "none" (with X being an int between 0 and 100). Any other value will be considered as "none"
+             */
+            scrollToClientHighestElem(priority="first", ...{className= ".subject-card", id="", margin=this.editMode ? 90 : 20, timeout=20, smooth=false, highestElemInPageHandleType="none"}) {
+                const defaultTargetElementDatas = [
+                    {className: ".modules-section",         margin: 20,                        highestElemInPageHandleType:"partial"}, 
+                    {className: ".ue-card",                 margin: this.editMode ? 90 : 20,   highestElemInPageHandleType:"above"},
+                    {className: ".unclassified-section",    margin: this.editMode ? 90 : 20,   highestElemInPageHandleType:"partial"},
+                    {className: ".subject-card",            margin: 10,                        highestElemInPageHandleType:"above"},
+                ];
+                let debugging = true;
+                debugging = false;
+
+                if (debugging) {debugger /* Starting to execute the methode */};
+
+                // Error-proof for different invalid arguments inputs (no arguments given, targetElementData object give instead of priority, invalid targetElementData objects passed, priority given at the wrong spot...)
+                let argumentsArray = []; 
+                let effectivePriority;
+                (arguments?.length > 1 
+                    ? Object.values(arguments).splice(1,Object.values(arguments).length) 
+                    : Object.values(arguments)
+                ).forEach((_obj, _index) => {
+                    if (_obj instanceof String && _index == 0) {
+                        effectivePriority = _obj;
+                    }
+                    else if (_obj instanceof Object && (_obj?.className || _obj?.id)) {
+                        argumentsArray.push(_obj)
+                    }
+                })
+
+                if (argumentsArray.length == 0) {
+                    argumentsArray = defaultTargetElementDatas;
+                }
+
+
+                if (!effectivePriority) {
+                    effectivePriority = "first"; // in case priority wasn't given as argument
+                }
+                else {
+                    effectivePriority = priority?.toLowerCase()?.trim(); // formatting priority correctly if it was given
+                }
+                
+                if (!effectivePriority?.match(/first|last/i)) {
+                    effectivePriority = "first"; if (debugging) {debugger /* Making sure that priority has a correct value */}
+                }
+
+                const abovePattern  =      /above( (100)%| (\d{1,2})%|)/;
+                const partialPattern  =  /partial( (100)%| (\d{1,2})%|)/;
+                const absolutePattern = /absolute( (100)%| (\d{1,2})%|)/;
+                const highestElemInPageHandleTypePattern = RegExp("none|" + abovePattern.source + "|" + partialPattern.source + "|" + absolutePattern.source);
+                
+                this.scrollToThisElem = ""; let targetDataIndex = -1;
+                
+                if (debugging) {debugger /* Error-proofing finished, everything is setup to check which element to scroll to (if any) */};
+
+                argumentsArray.forEach((targetElemData, targetIndex) => {
+                    if (debugging) {debugger /* Scanning through the target datas objects given, or the default objects if no object is given */}
+
+                    if (
+                        ( //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                            /* ensuring the priority to the first element of the first class className found */
+                            (
+                                targetDataIndex < 0 
+                                && (effectivePriority.toLowerCase()||"first") == "first"
+                            ) 
+                            || 
+                            (
+                                targetDataIndex == targetIndex-1 
+                                && (effectivePriority.toLowerCase()||"last") == "last"
+                            )
+                        )//////////////////////////////////////////////////////////////////////////////////////////////////////
+                    ) { // ensuring the priority to the first element of the first class className found
+                        
+                        if (debugging) {debugger /* Element: not found yet if priority = first, previous was found if priority = "last" */} 
+
+                        targetElemData.highestElemInPageHandleType = targetElemData?.highestElemInPageHandleType?.toLowerCase()?.trim() || highestElemInPageHandleType;
+                        if (!targetElemData?.highestElemInPageHandleType?.match(highestElemInPageHandleTypePattern)) {
+                            targetElemData.highestElemInPageHandleType = "none"; if(debugging) {debugger /* Making sure highestElemInPageHandleType has a correct value */};
+                        }
+
+
+                        if (targetElemData?.id=="" || !document.getElementById(targetElemData?.id || id)) { // If no id is given, or if the given id doesn't correspond to any item in the document:
+
+                            // getting the highest element of class className, as well as its top coordinate in the screen
+                            const highestElem = document.querySelector(targetElemData?.className || className);
+                            const highestElemCoords = highestElem?.getBoundingClientRect();
+                            const highestElemTopCoord = highestElemCoords?.top;
+                            const highestElemCenterCoord = (highestElemCoords?.top + highestElemCoords?.bottom)/2;
+
+                            // if highestElemTopCoord < margin, then it means that the top of the highest element of class className has passed the top of the screen
+
+
+                            if(debugging) {debugger /* We check for classNames */};
+                            
+                            if ( // The highest elem case
+                                (//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                                    /* Force case */
+                                    targetElemData?.highestElemInPageHandleType?.toLowerCase() == "force"
+                                    || 
+                                    ( /* Partial case */
+                                        targetElemData?.highestElemInPageHandleType?.match(partialPattern)
+
+                                        &&  /* Is the top coordinate of the highest element of class className: */
+                                        /* Above the required height (percentage of the total height)? */
+                                        highestElemTopCoord < window.innerHeight* (targetElemData?.highestElemInPageHandleType?.match(partialPattern)?.[2] || 0.5)
+                                        && 
+                                        /* Below the top of the screen? */
+                                        highestElemTopCoord >= 0
+                                    )
+                                    || 
+                                    ( /* Absolute case */
+                                        targetElemData?.highestElemInPageHandleType?.match(absolutePattern) 
+
+                                        && /* Is the top coordinate of the highest element of class className: */
+                                        /* Above the required height (percentage of the total height)? */
+                                        highestElemTopCoord < window.innerHeight* (targetElemData?.highestElemInPageHandleType?.match(absolutePattern)?.[2] || 0.5)
+                                    )
+                                    ||
+                                    ( /* Above case */
+                                        targetElemData?.highestElemInPageHandleType?.match(abovePattern)
+
+                                        && /* Is the top coordinate of the highest element of class className: */
+                                        /* Above the required height (percentage of the total height)? */
+                                        highestElemTopCoord < window.innerHeight* (targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[2] || 0.5)
+
+                                        && /* Is the center coordinate of the highest element of class className: */
+                                        /* Below the top of the screen? */
+                                        highestElemCenterCoord >= 0
+                                    )
+                                )//////////////////////////////////////////////////////////////////////////////////////////////////////
+                            ) { 
+
+                                this.scrollToThisElem = highestElem.id;
+                                targetDataIndex = targetIndex;
+                                if(debugging) {debugger /* The highest element of class className fits the conditions of its handle type! */};
+
+                            }
+                            else if (   // Get the first elem satisfying the condition.s corresponding to the className's highestElemInPageHandleType prop
+                                (//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                                    /* None case */
+                                    targetElemData?.highestElemInPageHandleType?.toLowerCase() == "none"
+                                    || 
+                                    ( /* Above case */
+                                        targetElemData?.highestElemInPageHandleType?.match(abovePattern)
+                                        
+                                        && /* Is the top coordinate of the highest element of class className: */
+                                        /* Below the top of the screen, taking into account the margin? */
+                                        highestElemTopCoord < window.innerHeight* (targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[2] || 0.5)
+                                    )
+                                )//////////////////////////////////////////////////////////////////////////////////////////////////////
+                            ) {
+
+                                document.querySelectorAll(targetElemData?.className || className).forEach((elem, _index) => {
+                                    if (
+                                        ( //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                                            /* ensuring the priority to the first element of the first class className found */
+                                            (
+                                                targetDataIndex < 0 
+                                                && (effectivePriority.toLowerCase()||"first") == "first"
+                                            ) 
+                                            || 
+                                            (
+                                                targetDataIndex == targetIndex-1 
+                                                && (effectivePriority.toLowerCase()||"last") == "last"
+                                            )
+                                        )//////////////////////////////////////////////////////////////////////////////////////////////////////
+                                    ) {
+
+                                        const elemCoordsClient = elem.getBoundingClientRect();
+                                        const elemCenterClient = (elemCoordsClient.top + elemCoordsClient.bottom)/2;
+                                        if(debugging) {debugger /* Scanning through all elements of class className */};
+    
+                                        if (
+                                            (//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                                                ( /* Checking if the element satisfies the conditions corresponding to its highestElemInPageHandleType */
+                                                    ( /* None case */
+                                                        targetElemData?.highestElemInPageHandleType?.toLowerCase() == "none" 
+                                                        && /* Is the center of the currently observed element of class className: */
+                                                        /* Below the top of the screen? */
+                                                        elemCenterClient >= 0 
+                                                    )
+                                                    || 
+                                                    ( /* Above case */
+                                                        targetElemData?.highestElemInPageHandleType?.match(abovePattern)
+                                                        && /* Is the top of the currently observed element of class className: */
+                                                        /* Below the top of the screen? */
+                                                        elemCenterClient >= 0 
+                                                        &&
+                                                        /* Above the required height (percentage of the total height) of the screen? */
+                                                        elemCoordsClient.top < window.innerHeight* (targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[2] || 0.5)
+                                                    )
+                                                )
+                                            )//////////////////////////////////////////////////////////////////////////////////////////////////////
+                                        ) {
+    
+                                            this.scrollToThisElem = elem.id;
+                                            targetDataIndex = targetIndex;
+                                            if(debugging) {debugger /* An element of class className that fits its handle type was found! */};
+                                                        
+                                        }
+
+                                    }
+                                })
+                            }
+                        }
+                        else {
+                            this.scrollToThisElem = targetElemData?.id || id;
+                            targetDataIndex = targetIndex;
+                            if(debugging) {debugger /* Using the id provided to target */};
+                        }
+                    }
+                })
+
+                if (targetDataIndex >= 0) {
+                    const targetElemData = argumentsArray[targetDataIndex];
+                    if(debugging) {debugger /* Now scrolling! */};
+
+                    setTimeout(() => {
+                        const scrollToThisElem = document.getElementById(this.scrollToThisElem) || document.querySelector(targetElemData.className); 
+                        scrollToThisElem.style.scrollMarginTop = `${(targetElemData?.margin || margin) + (document.body.classList.contains("lfr-dockbar-pinned") ? 45 : 0)}px`;
+                        scrollToThisElem.scrollIntoView({behavior: (targetElemData?.smooth || smooth) ? "smooth" : "instant", block: "start"});
+                        // console.log(scrollToThisElem);
+                        this.scrollToThisElem = "";
+                    }, (targetElemData?.timeout || timeout))
+
+                    return this.scrollToThisElem || String(targetElemData.className);
+                }
+
+                return;
+            }
+
+            async getConfigsFromRepo(repoUrl, callback, endActionCallback) {
+                let debug = false;
+                // debug = true;
+                debugger;
+
+                let nope;
+                this.gitFetchScanDoneArray = [];
+                this.gitConfigs = {nbCfgs: 0}
+
+                let xhttp = new XMLHttpRequest();
+                xhttp.open("GET", repoUrl, true);   // Fetch repo
+                xhttp.send();
+                if (debug) {debugger}
+
+                xhttp.onload = () => {
+                    if (debug) {debugger}
+                    // If not working, try again with the test repo Miscelleneous_Tempermonkey_UserScripts
+                    if (xhttp?.status == "404") {
+                        callback(xhttp?.status, endActionCallback);
+                        return
+                    }
+                    else {
+                        callback(xhttp?.status);
+                    }
+                    nope = "No 'config' folder found in repo";
+
+                    Object.values(JSON.parse(xhttp.response)).forEach(dir => {// For every file in root
+                        if (debug) {debugger}
+
+                        if (dir?.name.match(/\bconfigs\b/i)) {
+                            // if the name of the dir is "configs"
+                            nope = undefined;
+                            if (debug) {debugger}
+
+                            const newXhttp = new XMLHttpRequest();
+                            newXhttp.open("GET", dir?.url, true);
+                            newXhttp.send();
+                            newXhttp.onload = () => {
+                                Object.values(JSON.parse(newXhttp.response)).forEach((dir, index, array) => {// For every section
+                                    if (debug) {debugger}
+    
+                                    if (dir?.name.match(/\beeng\b|\bam\b/i)) {
+                                        this.gitConfigs[dir.name] = {nbCfgs: 0};
+                                        if (debug) {debugger}
+    
+                                        const newXhttp = new XMLHttpRequest();
+                                        newXhttp.open("GET", dir?.url, true);
+                                        newXhttp.send();
+                                        newXhttp.onload = () => {
+                                            Object.values(JSON.parse(newXhttp.response)).forEach((dir, index, array) => {// For every year
+                                                if (debug) {debugger}
+    
+                                                if (dir?.name.match(/\beeng( |)(1|2|3|4|5)\b|\bam( |)(1|2|3|4|5)\b/i)) {
+                                                    const path = dir?.path?.split("/");
+                                                    this.gitConfigs[path[1]][path[2]] = {nbCfgs: 0};
+                                                    if (debug) {debugger}
+                                                    
+                                                    const newXhttp = new XMLHttpRequest();
+                                                    newXhttp.open("GET", dir?.url, true);
+                                                    newXhttp.send();
+                                                    newXhttp.onload = () => {
+                                                        Object.values(JSON.parse(newXhttp.response)).forEach((dir, index, array) => {// For every prom
+                                                            if (debug) {debugger}
+                                                            
+                                                            if (dir?.name.match(/\bP(\d{4})\b/i)) {
+                                                                const path = dir?.path?.split("/");
+                                                                this.gitConfigs[path[1]][path[2]][path[3]] = {nbCfgs: 0};
+                                                                if (debug) {debugger}
+                                                                
+                                                                const newXhttp = new XMLHttpRequest();
+                                                                newXhttp.open("GET", dir?.url, true);
+                                                                newXhttp.send();
+                                                                newXhttp.onload = () => {
+                                                                    Object.values(JSON.parse(newXhttp.response)).forEach((dir, index, array) => {// For every pathway, or straight up the config itself
+                                                                        if (debug) {debugger}
+                                                                        
+                                                                        if (dir?.type == "file" && dir?.name.match(/(.+).json/)) {
+                                                                            const path = dir?.path?.split("/");
+
+                                                                            if (dir.name.match(/(.+).json/)[1].split(" - ").at(-1).match(/\bconfig\b/i)) {// is the file's name of format "EENG[X] - P[YYYY] - config.json"?
+                                                                                this.gitConfigs[path[1]][path[2]][path[3]]["__url__"] = dir?.url;
+                                                                                this.gitConfigs[path[1]][path[2]][path[3]].nbCfgs++;
+                                                                                this.gitConfigs[path[1]][path[2]].nbCfgs++;
+                                                                                this.gitConfigs[path[1]].nbCfgs++;
+                                                                                this.gitConfigs.nbCfgs++;
+                                                                                if (debug) {debugger}
+                                                                            }
+                                                                            else {// else, then it's a pathway's config
+                                                                                const pathwayName = dir.name.match(/(.+).json/)[1].split(" - ").at(-1);
+                                                                                this.gitConfigs[path[1]][path[2]][path[3]][pathwayName] = dir?.url;
+                                                                                this.gitConfigs[path[1]][path[2]][path[3]].nbCfgs++;
+                                                                                this.gitConfigs[path[1]][path[2]].nbCfgs++;
+                                                                                this.gitConfigs[path[1]].nbCfgs++;
+                                                                                this.gitConfigs.nbCfgs++;
+                                                                                if (debug) {debugger}
+                                                                            }
+                                                                        }
+                                                                        else {
+                                                                            console.warn("Configs\\"+this.cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path, was expecting a file with a .json extension or a folder with the name of a pathway")
+                                                                        }
+
+
+                                                                        debugger;
+                                                                        if (index == array.length-1 && endActionCallback instanceof Function) {
+                                                                            debugger;
+                                                                            let end = true;
+                                                                            this.gitFetchScanDoneArray.forEach(dirIsDone => {
+                                                                                debugger;
+                                                                                if (!dirIsDone) {
+                                                                                    end = false;
+                                                                                    debugger;
+                                                                                }
+                                                                            })
+    
+                                                                            if (end) {endActionCallback()}
+                                                                        }
+                                                                    })
+
+                                                                };
+                                                                
+                                                                if (index == array.length-1) {this.gitFetchScanDoneArray.push(true)}
+
+                                                            }
+                                                            else {
+                                                                console.warn("Configs\\"+this.cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path, was expecting the name of the prom, like 'P2028'")
+                                                            }
+                                                        })
+                                                    };
+
+                                                    if (index == array.length-1) {this.gitFetchScanDoneArray.push(true)}
+
+                                                }
+                                                else {
+                                                    console.warn("Configs\\"+this.cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path, was expecting the name of a year, like 'eeng3'")
+                                                }
+                                            })
+                                        };
+
+                                        if (index == array.length-1) {this.gitFetchScanDoneArray.push(true)}
+                                    }
+                                    else {
+                                        console.warn("'Configs\\"+dir?.name+"' isn't an expected path, was expecting something the name of a section, like 'eeng'")
+                                    }
+    
+                                })
+                            }
+                        }
+                    })
+
+                    if (nope) {console.warn(nope)}
+                };
+            }
+
             /** 
             *  Use only in the console: iterating through a long list of objects isn't very optimized. Use it only to obtain the indices pointing at the class you want to change.
             *  Grade for now: the style sheet of this script is located at document.styleSheets[11];
@@ -456,23 +1009,30 @@
                 return document.styleSheets[styleSheetIndex].cssRules[ruleIndex]
             }
             saveConfig() { localStorage.setItem('ECAM_DASHBOARD_UE_CONFIG', JSON.stringify(this.ueConfig)); }
-            saveSim() { localStorage.setItem("ECAM_DASHBOARD_SIM_gradeS", JSON.stringify(this.sim)); }
+            saveSim() { this.deleteUnusedSimPath(); localStorage.setItem("ECAM_DASHBOARD_SIM_gradeS", JSON.stringify(this.sim)); }
             saveIgnoredGrades() { localStorage.setItem("ECAM_DASHBOARD_IGNORED_GRADES", JSON.stringify(this.ignoredGrades)); }
-            ensureSimPath(sem, ue, subj) {
-                if(!this.sim[sem]) this.sim[sem]={};
-                if(!this.sim[sem][ue]) this.sim[sem][ue]={};
-                if(subj !== undefined && !this.sim[sem][ue][subj]) this.sim[sem][ue][subj]=[];
+            ensureSimPath(sem=undefined, ue=undefined, subj=undefined) {
+                if (subj)   {if(!this.sim?.[sem])               this.sim[sem]={}; }
+                if (ue)     {if(!this.sim?.[sem]?.[ue])         this.sim[sem][ue]={}; }
+                if (subj)   {if(!this.sim?.[sem]?.[ue]?.[subj]) this.sim[sem][ue][subj]=[]; }
             }
-            deleteUnusedSimPath(sem, ue, subj) {
-                if (this.sim[sem]) {
-                    if (this.sim[sem][ue]) {
-                        if (this.sim[sem][ue][subj]) {
-                            if (this.sim[sem][ue][subj].length == 0) {delete this.sim[sem][ue][subj]}
-                        }
-                        if (this.sim[sem][ue] == {}) {delete this.sim[sem][ue]}
-                    }
-                    if (this.sim[sem] == {}) {delete this.sim[sem]}
-                }
+            deleteUnusedSimPath(flex=true, sem=undefined, ue=undefined, subj=undefined) {
+                (sem ? [sem] : (flex ? Object.keys(this.sim || []) : [])).forEach(_sem => {
+                    (ue ? [ue] : (flex ? Object.keys(this.sim?.[_sem] || []) : [])).forEach(_ue => {
+                        (subj ? [subj] : (flex ? Object.keys(this.sim?.[_sem]?.[_ue] || []) : [])).forEach(_subj => {
+                            if (Object.keys(this.sim?.[_sem]?.[_ue]?.[_subj])?.length == 0) {delete this.sim[_sem][_ue][_subj]}
+                        })
+                        if (Object.keys(this.sim?.[_sem]?.[_ue])?.length == 0) {delete this.sim[_sem][_ue]}
+                    })
+                    if (Object.keys(this.sim?.[_sem])?.length == 0) {delete this.sim[_sem]}
+                })
+            }
+            clearSimGradesForUE(sem, ueName) {
+                this.ensureSimPath(sem, ueName);
+                delete this.sim[sem][ueName];
+                if (this.sim[sem] == {}) delete this.sim[sem];
+                this.saveSim()
+                this.getGradesDatas();
             }
             getSimGrades(sem, ue, subj){ return (this.sim[sem]&&this.sim[sem][ue]&&this.sim[sem][ue][subj])||[]; }
             getAllSubjectsForUE(sem, ueName){
@@ -482,8 +1042,8 @@
             }
             calculateUEGrades(sem, ueName){
                 const grades = [];
-                const allMats = this.getAllSubjectsForUE(sem, ueName);
-                allMats.forEach(subject=>{
+                const allSubjs = this.getAllSubjectsForUE(sem, ueName);
+                allSubjs.forEach(subject=>{
                     const pct =         this.ueConfig?.[sem]?.[ueName]?.coefficients?.[subject] || 0;
                     const realGrades =  this.semesters?.[sem]?.[subject] || [];
                     const simGrades  =  this.getSimGrades(sem, ueName, subject).map(n=>({ ...n, __sim:true }));
@@ -500,16 +1060,16 @@
                 });
                 return grades;
             }
-            getGradeColor(grade) { if (grade >= 10) return 'good'; /* if (grade >= 10) return 'medium'; */ return 'bad'; }
+            getGradeColor(grade) { if (grade >= 10) return 'good'; return 'bad'; }
             getAverageColor(avg) { if (avg >= 12) return 'average-good'; if (avg >= 10) return 'average-medium'; return 'average-bad'; }
             gradeIsDisabled(n) {
-                return this.ignoredGrades.indexOf([n.semester, n.subject, n.type+" "+n.date+" "+n.prof].join("\\")) > -1
+                return this.ignoredGrades?.includes([n.semester, n.subject, (n?.id || n.type + " " + n.date + " " + n.prof)].join("\\"))
             }
             moyennePonderee(arr) {
                 if (!arr || arr.length === 0) return 0;
                 let total = 0, coeffs = 0;
                 arr.forEach(n => { 
-                    if (this.ignoredGrades.indexOf([n.semester, n.subject, n.type+" "+n.date+" "+n.prof].join("\\")) == -1) {
+                    if (!this.gradeIsDisabled(n)) {
                         total += n.grade * (n.coef||0); 
                         coeffs += (n.coef||0); 
                     }
@@ -566,22 +1126,16 @@
             }
             clearIgnoredGradesForUE(sem, ueName) {
                 // Clear ignored grades only for the specified UE
-                const allMats = this.getAllSubjectsForUE(sem, ueName);
+                const allSubjs = this.getAllSubjectsForUE(sem, ueName);
 
                 // Keep ignored grades that are NOT part of this UE
-                this.ignoredGrades = (this.ignoredGrades || []).filter(ignoredId => {
+                this.ignoredGrades = this.ignoredGrades?.filter(ignoredId => {
                     const parts = ignoredId.split("\\");
                     const semX = parts[0];
                     const subj = parts[1];
-                    return semX !== sem || !allMats.includes(subj);
+                    return semX !== sem || !allSubjs.includes(subj);
                 });
                 this.saveIgnoredGrades();
-                this.getGradesDatas();
-            }
-            clearSimGradesForUE(sem, ueName) {
-                delete this.sim[sem][ueName];
-                if (this.sim[sem] == {}) delete this.sim[sem];
-                this.saveSim()
                 this.getGradesDatas();
             }
             compareArraysofObjects(a, b) {
@@ -667,7 +1221,7 @@
 
                 document.querySelector(".new-grades-notif").onclick = () => {
                     const newGradesCard = document.querySelector(".new-grades-card");
-                    newGradesCard.scrollIntoView();
+                    newGradesCard.scrollIntoView({behavior: "instant"});
                     newGradesCard.classList.add("myhighlight");
                     setTimeout(() => {newGradesCard.classList.remove("myhighlight")},200)
                 };
@@ -676,49 +1230,7 @@
             draggableIcon(source="subject-card", {height=25, type="unknown", targetId="none"}={height: 25, type: "unknown", targetId:"none"}) {
                 return `<img class="drag-icon for-${source}" data-targetid="${targetId}" data-type="${type}" draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/960px-Hamburger_icon.svg.png" alt="☰" style="height:${height}px; ${source.match(/-subject-card/) ? "border: 2px solid; border-radius: 8px;" : ""}">`
             }
-            // MARK: Scroll to element
-            /**
-             * Scrolls to the highest element in client view
-             * @param {*} className Name of the class of the element to scroll to
-             * @param id Id of the 
-             */
-            scrollToClientHighestElemWithClassWithTimeout({className, id="", timeout=50, smooth=false, margin=23}) {
-                this.scrollToThisElem = ""; let found = false;
-                if (this.editMode) {margin = 93}
-                if (document.body.classList.contains("lfr-dockbar-pinned")) {margin += 45}
 
-                if (id=="") {
-                    className.split("||").forEach(_className => {
-                        document.querySelectorAll(`${_className}`).forEach(elem => {
-                            const coords = elem.getBoundingClientRect();
-                            const meanClientTop = (coords.top + coords.bottom)/2;
-                            if ((meanClientTop > 0) && !found) {
-                                this.scrollToThisElem = elem.id;
-                                found = true;
-                            }
-                        })
-                    })
-
-                    if (found) {
-                        setTimeout(() => {
-                            const scrollToThisElem = document.getElementById(this.scrollToThisElem); 
-                            scrollToThisElem.style.scrollMarginTop = `${margin}px`;
-                            scrollToThisElem.scrollIntoView({behavior: smooth ? "smooth" : "instant", block: "start"});
-                        }, timeout)
-                    }
-                }
-                else
-                {
-                    this.scrollToThisElem = id;
-                    
-                    setTimeout(() => {
-                        const scrollToThisElem = document.getElementById(this.scrollToThisElem); 
-                        scrollToThisElem.style.scrollMarginTop = `${margin}px`;
-                        scrollToThisElem.scrollIntoView({behavior: smooth ? "smooth" : "instant", block: "start"});
-                    }, timeout)
-                }
-
-            }
             // MARK: Set total coefs
             setGradesTableTotalCoef() {
                 const good="#10b981", meh="#e98c00", bad="#e90000", unknown="#7a7a7a";
@@ -730,6 +1242,7 @@
                         ueData = this.gradesDatas[sem][ue],
                         nbSubjects = Object.keys(ueData.subjects).length,
                         
+                        nbGrades =                      ueData.nbGrades,
                         simGrades =                     ueData.simGrades, 
                         disabledRealGrades =            ueData.disabledRealGrades, 
                         disabledSimGrades =             ueData.disabledSimGrades, 
@@ -784,8 +1297,8 @@
                     else if (totalCoefRealGrades < 100) {
                         if (totalCoefEnabledSimGrades > 0) {
                             advice = this.lang == "fr" 
-                                ? `${nbEnabledSimGrades}% de tes notes est simulé, toutes tes notes ne sont encore pas là !` 
-                                : `${nbEnabledSimGrades}% of your grades is simulated, all your grades aren't out yet!`
+                                ? `${100*totalCoefEnabledSimGrades/totalCoefEnabledGrades}% de tes notes est simulé, toutes tes notes ne sont encore pas là !` 
+                                : `${100*totalCoefEnabledSimGrades/totalCoefEnabledGrades}% of your grades is simulated, all your grades aren't out yet!`
                             ;
                             color = meh;
                         }
@@ -928,7 +1441,7 @@
                 // FOR EACH SEMESTER
                 (sem && this.ueConfig[sem] ? [sem] : Object.keys(this.semesters)).forEach((semX) => {
                     this.gradesDatas[semX] = {
-                        unclassified: {subjects: {}}
+                        "__#unclassified#__": {subjects: {}}
                     };
                     let semData = this.gradesDatas[semX];
 
@@ -938,14 +1451,16 @@
                     if (unclassified.length > 0) {
                         (subj && unclassified.includes(subj) ? [subj] : unclassified).forEach(unclassifiedSubjectName => {
 
-                            semData["unclassified"].subjects[unclassifiedSubjectName] = {};
+                            semData["__#unclassified#__"].subjects[unclassifiedSubjectName] = {};
+                            const realGrades = Array(...(this.semesters[semX]||{})[unclassifiedSubjectName])||[];
+                            const simGrades = this.sim?.[semX]?.["__#unclassified#__"]?.[unclassifiedSubjectName] || [];
 
-                            let unclassifiedSubjectData = semData["unclassified"].subjects[unclassifiedSubjectName];
+                            let unclassifiedSubjectData = semData["__#unclassified#__"].subjects[unclassifiedSubjectName];
                             
                             unclassifiedSubjectData.subjName                    = unclassifiedSubjectName;
-                            unclassifiedSubjectData.grades                      = new Array(...(this.semesters[semX]||{})[unclassifiedSubjectName])||[];
+                            unclassifiedSubjectData.grades                      = (realGrades).concat(simGrades);
                             unclassifiedSubjectData.disabledRealGrades          = [];
-                            unclassifiedSubjectData.simGrades                   = [];
+                            unclassifiedSubjectData.simGrades                   = simGrades;
                             unclassifiedSubjectData.disabledSimGrades           = [];
                             unclassifiedSubjectData.average                     = 0;
                             unclassifiedSubjectData.classAvg                    = 0;
@@ -958,8 +1473,8 @@
 
 
 
-                            // FOR EACH GRADES IN UNCLASSIFIED SUBJECT
-                            unclassifiedSubjectData.grades.forEach(grade => {
+                            // FOR EACH GRADES AND SIM GRADES IN UNCLASSIFIED SUBJECT
+                            (unclassifiedSubjectData.grades).forEach(grade => {
                                 const gradeValue = parseFloat(grade.grade),
                                     classAvg = parseFloat(grade.classAvg),
                                     coef = parseInt(grade.coef)
@@ -986,7 +1501,6 @@
 
                                     case `enabled sim grade`:                                                               // CHANGE THIS LATER (add sim grades for unclassified subjects)
                                         unclassifiedSubjectData.average                     += gradeValue*coef/100;
-                                        unclassifiedSubjectData.simGrades.push(grade);
                                         unclassifiedSubjectData.totalCoefSimGrades          += coef;
 
                                         unclassifiedSubjectData.totalCoefEnabledGrades      += coef;
@@ -994,7 +1508,6 @@
                                     break;
 
                                     case `disabled sim grade`:
-                                        unclassifiedSubjectData.simGrades.push(grade);
                                         unclassifiedSubjectData.totalCoefSimGrades          += coef;
 
                                         unclassifiedSubjectData.disabledSimGrades.push(grade);
@@ -1003,8 +1516,8 @@
                             })
 
                             
-                            unclassifiedSubjectData.average                     = Math.round(100*unclassifiedSubjectData.average/(unclassifiedSubjectData.totalCoefGrades/100))/100;
-                            unclassifiedSubjectData.classAvg                    = Math.round(100*unclassifiedSubjectData.classAvg/(unclassifiedSubjectData.totalCoefGrades/100))/100;
+                            unclassifiedSubjectData.average                     = Math.round(100*unclassifiedSubjectData.average /(unclassifiedSubjectData.totalCoefEnabledGrades/100))/100;
+                            unclassifiedSubjectData.classAvg                    = Math.round(100*unclassifiedSubjectData.classAvg/(unclassifiedSubjectData.totalCoefEnabledGrades/100))/100;
                             unclassifiedSubjectData.totalCoefGrades             = Math.round(unclassifiedSubjectData.totalCoefGrades);
                             unclassifiedSubjectData.totalCoefRealGrades         = Math.round(unclassifiedSubjectData.totalCoefRealGrades);
                             unclassifiedSubjectData.totalCoefSimGrades          = Math.round(unclassifiedSubjectData.totalCoefSimGrades);
@@ -1018,7 +1531,7 @@
                     // FOR EACH UE IN SEMESTER (if any)
                     if (this.ueConfig?.[semX]?.__ues__) {
                         (ue && this.ueConfig?.[sem]?.__ues__.includes(ue) ? [ue] : this.ueConfig[semX].__ues__).forEach((ueName) => {
-                            const allMats = this.getAllSubjectsForUE(semX, ueName);
+                            const allSubjs = this.getAllSubjectsForUE(semX, ueName);
                             const ueGrades = this.calculateUEGrades(semX, ueName);
 
                             semData[ueName] = {};
@@ -1027,6 +1540,7 @@
                             
                             ueData.ueName                       = ueName;
                             ueData.subjects                     = {};
+                            ueData.nbGrades                     = 0;
                             ueData.simGrades                    = [];
                             ueData.disabledRealGrades           = [];
                             ueData.disabledSimGrades            = [];
@@ -1058,18 +1572,19 @@
                                     subjectData = {grades: []};
                                 }
                                 subjectData.grades.push(n);
+                                ueData.nbGrades++;
                             });
 
                             
 
                             // FOR EACH SUBJECT IN UE
-                            (subj && this.ueConfig?.[sem]?.[ue]?.subjects?.includes(subj) ? [subj] : allMats).forEach(subjectName => {
+                            (subj && this.ueConfig?.[sem]?.[ue]?.subjects?.includes(subj) ? [subj] : allSubjs).forEach(subjectName => {
 
                                 let subjectData = ueData.subjects[subjectName];
 
                                 subjectData.subjName                    = subjectName;
                                 subjectData.coef                        = this.ueConfig[semX][ueName].coefficients[subjectName];
-                                subjectData.isCustom                    = this.ueConfig[semX][ueName].custom[subjectName];
+                                subjectData.isCustom                    = true;
                                 subjectData.disabledRealGrades          = [];
                                 subjectData.simGrades                   = [];
                                 subjectData.disabledSimGrades           = [];
@@ -1085,6 +1600,7 @@
 
                                 ueData.totalCoefSubjects += parseInt(subjectData.coef);
                                 
+                                
                                 // FOR EACH GRADE IN SUBJECT
                                 subjectData.grades.forEach(grade => {
                                     const gradeValue = parseFloat(grade.grade),
@@ -1094,6 +1610,7 @@
                                     ;
                                     
                                     subjectData.totalCoefGrades += grade.coef;
+                                    subjectData.isCustom = false;
 
                                     switch (`${this.gradeIsDisabled(grade) ? "disabled" : "enabled"} ${grade.__sim ? "sim" : "real"} grade`) {
                                         case `enabled real grade`:
@@ -1163,8 +1680,8 @@
                                     ueData.coefSubjectsNoGrade += subjectData.coef;
                                 }
                                 else {
-                                    subjectData.average     =  Math.round(100*subjectData.average /(subjectData.totalCoefGrades/100))/100;
-                                    subjectData.classAvg    =  Math.round(100*subjectData.classAvg/(subjectData.totalCoefGrades/100))/100;
+                                    subjectData.average     =  Math.round(100*subjectData.average /(subjectData.totalCoefEnabledGrades/100))/100;
+                                    subjectData.classAvg    =  Math.round(100*subjectData.classAvg/(subjectData.totalCoefEnabledGrades/100))/100;
 
                                     ueData.average          += subjectData.average *subjectData.coef/100;
                                     ueData.classAvg         += subjectData.classAvg*subjectData.coef/100;
@@ -1222,13 +1739,13 @@
 
 
 
-
         // MARK: -INIT
         init() {
             // document.getElementById("dockbar").remove();
 
             this.parseGrades();
             this.getGradesDatas();
+
             if (this.savedReadGrades.length == 0) {
                 this.newGrades = [];
                 this.grades.forEach(e => {this.savedReadGrades.push(e)})
@@ -1244,8 +1761,7 @@
             this.newGrades = this.compareArraysofObjects(this.grades, this.savedReadGrades).more;
             this.createNewGradesNotifDiv();
             this.createDashboard();
-            this.attachEventListeners();
-            
+            this.openOnlineCfgPicker();
         }
 
 
@@ -1292,6 +1808,10 @@
                         <div style="display: flex; flex-direction: column; gap: 8px">
                             <button class="btn btn-export" id="exportBtn"></button>
                             <button class="btn btn-import" id="importBtn"></button>
+                            <div class="import-menu" id="importMenu">
+                                <div class="import-menu-btn file"></div>
+                                <div class="import-menu-btn online"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1302,7 +1822,7 @@
                         <div class="average-label"></div>
                     </div>
                     <div class="average-stats">
-                        <div class="stat-item"><div class="stat-value">${totalGrades                        }</div><div class="stat-label"></div></div>
+                        <div class="stat-item"><div class="stat-value">${totalGrades                       }</div><div class="stat-label"></div></div>
                         <div class="stat-item"><div class="stat-value">${Object.keys(this.semesters).length}</div><div class="stat-label"></div></div>
                         <div class="stat-item"><div class="stat-value">${ueStats.validated}/${ueStats.total}</div><div class="stat-label"></div></div>
                     </div>
@@ -1395,8 +1915,12 @@
                     newGradesCard.innerHTML += html;
                 }
 
-                if (newGradesCard.children.length == 1) {newGradesCard.classList.add("none")}
-                else {newGradesCard.classList.remove("none")}
+                if (newGradesCard.children.length == 1) {
+                    newGradesCard.classList.add("none")
+                }
+                else {
+                    newGradesCard.classList.remove("none")
+                }
             }
 
 
@@ -1424,7 +1948,7 @@
                 const statLabelsArray = document.querySelectorAll(".stat-label");
                 statLabelsArray[0].innerHTML = `${this.lang == "fr" ? "Notes" : "Grades"}`;
                 statLabelsArray[1].innerHTML = `${this.lang == "fr" ? "Semestres" : "Semesters"}`;
-                statLabelsArray[2].innerHTML = `${this.lang == "fr" ? "UE Validées" : "Validated TU"}`;
+                statLabelsArray[2].innerHTML = `${this.lang == "fr" ? "Modules Validés" : "Validated module"}`;
 
                 document.querySelector(".filter-title").innerHTML = `${this.lang == "fr" ? "Filtrer par semestre" : "Filter by semester"}`;
                 document.querySelector(".filter-tab").innerHTML = `${this.lang == "fr" ? "Tous" : "All"}`;
@@ -1495,7 +2019,7 @@
                     section.innerHTML = `
                     <div class="semester-header" data-semester="${sem}">
                         <div class="semester-info">
-                            <div class="semester-name">📚 ${this.lang == "fr" ? 'semester' : "Semester"} ${sem}</div>
+                            <div class="semester-name">📚 ${this.lang == "fr" ? 'Semestre' : "Semester"} ${sem}</div>
                                 <div class="semester-average ${avgClass}">
                                     <span>${moyenneSem >= 10 ? '✅' : '⚠️'}</span><span>${moyenneSem}/20</span>
                                 </div>
@@ -1503,34 +2027,44 @@
                         <div class="semester-toggle open collapse-icon">▲</div>
                     </div>
                     <div class="semester-content show${this.selectedSubjectCards.length > 0 ? " dragging" : ""}${fadeIn ? " fade-in" : ""}" id="sem-content-${sem}">
-                        <div class="drop-field remove-from-ue${this.selectedSubjectCards.length > 0 ? " show" : ""}">-</div>
-                        <div class="ue-grid" ${(unclassified.length == 0 || !this.ueConfig[sem] || Object.keys(this.ueConfig?.[sem])[0] == undefined) ? `style="gap: ${this.editMode ? `20px` : `0px`}"` : ``}>
-                            <div class="modules-section">
-                                ${this.renderAllUECards(sem)}
+                        <div class="drop-field remove-from-ue${this.selectedSubjectCards.length > 0 ? " show" : ""}">
+                            <div class="drop-field-remove-from-ue-text top${this.lang == "fr" ? " fr" : " en"}"></div>
+                            <div class="drop-field-remove-from-ue-minus">-</div>
+                            <div class="drop-field-remove-from-ue-text bottom${this.lang == "fr" ? " fr" : " en"}"></div>
+                        </div>
+                        <div class="semester-grid" ${(unclassified.length == 0 || !this.ueConfig[sem] || Object.keys(this.ueConfig?.[sem])[0] == undefined) ? `style="gap: ${this.editMode ? `20px` : `0px`}"` : ``}>
+                            <div class="modules-section" id="modules-section">
+                                ${this.createAllUECards(sem)}
                             </div>
-                            <div class="unclassified-section" style="height: 100%${unclassified.length > 0 ? `` : `; display: none`}">
+                            <div class="unclassified-section" id="unclassified-section" style="height: 100%${unclassified.length > 0 ? `` : `; display: none`}">
                                 <div class="unclassified-title">
-                                    ${this.lang == "fr" ? `Matière${unclassified.length > 1 ?  `s` : ``} non classée${unclassified.length > 1 ?  `s` : ``} dans une UE` : `Subject${unclassified.length > 1 ?  `s` : ``} not classified in a TU`}
+                                    ${this.lang == "fr" ? `Matière${unclassified.length > 1 ?  `s` : ``} non classée${unclassified.length > 1 ?  `s` : ``} dans un module` : `Subject${unclassified.length > 1 ?  `s` : ``} not classified in a module`}
                                 </div>
                                 <div class="unclassified-content">
-                                    ${unclassified.length > 0 ?  `${this.renderAllUnclassifiedMatCard(sem)}` : ``}
+                                    ${unclassified.length > 0 ?  `${this.createAllUnclassifiedSubjCard(sem)}` : ``}
                                 </div>
                             </div>
                         </div>
-                        <div class="drop-field create-ue${this.selectedSubjectCards.length > 0 ? " show" : ""}">+</div>
+                        <div class="drop-field create-ue${this.lang == "fr" ? " fr" : " en"}${this.selectedSubjectCards.length > 0 ? " show" : ""}">
+                            <div class="drop-field-create-ue-text top${this.lang == "fr" ? " fr" : " en"}"></div>
+                            <div class="drop-field-create-ue-plus">+</div>
+                            <div class="drop-field-create-ue-text bottom${this.lang == "fr" ? " fr" : " en"}"></div>
+                        </div>
                     </div>
                     `;
                     contentArea.appendChild(section);
 
                     // Set a fixed height for the unclassified section, so that when dragging a subject card, the unclassified section doesn't change height upon the grades tables disappearing
                     const unclassifiedSection = document.querySelector(".unclassified-section");
-                    const currentUnclassifiedSectionHeight = new Number(unclassifiedSection.clientHeight);
-                    unclassifiedSection.style.height = `${currentUnclassifiedSectionHeight+4}px`;
+                    setTimeout(() => {
+                        const currentUnclassifiedSectionHeight = new Number(unclassifiedSection.clientHeight); 
+                        unclassifiedSection.style.height = `${currentUnclassifiedSectionHeight+4}px`;
+                    }, 100)
 
                     const container = document.getElementById(`sem-content-${sem}`)
-                    // container.querySelectorAll(".subject-card").forEach(subjCard => {
+                    // container.querySelectorAll(".subject-card").forEach(subjectCard => {
                     //     this.selectedSubjectCards.forEach(selectedSubjCard => {
-                    //         if (selectedSubjCard.id == subjCard.id)
+                    //         if (selectedSubjCard.id == subjectCard.id)
                     //     })
                     // })
 
@@ -1538,21 +2072,21 @@
                     this.attachCheckboxListeners(container);
 
                     // After rendering the UE card's content in detailed view, check if the view mode is set to "compact" and if so, render the UE card's content in compact view
-                    if (this.viewMode == "compact") {
-                        document.querySelectorAll('.ue-header').forEach(header => {
-                            if (header.nextElementSibling) {
-                                const toggle = header.querySelector('.ue-toggle');
-                                const content = header.nextElementSibling;
-                                const sem = header.dataset.semester;
-                                const ueName = this.editMode ? header.children[0].children[1].value : header.children[0].innerText;
+                    // if (this.viewMode == "compact") {
+                    //     document.querySelectorAll('.ue-header').forEach(header => {
+                    //         if (header.nextElementSibling) {
+                    //             const toggle = header.querySelector('.ue-toggle');
+                    //             const content = header.nextElementSibling;
+                    //             const sem = header.dataset.semester;
+                    //             const ueName = this.editMode ? header.children[0].children[1].value : header.children[0].innerText;
                                 
-                                const ueContent = header.parentElement.querySelector(".ue-details");
-                                ueContent.innerHTML = this.renderAllMatCardCompact(sem, ueName);
-                                content.classList.add('compact');
-                                toggle.classList.remove('open');
-                            }
-                        });
-                    }
+                    //             const ueContent = header.parentElement.querySelector(".ue-details");
+                    //             ueContent.innerHTML = this.createAllSubjCardCompact(sem, ueName);
+                    //             content.classList.add('compact');
+                    //             toggle.classList.remove('open');
+                    //         }
+                    //     });
+                    // }
 
                     this.setGradesTableTotalCoef();
                     this.attachEventListeners();
@@ -1562,24 +2096,24 @@
 
 
 
-            // MARK: renderUECard
-            renderAllUECards(sem) {
+            // MARK: createUECard
+            createAllUECards(sem) {
                 const ueConfig = this.ueConfig?.[sem] || {};
 
                 let html =  this.editMode ? this.createDropAreaInsertionField("ue", {sem, index:0}) : "";
                 // let html = this.editMode ? `<div class="drop-field insert-area" data-semester="${sem}" data-index="0">+</div>` : "";
 
                 ueConfig?.__ues__?.forEach((ueName, ueIndex) => {
-                    html += this.renderUECard(sem, ueName, ueIndex);
+                    html += this.createUECard(sem, ueName, ueIndex);
                     html += this.editMode ? this.createDropAreaInsertionField("ue", {sem, index:ueIndex+1}) : "";
                     // html += this.editMode ? `<div class="drop-field insert-area" data-semester="${sem}" data-index="${ueIndex+1}">+</div>` : ``;
                 });
 
                 return html;
             }
-            renderUECard(sem, ueName, ueIndex=-1) {
+            createUECard(sem, ueName, ueIndex=-1) {
                 const ueGrades = this.calculateUEGrades(sem, ueName);
-                const includedGrades = (ueGrades || []).filter(n => this.ignoredGrades.indexOf([sem, n.subject, n.type+" "+n.date+" "+n.prof].join("\\")) == -1);
+                const includedGrades = (ueGrades || []).filter(n => !this.gradeIsDisabled(n));
                 let weight = 0; includedGrades.forEach(grade => {weight += grade.coef/100})
                 const moyenne = this.gradesDatas[sem][ueName].average;
                 const hasSim =      this.gradesDatas[sem][ueName].simGrades.length > 0 ? true : false;
@@ -1613,67 +2147,70 @@
                         </div>
                     </div>
                     
-                    ${hasSim || hasDisabled ? `
-                        <div class="ue-info">
-                            ${hasDisabled 
-                                ? 
-                                `<div class="ue-info bar">
-                                    <div style="font-weight: 700">${this.lang == "fr" ? "Inclus des notes désactivées" : "Includes disabled grades"}</div>
-                                    <div class="ue-info-clear disabled" data-semester="${sem}" data-ue="${ueName}">${this.lang == "fr" ? "Activer toutes ces notes" : "Enable all the grades"}</div>
-                                </div>` 
-                                : ``
-                            }
-                            ${hasSim 
-                                ? 
-                                `<div class="ue-info bar">
-                                    <div style="font-weight: 700">${this.lang == "fr" ? "Inclus des notes simulées" : "Includes simulated grades"}</div>
-                                    <div class="ue-info-clear sim" data-semester="${sem}" data-ue="${ueName}">${this.lang == "fr" ? "Effacer toutes ces notes simulées" : "Erase all the simulated grades"}</div>
-                                </div>` 
-                                : ``
-                            }
-                        </div>
-                    ` : ""}
-
-                    <div class="ue-details ${this.editMode ? "edit-mode": ""}" id="ue-details-${ueName}-in-semester${sem}">
-                        ${this.renderAllMatCardDetailed(sem, ueName)}
+                    <div class="ue-info">
+                        ${hasDisabled 
+                            ? 
+                            `<div class="ue-info-bar">
+                                <div style="font-weight: 700; font-size: 15px;">${this.lang == "fr" ? "Inclus des notes désactivées" : "Includes disabled grades"}</div>
+                                <div class="ue-info-clear disabled" data-semester="${sem}" data-ue="${ueName}">${this.lang == "fr" ? "Activer toutes ces notes" : "Enable all the grades"}</div>
+                            </div>` 
+                            : ``
+                        }
+                        ${hasSim 
+                            ? 
+                            `<div class="ue-info-bar">
+                                <div style="font-weight: 700; font-size: 15px;">${this.lang == "fr" ? "Inclus des notes simulées" : "Includes simulated grades"}</div>
+                                <div class="ue-info-clear sim" data-semester="${sem}" data-ue="${ueName}">${this.lang == "fr" ? "Effacer toutes ces notes simulées" : "Erase all the simulated grades"}</div>
+                            </div>` 
+                            : ``
+                        }
                     </div>
-
-                </div>
+                    
+                    <div class="ue-card-content ${this.editMode ? "edit-mode": ""}">
+                    <div class="ue-details ${this.editMode ? "edit-mode": ""}" id="ue-details-${ueName}-in-semester${sem}">
+                    ${this.viewMode == "detailed" ? this.createAllSubjCardDetailed(sem, ueName) : this.createAllSubjCardCompact(sem, ueName)}
+                    </div>
+                    </div>
+                    
+                    </div>
                 `;
 
+                // <div class="ue-coef-slider ${this.editMode ? "edit-mode": ""}"></div>
+                    
                 return html
             }
             
 
 
 
-            // MARK: renderMatCardDetailed
-            renderAllMatCardDetailed(sem, ueName) {
+            // MARK: createSubjCardDetailed
+            createAllSubjCardDetailed(sem, ueName) {
                 const ueData = this.gradesDatas[sem][ueName];
                 const select = this.selectedSubjectCards.length == 0;
 
                 let html =  this.editMode ? this.createDropAreaInsertionField("subject", {sem, ueName, index:0}) : "";
 
                 Object.values(ueData.subjects).forEach((_value, _index) => {
-                    html += this.renderMatCardDetailed(sem, ueName, _value.subjName, _index);
+                    html += this.createSubjCardDetailed(sem, ueName, _value.subjName, _index);
                     html += this.editMode ? this.createDropAreaInsertionField("subject", {sem, ueName, index:_index+1}) : "";
                 })
 
                 return html;
             }
-            renderMatCardDetailed(sem, ueName, subject, index=-1) {
-                const ueData =  this.gradesDatas[sem][ueName];
+            createSubjCardDetailed(sem, ueName, subject, index=-1) {
+                const ueData =          this.gradesDatas[sem][ueName];
                 const subjectData =     ueData.subjects[subject];
                 const subjGrades =      subjectData.grades;
                 const ueMoy =           ueData.average;
-                const moyMat =          subjectData.average;
+                const subjAvg =          subjectData.average;
                 const pct =             subjectData.coef;
                 const isCustom =        subjectData.isCustom;
-                const totalSimGrades =  subjectData.simGrades.length;
+                const nbGrades =        subjGrades.length;
+                const nbSimGrades =     subjectData.simGrades.length;
                 
                 let html = `
-                <div class="subject-card ${moyMat == " - " ? `unknown` : `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" ${this.editMode ? `style="user-select: none;"` : ``} id="subject-card-semester-${sem}-subject-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
-                    <div class="subject-card-header ${moyMat == " - " ? `unknown` : `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" ${this.editMode ? `draggable="true"` : ``} style="${this.editMode ? `cursor: grab; ` : `${subjGrades.length > 0 ? `` : `border-radius: 20px; border: none`}`}">
+                <div class="subject-card ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" ${this.editMode ? `style="user-select: none;"` : ``} id="subject-card-semester-${sem}-subject-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
+                    <div class="subject-card-header ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" ${this.editMode ? `draggable="true"` : ``} style="${this.editMode ? `cursor: grab; ` : `${nbGrades > 0 ? `` : `border-radius: 20px; border: none`}`}">
                         <div style="display: flex; width: 42%; padding-left: ${this.editMode ? `10px` : `50px`}">
                             <div style="display: flex; justify-content: flex-start; align-items: center; width: 100%; gap:8px; user-select: text">
                                 ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("detailed-subject-card", {type:"detailed", targetId:`subject-card-semester-${sem}-subject-${subject}`})}</div>` : ""}
@@ -1682,14 +2219,14 @@
                                         ? `<input type="text" onmouseover="event.preventDefault()" class="subject-name input any-input" id="subject-name-input-${sem}-${ueName}-${subject}" value="${subject}"/>`
                                         : `<div class="subject-name">${subject}</div>`}
                                     <div class="grade-type">
-                                        ${this.lang == "fr" ? "Poids dans l'UE" : "Weight in TU"}: 
+                                        ${this.lang == "fr" ? "Poids dans module" : "Weight in module"}: 
                                         ${this.editMode 
                                             ? `<input class="subject-coef-input-box any-input" id="subject-coef-input-box-${sem}-${ueName}-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" type="number" placeholder="%" step="5" min="0" max="100" value="${pct}"/>%`
                                             : `<span style="font-weight: 800;">${pct}%</span>`}
                                         | 
                                         ${this.lang == "fr" ? "Moyenne" : "Average"}: 
-                                        <span class="subj-moyenne ${moyMat == " - " ? '' : `${moyMat>=10 ? 'good' : 'bad'}`}">${moyMat}/20</span> 
-                                        ${subjGrades.length===0 ? `<span style="margin-left:2px;font-size:12px;color:#6b7280">${this.lang == "fr" ? "(aucune note publiée)" : "(no published grade)"}</span>` : ''}
+                                        <span class="subj-moyenne ${subjAvg == " - " ? '' : `${subjAvg>=10 ? 'good' : 'bad'}`}">${subjAvg}/20</span> 
+                                        ${nbGrades===0 ? `<span style="margin-left:2px;font-size:12px;color:#6b7280">${this.lang == "fr" ? "(aucune note publiée)" : "(no published grade)"}</span>` : ''}
                                     </div>
                                 </div>
                             </div>
@@ -1701,10 +2238,10 @@
                             <div class="grades-table-subject-total-coef-value" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}"></div>
                         </div>
                     </div>
-                    <table class="grades-table ${moyMat == " - " ? `unknown` : `${moyMat >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" style="${this.editMode ? `user-select: text;` : ``}" id="grades-table-${subject}-semester${sem}" data-subject="${subject}">
+                    <table class="grades-table ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" style="${this.editMode ? `user-select: text;` : ``}" id="grades-table-${subject}-semester${sem}" data-subject="${subject}">
 
                         <thead>
-                            ${subjGrades.length > 0 || this.editMode
+                            ${nbGrades > 0 || this.editMode
                                 ? `<tr>
                                     <th class="grades-table-type" style="padding-left: 30px; border-left-width: 0px;">
                                         ${this.lang == "fr" ? "Intitulé" : "Title"}
@@ -1721,8 +2258,10 @@
                                     <th class="grades-table-date">
                                         ${this.lang == "fr" ? "Date" : "Date"}
                                     </th>
-                                    <th class="grades-table-teacher" style="border-right-width: 0px;${this.selectedSubjectCards.length > 0 ? " display: none;" : ""}" colspan="2">
+                                    <th class="grades-table-teacher" style="border-right-width: 0px;${this.selectedSubjectCards.length > 0 ? " display: none;" : ""}">
                                         ${this.lang == "fr" ? "Prof(s)" : "Teacher(s)"}
+                                    </th>
+                                    <th style="border-right-width: 0px; border-left-width: 0px;">
                                     </th>
                                 </tr>`
                                 : ``
@@ -1733,81 +2272,83 @@
 
                 subjGrades.forEach((grade, index) => {
                     const gradeClass = this.getGradeColor(grade.grade);
-                    const gradeIsSim = grade.__sim ? "true" : "false";
+                    const gradeIsSim = grade.__sim ? true : false;
 
                     html += `
-                            <tr class="grade-row ${index == subjGrades.length-1 ? `last` : ``} ${grade.__sim ? `sim` : ``}" data-sim="${gradeIsSim}">
+                            <tr class="grade-row ${index == nbGrades-1 ? `last` : ``} ${gradeIsSim ? `sim` : ``}" data-sim="${gradeIsSim}">
                                 <td class="grades-table-type" style="display: flex; align-items: center; gap: 6px; width: auto">
-                                    <input type="checkbox" class="grade-checkbox any-input" id="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}" data-semester="${sem}" data-subj="${subject}" data-uen="${ueName||''}" data-prof="${grade.prof}" data-gradeid="${grade.type} ${grade.date} ${grade.prof}" ${this.ignoredGrades.indexOf([sem, subject, grade.type+" "+grade.date+" "+grade.prof].join("\\")) == -1 ? "checked" : ""}></input>
-                                    ${grade.__sim && this.editMode
-                                        ? `<input class="grade-type grade-simulee-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="grade-simulee-input-type-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" data-modifType="type" data-id="${totalSimGrades-1}" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-uen="${ueName||''}" value="${grade.type}"/>` 
-                                        : `<label class="grade-type" style="width: auto"  id="grade-type-${grade.type}-${grade.date}" for="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}">${grade.type || ''}${grade.__sim ? ` • ${this.lang == "fr" ? "Simulée" : "Simulated"}` : ''}</label>`
+                                    <input type="checkbox" class="grade-checkbox any-input" id="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}" data-semester="${sem}" data-subj="${subject}" data-ue="${ueName||''}" data-prof="${grade.prof}" data-gradeid="${grade.type + " " + grade.date + " " + grade.prof}" ${gradeIsSim ? `data-simtimestamp="${grade.id}"` : ""} ${!this.gradeIsDisabled(grade) ? "checked" : ""}></input>
+                                    ${gradeIsSim && this.editMode
+                                        ? `<input class="grade-type grade-simulee-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="grade-simulee-input-type-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" data-modifType="type" data-simid="${nbSimGrades-1}" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-ue="${ueName||''}" value="${grade.type}"/>` 
+                                        : `<label class="grade-type" style="width: auto"  id="grade-type-${grade.type}-${grade.date}" for="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}">${grade.type || ''}${gradeIsSim ? ` • ${this.lang == "fr" ? "Simulée" : "Simulated"}` : ''}</label>`
                                     }
                                 </td>
                                 <td class="grade-value grade-${gradeClass} grades-table-grade" data-sim="${gradeIsSim}">
-                                    ${grade.__sim && this.editMode
-                                        ? `<input class="grade-simulee-input-edit sim-inp-grade any-input" style="width: 100%; max-width: 75px;" id="grade-simulee-input-grade-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="number" step="0.5" min="0" max="20" data-id="${totalSimGrades-1}" data-modifType="grade" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-uen="${ueName||''}" style="width:75px; height:25px" value="${grade.grade}"> /20`
+                                    ${gradeIsSim && this.editMode
+                                        ? `<input class="grade-simulee-input-edit sim-inp-grade any-input" style="width: 100%; max-width: 75px;" id="grade-simulee-input-grade-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="number" step="0.5" min="0" max="20" data-simid="${nbSimGrades-1}" data-modifType="grade" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-ue="${ueName||''}" style="width:75px; height:25px" value="${grade.grade}"> /20`
                                         : `${grade.grade}/20`
                                     }
                                 </td>
                                 <td class="grades-table-coef" data-sim="${gradeIsSim}">
-                                    ${grade.__sim && this.editMode
-                                        ? `<input class="grade-simulee-input-edit sim-inp-coef any-input" style="width: 100%; max-width: 60px;" id="grade-simulee-input-coef-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="number" step="5" min="0" max="100" data-id="${totalSimGrades-1}" data-modifType="coef" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-uen="${ueName||''}" style="width:60px; height:25px"value="${grade.coef}"> %`
+                                    ${gradeIsSim && this.editMode
+                                        ? `<input class="grade-simulee-input-edit sim-inp-coef any-input" style="width: 100%; max-width: 60px;" id="grade-simulee-input-coef-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="number" step="5" min="0" max="100" data-simid="${nbSimGrades-1}" data-modifType="coef" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-ue="${ueName||''}" style="width:60px; height:25px"value="${grade.coef}"> %`
                                         : `${grade.coef} %`
                                     }
                                 </td>
                                 <td class="grades-table-classAvg" data-sim="${gradeIsSim}">
-                                    ${grade._sim && this.editMode
-                                        ? ``
-                                        : `${grade.__sim ? "" : grade.classAvg+"/20"}`
+                                    ${gradeIsSim
+                                        ? `<span style="width: 100%; display: flex; justify-content: center;"> — </span>`
+                                        : `${grade.classAvg}/20`
                                     }
                                 </td>
                                 <td class="grades-table-date grade-date" data-sim="${gradeIsSim}">
-                                    ${grade.__sim && this.editMode
-                                        ? `<input class="grade-simulee-input-edit sim-inp-date any-input" style="width: 100%; max-width: 140px;" id="grade-simulee-input-date-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="date" data-id="${totalSimGrades-1}" data-semester="${sem}" data-subj="${subject}" data-modifType="date" data-type="${grade.type}" data-uen="${ueName||''}" style="width:140px; height:25px"value="${grade.date||""}">`
-                                        : `${`${grade.__sim ? grade.date.split("-").reverse().join("/") : grade.date}`||''}`
+                                    ${gradeIsSim
+                                        ? `<span style="width: 100%; display: flex; justify-content: center;"> — </span>`
+                                        : `${grade.date}`
                                     }
                                 </td>
                                 <td class="grades-table-teacher" ${this.selectedSubjectCards.length > 0 ? `style="display: none;"` : ""}>
-                                    <span>${`${grade.prof.split(" / ").length <= 3 ? grade.prof : grade.prof.split(" / ").slice(0,3).join(" / ") + " / ... "}`||''}</span>
+                                    ${gradeIsSim
+                                        ? `<span style="width: 100%; display: flex; justify-content: center;"> — </span>`
+                                        : `<span>${`${grade.prof.split(" / ").length <= 3 ? grade.prof : grade.prof.split(" / ").slice(0,3).join(" / ") + " / ... "}`||''}</span>`
+                                    }
                                 </td>
-                                <td class="grades-table-add-sim-cell" style="${grade.__sim ? `width: 52px; padding: 3px` : ``}">
-                                    ${grade.__sim 
-                                        ? `<button class="sim-del-btn" data-semester="${sem}" data-subj="${subject}" data-uen="${ueName||''}" data-type="${grade.type}">🗑️</button>` 
-                                        : `<div style="width:32px"></div>`}
+                                <td class="grades-table-add-sim-cell" style="${gradeIsSim ? `width: 52px; padding: 3px; text-align: center;` : ``}">
+                                    ${
+                                        gradeIsSim 
+                                        ? `<button class="sim-del-btn" data-semester="${sem}" data-subj="${subject}" data-ue="${ueName||''}" data-type="${grade.type}">🗑️</button>` 
+                                        : `<div style="width:32px"></div>`
+                                    }
                                 </td>
                             </tr>
                     `;
                 });
 
                 // Formulaire d'ajout de grade simulée pour cette matière
-                    html += `
-                                <tr ${this.editMode ? "" : "hidden=true"}>
-                                    <td class="grades-table-type">
-                                        <div class="grade-type" style="display:flex; align-items:center; justify-content: flex-start">
-                                            <div style="width: 120px">${this.lang == "fr" ? "Ajouter une note simulée: " : "Add a simulated grade: "}</div>
-                                            <input class="grade-simulee-input sim-inp-type any-input" id="grade-simulee-input-type-for-${subject}-from-${ueName}-in-semester${sem}" data-semester="${sem}" data-subj="${subject}" placeholder="${this.lang == "fr" ? "Titre" : "Title"}" />
-                                        </div>
-                                    </td>
-                                    <td class="grades-table-grade">
-                                        <input class="grade-simulee-input sim-inp-grade any-input" id="grade-simulee-input-grade-for-${subject}-from-${ueName}-in-semester${sem}" type="number" step="0.5" min="0" max="20" data-semester="${sem}" data-subj="${subject}" placeholder="/20"> /20
-                                    </td>
-                                    <td class="grades-table-coef">
-                                        <input class="grade-simulee-input sim-inp-coef any-input" id="grade-simulee-input-coef-for-${subject}-from-${ueName}-in-semester${sem}" type="number" step="5" min="0" max="100" data-semester="${sem}" data-subj="${subject}" placeholder="%"> %
-                                    </td>
-                                    <td>
-                                    </td>
-                                    <td class="grades-table-date">
-                                        <input class="grade-simulee-input sim-inp-date any-input" id="grade-simulee-input-date-for-${subject}-from-${ueName}-in-semester${sem}" type="date" value="${this.today}" data-semester="${sem}" data-subj="${subject}">
-                                    </td>
-                                    <td colspan="2">
-                                        <button class="btn-export sim-add-btn" data-semester="${sem}" data-subj="${subject}" data-uen="${ueName||''}">${this.lang == "fr" ? "Ajouter" : "Add"}</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    `;
+                html += `
+                            <tr ${this.editMode ? "" : "hidden=true"}>
+                                <td class="grades-table-type">
+                                    <div class="grade-type" style="display:flex; align-items:center; justify-content: flex-start">
+                                        <div style="width: 120px">${this.lang == "fr" ? "Ajouter une note simulée: " : "Add a simulated grade: "}</div>
+                                        <input class="grade-simulee-input sim-inp-type any-input" id="grade-simulee-input-type-for-${subject}-from-${ueName}-in-semester${sem}" data-semester="${sem}" data-subj="${subject}" placeholder="${this.lang == "fr" ? "Titre" : "Title"}" />
+                                    </div>
+                                </td>
+                                <td class="grades-table-grade">
+                                    <input class="grade-simulee-input sim-inp-grade any-input" id="grade-simulee-input-grade-for-${subject}-from-${ueName}-in-semester${sem}" type="number" step="0.5" min="0" max="20" data-semester="${sem}" data-subj="${subject}" placeholder="/20"> /20
+                                </td>
+                                <td class="grades-table-coef">
+                                    <input class="grade-simulee-input sim-inp-coef any-input" id="grade-simulee-input-coef-for-${subject}-from-${ueName}-in-semester${sem}" type="number" step="5" min="0" max="100" data-semester="${sem}" data-subj="${subject}" placeholder="%"> %
+                                </td>
+                                <td colspan="3">
+                                </td>
+                                <td>
+                                    <button class="btn-export sim-add-btn" data-semester="${sem}" data-subj="${subject}" data-ue="${ueName||''}">${this.lang == "fr" ? "Ajouter" : "Add"}</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                `;
 
                 return html;
             }
@@ -1815,33 +2356,34 @@
 
 
 
-            // MARK: renderMatCardCompact
-            renderAllMatCardCompact(sem, ueName) {
+            // MARK: createSubjCardCompact
+            createAllSubjCardCompact(sem, ueName) {
                 const ueData = this.gradesDatas[sem][ueName];
                 const select = this.selectedSubjectCards.length == 0;
 
                 let html =  this.editMode ? this.createDropAreaInsertionField("subject", {sem, ueName, index:0}) : "";
 
                 Object.values(ueData.subjects).forEach((_value, _index) => {
-                    html += this.renderMatCardCompact(sem, ueName, _value.subjName, _index);
+                    html += this.createSubjCardCompact(sem, ueName, _value.subjName, _index);
                     html += this.editMode ? this.createDropAreaInsertionField("subject", {sem, ueName, index:_index+1}) : "";
                 })
 
                 return html;
             }
-            renderMatCardCompact(sem, ueName, subject, index=-1) {
+            createSubjCardCompact(sem, ueName, subject, index=-1) {
                 const ueData =  this.gradesDatas[sem][ueName];
                 const subjectData =             ueData.subjects[subject];
                 const subjGrades =              subjectData.grades;
                 const ueMoy =                   ueData.average;
-                const moyMat =                  subjectData.average;
+                const subjAvg =                  subjectData.average;
                 const pct =                     subjectData.coef;
                 const isCustom =                subjectData.isCustom;
-                const includedGradesLength =    subjGrades.length - subjectData.disabledRealGrades.length - subjectData.disabledSimGrades.length;
-                const totalSimGrades =          subjectData.simGrades.length;
+                const nbGrades =                subjGrades.length;
+                const includedGradesLength =    nbGrades - subjectData.disabledRealGrades.length - subjectData.disabledSimGrades.length;
+                const nbSimGrades =          subjectData.simGrades.length;
 
                 const html = `
-                <div class="subject-card compact ${this.editMode ? "" : "edit-mode"} ${moyMat == " - " ? "unknown" : `${moyMat>10 ? `${ueMoy>10 ? `good` : `meh`}` : `bad`}`}" id="subject-card-semester-${sem}-subject-${subject}" style="${this.editMode ? "cursor: grab; user-select: none; " : " "}" ${this.editMode ? `draggable="true"` : ""} data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
+                <div class="subject-card compact ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? "unknown" : `${subjAvg>10 ? `${ueMoy>10 ? `good` : `meh`}` : `bad`}`}" id="subject-card-semester-${sem}-subject-${subject}" style="${this.editMode ? "cursor: grab; user-select: none; " : " "}" ${this.editMode ? `draggable="true"` : ""} data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
                     <div style="display:flex; align-items:center; gap:8px; padding-left: 11px; width:43%; min-width: 275px">
                         ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("compact-subject-card", {type:"compact", targetId:`subject-card-semester-${sem}-subject-${subject}`})}</div>` : ""}
                         <div style="width: 87%">
@@ -1850,20 +2392,20 @@
                                 : `<div class="subject-name">${subject}</div>`
                             }
                             <div style="font-size:13px;color:#666;">
-                                ${this.lang == "fr" ? "Poids dans l'UE: " : "Weight in TU: "}
+                                ${this.lang == "fr" ? "Poids dans module: " : "Weight in module: "}
                                 ${this.editMode 
                                     ? `<input class="subject-coef-input-box any-input" id="subject-coef-input-box-${sem}-${ueName}-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" type="number" placeholder="%" step="5" min="0" max="100" value="${pct}"/>%`
                                     : `<span style="font-weight: 800">${pct}%</span>`
                                 } • 
-                                ${subjGrades.length===0 ? `${this.lang == "fr" ? "aucune note publiée" : "no published grade"}` : `${subjGrades.length} ${this.lang == "fr" ? `note${subjGrades.length>1?"s":""} au total` : `grade${subjGrades.length>1?"s":""} total`}`}
-                                ${subjGrades.length>0 
-                                    ? ` • <span ${includedGradesLength<subjGrades.length ? `style="color: #df0000"` : ``}>
+                                ${nbGrades===0 ? `${this.lang == "fr" ? "aucune note publiée" : "no published grade"}` : `${nbGrades} ${this.lang == "fr" ? `note${nbGrades>1?"s":""} au total` : `grade${nbGrades>1?"s":""} total`}`}
+                                ${nbGrades>0 
+                                    ? ` • <span ${includedGradesLength<nbGrades ? `style="color: #df0000"` : ``}>
                                         <span style="font-weight: 700; ">${includedGradesLength}/${subjGrades.length}</span> 
                                         ${this.lang == "fr" ? `note${includedGradesLength>1?"s":""} activée${includedGradesLength>1?"s":""}` : `grade${includedGradesLength>1?"s":""} enabled`}${includedGradesLength<subjGrades.length ? `!` : ``}
                                     </span>` 
                                     : ``}
-                                ${totalSimGrades>0 
-                                    ? ` • ${totalSimGrades} ${this.lang == "fr" ? `note${totalSimGrades>1?"s":""} simulée${totalSimGrades>1?"s":""}` : `simulated grade${totalSimGrades>1?"s":""}`}`
+                                ${nbSimGrades>0 
+                                    ? ` • ${nbSimGrades} ${this.lang == "fr" ? `note${nbSimGrades>1?"s":""} simulée${nbSimGrades>1?"s":""}` : `simulated grade${nbSimGrades>1?"s":""}`}`
                                     : ``}
                                 
                             </div>
@@ -1875,7 +2417,7 @@
                         </div>
                         <div class="grades-table-subject-total-coef-value" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}"></div>
                     </div>
-                    <div class="subj-moyenne ${moyMat == " - " ? '' : `${moyMat>=10 ? 'good' : 'bad'}`}" style="display: flex; justify-content: flex-end; width: 80px; padding-right: 20px; font-size: 20px">${moyMat}/20</div>
+                    <div class="subj-moyenne ${subjAvg == " - " ? '' : `${subjAvg>=10 ? 'good' : 'bad'}`}" style="display: flex; justify-content: flex-end; width: 80px; padding-right: 20px; font-size: 20px">${subjAvg}/20</div>
                 </div>
                 `;
                 return html;
@@ -1884,42 +2426,48 @@
 
 
 
-            // MARK: renderUnclassifiedMatCard
-            renderAllUnclassifiedMatCard(sem) {
+            // MARK: createUnclassifiedSubjCard
+            createAllUnclassifiedSubjCard(sem) {
                 const unclassified = this.getUnclassifiedSubjects(sem);
                 let html = ``;
 
                 unclassified.forEach(subject => {
-                    html += this.renderUnclassifiedMatCard(sem, subject);
+                    html += this.createUnclassifiedSubjCard(sem, subject);
                 })
                 return html
             }
-            renderUnclassifiedMatCard(sem, subject) {
+            createUnclassifiedSubjCard(sem, subject) {
                 let html = ``;
                 let totalCoef = 0;
                 let totalClassAvg = 0;
+                const ueName = "__#unclassified#__";
+                const subjData =    this.gradesDatas?.[sem]?.[ueName]?.subjects?.[subject] || {};
+                const grades =          subjData?.grades || [];
+                const simGrades =       subjData?.simGrades || [];
+                const subjAvg =          subjData?.average || " - ";
+                const nbGrades =        grades.length;
+                const nbSimGrades =     simGrades.length;
+                const nbRealGrades =    nbGrades - nbSimGrades;
 
-                const grades = (this.semesters[sem]||{})[subject]||[];
-                const moyMat = this.moyennePonderee(grades);
                 html +=`
-                <div class="subject-card unclassified ${moyMat >= 10 ? `good` : `bad`}" id="subject-card-semester-${sem}-subject-${subject}" ${this.editMode ? `style="user-select: none;"` : ""} ${this.editMode ? `draggable="true"` : ""} data-subject="${subject}" data-semester="${sem}">
-                    <div class="subject-card-header unclassified  ${moyMat >= 10 ? `good` : `bad`}" style="${this.editMode ? "cursor: grab; padding-left: 10px;" : "padding-left: 50px;"}" data-semester="${sem}" data-subject="${subject}">
+                <div class="subject-card unclassified ${subjAvg >= 10 ? `good` : `bad`}" id="subject-card-semester-${sem}-subject-${subject}" ${this.editMode ? `style="user-select: none;"` : ""} ${this.editMode ? `draggable="true"` : ""} data-subject="${subject}" data-semester="${sem}">
+                    <div class="subject-card-header unclassified  ${subjAvg >= 10 ? `good` : `bad`}" style="${this.editMode ? "cursor: grab; padding-left: 10px;" : "padding-left: 50px;"}" data-semester="${sem}" data-subject="${subject}">
                         ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("unclassified-subject-card", {type:"unclassified", targetId:`subject-card-semester-${sem}-subject-${subject}`})}</div>` : ""}
                         <div style="width: 40%">
                             ${subject}
-                            <div style="font-size:12px;margin-top:4px;">${this.lang == "fr" ? "Moyenne" : "Average"}: <span class="subj-moyenne ${moyMat>=10 ? 'good' : 'bad'}" >${moyMat}/20</span></div>
+                            <div style="font-size:12px;margin-top:4px;">${this.lang == "fr" ? "Moyenne" : "Average"}: <span class="subj-moyenne ${subjAvg>=10 ? 'good' : 'bad'}" >${subjAvg}/20</span></div>
                         </div>
                         <div class="grades-table-coef" style="display:flex; flex-direction: column; width:58%; gap:4px; padding-left: 10px; font-size: 13px">
                             <div style="text-align: left;">
                                 ${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}
                             </div>
-                            <div class="grades-table-subject-total-coef-value" data-semester="${sem}" data-ue="unclassified" data-subject="${subject}"></div>
+                            <div class="grades-table-subject-total-coef-value" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}"></div>
                         </div>
                     </div>
 
-                    <table class="grades-table ${moyMat >= 10 ? "good" : "bad"}" id="grades-table-${subject}-semester${sem}">
+                    <table class="grades-table ${subjAvg >= 10 ? "good" : "bad"}" id="grades-table-${subject}-semester${sem}">
                         <thead>
-                            ${grades.length > 0 || this.editMode
+                            ${nbGrades > 0 || this.editMode
                                 ? `<tr style="/* border-bottom: 2px solid #d5d5d5; */">
                                     <th class="grades-table-type" style="padding-left: 30px; border-left-width: 0px;">
                                         ${this.lang == "fr" ? "Intitulé" : "Title"}
@@ -1936,8 +2484,10 @@
                                     <th class="grades-table-date">
                                         ${this.lang == "fr" ? "Date" : "Date"}
                                     </th>
-                                    <th class="grades-table-teacher" style="border-right-width: 0px;${this.selectedSubjectCards.length > 0 ? " display: none;" : ""}" colspan="2">
+                                    <th class="grades-table-teacher" style="border-right-width: 0px;${this.selectedSubjectCards.length > 0 ? " display: none;" : ""}">
                                         ${this.lang == "fr" ? "Prof(s)" : "Teacher(s)"}
+                                    </th>
+                                    <th style="border-right-width: 0px; border-left-width: 0px;">
                                     </th>
                                 </tr>`
                                 : ``
@@ -1946,24 +2496,117 @@
                         <tbody>
                 `;
                 grades.forEach((grade, index) => {
-                    this.gradesDatas[sem]["unclassified"].subjects[subject].grades.push(grade);
                     totalCoef += grade.coef;
                     totalClassAvg += grade.classAvg;
 
+                    const gradeClass = this.getGradeColor(grade.grade);
+                    const gradeIsSim = grade.__sim ? true : false;
+
                     html += `
-                            <tr class="grade-row-unsorted-grades ${index == grades.length-1 ? `last` : ``}">
-                                <td class="grades-table-type" style="width: 30%">${grade.type}</td>
-                                <td class="grades-table-grade"><span class="grade-value grade-${this.getGradeColor(grade.grade)}">${grade.grade}/20</span></td>
-                                <td class="grades-table-coef">${grade.coef}%</td>
-                                <td class="grades-table-classAvg">${grade.classAvg}</td>
-                                <td class="grades-table-date grade-date">${grade.date}</td>
-                                <td class="grades-table-teacher" style="font-size:12px;color:#999;${this.selectedSubjectCards.length > 0 ? " display: none;" : ""}">${grade.prof}</td>
+                            <tr class="grade-row-unsorted-grades ${index == nbRealGrades-1 ? `last` : ``} ${gradeIsSim ? `sim` : ``}" data-sim="${gradeIsSim}">
+                                <td class="grades-table-type" style="display: flex; align-items: center; gap: 6px; width: auto">
+                                    <input type="checkbox" class="grade-checkbox any-input" id="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}-${index-nbRealGrades}" data-semester="${sem}" data-subj="${subject}" data-ue="${ueName||''}" data-prof="${grade.prof}" data-gradeid="${grade.type + " " + grade.date + " " + grade.prof}" ${gradeIsSim ? `data-simtimestamp="${grade.id}"` : ""} ${!this.gradeIsDisabled(grade) ? "checked" : ""}></input>
+                                    ${gradeIsSim && this.editMode
+                                        ? `<input class="grade-type grade-simulee-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="grade-simulee-input-type-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" data-modifType="type" data-simid="${index-nbRealGrades}" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-ue="${ueName||''}" value="${grade.type}"/>` 
+                                        : `<label class="grade-type" style="width: auto"  id="grade-type-${grade.type}-${grade.date}" for="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}-${index-nbRealGrades}">${grade.type || ''}${gradeIsSim ? ` • ${this.lang == "fr" ? "Simulée" : "Simulated"}` : ''}</label>`
+                                    }
+                                </td>
+                                <td class="grade-value grade-${gradeClass} grades-table-grade" data-sim="${gradeIsSim}">
+                                    ${gradeIsSim && this.editMode
+                                        ? `<input class="grade-simulee-input-edit sim-inp-grade any-input" style="width: 100%; max-width: 75px;" id="grade-simulee-input-grade-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="number" step="0.5" min="0" max="20" data-simid="${index-nbRealGrades}" data-modifType="grade" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-ue="${ueName||''}" style="width:75px; height:25px" value="${grade.grade}"> /20`
+                                        : `${grade.grade}/20`
+                                    }
+                                </td>
+                                <td class="grades-table-coef" data-sim="${gradeIsSim}">
+                                    ${gradeIsSim && this.editMode
+                                        ? `<input class="grade-simulee-input-edit sim-inp-coef any-input" style="width: 100%; max-width: 60px;" id="grade-simulee-input-coef-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="number" step="5" min="0" max="100" data-simid="${index-nbRealGrades}" data-modifType="coef" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-ue="${ueName||''}" style="width:60px; height:25px"value="${grade.coef}"> %`
+                                        : `${grade.coef} %`
+                                    }
+                                </td>
+                                <td class="grades-table-classAvg" data-sim="${gradeIsSim}">
+                                    ${gradeIsSim
+                                        ? `<span style="width: 100%; display: flex; justify-content: center;"> — </span>`
+                                        : `${grade.classAvg}/20`
+                                    }
+                                </td>
+                                <td class="grades-table-date grade-date" data-sim="${gradeIsSim}">
+                                    ${gradeIsSim
+                                        ? `<span style="width: 100%; display: flex; justify-content: center;"> — </span>`
+                                        : `${grade.date}`
+                                    }
+                                </td>
+                                <td class="grades-table-teacher" ${this.selectedSubjectCards.length > 0 ? `style="display: none;"` : ""}>
+                                    ${gradeIsSim
+                                        ? `<span style="width: 100%; display: flex; justify-content: center;"> — </span>`
+                                        : `<span>${`${grade.prof.split(" / ").length <= 3 ? grade.prof : grade.prof.split(" / ").slice(0,3).join(" / ") + " / ... "}`||''}</span>`
+                                    }
+                                </td>
+                                <td class="grades-table-add-sim-cell" style="${gradeIsSim ? `width: 52px; padding: 3px; text-align: center;` : ``}">
+                                    ${
+                                        gradeIsSim 
+                                        ? `<button class="sim-del-btn" data-semester="${sem}" data-subj="${subject}" data-ue="${ueName||''}" data-type="${grade.type}" data-simid="${index-nbRealGrades}">🗑️</button>` 
+                                        : `<div style="width:32px"></div>`
+                                    }
+                                </td>
                             </tr>
-                    `;
+                    `
                 });
 
-                html +=`</tbody></table></div>`;
+                html += `
+                            <tr ${this.editMode ? "" : "hidden=true"}>
+                                <td class="grades-table-type">
+                                    <div class="grade-type" style="display:flex; align-items:center; justify-content: flex-start">
+                                        <div style="width: 120px">${this.lang == "fr" ? "Ajouter une note simulée: " : "Add a simulated grade: "}</div>
+                                        <input class="grade-simulee-input sim-inp-type any-input" id="grade-simulee-input-type-for-${subject}-from-${ueName}-in-semester${sem}" data-semester="${sem}" data-subj="${subject}" placeholder="${this.lang == "fr" ? "Titre" : "Title"}" />
+                                    </div>
+                                </td>
+                                <td class="grades-table-grade">
+                                    <input class="grade-simulee-input sim-inp-grade any-input" id="grade-simulee-input-grade-for-${subject}-from-${ueName}-in-semester${sem}" type="number" step="0.5" min="0" max="20" data-semester="${sem}" data-subj="${subject}" placeholder="/20"> /20
+                                </td>
+                                <td class="grades-table-coef">
+                                    <input class="grade-simulee-input sim-inp-coef any-input" id="grade-simulee-input-coef-for-${subject}-from-${ueName}-in-semester${sem}" type="number" step="5" min="0" max="100" data-semester="${sem}" data-subj="${subject}" placeholder="%"> %
+                                </td>
+                                <td colspan="3">
+                                </td>
+                                <td>
+                                    <button class="btn-export sim-add-btn" data-semester="${sem}" data-subj="${subject}" data-ue="${ueName||''}">${this.lang == "fr" ? "Ajouter" : "Add"}</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                `;
+
+                // html +=`</tbody></table></div>`;
                 return html;
+            }
+
+            
+            createAllCoefSliders(sem) {
+
+            }
+            createCoefSliders(sem, ueName) {
+                document.querySelectorAll("ue-coef-slider").forEach(slider => {
+                    const width         = slider.clientWidth;
+                    const borderWidth   = slider.offsetWidth - slider.clientWidth;
+                    const subjNames     = Object.keys(this.gradesDatas?.[sem]?.[ueName]?.subjects || {});
+                    const nbSubjects    = subjNames.length;
+
+                    let html = ``;
+
+                    subjNames.forEach((subj, index) => {
+                        const subjectData = this.gradesDatas?.[sem]?.[ueName]?.subjects?.[subj];
+                        const coef = subjectData.coef;
+
+                        html += `
+                            <div class="ue-coef-slider-block" style="height: ${coef}%; top: ${coef}%; min-width: calc(${width} - 2*${borderWidth}); left: calc(${width} - 2*${borderWidth});" data-semester="${sem}" data-ue="${ueName}" data-subject="${subj}">
+                            </div>
+                            <div class="ue-coef-slider-handle" style="top: ${coef}%; left: calc(2 * (${width} - 2 * ${borderWidth}));" data-semester="${sem}" data-ue="${ueName}" data-subject="${subj}">
+                                <div class="ue-coef-slider-handle-text" data-semester="${sem}" data-ue="${ueName}" data-subject="${subj}">${subj}</div>
+                            </div>
+                        `;
+                    })
+                })
             }
 
         //#endregion
@@ -2092,7 +2735,7 @@
                     if (e.target.closest('.ue-header') && !e.target.closest('.ue-title.input') && !e.target.closest('.ue-delete-btn')) {
                         this.ueHeaderClickEvent(e)
                     }
-                    else if (e.target.closest(".subject-card-header") || e.target.closest(".subject-card.compact")) {
+                    /* else if (e.target.closest(".subject-card-header") || e.target.closest(".subject-card.compact")) {
                         if (this.editMode) {
                             const isCompact = e.target?.closest(".subject-card.compact")?.classList?.contains("compact");
                             const subjectCard = isCompact ? e.target.closest(".subject-card.compact") : e.target.closest(".subject-card-header");
@@ -2124,7 +2767,7 @@
                             document.ondragend = null;
                             document.ondrop = null;
                         }
-                    }
+                    } */
                 };
 
                 // this.dragElement(document.getElementById("main-average-card"));
@@ -2135,7 +2778,7 @@
 
                 document.querySelector(".new-grades-notif").onclick = () => {
                     const newGradesCard = document.querySelector(".new-grades-card");
-                    newGradesCard.scrollIntoView();
+                    newGradesCard.scrollIntoView({behavior: "instant"});
                     newGradesCard.classList.add("myhighlight");
                     setTimeout(() => {newGradesCard.classList.remove("myhighlight")},200)
                 };
@@ -2169,7 +2812,7 @@
                         localStorage.setItem("ECAM_DASHBOARD_DEFAULT_SEMESTER", this.currentSemester);
 
                         const targetElem = document.getElementById(`subject-card-semester-${e.target.dataset.semester}-subject-${e.target.dataset.subject}`);
-                        targetElem.scrollIntoView({block: "center"});
+                        targetElem.scrollIntoView({behavior: "instant",block: "center"});
                         targetElem.onscrollend = ((elem) => {
                             elem.classList.add("scroll-to");
                             elem.onanimationend = () => {targetElem.classList.remove("scroll-to")}
@@ -2230,12 +2873,16 @@
                     const dragIcon = subjectCard.querySelector(".drag-icon");
                     this.dragIconOnClickEvent(subjectCard, dragIcon, true); // Trigger the dragIcon onClick event to simulate the default drag icon being clicked
                 })
-                document.querySelectorAll(".drag-icon").forEach(dragIcon => {
-                    dragIcon.onclick = (e) => { this.dragIconOnClickEvent(e, dragIcon) };
-                });
-                document.querySelectorAll(".tick-icon").forEach(tick => {
-                    tick.onclick = (e) => { this.tickIconOnClickEvent(e, tick) };
-                });
+                document.querySelectorAll(".subject-card").forEach(subjCard => {
+                    if (subjCard.querySelector(".drag-icon")) {
+                        const dragIcon = subjCard.querySelector(".drag-icon");
+                        dragIcon.onclick = (e) => { this.dragIconOnClickEvent(e, dragIcon) };
+                    }
+                    else if (subjCard.querySelector(".tick-icon")) {
+                        const tick = subjCard.querySelector(".tick-icon");
+                        tick.onclick = (e) => { this.tickIconOnClickEvent(e, tick) };
+                    }
+                })
 
 
                 // Attach listeners for every input of class ".any-input"
@@ -2259,61 +2906,74 @@
                 // Change custom subject name
                 document.querySelectorAll(".subject-name.input").forEach(input => {
                     input.onchange = (e) => {
-                        const subjNewName = e.target.value;
-                        const matCard = e.target.parentElement.parentElement.parentElement.parentElement.parentElement;
-                        const sem = matCard.dataset.semester;
-                        const ue = matCard.dataset.ue;
-                        const subjOldName = matCard.dataset.subject;
-                        const ueContent = matCard.parentElement;
-                        const ueCard = ueContent.parentElement;
+                        
+                        const subjNewName   = e.target.value;
+                        const subjectCard   = e.target.parentElement.parentElement.parentElement.parentElement.parentElement;
+                        const sem           = subjectCard.dataset.semester;
+                        const ue            = subjectCard.dataset.ue;
+                        const subjOldName   = subjectCard.dataset.subject;
+                        const ueContent     = subjectCard.parentElement;
+                        const ueCard        = ueContent.parentElement;
 
-                        let isCustom = true;
-                        Object.keys(this.semesters[this.currentSemester]).forEach(subjectName => {if (subjectName == subjNewName) isCustom = false})
 
                         let diffName = true;
-                        this.ueConfig[sem][ue].subjects.forEach(_mat => {if (_mat == subjNewName) diffName = false});
+                        this.ueConfig[sem][ue].subjects.forEach(_subj => {if (_subj == subjNewName) diffName = false});
+
+                        this.ueConfig[sem].__ues__.forEach(ueName => {
+                            this.ueConfig[sem][ueName].subjects.forEach(_subj => {
+                                if (_subj == subjNewName && _subj != subjOldName) {
+                                    alert(this.lang == "fr" 
+                                        ? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
+                                        : "This subject already exists! Please choose a different name"
+                                    )
+                                    diffName = false;
+                                }
+                            })
+                        })
                             
 
                         if (diffName) {
-                            const oldMatIndex = this.ueConfig[sem][ue].subjects.indexOf(subjOldName);
-                            const pct       = new Number(   this.ueConfig[sem][ue].coefficients [subjOldName]);
+                            const oldSubjIndex =    this.ueConfig[sem][ue].subjects.indexOf(subjOldName);
+                            const pct = new Number(this.ueConfig[sem][ue].coefficients    [subjOldName]);
 
-                            this.ueConfig[sem][ue].subjects[oldMatIndex]=subjNewName ;    // Replace the subject's old name by the subject's new name
+                            this.ueConfig[sem][ue].subjects[oldSubjIndex]=subjNewName ;    // Replace the subject's old name by the subject's new name
                             delete  this.ueConfig[sem][ue].coefficients [subjOldName];
-                            delete  this.ueConfig[sem][ue].custom       [subjOldName];
 
                                     this.ueConfig[sem][ue].coefficients [subjNewName] = pct;
-                                    this.ueConfig[sem][ue].custom       [subjNewName] = isCustom;
-                        }
-                        
-                        this.getGradesDatas();
+                                        
+                            this.getGradesDatas();
 
-                        if (this.viewMode == "detailed" || !ueCard.classList.contains("compact")) {
-                            ueContent.innerHTML = this.renderAllMatCardDetailed(sem, ue);
+                            if (this.viewMode == "detailed" || !ueCard.classList.contains("compact")) {
+                                ueContent.innerHTML = this.createAllSubjCardDetailed(sem, ue);
+                            }
+                            else {
+                                ueContent.innerHTML = this.createAllSubjCardCompact(sem, ue);
+                            }
+
+                            const unclassifiedSection = document.querySelector(".unclassified-section");
+                            const unclassifiedContent = unclassifiedSection.querySelector(".unclassified-content");
+                            unclassifiedSection.style.height = "100%";
+                            unclassifiedContent.innerHTML = this.createAllUnclassifiedSubjCard(sem);
+
+                            setTimeout(() => {
+                                const currentUnclassifiedSectionHeight = new Number(unclassifiedSection.clientHeight);
+                                unclassifiedSection.style.height = `${currentUnclassifiedSectionHeight+4}px`;}
+                            , 100)
+                            
+
+                            this.attachEventListeners()
+                            this.setGradesTableTotalCoef();
+                            this.saveConfig()
+                            this.getGradesDatas();
                         }
                         else {
-                            ueContent.innerHTML = this.renderAllMatCardCompact(sem, ue);
-                        }
-
-                        const unclassifiedSection = document.querySelector(".unclassified-section");
-                        const unclassifiedContent = unclassifiedSection.querySelector(".unclassified-content");
-                        unclassifiedSection.style.height = "100%";
-                        unclassifiedContent.innerHTML = this.renderAllUnclassifiedMatCard(sem);
-
-                        setTimeout(() => {
-                            const currentUnclassifiedSectionHeight = new Number(unclassifiedSection.clientHeight);
-                            unclassifiedSection.style.height = `${currentUnclassifiedSectionHeight+4}px`;}
-                        , 100)
-                        
-
-                        this.attachEventListeners()
-                        this.setGradesTableTotalCoef();
-                        this.saveConfig()
-                        this.getGradesDatas();
+                            e.target.focus();
+                            e.target.style.background = "#ff7979";
+                        }                     
                     }
                 })
 
-                document.querySelector(".modules-section").querySelectorAll(".ue-delete-btn").forEach(btn => {
+                document.querySelectorAll(".ue-delete-btn").forEach(btn => {
                     btn.onclick = e => {
                         const sem = e.target.dataset.semester;
                         const ueName = e.target.dataset.ue;
@@ -2323,8 +2983,9 @@
                         this.ueConfig[sem].__ues__.splice(ueIndex, 1);
                         delete this.ueConfig[sem][ueName];
 
-                        if (this.ueConfig[sem] == {}) {delete this.ueConfig[sem]}
-
+                        if (this.ueConfig[sem].__ues__.length == 0) {delete this.ueConfig[sem]}
+                        
+                        this.clearSimGradesForUE(sem, ueName);
                         this.saveConfig();
                         this.getGradesDatas();
                         this.renderContent();
@@ -2337,32 +2998,49 @@
                 // Attach on-click event action for the simulated grade addition button
                 document.querySelectorAll('.sim-add-btn').forEach(btn=>{
                     btn.onclick = (e)=>{
-                        const ueName = e.target.dataset.uen;
+                        const ueName = e.target.dataset.ue;
                         const semX = e.target.dataset.semester;
                         const subj = e.target.dataset.subj;
                         this.ensureSimPath(semX, ueName, subj);
-                        const id = this.sim[semX][ueName][subj].length;
-                        const typeInp = document.querySelector(`.grade-simulee-input.sim-inp-type[data-semester="${semX}"][data-subj="${subj}"]`);
+                        const typeInp =  document.querySelector(`.grade-simulee-input.sim-inp-type[data-semester="${semX}"][data-subj="${subj}"]`);
                         const gradeInp = document.querySelector(`.grade-simulee-input.sim-inp-grade[data-semester="${semX}"][data-subj="${subj}"]`);
-                        const coefInp = document.querySelector(`.grade-simulee-input.sim-inp-coef[data-semester="${semX}"][data-subj="${subj}"]`);
-                        const dateInp = document.querySelector(`.grade-simulee-input.sim-inp-date[data-semester="${semX}"][data-subj="${subj}"]`);
-                        const type = typeInp?.value||'';
+                        const coefInp =  document.querySelector(`.grade-simulee-input.sim-inp-coef[data-semester="${semX}"][data-subj="${subj}"]`);
+                        const dateInp =  document.querySelector(`.grade-simulee-input.sim-inp-date[data-semester="${semX}"][data-subj="${subj}"]`);
+                        const type = typeInp?.value||`${this.lang=="fr"? 'Simulé' : "Simulated"}`;
                         const grade = parseFloat(gradeInp?.value||'');
                         const coef = parseFloat(coefInp?.value||'');
                         const date = dateInp?.value||'';
                         if(isNaN(grade) || isNaN(coef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
+
                         this.ensureSimPath(semX, ueName, subj);
+
+                        // Making sure the automatically generated name (if the user didn't input any type name) isn't the same as one that already exists 
+                        // (incrementing an index every time it's the case and add it at the end of the new sim grade's name)
+                        let newName = type, validNewName = newName != type, count = 2;
+
+                        while (!validNewName && this.sim[semX][ueName][subj].length > 0) {
+                            validNewName = true;
+                            this.sim[semX][ueName][subj].forEach((_grade, _index) => {
+                                if (_grade.type == newName && validNewName) {
+                                    validNewName = false;
+                                    newName = type + ` (${count})`;
+                                    count++;
+                                }
+                            })
+                        }
+
                         this.sim[semX][ueName][subj].push({
                             grade, 
                             coef,
-                            type: type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`,
-                            date: date||new Date().toLocaleDateString(),
+                            classAvg: '—',
+                            type: newName,
+                            date: '—',
                             prof: '—',
                             subject: subj,
                             semester: semX,
-                            libelle: `[SIM] ${subj} - ${type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`}`,
+                            libelle: `[SIM] ${subj} - ${type}`,
                             __sim: true,
-                            id
+                            id: new Date().getYear() + "" + new Date().getMonth() + "" + new Date().getDay() + "" + new Date().getHours() + "" + new Date().getMinutes() + "" + new Date().getSeconds() + "" + new Date().getMilliseconds()
                         });
                         this.saveSim();
                         this.getGradesDatas();
@@ -2370,40 +3048,37 @@
                     }
                 });
 
+                // Attach on-click event action for the simulated grades' deletion button
+                document.querySelectorAll('.sim-del-btn').forEach(btn=>{
+                    btn.onclick = (e) => {
+                        const semX = e.target.dataset.semester;
+                        const ueName = e.target.dataset.ue;
+                        const subj = e.target.dataset.subj;
+                        const id = e.target.dataset.simid;
+                        this.sim[semX][ueName][subj].splice(id, 1);
+
+                        this.deleteUnusedSimPath(false, semX, ueName, subj);
+                        this.saveSim();
+                        this.getGradesDatas();
+                        this.renderContent(false);
+                    }
+                })
+
                 // Attach on-change event action for simulated grades type/grade/coef/date fields
                 document.querySelectorAll(".grade-simulee-input-edit").forEach(input => {
                     input.onchange = e => {
-                        const ueName = e.target.dataset.uen;
+                        const ueName = e.target.dataset.ue;
                         const semX = e.target.dataset.semester;
                         const subj = e.target.dataset.subj;
-                        const id = e.target.dataset.id;
-                        let gradeRow = e.target.parentElement.parentElement;
-                        // const typeInp = document.querySelector(`.grade-simulee-input-edit.sim-inp-type[data-semester="${semX}"][data-subj="${subj}"]`);
-                        const typeInp = gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-type`)
+                        const id = e.target.dataset.simid;
+                        const gradeRow = e.target.parentElement.parentElement;
                         const gradeInp = gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-grade`);
-                        const coefInp = gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-coef`);
-                        const dateInp = gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-date`);
-                        const type = typeInp?.value||'';
+                        const coefInp =  gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-coef `);
                         const newGrade = parseFloat(gradeInp?.value||'');
                         const newCoef = parseFloat(coefInp?.value||'');
-                        const date = dateInp?.value||'';
+
                         if(isNaN(newGrade) || isNaN(newCoef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
-                        this.sim[semX][ueName][subj].forEach((grade, index) => {
-                            if (grade.id == id) {
-                                this.sim[semX][ueName][subj][index] = {
-                                    grade: newGrade, 
-                                    coef: newCoef,
-                                    type: type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`,
-                                    date: date||new Date().toLocaleDateString(),
-                                    prof: '—',
-                                    subject: subj,
-                                    semester: semX,
-                                    libelle: `[SIM] ${subj} - ${type||`${this.lang=="fr"? 'Simulé' : "Simulated"}`}`,
-                                    __sim: true,
-                                    id
-                                }
-                            }
-                        });
+                        this.sim[semX][ueName][subj][id][e.target.dataset.modiftype] = e.target.value;
 
                         this.saveSim();
                         this.getGradesDatas();
@@ -2411,23 +3086,13 @@
                     }
                 })
 
-                // Attach on-click event action for the simulated grades' deletion button
-                document.querySelectorAll('.sim-del-btn').forEach(btn=>{
-                    btn.onclick = (e) => {
-                        const semX = e.target.dataset.semester;
-                        const ueName = e.target.dataset.uen;
-                        const subj = e.target.dataset.subj;
-                        const type = e.target.dataset.type;
-                        this.sim[semX][ueName][subj].splice(this.sim[semX][ueName][subj].indexOf(type), 1);
-                        this.deleteUnusedSimPath(semX, ueName, subj);
-                        this.saveSim();
-                        this.getGradesDatas();
-                        this.renderContent(true);
-                    }
-                })
                 
-                document.querySelectorAll(".ue-info-clear.sim").     forEach(simClear => {simClear.onclick = () => {this.clearSimGradesForUE(    simClear.dataset.semester, simClear.dataset.ue);this.renderContent();}});
-                document.querySelectorAll(".ue-info-clear.disabled").forEach(disClear => {disClear.onclick = () => {this.clearIgnoredGradesForUE(disClear.dataset.semester, disClear.dataset.ue);this.renderContent();}});
+                document.querySelectorAll(".ue-info-clear.sim").     forEach(simClear => {
+                    simClear.onclick = () => {this.clearSimGradesForUE(    simClear.dataset.semester, simClear.dataset.ue);this.renderContent();}
+                });
+                document.querySelectorAll(".ue-info-clear.disabled").forEach(disClear => {
+                    disClear.onclick = () => {this.clearIgnoredGradesForUE(disClear.dataset.semester, disClear.dataset.ue);this.renderContent();}
+                });
 
                 
                 document.querySelector(".unclassified-content").querySelectorAll(".grades-table").forEach(table => {
@@ -2461,16 +3126,16 @@
                         this.renderContent(false);
                     }
                 };
-
-                // Import
-                document.getElementById('importBtn').onclick = () => this.importData();
-
+                
                 // Edit mode
                 document.getElementById('editModeBtn').onclick = () => {
                     this.editMode = !this.editMode;
                     this.renderContent();
                     this.attachEventListeners();
                 };
+                
+                // Import
+                document.getElementById('importBtn').onclick = () => this.openImportMenu();
 
                 // Export
                 document.getElementById('exportBtn').onclick = () => this.exportData();
@@ -2541,9 +3206,7 @@
                                 selectedSubjectCard2.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
                             }
                         })
-                        
                     }
-                    
                 }
             }
             
@@ -2553,18 +3216,19 @@
                     chbx.onclick = (e) => {
                         const semX = e.target.dataset.semester;
                         const subj = e.target.dataset.subj;
-                        const gradeID = e.target.dataset.gradeid;
-                        const key = [semX, subj, gradeID].join("\\");
+                        const simTimeStamp = e.target.dataset?.simtimestamp;
+                        const gradeId = e.target.dataset?.gradeid;
+                        const ignoredKey = [semX, subj, simTimeStamp || gradeId].join("\\");
                         if (e.target.checked) {
                             // remove this specific ignored key if present
-                            this.ignoredGrades = (this.ignoredGrades || []).filter(id => id !== key);
+                            this.ignoredGrades = this.ignoredGrades?.filter(id => id !== ignoredKey);
                         } else {
                             // add ignored key if not already present
-                            this.ignoredGrades = this.ignoredGrades || [];
-                            if (!this.ignoredGrades.includes(key)) this.ignoredGrades.push(key);
+                            if (!this.ignoredGrades?.includes(ignoredKey)) this.ignoredGrades.push(ignoredKey);
                         }
                         this.saveIgnoredGrades();
-                        this.getGradesDatas({semX, ue:undefined, subj});
+                        // this.getGradesDatas({semX, ue:undefined, subj});
+                        this.getGradesDatas();
                         this.renderContent(false);
                     }
                 });
@@ -2574,6 +3238,7 @@
                 document.body.onmousemove = (e) => {
                     e.preventDefault();
                     document.body.onmouseup = null;
+                    document.body.onmousemove = null;
                     this.attachEventListeners();
                 };
                 document.body.onmouseup = (e) => {
@@ -2584,17 +3249,20 @@
                     const ueContent = header.parentElement.querySelector(".ue-details");
 
                     if (toggle.classList.contains('open')) {
-                        ueContent.innerHTML = this.renderAllMatCardCompact(sem, ueName);
+                        ueContent.innerHTML = this.createAllSubjCardCompact(sem, ueName);
                         ueContent.classList.add('compact');
                         toggle.classList.remove('open');
                         this.setGradesTableTotalCoef()
                     } else {
-                        ueContent.innerHTML = this.renderAllMatCardDetailed(sem, ueName);
+                        ueContent.innerHTML = this.createAllSubjCardDetailed(sem, ueName);
                         ueContent.classList.remove('compact');
                         toggle.classList.add('open');
                         this.attachCheckboxListeners(ueContent);
                         this.setGradesTableTotalCoef()
                     }
+
+                    document.body.onmousemove = null;
+                    document.body.onmouseup = null;
                 }
             }
             
@@ -2603,8 +3271,7 @@
                 const oldUeName = e.target.dataset.ue; 
                 const oldUeIndex = this.ueConfig[sem].__ues__.indexOf(oldUeName);
                 const newUeName = e.target.value;
-                // const regExpExec = RegExp(`${oldUeName}`, "ig").exec(JSON.stringify(this.ueConfig[sem])); 
-                // this.ueConfig[sem] = JSON.parse('{"'+e.target.value+ regExpExec.input.slice(regExpExec.index+regExpExec[0].length,regExpExec.input.length));
+                
                 this.ueConfig[sem][newUeName] = this.ueConfig[sem][oldUeName];
                 delete this.ueConfig[sem][oldUeName];
                 this.ueConfig[sem].__ues__[oldUeIndex] = newUeName;
@@ -2640,7 +3307,7 @@
 
 
 
-            // #region dragged element events
+            // #region Dragged element events
 
             draggedElementOnDragStartEvent(e, {draggedElement, subjectCard}) {
                 this.currentlyDraggedElement = draggedElement;
@@ -2670,16 +3337,12 @@
                 document.querySelector(".drop-field.create-ue").classList.add("show");
                 document.querySelector(".drop-field.remove-from-ue").classList.add("show");
 
-                document.querySelectorAll(".drop-ue-card-insert-content.plus,  .drop-subject-card-insert-content.plus ").forEach(plus  => {plus.style.display  = "none";})
-                document.querySelectorAll(".drop-ue-card-insert-content.arrow, .drop-subject-card-insert-content.arrow").forEach(arrow => {arrow.style.display = "";})
-                const insertAreaTexts = document.querySelectorAll(".drop-ue-card-insert-text,  .drop-ue-card-insert-text");
+                document.querySelectorAll(".drop-ue-card-insert-plus,  .drop-subject-card-insert-plus ").forEach(plus  => {plus.classList.remove("show");})
+                document.querySelectorAll(".drop-ue-card-insert-arrow, .drop-subject-card-insert-arrow").forEach(arrow => {arrow.classList.add("show");})
+                const insertAreaTexts = document.querySelectorAll(".drop-ue-card-insert-text,  .drop-subject-card-insert-text");
                 insertAreaTexts.forEach(insertAreaText => {
-                    insertAreaText.innerHTML = type == "ue" 
-                        ? `${this.lang == "fr" ? "Insérer vers nouvelle UE ici" : "Insert to new TU here"}`
-                        : `${this.lang == "fr" ? "Insérer ici" : "Insert here"}`
-                    ;
-                    insertAreaText.classList.remove("add");
-                    insertAreaText.classList.add("insert");
+                    insertAreaText.classList.replace("add", "insert");
+                    insertAreaText.parentElement.classList.replace("add", "insert");
                 })
 
                 if (!subjectCard.classList.contains("unclassified")) {
@@ -2735,16 +3398,12 @@
                     document.querySelector(".drop-field.create-ue").classList.remove("show");
                     document.querySelector(".drop-field.remove-from-ue").classList.remove("show");
 
-                    document.querySelectorAll(".drop-ue-card-insert-content.plus,  .drop-subject-card-insert-content.plus ").forEach(plus  => {plus.style.display  = "";})
-                    document.querySelectorAll(".drop-ue-card-insert-content.arrow, .drop-subject-card-insert-content.arrow").forEach(arrow => {arrow.style.display = "none";})
-                    document.querySelectorAll(".drop-ue-card-insert-text,  .drop-ue-card-insert-text").forEach(insertAreaText => {
-                        insertAreaText.classList.add("add"); insertAreaText.classList.remove("insert"); 
-                        if (insertAreaText.dataset.type == "ue") {
-                            insertAreaText.innerHTML = this.lang == "fr" ? "Ajouter une UE ici" : "Add a TU here";
-                        }
-                        else {
-                            insertAreaText.innerHTML = this.lang == "fr" ? "Ajouter une matière ici" : "Add a subject here";
-                        }
+                    document.querySelectorAll(".drop-ue-card-insert-plus,  .drop-subject-card-insert-plus ").forEach(plus  => {plus.classList.add("show");})
+                    document.querySelectorAll(".drop-ue-card-insert-arrow, .drop-subject-card-insert-arrow").forEach(arrow => {arrow.classList.remove("show");})
+                    const insertAreaTexts = document.querySelectorAll(".drop-ue-card-insert-text,  .drop-subject-card-insert-text");
+                    insertAreaTexts.forEach(insertAreaText => {
+                        insertAreaText.classList.replace("insert", "add");
+                        insertAreaText.parentElement.classList.replace("insert", "add");
                     })
                 }
                 
@@ -2870,7 +3529,7 @@
 
 
 
-            // #region subject insertion events
+            // #region Subject insertion events
 
             insertAreaHitboxOnDragOverEvent(e) {
                 const type              = e.target.dataset.type;
@@ -2885,8 +3544,6 @@
                 insertAreaArrow?.classList?.add("hover"); 
                 insertAreaPlus?.classList?.add("hover");
                 insertAreaText.classList.add("hover");
-
-                insertAreaHitbox.ondragover = null;
             }
             insertAreaHitboxOnDragLeaveEvent(e) {
                 const type = e.target.dataset.type;
@@ -2901,8 +3558,6 @@
                 insertAreaArrow?.classList?.remove("hover"); 
                 insertAreaPlus?.classList?.remove("hover");
                 insertAreaText.classList.remove("hover");
-
-                insertAreaHitbox.ondragover = (e) => {this.insertAreaHitboxOnDragOverEvent(e)};
             }
             insertAreaHitboxOnDropEvent(e) {
                 const type = e.target.dataset.type;
@@ -2913,7 +3568,6 @@
                 const insertAreaHitbox  = insertArea.querySelector(`.drop-${type}-card-insert-hitbox`);
 
                 e.preventDefault(); 
-                insertArea.classList.remove("hover");
 
                 insertAreaHitbox.ondragover = (e) => {this.insertAreaHitboxOnDragOverEvent(e)};
                 this.dropAreaSubjectInsertAction(e.dataTransfer.getData("text"), insertArea);
@@ -2951,7 +3605,6 @@
                 const insertAreaText    = insertArea.querySelector(`.drop-${type}-card-insert-text`);
                 
                 e.preventDefault(); 
-                insertArea.classList.remove("hover");
 
                 if (this.selectedSubjectCards.length == 0) {
                     this.dropAreaSubjectInsertAction(null, insertArea)
@@ -2965,9 +3618,10 @@
                 insertAreaHitbox.ondragover     = (e) => {this.insertAreaHitboxOnDragOverEvent(e)};
                 insertAreaHitbox.ondragleave    = (e) => {this.insertAreaHitboxOnDragLeaveEvent(e)};
                 insertAreaHitbox.ondrop         = (e) => {
+                    e.preventDefault();
                     const data = e.target.dataset;
                     if (data.type == "subject") {
-                        this.insertAreaHitboxOnDropEvent(e)
+                        this.insertAreaHitboxOnDropEvent(e);
                     }
                     else {
                         this.dropAreaToNewUEAction(e.dataTransfer.getData("text"), data.index);
@@ -2979,7 +3633,7 @@
                 insertAreaHitbox.onclick        = (e) => {
                     const data = e.target.dataset;
                     if (data.type == "subject") {
-                        this.insertAreaHitboxOnClickEvent(e)
+                        this.insertAreaHitboxOnClickEvent(e);
                     }
                     else {
                         if (this.selectedSubjectCards.length > 0) {
@@ -3006,81 +3660,12 @@
 
 
 
-            // MARK: attach dropAreas events
-            attachDropAreasEventListeners() {
-                const dropAreaAdd =             document.querySelector(   ".drop-field.create-ue");
-                const dropAreaRemove =          document.querySelector(   ".drop-field.remove-from-ue");
-                // const ueInsertAreas =           document.querySelectorAll(".drop-field.insert-area");
-                const insertAreaHitboxes =      document.querySelectorAll(".drop-subject-card-insert-hitbox, .drop-ue-card-insert-hitbox");
-                
-                dropAreaAdd.style.background = "";
-                dropAreaAdd.ondragover =    (e) => {e.preventDefault(); e.target.style.background = "#bdb8ffce";};
-                dropAreaAdd.ondragleave =   (e) => {e.preventDefault(); e.target.style.background = "";};
-                dropAreaAdd.ondrop =        (e) => {
-                    e.target.style.background = ""; 
-                    e.preventDefault(); 
-                    this.dropAreaToNewUEAction(e.dataTransfer.getData("text"));
-                };
-                dropAreaAdd.onmouseenter =  (e) => {if (e.target.classList.contains("show")) {e.preventDefault(); e.target.style.background = "#bdb8ffce";}};
-                dropAreaAdd.onmouseleave =  (e) => {if (e.target.classList.contains("show")) {e.preventDefault(); e.target.style.background = "";}};
-                dropAreaAdd.onclick =       (e) => {if (e.target.classList.contains("show")) {
-                    e.target.style.background = ""; e.preventDefault(); 
-                    if (this.selectedSubjectCards.length > 0) {
-                        this.dropAreaToNewUEAction(this.selectedSubjectCards[0]);
-                    }
-                }};
-
-                dropAreaRemove.style.background = "";
-                dropAreaRemove.ondragover =    (e) => {e.preventDefault(); e.target.style.background = "#ffb8b8ce";};
-                dropAreaRemove.ondragleave =   (e) => {e.preventDefault(); e.target.style.background = "";};
-                dropAreaRemove.ondrop =        (e) => {
-                    e.target.style.background = ""; 
-                    e.preventDefault(); 
-                    this.dropAreaRemoveAction(e.dataTransfer.getData("text"));
-                };
-                // Custom :hover event, cuz otherwise it would trigger when the fields are not shown
-                dropAreaRemove.onmouseenter =  (e) => {if (e.target.classList.contains("show")) {e.preventDefault(); e.target.style.background = "#ffb8b8ce";}};
-                dropAreaRemove.onmouseleave =  (e) => {if (e.target.classList.contains("show")) {e.preventDefault(); e.target.style.background = "";}};
-                dropAreaRemove.onclick =       (e) => {if (e.target.classList.contains("show")) {
-                    e.target.style.background = ""; e.preventDefault(); 
-                    if (this.selectedSubjectCards.length > 0) {
-                        this.dropAreaRemoveAction(this.selectedSubjectCards[0]);
-                    }
-                }};
-
-                // ueInsertAreas.forEach(ueInsertArea => {
-                //     const insertIndex = ueInsertArea.dataset.index;
-                //     ueInsertArea.ondragover =     (e) => {e.preventDefault(); e.target.style.background = "#bdb8ffce";};
-                //     ueInsertArea.ondragleave =    (e) => {e.preventDefault(); e.target.style.background = "";};
-                //     ueInsertArea.ondrop =         (e) => {
-                //         e.target.style.background = ""; 
-                //         e.preventDefault(); 
-                //         this.dropAreaToNewUEAction(e.dataTransfer.getData("text"), insertIndex);
-                //     };
-
-                //     ueInsertArea.onclick =        (e) => {
-                //         e.target.style.background = ""; e.preventDefault(); 
-                //         if (this.selectedSubjectCards.length > 0) {
-                //             this.dropAreaToNewUEAction(this.selectedSubjectCards[0], insertIndex);
-                //         }
-                //         else {
-                //             this.dropAreaToNewUEAction(null, insertIndex);
-                //         }
-                //     };
-                // })
-
-                insertAreaHitboxes.forEach(insertAreaHitbox => {
-                    this.attachInsertAreaHitboxEventListeners(insertAreaHitbox)
-                })
-            }
-
-
 
             attachAllOnDragEventListeners() {
                 this.attachOnDragEventListeners();
                 this.attachDropAreasEventListeners();
             }
-            // MARK: Attach ondrag events
+            // MARK: attach ondrag events
             attachOnDragEventListeners() {   // Add ONDRAG cards event
 
                 document.querySelectorAll(".subject-card").forEach(subjectCard => {
@@ -3096,8 +3681,8 @@
                         draggableElement.ondragend =   (e) => {this.draggedElementOnDragEndEvent(   e, {draggableElement, subjectCard})};
                     }
                     else {
-                        draggableElement.ondragstart = (e) => {this.draggedSelectedElementOnDragStartEvent( e, {draggedElement: draggableElement, subjectCard: subjectCard})};
-                        draggableElement.ondragend =   (e) => {this.draggedSelectedElementOnDragEndEvent(   e, {draggedElement: draggableElement, subjectCard: subjectCard})};
+                        draggableElement.ondragstart = (e) => {this.draggedSelectedElementOnDragStartEvent( e, {draggedElement: draggableElement, subjectCard})};
+                        draggableElement.ondragend =   (e) => {this.draggedSelectedElementOnDragEndEvent(   e, {draggedElement: draggableElement, subjectCard})};
                     }
                 })
 
@@ -3105,7 +3690,7 @@
             }
 
 
-            // MARK: Detach ondrag events
+            // MARK: detach ondrag events
             detachOnDragEventListeners() {   // Remove ONDRAG cards event
                 document.querySelectorAll(".subject-card").forEach(subjectCard => {
                     let draggableElement = "";
@@ -3143,7 +3728,7 @@
             }
 
 
-            // MARK: removeSubjectCardFromSubjectSelection
+            // MARK: remove from subject selection
             /** 
             *  Manage all the actions involving the deletion of a subj card from the selection of subj cards (this.selectedSubjectCards)
             * 
@@ -3184,6 +3769,9 @@
                         setTimeout(()=>{
                             correspNotifDiv.remove();
                         }, 300)
+
+                        selectedSubjectCard.ondragstart = (e) => {this.draggedElementOnDragStartEvent(e, {subjectCard: selectedSubjectCard})};
+                        selectedSubjectCard.ondragend   = (e) => {this.draggedElementOnDragEndEvent  (e, {subjectCard: selectedSubjectCard})};
                     })
 
                     setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
@@ -3206,9 +3794,9 @@
                     this.selectedSubjectCardsSortedByUe = {};
                 } 
                 else {      // clear the specifically given notifDiv from the selection
-                    let matCard = "";
+                    let subjectCard = "";
                     if (!elementDroppedInArea) {
-                        matCard = document.getElementById(notifDiv.dataset.targetid);
+                        subjectCard = document.getElementById(notifDiv.dataset.targetid);
                     }
                     
 
@@ -3224,7 +3812,7 @@
                     this.selectedSubjectCards.forEach((selectedSubjectCardId, index) => {
                         const selectedSubjectCard = document.getElementById(selectedSubjectCardId);
 
-                        if (selectedSubjectCard == matCard) 
+                        if (selectedSubjectCard == subjectCard) 
                             this.selectedSubjectCards.splice(index, 1)
                         }
                     )
@@ -3254,38 +3842,31 @@
                         })
                     }
 
-                    const tick = matCard.querySelector(".tick-icon");
+                    const tick = subjectCard.querySelector(".tick-icon");
                     if (tick) {
                         tick.outerHTML = this.draggableIcon(`${notifDiv.dataset.type}-subject-card`, {targetId: `${notifDiv.dataset.targetid}`, type: notifDiv.dataset.type});
-                        const dragIcon = matCard.querySelector(".drag-icon");
+                        const dragIcon = subjectCard.querySelector(".drag-icon");
                         dragIcon.onclick = (e) => {this.dragIconOnClickEvent(e, dragIcon)};
                     }
+
+                    subjectCard.ondragstart = (e) => {this.draggedElementOnDragStartEvent(e, {subjectCard})};
+                    subjectCard.ondragend   = (e) => {this.draggedElementOnDragEndEvent  (e, {subjectCard})};
                 }
                 
                 
                 // Ensure the subject insertion drop areas are displaying the right text
                 document.querySelectorAll(".drop-field.insert-area").forEach(subjInsertArea => {
                     if (this.selectedSubjectCards.length == 0) {
-                        subjInsertArea.querySelector(".drop-ue-card-insert-content.plus , .drop-subject-card-insert-content.plus ").style.display = "";
-                        subjInsertArea.querySelector(".drop-ue-card-insert-content.arrow, .drop-subject-card-insert-content.arrow").style.display = "none";
-                        const insertAreaText = document.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text");
-                        insertAreaText.innerHTML = type == "ue" 
-                            ? `${this.lang == "fr" ? "Ajouter une UE ici" : "Add a TU here"}`
-                            : `${this.lang == "fr" ? "Ajouter une matière ici" : "Add a subject here"}`
-                        ;
-                        insertAreaText.classList.remove("insert");
-                        insertAreaText.classList.add("add");
+                        subjInsertArea.querySelector(".drop-ue-card-insert-plus , .drop-subject-card-insert-plus ").classList.add("show");
+                        subjInsertArea.querySelector(".drop-ue-card-insert-arrow, .drop-subject-card-insert-arrow").classList.remove("show");
+                        subjInsertArea.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").classList.replace("insert", "add");
+                        subjInsertArea.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").parentElement.classList.replace("insert", "add");
                     }
                     else {
-                        subjInsertArea.querySelector(".drop-ue-card-insert-content.plus , .drop-subject-card-insert-content.plus ").style.display = "none";
-                        subjInsertArea.querySelector(".drop-ue-card-insert-content.arrow, .drop-subject-card-insert-content.arrow").style.display = "";
-                        const insertAreaText = document.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text");
-                        insertAreaText.innerHTML = type == "ue" 
-                            ? `${this.lang == "fr" ? "Insérer vers nouvelle UE ici" : "Insert to new TU here"}`
-                            : `${this.lang == "fr" ? "Insérer ici" : "Insert here"}`
-                        ;
-                        insertAreaText.classList.remove("add");
-                        insertAreaText.classList.add("insert");
+                        subjInsertArea.querySelector(".drop-ue-card-insert-plus , .drop-subject-card-insert-plus ").classList.remove("show");
+                        subjInsertArea.querySelector(".drop-ue-card-insert-arrow, .drop-subject-card-insert-arrow").classList.add("show");
+                        subjInsertArea.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").classList.replace("add", "insert");
+                        subjInsertArea.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").parentElement.classList.replace("add", "insert");
                     }
                 });
             }
@@ -3295,7 +3876,7 @@
 
 
             // MARK: dragIconOnClickEvent
-            dragIconOnClickEvent(e, dragIcon, dontAddToSelection) {
+            dragIconOnClickEvent(e, dragIcon, dontAddToSelection=false) {
                 let subjectCard = e?.target ? e.target.parentElement.parentElement.parentElement : e;
                 let draggableElement = subjectCard;
                 const dropAreaAdd =     document.querySelector(".drop-field.create-ue");
@@ -3331,26 +3912,17 @@
                     // Ensure the subject insertion drop areas are showing the right text
                     document.querySelectorAll(".drop-field.insert-area").forEach(subjInsertArea => {
                         if (this.selectedSubjectCards.length == 0) {
-                            subjInsertArea.querySelector(".drop-ue-card-insert-content.plus , .drop-subject-card-insert-content.plus" ).style.display = "";
-                            subjInsertArea.querySelector(".drop-ue-card-insert-content.arrow, .drop-subject-card-insert-content.arrow").style.display = "none";
-                            const insertAreaText = document.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text");
-                            insertAreaText.innerHTML = type == "ue" 
-                                ? `${this.lang == "fr" ? "Ajouter une UE ici" : "Add a TU here"}`
-                                : `${this.lang == "fr" ? "Ajouter une matière ici" : "Add a subject here"}`
-                            ;
-                            insertAreaText.classList.remove("insert");
-                            insertAreaText.classList.add("add");
+                            // shouldn't be reached, normally
+                            subjInsertArea.querySelector(".drop-ue-card-insert-plus , .drop-subject-card-insert-plus ").classList.add("show");
+                            subjInsertArea.querySelector(".drop-ue-card-insert-arrow, .drop-subject-card-insert-arrow").classList.remove("show");
+                            subjInsertArea.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").classList.replace("insert", "add");
+                            subjInsertArea.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").parentElement.classList.replace("insert", "add");
                         }
                         else {
-                            subjInsertArea.querySelector(".drop-ue-card-insert-content.plus , .drop-subject-card-insert-content.plus " ).style.display = "none";
-                            subjInsertArea.querySelector(".drop-ue-card-insert-content.arrow, .drop-subject-card-insert-content.arrow").style.display = "";
-                            const insertAreaText = document.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text");
-                            insertAreaText.innerHTML = type == "ue" 
-                                ? `${this.lang == "fr" ? "Insérer vers nouvelle UE ici" : "Insert to new TU here"}`
-                                : `${this.lang == "fr" ? "Insérer ici" : "Insert here"}`
-                            ;
-                            insertAreaText.classList.remove("add");
-                            insertAreaText.classList.add("insert");
+                            subjInsertArea.querySelector(".drop-ue-card-insert-plus , .drop-subject-card-insert-plus ").classList.remove("show");
+                            subjInsertArea.querySelector(".drop-ue-card-insert-arrow, .drop-subject-card-insert-arrow").classList.add("show");
+                            subjInsertArea.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").classList.replace("add", "insert");
+                            subjInsertArea.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").parentElement.classList.replace("add", "insert");
                         }
                     });
                 }
@@ -3393,10 +3965,100 @@
 
 
 
-            // #region -drop fields
+            // #region -Drop fields actions
 
 
 
+
+
+
+                // MARK: attach dropAreas events
+                attachDropAreasEventListeners() {
+                    const dropAreaAdd =             document.querySelector(   ".drop-field.create-ue");
+                    const dropAreaRemove =          document.querySelector(   ".drop-field.remove-from-ue");
+                    const insertAreaHitboxes =      document.querySelectorAll(".drop-subject-card-insert-hitbox, .drop-ue-card-insert-hitbox");
+                    
+
+                    dropAreaAdd.style.background = "";
+                    dropAreaAdd.ondragover =    (e) => {
+                        e.preventDefault(); 
+                        e.target.classList.add("hover");
+                        e.target.querySelectorAll(".drop-field-create-ue-text, .drop-field-create-ue-plus").forEach(text => {text.classList.add("hover");})
+                    };
+                    dropAreaAdd.ondragleave =   (e) => {
+                        e.preventDefault(); 
+                        e.target.classList.remove("hover");
+                        e.target.querySelectorAll(".drop-field-create-ue-text, .drop-field-create-ue-plus").forEach(text => {text.classList.remove("hover");})
+                    };
+                    dropAreaAdd.ondrop =        (e) => {
+                        e.preventDefault(); 
+                        e.target.classList.remove("hover");
+                        e.target.querySelectorAll(".drop-field-create-ue-text, .drop-field-create-ue-plus").forEach(text => {text.classList.remove("hover");})
+                        this.dropAreaToNewUEAction(e.dataTransfer.getData("text"));
+                    };
+                    // Custom :hover event, cuz otherwise it would trigger when the fields are not shown
+                    dropAreaAdd.onmouseenter =  (e) => {if (e.target.classList.contains("show")) {
+                        e.preventDefault(); 
+                        e.target.classList.add("hover");
+                        e.target.querySelectorAll(".drop-field-create-ue-text, .drop-field-create-ue-plus").forEach(text => {text.classList.add("hover");})
+                    }};
+                    dropAreaAdd.onmouseleave =  (e) => {if (e.target.classList.contains("show")) {
+                        e.preventDefault(); 
+                        e.target.classList.remove("hover");
+                        e.target.querySelectorAll(".drop-field-create-ue-text, .drop-field-create-ue-plus").forEach(text => {text.classList.remove("hover");})
+                    }};
+                    dropAreaAdd.onclick =       (e) => {if (e.target.classList.contains("show")) {
+                        e.preventDefault(); 
+                        e.target.classList.remove("hover");
+                        e.target.querySelectorAll(".drop-field-create-ue-text, .drop-field-create-ue-plus").forEach(text => {text.classList.remove("hover");})
+                        if (this.selectedSubjectCards.length > 0) {
+                            this.dropAreaToNewUEAction(this.selectedSubjectCards[0]);
+                        }
+                    }};
+
+
+                    dropAreaRemove.style.background = "";
+                    dropAreaRemove.ondragover =    (e) => {
+                        e.preventDefault(); 
+                        e.target.classList.add("hover");
+                        e.target.querySelectorAll(".drop-field-remove-from-ue-text, .drop-field-remove-from-ue-minus").forEach(text => {text.classList.add("hover");})
+                    };
+                    dropAreaRemove.ondragleave =   (e) => {
+                        e.preventDefault(); 
+                        e.target.classList.remove("hover");
+                        e.target.querySelectorAll(".drop-field-remove-from-ue-text, .drop-field-remove-from-ue-minus").forEach(text => {text.classList.remove("hover");})
+                    };
+                    dropAreaRemove.ondrop =        (e) => {
+                        e.preventDefault(); 
+                        e.target.classList.remove("hover");
+                        this.dropAreaRemoveAction(e.dataTransfer.getData("text"));
+                        e.target.querySelectorAll(".drop-field-remove-from-ue-text, .drop-field-remove-from-ue-minus").forEach(text => {text.classList.remove("hover");})
+                    };
+                    // Custom :hover event, cuz otherwise it would trigger when the fields are not shown
+                    dropAreaRemove.onmouseenter =  (e) => {if (e.target.classList.contains("show")) {
+                        e.preventDefault(); 
+                        e.target.classList.add("hover");
+                        e.target.querySelectorAll(".drop-field-remove-from-ue-text, .drop-field-remove-from-ue-minus").forEach(text => {text.classList.add("hover");})
+                    }};
+                    dropAreaRemove.onmouseleave =  (e) => {if (e.target.classList.contains("show")) {
+                        e.preventDefault(); 
+                        e.target.classList.remove("hover");
+                        e.target.querySelectorAll(".drop-field-remove-from-ue-text, .drop-field-remove-from-ue-minus").forEach(text => {text.classList.remove("hover");})
+                    }};
+                    dropAreaRemove.onclick =       (e) => {if (e.target.classList.contains("show")) {
+                        e.preventDefault(); 
+                        e.target.classList.remove("hover");
+                        e.target.querySelectorAll(".drop-field-remove-from-ue-text, .drop-field-remove-from-ue-minus").forEach(text => {text.classList.remove("hover");})
+                        if (this.selectedSubjectCards.length > 0) {
+                            this.dropAreaRemoveAction(this.selectedSubjectCards[0]);
+                        }
+                    }};
+
+
+                    insertAreaHitboxes.forEach(insertAreaHitbox => {
+                        this.attachInsertAreaHitboxEventListeners(insertAreaHitbox)
+                    })
+                }
 
 
 
@@ -3439,7 +4101,6 @@
 
                                         this.ueConfig[sem][oldUeName].subjects.splice(subjectIndex,1);
                                         delete this.ueConfig[sem][oldUeName].coefficients[subject];
-                                        delete this.ueConfig[sem][oldUeName].custom[subject];
 
 
                                         if (manageSim) {if (!this.sim[sem][oldUeName]) manageSim = false;}
@@ -3449,7 +4110,7 @@
                                             this.sim[sem][oldUeName][subject].forEach((_, index) => {
                                                 this.sim[sem][newUeName][subject].push(this.sim[sem][oldUeName][subject][index].shift())
                                             })
-                                            this.deleteUnusedSimPath(sem, oldUeName, subject);
+                                            this.deleteUnusedSimPath(false, sem, oldUeName, subject);
                                             this.saveSim();
                                         }
                                     }
@@ -3492,7 +4153,7 @@
 
 
                                     _ueSelection.forEach((selectedSubjectCard, _subjIndex) => {
-                                        const subjectCard = selectedSubjectCard.subjectCard;
+                                        const subjectCard = document.getElementById(selectedSubjectCard.subjectCardId);
                                         const selectionIndex = selectedSubjectCard.selectionIndex;
                                         subject = subjectCard.dataset.subject;
 
@@ -3504,18 +4165,15 @@
                                             remainingCoef -= coef;
                                         }
 
-                                        newUeConfig.custom[subject] = false;
                                         newUeConfig.subjects[selectionIndex] = subject;
                                         
 
                                         if (!subjectCard.classList.contains("unclassified")) {
-                                            newUeConfig.custom[subject] = this.ueConfig[sem][oldUeName].custom[subject];
 
                                             // removing the subject card from its former UE
                                             const oldUeIndex = this.ueConfig[sem].__ues__.indexOf(oldUeName);                       // get the old ue's index in the ues ordered array of the semester
                                             const subjectIndexInOldUe = this.ueConfig[sem][oldUeName].subjects.indexOf(subject);    // get the subject's index in the subjects ordered array of the old ue
                                             delete  this.ueConfig[sem][oldUeName].coefficients[subject];                            // delete coefficient data
-                                            delete  this.ueConfig[sem][oldUeName].custom[subject];                                  // delete custom data
                                                     this.ueConfig[sem][oldUeName].subjects.splice(subjectIndexInOldUe,1);           // remove the subject from the subjects ordered array of the old ue
 
                                             if (this.ueConfig[sem][oldUeName].subjects.length == 0) {
@@ -3531,7 +4189,7 @@
                                                 this.sim[sem][oldUeName][subject].forEach((_, index) => {
                                                     this.sim[sem][newUeName][subject].push(this.sim[sem][oldUeName][subject][index].shift())
                                                 })
-                                                this.deleteUnusedSimPath(sem, oldUeName, subject);
+                                                this.deleteUnusedSimPath(false, sem, oldUeName, subject);
                                                 this.saveSim();
                                             }
                                         }
@@ -3548,7 +4206,6 @@
                         const newSubjName = this.lang == "fr" ? "Nouvelle matière" : "New subject";
                         newUeConfig.subjects.push(newSubjName);
                         newUeConfig.coefficients[newSubjName] = 100;
-                        newUeConfig.custom[newSubjName] = true;
                     }
 
                     this.ueConfig[sem][newUeName] = newUeConfig;
@@ -3565,7 +4222,7 @@
                     this.getGradesDatas();
                     this.renderContent();
                     this.attachEventListeners();
-                    this.scrollToClientHighestElemWithClassWithTimeout({id: `ue-card-${newUeName}-in-semester-${sem}`, smooth: true})
+                    this.scrollToClientHighestElem({id: `ue-card-${newUeName}-in-semester-${sem}`, smooth: true})
                 }
 
 
@@ -3588,7 +4245,6 @@
                             const subjectIndex = this.ueConfig[sem][ue].subjects.indexOf(subj);
                                     this.ueConfig[sem][ue].subjects.splice(subjectIndex,1);
                             delete  this.ueConfig[sem][ue].coefficients[subj];
-                            delete  this.ueConfig[sem][ue].custom[subj];
 
                             if (this.ueConfig[sem][ue].subjects.length == 0) {
                                 this.ueConfig[sem].__ues__.splice(ueIndex, 1);
@@ -3605,7 +4261,6 @@
                                 const subjectIndex = this.ueConfig[sem][ue].subjects.indexOf(subject);
                                         this.ueConfig[sem][ue].subjects.splice(subjectIndex,1);
                                 delete  this.ueConfig[sem][ue].coefficients[subject];
-                                delete  this.ueConfig[sem][ue].custom[subject];
 
                                 if (this.ueConfig[sem][ue].subjects.length == 0) {
                                     this.ueConfig[sem].__ues__.splice(ueIndex, 1);
@@ -3672,25 +4327,21 @@
                                         // Just set the unclassified subject in the ueConfig
                                         this.ueConfig[sem][targetUeName].subjects.splice(insertionIndex, 0, subject);
                                         this.ueConfig[sem][targetUeName].coefficients[subject] = 0;
-                                        this.ueConfig[sem][targetUeName].custom[subject] = false;
                                     break;
 
                                     case "subject card comes from a UE and is moved to a different UE":
                                         // We move the datas from the old UE to the new UE
                                         this.ueConfig[sem][targetUeName].subjects.splice(insertionIndex, 0, subject);
                                         this.ueConfig[sem][targetUeName].coefficients[subject]  = Number (this.ueConfig[sem][oldUeName].coefficients[subject]);
-                                        this.ueConfig[sem][targetUeName].custom[subject]        = Boolean(this.ueConfig[sem][oldUeName].custom[subject]);
 
                                         this.ueConfig[sem][oldUeName].subjects.splice(subjectOldIndex, 1);
                                         delete this.ueConfig[sem][oldUeName].coefficients[subject];
-                                        delete this.ueConfig[sem][oldUeName].custom[subject];
                                     break;
 
                                     case "subject card comes from a UE and is reorganized to a different index":
                                         // We move the datas while paying attention to at which index was the original subject before moving it (in order to not mess up with the insertion index)
                                         this.ueConfig[sem][targetUeName].subjects.splice(insertionIndex, 0, subject);
                                         this.ueConfig[sem][targetUeName].coefficients[subject]  = Number (this.ueConfig[sem][oldUeName].coefficients[subject]);
-                                        this.ueConfig[sem][targetUeName].custom[subject]        = Boolean(this.ueConfig[sem][oldUeName].custom[subject]);
 
                                         const subjectCorrectOldIndex = subjectOldIndex + (insertionIndex<=subjectOldIndex && this.ueConfig[sem][targetUeName].subjects.includes(subject) ? 1 : 0);
                                         this.ueConfig[sem][oldUeName].subjects.splice(subjectCorrectOldIndex, 1);
@@ -3736,49 +4387,37 @@
 
                         this.ueConfig   [sem][ue].subjects.splice(insertionIndex, 0, newSubjName);
                         this.ueConfig   [sem][ue].coefficients [newSubjName] = 0;
-                        this.ueConfig   [sem][ue].custom       [newSubjName] = true;
 
                         this.saveConfig();
                         this.getGradesDatas();
                         
                         if (this.viewMode == "detailed" || !ueCard.classList.contains("compact")) {
-                            ueContent.innerHTML = this.renderAllMatCardDetailed(sem, ue);
+                            ueContent.innerHTML = this.createAllSubjCardDetailed(sem, ue);
                         }
                         else {
-                            ueContent.innerHTML = this.renderAllMatCardCompact(sem, ue);
+                            ueContent.innerHTML = this.createAllSubjCardCompact(sem, ue);
                         }
 
                         this.attachEventListeners()
                         this.setGradesTableTotalCoef();
                     }
-                    
                 }
 
 
-
+                
                 // MARK: createDropAreaInsertionField
                 createDropAreaInsertionField(type="subject", {sem=0, ueName="", index=-1}={sem:0, ueName:"", index:-1}) {
-                    const select = this.selectedSubjectCards.length == 0;
+                    const thereIsSelection = this.selectedSubjectCards.length > 0;
                     return `
                         <div class="drop-field insert-area ${type} show" data-semester="${sem}" ${type=="ue" ? `` : `data-ue="${ueName}" `}data-index="${index}">
-                            <div class="drop-${type}-card-insert-content plus"${select ? "" : ` style="display: none"`}>
-                                <div class="drop-${type}-card-insert-plus">+</div>
+                            <div class="drop-${type}-card-insert-content plus">
+                                <div class="drop-${type}-card-insert-plus${thereIsSelection ? "" : " show"}">+</div>
                             </div>
-                            <div class="drop-${type}-card-insert-content arrow"${select ? ` style="display: none"` : ""}>
-                                <div class="drop-${type}-card-insert-arrow">→</div>
+                            <div class="drop-${type}-card-insert-content arrow">
+                                <div class="drop-${type}-card-insert-arrow${thereIsSelection ?  " show" : ""}">→</div>
                             </div>
-                            <div class="drop-${type}-card-insert-content text" data-type="${type}">
-                                <div class="drop-${type}-card-insert-text ${this.lang} add">${
-                                    type == "ue" 
-                                        ? `${select
-                                            ? `${this.lang == "fr" ? "Ajouter une UE ici" : "Add a TU here"}` 
-                                            : `${this.lang == "fr" ? "Insérer vers nouvelle UE ici" : "Insert to new TU here"}`
-                                        }`
-                                        : `${select
-                                            ? `${this.lang == "fr" ? "Ajouter une matière ici" : "Add a subject here"}` 
-                                            : `${this.lang == "fr" ? "Insérer ici" : "Insert here"}`
-                                        }`
-                                }</div>
+                            <div class="drop-${type}-card-insert-content text ${thereIsSelection ? "insert" : "add"}" data-type="${type}">
+                                <div class="drop-${type}-card-insert-text ${thereIsSelection ? "insert" : "add"} ${this.lang}"></div>
                             </div>
                             <div class="drop-${type}-card-insert-hitbox" data-type="${type}" data-index="${index}"></div>
                         </div>`
@@ -3877,6 +4516,43 @@
 
         //#region -REGION: Data ↓Imp/Exp↑
 
+            openImportMenu() {
+                const importMenu    = document.getElementById("importMenu");
+                const importFile    = importMenu.querySelector(".import-menu-btn.file");
+                const importOnline  = importMenu.querySelector(".import-menu-btn.online");
+
+                importFile.innerHTML   = this.lang == "fr" ? "Importer fichier de configuration .json"   : "Import .json configuration file";
+                importOnline.innerHTML = this.lang == "fr" ? "Obtenir fichier de configuration en ligne" : "Fetch online configuration file";
+                importMenu.classList.toggle("show");
+
+                if (importMenu.classList.contains("show")) {
+                    importFile.onclick = this.importData();
+                    importOnline.onclick = () => {
+                        this.getConfigsFromRepo("https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/contents", this.getLastGitFetchState, () => {debugger; this.openOnlineCfgPicker()})
+                    };
+                }
+            }
+
+            openOnlineCfgPicker() {
+                document.getElementById("importMenu").classList.remove("show");
+                const pickerMenu     = document.createElement("div");
+                pickerMenu.id        = "pickerMenu";
+                pickerMenu.className = "online-cfg-picker-menu";
+                pickerMenu.innerHTML = `
+                    <div class="online-cfg-picker-menu-header">
+                        <div class="online-cfg-picker-menu-close-btn">❌</div>
+                    </div>
+                `;
+
+                document.querySelector(".ecam-dash").appendChild(pickerMenu);
+                setTimeout(() => {pickerMenu.classList.add("show");}, 10)
+                
+                pickerMenu.querySelector(".online-cfg-picker-menu-close-btn").onclick = () => {
+                    pickerMenu.classList.remove("show");
+                    setTimeout(() => {pickerMenu.remove()}, 300);
+                }
+            }
+
             importData(file) {
                 this.sim = {};
                 return new Promise((resolve, reject) => {
@@ -3885,7 +4561,7 @@
                             const parsed = JSON.parse(text);
 
                             // If parsed contains ueConfig, apply it to the dashboard and persist
-                            if (parsed && parsed.ueConfig) {
+                            if (parsed?.ueConfig && parsed?.version == this.configVersion) {
                                 try {
                                     this.ueConfig = parsed.ueConfig || {};
                                     localStorage.setItem('ECAM_DASHBOARD_UE_CONFIG', JSON.stringify(this.ueConfig));
@@ -3893,23 +4569,11 @@
                                     // ignore storage errors
                                 }
                             }
-
-                            // If parsed contains semesters with simulated grades, apply them to this.sim
-                            if (parsed && parsed.semesters) {
-                                // Reset current sim and populate from file where available
-                                const newSim = {};
-                                Object.keys(parsed.semesters).forEach(sem => {
-                                    const semObj = parsed.semesters[sem] || {};
-                                    const uesObj = semObj.ues || {};
-                                    Object.keys(uesObj).forEach(ueName => {
-                                        const simulees = uesObj[ueName].simulees || {};
-                                        if (!newSim[sem]) newSim[sem] = {};
-                                        newSim[sem][ueName] = simulees;
-                                    });
-                                });
-                                // merge with existing sim to preserve structure where file doesn't provide
-                                this.sim = Object.assign({}, this.sim || {}, newSim);
-                                try { localStorage.setItem('ECAM_DASHBOARD_SIM_gradeS', JSON.stringify(this.sim)); } catch (e) {}
+                            else if (parsed?.version != this.configVersion) {
+                                alert(this.lang == "fr" 
+                                    ? `Ce fichier de configuration n'est pas de la bonne version ! Assure-toi de télécharger la dernière version ! (Ce fichier est de version "${parsed?.version}", alors que la version de fichier attendue est "${this.configVersion}")`
+                                    : `This configuration file isn't of the right version! Make sure you download the latest version! (This file's version is "${parsed?.version}", whereas the file's version expected is "${this.configVersion}")`
+                                )
                             }
 
                             // Re-render dashboard to reflect imported config
@@ -3932,8 +4596,14 @@
 
                     // If a JSON string was passed, try to parse directly
                     if (typeof file === 'string') {
-                        // treat as raw JSON string
-                        try { handleText(file); } catch (err) { reject(err); }
+                        if (file.match(/https:\/\/api.github.com\/repos\/(.+)\/contents/)) {
+                            // treat as a url to send a request to
+                            this.getConfigsFromRepo(file, () => {this.pickOnlineCfg()})
+                        }
+                        else {
+                            // treat as raw JSON string
+                            try { handleText(file); } catch (err) { reject(err); }
+                        }
                         return;
                     }
 
@@ -3957,24 +4627,8 @@
 
             exportData() {
                 const data = {
-                    date: new Date().toISOString(),
-                    ueConfig: this.ueConfig,
-                    semesters: {}
+                    ueConfig: this.ueConfig
                 };
-                Object.keys(this.semesters).forEach(sem => {
-                    if (!data.semesters[sem]) data.semesters[sem] = { ues: {} };
-                    if (this.ueConfig[sem]) {
-                        Object.keys(this.ueConfig[sem]).forEach(ue => {
-                            // const ueGrades = this.calculateUEGrades(sem, ue);
-                            data.semesters[sem].ues[ue] = {
-                                subjects: this.ueConfig[sem][ue].subjects,
-                                coefficients: this.ueConfig[sem][ue].coefficients,
-                                custom: this.ueConfig[sem][ue].custom,
-                                simulees: (this.sim[sem]&&this.sim[sem][ue]) || {}
-                            };
-                        });
-                    }
-                });
                 const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -3994,68 +4648,55 @@
         // MARK: -Keyboard Events
         generalKeyboardEvents() {
             document.onkeydown = (e) => {
-                if (e.key === "Shift") {
-                    document.onkeydown = (e) => {
-                        if (e.key === "E") {
-                            this.editMode = !this.editMode;
+                const key = `${e.altKey ? "alt" : "no-alt"} + ${e.ctrlKey ? "ctrl" : "no-ctrl"} + ${e.shiftKey ? "shift" : "no-shift"} + ${e.metaKey ? "meta" : "no-meta"} + ${e.key} (${e.repeat ? "repeat" : "no-repeat"})`;
 
-                            this.removeSubjectCardFromSubjectSelection();
-                            this.scrollToClientHighestElemWithClassWithTimeout({className: ".ue-card||.subject-card.unclassified"});
-                            this.renderContent();
-                        }
-                        else if (e.key === "D") {
-                            this.viewMode = this.viewMode == "detailed" ? "compact" : "detailed";   // Inverse the stored view mode value
-                            if (this.viewMode == "detailed") {
-                                document.getElementById('view-btn-detailed').classList.add("active")
-                                document.getElementById('view-btn-compact').classList.remove("active")
-                            }
-                            else
-                            {
-                                document.getElementById('view-btn-detailed').classList.remove("active")
-                                document.getElementById('view-btn-compact').classList.add("active")
-                            }                            
-                            localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
 
-                            this.scrollToClientHighestElemWithClassWithTimeout({className: ".ue-card||.subject-card.unclassified"});
-                            this.renderContent(false);                      
-                        }
-                        else if (e.key === "L") {
-                            if (this.lang == "fr")
-                            {
-                                this.lang = "en";
-                                localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
-                                document.getElementById('fr-lang-btn').classList.remove('active')
-                                document.getElementById('en-lang-btn').classList.add('active')
-
-                                this.scrollToClientHighestElemWithClassWithTimeout({className: ".ue-card||.subject-card.unclassified"});
-                                // this.languageSensitiveContent();
-                                this.renderContent(false);
-                            }
-                            else if (this.lang == "en")
-                            {
-                                this.lang = "fr";
-                                localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
-                                document.getElementById('fr-lang-btn').classList.add('active')
-                                document.getElementById('en-lang-btn').classList.remove('active')
-
-                                this.scrollToClientHighestElemWithClassWithTimeout({className: ".ue-card||.subject-card.unclassified"});
-                                // this.languageSensitiveContent();
-                                this.renderContent(false);
-                            }
-                        }
-                        else if (e.key === "R") {
-                            console.warn("You fell into my breakpoint trap!!"); debugger;
-                        }
-                    };
+                if (key === "no-alt + no-ctrl + shift + no-meta + E (no-repeat)") {
+                    this.editMode = !this.editMode;
+                    
+                    this.removeSubjectCardFromSubjectSelection();
+                    this.scrollToClientHighestElem();
+                    this.renderContent();
                 }
-            };
+                else if (key === "no-alt + no-ctrl + shift + no-meta + D (no-repeat)") {
 
-            document.onkeyup = (e) => {
-                if (e.key === "Shift") this.generalKeyboardEvents();
+                    this.viewMode = this.viewMode == "detailed" ? "compact" : "detailed";   // Inverse the stored view mode value
+                    localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
+                    if (this.viewMode == "detailed") {
+                        document.getElementById('view-btn-detailed').classList.add("active")
+                        document.getElementById('view-btn-compact').classList.remove("active")
+                    }
+                    else
+                    {
+                        document.getElementById('view-btn-detailed').classList.remove("active")
+                        document.getElementById('view-btn-compact').classList.add("active")
+                    }
+
+                    this.scrollToClientHighestElem();
+                    this.renderContent();
+                }
+                else if (key === "no-alt + no-ctrl + shift + no-meta + L (no-repeat)") {
+                    
+                    this.lang = this.lang == "fr" ? "en" : "fr";
+                    localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
+                    if (this.lang == "fr") {
+                        document.getElementById('fr-lang-btn').classList.add('active')
+                        document.getElementById('en-lang-btn').classList.remove('active')
+                    }
+                    else {
+                        document.getElementById('fr-lang-btn').classList.remove('active')
+                        document.getElementById('en-lang-btn').classList.add('active')
+                    }
+
+                    this.scrollToClientHighestElem();
+                    this.renderContent(false);
+                }
+                else if (key === "no-alt + no-ctrl + shift + no-meta + R (no-repeat)") {
+                    console.warn("You fell into my breakpoint trap!!"); debugger;
+                }
             };
         };
     }
-
 
     window.onload = () => { new ECAMDashboard(); };
     

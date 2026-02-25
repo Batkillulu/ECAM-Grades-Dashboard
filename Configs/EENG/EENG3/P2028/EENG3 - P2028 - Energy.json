@@ -1,8 +1,16 @@
 {
-  "date": "2025-12-20T16:09:17.540Z",
+  "date": "2026-02-01",
+  "version": "2",
   "ueConfig": {
     "6": {
-      "__ues__" : ["Mathematics for Engineers 6", "Control Engineering 6", "Systems Engineering 6", "Multidisciplinary Project 6", "Society, Management & Entrepreneurship 6", "Robotics and Automation Engineering 6"],
+      "__ues__" : [
+        "Mathematics for Engineers 6", 
+        "Control Engineering 6", 
+        "Systems Engineering 6", 
+        "Multidisciplinary Project 6", 
+        "Society, Management & Entrepreneurship 6", 
+        "Sustainable Energy and Environmental Engineering 6"
+      ],
       "Mathematics for Engineers 6": {
         "subjects": [
           "Probabilities and Inferential Statistics",
@@ -11,10 +19,6 @@
         "coefficients": {
           "Probabilities and Inferential Statistics": 65,
           "Object-Oriented Programming": 35
-        },
-        "custom": {
-          "Probabilities and Inferential Statistics": true,
-          "Object-Oriented Programming": true
         }
       },
       "Control Engineering 6": {
@@ -25,10 +29,6 @@
         "coefficients": {
           "Introduction to Control Theory": 60,
           "Power Electronics": 40
-        },
-        "custom": {
-          "Introduction to Control Theory": true,
-          "Power Electronics": true
         }
       },
       "Systems Engineering 6": {
@@ -39,10 +39,6 @@
         "coefficients": {
           "Quality": 40,
           "Vibrations": 60
-        },
-        "custom": {
-          "Quality": true,
-          "Vibrations": true
         }
       },
       "Multidisciplinary Project 6": {
@@ -53,10 +49,6 @@
         "coefficients": {
           "Ecodesign Project Part 2 - Environment": 50,
           "Ecodesign Project Part 2 - Technical": 50
-        },
-        "custom": {
-          "Ecodesign Project Part 2 - Environment": true,
-          "Ecodesign Project Part 2 - Technical": true
         }
       },
       "Society, Management & Entrepreneurship 6": {
@@ -71,34 +63,22 @@
           "Global affairs": 25,
           "Advanced English Skills 6": 35,
           "Professional Project": 15
-        },
-        "custom": {
-          "Principles of Marketing": true,
-          "Global affairs": true,
-          "Advanced English Skills 6": true,
-          "Professional Project": true
         }
       },
-      "Robotics and Automation Engineering 6": {
+      "Sustainable Energy and Environmental Engineering 6": {
         "subjects": [
-          "Introduction to Robotics",
-          "Sensing & Perception",
-          "Signal Processing + Wireless Communications"
+          "Advanced Heat Transfer",
+          "Hydraulics",
+          "Heating Ventilation & Air Conditioning HVAC"
         ],
         "coefficients": {
-          "Introduction to Robotics": 35,
-          "Sensing & Perception": 25,
-          "Signal Processing + Wireless Communications": 40
-        },
-        "custom": {
-          "Introduction to Robotics": true,
-          "Sensing & Perception": true,
-          "Signal Processing + Wireless Communications": true
+          "Advanced Heat Transfer": 35,
+          "Hydraulics": 25,
+          "Heating Ventilation & Air Conditioning HVAC": 40
         }
       }
     },
     "5": {
-      "__ues__" : ["Mathematics for Engineers 5", "Mechanical Engineering 5", "Electrical Engineering 5", "Industrial Organisation 5", "Multidisciplinary Project 5", "Society, Management & Entrepreneurship 5"],
       "Mathematics for Engineers 5": {
         "subjects": [
           "Mathematics for Engineers 5",
@@ -107,10 +87,6 @@
         "coefficients": {
           "Mathematics for Engineers 5": 70,
           "Network & Security": 30
-        },
-        "custom": {
-          "Mathematics for Engineers 5": false,
-          "Network & Security": false
         }
       },
       "Mechanical Engineering 5": {
@@ -123,11 +99,6 @@
           "Strength of Materials": 40,
           "Materials 2": 25,
           "Introduction to Heat Transfer": 35
-        },
-        "custom": {
-          "Strength of Materials": false,
-          "Materials 2": false,
-          "Introduction to Heat Transfer": false
         }
       },
       "Electrical Engineering 5": {
@@ -136,9 +107,6 @@
         ],
         "coefficients": {
           "Electrical Machines": 100
-        },
-        "custom": {
-          "Electrical Machines": false
         }
       },
       "Industrial Organisation 5": {
@@ -149,10 +117,6 @@
         "coefficients": {
           "Industrial Methods": 30,
           "Industrial Organisation": 70
-        },
-        "custom": {
-          "Industrial Methods": false,
-          "Industrial Organisation": false
         }
       },
       "Multidisciplinary Project 5": {
@@ -163,10 +127,6 @@
         "coefficients": {
           "Ecodesign Project Part 1 - Environment": 50,
           "Ecodesign Project Part 1 - Technical": 50
-        },
-        "custom": {
-          "Ecodesign Project Part 1 - Environment": true,
-          "Ecodesign Project Part 1 - Technical": false
         }
       },
       "Society, Management & Entrepreneurship 5": {
@@ -179,30 +139,8 @@
           "Professional Engineering Project": 15,
           "Engineering Ethics": 35,
           "Advanced English Skills 5: (IELTS Preparation)": 50
-        },
-        "custom": {
-          "Professional Engineering Project": false,
-          "Engineering Ethics": false,
-          "Advanced English Skills 5: (IELTS Preparation)": false
         }
       }
-    }
-  },
-  "semesters": {
-    "1": {
-      "ues": {}
-    },
-    "2": {
-      "ues": {}
-    },
-    "3": {
-      "ues": {}
-    },
-    "4": {
-      "ues": {}
-    },
-    "5": {
-      "ues": {}
     }
   }
 }
