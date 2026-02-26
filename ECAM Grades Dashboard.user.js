@@ -73,18 +73,17 @@
             .online-cfg-picker-menu-close-btn           { display: flex; justify-content: center; align-items: center; width: 30px; height: 30px; border-radius: 15px; border: 2px solid; font-size: 20px; user-select: none; cursor: pointer; margin-right: 3px; transition: all 0.2s ease; }
             .online-cfg-picker-menu-close-btn:hover     { width: 40px; height: 40px; border-radius: 20px; font-size: 30px; margin-right: -2px; gap: 5px; }
 
-            .online-cfg-picker-menu-body            { display: flex; flex-direction: row; justify-content: center; align-items: center; height: calc(100% - 40px); width: 100%; }
-            .online-cfg-picker-menu-dir-tree            { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 50px; width: 0px; position: relative; color: transparent; border-radius: 16px; border: 2px solid; background: white; overflow: clip; opacity: 0; transition: all 0.3s ease; }
+            .online-cfg-picker-menu-body            { display: flex; flex-direction: row; justify-content: center; align-items: center; height: calc(100% - 40px); width: 100%; gap: 5px; }
+            .online-cfg-picker-menu-dir-tree            { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 0px; position: relative; color: transparent; border-radius: 16px; border: 2px solid; background: white; overflow: clip; opacity: 0; transition: all 0.3s ease; }
             .online-cfg-picker-menu-dir-tree.open       { width: 150px; left: 0px; color: black; opacity: 1; }
             .online-cfg-picker-menu-dir-tree.section    { z-index: 1004; }
             .online-cfg-picker-menu-dir-tree.year       { z-index: 1003; }
             .online-cfg-picker-menu-dir-tree.prom       { z-index: 1002; }
             .online-cfg-picker-menu-dir-tree.config     { z-index: 1001; }
             .online-cfg-picker-menu-dir-tree-header     { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 20px; width: 100%; font-size: 15px; padding: 5px; }
-            .online-cfg-picker-menu-dir-tree-body       { display: flex; flex-direction: column; justify-content: center; align-items: center; height: calc(100% - 20px); width: 100%; gap: 5px; }
+            .online-cfg-picker-menu-dir-tree-body       { display: flex; flex-direction: column; justify-content: center; align-items: center; height: calc(100% - 20px); width: 95%; }
 
-            .online-cfg-picker-menu-dir-card                { display: flex; justify-content: center; align-items: center; height: 50px; width: 0px; position: relative; border-radius: 16px; overflow: clip; padding: 5px; user-select: none; opacity: 0; transition: all 0.3s ease; }
-            .online-cfg-picker-menu-dir-card.open           { width: 140px; left: 0px; border: 2px solid; background: white; cursor: pointer; opacity: 1; }
+            .online-cfg-picker-menu-dir-card                { display: flex; justify-content: center; align-items: center; height: 40px; width: 100%; position: relative; border-radius: 16px; border: 2px solid; background: white; cursor: pointer; overflow: clip; padding: 5px; margin: 5px 0px; user-select: none; transition: all 0.3s ease; }
 
             
             .header-actions                 { display: flex; gap: 12px; }
@@ -536,26 +535,43 @@
             this.lastGitFetchState = -1;
             this.gitFetchScanDoneArray = [];
             this.gitParentDirData = {};
-            this.gitConfigs = {/* 
-                eeng:   {
-                    eeng1: {},
-                    eeng2: {},
-                    eeng3: {
+            this.gitConfigs = {
+                EENG:   {
+                    EENG1: {},
+                    EENG2: {},
+                    EENG3: {
                         P2028: {
-                            energy:     "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Energy.json",
-                            mecha:      "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Mecha.json",
-                            robotics:   "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Robotics.json",
-                            supply:     "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20P2028%20-%20S5%20and%20S6%20-%20SupplyChain.json",
+                            Energy:      "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Energy.json",
+                            Mecha:       "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Mecha.json",
+                            Robotics:    "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Robotics.json",
+                            SupplyChain: "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20P2028%20-%20S5%20and%20S6%20-%20SupplyChain.json",
+                            path: "Configs/EENG/EENG3/P2028",
                             nbCfgs: 4, 
                         },
+                        path: "Configs/EENG/EENG3",
                         nbCfgs: 4, 
                     },
-                    eeng4: {},
-                    eeng5: {},
+                    EENG4: {},
+                    EENG5: {},
+                    path: "Configs/EENG",
                     nbCfgs: 4, 
                 },
-                am:     {}, 
-                nbCfgs: 4, */
+                AM:     {}, 
+                nbCfgs: 4,
+            };
+            this.tempGitConfigParentDirData = {};
+            this.getAllGitConfigs = () => {
+                Object.values(this.gitConfigs).map(value => {if (value != "nbCfgs" && value != "path") {return value}}).filter(value => {return value}).map(dirData => {
+                    Object.values(dirData).map(value => {if (value instanceof Object) {return value}}).filter(value => {return value}).map(dirData => {
+                        Object.values(dirData).map(value => {if (value instanceof Object) {return value}}).filter(value => {return value}).map(dirData => {
+                            this.tempGitConfigParentDirData = dirData;
+                            Object.keys(dirData).map(key => {if (key != "nbCfgs" && key!= "path") {return key}}).filter(value => {return value}).map(dirName => {
+                                `${this.tempGitConfigParentDirData.path + "/" + dirName} = ${this.tempGitConfigParentDirData[dirName]}`;
+                            })
+                            this.tempGitConfigParentDirData = undefined;
+                        })
+                    })
+                })
             };
 
             this.configVersion = 2;
@@ -4568,10 +4584,9 @@
                         <div class="online-cfg-picker-menu-close-btn">❌</div>
                     </div>
                     <div class="online-cfg-picker-menu-body">
-                        ${
+                        ${ false ?  // For save purpose
                             Object.keys(this.gitConfigs).map(key => {if (key != "nbCfgs" && key != "path") {return key}}).filter(value => {return value}).map((name, index, array) => {                  // Section
                                 this.gitParentDirData = this.gitConfigs[name];
-                                // this.generateOnlineCfgPickerMenuDirTree(this.gitConfigs[name]);
 
                                 return `<div class="online-cfg-picker-menu-dir-card section open" id="online-cfg-picker-menu-dir-card-section-${name}" data-path="${this.gitParentDirData.path}">${name}</div>` + 
                                 Object.keys(this.gitParentDirData).map(key => {if (key != "nbCfgs" && key != "path") {return key}}).filter(value => {return value}).map((name, index, array) => {          // Year
@@ -4589,6 +4604,98 @@
                                     }).join("");
                                 }).join("");
                             }).join("")
+                            : ""
+                        }
+                        ${  // Sections
+                            `
+                            <div class="online-cfg-picker-menu-dir-tree section open" data-path="Configs">
+                                <div class="online-cfg-picker-menu-dir-tree-header">Nb configs: ${this.gitConfigs.nbCfgs}</div>
+                                <div class="online-cfg-picker-menu-dir-tree-body">
+                            ` +
+                            Object.values(this.gitConfigs).map(value => {if (value instanceof Object) {return value}}).filter(value => {return value}).map(dirData => {         // Section
+                                const name = dirData.path.split("/").at(-1);
+                                return `
+                                    <div class="online-cfg-picker-menu-dir-card section" id="online-cfg-picker-menu-dir-card-section-${name}" data-path="${dirData.path}">${name}</div>
+                                `
+                            }).join("") 
+                            + 
+                            `
+                                </div>
+                            </div>
+                            `
+                        }
+                        ${  // Years
+                            Object.values(this.gitConfigs).map(value => {if (value instanceof Object) {return value}}).filter(value => {return value}).map(dirData => {         // Section
+                                const parentDirName = dirData.path.split("/").at(-2);
+                                return `
+                                <div class="online-cfg-picker-menu-dir-tree year" data-path="${dirData.path}">
+                                    <div class="online-cfg-picker-menu-dir-tree-header">Nb configs: ${dirData.nbCfgs}</div>
+                                    <div class="online-cfg-picker-menu-dir-tree-body">
+                                ` + 
+                                Object.values(dirData).map(value => {if (value instanceof Object) {return value}}).filter(value => {return value}).map(dirData => {             // Year
+                                    const name = dirData.path.split("/").at(-1);
+                                    return `
+                                        <div class="online-cfg-picker-menu-dir-card year" id="online-cfg-picker-menu-dir-card-year-${name}" data-path="${dirData.path}">${name}</div>
+                                    `
+                                }).join("")
+                                + 
+                                `
+                                    </div>
+                                </div>
+                                `
+                            }).join("")
+                        }
+                        ${  // Proms
+                            Object.values(this.gitConfigs).map(value => {if (value instanceof Object) {return value}}).filter(value => {return value}).map(dirData => {         // Section
+                                return `` + 
+                                Object.values(dirData).map(value => {if (value instanceof Object) {return value}}).filter(value => {return value}).map(dirData => {             // Year
+                                    const parentDirName = dirData.path.split("/").at(-2);
+                                    return `
+                                    <div class="online-cfg-picker-menu-dir-tree prom" data-path="${dirData.path}">
+                                        <div class="online-cfg-picker-menu-dir-tree-header">Nb configs: ${dirData.nbCfgs}</div>
+                                        <div class="online-cfg-picker-menu-dir-tree-body">
+                                    ` + 
+                                    Object.values(dirData).map(value => {if (value instanceof Object) {return value}}).filter(value => {return value}).map(dirData => {         // Prom
+                                        const name = dirData.path.split("/").at(-1);
+                                        this.tempGitConfigParentDirData = dirData;
+                                        return `
+                                            <div class="online-cfg-picker-menu-dir-card prom" id="online-cfg-picker-menu-dir-card-prom-${name}" data-path="${dirData.path}">${name}</div>
+                                        `
+                                    }).join("")
+                                    + 
+                                    `
+                                        </div>
+                                    </div>
+                                    `
+                                }).join("")
+                            }).join("") 
+                        }
+                        ${  // Configs
+                            Object.values(this.gitConfigs).map(value => {if (value instanceof Object) {return value}}).filter(value => {return value}).map(dirData => {         // Section
+                                return `` + 
+                                Object.values(dirData).map(value => {if (value instanceof Object) {return value}}).filter(value => {return value}).map(dirData => {             // Year
+                                    return `` + 
+                                    Object.values(dirData).map(value => {if (value instanceof Object) {return value}}).filter(value => {return value}).map(dirData => {         // Prom
+                                        this.tempGitConfigParentDirData = dirData;
+                                        return `
+                                        <div class="online-cfg-picker-menu-dir-tree config" data-path="${dirData.path}">
+                                            <div class="online-cfg-picker-menu-dir-tree-header">Nb configs: ${dirData.nbCfgs}</div>
+                                            <div class="online-cfg-picker-menu-dir-tree-body">
+                                        ` + 
+                                        Object.keys(dirData).map(key => {if (key != "nbCfgs" && key!= "path") {return key}}).filter(value => {return value}).map(dirName => {   // Config
+                                            const name = dirData.path.split("/").at(-1);
+                                            return `
+                                                <div class="online-cfg-picker-menu-dir-card config" id="online-cfg-picker-menu-dir-card-config-${name}" data-path="${this.tempGitConfigParentDirData.path+"/"+dirName}" data-url="${this.tempGitConfigParentDirData[name]}">${name}</div>
+                                            `
+                                        }).join("")
+                                        + 
+                                        `
+                                            </div>
+                                        </div>
+                                        `
+                                    }).join("")
+                                }).join("")
+                            }).join("") 
                         }
                     </div>
                 `;
@@ -4597,6 +4704,7 @@
                 setTimeout(() => {pickerMenu.classList.add("show");}, 10)
                 
                 pickerMenu.querySelector(".online-cfg-picker-menu-close-btn").onclick = () => {pickerMenu.classList.remove("show"); setTimeout(() => {pickerMenu.remove()}, 300);}
+                pickerMenu.querySelectorAll(".online-cfg-picker-menu-dir-card").onclick = (e) => {pickerMenu.querySelector(`.online-cfg-picker-menu-dir-card[data-path="${e.target.dataset.path}"]`).classList.toggle("show")}
             }
 
             generateOnlineCfgPickerMenuDirTree(dirData) {
@@ -4605,15 +4713,9 @@
 
                 let type = "section";
                 switch (path.split("/").length) {
-                    case 2: 
-                        type = "year";
-                    break;
-                    case 3: 
-                        type = "prom";
-                    break;
-                    case 4: 
-                        type = "config";
-                    break;
+                    case 2: type = "year";   break;
+                    case 3: type = "prom";   break;
+                    case 4: type = "config"; break;
                     default:
                 }
 
@@ -4625,11 +4727,14 @@
 
                 const childDirNames = Object.keys(dirData).map(key => {if (key != "nbCfgs" && key != "path") {return key}}).filter(value=>{return value});
 
-                childDirNames.forEach(name => {
-                    html += this.generateOnlineCfgPickerMenuDirCard((this.gitDirData?.path+"/"||"")+this.gitDirData[name]);
+                childDirNames.forEach(dirName => {
+                    html += this.generateOnlineCfgPickerMenuDirCard((this.gitDirData?.path+"/"||"Config/")+this.gitDirData[dirName]);
                 });
 
-                html += `</div></div>`;
+                html += `
+                        </div>
+                    </div>
+                `;
             }
             generateOnlineCfgPickerMenuDirCard(path) {
                 const splitPath = path.split("/"), name = splitPath.at(-1);
