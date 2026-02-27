@@ -544,7 +544,7 @@
                         P2028: {
                             Energy:      "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Energy.json",
                             Mecha:       "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Mecha.json",
-                            Robotics:    "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Robotics.json",
+                            Robotics:    "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20-%20P2028%20-%20Robotics.json",
                             SupplyChain: "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20P2028%20-%20S5%20and%20S6%20-%20SupplyChain.json",
                             path: "Configs/EENG/EENG3/P2028",
                             nbCfgs: 4, 
@@ -1043,7 +1043,7 @@
             saveSim() { this.deleteUnusedSimPath(); localStorage.setItem("ECAM_DASHBOARD_SIM_gradeS", JSON.stringify(this.sim)); }
             saveIgnoredGrades() { localStorage.setItem("ECAM_DASHBOARD_IGNORED_GRADES", JSON.stringify(this.ignoredGrades)); }
             ensureSimPath(sem=undefined, ue=undefined, subj=undefined) {
-                if (subj)   {if(!this.sim?.[sem])               this.sim[sem]={}; }
+                if (sem)    {if(!this.sim?.[sem])               this.sim[sem]={}; }
                 if (ue)     {if(!this.sim?.[sem]?.[ue])         this.sim[sem][ue]={}; }
                 if (subj)   {if(!this.sim?.[sem]?.[ue]?.[subj]) this.sim[sem][ue][subj]=[]; }
             }
@@ -4602,43 +4602,41 @@
 
                 document.querySelector(".ecam-dash").appendChild(pickerMenu);
                 setTimeout(() => {pickerMenu.classList.add("show");}, 10)
+
+                const closePickerMenuFunc = () => {pickerMenu.classList.remove("show"); setTimeout(() => {pickerMenu.remove()}, 300);};
                 
-                pickerMenu.querySelector(".online-cfg-picker-menu-close-btn").onclick = () => {pickerMenu.classList.remove("show"); setTimeout(() => {pickerMenu.remove()}, 300);}
+                pickerMenu.querySelector(".online-cfg-picker-menu-close-btn").onclick = closePickerMenuFunc;
                 pickerMenu.querySelectorAll(".online-cfg-picker-menu-dir-card").forEach(dirCard => {
                     dirCard.onclick = (e) => {
-                        // const allTreeCards = pickerMenu.querySelectorAll(`.online-cfg-picker-menu-dir-tree`);
                         const path = e.target.dataset.path;
+                        const url = e.target.dataset.url;
                         const targetTree = pickerMenu.querySelector(`.online-cfg-picker-menu-dir-tree[data-path="${path}"]`);
                         e.target.classList.toggle("on");
-                        targetTree.classList.toggle("show");
 
-                        if (!targetTree.classList.contains("show")) {
+                        if (!e.target.classList.contains("on") && !url) {
                             pickerMenu.querySelectorAll(".online-cfg-picker-menu-dir-tree.show").forEach(tree => {
-                                const childTreePath = tree.dataset.path.match(RegExp("\\b"+path + "/(.+)"));
-                                const childTree = pickerMenu.querySelector(`.online-cfg-picker-menu-dir-tree.show[data-path="${childTreePath?.[0]}"]`);
-                                childTree?.classList?.remove("show");
+                                const childTreePath = tree.dataset.path.match(RegExp("\\b"+ path + "(\\b|/(.+)\\b)"));
+                                const childTree = pickerMenu.querySelector(`.online-cfg-picker-menu-dir-tree.show[data-path="${childTreePath?.input}"]`);
                                 childTree?.querySelectorAll(".online-cfg-picker-menu-dir-card").forEach(dirCard => {
                                     dirCard?.classList?.remove("on");
                                 })
+                                childTree?.classList?.remove("show");
                             })
                         }
-
-
-                        
-                        // allTreeCards.forEach(treeCard => {
-                        //     const subTreesName = treeCard.dataset.path.match(RegExp("\\b"+path+"/(.+)"))?.[1]?.split("/");
-
-                        //     if (treeCard.dataset.path == path) {
-                        //         treeCard.classList.toggle("open");
-                        //     }
-                        //     else if (subTreesName.length > 0) {
-                        //         subTreesName.forEach((subTreeName, index, array) => {
-                        //             const subTreePath = Array(...array).splice(0,index).join("/");
-                        //             pickerMenu.querySelector(`.online-cfg-picker-menu-dir-tree[data-path="${subTreePath}"]`)
-                        //         })
-                        //     }
-                        // })
-                        
+                        else if (e.target.classList.contains("on") && !url) {
+                            targetTree.classList.add("show");
+                        }
+                        else if (e.target.classList.contains("on") && url) {
+                            const xhttp = new XMLHttpRequest();
+                            xhttp.open("GET", url, true);
+                            xhttp.send();
+                            xhttp.onload = () => {
+                                closePickerMenuFunc();
+                                setTimeout(() => {
+                                    this.importData(xhttp.response)
+                                }, 100);
+                            };
+                        }
                     };
                 })
             }
