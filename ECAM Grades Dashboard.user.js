@@ -542,10 +542,10 @@
                     EENG2: {},
                     EENG3: {
                         P2028: {
-                            Energy:      "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Energy.json",
-                            Mecha:       "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20P2028%20-%20S5%20and%20S6%20-%20Mecha.json",
+                            Energy:      "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20-%20P2028%20-%20Energy.json",
+                            Mecha:       "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20-%20P2028%20-%20Mecha.json",
                             Robotics:    "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20-%20P2028%20-%20Robotics.json",
-                            SupplyChain: "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20P2028%20-%20S5%20and%20S6%20-%20SupplyChain.json",
+                            SupplyChain: "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20-%20P2028%20-%20SupplyChain.json",
                             path: "Configs/EENG/EENG3/P2028",
                             nbCfgs: 4, 
                         },
@@ -952,9 +952,10 @@
                                                                         
                                                                         if (dir?.type == "file" && dir?.name.match(/(.+).json/)) {
                                                                             const path = dir?.path?.split("/");
+                                                                            const url = dir?.url?.replace("api.github.com/repos", "raw.githubusercontent.com")?.replace("/contents", "/refs/heads/main")?.replace("?ref=main", "");
 
                                                                             if (dir.name.match(/(.+).json/)[1].split(" - ").at(-1).match(/\bconfig\b/i)) { // is the file's name of format "EENG[X] - P[YYYY] - config.json"?
-                                                                                this.gitConfigs[path[1]][path[2]][path[3]]["__url__"] = dir?.url;
+                                                                                this.gitConfigs[path[1]][path[2]][path[3]]["__url__"] = url;
                                                                                 this.gitConfigs[path[1]][path[2]][path[3]].nbCfgs++;
                                                                                 this.gitConfigs[path[1]][path[2]].nbCfgs++;
                                                                                 this.gitConfigs[path[1]].nbCfgs++;
@@ -963,7 +964,7 @@
                                                                             }
                                                                             else {// else, then it's a pathway's config
                                                                                 const pathwayName = dir.name.match(/(.+).json/)[1].split(" - ").at(-1);
-                                                                                this.gitConfigs[path[1]][path[2]][path[3]][pathwayName] = dir?.url;
+                                                                                this.gitConfigs[path[1]][path[2]][path[3]][pathwayName] = url;
                                                                                 this.gitConfigs[path[1]][path[2]][path[3]].nbCfgs++;
                                                                                 this.gitConfigs[path[1]][path[2]].nbCfgs++;
                                                                                 this.gitConfigs[path[1]].nbCfgs++;
@@ -4565,8 +4566,8 @@
                     setTimeout(() => {importMenu.classList.add("show")}, 10)
                     importFile.onclick   = () => this.importData();
                     importOnline.onclick = () => {
-                        this.openOnlineCfgPicker()
-                        // this.getConfigsFromRepo("https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/contents", this.getLastGitFetchState, () => {this.openOnlineCfgPicker()})
+                        // this.openOnlineCfgPicker()
+                        this.getConfigsFromRepo("https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/contents", this.getLastGitFetchState, () => {this.openOnlineCfgPicker()})
                     };
                 }
                 else if (importMenu.classList.contains("show") || open == false) {
@@ -4773,7 +4774,7 @@
                     if (typeof file === 'string') {
                         if (file.match(/https:\/\/api.github.com\/repos\/(.+)\/contents/)) {
                             // treat as a url to send a request to
-                            this.getConfigsFromRepo(file, () => {this.pickOnlineCfg()})
+                            this.getConfigsFromRepo(file, () => {}, () => {this.openOnlineCfgPicker()})
                         }
                         else {
                             // treat as raw JSON string
