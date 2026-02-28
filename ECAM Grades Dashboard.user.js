@@ -542,7 +542,7 @@
             this.getLastGitFetchState = (state, fallback) => {
                 this.lastGitFetchState = state;
                 if (state == 404) {     // Shouldn't reach this, since now the ECAM-Grades-Dashboard repo is public and its github API is accessible
-                    this.getConfigsFromRepo(this.fallbackRepoApi, this.getLastGitFetchState, fallback)
+                    this.getConfigsFromRepo(this.repoAPI, this.getLastGitFetchState, fallback)
                 }
             };
             this.gitFetchScanDoneArray = [];
@@ -1675,7 +1675,7 @@
                                     
                                     pathArray.forEach((dirName, hierarchyIndex, pathArray) => {
                                         if (hierarchyIndex == pathArray.length-1) {
-                                            const url = repoAPIUrl.replace("api.github.com/repos", "raw.githubusercontents.com").replace("/contents", "/refs/heads/main/") + pathArray.join("/").replace(/ /g, "%20");
+                                            const url = repoAPIUrl.replace("api.github.com/repos", "raw.githubusercontent.com").replace("/contents", "/refs/heads/main/") + (this.tempGitConfigParentDirData.path+"/"+dirName).replace(/ /g, "%20");
                                             this.tempGitConfigParentDirData[dirName] = url;
                                         }
                                         else if (!this.tempGitConfigParentDirData[dirName]) {
@@ -4659,7 +4659,7 @@
                     importOnline.onclick = () => {
                         if (this.onlineConfigs)
                         // this.openOnlineCfgPicker()
-                        this.getConfigsFromRepo(this.fallbackRepoApi, this.getLastGitFetchState, () => this.openOnlineCfgPicker())
+                        this.getConfigsFromRepo(this.repoAPI, this.getLastGitFetchState, () => this.openOnlineCfgPicker())
                     };
                 }
                 else if (importMenu.classList.contains("show") || open == false) {
@@ -4673,13 +4673,13 @@
             openOnlineCfgPicker() {
                 document.getElementById("importMenu").classList.remove("show");
                 document.getElementById("importMenu").hidden
-                const pickerMenu     = document.createElement("div");
-                pickerMenu.id        = "pickerMenu";
-                pickerMenu.className = "online-cfg-picker-menu";
-                const sectionsHTML  = this.generateOnlineCfgPickerMenuDirTree("section");
-                const yearsHTML     = this.generateOnlineCfgPickerMenuDirTree("year");
-                const promsHTML     = this.generateOnlineCfgPickerMenuDirTree("prom");
-                const configsHTML   = this.generateOnlineCfgPickerMenuDirTree("config");
+                const pickerMenu        = document.createElement("div");
+                pickerMenu.id           = "pickerMenu";
+                pickerMenu.className    = "online-cfg-picker-menu";
+                const sectionsHTML      = this.generateOnlineCfgPickerMenuDirTree("section");
+                const yearsHTML         = this.generateOnlineCfgPickerMenuDirTree("year");
+                const promsHTML         = this.generateOnlineCfgPickerMenuDirTree("prom");
+                const configsHTML       = this.generateOnlineCfgPickerMenuDirTree("config");
 
                 pickerMenu.innerHTML = `
                     <div class="online-cfg-picker-menu-header">
@@ -4715,22 +4715,20 @@
                                 })
                                 childTree?.classList?.remove("show");
                             })
+                            setTimeout(() => {
+                                pickerMenu.querySelectorAll(".online-cfg-picker-menu-dir-tree.show").forEach(tree => {
+                                    const childTreePath = tree.dataset.path.match(RegExp("\\b"+ path + "(\\b|/(.+)\\b)"));
+                                    const childTree = pickerMenu.querySelector(`.online-cfg-picker-menu-dir-tree.show[data-path="${childTreePath?.input}"]`);
+                                    if (childTree) {childTree.style.display = "none"}
+                                })
+                            }, 300);
                         }
                         else if (e.target.classList.contains("on") && !url) {
-                            targetTree.classList.add("show");
+                            targetTree.style.display = "";
+                            setTimeout(() => {targetTree.classList.add("show")}, 10)
                         }
                         else if (e.target.classList.contains("on") && url) {
                             this.importData(url)
-                            // const xhttp = new XMLHttpRequest();
-                            // xhttp.open("GET", url, true);
-                            // xhttp.send();
-
-                            // xhttp.onload = () => {
-                            //     closePickerMenuFunc();
-                            //     setTimeout(() => {
-                            //         this.importData(xhttp.response)
-                            //     }, 100);
-                            // };
                         }
                     };
                 })
@@ -4755,7 +4753,7 @@
                     
                     
                     let out = type == "year" ? `
-                    <div class="online-cfg-picker-menu-dir-tree ${type}" data-path="${sectionDirData.path}">
+                    <div class="online-cfg-picker-menu-dir-tree ${type}" style="display: none" data-path="${sectionDirData.path}">
                     <div class="online-cfg-picker-menu-dir-tree-header">Nb configs: ${sectionDirData.nbCfgs}</div>
                     <div class="online-cfg-picker-menu-dir-tree-body">
                     ` : "";
@@ -4769,7 +4767,7 @@
                         const promsArray = Object.values(yearDirData).map(value => {if (value instanceof Object && Object.keys(value).length>0) {return value}}).filter(value => {return value});
                         const name = yearDirData.path.split("/").at(-1);
                         let out = type == "prom" ? `
-                        <div class="online-cfg-picker-menu-dir-tree ${type}" data-path="${yearDirData.path}">
+                        <div class="online-cfg-picker-menu-dir-tree ${type}" style="display: none" data-path="${yearDirData.path}">
                         <div class="online-cfg-picker-menu-dir-tree-header">Nb configs: ${yearDirData.nbCfgs}</div>
                         <div class="online-cfg-picker-menu-dir-tree-body">
                         ` : "";
@@ -4780,11 +4778,11 @@
                         `
                         : promsArray.map(promDirData => {           // Dir: Prom
                             // Creating an array containing all the properties' value of promDirData that are objects (so that have a descendance) with at least one property: they are the data of the configs
-                            const configsArray = Object.keys(yearDirData).map(key => {if (key != "nbCfgs" && key!= "path") {return key}}).filter(value => {return value});
+                            const configsArray = Object.keys(promDirData).map(key => {if (key != "nbCfgs" && key!= "path") {return key}}).filter(value => {return value});
                             const name = promDirData.path.split("/").at(-1);
                             this.tempGitConfigParentDirData = promDirData;
                             let out = type == "config" ? `
-                            <div class="online-cfg-picker-menu-dir-tree ${type}" data-path="${promDirData.path}">
+                            <div class="online-cfg-picker-menu-dir-tree ${type}" style="display: none" data-path="${promDirData.path}">
                                 <div class="online-cfg-picker-menu-dir-tree-header">Nb configs: ${promDirData.nbCfgs}</div>
                                 <div class="online-cfg-picker-menu-dir-tree-body">
                             ` : "";
@@ -4792,10 +4790,10 @@
                             out += type == "prom" ? `
                                 <div class="online-cfg-picker-menu-dir-card ${type}" id="online-cfg-picker-menu-dir-card-section-${name}" data-path="${promDirData.path}">${name}</div>
                             `
-                            : configsArray.map(configDirName => {   // Dir: Config
-                                const path = this.tempGitConfigParentDirData.path, name = path.split("/").at(-1);
+                            : configsArray.map(configName => {   // Dir: Config
+                                const path = this.tempGitConfigParentDirData.path+"/"+configName, name = configName.match(/.+ - (.+)\.json/)[1];
                                 return `
-                                    <div class="online-cfg-picker-menu-dir-card config" id="online-cfg-picker-menu-dir-card-config-${name}" data-path="${this.tempGitConfigParentDirData.path+"/"+configDirName}" data-url="${this.tempGitConfigParentDirData[configDirName]}">${configDirName}</div>
+                                    <div class="online-cfg-picker-menu-dir-card config" id="online-cfg-picker-menu-dir-card-config-${name}" data-path="${path}" data-url="${this.tempGitConfigParentDirData[configName]}">${name}</div>
                                 `
                             }).join("");
                             
@@ -4860,7 +4858,7 @@
                             }
 
                             // Re-render dashboard to reflect imported config
-                            try { this.removeSubjectCardFromSubjectSelection(); this.getGradesDatas(); this.renderContent(); } catch (e) {}
+                            try { const pickerMenu = document.getElementById("pickerMenu"); pickerMenu.classList.remove("show"); setTimeout(() => {pickerMenu.remove()}, 300); this.removeSubjectCardFromSubjectSelection(); this.getGradesDatas(); this.renderContent(); } catch (e) {}
 
                             resolve(parsed);
                         } catch (err) {
@@ -4879,10 +4877,15 @@
 
                     // If a JSON string was passed, try to parse directly
                     if (typeof file === 'string') {
-                        if (file.match(/https:\/\/api.github.com\/repos\/(.+)\/contents/)) {
-                            // treat as a url to send a request to
-                            // this.getConfigsFromRepo(file, () => {}, this.openOnlineCfgPicker)
-                            debugger;
+                        if (file.match(RegExp("https://raw.githubusercontent.com/(.+).json"))) {
+                            const xhttp = new XMLHttpRequest();
+                            xhttp.open("GET", file, true);
+                            xhttp.send();
+
+                            xhttp.onload = () => {
+                                try { handleText(xhttp.response); } catch (err) { reject(err); }
+                            }
+                            return;
                         }
                         else {
                             // treat as raw JSON string
