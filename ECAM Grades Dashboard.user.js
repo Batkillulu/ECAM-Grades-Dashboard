@@ -1679,7 +1679,7 @@
                                             this.tempGitConfigParentDirData[dirName] = url;
                                         }
                                         else if (!this.tempGitConfigParentDirData[dirName]) {
-                                            const pathSubArray = Object.values(pathArray).splice(0,hierarchyIndex);
+                                            const pathSubArray = Object.values(pathArray).splice(0,hierarchyIndex+1);
                                             this.tempGitConfigParentDirData[dirName] = {nbCfgs: 1, path: `Configs${pathSubArray.length>0 ? "/" : ""}` + pathSubArray.join("/").replace(/ /g, "%20")}
                                             this.tempGitConfigParentDirData = this.tempGitConfigParentDirData[dirName];
                                         }
