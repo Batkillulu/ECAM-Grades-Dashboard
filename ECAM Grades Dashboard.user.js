@@ -524,55 +524,59 @@
 
     //MARK: -
     class ECAMDashboard {
+
         constructor() {
-            this.grades = [];
-            this.semesters = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{}, 7:{}, 8:{}, 9:{}, 10:{}};
-            this.repo                   = "https://github.com/Batkillulu/ECAM-Grades-Dashboard";
-            this.repoAPI                = "https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/contents";
-            this.repoScriptRaw          = "https://raw.githubusercontents.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/ECAM-Grades-Dashboard.user.js";
-            this.fallbackRepo           = "https://github.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts";
-            this.fallbackRepoAPI        = "https://api.github.com/repos/Batkillulu/Miscelleneous_Tempermonkey_UserScripts";
-            this.fallbackRepoScriptRaw  = "https://raw.githubusercontents.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/ECAM-Grades-Dashboard.user.js";
-            
-            this.lastGitFetchState = -1;
-            this.getLastGitFetchState = (state, fallback) => {
-                this.lastGitFetchState = state;
-                if (state == 404) {
-                    this.getConfigsFromRepo("https://api.github.com/repos/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/contents", this.getLastGitFetchState, fallback)
-                }
-            };
-            this.gitFetchScanDoneArray = [];
-            this.tempGitConfigParentDirData = {};
-            this.gitConfigs = {
-                EENG:   {
-                    EENG1: {},
-                    EENG2: {},
-                    EENG3: {
-                        P2028: {
-                            Energy:      "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20-%20P2028%20-%20Energy.json",
-                            Mecha:       "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20-%20P2028%20-%20Mecha.json",
-                            Robotics:    "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20-%20P2028%20-%20Robotics.json",
-                            SupplyChain: "https://raw.githubusercontent.com/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20-%20P2028%20-%20SupplyChain.json",
-                            path: "Configs/EENG/EENG3/P2028",
-                            nbCfgs: 4, 
-                        },
-                        path: "Configs/EENG/EENG3",
-                        nbCfgs: 4, 
-                    },
-                    EENG4: {},
-                    EENG5: {},
-                    path: "Configs/EENG",
-                    nbCfgs: 4, 
-                },
-                AM:     {}, 
-                path: "Configs",
-                nbCfgs: 4,
-            };
-            
             this.now    = new Date().toISOString().replace(/\.(\d{3})/, "");    // Current date and time in ISO String, removing the milliseconds
             this.today  = new Date().toISOString().split('T')[0];               // Current date in ISO String
             this.ISOTimeOfLastUpdate            = localStorage.getItem("ECAM_DASHBOARD_ISO_TIME_OF_LAST_UPDATE")    || this.now;
             this.dateOfLastLoad                 = localStorage.getItem("ECAM_DASHBOARD_DATE_OF_LAST_LOAD")          || this.today;
+
+            this.grades = [];
+            this.semesters = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{}, 7:{}, 8:{}, 9:{}, 10:{}};
+            this.repo               = "https://github.com/Batkillulu/ECAM-Grades-Dashboard";
+            this.repoAPI            = "https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/contents";
+            this.repoScriptRaw      = "https://raw.githubusercontents.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/ECAM-Grades-Dashboard.user.js";
+            this.fallbackRepoApi    = "https://api.github.com/repos/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/contents";
+            
+            this.lastGitFetchState = -1;
+            this.getLastGitFetchState = (state, fallback) => {
+                this.lastGitFetchState = state;
+                if (state == 404) {     // Shouldn't reach this, since now the ECAM-Grades-Dashboard repo is public and its github API is accessible
+                    this.getConfigsFromRepo(this.fallbackRepoApi, this.getLastGitFetchState, fallback)
+                }
+            };
+            this.gitFetchScanDoneArray = [];
+            this.tempGitConfigParentDirData = {};
+            this.onlineConfigs                  = localStorage.getItem("ECAM_DASHBOARD_ONLINE_CONFIGS")             || {
+                Configs: {
+                    EENG:   {
+                        EENG1: {},
+                        EENG2: {},
+                        EENG3: {
+                            P2028: {
+                                Energy:      "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20-%20P2028%20-%20Energy.json",
+                                Mecha:       "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20-%20P2028%20-%20Mecha.json",
+                                Robotics:    "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20-%20P2028%20-%20Robotics.json",
+                                SupplyChain: "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20-%20P2028%20-%20SupplyChain.json",
+                                path: "Configs/EENG/EENG3/P2028",
+                                nbCfgs: 4, 
+                            },
+                            path: "Configs/EENG/EENG3",
+                            nbCfgs: 4, 
+                        },
+                        EENG4: {},
+                        EENG5: {},
+                        path: "Configs/EENG",
+                        nbCfgs: 4, 
+                    },
+                    AM:     {}, 
+                    path: "Configs",
+                    nbCfgs: 4,
+                },
+                nbCfgs: 4,
+                date: this.today,
+            };
+            
             this.configVersion = 2;
             this.ueConfig           = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_UE_CONFIG"))                 || {};
             this.sim                = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SIM_gradeS"))                || {};
@@ -581,6 +585,7 @@
 
             this.savedReadGrades    = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SAVED_READ_GRADES"))         || [] ;
             this.newGrades = [];
+
 
             this.defSem                         = localStorage.getItem("ECAM_DASHBOARD_DEFAULT_SEMESTER")           || "all";
             this.currentSemester = this.defSem;
@@ -596,7 +601,6 @@
             this.mobileVer = false;
             this.clientWidth = 1920;
 
-            // this.ueHeaderNoMove = true;
             this.selectedSubjectCards = [];
             this.selectedSubjectCardsSortedByUe = {};
             this.scrollToThisElem = "";
@@ -1109,6 +1113,10 @@
                 return `<img class="drag-icon for-${source}" data-targetid="${targetId}" data-type="${type}" draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/960px-Hamburger_icon.svg.png" alt="☰" style="height:${height}px; ${source.match(/-subject-card/) ? "border: 2px solid; border-radius: 8px;" : ""}">`
             }
 
+            updateAvailable() {
+
+            }
+
             // MARK: Set total coefs
             setGradesTableTotalCoef() {
                 const good="#10b981", meh="#e98c00", bad="#e90000", unknown="#7a7a7a";
@@ -1617,156 +1625,220 @@
 
 
 
-        //#region -REGION: async methods
+        //#region -REGION: Online Configs methods
             
-            async getConfigsFromRepo(repoUrl, callback, endActionCallback) {
+            getConfigsFromRepo(repoAPIUrl, callback, endActionCallback) {
                 let debug = false;
                 // debug = true;
 
-                let nope;
-                this.gitFetchScanDoneArray = [];
-                this.gitConfigs = {nbCfgs: 0, path: ""}
-
-                let xhttp = new XMLHttpRequest();
-                xhttp.open("GET", repoUrl, true);   // Fetch repo
+                
+                this.onlineConfigs = {Configs: {nbCfgs: 0, path: ""}, nbCfgs: 0, date: this.today};
+                
+                // Fetch repo's API data
+                const xhttp = new XMLHttpRequest();
+                xhttp.open("GET", repoAPIUrl, true);
                 xhttp.send();
                 if (debug) {debugger}
 
                 xhttp.onload = () => {
                     if (debug) {debugger}
-                    // If not working, try again with the test repo Miscelleneous_Tempermonkey_UserScripts
+                    // If couldn't find the repo's API data, try again with the test repo Miscelleneous_Tempermonkey_UserScripts
                     if (xhttp?.status == "404") {
                         callback(xhttp?.status, endActionCallback);
-                        return
+                        return;
                     }
                     else {
-                        callback(xhttp?.status);
+                        this.lastGitFetchState = xhttp?.status;
                     }
-                    nope = "No 'config' folder found in repo";
+                    
+                    const repoContent = JSON.parse(xhttp.response);
+                    if (debug) {debugger}
 
-                    Object.values(JSON.parse(xhttp.response)).forEach(dir => { // For every file in root
-                        if (debug) {debugger}
 
-                        if (dir?.name.match(/\bconfigs\b/i)) {
-                            // if the name of the dir is "configs"
-                            nope = undefined;
-                            if (debug) {debugger}
+                    repoContent.forEach(elem => {if (elem.name == "Configs" && elem.type == "dir") {
+                        const configsTreeUrl = repoAPIUrl.replace("/contents", "/git/trees/"+elem.sha+"?recursive=true");
+                        const configsTreeReq = new XMLHttpRequest();
+                        configsTreeReq.open("GET", configsTreeUrl, true);
+                        configsTreeReq.send();
 
-                            const newXhttp = new XMLHttpRequest();
-                            newXhttp.open("GET", dir?.url, true);
-                            newXhttp.send();
-                            newXhttp.onload = () => {
-                                Object.values(JSON.parse(newXhttp.response)).forEach((dir, index, array) => { // For every section
-                                    if (debug) {debugger}
+                        configsTreeReq.onload = () => {
+                            const configsTree = JSON.parse(configsTreeReq.response).tree;
+                            configsTree.forEach(dir => {
+                                if (dir?.type == "blob") {
+                                    const path      = dir.path;
+                                    const pathArray = path.split("/");
+
+                                    this.onlineConfigs.nbCfgs++;
+                                    this.onlineConfigs.Configs.nbCfgs++;
+                                    this.onlineConfigs.Configs.path = "Configs";
+                                    this.tempGitConfigParentDirData = this.onlineConfigs.Configs;
+                                    
+                                    pathArray.forEach((dirName, hierarchyIndex, pathArray) => {
+                                        if (hierarchyIndex == pathArray.length-1) {
+                                            const url = repoAPIUrl.replace("api.github.com/repos", "raw.githubusercontents.com").replace("/contents", "/refs/heads/main/") + pathArray.join("/").replace(/ /g, "%20");
+                                            this.tempGitConfigParentDirData[dirName] = url;
+                                        }
+                                        else if (!this.tempGitConfigParentDirData[dirName]) {
+                                            const pathSubArray = Object.values(pathArray).splice(0,hierarchyIndex);
+                                            this.tempGitConfigParentDirData[dirName] = {nbCfgs: 1, path: `Configs${pathSubArray.length>0 ? "/" : ""}` + pathSubArray.join("/").replace(/ /g, "%20")}
+                                            this.tempGitConfigParentDirData = this.tempGitConfigParentDirData[dirName];
+                                        }
+                                        else if (this.tempGitConfigParentDirData[dirName]) {
+                                            this.tempGitConfigParentDirData[dirName].nbCfgs++;
+                                            this.tempGitConfigParentDirData = this.tempGitConfigParentDirData[dirName];
+                                        }
+
+                                    })
+                                }
+                            })
+
+                            this.tempGitConfigParentDirData = undefined;
+                            localStorage.setItem("ECAM_DASHBOARD_ONLINE_CONFIGS", this.onlineConfigs);
+                            endActionCallback();
+                        };
+                    }})
+                }
+                
+                // let nope;
+                // this.gitFetchScanDoneArray = [];
+                // xhttp.onload = () => {
+                //     if (debug) {debugger}
+                //     // If not working, try again with the test repo Miscelleneous_Tempermonkey_UserScripts
+                //     if (xhttp?.status == "404") {
+                //         callback(xhttp?.status, endActionCallback);
+                //         return
+                //     }
+                //     else {
+                //         callback(xhttp?.status);
+                //     }
+                //     nope = "No 'config' folder found in repo";
+
+                //     Object.values(JSON.parse(xhttp.response)).forEach(dir => { // For every file in root
+                //         if (debug) {debugger}
+
+                //         if (dir?.name.match(/\bconfigs\b/i)) {
+                //             // if the name of the dir is "configs"
+                //             nope = undefined;
+                //             if (debug) {debugger}
+
+                //             const newXhttp = new XMLHttpRequest();
+                //             newXhttp.open("GET", dir?.url, true);
+                //             newXhttp.send();
+                //             newXhttp.onload = () => {
+                //                 Object.values(JSON.parse(newXhttp.response)).forEach((dir, index, array) => { // For every section
+                //                     if (debug) {debugger}
     
-                                    if (dir?.name.match(/\beeng\b|\bam\b/i)) {
-                                        this.gitConfigs.path = dir.path.split("/")[0];
-                                        this.gitConfigs[dir.name] = {nbCfgs: 0, path: dir.path};
-                                        if (debug) {debugger}
+                //                     if (dir?.name.match(/\beeng\b|\bam\b/i)) {
+                //                         this.onlineConfigs.Configs.path = dir.path.split("/")[0];
+                //                         this.onlineConfigs.Configs[dir.name] = {nbCfgs: 0, path: dir.path};
+                //                         if (debug) {debugger}
     
-                                        const newXhttp = new XMLHttpRequest();
-                                        newXhttp.open("GET", dir?.url, true);
-                                        newXhttp.send();
-                                        newXhttp.onload = () => {
-                                            Object.values(JSON.parse(newXhttp.response)).forEach((dir, index, array) => { // For every year
-                                                if (debug) {debugger}
+                //                         const newXhttp = new XMLHttpRequest();
+                //                         newXhttp.open("GET", dir?.url, true);
+                //                         newXhttp.send();
+                //                         newXhttp.onload = () => {
+                //                             Object.values(JSON.parse(newXhttp.response)).forEach((dir, index, array) => { // For every year
+                //                                 if (debug) {debugger}
     
-                                                if (dir?.name.match(/\beeng( |)(1|2|3|4|5)\b|\bam( |)(1|2|3|4|5)\b/i)) {
-                                                    const path = dir?.path?.split("/");
-                                                    this.gitConfigs[path[1]][path[2]] = {nbCfgs: 0, path: dir.path};
-                                                    if (debug) {debugger}
+                //                                 if (dir?.name.match(/\beeng( |)(1|2|3|4|5)\b|\bam( |)(1|2|3|4|5)\b/i)) {
+                //                                     const path = dir?.path?.split("/");
+                //                                     this.onlineConfigs.Configs[path[1]][path[2]] = {nbCfgs: 0, path: dir.path};
+                //                                     if (debug) {debugger}
                                                     
-                                                    const newXhttp = new XMLHttpRequest();
-                                                    newXhttp.open("GET", dir?.url, true);
-                                                    newXhttp.send();
-                                                    newXhttp.onload = () => {
-                                                        Object.values(JSON.parse(newXhttp.response)).forEach((dir, index, array) => { // For every prom
-                                                            if (debug) {debugger}
+                //                                     const newXhttp = new XMLHttpRequest();
+                //                                     newXhttp.open("GET", dir?.url, true);
+                //                                     newXhttp.send();
+                //                                     newXhttp.onload = () => {
+                //                                         Object.values(JSON.parse(newXhttp.response)).forEach((dir, index, array) => { // For every prom
+                //                                             if (debug) {debugger}
                                                             
-                                                            if (dir?.name.match(/\bP(\d{4})\b/i)) {
-                                                                const path = dir?.path?.split("/");
-                                                                this.gitConfigs[path[1]][path[2]][path[3]] = {nbCfgs: 0, path: dir.path};
-                                                                if (debug) {debugger}
+                //                                             if (dir?.name.match(/\bP(\d{4})\b/i)) {
+                //                                                 const path = dir?.path?.split("/");
+                //                                                 this.onlineConfigs.Configs[path[1]][path[2]][path[3]] = {nbCfgs: 0, path: dir.path};
+                //                                                 if (debug) {debugger}
                                                                 
-                                                                const newXhttp = new XMLHttpRequest();
-                                                                newXhttp.open("GET", dir?.url, true);
-                                                                newXhttp.send();
-                                                                newXhttp.onload = () => {
-                                                                    Object.values(JSON.parse(newXhttp.response)).forEach((dir, index, array) => { // For every pathway, or straight up the config itself
-                                                                        if (debug) {debugger}
+                //                                                 const newXhttp = new XMLHttpRequest();
+                //                                                 newXhttp.open("GET", dir?.url, true);
+                //                                                 newXhttp.send();
+                //                                                 newXhttp.onload = () => {
+                //                                                     Object.values(JSON.parse(newXhttp.response)).forEach((dir, index, array) => { // For every pathway, or straight up the config itself
+                //                                                         if (debug) {debugger}
                                                                         
-                                                                        if (dir?.type == "file" && dir?.name.match(/(.+).json/)) {
-                                                                            const path = dir?.path?.split("/");
-                                                                            const url = dir?.url?.replace("api.github.com/repos", "raw.githubusercontent.com")?.replace("/contents", "/refs/heads/main")?.replace("?ref=main", "");
+                //                                                         if (dir?.type == "file" && dir?.name.match(/(.+).json/)) {
+                //                                                             const path = dir?.path?.split("/");
+                //                                                             const url = dir?.url?.replace("api.github.com/repos", "raw.githubusercontent.com")?.replace("/contents", "/refs/heads/main")?.replace("?ref=main", "");
 
-                                                                            if (dir.name.match(/(.+).json/)[1].split(" - ").at(-1).match(/\bconfig\b/i)) { // is the file's name of format "EENG[X] - P[YYYY] - config.json"?
-                                                                                this.gitConfigs[path[1]][path[2]][path[3]]["__url__"] = url;
-                                                                                this.gitConfigs[path[1]][path[2]][path[3]].nbCfgs++;
-                                                                                this.gitConfigs[path[1]][path[2]].nbCfgs++;
-                                                                                this.gitConfigs[path[1]].nbCfgs++;
-                                                                                this.gitConfigs.nbCfgs++;
-                                                                                if (debug) {debugger}
-                                                                            }
-                                                                            else {// else, then it's a pathway's config
-                                                                                const pathwayName = dir.name.match(/(.+).json/)[1].split(" - ").at(-1);
-                                                                                this.gitConfigs[path[1]][path[2]][path[3]][pathwayName] = url;
-                                                                                this.gitConfigs[path[1]][path[2]][path[3]].nbCfgs++;
-                                                                                this.gitConfigs[path[1]][path[2]].nbCfgs++;
-                                                                                this.gitConfigs[path[1]].nbCfgs++;
-                                                                                this.gitConfigs.nbCfgs++;
-                                                                                if (debug) {debugger}
-                                                                            }
-                                                                        }
-                                                                        else {
-                                                                            console.warn("Configs\\"+this.cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path, was expecting a file with a .json extension or a folder with the name of a pathway")
-                                                                        }
+                //                                                             if (dir.name.match(/(.+).json/)[1].split(" - ").at(-1).match(/\bconfig\b/i)) { // is the file's name of format "EENG[X] - P[YYYY] - config.json"?
+                //                                                                 this.onlineConfigs.Configs[path[1]][path[2]][path[3]]["__url__"] = url;
+                //                                                                 this.onlineConfigs.Configs[path[1]][path[2]][path[3]].nbCfgs++;
+                //                                                                 this.onlineConfigs.Configs[path[1]][path[2]].nbCfgs++;
+                //                                                                 this.onlineConfigs.Configs[path[1]].nbCfgs++;
+                //                                                                 this.onlineConfigs.Configs.nbCfgs++;
+                //                                                                 this.onlineConfigs.nbCfgs++;
+                //                                                                 if (debug) {debugger}
+                //                                                             }
+                //                                                             else {// else, then it's a pathway's config
+                //                                                                 const pathwayName = dir.name.match(/(.+).json/)[1].split(" - ").at(-1);
+                //                                                                 this.onlineConfigs.Configs[path[1]][path[2]][path[3]][pathwayName] = url;
+                //                                                                 this.onlineConfigs.Configs[path[1]][path[2]][path[3]].nbCfgs++;
+                //                                                                 this.onlineConfigs.Configs[path[1]][path[2]].nbCfgs++;
+                //                                                                 this.onlineConfigs.Configs[path[1]].nbCfgs++;
+                //                                                                 this.onlineConfigs.Configs.nbCfgs++;
+                //                                                                 this.onlineConfigs.nbCfgs++;
+                //                                                                 if (debug) {debugger}
+                //                                                             }
+                //                                                         }
+                //                                                         else {
+                //                                                             console.warn("Configs\\"+this.cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path, was expecting a file with a .json extension or a folder with the name of a pathway")
+                //                                                         }
 
 
-                                                                        if (index == array.length-1 && endActionCallback instanceof Function) {
-                                                                            let end = true;
-                                                                            this.gitFetchScanDoneArray.forEach(dirIsDone => {
-                                                                                if (!dirIsDone) {
-                                                                                    end = false;
-                                                                                }
-                                                                            })
+                //                                                         if (index == array.length-1 && endActionCallback instanceof Function) {
+                //                                                             let end = true;
+                //                                                             this.gitFetchScanDoneArray.forEach(dirIsDone => {
+                //                                                                 if (!dirIsDone) {
+                //                                                                     end = false;
+                //                                                                 }
+                //                                                             })
     
-                                                                            if (end) {endActionCallback()}
-                                                                        }
-                                                                    })
+                //                                                             if (end) {endActionCallback()}
+                //                                                         }
+                //                                                     })
 
-                                                                };
+                //                                                 };
                                                                 
-                                                                if (index == array.length-1) {this.gitFetchScanDoneArray.push(true)}
+                //                                                 if (index == array.length-1) {this.gitFetchScanDoneArray.push(true)}
 
-                                                            }
-                                                            else {
-                                                                console.warn("Configs\\"+this.cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path, was expecting the name of the prom, like 'P2028'")
-                                                            }
-                                                        })
-                                                    };
+                //                                             }
+                //                                             else {
+                //                                                 console.warn("Configs\\"+this.cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path, was expecting the name of the prom, like 'P2028'")
+                //                                             }
+                //                                         })
+                //                                     };
 
-                                                    if (index == array.length-1) {this.gitFetchScanDoneArray.push(true)}
+                //                                     if (index == array.length-1) {this.gitFetchScanDoneArray.push(true)}
 
-                                                }
-                                                else {
-                                                    console.warn("Configs\\"+this.cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path, was expecting the name of a year, like 'eeng3'")
-                                                }
-                                            })
-                                        };
+                //                                 }
+                //                                 else {
+                //                                     console.warn("Configs\\"+this.cfgPathArr.join("\\")+"\\"+dir?.name+" isn't an expected path, was expecting the name of a year, like 'eeng3'")
+                //                                 }
+                //                             })
+                //                         };
 
-                                        if (index == array.length-1) {this.gitFetchScanDoneArray.push(true)}
-                                    }
-                                    else {
-                                        console.warn("'Configs\\"+dir?.name+"' isn't an expected path, was expecting something the name of a section, like 'eeng'")
-                                    }
+                //                         if (index == array.length-1) {this.gitFetchScanDoneArray.push(true)}
+                //                     }
+                //                     else {
+                //                         console.warn("'Configs\\"+dir?.name+"' isn't an expected path, was expecting something the name of a section, like 'eeng'")
+                //                     }
     
-                                })
-                            }
-                        }
-                    })
+                //                 })
+                //             }
+                //         }
+                //     })
 
-                    if (nope) {console.warn(nope)}
-                };
+                //     if (nope) {console.warn(nope)}
+                // };
+
             }
 
             async runUpdateCheck() {
@@ -1788,6 +1860,7 @@
 
         // MARK: -INIT
         init() {
+
             if (this.dateOfLastLoad < this.today) {
                 this.runUpdateCheck();
             }
@@ -4584,8 +4657,9 @@
                     setTimeout(() => {importMenu.classList.add("show")}, 10)
                     importFile.onclick   = () => this.importData();
                     importOnline.onclick = () => {
+                        if (this.onlineConfigs)
                         // this.openOnlineCfgPicker()
-                        this.getConfigsFromRepo("https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/contents", this.getLastGitFetchState, () => {this.openOnlineCfgPicker()})
+                        this.getConfigsFromRepo(this.fallbackRepoApi, this.getLastGitFetchState, () => this.openOnlineCfgPicker())
                     };
                 }
                 else if (importMenu.classList.contains("show") || open == false) {
@@ -4646,67 +4720,82 @@
                             targetTree.classList.add("show");
                         }
                         else if (e.target.classList.contains("on") && url) {
-                            const xhttp = new XMLHttpRequest();
-                            xhttp.open("GET", url, true);
-                            xhttp.send();
-                            xhttp.onload = () => {
-                                closePickerMenuFunc();
-                                setTimeout(() => {
-                                    this.importData(xhttp.response)
-                                }, 100);
-                            };
+                            this.importData(url)
+                            // const xhttp = new XMLHttpRequest();
+                            // xhttp.open("GET", url, true);
+                            // xhttp.send();
+
+                            // xhttp.onload = () => {
+                            //     closePickerMenuFunc();
+                            //     setTimeout(() => {
+                            //         this.importData(xhttp.response)
+                            //     }, 100);
+                            // };
                         }
                     };
                 })
             }
 
             generateOnlineCfgPickerMenuDirTree(type="section") {
+                // Creating an array containing all the properties' value of this.onlineConfigs.Configs that are objects (so that have a descendance) with at least one property: they are the data of the section folders
+                const sectionsArray = Object.values(this.onlineConfigs.Configs).map(value => {if (value instanceof Object && Object.keys(value).length>0) {return value}}).filter(value => {return value});
+
+
                 let html = type == "section" ? `
-                    <div class="online-cfg-picker-menu-dir-tree ${type} show" data-path="${this.gitConfigs.path}">
-                        <div class="online-cfg-picker-menu-dir-tree-header">Nb configs: ${this.gitConfigs.nbCfgs}</div>
+                    <div class="online-cfg-picker-menu-dir-tree ${type} show" data-path="${this.onlineConfigs.Configs.path}">
+                        <div class="online-cfg-picker-menu-dir-tree-header">Nb configs: ${this.onlineConfigs.Configs.nbCfgs}</div>
                         <div class="online-cfg-picker-menu-dir-tree-body">
                 ` : "";
 
-                html += Object.values(this.gitConfigs).map((value, index, array) => {if (value instanceof Object && Object.keys(value).length>0) {return value}}).filter(value => {return value}).map(dirData => {                     // Dir: Section
-                    const name = dirData.path.split("/").at(-1);
+                html += sectionsArray.map(sectionDirData => {       // Dir: Section
+                    // Creating an array containing all the properties' value of sectionDirData that are objects (so that have a descendance) with at least one property: they are the data of the year folders
+                    const yearsArray = Object.values(sectionDirData).map(value => {if (value instanceof Object && Object.keys(value).length>0) {return value}}).filter(value => {return value});
+                    
+                    const name = sectionDirData.path.split("/").at(-1);
+                    
+                    
                     let out = type == "year" ? `
-                        <div class="online-cfg-picker-menu-dir-tree ${type}" data-path="${dirData.path}">
-                            <div class="online-cfg-picker-menu-dir-tree-header">Nb configs: ${dirData.nbCfgs}</div>
-                            <div class="online-cfg-picker-menu-dir-tree-body">
+                    <div class="online-cfg-picker-menu-dir-tree ${type}" data-path="${sectionDirData.path}">
+                    <div class="online-cfg-picker-menu-dir-tree-header">Nb configs: ${sectionDirData.nbCfgs}</div>
+                    <div class="online-cfg-picker-menu-dir-tree-body">
                     ` : "";
-
+                    
                     out += type == "section"
                     ? `
-                        <div class="online-cfg-picker-menu-dir-card ${type}" id="online-cfg-picker-menu-dir-card-section-${name}" data-path="${dirData.path}">${name}</div>
+                    <div class="online-cfg-picker-menu-dir-card ${type}" id="online-cfg-picker-menu-dir-card-section-${name}" data-path="${sectionDirData.path}">${name}</div>
                     `
-                    : Object.values(dirData).map(value => {if (value instanceof Object && Object.keys(value).length>0) {return value}}).filter(value => {return value}).map(dirData => {               // Dir: Year
-                        const name = dirData.path.split("/").at(-1);
+                    : yearsArray.map(yearDirData => {               // Dir: Year
+                        // Creating an array containing all the properties' value of yearDirData that are objects (so that have a descendance) with at least one property: they are the data of the prom folders
+                        const promsArray = Object.values(yearDirData).map(value => {if (value instanceof Object && Object.keys(value).length>0) {return value}}).filter(value => {return value});
+                        const name = yearDirData.path.split("/").at(-1);
                         let out = type == "prom" ? `
-                            <div class="online-cfg-picker-menu-dir-tree ${type}" data-path="${dirData.path}">
-                                <div class="online-cfg-picker-menu-dir-tree-header">Nb configs: ${dirData.nbCfgs}</div>
-                                <div class="online-cfg-picker-menu-dir-tree-body">
+                        <div class="online-cfg-picker-menu-dir-tree ${type}" data-path="${yearDirData.path}">
+                        <div class="online-cfg-picker-menu-dir-tree-header">Nb configs: ${yearDirData.nbCfgs}</div>
+                        <div class="online-cfg-picker-menu-dir-tree-body">
                         ` : "";
-
+                        
                         out += type == "year"
                         ? `
-                            <div class="online-cfg-picker-menu-dir-card ${type}" id="online-cfg-picker-menu-dir-card-section-${name}" data-path="${dirData.path}">${name}</div>
+                        <div class="online-cfg-picker-menu-dir-card ${type}" id="online-cfg-picker-menu-dir-card-section-${name}" data-path="${yearDirData.path}">${name}</div>
                         `
-                        : Object.values(dirData).map(value => {if (value instanceof Object && Object.keys(value).length>0) {return value}}).filter(value => {return value}).map(dirData => {           // Dir: Prom
-                            const name = dirData.path.split("/").at(-1);
-                            this.tempGitConfigParentDirData = dirData;
+                        : promsArray.map(promDirData => {           // Dir: Prom
+                            // Creating an array containing all the properties' value of promDirData that are objects (so that have a descendance) with at least one property: they are the data of the configs
+                            const configsArray = Object.keys(yearDirData).map(key => {if (key != "nbCfgs" && key!= "path") {return key}}).filter(value => {return value});
+                            const name = promDirData.path.split("/").at(-1);
+                            this.tempGitConfigParentDirData = promDirData;
                             let out = type == "config" ? `
-                            <div class="online-cfg-picker-menu-dir-tree ${type}" data-path="${dirData.path}">
-                                <div class="online-cfg-picker-menu-dir-tree-header">Nb configs: ${dirData.nbCfgs}</div>
+                            <div class="online-cfg-picker-menu-dir-tree ${type}" data-path="${promDirData.path}">
+                                <div class="online-cfg-picker-menu-dir-tree-header">Nb configs: ${promDirData.nbCfgs}</div>
                                 <div class="online-cfg-picker-menu-dir-tree-body">
                             ` : "";
                             
                             out += type == "prom" ? `
-                                <div class="online-cfg-picker-menu-dir-card ${type}" id="online-cfg-picker-menu-dir-card-section-${name}" data-path="${dirData.path}">${name}</div>
+                                <div class="online-cfg-picker-menu-dir-card ${type}" id="online-cfg-picker-menu-dir-card-section-${name}" data-path="${promDirData.path}">${name}</div>
                             `
-                            : Object.keys(dirData).map(key => {if (key != "nbCfgs" && key!= "path") {return key}}).filter(value => {return value}).map(dirName => {     // Dir: Config
+                            : configsArray.map(configDirName => {   // Dir: Config
                                 const path = this.tempGitConfigParentDirData.path, name = path.split("/").at(-1);
                                 return `
-                                    <div class="online-cfg-picker-menu-dir-card config" id="online-cfg-picker-menu-dir-card-config-${name}" data-path="${this.tempGitConfigParentDirData.path+"/"+dirName}" data-url="${this.tempGitConfigParentDirData[dirName]}">${dirName}</div>
+                                    <div class="online-cfg-picker-menu-dir-card config" id="online-cfg-picker-menu-dir-card-config-${name}" data-path="${this.tempGitConfigParentDirData.path+"/"+configDirName}" data-url="${this.tempGitConfigParentDirData[configDirName]}">${configDirName}</div>
                                 `
                             }).join("");
                             
@@ -4792,7 +4881,8 @@
                     if (typeof file === 'string') {
                         if (file.match(/https:\/\/api.github.com\/repos\/(.+)\/contents/)) {
                             // treat as a url to send a request to
-                            this.getConfigsFromRepo(file, () => {}, () => {this.openOnlineCfgPicker()})
+                            // this.getConfigsFromRepo(file, () => {}, this.openOnlineCfgPicker)
+                            debugger;
                         }
                         else {
                             // treat as raw JSON string
