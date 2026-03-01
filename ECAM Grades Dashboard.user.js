@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.0
+// @version      2.0.0
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/group/education/notes*
@@ -216,8 +216,17 @@
 
         //#region: -DROP FIELDS REGION
             styles += `
-                .drop-field     { display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 20px; mix-blend-mode: multiply; overflow: clip; user-select: none; }
+                .drop-field     { display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 20px; overflow: clip; user-select: none; }
                 `;
+
+            // MARK: scroll fields
+            styles += `
+                .scroll-field           { display: flex; flex-direction: column; mix-blend-mode: multiply; position: fixed; left: 0px; user-select: none; width: 100%; height: 80px; z-index: 1000; transition: all 0.3s ease; }
+                .scroll-field.up        { top:   -125px; background: linear-gradient(  0deg, #b6d0ff00 0%, #5c95ff 100%); }
+                .scroll-field.down      { bottom:-125px; background: linear-gradient(180deg, #b6d0ff00 0%, #5c95ff 100%); }
+                .scroll-field.up.show   { top:      0px; opacity: 0.5; }
+                .scroll-field.down.show { bottom:   0px; opacity: 0.5; }
+            `;
                 
 
             // MARK: drop create fields
@@ -240,7 +249,7 @@
 
                 .drop-field-create-ue-hitbox                    { position: fixed; top: 50px; right:0px; height: calc(100% - 100px); width: 0%; border-radius: 20px 0px 0px 20px; transition: all 0.2s ease; }
                 .drop-field-create-ue-hitbox.show               { width: 15%; border-width: 2px 0px 2px 2px; cursor: pointer; z-index: 302; }
-                `;
+            `;
                 
 
             // MARK: drop remove fields
@@ -266,7 +275,7 @@
 
                 .drop-field-remove-from-ue-hitbox                    { position: fixed; top: 50px; left:0px; height: calc(100% - 100px); width: 0%; border-radius: 0px 20px 20px 0px; transition: all 0.2s ease; }
                 .drop-field-remove-from-ue-hitbox.show               { width: 15%; border-width: 2px 2px 2px 0px; cursor: pointer; z-index: 302; }
-                `;
+            `;
                 
 
             // MARK: drop insert fields
@@ -562,10 +571,12 @@
     class ECAMDashboard {
 
         constructor() {
+            // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
+            this.scriptVersion = "2.0.0";
+
             this.now    = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
             this.hour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
             this.today  = new Date().toISOString().split('T')[0];                                                   // Current date in ISO String
-            this.ISOTimeOfLastUpdate            = localStorage.getItem("ECAM_DASHBOARD_ISO_TIME_OF_LAST_UPDATE")    || this.now();
             this.dateOfLastLoad                 = localStorage.getItem("ECAM_DASHBOARD_DATE_OF_LAST_LOAD")          || this.today;
 
             this.grades     = [];
@@ -578,16 +589,9 @@
             this.repoAPI            = "https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard";
             this.repoContentsAPI    = "https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/contents";
             this.repoMainBranchAPI  = "https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/branches/main";
-            this.repoScriptRaw      = "https://github.com/Batkillulu/ECAM-Grades-Dashboard/raw/refs/heads/main/ECAM%20Grades%20Dashboard.user.js";
+            this.repoScriptRaw      = "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/ECAM%20Grades%20Dashboard.user.js";
             this.fallbackRepoApi    = "https://api.github.com/repos/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/contents";
             
-            this.lastGitFetchState = -1;
-            this.getLastGitFetchState = (state, fallback) => {
-                this.lastGitFetchState = state;
-                if (state == 404) {     // Shouldn't reach this, since now the ECAM-Grades-Dashboard repo is public and its github API is accessible
-                    this.getConfigsFromRepo(this.repoContentsAPI, this.getLastGitFetchState, fallback)
-                }
-            };
             this.gitFetchScanDoneArray = [];
             this.tempGitConfigParentDirData = {};
             this.onlineConfigs                  = localStorage.getItem("ECAM_DASHBOARD_ONLINE_CONFIGS")             || {
@@ -636,6 +640,7 @@
             this.tempSelection = {};
             this.draggedSubjId = "";
             this.editMode = false;
+            this.pinDockbar = false;
 
             this.mobileVer = false;
             this.clientWidth = 1920;
@@ -1666,7 +1671,7 @@
 
         //#region -REGION: Online methods
             
-            getConfigsFromRepo(repoAPIUrl, callback, endActionCallback) {
+            getConfigsFromRepo(repoAPIUrl, endActionCallback) {
 
                 
                 this.onlineConfigs = {Configs: {nbCfgs: 0, path: ""}, nbCfgs: 0, date: this.today};
@@ -1678,12 +1683,9 @@
 
                 xhttp.onload = () => {
                     // If couldn't find the repo's API data, try again with the test repo Miscelleneous_Tempermonkey_UserScripts
-                    if (xhttp?.status == "404") {
-                        callback(xhttp?.status, endActionCallback);
+                    if (xhttp?.status != "200") {
+                        alert("A problem has occured... this configuration file isn't accessible anymore? Let the devs!");
                         return;
-                    }
-                    else {
-                        this.lastGitFetchState = xhttp?.status;
                     }
                     
                     const repoContent = JSON.parse(xhttp.response);
@@ -1743,15 +1745,12 @@
 
             async runUpdateCheck() {
                 const xhttp = new XMLHttpRequest(); 
-                xhttp.open("GET", this.repoMainBranchAPI, true); 
+                xhttp.open("GET", this.repoScriptRaw, true); 
                 xhttp.send(); 
                 xhttp.onload = () => {
-                    const resp = JSON.parse(xhttp.response);
+                    const scriptGitVersion = xhttp.response.match(/\/\/ @version( +)(\d+(\.\d+|\.|)+)/)[2];
                     
-                    if (resp.commit.commit.committer.date > this.ISOTimeOfLastUpdate) {
-                        this.ISOTimeOfLastUpdate = resp.commit.commit.committer.date;
-                        localStorage.setItem("ECAM_DASHBOARD_ISO_TIME_OF_LAST_UPDATE", this.ISOTimeOfLastUpdate)
-
+                    if (scriptGitVersion > this.scriptVersion) {
                         this.updateAvailable();
                     }
     
@@ -1910,6 +1909,8 @@
                     </div>
                 </div>
 
+                <div class="scroll-field up${this.selectedSubjectCards.length > 0 ? " show" : ""}"${document.body.classList.contains("lfr-dockbar-pinned") ? ` style="top: 45px"` : ""}></div>
+
                 <div class="drop-field remove-from-ue${this.selectedSubjectCards.length > 0 ? " show" : ""}">
                     <div class="drop-field-remove-from-ue-text top${this.lang == "fr" ? " fr" : " en"}"></div>
                     <div class="drop-field-remove-from-ue-minus">-</div>
@@ -1919,12 +1920,15 @@
 
                 <div class="content-area" id="contentArea"></div>
 
-                <div class="drop-field create-ue${this.lang == "fr" ? " fr" : " en"}${this.selectedSubjectCards.length > 0 ? " show" : ""}">
-                    <div class="drop-field-create-ue-text top${this.lang == "fr" ? " fr" : " en"}"></div>
+                <div class="drop-field create-ue ${this.lang == "fr" ? "fr" : "en"}${this.selectedSubjectCards.length > 0 ? " show" : ""}">
+                    <div class="drop-field-create-ue-text top ${this.lang == "fr" ? "fr" : "en"}"></div>
                     <div class="drop-field-create-ue-plus">+</div>
-                    <div class="drop-field-create-ue-text bottom${this.lang == "fr" ? " fr" : " en"}"></div>
+                    <div class="drop-field-create-ue-text bottom ${this.lang == "fr" ? "fr" : "en"}"></div>
                     <div class="drop-field-create-ue-hitbox"></div>
                 </div>
+
+                <div class="scroll-field down${this.selectedSubjectCards.length > 0 ? " show" : ""}"></div>
+
                 <div class="intranet-collapse"><div class="intranet-text"><div class="intranet-toggle collapse-icon">▲</div><div class="semester-name"> <div class="intranet-subtext"></div> </div><div class="intranet-toggle collapse-icon">▲</div></div></div>
                 `;
 
@@ -2758,6 +2762,17 @@
                     }
                 };
 
+                document.querySelector(".aui-toolbar").onclick = () => {
+                    if (document.body.classList.contains("lfr-dockbar-pinned")) {
+                        this.pinDockbar = true;
+                        document.querySelector(".scroll-field.up").style.transform = "translateY(45px)";
+                    }
+                    else {
+                        this.pinDockbar = false;
+                        document.querySelector(".scroll-field.up").style.transform = "";
+                    }
+                }
+
                 
 
 
@@ -3166,6 +3181,8 @@
                             dropFieldAddHitbox.classList.remove("show");
                             dropFieldRemove.classList.remove("show");
                             dropFieldRemoveHitbox.classList.remove("show");
+                            document.querySelector(".scroll-field.up")  .classList.remove("show");
+                            document.querySelector(".scroll-field.down").classList.remove("show");
                             this.removeSubjectCardFromSubjectSelection();
                         }
                         
@@ -3295,27 +3312,28 @@
             // #region Dragged element events
 
             draggedElementOnDragStartEvent(e, {draggedElement, card}) {
+                if (e.target.classList.contains("any-input")) {return};
+
                 if (card.classList.contains("subject-card")) {
                     this.currentlyDraggedElement = draggedElement;
                     this.currentlyDraggedCard = card;
-                    if (e.target.classList.contains("any-input")) {return};
                     this.currentlyDraggedCard.style.width = "50%";
 
                     if (this.currentlyDraggedCard.classList.contains("unclassified")) {
-                        this.currentlyDraggedCard.querySelector(".grades-table").style.display = "none";
-                        this.currentlyDraggedCard.querySelector(".subject-card-header").style.border = "none";
-                        this.currentlyDraggedCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 20px 20px";
+                        this.currentlyDraggedCard.querySelector(".grades-table")        .style.display = "none";
+                        this.currentlyDraggedCard.querySelector(".subject-card-header") .style.border = "none";
+                        this.currentlyDraggedCard.querySelector(".subject-card-header") .style.borderRadius = "20px 20px 20px 20px";
                         
                     } 
                     else if (this.currentlyDraggedCard.classList.contains("compact")) {
-                        this.currentlyDraggedCard.querySelector(".grades-table-coef").style.display = "none";
+                        this.currentlyDraggedCard.querySelector(".grades-table-coef")   .style.display = "none";
                     }
                     else {
-                        this.currentlyDraggedCard.querySelector(".subject-card-header").children[0].style.width =                           "50%";
-                        this.currentlyDraggedCard.querySelector(".subject-card-header").querySelector(".grades-table-coef").style.width =   "50%";
-                        this.currentlyDraggedCard.querySelector(".grades-table").style.display = "none";
-                        this.currentlyDraggedCard.querySelector(".subject-card-header").style.borderBottom = "none";
-                        this.currentlyDraggedCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 20px 20px";
+                        this.currentlyDraggedCard.querySelector(".subject-card-header") .children[0].style.width =                           "50%";
+                        this.currentlyDraggedCard.querySelector(".subject-card-header") .querySelector(".grades-table-coef").style.width =   "50%";
+                        this.currentlyDraggedCard.querySelector(".grades-table")        .style.display = "none";
+                        this.currentlyDraggedCard.querySelector(".subject-card-header") .style.borderBottom = "none";
+                        this.currentlyDraggedCard.querySelector(".subject-card-header") .style.borderRadius = "20px 20px 20px 20px";
                     }
 
                     document.querySelectorAll(".grades-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
@@ -3324,6 +3342,8 @@
                     document.querySelector(".drop-field-create-ue-hitbox")      .classList.add("show");
                     document.querySelector(".drop-field.remove-from-ue")        .classList.add("show");
                     document.querySelector(".drop-field-remove-from-ue-hitbox") .classList.add("show");
+                    document.querySelector(".scroll-field.up")                  .classList.add("show");
+                    document.querySelector(".scroll-field.down")                .classList.add("show");
 
                     document.querySelectorAll(".drop-ue-card-insert-plus,  .drop-subject-card-insert-plus ").forEach(plus  => {plus.classList.remove("show");})
                     document.querySelectorAll(".drop-ue-card-insert-arrow, .drop-subject-card-insert-arrow").forEach(arrow => {arrow.classList.add("show");})
@@ -3396,6 +3416,9 @@
                     ueCardElems.forEach(elem => {elem.classList.add("collapse")})
                     this.currentlyDraggedCard.classList.add("collapse");
 
+                    document.querySelector(".scroll-field.up")                  .classList.add("show");
+                    document.querySelector(".scroll-field.down")                .classList.add("show");
+
                     this.waitingForLastTimeoutToFinish = true;
                     setTimeout(() => {
                         upperInsertField.style.display = "none";
@@ -3446,6 +3469,8 @@
                         document.querySelector(".drop-field-create-ue-hitbox")      .classList.remove("show");
                         document.querySelector(".drop-field.remove-from-ue")        .classList.remove("show");
                         document.querySelector(".drop-field-remove-from-ue-hitbox") .classList.remove("show");
+                        document.querySelector(".scroll-field.up")                  .classList.remove("show");
+                        document.querySelector(".scroll-field.down")                .classList.remove("show");
 
                         document.querySelectorAll(".drop-ue-card-insert-plus,  .drop-subject-card-insert-plus ").forEach(plus  => {plus.classList.add("show");})
                         document.querySelectorAll(".drop-ue-card-insert-arrow, .drop-subject-card-insert-arrow").forEach(arrow => {arrow.classList.remove("show");})
@@ -3525,6 +3550,8 @@
                     const ue    = card.dataset.ue;
                     const index = card.dataset.index;
                     const ueCardElems = card.querySelectorAll(".ue-card, .ue-header, .ue-info, .ue-card-content, .ue-details");
+                    document.querySelector(".scroll-field.up")  .classList.remove("show");
+                    document.querySelector(".scroll-field.down").classList.remove("show");
 
                     const upperInsertField = document.querySelector(`.drop-field.insert-field.ue[data-semester="${sem}"][data-index="${index}"]`)
                     const lowerInsertField = document.querySelector(`.drop-field.insert-field.ue[data-semester="${sem}"][data-index="${parseInt(index)+1}"]`)
@@ -3702,6 +3729,8 @@
                 document.querySelector(".drop-field-create-ue-hitbox")      .classList.add("show");
                 document.querySelector(".drop-field.remove-from-ue")        .classList.add("show");
                 document.querySelector(".drop-field-remove-from-ue-hitbox") .classList.add("show");
+                document.querySelector(".scroll-field.up")                  .classList.add("show");
+                document.querySelector(".scroll-field.down")                .classList.add("show");
 
                 e.dataTransfer.effectAllowed = "link";
                 e.dataTransfer.setDragImage(document.getElementById("emptyDiv"), 0, 0);
@@ -3730,6 +3759,9 @@
                         selectedSubjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
                     }
                 })
+                
+                document.querySelector(".scroll-field.up")  .classList.remove("show");
+                document.querySelector(".scroll-field.down").classList.remove("show");
             }
 
             // #endregion
@@ -4175,6 +4207,8 @@
                 dropFieldAddHitbox.classList.add("show");
                 dropFieldRemove.classList.add("show");
                 dropFieldRemoveHitbox.classList.add("show");
+                document.querySelector(".scroll-field.up")  .classList.add("show");
+                document.querySelector(".scroll-field.down").classList.add("show");
                 document.querySelector(".semester-content").classList.add("dragging");
 
                 dragIcon.outerHTML = `<div class="tick-icon for-${type}-subject-card" data-type="${type}">✔</div>`;
@@ -4302,6 +4336,12 @@
                             this.attachInsertFieldHitboxEventListeners(insertFieldHitbox)
                         })
                     }
+                }
+
+
+                // MARK: attach scroll fields events
+                attachScrollFieldsEventListeners() {
+
                 }
 
 
@@ -4720,7 +4760,7 @@
                     importFile.onclick   = () => this.importData();
                     importOnline.onclick = () => {
                         if (this.onlineConfigs)
-                        this.getConfigsFromRepo(this.repoContentsAPI, this.getLastGitFetchState, () => this.openOnlineCfgPicker())
+                        this.getConfigsFromRepo(this.repoContentsAPI, () => this.openOnlineCfgPicker())
                     };
                 }
                 else if (importMenu.classList.contains("show") || open == false) {
