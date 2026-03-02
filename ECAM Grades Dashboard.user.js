@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.0.0
+// @version      2.0.1
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/group/education/notes*
@@ -10,7 +10,7 @@
 // @license      AGPL-3.0; Commercial license available
 // ==/UserScript==
 //
-// Copyright (C) 2025 Maxence Leroux & Baptiste Jaquin
+// Copyright (C) 2026 Baptiste Jaquin & Maxence Leroux
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published
@@ -18,6 +18,10 @@
 //
 // Free for individual student use.
 // Institutional or official use requires a commercial license.
+// 
+// Don't hesitate to contact us, at either:
+//  - baptiste.jacquin@ecam.fr
+//  - maxence.leroux@ecam.fr
 
 
 (function() {
@@ -63,12 +67,7 @@
             
 
             .online-cfg-picker-menu         { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 20%; display: flex; flex-direction: column; justify-content: flex-start; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; z-index: 1000; border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0; transition: all 0.3s ease; }
-            .online-cfg-picker-menu.show    { 
-                height: calc(100% - 60px); width: calc(100% - 60px); 
-                top: 30px; left: 30px; 
-                border: 8px solid #ffffff; 
-                opacity: 1;
-            }
+            .online-cfg-picker-menu.show    { height: calc(100% - 60px); width: calc(100% - 60px); top: 30px; left: 30px; border: 8px solid #ffffff; opacity: 1; }
             .online-cfg-picker-menu-header          { display: flex; justify-content: flex-end; height: 40px; align-items: center; }
             .online-cfg-picker-menu-close-btn           { display: flex; justify-content: center; align-items: center; width: 30px; height: 30px; border-radius: 15px; border: 2px solid; font-size: 20px; user-select: none; cursor: pointer; margin-right: 3px; transition: all 0.2s ease; }
             .online-cfg-picker-menu-close-btn:hover     { width: 40px; height: 40px; border-radius: 20px; font-size: 30px; margin-right: -2px; gap: 5px; }
@@ -80,11 +79,12 @@
             .online-cfg-picker-menu-dir-tree.year       { z-index: 1003; }
             .online-cfg-picker-menu-dir-tree.prom       { z-index: 1002; }
             .online-cfg-picker-menu-dir-tree.config     { z-index: 1001; }
-            .online-cfg-picker-menu-dir-tree-header     { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 20px; width: 100%; font-size: 15px; padding: 5px; }
+            .online-cfg-picker-menu-dir-tree-header     { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; overflow: clip; text-wrap-mode: nowrap; font-size: 20px; font-weight: 800; border-bottom-width: 2px; border-bottom-style: solid; padding: 5px; }
+            .online-cfg-picker-menu-dir-tree-nb-cfgs    { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; overflow: clip; text-wrap-mode: nowrap; font-size: 15px; padding: 5px; }
             .online-cfg-picker-menu-dir-tree-body       { display: flex; flex-direction: column; justify-content: center; align-items: center; height: calc(100% - 20px); width: 95%; }
 
-            .online-cfg-picker-menu-dir-card                { display: flex; justify-content: center; align-items: center; height: 40px; width: 90%; position: relative; border-radius: 16px; border: 2px solid; background: white; cursor: pointer; overflow: clip; padding: 5px; margin: 5px 0px; user-select: none; transition: all 0.3s ease; }
-            .online-cfg-picker-menu-dir-card.on             { width: 100%; border-radius: 16px; background: #7c85ff; }
+            .online-cfg-picker-menu-dir-card            { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 40px; width: 90%; position: relative; border-radius: 16px; border: 2px solid; background: white; cursor: pointer; overflow: clip; padding: 5px; margin: 5px 0px; user-select: none; transition: all 0.3s ease; }
+            .online-cfg-picker-menu-dir-card.on         { width: 100%; border-radius: 16px; background: #7c85ff; }
 
             
             .header-actions                 { display: flex; gap: 12px; }
@@ -579,7 +579,7 @@
             this.now    = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
             this.hour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
             this.today  = new Date().toISOString().split('T')[0];                                                   // Current date in ISO String
-            this.dateOfLastLoad                 = localStorage.getItem("ECAM_DASHBOARD_DATE_OF_LAST_LOAD")          || this.today;
+            this.dateOfLastLoad                 = localStorage.getItem("ECAM_DASHBOARD_DATE_OF_LAST_LOAD")          || "2026-02-02"; // The day before the date of last update, so that the update check is ran to make sure the correct version is installed
 
             this.grades     = [];
             this.semesters  = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{}, 7:{}, 8:{}, 9:{}, 10:{}};
@@ -644,7 +644,7 @@
             this.editMode = false;
             this.pinDockbar = false;
 
-            this.mobileVer = false;
+            this.mobileVer = this.clientWidth <= 935;
             this.clientWidth = 1920;
 
             this.selectedSubjectCards = [];
@@ -1056,7 +1056,7 @@
                 this.saveIgnoredGrades();
                 this.getGradesDatas();
             }
-            compareArraysofObjects(a, b) {
+            compareArraysOfObjects(a, b) {
                 const out = {common:[], more:[], missing:[]};
 
                 // turning a in an array of strings, for easier comparison in case the elements of a are objects
@@ -1116,8 +1116,7 @@
                     const notifDiv = document.createElement("div");
                     notifDiv.className = "new-grades-notif";
                     notifDiv.innerHTML = this.lang == "fr" ? `NOUVELLE NOTE${this.newGrades.length>1 ? "S !" : " !"}` : `NEW GRADE${this.newGrades.length>1 ? "S!" : "!"}`;
-                    notifDiv.innerHTML += `<button id="closeNewGradesNotif" style="padding-bottom: 3px;font-size: 10px;display: flex;width: 21px;height: 21px;position: fixed;right: calc(5% - -15px);border-radius: 5px;border: 3px solid #e0e6ff;justify-content: center;align-items: center;align-content: center;">❌
-                    </button>`;
+                    notifDiv.innerHTML += `<button id="closeNewGradesNotif" style="padding-bottom: 3px;font-size: 10px;display: flex;width: 21px;height: 21px;position: fixed;right: calc(5% - -15px);border-radius: 5px;border: 3px solid #e0e6ff;justify-content: center;align-items: center;align-content: center;">❌</button>`;
                     document.querySelector(".portlet-boundary").appendChild(notifDiv);
                     setTimeout(() => {if (this.newGrades.length > 0) {document.querySelector(".new-grades-notif").classList.add("on")}}, 10)
                 }
@@ -1125,16 +1124,14 @@
                     const notifDiv = document.createElement("div");
                     notifDiv.className = "new-grades-notif";
                     notifDiv.innerHTML = `Debug mode: Service is unavailable`;
-                    notifDiv.innerHTML += `<button id="closeNewGradesNotif" style="padding-bottom: 3px;font-size: 10px;display: flex;width: 21px;height: 21px;position: fixed;right: calc(5% - -15px);border-radius: 5px;border: 3px solid #e0e6ff;justify-content: center;align-items: center;align-content: center;">❌
-                    </button>`;
+                    notifDiv.innerHTML += `<button id="closeNewGradesNotif" style="padding-bottom: 3px;font-size: 10px;display: flex;width: 21px;height: 21px;position: fixed;right: calc(5% - -15px);border-radius: 5px;border: 3px solid #e0e6ff;justify-content: center;align-items: center;align-content: center;">❌</button>`;
                     document.body.appendChild(notifDiv);
                     setTimeout(() => {document.querySelector(".new-grades-notif").classList.add("on")}, 10)
                 }
                 else
                 {
                     document.querySelector(".new-grades-notif").innerHTML = this.lang == "fr" ? `NOUVELLE NOTE${this.newGrades.length>1 ? "S !" : " !"}` : `NEW GRADE${this.newGrades.length>1 ? "S!" : "!"}` +
-                    `<button id="closeNewGradesNotif" style="padding-bottom: 3px;font-size: 10px;display: flex;width: 21px;height: 21px;position: fixed;right: calc(5% - -15px);border-radius: 5px;border: 3px solid #e0e6ff;justify-content: center;align-items: center;align-content: center;">❌
-                    </button>`;
+                    `<button id="closeNewGradesNotif" style="padding-bottom: 3px;font-size: 10px;display: flex;width: 21px;height: 21px;position: fixed;right: calc(5% - -15px);border-radius: 5px;border: 3px solid #e0e6ff;justify-content: center;align-items: center;align-content: center;">❌</button>`;
                 }
 
                 document.querySelector(".new-grades-notif").onclick = () => {
@@ -1777,7 +1774,7 @@
                     </div>
                     <div class="update-available-notif-btns">
                         <div style="display: flex; justify-content: center; width: 50%">
-                            <a class="update-btn" id="updateBtn" href="${this.repoScriptRaw}" target="_blank">${this.lang == "fr" ? "Installer" : "Install"}</a>
+                            <a class="update-btn" id="updateBtn" href="${this.repoScriptRaw}" target="_blank">${this.lang == "fr" ? "INSTALLER" : "INSTALL"}</a>
                         </div>
                         <div style="display: flex; justify-content: center; width: 50%">
                             <div class="dismiss-update-btn" id="dismissUpdateBtn" title="${this.lang == "fr" ? "Ignorer pour aujourd'hui" : "Ignore for today"}">${this.lang == "fr" ? "Ignorer" : "Ignore"}</div>
@@ -1794,6 +1791,20 @@
                     updateAvailableNotif.classList.remove("on");
                     setTimeout(() => {updateAvailableNotif.remove()}, 300)
                 };
+                updateAvailableNotif.querySelector(".update-btn").onclick = () => {
+                    const reloadRequest = document.createElement("div");
+                    reloadRequest.className = "online-cfg-picker-menu";
+                    reloadRequest.style.cursor = "pointer";
+                    reloadRequest.style.justifyContent = "center";
+                    reloadRequest.style.textAlign = "center";
+                    reloadRequest.style.fontSize = "50px";
+                    reloadRequest.style.fontWeight = "900";
+                    reloadRequest.style.title = this.lang == "fr" ? "Rafraichir" : "Reload";
+                    reloadRequest.innerHTML = this.lang == "fr" ? "Clique ici pour rafraichir la page et appliquer la mise à jour !" : "Click here to reload the page and apply the update!";
+                    document.querySelector(".ecam-dash").appendChild(reloadRequest);
+                    setTimeout(() => {reloadRequest.classList.add("show");}, 10)
+                    reloadRequest.onclick = () => {window.location.reload();};
+                };
             }
             
         //#endregion
@@ -1809,17 +1820,14 @@
 
             if (this.savedReadGrades.length == 0) {
                 this.newGrades = [];
-                this.grades.forEach(e => {this.savedReadGrades.push(e)})
+                this.savedReadGrades = this.grades;
                 localStorage.setItem("ECAM_DASHBOARD_SAVED_READ_GRADES", JSON.stringify(this.savedReadGrades));
             }
-            if (this.clientWidth <= 935) {
-                this.clientWidth = 935;
-                this.mobileVer = true;
+            else {
+                this.newGrades = this.compareArraysOfObjects(this.grades, this.savedReadGrades).more;
             }
             
             this.generalKeyboardEvents();
-
-            this.newGrades = this.compareArraysofObjects(this.grades, this.savedReadGrades).more;
             this.createNewGradesNotifDiv();
             this.createDashboard();
             
@@ -2027,16 +2035,22 @@
 
                 const langShortcutText = document.getElementById("langShortcut");
                 langShortcutText.innerHTML = this.lang == "fr" ? "(Ctrl+L)" : "(Shift+L)";
-
+                
                 const importBtn = document.getElementById("importBtn");
                 const editModeBtn = document.getElementById("editModeBtn");
                 const exportBtn = document.getElementById("exportBtn");
                 importBtn.innerHTML =   `${this.lang == "fr" ? "Importer Config": "Import Config"}<span class="btn-icon">⬇️</span>`;
                 editModeBtn.innerHTML = `<div style="display:flex; flex-direction:column; gap:3px"><span style="font-size:40px">🖊️</span><div>${this.lang == "fr" ? "Mode Édition" : "Edit Mode"}</div><div>${this.lang == "fr" ? "(Maj+E)" : "(Shift+E)"}</div></div>`;
-                if (this.editMode)
-                        {editModeBtn.classList.add('on')}
+                if (this.editMode) {editModeBtn.classList.add('on')}
                 else    {editModeBtn.classList.remove('on')}
                 exportBtn.innerHTML =   `${this.lang == "fr" ? "Exporter Config": "Export Config"}<span class="btn-icon">⬆️</span>`;
+                
+                const importMenu    = document.getElementById("importMenu");
+                const importFile    = importMenu.querySelector(".import-menu-btn.file");
+                const importOnline  = importMenu.querySelector(".import-menu-btn.online");
+
+                importFile.children[0].innerHTML   = this.lang == "fr" ? "Importer un fichier de configuration .json"   : "Import a .json configuration file";
+                importOnline.children[1].innerHTML = this.lang == "fr" ? "Obtenir un fichier de configuration en ligne" : "Get a configuration file online";
 
                 const avgLabel = document.querySelector(".average-label");
                 avgLabel.innerHTML = `/20 ${this.lang == "fr" ? "Moyenne Générale" : "Global Average"}`;
@@ -4747,8 +4761,8 @@
                 const importFile    = importMenu.querySelector(".import-menu-btn.file");
                 const importOnline  = importMenu.querySelector(".import-menu-btn.online");
 
-                importFile.children[0].innerHTML   = this.lang == "fr" ? "Importer fichier de configuration .json"   : "Import .json configuration file";
-                importOnline.children[1].innerHTML = this.lang == "fr" ? "Obtenir fichier de configuration en ligne" : "Fetch online configuration file";
+                importFile.children[0].innerHTML   = this.lang == "fr" ? "Importer fichier de configuration .json"   : "Import a .json configuration file";
+                importOnline.children[1].innerHTML = this.lang == "fr" ? "Obtenir fichier de configuration en ligne" : "Get a configuration file online";
                 
                 if (!importMenu.classList.contains("show") || open == true) {
                     importMenu.style.display = "";
@@ -4793,7 +4807,10 @@
                 document.querySelector(".ecam-dash").appendChild(pickerMenu);
                 setTimeout(() => {pickerMenu.classList.add("show");}, 10)
 
-                const closePickerMenuFunc = () => {pickerMenu.classList.remove("show"); setTimeout(() => {pickerMenu.remove()}, 300);};
+                const closePickerMenuFunc = () => {
+                    pickerMenu.classList.remove("show"); 
+                    setTimeout(() => {pickerMenu.remove()}, 300);
+                };
                 
                 pickerMenu.querySelector(".online-cfg-picker-menu-close-btn").onclick = closePickerMenuFunc;
                 pickerMenu.querySelectorAll(".online-cfg-picker-menu-dir-card").forEach(dirCard => {
@@ -4838,8 +4855,9 @@
 
                 let html = type == "section" ? `
                     <div class="online-cfg-picker-menu-dir-tree ${type} show" data-path="${this.onlineConfigs.Configs.path}">
-                        <div class="online-cfg-picker-menu-dir-tree-header">Nb configs: ${this.onlineConfigs.Configs.nbCfgs}</div>
+                        <div class="online-cfg-picker-menu-dir-tree-header">SECTION</div>
                         <div class="online-cfg-picker-menu-dir-tree-body">
+                        <div class="online-cfg-picker-menu-dir-tree-nb-cfgs">Nb configs: ${this.onlineConfigs.Configs.nbCfgs}</div>
                 ` : "";
 
                 html += sectionsArray.map(sectionDirData => {       // Dir: Section
@@ -4851,8 +4869,9 @@
                     
                     let out = type == "year" ? `
                     <div class="online-cfg-picker-menu-dir-tree ${type}" style="display: none" data-path="${sectionDirData.path}">
-                    <div class="online-cfg-picker-menu-dir-tree-header">Nb configs: ${sectionDirData.nbCfgs}</div>
-                    <div class="online-cfg-picker-menu-dir-tree-body">
+                        <div class="online-cfg-picker-menu-dir-tree-header">${this.lang == "fr" ? "ANNÉE" : "YEAR"}</div>
+                        <div class="online-cfg-picker-menu-dir-tree-nb-cfgs">Nb configs: ${sectionDirData.nbCfgs}</div>
+                        <div class="online-cfg-picker-menu-dir-tree-body">
                     ` : "";
                     
                     out += type == "section"
@@ -4865,8 +4884,9 @@
                         const name = yearDirData.path.split("/").at(-1);
                         let out = type == "prom" ? `
                         <div class="online-cfg-picker-menu-dir-tree ${type}" style="display: none" data-path="${yearDirData.path}">
-                        <div class="online-cfg-picker-menu-dir-tree-header">Nb configs: ${yearDirData.nbCfgs}</div>
-                        <div class="online-cfg-picker-menu-dir-tree-body">
+                            <div class="online-cfg-picker-menu-dir-tree-header">${this.lang == "fr" ? "PROMO" : "PROM"}</div>
+                            <div class="online-cfg-picker-menu-dir-tree-nb-cfgs">Nb configs: ${yearDirData.nbCfgs}</div>
+                            <div class="online-cfg-picker-menu-dir-tree-body">
                         ` : "";
                         
                         out += type == "year"
@@ -4880,7 +4900,8 @@
                             this.tempGitConfigParentDirData = promDirData;
                             let out = type == "config" ? `
                             <div class="online-cfg-picker-menu-dir-tree ${type}" style="display: none" data-path="${promDirData.path}">
-                                <div class="online-cfg-picker-menu-dir-tree-header">Nb configs: ${promDirData.nbCfgs}</div>
+                                <div class="online-cfg-picker-menu-dir-tree-header">CONFIG</div>
+                                <div class="online-cfg-picker-menu-dir-tree-nb-cfgs">Nb configs: ${promDirData.nbCfgs}</div>
                                 <div class="online-cfg-picker-menu-dir-tree-body">
                             ` : "";
                             
