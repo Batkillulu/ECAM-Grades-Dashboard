@@ -3135,7 +3135,6 @@
                 document.getElementById('exportBtn').onclick = () => this.exportData();
 
                 if (this.editMode) {this.attachAllOnDragEventListeners();} else {this.detachOnDragEventListeners();}
-                this.attachScrollFieldsEventListeners();
             }
 
             /** Ensures that the dragend event of the document results in resetting the display if the dragged element is a subject card that is not selected */
@@ -3180,7 +3179,6 @@
                             dropFieldAddHitbox.classList.remove("show");
                             dropFieldRemove.classList.remove("show");
                             dropFieldRemoveHitbox.classList.remove("show");
-                            // this.showScrollFields(false)
                             this.removeSubjectCardFromSubjectSelection();
                         }
                         
@@ -3442,7 +3440,6 @@
                     }, this.waitingForLastTimeoutToFinish.timeout)
                 }
 
-                // this.showScrollFields(true);
                 e.dataTransfer.effectAllowed = "link";
                 e.dataTransfer.setDragImage(document.getElementById("emptyDiv"), 0, 0);
                 e.dataTransfer.setData("text", this.currentlyDraggedCard.id);
@@ -3451,7 +3448,6 @@
                 card.style.width = "";
                 this.currentlyDraggedElement = undefined;
                 this.currentlyDraggedCard    = undefined;
-                // this.showScrollFields(false);
 
                 if (card.classList.contains("subject-card")) {
                         if (card.classList.contains("unclassified")) {
@@ -3737,7 +3733,6 @@
                 document.querySelector(".drop-field.remove-from-ue")        .classList.add("show");
                 document.querySelector(".drop-field-remove-from-ue-hitbox") .classList.add("show");
 
-                // this.showScrollFields(true);
                 e.dataTransfer.effectAllowed = "link";
                 e.dataTransfer.setDragImage(document.getElementById("emptyDiv"), 0, 0);
                 e.dataTransfer.setData("text", card.id)
@@ -3765,7 +3760,6 @@
                         selectedSubjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
                     }
                 })
-                // this.showScrollFields(false);
             }
 
             // #endregion
@@ -4344,47 +4338,6 @@
                             this.attachInsertFieldHitboxEventListeners(insertFieldHitbox)
                         })
                     }
-                }
-
-
-                // MARK: attach scroll fields listeners
-                attachScrollFieldsEventListeners() {
-                    const scrollUpField     = document.querySelector(".scroll-field.up");
-                    const scrollDownField   = document.querySelector(".scroll-field.down");
-
-                    scrollUpField.ondragover    = (e) => {this.scrollFieldOnDragOverAction(e)};
-                    scrollUpField.ondrop        = (e) => {e.dataTransfer.dropEffect = "none";};
-                    scrollDownField.ondragover  = (e) => {this.scrollFieldOnDragOverAction(e)};
-                    scrollDownField.ondrop      = (e) => {e.dataTransfer.dropEffect = "none";};
-                }
-
-                showScrollFields(show="toggle") {
-                    const scrollUpField     = document.querySelector(".scroll-field.up");
-                    const scrollDownField   = document.querySelector(".scroll-field.down");
-
-                    if (show.toString() == "toggle") {
-                        scrollUpField  .classList.toggle("show");
-                        scrollDownField.classList.toggle("show");
-                    }
-                    if (show.toString() == "true" || show.toString() == "show") {
-                        scrollUpField  .classList.add("show");
-                        scrollDownField.classList.add("show");
-                    }
-                    if (show.toString() == "false" || show.toString() == "hide") {
-                        scrollUpField  .classList.remove("show");
-                        scrollDownField.classList.remove("show");
-                    }
-                }
-
-                async scrollFieldOnDragOverAction(e) {
-                    e.preventDefault();
-                    const fieldHeight = e.target.clientHeight;
-                    const mouseHeightInField = e.layerY;
-                    const mouseHeightPercent = e.target.classList.contains("up") ? (mouseHeightInField/fieldHeight - 1)*100 : (mouseHeightInField/fieldHeight)*100;
-                    const scrollByYValue = 10*(mouseHeightPercent/Math.abs(mouseHeightPercent))*Math.log10(Math.abs(mouseHeightPercent));
-                    console.log(`layerY: ${mouseHeightInField} | fieldHeight: ${fieldHeight} | percentage: ${mouseHeightPercent} | log: ${Math.log10(Math.abs(mouseHeightPercent))} | scrollBy Y value: ${scrollByYValue}`)
-
-                    window.scrollBy({left: 0, top: scrollByYValue});
                 }
 
 
