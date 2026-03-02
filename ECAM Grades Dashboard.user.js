@@ -579,7 +579,7 @@
             this.now    = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
             this.hour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
             this.today  = new Date().toISOString().split('T')[0];                                                   // Current date in ISO String
-            this.dateOfLastLoad                 = localStorage.getItem("ECAM_DASHBOARD_DATE_OF_LAST_LOAD")          || this.today;
+            this.dateOfLastLoad                 = localStorage.getItem("ECAM_DASHBOARD_DATE_OF_LAST_LOAD")          || "2026-02-02"; // The day before the date of last update, so that the update check is ran to make sure the correct version
 
             this.grades     = [];
             this.semesters  = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{}, 7:{}, 8:{}, 9:{}, 10:{}};
