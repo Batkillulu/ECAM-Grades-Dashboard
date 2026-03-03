@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.0.1
+// @version      2.0.2
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/group/education/notes*
@@ -58,6 +58,13 @@
             .lang-btn           { border: 2px solid #000000ff; background: #6f79ff; border-radius: 18px; width: 36px; height: 36px; }
             .lang-btn.active    { border: 2px solid #ceefffff; }
             .lang-btn:hover     { border: 2px solid #afe4ffff; background: #a6acff; }
+
+            .report-issue           { display: flex; justify-content: flex-start; align-items: center; text-align: right; outline: 2px solid #c022ff; background: #c022ff55; border-radius: 20px; position: absolute; top: 79px; right: 42px; height: 40px; width: 39px; padding-left: 6px; gap: 5px; font-size: 15px; text-wrap-mode: nowrap; overflow: clip; transition: all 0.2s ease; }
+            .report-issue.open      { width: 160px; }
+            .report-issue-btn           { display: flex; justify-content: center; align-items: center; text-align: center; outline: 2px solid #c022ff; background: #6e00ad; border-radius: 20px; position: absolute; top: 79px; right: 42px; height: 40px; width: 40px; padding-left: 6px; font-size: 20px; user-select: none; text-decoration: none; color: inherit; transition: all 0.2s ease; }
+            .report-issue-btn:focus     { color: #b8d7ff; font-size: 25px; }
+            .report-issue-hitbox        { border-radius: 20px; position: absolute; top: 79px; right: 42px; height: 40px; width: 40px; opacity: 0; cursor: pointer; transition: all 0.2s ease; }
+            .report-issue-hitbox.open   { width: 160px; }
 
             .import-menu        { display: flex; justify-content: space-around; position: absolute; right: 4%; top: 220px; background: white; color: black; box-shadow: 5px 4px 20px 0px #00000066; font-size: 15px; border-radius: 13px; min-height: 60px; width: 35%; align-items: center; opacity: 0; transition: all 0.2s ease; }
             .import-menu.show   { top: 230px; opacity: 1; }
@@ -574,12 +581,20 @@
 
         constructor() {
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.0.0";
+            this.scriptVersion = "2.0.2";
 
-            this.now    = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
-            this.hour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
-            this.today  = new Date().toISOString().split('T')[0];                                                   // Current date in ISO String
-            this.dateOfLastLoad                 = localStorage.getItem("ECAM_DASHBOARD_DATE_OF_LAST_LOAD")          || "2026-02-02"; // The day before the date of last update, so that the update check is ran to make sure the correct version is installed
+            this.now        = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
+            this.dateHour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
+            this.today  = new Date().toISOString().split('T')[0];                                                       // Current date in ISO String
+            this.dateTimeOfUpdateCheck          = localStorage.getItem("ECAM_DASHBOARD_DATE_TIME_OF_LAST_LOAD")     || "2026-02-02"; // The day before the date of last update, so that the update check is ran to make sure the correct version is installed
+            this.getDateTimeOffsetFromNow       = (minutesOffset=5) => {
+                const now = this.now();
+                const nowMinutes = parseInt(now.match(/T\d{2}:(\d{2}):\d{2}Z/)[1]);
+                const newMinutes = (nowMinutes + minutesOffset)%60;
+                const hourOffset = (Math.abs(nowMinutes + minutesOffset)) / 60 - Math.sign(minutesOffset)*(newMinutes/60);
+                const nowHour = Math.abs(nowMinutes)/60 > 1 ? parseInt(now.match(/T(\d{2}):\d{2}:\d{2}Z/)[1]) + Math.floor(nowMinutes/60)-1 : parseInt(now.match(/T(\d{2}):\d{2}:\d{2}Z/)[1]);
+                return now.replace(/:\d{2}:/, `:${newMinutes}:`)
+            };
 
             this.grades     = [];
             this.semesters  = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{}, 7:{}, 8:{}, 9:{}, 10:{}};
@@ -587,12 +602,10 @@
             this.sim                = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SIM_GRADES"))                || {};
             this.newGrades = [];
             
-            this.repo               = "https://github.com/Batkillulu/ECAM-Grades-Dashboard";
-            this.repoAPI            = "https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard";
-            this.repoContentsAPI    = "https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/contents";
-            this.repoMainBranchAPI  = "https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/branches/main";
-            this.repoScriptRaw      = "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/ECAM%20Grades%20Dashboard.user.js";
-            this.fallbackRepoApi    = "https://api.github.com/repos/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/contents";
+            this.repoUserReportIssue        = "https://github.com/Batkillulu/ECAM-Grades-Dashboard/issues/new?template=user-report-issue-template.md";
+            this.repoUserSuggestionIssue    = "https://github.com/Batkillulu/ECAM-Grades-Dashboard/issues/new?template=user-report-issue-template.md";
+            this.repoContentsAPI            = "https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/contents";
+            this.repoScriptRaw              = "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/ECAM%20Grades%20Dashboard.user.js";
             
             this.gitFetchScanDoneArray = [];
             this.tempGitConfigParentDirData = {};
@@ -1745,7 +1758,7 @@
             }
 
             async autoUpdateCheck() {
-                if (this.dateOfLastLoad < this.today) {
+                if (this.dateTimeOfUpdateCheck < this.getPlannedTimeOfUpdate()) {
                     this.runUpdateCheck();
                 }
             }
@@ -1785,8 +1798,8 @@
                 document.querySelector(".ecam-dash").insertBefore(updateAvailableNotif, document.querySelector(".dash-header"));
                 setTimeout(() => {updateAvailableNotif.classList.add("on")}, 500);
                 updateAvailableNotif.querySelector(".dismiss-update-btn").onclick = () => {
-                    this.dateOfLastLoad = this.today; 
-                    localStorage.setItem("ECAM_DASHBOARD_DATE_OF_LAST_LOAD", this.dateOfLastLoad);
+                    this.dateTimeOfUpdateCheck = this.now(); 
+                    localStorage.setItem("ECAM_DASHBOARD_DATE_OF_LAST_LOAD", this.dateTimeOfUpdateCheck);
 
                     updateAvailableNotif.classList.remove("on");
                     setTimeout(() => {updateAvailableNotif.remove()}, 300)
@@ -1836,9 +1849,6 @@
             this.generalKeyboardEvents();
             this.createNewGradesNotifDiv();
             this.createDashboard();
-            
-            this.dateOfLastLoad = this.today;
-            localStorage.setItem("ECAM_DASHBOARD_DATE_OF_LAST_LOAD", this.dateOfLastLoad);
         }
 
 
@@ -1883,10 +1893,18 @@
                         </div>
                     </div>
                     <div class="header-actions" style="display:flex; align-items:center">
+
+                        <div class="report-issue">${this.lang == "fr" ? "Signaler un probème" : "Report an issue"}</div>
+                        <div class="report-issue-btn" id="reportIssueBtn">🚩</div>
+                        <a class="report-issue-hitbox" id="reportIssueHitbox" href="${this.repoUserReportIssue}" target="_blank"></a>
+
                         <button class="btn btn-edit-mode ${this.editMode ? "on" : "off"}" id="editModeBtn"></button>
+
                         <div style="display: flex; flex-direction: column; gap: 8px">
+
                             <button class="btn btn-export" id="exportBtn"></button>
                             <button class="btn btn-import" id="importBtn"></button>
+
                             <div class="import-menu" id="importMenu" style="display: none">
                                 <svg viewBox="0 0 2 1" style="position: absolute;bottom: 60px;right: 11px;width: 28px;height: 14px;" id="aui_3_2_0_1345">
                                     <polyline fill="white" stroke="none" points="0,1 1,0 2,1"></polyline>
@@ -1900,7 +1918,9 @@
                                     <div></div>
                                 </div>
                             </div>
+
                         </div>
+
                     </div>
                 </div>
                 
@@ -2038,6 +2058,11 @@
 
                 const langShortcutText = document.getElementById("langShortcut");
                 langShortcutText.innerHTML = this.lang == "fr" ? "(Ctrl+L)" : "(Shift+L)";
+
+                const reportIssue = document.querySelector(".report-issue");
+                reportIssue.innerHTML = this.lang == "fr" ? "Signaler un probème" : "Report an issue";
+                const reportIssueBtn = document.getElementById("reportIssueBtn");
+                reportIssueBtn.title = this.lang == "fr" ? "Signaler un probème" : "Report an issue";
                 
                 const importBtn = document.getElementById("importBtn");
                 const editModeBtn = document.getElementById("editModeBtn");
@@ -2052,6 +2077,10 @@
                 const importFile    = importMenu.querySelector(".import-menu-btn.file");
                 const importOnline  = importMenu.querySelector(".import-menu-btn.online");
 
+                importFile.children[0].innerHTML   = this.lang == "fr" ? "Importer un fichier de configuration .json"   : "Import a .json configuration file";
+                importOnline.children[1].innerHTML = this.lang == "fr" ? "Obtenir un fichier de configuration en ligne" : "Get a configuration file online";
+
+
                 if (this.lang == "fr") {
                     document.querySelectorAll(".drop-ue-card-insert-text, .drop-field-remove-from-ue-text, .drop-field-create-ue-text").forEach(dropFieldText => {
                         dropFieldText.classList.replace("en", "fr")
@@ -2062,10 +2091,6 @@
                         dropFieldText.classList.replace("fr", "en")
                     })
                 }
-
-                importFile.children[0].innerHTML   = this.lang == "fr" ? "Importer un fichier de configuration .json"   : "Import a .json configuration file";
-                importOnline.children[1].innerHTML = this.lang == "fr" ? "Obtenir un fichier de configuration en ligne" : "Get a configuration file online";
-
                 const avgLabel = document.querySelector(".average-label");
                 avgLabel.innerHTML = `/20 ${this.lang == "fr" ? "Moyenne Générale" : "Global Average"}`;
 
@@ -2098,7 +2123,6 @@
                 document.querySelector(".new-grades-mark-as-read").title = this.lang == "fr" ? "Marquer comme lu" : "Mark as read";
                 
 
-                let highestWidth = 0;
                 document.querySelectorAll(".selected-subject-card-notif-div").forEach(notifDiv => {
                     notifDiv.childNodes[4].data = this.lang == "fr" ? `est sélectionné!` : `is selected!`;
                 })
@@ -2682,64 +2706,10 @@
 
         //#region -REGION: Ev Listeners
 
-            attachDocumentMouseEvents(eventName="all") {
-                if (eventName == "onclick" || eventName == "all") {
-                    document.onclick = (e) => {
-                        // Toggle semesters
-                        if (e.target.closest('.semester-header')) {
-                            const header = e.target.closest('.semester-header');
-                            const sem = header.dataset.semester;
-                            const content = document.getElementById(`sem-content-${sem}`);
-                            const toggle = header.querySelector('.semester-toggle');
-                            if (content.classList.contains('show')) {
-                                content.classList.remove('show'); toggle.classList.remove('open'); content.style.display = 'none';
-                            } else {
-                                content.classList.add('show'); toggle.classList.add('open'); content.style.display = 'flex';
-                            }
-                        }
-
-                        // Toggle intranet table
-                        else if (e.target.closest('.intranet-collapse')) {
-                            const header = e.target.closest('.intranet-collapse');
-                            const intranetTable = document.querySelector('.greyGridTable');
-                            const intranetToggle = header.querySelectorAll('.intranet-toggle');
-                            intranetToggle.forEach(t => {
-                                if (t.previousElementSibling == null){
-                                    t.classList.toggle('openLeft')
-                                } else {
-                                    t.classList.toggle('openRight');
-                                }
-                            });
-
-                            if (intranetTable.style.display == 'none') {
-                                intranetTable.style.display = 'block';
-                            } else {
-                                intranetTable.style.display = 'none';
-                            }
-                        }
-
-                        if (!e.target.closest(".import-menu") && document.getElementById("importMenu").classList.contains("show")) {
-                            document.getElementById("importMenu").classList.remove("show");
-                            setTimeout(() => {document.getElementById("importMenu").style.display = "none"}, 300);
-                        }
-                    };
-                }
-                
-                if (eventName == "onmousedown" || eventName == "all") {
-                    // Collapse/Develop (fold/unfold) UEs
-                    document.onmousedown = (e) => {
-                        if (e.target.closest('.ue-header') && !e.target.closest('.ue-title.input') && !e.target.closest('.ue-delete-btn')) {
-                            this.ueHeaderClickEvent(e)
-                        }
-                    };
-                }
-
-            }
-
             attachEventListeners() {
                 this.attachDocumentMouseEvents();
 
-                document.body.onresize = (e) => {   // grade FOR THE FUTURE: DONT RE-RENDER THE CONTENT ON RESIZE, IT MESSES UP WITH THE SELECTED subject CARDS
+                document.body.onresize = (e) => {
                     
                     /* if (document.body.clientWidth <= 1530) {
                         if (this.clientWidth > 1530) {
@@ -2807,6 +2777,18 @@
                     }
                 }
 
+
+                const reportIssueContainer = document.querySelector(".report-issue");
+                const reportIssueHitbox    = document.querySelector(".report-issue-hitbox");
+                reportIssueHitbox.onmouseenter = (e) => {
+                    reportIssueHitbox.classList.add("open");
+                    reportIssueContainer.classList.add("open");
+                }
+                reportIssueHitbox.onmouseleave = (e) => {
+                    reportIssueHitbox.classList.remove("open");
+                    reportIssueContainer.classList.remove("open");
+                }
+                
                 
 
 
@@ -3172,6 +3154,59 @@
                 document.getElementById('exportBtn').onclick = () => this.exportData();
 
                 if (this.editMode) {this.attachAllOnDragEventListeners();} else {this.detachOnDragEventListeners();}
+            }
+
+            attachDocumentMouseEvents(eventName="all") {
+                if (eventName == "onclick" || eventName == "all") {
+                    document.onclick = (e) => {
+                        // Toggle semesters
+                        if (e.target.closest('.semester-header')) {
+                            const header = e.target.closest('.semester-header');
+                            const sem = header.dataset.semester;
+                            const content = document.getElementById(`sem-content-${sem}`);
+                            const toggle = header.querySelector('.semester-toggle');
+                            if (content.classList.contains('show')) {
+                                content.classList.remove('show'); toggle.classList.remove('open'); content.style.display = 'none';
+                            } else {
+                                content.classList.add('show'); toggle.classList.add('open'); content.style.display = 'flex';
+                            }
+                        }
+
+                        // Toggle intranet table
+                        else if (e.target.closest('.intranet-collapse')) {
+                            const header = e.target.closest('.intranet-collapse');
+                            const intranetTable = document.querySelector('.greyGridTable');
+                            const intranetToggle = header.querySelectorAll('.intranet-toggle');
+                            intranetToggle.forEach(t => {
+                                if (t.previousElementSibling == null){
+                                    t.classList.toggle('openLeft')
+                                } else {
+                                    t.classList.toggle('openRight');
+                                }
+                            });
+
+                            if (intranetTable.style.display == 'none') {
+                                intranetTable.style.display = 'block';
+                            } else {
+                                intranetTable.style.display = 'none';
+                            }
+                        }
+
+                        if (!e.target.closest(".import-menu") && document.getElementById("importMenu").classList.contains("show")) {
+                            document.getElementById("importMenu").classList.remove("show");
+                            setTimeout(() => {document.getElementById("importMenu").style.display = "none"}, 300);
+                        }
+                    };
+                }
+                
+                if (eventName == "onmousedown" || eventName == "all") {
+                    // Collapse/Develop (fold/unfold) UEs
+                    document.onmousedown = (e) => {
+                        if (e.target.closest('.ue-header') && !e.target.closest('.ue-title.input') && !e.target.closest('.ue-delete-btn')) {
+                            this.ueHeaderClickEvent(e)
+                        }
+                    };
+                }
             }
 
             /** Ensures that the dragend event of the document results in resetting the display if the dragged element is a subject card that is not selected */
