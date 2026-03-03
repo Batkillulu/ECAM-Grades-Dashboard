@@ -9,7 +9,7 @@ All trademarks and logos belong to their respective owners.
 # Installation guide ([Windows and Androids](#windows-and-androids) here, [IOS](#ios) there)
 
 ## Windows and Androids
-For Windows, any web browser works, and for Androids, only the [Firefox Nightly](https://play.google.com/store/apps/details?id=org.mozilla.fenix&hl=en&pli=1) web browser manages extension, to my knowledge, so if you want to use the ECAM Grades Dashboard, install [Firefox Nightly](https://play.google.com/store/apps/details?id=org.mozilla.fenix&hl=en&pli=1).
+For Windows, any web browser works, and for Androids, only the [Firefox Nightly](https://play.google.com/store/apps/details?id=org.mozilla.fenix&hl=en&pli=1) web browser manages extension, to my knowledge, so if you want to use the ECAM Grades Dashboard, install [Firefox Nightly](https://play.google.com/store/apps/details?id=org.mozilla.fenix&hl=en&pli=1). For now, there's no proper mobile display, this is coming in the next major update, so for now, you may use the `Desktop version` that you can enabled when taping on the three dots in the top-right corner of the Firefox Nightly.
 
 ### Step 1: [Install Tampermonkey](https://www.tampermonkey.net/)
 It's a web browser extension that allows to run JavaScript scripts upon loading a specified website. (I'm sorry there are tons of ads...)
