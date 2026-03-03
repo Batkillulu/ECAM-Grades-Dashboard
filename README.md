@@ -6,7 +6,7 @@ Institutional use, official deployment, or integration into the ECAM intranet re
 This project is not affiliated with or endorsed by ECAM LaSalle.
 All trademarks and logos belong to their respective owners.
 
-# Installation guide ([Windows and Androids](#step-3-install-the-ecam-grades-dashboard-script) here, [IOS](#ios) there)
+# Installation guide ([Windows and Androids](#windows-and-androids) here, [IOS](#ios) there)
 
 ## Windows and Androids
 For Windows, any web browser works, and for Androids, only the [Firefox Nightly](https://play.google.com/store/apps/details?id=org.mozilla.fenix&hl=en&pli=1) web browser manages extension, to my knowledge, so if you want to use the ECAM Grades Dashboard, install [Firefox Nightly](https://play.google.com/store/apps/details?id=org.mozilla.fenix&hl=en&pli=1).
