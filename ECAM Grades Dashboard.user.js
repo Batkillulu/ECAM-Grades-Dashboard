@@ -1152,7 +1152,7 @@
              * @param {Object} param2 All the modifiers. Each element of this object `alt`, `ctrl`, `shift`, `meta`, and `repeat` take as value on of the following Strings: "required", "allowed", "dont care", 
              * @returns {RegExpMatchArray} A formated RegExpMatchArray result following the key and the modifiers given as parameters
              */
-            keyMatch(keyboardEvent, keyPressed="(.+)", {alt="whatever", ctrl="whatever", shift="whatever", meta="whatever", repeat="whatever"}={alt:"whatever", ctrl:"whatever", shift:"whatever", meta:"whatever", repeat:"whatever"}) {
+            keyInputMatch(keyboardEvent, keyPressed="(.+)", {alt="whatever", ctrl="whatever", shift="whatever", meta="whatever", repeat="whatever"}={alt:"whatever", ctrl:"whatever", shift:"whatever", meta:"whatever", repeat:"whatever"}) {
                 const e = keyboardEvent;
                 const key = `${e.altKey ? "alt" : "no-alt"} ${e.ctrlKey ? "+ ctrl" : "+ no-ctrl"} ${e.shiftKey ? "+ shift" : "+ no-shift"} ${e.metaKey ? "+ meta" : "+ no-meta"} + ${e.key} (${e.repeat ? "repeat" : "no-repeat"})`;
 
@@ -1866,19 +1866,19 @@
                 container.innerHTML = `
                 <div id="emptyDiv"></div>
                 <div class="dash-header">
-                    <div style="display: bloc">
-                        <img draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/5/51/ECAM-LaSalle-bleu-seul.png" alt="ECAM Logo" style="margin: -136px -444px -121px -43px; height: 141px; width: 148px;">
-                        <div style="margin: 0px 40px 0px 100px;">
-                            <div class="dash-title"></div>
-                            <p class="dash-subtitle"></p>
+                    <div style="display: flex;flex-direction: row;" id="aui_3_2_0_1305">
+                        <img draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/5/51/ECAM-LaSalle-bleu-seul.png" alt="ECAM Logo" style="margin: 0px 0px 0px -10px;height: 141px;width: 148px;" id="aui_3_2_0_1304">
+                        <div style="margin: 30px 0px 0px 0px;">
+                            <div class="dash-title">Tableau de Bord des Notes ECAM</div>
+                            <p class="dash-subtitle">Vue complète de vos résultats académiques</p>
                             <div style="display: flex; gap: 2px">
-                                <div class="lang-btn ${this.lang == "fr" ? "active" : ""}" id="fr-lang-btn">
-                                    <image style="display: flex; margin: 6px 0px 0px 6px; width:20px; height:20px" alt="🇫🇷" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAACTUExURUdwTAAkjM7Pzs7OzrMGE74QIMPEx4hTeAAkjQARewAagbIFEgAfhc3NzdDQ0M7PzrYMG8zMzbcMG8EXKcUbLQAMd7UKGLUKGMMWJ7OhrcMVJv///+oPIO4bLgAmoOwWKAAZmQArpO8iNgAfnQATlAIyqLUGFAEoksUSIwAYhgANePnCyMbO6djY2NUWJ+7u7sCep4f8c74AAAAbdFJOUwDL+z19ffsVe3qU1jy51pA+bLyNc+Vrnu+m2KjIWToAAALxSURBVFjD7djJcuIwEIDhAAMOxuwTCAnyKgxOxg7v/3SjtraWDJKTUw60K1Vc+OqX5APK09NjHvOLJxDz3a+t9Mcoeg7DgZrDcrkejUZBL2X7NuYfo4gRZ2MmNZvhYjEHz1EYrHab18tl3LaEEonFnOPT5KtWM1zMhReY27DabUG5ABQ8cyXLTnIy9pz+vcN8seFWPRxC32G7Hf+FGW/3m7fXVmkagJ5NpGXYCOjd5Or6ejGmaRpCctJw6HTqOgaEvM8GT07ynP0RXhTbSqcIzWduDWOIgHBRJqmeELkJtQB34v4QUUs7o8MSC4t7FYECkF2UKYW9Sb2KRI8FqVWB06OI4KJSQRnuyXoUiW0mHUj2iPFAJEdOoiGVE/OV+SCxqLxTpI+LT+GGcE8Cj4AypAiqcEDyrPTSFHSS25zxnMIH6W2GnsQsitVGM8sBEf36AAOOASkDHg+EcuyiWLw+TAHGCdk5EqrOKqhQjgfCJ8ahPxxCx1W0K0tdUG4qCJKrAoMXpd4i7BwFpM+rkJNmbijh7w+xIHRanPFAiXx/khuQ7mFM6i9CzFFAlQiSDHPcRQneoCM8uqhA29NOfB/Sr48MUkWF3uY0bVfmgqyF6aIKHVcqgpxFMETlGHtkrMoDdXKYVMqlqRxhUReUmBuNiro9KXVCcllcOaoiq4emlPaAOJMoaCogHdNSXgg7GEqRRL1FR709FqRzKO0PdYt0D6X+IrWqTlGnh9LzPYgk1rIQlKogqqj70NHYZgR9VN0eJ2Ttj1GkT6udygN1BhVR/vQp6m6RUYRzfl5k1lSeItfSOFBVH3KqCfw8vwPZTRddhAgx1+GE3T6GdW2CN4oYU5Y7gITy8jIIwymfMDzM54tJOy1XC86E2G0GlHKzCxjUIoNwGtmXqGA0Wi+X0uPgVd1DhFGWs/0KvjgFhSGOyyl4su9aGjPbcAWglzDqdd9k99L1ennYzMRs9tvdaqW/GkXfvAbL+/NT8PhXwmN+7/wHgdqiCaxyTNQAAAAASUVORK5CYII=">
+                                <div class="lang-btn active" id="fr-lang-btn">
+                                    <img style="display: flex; margin: 6px 0px 0px 6px; width:20px; height:20px" alt="🇫🇷" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAACTUExURUdwTAAkjM7Pzs7OzrMGE74QIMPEx4hTeAAkjQARewAagbIFEgAfhc3NzdDQ0M7PzrYMG8zMzbcMG8EXKcUbLQAMd7UKGLUKGMMWJ7OhrcMVJv///+oPIO4bLgAmoOwWKAAZmQArpO8iNgAfnQATlAIyqLUGFAEoksUSIwAYhgANePnCyMbO6djY2NUWJ+7u7sCep4f8c74AAAAbdFJOUwDL+z19ffsVe3qU1jy51pA+bLyNc+Vrnu+m2KjIWToAAALxSURBVFjD7djJcuIwEIDhAAMOxuwTCAnyKgxOxg7v/3SjtraWDJKTUw60K1Vc+OqX5APK09NjHvOLJxDz3a+t9Mcoeg7DgZrDcrkejUZBL2X7NuYfo4gRZ2MmNZvhYjEHz1EYrHab18tl3LaEEonFnOPT5KtWM1zMhReY27DabUG5ABQ8cyXLTnIy9pz+vcN8seFWPRxC32G7Hf+FGW/3m7fXVmkagJ5NpGXYCOjd5Or6ejGmaRpCctJw6HTqOgaEvM8GT07ynP0RXhTbSqcIzWduDWOIgHBRJqmeELkJtQB34v4QUUs7o8MSC4t7FYECkF2UKYW9Sb2KRI8FqVWB06OI4KJSQRnuyXoUiW0mHUj2iPFAJEdOoiGVE/OV+SCxqLxTpI+LT+GGcE8Cj4AypAiqcEDyrPTSFHSS25zxnMIH6W2GnsQsitVGM8sBEf36AAOOASkDHg+EcuyiWLw+TAHGCdk5EqrOKqhQjgfCJ8ahPxxCx1W0K0tdUG4qCJKrAoMXpd4i7BwFpM+rkJNmbijh7w+xIHRanPFAiXx/khuQ7mFM6i9CzFFAlQiSDHPcRQneoCM8uqhA29NOfB/Sr48MUkWF3uY0bVfmgqyF6aIKHVcqgpxFMETlGHtkrMoDdXKYVMqlqRxhUReUmBuNiro9KXVCcllcOaoiq4emlPaAOJMoaCogHdNSXgg7GEqRRL1FR709FqRzKO0PdYt0D6X+IrWqTlGnh9LzPYgk1rIQlKogqqj70NHYZgR9VN0eJ2Ttj1GkT6udygN1BhVR/vQp6m6RUYRzfl5k1lSeItfSOFBVH3KqCfw8vwPZTRddhAgx1+GE3T6GdW2CN4oYU5Y7gITy8jIIwymfMDzM54tJOy1XC86E2G0GlHKzCxjUIoNwGtmXqGA0Wi+X0uPgVd1DhFGWs/0KvjgFhSGOyyl4su9aGjPbcAWglzDqdd9k99L1ennYzMRs9tvdaqW/GkXfvAbL+/NT8PhXwmN+7/wHgdqiCaxyTNQAAAAASUVORK5CYII=">
                                 </div>
-                                <div class="lang-btn ${this.lang == "fr" ? "" : "active"}" id="en-lang-btn">
-                                    <image style="display: flex; margin: 6px 0px 0px 6px; width:20px; height:20px" alt="🇬🇧" src="data:image/png;base64,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">
+                                <div class="lang-btn " id="en-lang-btn">
+                                    <img style="display: flex; margin: 6px 0px 0px 6px; width:20px; height:20px" alt="🇬🇧" src="data:image/png;base64,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">
                                 </div>
-                                <div id="langShortcut" style="display: flex; align-content: center; justify-content: center; align-items: center; padding-left: 9px;">${this.lang == "fr" ? "(Ctrl+L)" : "(Shift+L)"}</div>
+                                <div id="langShortcut" style="display: flex; align-content: center; justify-content: center; align-items: center; padding-left: 9px;">(Ctrl+L)</div>
                             </div>
                         </div>
                     </div>
@@ -1926,9 +1926,6 @@
                         </div>
                     </div>
                 </div>
-
-
-                <div class="filter-title"></div>
 
                 <div class="controls-bar">
                     <div class="filter-tabs">
@@ -2036,7 +2033,7 @@
                 // Language Sensitive text in the Dashboard Header and Semester filter tab (which don't refresh on calling the renderContent() method)
                 const dashTitle = document.querySelector(".dash-title");
                 const dashSubtitle = document.querySelector(".dash-subtitle");
-                dashTitle.innerHTML = this.lang == "fr" ? 'ECAM Grades Dashboard' : "ECAM Grades Dashboard";
+                dashTitle.innerHTML = this.lang == "fr" ? 'Tableau de Bord des Notes ECAM' : "ECAM Grades Dashboard";
                 dashSubtitle.innerHTML = this.lang == "fr" ? 'Vue complète de vos résultats académiques' : "Complete view of your academic results";
 
                 const langShortcutText = document.getElementById("langShortcut");
@@ -2055,6 +2052,17 @@
                 const importFile    = importMenu.querySelector(".import-menu-btn.file");
                 const importOnline  = importMenu.querySelector(".import-menu-btn.online");
 
+                if (this.lang == "fr") {
+                    document.querySelectorAll(".drop-ue-card-insert-text, .drop-field-remove-from-ue-text, .drop-field-create-ue-text").forEach(dropFieldText => {
+                        dropFieldText.classList.replace("en", "fr")
+                    })
+                }
+                else {
+                    document.querySelectorAll(".drop-ue-card-insert-text, .drop-field-remove-from-ue-text, .drop-field-create-ue-text").forEach(dropFieldText => {
+                        dropFieldText.classList.replace("fr", "en")
+                    })
+                }
+
                 importFile.children[0].innerHTML   = this.lang == "fr" ? "Importer un fichier de configuration .json"   : "Import a .json configuration file";
                 importOnline.children[1].innerHTML = this.lang == "fr" ? "Obtenir un fichier de configuration en ligne" : "Get a configuration file online";
 
@@ -2066,7 +2074,6 @@
                 statLabelsArray[1].innerHTML = this.lang == "fr" ? "Semestres" : "Semesters";
                 statLabelsArray[2].innerHTML = this.lang == "fr" ? "Modules Validés" : "Validated module";
 
-                document.querySelector(".filter-title").innerHTML = this.lang == "fr" ? "Filtrer par semestre" : "Filter by semester";
                 document.querySelector(".filter-tab").innerHTML = this.lang == "fr" ? "Tous" : "All";
 
                 document.querySelector(".view-toggle").children[0].innerHTML = this.lang == "fr" ? `Basculer le mode d'affichage (Maj+D)` : `Display mode toggle (Shift+D)`;
@@ -2675,7 +2682,63 @@
 
         //#region -REGION: Ev Listeners
 
+            attachDocumentMouseEvents(eventName="all") {
+                if (eventName == "onclick" || eventName == "all") {
+                    document.onclick = (e) => {
+                        // Toggle semesters
+                        if (e.target.closest('.semester-header')) {
+                            const header = e.target.closest('.semester-header');
+                            const sem = header.dataset.semester;
+                            const content = document.getElementById(`sem-content-${sem}`);
+                            const toggle = header.querySelector('.semester-toggle');
+                            if (content.classList.contains('show')) {
+                                content.classList.remove('show'); toggle.classList.remove('open'); content.style.display = 'none';
+                            } else {
+                                content.classList.add('show'); toggle.classList.add('open'); content.style.display = 'flex';
+                            }
+                        }
+
+                        // Toggle intranet table
+                        else if (e.target.closest('.intranet-collapse')) {
+                            const header = e.target.closest('.intranet-collapse');
+                            const intranetTable = document.querySelector('.greyGridTable');
+                            const intranetToggle = header.querySelectorAll('.intranet-toggle');
+                            intranetToggle.forEach(t => {
+                                if (t.previousElementSibling == null){
+                                    t.classList.toggle('openLeft')
+                                } else {
+                                    t.classList.toggle('openRight');
+                                }
+                            });
+
+                            if (intranetTable.style.display == 'none') {
+                                intranetTable.style.display = 'block';
+                            } else {
+                                intranetTable.style.display = 'none';
+                            }
+                        }
+
+                        if (!e.target.closest(".import-menu") && document.getElementById("importMenu").classList.contains("show")) {
+                            document.getElementById("importMenu").classList.remove("show");
+                            setTimeout(() => {document.getElementById("importMenu").style.display = "none"}, 300);
+                        }
+                    };
+                }
+                
+                if (eventName == "onmousedown" || eventName == "all") {
+                    // Collapse/Develop (fold/unfold) UEs
+                    document.onmousedown = (e) => {
+                        if (e.target.closest('.ue-header') && !e.target.closest('.ue-title.input') && !e.target.closest('.ue-delete-btn')) {
+                            this.ueHeaderClickEvent(e)
+                        }
+                    };
+                }
+
+            }
+
             attachEventListeners() {
+                this.attachDocumentMouseEvents();
+
                 document.body.onresize = (e) => {   // grade FOR THE FUTURE: DONT RE-RENDER THE CONTENT ON RESIZE, IT MESSES UP WITH THE SELECTED subject CARDS
                     
                     /* if (document.body.clientWidth <= 1530) {
@@ -2730,53 +2793,6 @@
                     } 
                     */
                 }; 
-                
-                document.onclick = (e) => {
-                    // Toggle semesters
-                    if (e.target.closest('.semester-header')) {
-                        const header = e.target.closest('.semester-header');
-                        const sem = header.dataset.semester;
-                        const content = document.getElementById(`sem-content-${sem}`);
-                        const toggle = header.querySelector('.semester-toggle');
-                        if (content.classList.contains('show')) {
-                            content.classList.remove('show'); toggle.classList.remove('open'); content.style.display = 'none';
-                        } else {
-                            content.classList.add('show'); toggle.classList.add('open'); content.style.display = 'flex';
-                        }
-                    }
-
-                    // Toggle intranet table
-                    else if (e.target.closest('.intranet-collapse')) {
-                        const header = e.target.closest('.intranet-collapse');
-                        const intranetTable = document.querySelector('.greyGridTable');
-                        const intranetToggle = header.querySelectorAll('.intranet-toggle');
-                        intranetToggle.forEach(t => {
-                            if (t.previousElementSibling == null){
-                                t.classList.toggle('openLeft')
-                            } else {
-                                t.classList.toggle('openRight');
-                            }
-                        });
-
-                        if (intranetTable.style.display == 'none') {
-                            intranetTable.style.display = 'block';
-                        } else {
-                            intranetTable.style.display = 'none';
-                        }
-                    }
-
-                    if (!e.target.closest(".import-menu") && document.getElementById("importMenu").classList.contains("show")) {
-                        document.getElementById("importMenu").classList.remove("show");
-                        setTimeout(() => {document.getElementById("importMenu").style.display = "none"}, 300);
-                    }
-                };
-                
-                // Collapse/Develop (fold/unfold) UEs
-                document.onmousedown = (e) => {
-                    if (e.target.closest('.ue-header') && !e.target.closest('.ue-title.input') && !e.target.closest('.ue-delete-btn')) {
-                        this.ueHeaderClickEvent(e)
-                    }
-                };
 
                 document.querySelector(".pin-dockbar").children[0].children[0].onclick = () => {
                     // when clicking on the button to unpin the dockbar, this event listener is triggered before the action of unpinning the dockbar is actually done, 
@@ -2848,9 +2864,11 @@
                             document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
                             e.target.classList.add('active');
                             this.currentSemester = e.target.dataset.filter;
+                            localStorage.setItem("ECAM_DASHBOARD_DEFAULT_SEMESTER", this.currentSemester);
+                            
+                            this.removeSubjectCardFromSubjectSelection();
                             this.renderContent();
                             this.attachEventListeners();
-                            localStorage.setItem("ECAM_DASHBOARD_DEFAULT_SEMESTER", this.currentSemester);
                         }
                     };
                 });
@@ -2884,8 +2902,7 @@
                 // Ensures all selected Subject Cards have a tick icon with their assigned event listeners instead of the default drag icon
                 this.selectedSubjectCards.forEach(selectedSubjectCardId => {
                     const subjectCard = document.getElementById(selectedSubjectCardId);
-                    const dragIcon = subjectCard.querySelector(".drag-icon");
-                    this.dragIconOnClickEvent(subjectCard, dragIcon, true); // Trigger the dragIcon onClick event to simulate the default drag icon being clicked
+                    this.changeDragIconToTickIcon(subjectCard);
                 })
                 document.querySelectorAll(".subject-card").forEach(subjCard => {
                     if (subjCard.querySelector(".drag-icon")) {
@@ -3277,8 +3294,14 @@
                         this.attachCheckboxListeners(ueContent);
                         this.setGradesTableTotalCoef()
                     }
+
+                    ueContent.querySelectorAll(".subject-card").forEach(subjCard => {
+                        if (this.selectedSubjectCards.includes(subjCard.id)) {
+                            this.changeDragIconToTickIcon(subjCard);
+                        }
+                    })
                     
-                    this.attachDropFieldsEventListeners("insert", ueContent.parentElement)
+                    this.attachDropFieldsEventListeners("insert", ueContent.parentElement);
                     document.body.onmousemove = null;
                     document.body.onmouseup = null;
                 }
@@ -4016,8 +4039,8 @@
             /** 
             *  Manage all the actions involving the deletion of a subj card from the selection of subj cards (this.selectedSubjectCards)
             * 
-            * @param notifDiv: the div of the notif linked to the selected subject card
-            * @param elementDroppedInField: if this method is called from triggering an ondrop event of a drop field, pass the dropped element in this argument
+            * @param {String} notifDiv the div of the notif linked to the selected subject card
+            * @param {HTMLElement} elementDroppedInField if this method is called from triggering an ondrop event of a drop field, pass the dropped element in this argument
             */
             removeSubjectCardFromSubjectSelection({notifDiv="all", elementDroppedInField=undefined}={notifDiv:"all", elementDroppedInField:undefined}) {
                 if (notifDiv=="all") {      // clear all subject card selection as well as their respective notif
@@ -4043,10 +4066,7 @@
                             selectedSubjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
                         }
                         
-                        const tick = selectedSubjectCard.querySelector(".tick-icon");
-                        tick.outerHTML = this.draggableIcon(`${selectedSubjectCard.dataset.type}-subject-card`, {targetId: `${selectedSubjectCard.dataset.targetid}`, type: selectedSubjectCard.dataset.type});
-                        const dragIcon = selectedSubjectCard.querySelector(".drag-icon");
-                        dragIcon.onclick = (e) => {this.dragIconOnClickEvent(e, dragIcon)};
+                        this.changeTickIconToDragIcon(selectedSubjectCard);
 
                         const correspNotifDiv = document.querySelector(`.selected-subject-card-notif-div[data-targetid="${selectedSubjectCard.id}"]`);
                         correspNotifDiv.classList.remove("on");
@@ -4130,12 +4150,7 @@
                         })
                     }
 
-                    const tick = subjectCard.querySelector(".tick-icon");
-                    if (tick) {
-                        tick.outerHTML = this.draggableIcon(`${notifDiv.dataset.type}-subject-card`, {targetId: `${notifDiv.dataset.targetid}`, type: notifDiv.dataset.type});
-                        const dragIcon = subjectCard.querySelector(".drag-icon");
-                        dragIcon.onclick = (e) => {this.dragIconOnClickEvent(e, dragIcon)};
-                    }
+                    this.changeTickIconToDragIcon(subjectCard)
 
                     subjectCard.ondragstart = (e) => {this.draggedElementOnDragStartEvent(e, {card:subjectCard})};
                     subjectCard.ondragend   = (e) => {this.draggedElementOnDragEndEvent  (e, {card:subjectCard})};
@@ -4160,6 +4175,37 @@
             }
 
 
+
+
+            changeDragIconToTickIcon(subjectCard) {
+                const dragIcon = subjectCard.querySelector(".drag-icon");
+                if (dragIcon) {
+                    const type = subjectCard.classList.contains("compact") ? "compact" : "detailed";
+                    dragIcon.outerHTML = `<div class="tick-icon for-${type}-subject-card" data-type="${type}" data-targetid="${subjectCard.id}">✔</div>`;
+                    const tickIcon = subjectCard.querySelector(".tick-icon");
+                    tickIcon.onclick = (e) => {this.tickIconOnClickEvent(e, tickIcon)};
+                }
+            }
+
+            changeTickIconToDragIcon(subjectCard) {
+                const tickIcon = subjectCard.querySelector(".tick-icon");
+                if (tickIcon) {
+                    const type = subjectCard.classList.contains("compact") ? "compact" : "detailed";
+                    tickIcon.outerHTML = this.draggableIcon(`${type}-subject-card`, {targetId: subjectCard.id, type});
+                    const dragIcon = subjectCard.querySelector(".drag-icon");
+                    dragIcon.onclick = (e) => {this.dragIconOnClickEvent(e, dragIcon)};
+                }
+            }
+
+            switchBetweenDragAndTickIcon(subjectCard) {
+                const dragIcon = subjectCard.querySelector(".drag-icon");
+                if (dragIcon) {
+                    this.changeDragIconToTickIcon(subjectCard);
+                }
+                else {
+                    this.changeTickIconToDragIcon(subjectCard);
+                }
+            }
 
 
 
@@ -4192,11 +4238,6 @@
 
                     document.querySelector(".selected-subject-card-notif-container").appendChild(selectionNotifDiv);
                     this.notifBtnsAttachListener(selectionNotifDiv);
-                    // this.notifScrollBtnAttachListener(selectionNotifDiv.querySelector(".selected-subject-card-notif-div-scroll-btn"));
-
-                    // let highestWidth = 0;
-                    // document.querySelectorAll(".selected-subject-card-notif-div").forEach(notifDiv => {if (highestWidth < notifDiv.clientWidth) highestWidth = notifDiv.clientWidth;})
-                    // document.querySelector(".selected-subject-card-notif-container").style.left = `calc(99% - ${100 * highestWidth/document.body.clientWidth}%`;
 
                     setTimeout(()=>{selectionNotifDiv.classList.add("on")}, 10)
 
@@ -4815,9 +4856,11 @@
 
                 const closePickerMenuFunc = () => {
                     pickerMenu.classList.remove("show"); 
-                    setTimeout(() => {pickerMenu.remove()}, 300);
+                    setTimeout(() => {pickerMenu.remove(); this.attachDocumentMouseEvents()}, 300);
                 };
                 
+                document.onclick = (e) => {if (!e.target.closest(".online-cfg-picker-menu")) {closePickerMenuFunc()}}
+                document.onmousedown = null;
                 pickerMenu.querySelector(".online-cfg-picker-menu-close-btn").onclick = closePickerMenuFunc;
                 pickerMenu.querySelectorAll(".online-cfg-picker-menu-dir-card").forEach(dirCard => {
                     dirCard.onclick = (e) => {
@@ -4830,7 +4873,7 @@
                             pickerMenu.querySelectorAll(".online-cfg-picker-menu-dir-tree.show").forEach(tree => {
                                 const childTreePath = tree.dataset.path.match(RegExp("\\b"+ path + "(\\b|/(.+)\\b)"));
                                 const childTree = pickerMenu.querySelector(`.online-cfg-picker-menu-dir-tree.show[data-path="${childTreePath?.input}"]`);
-                                childTree?.querySelectorAll(".online-cfg-picker-menu-dir-card").forEach(dirCard => {
+                                childTree?.querySelectorAll(".online-cfg-picker-menu-dir-card")?.forEach(dirCard => {
                                     dirCard?.classList?.remove("on");
                                 })
                                 childTree?.classList?.remove("show");
@@ -4907,7 +4950,6 @@
                             let out = type == "config" ? `
                             <div class="online-cfg-picker-menu-dir-tree ${type}" style="display: none" data-path="${promDirData.path}">
                                 <div class="online-cfg-picker-menu-dir-tree-header">CONFIG</div>
-                                <div class="online-cfg-picker-menu-dir-tree-nb-cfgs">Nb configs: ${promDirData.nbCfgs}</div>
                                 <div class="online-cfg-picker-menu-dir-tree-body">
                             ` : "";
                             
@@ -5069,7 +5111,7 @@
         // MARK: -Keyboard Events
         generalKeyboardEvents() {
             document.onkeydown = (e) => {
-                if (this.keyMatch(e, "E", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"}) /* key === "no-alt + no-ctrl + shift + no-meta + E (no-repeat)" */) {
+                if      (this.keyInputMatch(e, "E", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
                     
                     this.editMode = !this.editMode;
                     
@@ -5078,7 +5120,7 @@
                     this.renderContent();
                     this.attachEventListeners();
                 }
-                else if (this.keyMatch(e, "D", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
+                else if (this.keyInputMatch(e, "D", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
 
                     this.viewMode = this.viewMode == "detailed" ? "compact" : "detailed";
                     localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
@@ -5096,7 +5138,7 @@
                     this.renderContent();
                     this.attachEventListeners();
                 }
-                else if (this.keyMatch(e, "L", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
+                else if (this.keyInputMatch(e, "L", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
                     
                     this.lang = this.lang == "fr" ? "en" : "fr";
                     localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
@@ -5113,7 +5155,7 @@
                     this.renderContent(false);
                     this.attachEventListeners();
                 }
-                else if (this.keyMatch(e, "R", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
+                else if (this.keyInputMatch(e, "R", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
                     console.warn("You fell into my breakpoint trap!!"); debugger;
                 }
             };
