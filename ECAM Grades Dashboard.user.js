@@ -59,12 +59,20 @@
             .lang-btn.active    { border: 2px solid #ceefffff; }
             .lang-btn:hover     { border: 2px solid #afe4ffff; background: #a6acff; }
 
-            .report-issue           { display: flex; justify-content: flex-start; align-items: center; text-align: right; outline: 2px solid #c022ff; background: #c022ff55; border-radius: 20px; position: absolute; top: 79px; right: 42px; height: 40px; width: 39px; padding-left: 6px; gap: 5px; font-size: 15px; text-wrap-mode: nowrap; overflow: clip; transition: all 0.2s ease; }
-            .report-issue.open      { width: 160px; }
-            .report-issue-btn           { display: flex; justify-content: center; align-items: center; text-align: center; outline: 2px solid #c022ff; background: #6e00ad; border-radius: 20px; position: absolute; top: 79px; right: 42px; height: 40px; width: 40px; padding-left: 6px; font-size: 20px; user-select: none; text-decoration: none; color: inherit; transition: all 0.2s ease; }
-            .report-issue-btn:focus     { color: #b8d7ff; font-size: 25px; }
-            .report-issue-hitbox        { border-radius: 20px; position: absolute; top: 79px; right: 42px; height: 40px; width: 40px; opacity: 0; cursor: pointer; transition: all 0.2s ease; }
-            .report-issue-hitbox.open   { width: 160px; }
+
+            .issue.suggest-idea           { display: flex; justify-content: flex-start; align-items: center; text-align: left; outline: 2px solid white; background: #009d40; border-radius: 20px; position: absolute; top: 79px; right: 42px; height: 40px; width: 39px; padding-left: 6px; color: white; font-size: 15px; text-wrap-mode: nowrap; overflow: clip; cursor: pointer; user-select: none; text-decoration: none; z-index: 2; transition: all 0.2s ease; }
+            .issue.report-issue           { display: flex; justify-content: flex-start; align-items: center; text-align: left; outline: 2px solid white; background: #ad0000; border-radius: 20px; position: absolute; top: 79px; right: 42px; height: 40px; width: 39px; padding-left: 6px; color: white; font-size: 15px; text-wrap-mode: nowrap; overflow: clip; cursor: pointer; user-select: none; text-decoration: none; z-index: 3; transition: all 0.2s ease; }
+            .issue.suggest-idea:hover     { color: #b8d7ff; }
+            .issue.report-issue:hover     { color: #b8d7ff; }
+            .issue.suggest-idea:focus     { color: #b8d7ff; }
+            .issue.report-issue:focus     { color: #b8d7ff; }
+            .issue.suggest-idea.fr.open      { width: 345px; }
+            .issue.report-issue.fr.open      { width: 200px; }
+            .issue.suggest-idea.en.open      { width: 290px; }
+            .issue.report-issue.en.open      { width: 160px; }
+            .issue.issue-btn              { display: flex; justify-content: center; align-items: center; text-align: center; outline: 2px solid #c022ff; background: #6e00ad; border-radius: 20px; position: absolute; top: 79px; right: 42px; height: 40px; width: 40px; padding-left: 6px; font-size: 20px; user-select: none; text-decoration: none; color: inherit; cursor: pointer; z-index: 4; transition: all 0.2s ease; }
+            .issue.issue-btn:focus        { color: #b8d7ff; font-size: 25px; }
+
 
             .import-menu        { display: flex; justify-content: space-around; position: absolute; right: 4%; top: 220px; background: white; color: black; box-shadow: 5px 4px 20px 0px #00000066; font-size: 15px; border-radius: 13px; min-height: 60px; width: 35%; align-items: center; opacity: 0; transition: all 0.2s ease; }
             .import-menu.show   { top: 230px; opacity: 1; }
@@ -73,7 +81,7 @@
             .import-menu-btn.online {  }
             
 
-            .online-cfg-picker-menu         { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 20%; display: flex; flex-direction: column; justify-content: flex-start; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; z-index: 1000; border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0; transition: all 0.3s ease; }
+            .online-cfg-picker-menu         { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 20%; display: flex; flex-direction: column; justify-content: flex-start; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; z-index: 1000; border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0; transition: all 0.3s ease; backdrop-filter: blur(5px);  }
             .online-cfg-picker-menu.show    { height: calc(100% - 60px); width: calc(100% - 60px); top: 30px; left: 30px; border: 8px solid #ffffff; opacity: 1; }
             .online-cfg-picker-menu-header          { display: flex; justify-content: flex-end; height: 40px; align-items: center; }
             .online-cfg-picker-menu-close-btn           { display: flex; justify-content: center; align-items: center; width: 30px; height: 30px; border-radius: 15px; border: 2px solid; font-size: 20px; user-select: none; cursor: pointer; margin-right: 3px; transition: all 0.2s ease; }
@@ -586,24 +594,17 @@
             this.now        = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
             this.dateHour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
             this.today  = new Date().toISOString().split('T')[0];                                                       // Current date in ISO String
-            this.dateTimeOfUpdateCheck          = localStorage.getItem("ECAM_DASHBOARD_DATE_TIME_OF_LAST_LOAD")     || "2026-02-02"; // The day before the date of last update, so that the update check is ran to make sure the correct version is installed
-            this.getDateTimeOffsetFromNow       = (minutesOffset=5) => {
-                const now = this.now();
-                const nowMinutes = parseInt(now.match(/T\d{2}:(\d{2}):\d{2}Z/)[1]);
-                const newMinutes = (nowMinutes + minutesOffset)%60;
-                const hourOffset = (Math.abs(nowMinutes + minutesOffset)) / 60 - Math.sign(minutesOffset)*(newMinutes/60);
-                const nowHour = Math.abs(nowMinutes)/60 > 1 ? parseInt(now.match(/T(\d{2}):\d{2}:\d{2}Z/)[1]) + Math.floor(nowMinutes/60)-1 : parseInt(now.match(/T(\d{2}):\d{2}:\d{2}Z/)[1]);
-                return now.replace(/:\d{2}:/, `:${newMinutes}:`)
-            };
+            this.dateTimeOfLastUpdateCheck  = localStorage.getItem("ECAM_DASHBOARD_DATE_TIME_OF_LAST_UPDATE_CHECK") || "2026-02-02T00:00:00Z"; // A day before the date of last update, so that the update check is ran to make sure the correct version is installed
+            this.updateTimeInterval         = 30; // in minutes
 
             this.grades     = [];
             this.semesters  = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{}, 7:{}, 8:{}, 9:{}, 10:{}};
-            this.savedReadGrades    = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SAVED_READ_GRADES"))         || [] ;
+            this.savedReadGrades    = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SAVED_READ_GRADES"))         || [];
             this.sim                = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SIM_GRADES"))                || {};
             this.newGrades = [];
             
             this.repoUserReportIssue        = "https://github.com/Batkillulu/ECAM-Grades-Dashboard/issues/new?template=user-report-issue-template.md";
-            this.repoUserSuggestionIssue    = "https://github.com/Batkillulu/ECAM-Grades-Dashboard/issues/new?template=user-report-issue-template.md";
+            this.repoUserSuggestionIssue    = "https://github.com/Batkillulu/ECAM-Grades-Dashboard/issues/new?template=feature-improvement-request.md";
             this.repoContentsAPI            = "https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/contents";
             this.repoScriptRaw              = "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/ECAM%20Grades%20Dashboard.user.js";
             
@@ -1758,8 +1759,24 @@
             }
 
             async autoUpdateCheck() {
-                if (this.dateTimeOfUpdateCheck < this.getPlannedTimeOfUpdate()) {
+                const dateTimeOfLastUpdateCheck = this.dateTimeOfLastUpdateCheck;
+                const minutesOffset = 5;
+                const minutes    = parseInt(dateTimeOfLastUpdateCheck.match(/T\d{2}:(\d{2}):\d{2}Z/)[1]);
+                const hour       = parseInt(dateTimeOfLastUpdateCheck.match(/T(\d{2}):\d{2}:\d{2}Z/)[1]);
+                let newMinutes   = minutes + minutesOffset;
+                let newHour      = hour; if (newMinutes >= 60) {newHour++} else if (newMinutes < 0) {newHour--}
+                newHour = newHour.toString();
+                if (newHour.length == 1) {newHour = "0" + newHour}
+                newMinutes %= 60;
+                newMinutes = newMinutes.toString();
+                if (newMinutes.length == 1) {newMinutes = "0" + newMinutes}
+
+                const getPlannedDateTimeOfUpdate = dateTimeOfLastUpdateCheck.replace(/T\d{2}:\d{2}:\d{2}Z/, `T${newHour}:${newMinutes}:00Z`)
+
+                if (getPlannedDateTimeOfUpdate < this.now()) {
                     this.runUpdateCheck();
+                    this.dateTimeOfLastUpdateCheck = this.now();
+                    localStorage.setItem("ECAM_DASHBOARD_DATE_TIME_OF_LAST_UPDATE_CHECK", this.now());
                 }
             }
 
@@ -1894,9 +1911,10 @@
                     </div>
                     <div class="header-actions" style="display:flex; align-items:center">
 
-                        <div class="report-issue">${this.lang == "fr" ? "Signaler un probème" : "Report an issue"}</div>
-                        <div class="report-issue-btn" id="reportIssueBtn">🚩</div>
-                        <a class="report-issue-hitbox" id="reportIssueHitbox" href="${this.repoUserReportIssue}" target="_blank"></a>
+                        <a class="issue suggest-idea ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserSuggestionIssue}" target="_blank">${this.lang == "fr" ? "Suggérer une idée"   : "Suggest an idea"}</a>
+                        <a class="issue report-issue ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserReportIssue    }" target="_blank">${this.lang == "fr" ? "Signaler un probème" : "Report an issue"}</a>
+                        <div class="issue issue-btn" id="reportIssueBtn">🚩</div>
+
 
                         <button class="btn btn-edit-mode ${this.editMode ? "on" : "off"}" id="editModeBtn"></button>
 
@@ -2059,10 +2077,23 @@
                 const langShortcutText = document.getElementById("langShortcut");
                 langShortcutText.innerHTML = this.lang == "fr" ? "(Ctrl+L)" : "(Shift+L)";
 
-                const reportIssue = document.querySelector(".report-issue");
-                reportIssue.innerHTML = this.lang == "fr" ? "Signaler un probème" : "Report an issue";
-                const reportIssueBtn = document.getElementById("reportIssueBtn");
-                reportIssueBtn.title = this.lang == "fr" ? "Signaler un probème" : "Report an issue";
+                const suggestIdea = document.querySelector(".issue.suggest-idea");
+                const reportIssue = document.querySelector(".issue.report-issue");
+                const reportIssueBtn = document.querySelector(".issue.issue-btn");
+                if (this.lang == "fr") {
+                    suggestIdea.innerHTML = "Suggérer une idée";
+                    reportIssue.innerHTML = "Signaler un probème";
+                    reportIssueBtn.title  = "Signaler...";
+                    suggestIdea.classList.replace("en", "fr");
+                    reportIssue.classList.replace("en", "fr");
+                }
+                else {
+                    suggestIdea.innerHTML = "Suggest an idea";
+                    reportIssue.innerHTML = "Report an issue";
+                    reportIssueBtn.title  = "Report...";
+                    suggestIdea.classList.replace("fr", "en");
+                    reportIssue.classList.replace("fr", "en");
+                }
                 
                 const importBtn = document.getElementById("importBtn");
                 const editModeBtn = document.getElementById("editModeBtn");
@@ -2708,6 +2739,7 @@
 
             attachEventListeners() {
                 this.attachDocumentMouseEvents();
+                this.attachIssuesBtnsMouseEvents();
 
                 document.body.onresize = (e) => {
                     
@@ -2777,17 +2809,6 @@
                     }
                 }
 
-
-                const reportIssueContainer = document.querySelector(".report-issue");
-                const reportIssueHitbox    = document.querySelector(".report-issue-hitbox");
-                reportIssueHitbox.onmouseenter = (e) => {
-                    reportIssueHitbox.classList.add("open");
-                    reportIssueContainer.classList.add("open");
-                }
-                reportIssueHitbox.onmouseleave = (e) => {
-                    reportIssueHitbox.classList.remove("open");
-                    reportIssueContainer.classList.remove("open");
-                }
                 
                 
 
@@ -3154,6 +3175,33 @@
                 document.getElementById('exportBtn').onclick = () => this.exportData();
 
                 if (this.editMode) {this.attachAllOnDragEventListeners();} else {this.detachOnDragEventListeners();}
+            }
+
+            attachIssuesBtnsMouseEvents() {
+                const issueBtn       = document.querySelector(".issue.issue-btn");
+                const reportIssue    = document.querySelector(".issue.report-issue");
+                const suggestIdea    = document.querySelector(".issue.suggest-idea");
+
+                issueBtn.onclick = (e) => {
+                    if (reportIssue.classList.contains("open")) {
+                        reportIssue.classList.remove("open");
+                        reportIssue.classList.remove("open");
+                        suggestIdea.classList.remove("open");
+                        this.attachDocumentMouseEvents("onclick");
+                    }
+                    else {
+                        reportIssue.classList.add("open");
+                        reportIssue.classList.add("open");
+                        suggestIdea.classList.add("open");
+
+                        document.onclick = (e) => {if (!e.target.closest(".issue")) {
+                            reportIssue.classList.remove("open");
+                            reportIssue.classList.remove("open");
+                            suggestIdea.classList.remove("open");
+                            this.attachDocumentMouseEvents("onclick");
+                        }}
+                    }
+                };
             }
 
             attachDocumentMouseEvents(eventName="all") {

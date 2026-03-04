@@ -6,6 +6,8 @@ labels: user suggestion
 assignees: Batkillulu
 
 ---
+> Feel free to write in French or in English! Vous pouvez écrire en français ou en anglais ! Mais je vais partir du principe que vous pouvez comprendre ce que je dis en anglais, j'ai la flemme de traduire et c'est pénible en terme de lisibilité, merci pour votre compréhension :P
+
 
 **Is your feature request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
