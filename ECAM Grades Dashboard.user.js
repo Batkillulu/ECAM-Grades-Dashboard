@@ -36,20 +36,17 @@
         styles += `
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
             * { box-sizing: border-box; }
-            .ecam-dash { 
-                display: grid; 
-                flex-direction: column; 
-                justify-content:center; 
-                width: 97%; 
-                grid-template-columns: 100%; 
-                font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; 
-                margin: 20px 1.5% 0px 1.5%; 
-                color: #1a1a1a; 
-            }
+            .ecam-dash { display: grid; flex-direction: column; justify-content:center; width: 97%; grid-template-columns: 100%; font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; margin: 20px 1.5% 0px 1.5%; color: #1a1a1a; }
 
             .dash-header { background: linear-gradient(135deg, #5b62bf 0%, #2A2F72 100%); color: white; padding: 30px 40px; border-radius: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 3px 5px 5px 0px #00000042; }
             .dash-title { font-size: 24px; font-weight: 700; margin: 0; }
             .dash-subtitle { font-size: 14px; opacity: 0.95; margin-top: 5px; }
+            
+            .currently-loading      { display: flex; justify-content: center; align-items: center; height: 100px; width: 100px; min-height: 100px; min-width: 100px; position: fixed; top: 20px; right: -100px; opacity: 0; z-index: 1500; transition: opacity 0.2s ease; }
+            .currently-loading.show { right: 20px; opacity: 1; }
+            .loading-symbol         { position: absolute; top: 100px; right: 100px; height: 100px; width: 100px; clip-path: circle(20px); background: #594a8fe0; offset-path: circle(50px); backdrop-filter: blur(2px); offset-distance: var(--offset-offset); }
+            .loading-symbol.show    { animation: loading 1s infinite; }
+            @keyframes loading  { from {offset-distance: var(--offset-offset)} to {offset-distance: calc(var(--offset-offset) + 100%)} }
         `;
         
         
@@ -75,7 +72,7 @@
 
 
             .import-menu        { display: flex; justify-content: space-around; position: absolute; right: 4%; top: 220px; background: white; color: black; box-shadow: 5px 4px 20px 0px #00000066; font-size: 15px; border-radius: 13px; min-height: 60px; width: 35%; align-items: center; opacity: 0; transition: all 0.2s ease; }
-            .import-menu.show   { top: 230px; opacity: 1; }
+            .import-menu.show   { top: 245px; opacity: 1; }
             .import-menu-btn        { display: flex; justify-content: center; align-items: center; text-align: center; user-select: none; cursor: pointer; border-radius: 12px; border: 2px solid; height: 40px; width: 45%; padding: 5px; }
             .import-menu-btn.file   {  }
             .import-menu-btn.online {  }
@@ -1691,10 +1688,30 @@
 
 
         //#region -REGION: Online methods
-            
-            getConfigsFromRepo(repoAPIUrl, endActionCallback) {
 
-                
+            /** Shows/Hides/Toggles the loading symbol when called depending on the argument `show`.
+             * Default call: `this.showLoadingSymbol()`
+             * 
+             * @param {Boolean} show Optional, accepts true, false or nothing, to respectively show, hide or toggle the loading symbol
+             */
+            async showLoadingSymbol(show=undefined) {
+                if (show === undefined) {
+                    document.querySelector(".currently-loading").classList.toggle("show");
+                    document.querySelectorAll(".loading-symbol").forEach(symbol => {symbol.classList.toggle("show")});
+                }
+                else if (show) {
+                    document.querySelector(".currently-loading").classList.add("show");
+                    document.querySelectorAll(".loading-symbol").forEach(symbol => {symbol.classList.add("show")});
+                }
+                else {
+                    document.querySelector(".currently-loading").classList.remove("show");
+                    document.querySelectorAll(".loading-symbol").forEach(symbol => {symbol.classList.remove("show")});
+                }
+            }
+            
+            async getConfigsFromRepo(repoAPIUrl, endActionCallback) {
+                this.showLoadingSymbol(true);
+
                 this.onlineConfigs = {Configs: {nbCfgs: 0, path: ""}, nbCfgs: 0, date: this.today};
                 
                 // Fetch repo's API data
@@ -1751,6 +1768,7 @@
 
                             this.tempGitConfigParentDirData = undefined;
                             localStorage.setItem("ECAM_DASHBOARD_ONLINE_CONFIGS", this.onlineConfigs);
+                            this.showLoadingSymbol(false);
                             endActionCallback();
                         };
                     }})
@@ -1892,6 +1910,14 @@
                 // Therefore, the text isn't yet created, but will be in the renderContent() method later on, to regenerate the text in case the language is changed
                 container.innerHTML = `
                 <div id="emptyDiv"></div>
+                <div class="currently-loading">
+                    <div class="loading-symbol" style="--offset-offset: calc(0 * 100% / 6)"></div>
+                    <div class="loading-symbol" style="--offset-offset: calc(1 * 100% / 6)"></div>
+                    <div class="loading-symbol" style="--offset-offset: calc(2 * 100% / 6)"></div>
+                    <div class="loading-symbol" style="--offset-offset: calc(3 * 100% / 6)"></div>
+                    <div class="loading-symbol" style="--offset-offset: calc(4 * 100% / 6)"></div>
+                    <div class="loading-symbol" style="--offset-offset: calc(5 * 100% / 6)"></div>
+                </div>
                 <div class="dash-header">
                     <div style="display: flex;flex-direction: row;" id="aui_3_2_0_1305">
                         <img draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/5/51/ECAM-LaSalle-bleu-seul.png" alt="ECAM Logo" style="margin: 0px 0px 0px -10px;height: 141px;width: 148px;" id="aui_3_2_0_1304">
@@ -5119,6 +5145,7 @@
                                 }, 300); 
                             } catch (e) {}
 
+                            this.showLoadingSymbol(false);
                             resolve(parsed);
                         } catch (err) {
                             reject(err);
@@ -5127,6 +5154,7 @@
 
                     // If a File object was passed, read it
                     if (file instanceof File) {
+                        this.showLoadingSymbol(true)
                         const reader = new FileReader();
                         reader.onload = (e) => handleText(e.target.result);
                         reader.onerror = (e) => reject(e);
