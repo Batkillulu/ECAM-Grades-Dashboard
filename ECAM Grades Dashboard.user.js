@@ -85,8 +85,8 @@
             .online-cfg-picker-menu-close-btn           { display: flex; justify-content: center; align-items: center; width: 30px; height: 30px; border-radius: 15px; border: 2px solid; font-size: 20px; user-select: none; cursor: pointer; margin-right: 3px; transition: all 0.2s ease; }
             .online-cfg-picker-menu-close-btn:hover     { width: 40px; height: 40px; border-radius: 20px; font-size: 30px; margin-right: -2px; gap: 5px; }
 
-            .online-cfg-picker-menu-body            { display: flex; flex-direction: row; justify-content: center;   align-items: center; height: calc(100% - 40px); width: 100%; gap: 5px; overflow: clip;}
-            .online-cfg-picker-menu-body-container  { display: flex; flex-direction: row; justify-content: flex-end; align-items: center; height:      100%;         width: 35%;  gap: 5px; position: relative; right: 14%; }
+            .online-cfg-picker-menu-body            { display: flex; flex-direction: row; justify-content: center;   align-items: center; height: calc(100% - 40px); width: 100%;  gap: 5px; overflow: clip;}
+            .online-cfg-picker-menu-body-container  { display: flex; flex-direction: row; justify-content: flex-end; align-items: center; height:      100%;         width: 620px; gap: 5px; position: relative; right: 14%; }
             .online-cfg-picker-menu-dir-tree            { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 0px; color: transparent; border-radius: 16px; border: 2px solid; background: white; overflow: clip; opacity: 0; transition: all 0.2s ease; }
             .online-cfg-picker-menu-dir-tree.show       { width: 150px; color: black; opacity: 1; }
             .online-cfg-picker-menu-dir-tree.section    { z-index: 1004; }
