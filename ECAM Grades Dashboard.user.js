@@ -71,22 +71,23 @@
             .issue.issue-btn:focus        { color: #b8d7ff; font-size: 25px; }
 
 
-            .import-menu        { display: flex; justify-content: space-around; position: absolute; right: 4%; top: 220px; background: white; color: black; box-shadow: 5px 4px 20px 0px #00000066; font-size: 15px; border-radius: 13px; min-height: 60px; width: 35%; align-items: center; opacity: 0; transition: all 0.2s ease; }
+            .import-menu        { display: flex; justify-content: space-around; position: absolute; right: 4%; top: 220px; background: white; color: black; box-shadow: 5px 4px 20px 0px #00000066; font-size: 15px; border-radius: 13px; min-height: 60px; width: 35%; align-items: center; opacity: 0; z-index: 0; transition: all 0.2s ease; }
             .import-menu.show   { top: 245px; opacity: 1; }
-            .import-menu-btn        { display: flex; justify-content: center; align-items: center; text-align: center; user-select: none; cursor: pointer; border-radius: 12px; border: 2px solid; height: 40px; width: 45%; padding: 5px; }
+            .import-menu-btn        { display: flex; justify-content: center; align-items: center; text-align: center; user-select: none; cursor: pointer; border-radius: 12px; border: 2px solid; height: 40px; width: 45%; padding: 5px; transition: all 0.2s ease; }
+            .import-menu-btn:hover  { background: #dddddd; }
             .import-menu-btn.file   {  }
             .import-menu-btn.online {  }
             
 
-            .online-cfg-picker-menu         { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 20%; display: flex; flex-direction: column; justify-content: flex-start; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; z-index: 1000; border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0; transition: all 0.3s ease; backdrop-filter: blur(5px);  }
+            .online-cfg-picker-menu         { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 20%; display: flex; flex-direction: column; justify-content: flex-start; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; z-index: 1000; border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0; transition: all 0.3s ease; backdrop-filter: blur(1px);  }
             .online-cfg-picker-menu.show    { height: calc(100% - 60px); width: calc(100% - 60px); top: 30px; left: 30px; border: 8px solid #ffffff; opacity: 1; }
             .online-cfg-picker-menu-header          { display: flex; justify-content: flex-end; height: 40px; align-items: center; }
             .online-cfg-picker-menu-close-btn           { display: flex; justify-content: center; align-items: center; width: 30px; height: 30px; border-radius: 15px; border: 2px solid; font-size: 20px; user-select: none; cursor: pointer; margin-right: 3px; transition: all 0.2s ease; }
             .online-cfg-picker-menu-close-btn:hover     { width: 40px; height: 40px; border-radius: 20px; font-size: 30px; margin-right: -2px; gap: 5px; }
 
             .online-cfg-picker-menu-body            { display: flex; flex-direction: row; justify-content: center; align-items: center; height: calc(100% - 40px); width: 100%; gap: 5px; }
-            .online-cfg-picker-menu-dir-tree            { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 0px; position: relative; color: transparent; border-radius: 16px; border: 2px solid; background: white; overflow: clip; opacity: 0; transition: all 0.3s ease; }
-            .online-cfg-picker-menu-dir-tree.show       { width: 150px; left: 0px; color: black; opacity: 1; }
+            .online-cfg-picker-menu-dir-tree            { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 0px; color: transparent; border-radius: 16px; border: 2px solid; background: white; overflow: clip; opacity: 0; transition: all 0.3s ease; }
+            .online-cfg-picker-menu-dir-tree.show       { width: 150px; color: black; opacity: 1; }
             .online-cfg-picker-menu-dir-tree.section    { z-index: 1004; }
             .online-cfg-picker-menu-dir-tree.year       { z-index: 1003; }
             .online-cfg-picker-menu-dir-tree.prom       { z-index: 1002; }
@@ -96,18 +97,19 @@
             .online-cfg-picker-menu-dir-tree-body       { display: flex; flex-direction: column; justify-content: center; align-items: center; height: calc(100% - 20px); width: 95%; }
 
             .online-cfg-picker-menu-dir-card            { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 40px; width: 90%; position: relative; border-radius: 16px; border: 2px solid; background: white; cursor: pointer; overflow: clip; padding: 5px; margin: 5px 0px; user-select: none; transition: all 0.3s ease; }
-            .online-cfg-picker-menu-dir-card.on         { width: 100%; border-radius: 16px; background: #7c85ff; }
+            .online-cfg-picker-menu-dir-card:hover      { height: 40px; width: 85%; border: 2px solid; background: #dddddd; padding: 5px; margin: 5px 0px; user-select: none; transition: all 0.3s ease; }
+            .online-cfg-picker-menu-dir-card.on         { width: 100%; border-radius: 16px; background: #b9beff; }
 
             
             .header-actions                 { display: flex; gap: 12px; }
-            .btn                                { display: flex; justify-content: center; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-size: 14px; }
+            .btn                                { display: flex; justify-content: center; align-items: center; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-size: 14px; }
             .btn-edit-mode:hover:not(:disabled) { transform: scale(0.95); background: linear-gradient(135deg, #7d92eeff 0%, #8e5ebeff 100%); }
             .btn-edit-mode                      { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: grid; width: 126px; height: 108px; transition: all 0.2s ease }
             .btn-edit-mode.on                   { transform: scale(0.95); box-shadow: inset 0px 0px 6px 4px #ffffff; }
-            .btn-export                         { background: white; color: #666; display: flex; align-items: center; width: 140px; height: 50px; }
-            .btn-import                         { background: white; color: #666; display: flex; align-items: center; width: 140px; height: 50px; }
-            .btn-export:hover                   { border: 1px solid #667eea; color: #667eea; transform: scale(0.95); box-shadow: 3px 5px 5px 0px #00000042; }
-            .btn-import:hover                   { border: 1px solid #667eea; color: #667eea; transform: scale(0.95); box-shadow: 3px 5px 5px 0px #00000042; }
+            .btn-export                         { background: white; color: #666; width: 140px; height: 50px; }
+            .btn-import                         { background: white; color: #666; width: 140px; height: 50px; z-index: 1; }
+            .btn-export:hover                   { background: white; border: 1px solid #667eea; color: #667eea; transform: scale(0.95); box-shadow: 3px 5px 5px 0px #00000042; }
+            .btn-import:hover                   { background: white; border: 1px solid #667eea; color: #667eea; transform: scale(0.95); box-shadow: 3px 5px 5px 0px #00000042; }
             .btn-icon                           { font-size: 20px; margin-bottom: 2px }
             .btn:disabled                       { opacity: 0.5; cursor: not-allowed; }
         `;
@@ -5008,14 +5010,15 @@
 
             generateOnlineCfgPickerMenuDirTree(type="section") {
                 // Creating an array containing all the properties' value of this.onlineConfigs.Configs that are objects (so that have a descendance) with at least one property: they are the data of the section folders
-                const sectionsArray = Object.values(this.onlineConfigs.Configs).map(value => {if (value instanceof Object && Object.keys(value).length>0) {return value}}).filter(value => {return value});
+                const sectionsData = this.onlineConfigs.Configs;
+                const sectionsArray = Object.values(sectionsData).map(value => {if (value instanceof Object && Object.keys(value).length>0) {return value}}).filter(value => {return value});
 
 
                 let html = type == "section" ? `
-                    <div class="online-cfg-picker-menu-dir-tree ${type} show" data-path="${this.onlineConfigs.Configs.path}">
+                    <div class="online-cfg-picker-menu-dir-tree ${type} show" data-path="${sectionsData.path}">
                         <div class="online-cfg-picker-menu-dir-tree-header">SECTION</div>
                         <div class="online-cfg-picker-menu-dir-tree-body">
-                        <div class="online-cfg-picker-menu-dir-tree-nb-cfgs">Nb configs: ${this.onlineConfigs.Configs.nbCfgs}</div>
+                        <div class="online-cfg-picker-menu-dir-tree-nb-cfgs">${sectionsData.nbCfgs} config${sectionsData.nbCfgs>1?"s":""}</div>
                 ` : "";
 
                 html += sectionsArray.map(sectionDirData => {       // Dir: Section
@@ -5028,7 +5031,7 @@
                     let out = type == "year" ? `
                     <div class="online-cfg-picker-menu-dir-tree ${type}" style="display: none" data-path="${sectionDirData.path}">
                         <div class="online-cfg-picker-menu-dir-tree-header">${this.lang == "fr" ? "ANNÉE" : "YEAR"}</div>
-                        <div class="online-cfg-picker-menu-dir-tree-nb-cfgs">Nb configs: ${sectionDirData.nbCfgs}</div>
+                        <div class="online-cfg-picker-menu-dir-tree-nb-cfgs">${sectionDirData.nbCfgs} config${sectionDirData.nbCfgs>1?"s":""}</div>
                         <div class="online-cfg-picker-menu-dir-tree-body">
                     ` : "";
                     
@@ -5043,7 +5046,7 @@
                         let out = type == "prom" ? `
                         <div class="online-cfg-picker-menu-dir-tree ${type}" style="display: none" data-path="${yearDirData.path}">
                             <div class="online-cfg-picker-menu-dir-tree-header">${this.lang == "fr" ? "PROMO" : "PROM"}</div>
-                            <div class="online-cfg-picker-menu-dir-tree-nb-cfgs">Nb configs: ${yearDirData.nbCfgs}</div>
+                            <div class="online-cfg-picker-menu-dir-tree-nb-cfgs">${yearDirData.nbCfgs} config${yearDirData.nbCfgs>1?"s":""}</div>
                             <div class="online-cfg-picker-menu-dir-tree-body">
                         ` : "";
                         
