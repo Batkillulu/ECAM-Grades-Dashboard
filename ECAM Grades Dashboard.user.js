@@ -57,18 +57,19 @@
             .lang-btn:hover     { border: 2px solid #afe4ffff; background: #a6acff; }
 
 
-            .issue.suggest-idea           { display: flex; justify-content: flex-start; align-items: center; text-align: left; outline: 2px solid white; background: #009d40; border-radius: 20px; position: absolute; top: 79px; right: 42px; height: 40px; width: 39px; padding-left: 6px; color: white; font-size: 15px; text-wrap-mode: nowrap; overflow: clip; cursor: pointer; user-select: none; text-decoration: none; z-index: 2; transition: all 0.2s ease; }
-            .issue.report-issue           { display: flex; justify-content: flex-start; align-items: center; text-align: left; outline: 2px solid white; background: #ad0000; border-radius: 20px; position: absolute; top: 79px; right: 42px; height: 40px; width: 39px; padding-left: 6px; color: white; font-size: 15px; text-wrap-mode: nowrap; overflow: clip; cursor: pointer; user-select: none; text-decoration: none; z-index: 3; transition: all 0.2s ease; }
-            .issue.suggest-idea:hover     { color: #b8d7ff; }
-            .issue.report-issue:hover     { color: #b8d7ff; }
-            .issue.suggest-idea:focus     { color: #b8d7ff; }
-            .issue.report-issue:focus     { color: #b8d7ff; }
-            .issue.suggest-idea.fr.open      { width: 345px; }
-            .issue.report-issue.fr.open      { width: 200px; }
-            .issue.suggest-idea.en.open      { width: 290px; }
-            .issue.report-issue.en.open      { width: 160px; }
-            .issue.issue-btn              { display: flex; justify-content: center; align-items: center; text-align: center; outline: 2px solid #c022ff; background: #6e00ad; border-radius: 20px; position: absolute; top: 79px; right: 42px; height: 40px; width: 40px; padding-left: 6px; font-size: 20px; user-select: none; text-decoration: none; color: inherit; cursor: pointer; z-index: 4; transition: all 0.2s ease; }
-            .issue.issue-btn:focus        { color: #b8d7ff; font-size: 25px; }
+            .issue.issue-btn              { display: flex; justify-content: center; align-items: center; text-align: center; border: none; outline: 2px solid #c022ff; background: #6e00ad; border-radius: 20px; position: absolute; top: 79px; right: 42px; height: 40px; width: 40px; padding-left: 6px; font-size: 20px; user-select: none; text-decoration: none; color: inherit; cursor: pointer; z-index: 4; transition: all 0.2s ease; }
+            .issue.issue-btn:focus        { outline: 2px solid white; }
+            .issue.issue-btn.open         { outline: 2px solid white; }
+            .issue.suggest-idea             { display: flex; justify-content: flex-start; align-items: center; text-align: left; outline: 2px solid white; background: #009d40; border-radius: 20px; position: absolute; top: 79px; right: 42px; height: 40px; width: 39px; padding-left: 10px; color: white; font-size: 15px; text-wrap-mode: nowrap; overflow: clip; cursor: pointer; user-select: none; text-decoration: none; z-index: 2; transition: all 0.2s ease; }
+            .issue.report-issue             { display: flex; justify-content: flex-start; align-items: center; text-align: left; outline: 2px solid white; background: #ad0000; border-radius: 20px; position: absolute; top: 79px; right: 42px; height: 40px; width: 39px; padding-left: 10px; color: white; font-size: 15px; text-wrap-mode: nowrap; overflow: clip; cursor: pointer; user-select: none; text-decoration: none; z-index: 3; transition: all 0.2s ease; }
+            .issue.suggest-idea:hover       { color: #b8d7ff; }
+            .issue.report-issue:hover       { color: #b8d7ff; }
+            .issue.suggest-idea:focus       { color: #b8d7ff; }
+            .issue.report-issue:focus       { color: #b8d7ff; }
+            .issue.suggest-idea.fr.open       { width: 380px; }
+            .issue.report-issue.fr.open       { width: 220px; }
+            .issue.suggest-idea.en.open       { width: 315px; }
+            .issue.report-issue.en.open       { width: 175px; }
 
 
             .import-menu        { display: flex; justify-content: space-around; position: absolute; right: 4%; top: 220px; background: white; color: black; box-shadow: 5px 4px 20px 0px #00000066; font-size: 15px; border-radius: 13px; min-height: 60px; width: 35%; align-items: center; opacity: 0; z-index: 0; transition: all 0.2s ease; }
@@ -384,16 +385,16 @@
             .semester-grid      { display: grid; width: 100%; gap: 20px; transition: gap 0.2s ease; }
             .ue-card                { display: flex; flex-direction: column; align-items: center; width: 100%; background: #fafafa; border-radius: 25px; border: 3px solid #e5e5e5; scroll-margin: 70px; transition: all 0.2s ease; }
             .ue-card.collapse       { border-radius: 25px; border: 0px solid #e5e5e5; }
-            .ue-card.validated      { border-color: #10b981ff; background: #f0fdf4ff; }
-            .ue-card.failed         { border-color: #ef4444ff; background: #fef2f2ff; }
-            .ue-card.unknown        { border-color: #6d6d6dff; background: #d1d1d1ff; }
+            .ue-card.validated      { border-color: #10b981ff; background: radial-gradient(transparent 0%, #f0fdf4ff 75%); }
+            .ue-card.failed         { border-color: #ef4444ff; background: radial-gradient(transparent 0%, #fef2f2ff 75%); }
+            .ue-card.unknown        { border-color: #6d6d6dff; background: radial-gradient(transparent 0%, #d1d1d1ff 75%); }
 
-            .ue-header                  { display: flex; align-items: center; padding: 20px 20px 18px 20px; border-bottom: 3px solid #e5e5e5; border-radius: 22px 22px 0px 0px; width: 100%; cursor: pointer; z-index: 1; }
+            .ue-header                  { display: flex; align-items: center; padding: 20px 20px 18px 20px; border-bottom: 3px solid #e5e5e5; border-radius: 22px 22px 0px 0px; width: 100%; cursor: pointer; z-index: 1; transition: all 0.3s ease; }
             .ue-header.collapse         { border-width: 3px; border-style: solid; border-radius: 22px 22px 22px 22px; }
-            .ue-header.validated        { border-color: #10b981ff; background: #e0ffeaff; }
-            .ue-header.failed           { border-color: #ef4444ff; background: #ffd9d9ff; }
-            .ue-header.unknown          { border-color: #6d6d6dff; background: #acacacff; }
-            .ue-header:hover            { background: #f3f4f6; }
+            .ue-header.validated        { border-color: #10b981ff; background: linear-gradient(300deg, #e0ffeaff 30%, transparent); }
+            .ue-header.failed           { border-color: #ef4444ff; background: linear-gradient(300deg, #ffd9d9ff 30%, transparent); }
+            .ue-header.unknown          { border-color: #6d6d6dff; background: linear-gradient(300deg, #acacacff 30%, transparent); }
+            .ue-header:hover            { backdrop-filter: brightness(2); opacity: 0.8; }
             .ue-delete-btn                  { border-radius: 14px; background: transparent; }
             .ue-title                    { font-size: 16px; font-weight: 800; color: #1a1a1a; width:42%; margin-bottom: 2px; }
             .ue-title.input              { font-size: 16px; font-weight: 800; color: #1a1a1a; width:90%; border-radius: 12px; padding-left: 10px; }
@@ -439,29 +440,29 @@
         styles += `
 
             .subject-card               { display: flex; flex-direction: column; align-items: center; border: 4px solid #ffffffff; border-radius: 20px; width: 100%; background: #c5c5c5; transition: width 0.3s ease, box-shadow 0.1s ease, opacity 0.2s ease, height 0.2s ease, padding 0.2s ease, border-width 0.2s ease; }
-            .subject-card.good          { box-shadow: 0px 0px 0px 0px #39ff8f; background: #f0fdf4; }
+            .subject-card.good          { box-shadow: 0px 0px 0px 0px #39ff8f; background: linear-gradient(300deg, #f0fdf4 30%, transparent); }
             .subject-card.good:hover    { box-shadow: 0px 0px 7px 0px #39ff8f; }
-            .subject-card.meh           { box-shadow: 0px 0px 0px 0px #fff27b; background: #fff2e4; }
+            .subject-card.meh           { box-shadow: 0px 0px 0px 0px #fff27b; background: linear-gradient(300deg, #fff2e4 30%, transparent); }
             .subject-card.meh:hover     { box-shadow: 0px 0px 7px 0px #fff27b; }
-            .subject-card.bad           { box-shadow: 0px 0px 0px 0px #ff7b7b; background: #fef2f2; }
+            .subject-card.bad           { box-shadow: 0px 0px 0px 0px #ff7b7b; background: linear-gradient(300deg, #fef2f2 30%, transparent); }
             .subject-card.bad:hover     { box-shadow: 0px 0px 7px 0px #ff7b7b; }
-            .subject-card.unknown       { box-shadow: 0px 0px 0px 0px #6d6d6d; background: #c5c5c5; }
+            .subject-card.unknown       { box-shadow: 0px 0px 0px 0px #6d6d6d; background: linear-gradient(300deg, #c5c5c5 30%, transparent); }
             .subject-card.unknown:hover { box-shadow: 0px 0px 7px 0px #6d6d6d; }
             
-            .subject-card-header        { display: flex; align-items: center; height: 62px; width: 100%; padding: 5px 0px; border-radius: 20px 20px 0px 0px; background: #b8b8b8; font-weight:600; border-bottom: 4px solid white; }
-            .subject-card-header.good   { background: #e3ffeb; }
-            .subject-card-header.meh    { background: #ffe8d0; }
-            .subject-card-header.bad    { background: #ffe0e0; }
+            .subject-card-header        { display: flex; align-items: center; height: 62px; width: 100%; padding: 5px 0px; border-radius: 20px 20px 0px 0px; background: linear-gradient(300deg, #b8b8b8 30%, transparent); font-weight:600; border-bottom: 4px solid white; }
+            .subject-card-header.good   { background: linear-gradient(300deg, #e3ffeb 30%, transparent); }
+            .subject-card-header.meh    { background: linear-gradient(300deg, #ffe8d0 30%, transparent); }
+            .subject-card-header.bad    { background: linear-gradient(300deg, #ffe0e0 30%, transparent); }
             .subject-name               { font-weight: 800; color: #1a1a1a; font-size: 14px }
             .subject-name.input         { font-weight: 800; color: #1a1a1a; font-size: 14px; border: 2px solid #797979; border-radius: 15px; padding-left: 8px; width: 100%; height: 25px;}
             .subject-coef-input-box     { padding-left: 5px; width: 48px; border-radius: 8px; }
-            .subject-card.compact                       { display:flex; flex-direction: row; justify-content:space-between; align-items:center; padding: 7px 0px; border-radius: 16px; border: 3px solid #ffffff; height: 68px; width: 100%; min-width: 380px; transition: all 0.2s ease; background: none; }
+            .subject-card.compact                       { display:flex; flex-direction: row; justify-content:space-between; align-items:center; padding: 7px 0px; border-radius: 16px; border: 3px solid #ffffff; height: 68px; width: 100%; min-width: 380px; background: none; transition: all 0.2s ease; }
             .subject-card.compact.edit-mode             {  }
-            .subject-card.compact.good                  { background: #e3ffeb; }
-            .subject-card.compact.meh                   { background: #ffe8d0; }
-            .subject-card.compact.bad                   { background: #ffe0e0; }
-            .subject-card.compact.unknown               { background: #c5c5c5; }
-            .subject-card.compact:hover                 { background: #f3f4f6; box-shadow: inset 0px 0px 8px 1px #0032ff42; }
+            .subject-card.compact.good                  { border-color: #c0ffd2; background: linear-gradient(300deg, #e3ffeb 30%, transparent); }
+            .subject-card.compact.meh                   { border-color: #ffe1c2; background: linear-gradient(300deg, #ffe8d0 30%, transparent); }
+            .subject-card.compact.bad                   { border-color: #ffcccc; background: linear-gradient(300deg, #ffe0e0 30%, transparent); }
+            .subject-card.compact.unknown               { border-color: #a3a3a3; background: linear-gradient(300deg, #c5c5c5 30%, transparent); }
+            .subject-card.compact:hover                 { /* backdrop-filter: brightness(2); */ /* opacity: 0.8; */ box-shadow: inset 0px 0px 8px 1px #0032ff42; background: linear-gradient(300deg, var(--subject-card-compact-background-hover) 30%, transparent); }
             .subject-card.compact.edit-mode:hover       { transform: scale(0.995); }
             .subject-card.unclassified                  { display: flex; flex-direction: column; align-items: center; border: 2px solid #ffe4cd; border-radius: 20px; width:100%; background: white; user-select: none; margin: 0px; transition: width 0.3s ease, box-shadow 0.1s ease; }
             .subject-card.unclassified.good             { box-shadow: 0px 0px 0px 0px #39ff8f; background: #f0fdf4; }
@@ -1940,9 +1941,9 @@
                     </div>
                     <div class="header-actions" style="display:flex; align-items:center">
 
-                        <a class="issue suggest-idea ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserSuggestionIssue}" target="_blank">${this.lang == "fr" ? "Suggérer une idée"   : "Suggest an idea"}</a>
-                        <a class="issue report-issue ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserReportIssue    }" target="_blank">${this.lang == "fr" ? "Signaler un probème" : "Report an issue"}</a>
-                        <div class="issue issue-btn" id="reportIssueBtn">🚩</div>
+                        <a class="issue suggest-idea ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserSuggestionIssue}" target="_blank" tabindex="-1">${this.lang == "fr" ? "Suggérer une idée"   : "Suggest an idea"}</a>
+                        <a class="issue report-issue ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserReportIssue    }" target="_blank" tabindex="-1">${this.lang == "fr" ? "Signaler un probème" : "Report an issue"}</a>
+                        <button class="issue issue-btn" id="reportIssueBtn" tabindex="0">🚩</button>
 
 
                         <button class="btn btn-edit-mode ${this.editMode ? "on" : "off"}" id="editModeBtn"></button>
@@ -2110,15 +2111,15 @@
                 const reportIssue = document.querySelector(".issue.report-issue");
                 const reportIssueBtn = document.querySelector(".issue.issue-btn");
                 if (this.lang == "fr") {
-                    suggestIdea.innerHTML = "Suggérer une idée";
-                    reportIssue.innerHTML = "Signaler un probème";
+                    suggestIdea.innerHTML = "Suggérer une idée\u2197";
+                    reportIssue.innerHTML = "Signaler un problème\u2197";
                     reportIssueBtn.title  = "Signaler...";
                     suggestIdea.classList.replace("en", "fr");
                     reportIssue.classList.replace("en", "fr");
                 }
                 else {
-                    suggestIdea.innerHTML = "Suggest an idea";
-                    reportIssue.innerHTML = "Report an issue";
+                    suggestIdea.innerHTML = "Suggest an idea\u2197";
+                    reportIssue.innerHTML = "Report an issue\u2197";
                     reportIssueBtn.title  = "Report...";
                     suggestIdea.classList.replace("fr", "en");
                     reportIssue.classList.replace("fr", "en");
@@ -3213,20 +3214,20 @@
 
                 issueBtn.onclick = (e) => {
                     if (reportIssue.classList.contains("open")) {
-                        reportIssue.classList.remove("open");
-                        reportIssue.classList.remove("open");
-                        suggestIdea.classList.remove("open");
+                        issueBtn.classList.remove("open");
+                        reportIssue.classList.remove("open"); reportIssue.tabIndex = "-1";
+                        suggestIdea.classList.remove("open"); suggestIdea.tabIndex = "-1";
                         this.attachDocumentMouseEvents("onclick");
                     }
                     else {
-                        reportIssue.classList.add("open");
-                        reportIssue.classList.add("open");
-                        suggestIdea.classList.add("open");
+                        issueBtn.classList.add("open");
+                        reportIssue.classList.add("open"); reportIssue.tabIndex = "0";
+                        suggestIdea.classList.add("open"); suggestIdea.tabIndex = "0";
 
                         document.onclick = (e) => {if (!e.target.closest(".issue")) {
-                            reportIssue.classList.remove("open");
-                            reportIssue.classList.remove("open");
-                            suggestIdea.classList.remove("open");
+                            issueBtn.classList.remove("open");
+                            reportIssue.classList.remove("open"); reportIssue.tabIndex = "-1";
+                            suggestIdea.classList.remove("open"); suggestIdea.tabIndex = "-1";
                             this.attachDocumentMouseEvents("onclick");
                         }}
                     }
@@ -4942,7 +4943,8 @@
 
             openOnlineCfgPicker() {
                 document.getElementById("importMenu").classList.remove("show");
-                document.getElementById("importMenu").hidden
+                setTimeout(() => {document.getElementById("importMenu").style.display = "none";}, 300)
+
                 const pickerMenu        = document.createElement("div");
                 pickerMenu.id           = "pickerMenu";
                 pickerMenu.className    = "online-cfg-picker-menu";
