@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.0.3
+// @version      2.0.4
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/group/education/notes*
@@ -399,11 +399,15 @@
             .ue-header.validated        { border-color: #10b981ff; background: linear-gradient(300deg, #e0ffeaff 30%, transparent); }
             .ue-header.failed           { border-color: #ef4444ff; background: linear-gradient(300deg, #ffd9d9ff 30%, transparent); }
             .ue-header.unknown          { border-color: #6d6d6dff; background: linear-gradient(300deg, #acacacff 30%, transparent); }
-            .ue-header:hover            { backdrop-filter: brightness(2); opacity: 0.8; }
+            .ue-header:hover            { filter: brightness(calc(0.01 * 120)); opacity: 0.8; }
             .ue-delete-btn                  { border-radius: 14px; background: transparent; }
             .ue-title                    { font-size: 16px; font-weight: 800; color: #1a1a1a; width:42%; margin-bottom: 2px; }
             .ue-title.input              { font-size: 16px; font-weight: 800; color: #1a1a1a; width:90%; border-radius: 12px; padding-left: 10px; }
-            .ue-subject-total-coef-value { display: flex; gap: 15px; font-weight: 600; }
+
+            .ue-subject-total-coef-div   { display: flex; flex-direction: column; text-align: left; width:47%; gap:4px; padding: 0px 10px; font-size: 14px; }
+            .ue-subject-total-coef-value { display: flex; text-align: left; font-size: 13px; font-weight: 600; gap: 8px; }
+            .ue-subject-total-coef-debug { display: flex; text-align: left; font-size: 13px; }
+
 
             .ue-card-content            { display: flex; flex-direction: row; width: 98%; height: 100%; align-items: center; gap: 0px; margin: 8px 0px 18px 0px; transition: all 0.2s ease; }
             .ue-card-content.collapse   { height: 0%; margin: 0px; }
@@ -411,9 +415,9 @@
 
             .ue-info                        { display: flex; flex-direction: row; justify-content: space-around; align-items: center; width:97%; background: #eef2ff00; border:1px solid #c7d2fe00; padding: 0px 8px 3px 8px; border-radius: 0px 0px 8px 8px; margin-top: -1px; height: 36px; transition: all 0.2s ease; }
             .ue-info.collapse               { height: 0px; padding: 0px; }
-            .ue-info-bar                    { display: flex; flex-direction: row; justify-content: space-around; align-items: center; width:48%; background: #eef2ff;   border:1px solid #c7d2fe;   padding: 3px 8px 3px 8px; border-radius: 0px 0px 8px 8px; }
+            .ue-info-bar                    { display: flex; flex-direction: row; justify-content: space-between; align-items: center; width:48%; background: #eef2ff; border:1px solid #c7d2fe; padding: 3px 15px; border-radius: 0px 0px 8px 8px; }
             .ue-info-clear                  { display: flex; flex-direction: row; justify-content: center; align-items: center; font-size: 12px; background: #d7e0ff; border: 2px solid; border-radius: 10px; padding: 2px 7px; user-select: none; width: 220px; margin-right: 8px; cursor: pointer; transition: all 0.2s ease; }
-            .ue-info-clear:hover            { width: 240px; margin-right: 4px; font-size: 11.5px; background: #eef2ff; }
+            .ue-info-clear:hover            { width: 240px; font-size: 11.5px; margin-right: 0px; background: #eef2ff; }
             .ue-info-clear.disabled         {  }
             .ue-info-clear.sim              {  }
 
@@ -468,7 +472,7 @@
             .subject-card.compact.meh                   { border-color: #ffe1c2; background: linear-gradient(300deg, #ffe8d0 30%, transparent); }
             .subject-card.compact.bad                   { border-color: #ffcccc; background: linear-gradient(300deg, #ffe0e0 30%, transparent); }
             .subject-card.compact.unknown               { border-color: #a3a3a3; background: linear-gradient(300deg, #c5c5c5 30%, transparent); }
-            .subject-card.compact:hover                 { /* backdrop-filter: brightness(2); */ /* opacity: 0.8; */ box-shadow: inset 0px 0px 8px 1px #0032ff42; background: linear-gradient(300deg, var(--subject-card-compact-background-hover) 30%, transparent); }
+            .subject-card.compact:hover                 { filter: brightness(calc(0.01 * 120)); box-shadow: inset 0px 0px 8px 1px #0032ff42; }
             .subject-card.compact.edit-mode:hover       { transform: scale(0.995); }
             .subject-card.unclassified                  { border: 2px solid #ffe4cd; border-radius: 20px; width:100%; background: white; user-select: none; margin: 0px; }
             .subject-card.unclassified.good             { box-shadow: 0px 0px 0px 0px #39ff8f; background: #f0fdf4; }
@@ -482,9 +486,11 @@
             .subject-card.collapse      { opacity: 0; height: 0px; border-width: 0px; padding: 0px; }
 
 
-            .subject-insert-field                        { display: flex: flex-direction: column; align-items: center; height: 0px; width: 100%; margin: 0px 0px; transition: height 0.2s ease, margin 0.2s ease; }
-            .subject-insert-field.show                   { height: 50px; margin: 10px 0px; }
-            .grades-table-subject-total-coef-value      { display: flex; gap: 15px }
+            .grades-table-subject-total-coef-div        { display: flex; flex-direction: column; gap: 4px; text-align: left; width:58%; padding: 0px 10px; font-size: 13px}
+            .grades-table-subject-total-coef-value      { display: flex; gap: 15px; text-align: left; font-weight: 600; gap: 8px; }
+            .grades-table-subject-total-coef-debug      { display: flex; gap: 15px; text-align: left; font-weight: 400; }
+            .subject-insert-field                           { display: flex: flex-direction: column; align-items: center; height: 0px; width: 100%; margin: 0px 0px; transition: height 0.2s ease, margin 0.2s ease; }
+            .subject-insert-field.show                      { height: 50px; margin: 10px 0px; }
             .subj-moyenne        { font-size: 16px; font-weight: 800; }
             .subj-moyenne.good   { color: #10b981; }
             .subj-moyenne.bad    { color: #ef4444; }
@@ -596,7 +602,7 @@
 
         constructor() {
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.0.2";
+            this.scriptVersion = "2.0.4";
 
             this.now        = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
             this.dateHour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
@@ -662,7 +668,7 @@
             this.lang                           = localStorage.getItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE")           || "en";
             this.tempSelection = {};
             this.draggedSubjId = "";
-            this.editMode = false;
+            this.editMode                       = localStorage.getItem("ECAM_DASHBOARD_DEFAULT_EDIT_MODE")          || false;
             this.pinDockbar = false;
 
             this.mobileVer = this.clientWidth <= 935;
@@ -1208,41 +1214,43 @@
             setGradesTableTotalCoef() {
                 const good="#10b981", meh="#e98c00", bad="#e90000", unknown="#7a7a7a";
 
-                document.querySelectorAll(".ue-subject-total-coef-value").forEach(totalCoefDiv => {
+                document.querySelectorAll(".ue-subject-total-coef-div").forEach(totalCoefDiv => {
                     const 
-                        sem = totalCoefDiv.dataset.semester,
-                        ue = totalCoefDiv.dataset.ue,
-                        ueData = this.gradesDatas[sem][ue],
-                        nbSubjects = Object.keys(ueData.subjects).length,
+                        totalCoefValue  = totalCoefDiv.querySelector(".ue-subject-total-coef-value"),
+                        totalCoefDebug  = totalCoefDiv.querySelector(".ue-subject-total-coef-debug"),
+                        sem             = totalCoefDiv.dataset.semester,
+                        ue              = totalCoefDiv.dataset.ue,
+                        ueData          = this.gradesDatas[sem][ue],
+                        nbSubjects      = Object.keys(ueData.subjects).length,
                         
-                        nbGrades =                      ueData.nbGrades,
-                        simGrades =                     ueData.simGrades, 
-                        disabledRealGrades =            ueData.disabledRealGrades, 
-                        disabledSimGrades =             ueData.disabledSimGrades, 
+                        nbGrades                    = ueData.nbGrades,
+                        simGrades                   = ueData.simGrades, 
+                        disabledRealGrades          = ueData.disabledRealGrades, 
+                        disabledSimGrades           = ueData.disabledSimGrades, 
 
-                        totalCoefSubjects =             ueData.totalCoefSubjects, 
-                        totalCoefGrades =               ueData.totalCoefGrades,  
-                        totalCoefRealGrades =           ueData.totalCoefRealGrades, 
-                        totalCoefSimGrades =            ueData.totalCoefSimGrades, 
-                        totalCoefEnabledGrades =        ueData.totalCoefEnabledGrades, 
-                        totalCoefEnabledRealGrades =    ueData.totalCoefEnabledRealGrades, 
-                        totalCoefEnabledSimGrades =     ueData.totalCoefEnabledSimGrades, 
+                        totalCoefSubjects           = ueData.totalCoefSubjects, 
+                        totalCoefGrades             = ueData.totalCoefGrades,  
+                        totalCoefRealGrades         = ueData.totalCoefRealGrades, 
+                        totalCoefSimGrades          = ueData.totalCoefSimGrades, 
+                        totalCoefEnabledGrades      = ueData.totalCoefEnabledGrades, 
+                        totalCoefEnabledRealGrades  = ueData.totalCoefEnabledRealGrades, 
+                        totalCoefEnabledSimGrades   = ueData.totalCoefEnabledSimGrades, 
 
 
-                        subjectsBelow100 =              ueData.subjectsBelow100, 
-                        subjectsOver100 =               ueData.subjectsOver100,
-                        subjectsReallyBelow100 =        ueData.subjectsReallyBelow100, 
-                        subjectsReallyOver100 =         ueData.subjectsReallyOver100,
-                            
-                        nbSubjectsBelow100 =            subjectsBelow100.length, 
-                        nbSubjectsOver100 =             subjectsOver100.length, 
-                        nbSubjectsReallyBelow100 =      subjectsReallyBelow100.length, 
-                        nbSubjectsReallyOver100 =       subjectsReallyOver100.length, 
-                        nbSubjectsSimBelow100 =         nbSubjectsBelow100-nbSubjectsReallyBelow100, 
-                        nbSubjectsSimOver100 =          nbSubjectsOver100-nbSubjectsReallyOver100, 
-                        nbDisabledRealGrades =          disabledRealGrades.length, 
-                        nbSimGrades =                   simGrades.length, 
-                        nbEnabledSimGrades =            nbSimGrades - disabledSimGrades.length
+                        subjectsBelow100            = ueData.subjectsBelow100, 
+                        subjectsOver100             = ueData.subjectsOver100,
+                        subjectsReallyBelow100      = ueData.subjectsReallyBelow100, 
+                        subjectsReallyOver100       = ueData.subjectsReallyOver100,
+
+                        nbSubjectsBelow100          = subjectsBelow100.length, 
+                        nbSubjectsOver100           = subjectsOver100.length, 
+                        nbSubjectsReallyBelow100    = subjectsReallyBelow100.length, 
+                        nbSubjectsReallyOver100     = subjectsReallyOver100.length, 
+                        nbSubjectsSimBelow100       = nbSubjectsBelow100-nbSubjectsReallyBelow100, 
+                        nbSubjectsSimOver100        = nbSubjectsOver100-nbSubjectsReallyOver100, 
+                        nbDisabledRealGrades        = disabledRealGrades.length, 
+                        nbSimGrades                 = simGrades.length, 
+                        nbEnabledSimGrades          = nbSimGrades - disabledSimGrades.length
                     ;
 
 
@@ -1270,8 +1278,8 @@
                     else if (totalCoefRealGrades < 100) {
                         if (totalCoefEnabledSimGrades > 0) {
                             advice = this.lang == "fr" 
-                                ? `${100*totalCoefEnabledSimGrades/totalCoefEnabledGrades}% de tes notes est simulé, toutes tes notes ne sont encore pas là !` 
-                                : `${100*totalCoefEnabledSimGrades/totalCoefEnabledGrades}% of your grades is simulated, all your grades aren't out yet!`
+                                ? `${Math.round(10000*totalCoefEnabledSimGrades/totalCoefEnabledGrades)/100}% de tes notes est simulé, toutes tes notes ne sont encore pas là !` 
+                                : `${Math.round(10000*totalCoefEnabledSimGrades/totalCoefEnabledGrades)/100}% of your grades is simulated, all your grades aren't out yet!`
                             ;
                             color = meh;
                         }
@@ -1322,14 +1330,17 @@
                         }
                     }
 
-                    totalCoefDiv.innerHTML = `<span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}% / ${totalCoefSubjects}%</span>${advice}`;
+                    totalCoefValue.innerHTML = `${this.lang == "fr" ? "Coef Total des Matières :" : "Total Subjects Coef:"} <span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}% / ${totalCoefSubjects}%</span>`;
+                    totalCoefDebug.innerHTML = `${advice}`;
                 })
-                document.querySelectorAll(".grades-table-subject-total-coef-value").forEach(totalCoefDiv => {
+                document.querySelectorAll(".grades-table-subject-total-coef-div").forEach(totalCoefDiv => {
                     const 
-                        sem = totalCoefDiv.dataset.semester,
-                        ue = totalCoefDiv.dataset.ue,
-                        subject = totalCoefDiv.dataset.subject,
-                        subjectData = this.gradesDatas[sem][ue].subjects[subject],
+                        totalCoefValue  = totalCoefDiv.querySelector(".grades-table-subject-total-coef-value"),
+                        totalCoefDebug  = totalCoefDiv.querySelector(".grades-table-subject-total-coef-debug"),
+                        sem             = totalCoefDiv.dataset.semester,
+                        ue              = totalCoefDiv.dataset.ue,
+                        subject         = totalCoefDiv.dataset.subject,
+                        subjectData     = this.gradesDatas[sem][ue].subjects[subject],
 
                         disabledRealGrades          = subjectData.disabledRealGrades,
                         simGrades                   = subjectData.simGrades,
@@ -1406,7 +1417,8 @@
                         }
                     }
                     
-                    totalCoefDiv.innerHTML = `<span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}%</span>${advice}`;
+                    totalCoefValue.innerHTML = `${this.lang == "fr" ? "Coef Total des Notes :" : "Total Grades Coef:"} <span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}%</span>`;
+                    totalCoefDebug.innerHTML = `${advice}`;
                 })
             }
             // MARK: getGradesDatas
@@ -2359,11 +2371,9 @@
                             : 
                             `<div class="ue-title">${ueName}</div>`
                         }
-                        <div class="grades-table-coef" style="display:flex; flex-direction: column; width:47%; gap:4px; padding: 0px 10px; font-size: 13px">
-                            <div style="font-size: 14px; font-weight: 700; text-align: left;">
-                                ${this.lang == "fr" ? `Coef Total des matières :` : `Total Subjects Coef:`}
-                            </div>
-                            <div class="ue-subject-total-coef-value" data-semester="${sem}" data-ue="${ueName}"></div>
+                        <div class="ue-subject-total-coef-div" data-semester="${sem}" data-ue="${ueName}">
+                            <div class="ue-subject-total-coef-value">${this.lang == "fr" ? `Coef Total des matières :` : `Total Subjects Coef:`}</div>
+                            <div class="ue-subject-total-coef-debug"></div>
                         </div>
                         <div class="ue-moyenne ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'good' : 'bad'}`}" data-semester="${sem}" data-ue="${ueName}">
                             ${moyenne}/20 
@@ -2454,11 +2464,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="grades-table-coef" style="display:flex; flex-direction: column; width:58%; gap:4px; padding: 0px 10px; font-size: 13px">
-                            <div style="text-align: left;">
-                                ${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}
-                            </div>
-                            <div class="grades-table-subject-total-coef-value" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}"></div>
+                        <div class="grades-table-subject-total-coef-div" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}">
+                            <div class="grades-table-subject-total-coef-value"></div>
+                            <div class="grades-table-subject-total-coef-debug">${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}</div>
                         </div>
                     </div>
                     <table class="grades-table ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" style="${this.editMode ? `user-select: text;` : ``}" id="grades-table-${subject}-semester${sem}" data-subject="${subject}">
@@ -2634,11 +2642,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="grades-table-coef" style="display:flex; flex-direction: column; width:50%; gap:4px; padding: 0px 10px; font-size: 13px; font-weight: 600">
-                        <div style="text-align: left;">
-                            ${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}
-                        </div>
-                        <div class="grades-table-subject-total-coef-value" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}"></div>
+                    <div class="grades-table-subject-total-coef-div" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}">
+                        <div class="grades-table-subject-total-coef-value"></div>
+                        <div class="grades-table-subject-total-coef-debug">${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}</div>
                     </div>
                     <div class="subj-moyenne ${subjAvg == " - " ? '' : `${subjAvg>=10 ? 'good' : 'bad'}`}" style="display: flex; justify-content: flex-end; width: 80px; padding-right: 20px; font-size: 20px">${subjAvg}/20</div>
                 </div>
@@ -2680,11 +2686,9 @@
                             ${subject}
                             <div style="font-size:12px;margin-top:4px;">${this.lang == "fr" ? "Moyenne" : "Average"}: <span class="subj-moyenne ${subjAvg>=10 ? 'good' : 'bad'}" >${subjAvg}/20</span></div>
                         </div>
-                        <div class="grades-table-coef" style="display:flex; flex-direction: column; width:58%; gap:4px; padding-left: 10px; font-size: 13px">
-                            <div style="text-align: left;">
-                                ${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}
-                            </div>
-                            <div class="grades-table-subject-total-coef-value" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}"></div>
+                        <div class="grades-table-subject-total-coef-div" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}">
+                            <div class="grades-table-subject-total-coef-value"></div>
+                            <div class="grades-table-subject-total-coef-debug">${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}</div>
                         </div>
                     </div>
 
@@ -2815,62 +2819,6 @@
             attachAllEventListeners() {
                 this.attachDocumentMouseListeners();
                 this.attachAllAnyInputsListeners();
-
-                document.body.onresize = (e) => {   // grade FOR THE FUTURE: DONT RE-RENDER THE CONTENT ON RESIZE, IT MESSES UP WITH THE SELECTED subject CARDS
-                    
-                    /* if (document.body.clientWidth <= 1530) {
-                        if (this.clientWidth > 1530) {
-                            this.clientWidth = 1530;
-                            document.querySelectorAll(".ue-subject-total-coef-value").forEach(ueTotalCoef => {
-                                ueTotalCoef.style.flexDirection = "column"; ueTotalCoef.style.gap = "2px";
-                            })
-                        }
-                    }
-                    else
-                    {
-                        if (this.clientWidth <= 1470) {
-                            this.clientWidth = 1920;
-                            document.querySelectorAll(".ue-subject-total-coef-value").forEach(ueTotalCoef => {
-                                ueTotalCoef.style.flexDirection = ""; ueTotalCoef.style.gap = "15px";
-                            })
-                        }
-                    }
-
-                    if (document.body.clientWidth <= 1470) {
-                        if (this.clientWidth > 1470) {
-                            this.clientWidth = 1470;
-                        }
-                        // this.getCSSClassCoordInStyleSheet(".grade-simulee-input")
-                        // this.getCSSClassCoordInStyleSheet(".grade-simulee-input.sim-inp-type")
-                    }
-                    else
-                    {
-                        if (this.clientWidth <= 1470) {
-                            this.clientWidth = 1530;
-                        }
-                    }
-
-                    if (document.body.clientWidth <= 935) {
-                        if (this.mobileVer == false) {
-                            this.clientWidth = 935;
-                            this.mobileVer = true;
-                            this.generateContent(false)
-                            // document.querySelectorAll(".grades-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
-                            // this.getCSSClassCoordInStyleSheet(".grades-table-teacher").style.display = "none";
-                        }
-                    }
-                    else
-                    {
-                        if (this.mobileVer == true) {
-                            this.clientWidth = 1470;
-                            this.mobileVer = false;
-                            this.generateContent(false)
-                            // this.getCSSClassCoordInStyleSheet(".grades-table-teacher").style.display = "table-cell";
-                        }
-                    } 
-                    */
-                }; 
-
                 
                 this.attachLangBtnsListener();
                 this.attachIssuesBtnsMouseListeners();
@@ -2994,6 +2942,7 @@
                         }
                     }
                     
+
                     attachLangBtnsListener() {
                         // Change to English
                         document.getElementById('en-lang-btn').onclick = () => {
@@ -3017,6 +2966,8 @@
                             }
                         };
                     }
+
+
                     attachIssuesBtnsMouseListeners() {
                         const issueBtn       = document.querySelector(".issue.issue-btn");
                         const shareConfig    = document.querySelector(".issue.share-config");
@@ -3047,12 +2998,15 @@
                             }
                         };
                     }
+
                     attachEditModeListener() {
                         document.getElementById('editModeBtn').onclick = () => {
                             this.editMode = !this.editMode;
+                            localStorage.setItem("ECAM_DASHBOARD_DEFAULT_EDIT_MODE", this.editMode);
                             this.generateContent();
                         };
                     }
+
                     attachImportBtnListener() {
                         document.getElementById('importBtn').onclick = () => this.toggleImportMenu();
                     }
@@ -4383,9 +4337,9 @@
                         input.parentElement.style.transition = "";
                         input.parentElement.style.width = "42%";
                     })
-                    document.querySelectorAll(".ue-subject-total-coef-value").forEach(totalCoef => {
-                        totalCoef.parentElement.style.transition = "";
-                        totalCoef.parentElement.style.width = "47%";
+                    document.querySelectorAll(".ue-subject-total-coef-div").forEach(totalCoefDiv => {
+                        totalCoefDiv.style.transition = "";
+                        totalCoefDiv.style.width = "47%";
                     })
 
                     this.selectedSubjectCardsId = [];
@@ -4436,9 +4390,9 @@
                             input.parentElement.style.transition = "";
                             input.parentElement.style.width = "42%";
                         })
-                        document.querySelectorAll(".ue-subject-total-coef-value").forEach(totalCoef => {
-                            totalCoef.parentElement.style.transition = "";
-                            totalCoef.parentElement.style.width = "47%";
+                        document.querySelectorAll(".ue-subject-total-coef-div").forEach(totalCoefDiv => {
+                            totalCoefDiv.style.transition = "";
+                            totalCoefDiv.style.width = "47%";
                         })
                     }
 
@@ -4556,9 +4510,9 @@
                     input.parentElement.style.transition = "width 0.3s ease";
                     input.parentElement.style.width = "30%";
                 })
-                document.querySelectorAll(".ue-subject-total-coef-value").forEach(totalCoef => {
-                    totalCoef.parentElement.style.transition = "width 0.3s ease";
-                    totalCoef.parentElement.style.width = "56%";
+                document.querySelectorAll(".ue-subject-total-coef-div").forEach(totalCoefDiv => {
+                    totalCoefDiv.style.transition = "width 0.3s ease";
+                    totalCoefDiv.style.width = "56%";
                 })
                 dropFieldAdd.classList.add("show");
                 dropFieldAddHitbox.classList.add("show");
@@ -5410,7 +5364,7 @@
                 if      (this.keyInputMatch(e, "E", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
                     
                     this.editMode = !this.editMode;
-                    
+                    localStorage.setItem("ECAM_DASHBOARD_DEFAULT_EDIT_MODE", this.editMode);
                     this.removeSubjectCardFromSubjectSelection();
                     this.scrollToClientHighestElem();
                     this.generateContent();
