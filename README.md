@@ -17,7 +17,7 @@ For Windows, any web browser works, and for Androids, only the [Firefox Nightly 
 It's a web browser extension that allows to run JavaScript scripts upon loading a specified website. (Please ignore the thousand pop-ups and ads... I swear this is safe...)
 
 ### Step 2: Setup Tampermonkey
-Open your extensions settings in `Managa extensions`. Enable `Developer Mode`, then find Tampermonkey, and click on `Details`. Make sure that `Allow User Scripts` and `Allow access to file URLs`.
+Open your extensions settings in `Manage extensions`. Enable `Developer Mode`, then find Tampermonkey, and click on `Details`. Make sure that `Allow User Scripts` and `Allow access to file URLs`.
 
 ### Step 3: [Install the ECAM Grades Dashboard Script ↗](https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/ECAM%20Grades%20Dashboard.user.js)
 This will redirect you to a Tampermonkey page that will ask you to install the script. Press `Install` to complete the installation.
