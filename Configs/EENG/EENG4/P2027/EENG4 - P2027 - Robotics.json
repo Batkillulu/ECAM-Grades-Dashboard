@@ -1,0 +1,168 @@
+{
+  "date": "2026-02-01",
+  "version": "2",
+  "ueConfig": {
+    "7": {
+      "__ues__": [
+        "Sustainable Management 7",
+        "Society, Management & Entrepreneurship 7",
+        "Systems Engineering 7",
+        "Applied Internship",
+        "Innovation Project 7",
+        "Robotics and Automation Engineering 7"
+      ],
+      "Sustainable Management 7": {
+        "subjects": [
+          "Operational Quality and Lean Management",
+          "Carbon Footprint",
+          "Research Methods"
+        ],
+        "coefficients": {
+          "Operational Quality and Lean Management": 35,
+          "Carbon Footprint": 35,
+          "Research Methods": 30
+        }
+      },
+      "Society, Management & Entrepreneurship 7": {
+        "subjects": [
+          "Society, Management & Entrepreneurship Final Project 1"
+        ],
+        "coefficients": {
+          "Society, Management & Entrepreneurship Final Project 1": 100
+        }
+      },
+      "Systems Engineering 7": {
+        "subjects": [
+          "Multibody Dynamics Systems",
+          "Electrical Machines & Drives"
+        ],
+        "coefficients": {
+          "Multibody Dynamics Systems": 50,
+          "Electrical Machines & Drives": 50
+        }
+      },
+      "Applied Internship": {
+        "subjects": [
+          "Applied Internship"
+        ],
+        "coefficients": {
+          "Applied Internship": 100
+        }
+      },
+      "Innovation Project 7": {
+        "subjects": [
+          "IP Project Management",
+          "IP Users Research",
+          "IP Ideation",
+          "IP Marketing",
+          "IP Requirements"
+        ],
+        "coefficients": {
+          "IP Project Management": 20,
+          "IP Users Research": 15,
+          "IP Ideation": 20,
+          "IP Marketing": 25,
+          "IP Requirements": 20
+        }
+      },
+      "Robotics and Automation Engineering 7": {
+        "subjects": [
+          "Control Theory 2a (Digital Control Systems)",
+          "Control Theory 2b (Multivariable Control Systems)",
+          "Advanced Robotics",
+          "Manufacturing Digital Transformation"
+        ],
+        "coefficients": {
+          "Control Theory 2a (Digital Control Systems)": 20,
+          "Control Theory 2b (Multivariable Control Systems)": 15,
+          "Advanced Robotics": 35,
+          "Manufacturing Digital Transformation": 30
+        }
+      }
+    },
+    "8": {
+      "__ues__": [
+        "Sustainable Management 8",
+        "Data and Engineering",
+        "Society, Management & Entrepreneurship S8",
+        "Innovation Project S8 - Road to Business",
+        "Innovation Project S8 - Engineering Developments",
+        "Robotics and Automation Engineering S8"
+      ],
+      "Data and Engineering": {
+        "subjects": [
+          "Data",
+          "Operations Research",
+          "Introduction to AI"
+        ],
+        "coefficients": {
+          "Data": 50,
+          "Operations Research": 25,
+          "Introduction to AI": 25
+        }
+      },
+      "Sustainable Management 8": {
+        "subjects": [
+          "Innovation Management & Intellectual Property",
+          "Circular Economy",
+          "Corporate Social Responsibility",
+          "Climate Transformation of Industries"
+        ],
+        "coefficients": {
+          "Innovation Management & Intellectual Property": 50,
+          "Circular Economy": 10,
+          "Corporate Social Responsibility": 20,
+          "Climate Transformation of Industries": 20
+        }
+      },
+      "Society, Management & Entrepreneurship S8": {
+        "subjects": [
+          "Society, Management & Entrepreneurship Final Project 2"
+        ],
+        "coefficients": {
+          "Society, Management & Entrepreneurship Final Project 2": 100
+        }
+      },
+      "Innovation Project S8 - Road to Business": {
+        "subjects": [
+          "IP Business Plan",
+          "IP Project Closure"
+        ],
+        "coefficients": {
+          "IP Business Plan": 60,
+          "IP Project Closure": 40
+        }
+      },
+      "Innovation Project S8 - Engineering Developments": {
+        "subjects": [
+          "IP Project Management and Technical Requirements",
+          "IP Technical Deployment"
+        ],
+        "coefficients": {
+          "IP Project Management and Technical Requirements": 40,
+          "IP Technical Deployment": 60
+        }
+      },
+      "Robotics and Automation Engineering S8": {
+        "subjects": [
+          "Robotic Expertise - Automation & Industrial Robotics",
+          "IT Expertise - Machine Vision",
+          "IT Expertise - Machine Learning",
+          "Robotic Expertise - Motion Planning and Control",
+          "Wireless Communications & Networks",
+          "IT & Robotics Labs",
+          "Introduction to Controllers"
+        ],
+        "coefficients": {
+          "Robotic Expertise - Automation & Industrial Robotics": 20,
+          "IT Expertise - Machine Vision": 10,
+          "IT Expertise - Machine Learning": 20,
+          "Robotic Expertise - Motion Planning and Control": 10,
+          "Wireless Communications & Networks": 10,
+          "IT & Robotics Labs": 20,
+          "Introduction to Controllers": 10
+        }
+      }
+    }
+  }
+}
