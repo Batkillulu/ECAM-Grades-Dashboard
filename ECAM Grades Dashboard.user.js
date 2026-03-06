@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.0.4
+// @version      2.0.5
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/group/education/notes*
@@ -42,8 +42,8 @@
             .dash-title { font-size: 24px; font-weight: 700; margin: 0; }
             .dash-subtitle { font-size: 14px; opacity: 0.95; margin-top: 5px; }
             
-            .currently-loading      { display: flex; justify-content: center; align-items: center; height: 100px; width: 100px; min-height: 100px; min-width: 100px; position: fixed; top: 20px; right: -100px; opacity: 0; z-index: 1500; transition: opacity 0.2s ease; }
-            .currently-loading.show { right: 20px; opacity: 1; }
+            .currently-loading      { display: flex; justify-content: center; align-items: center; height: 100px; width: 100px; min-height: 100px; min-width: 100px; position: fixed; bottom: 30px; right: -100px; opacity: 0; z-index: 1500; transition: opacity 0.2s ease; }
+            .currently-loading.show { right: 30px; opacity: 1; }
             .loading-symbol         { position: absolute; top: 100px; right: 100px; height: 100px; width: 100px; clip-path: circle(20px); background: #594a8fe0; offset-path: circle(50px); backdrop-filter: blur(2px); offset-distance: var(--offset-offset); }
             .loading-symbol.show    { animation: loading 1s infinite; }
             @keyframes loading  { from {offset-distance: var(--offset-offset)} to {offset-distance: calc(var(--offset-offset) + 100%)} }
@@ -57,18 +57,20 @@
             .lang-btn:hover     { border: 2px solid #afe4ffff; background: #a6acff; }
 
 
-            .issue.issue-btn              { display: flex; justify-content: center; align-items: center; text-align: center; border: none; outline: 2px solid #c022ff; background: #6e00ad; border-radius: 20px; position: absolute; top: 79px; right: 2.4%; height: 40px; width: 40px; padding-left: 6px; font-size: 20px; user-select: none; text-decoration: none; color: inherit; cursor: pointer; z-index: 4; transition: all 0.2s ease; }
-            .issue.issue-btn:focus        { outline: 2px solid white; }
-            .issue.issue-btn.open         { outline: 2px solid white; }
-            .issue.share-config             { display: flex; justify-content: flex-start; align-items: center; text-align: left; outline: 2px solid white; background: #00569d; border-radius: 20px; position: absolute; top: 79px; right: 2.4%; height: 40px; width: 39px; padding-left: 10px; color: white; font-size: 15px; text-wrap-mode: nowrap; overflow: clip; cursor: pointer; user-select: none; text-decoration: none; z-index: 1; transition: all 0.2s ease; }
-            .issue.suggest-idea             { display: flex; justify-content: flex-start; align-items: center; text-align: left; outline: 2px solid white; background: #009d40; border-radius: 20px; position: absolute; top: 79px; right: 2.4%; height: 40px; width: 39px; padding-left: 10px; color: white; font-size: 15px; text-wrap-mode: nowrap; overflow: clip; cursor: pointer; user-select: none; text-decoration: none; z-index: 2; transition: all 0.2s ease; }
-            .issue.report-issue             { display: flex; justify-content: flex-start; align-items: center; text-align: left; outline: 2px solid white; background: #ad0000; border-radius: 20px; position: absolute; top: 79px; right: 2.4%; height: 40px; width: 39px; padding-left: 10px; color: white; font-size: 15px; text-wrap-mode: nowrap; overflow: clip; cursor: pointer; user-select: none; text-decoration: none; z-index: 3; transition: all 0.2s ease; }
-            .issue.share-config:hover       { color: #b8d7ff; }
-            .issue.suggest-idea:hover       { color: #b8d7ff; }
-            .issue.report-issue:hover       { color: #b8d7ff; }
-            .issue.share-config:focus       { color: #b8d7ff; }
-            .issue.suggest-idea:focus       { color: #b8d7ff; }
-            .issue.report-issue:focus       { color: #b8d7ff; }
+            .issue                  { --btns-top: 59px; --how-to-use-btn-right: 2.4%; --issue-btns-right: 5.5%; }
+            .issue.how-to-use-btn           { display: flex; justify-content: center;     align-items: center; text-align: center; background: #0059ad; border-radius: 20px; position: absolute; top: var(--btns-top); right: var(--how-to-use-btn-right); height: 40px; width: 40px; padding-left: 0px; font-size: 20px; outline: 2px solid #c022ff; border: none; user-select: none; text-decoration: none; color: inherit; cursor: pointer; z-index: 4; transition: all 0.2s ease;}
+            .issue.issue-btn                { display: flex; justify-content: center;     align-items: center; text-align: center; background: #6e00ad; border-radius: 20px; position: absolute; top: var(--btns-top); right: var(--issue-btns-right);     height: 40px; width: 40px; padding-left: 6px; font-size: 20px; outline: 2px solid #c022ff; border: none; user-select: none; text-decoration: none; color: inherit; cursor: pointer; z-index: 4; transition: all 0.2s ease; }
+            .issue.issue-btn:focus          { outline: 2px solid white; }
+            .issue.issue-btn.open           { outline: 2px solid white; }
+            .issue.share-config             { display: flex; justify-content: flex-start; align-items: center; text-align: left;   background: #00569d; border-radius: 20px; position: absolute; top: var(--btns-top); right: var(--issue-btns-right);     height: 40px; width: 39px; padding-left: 10px; color: white; font-size: 15px; outline: 2px solid white; text-wrap-mode: nowrap; overflow: clip; cursor: pointer; user-select: none; text-decoration: none; z-index: 1; transition: all 0.2s ease; }
+            .issue.suggest-idea             { display: flex; justify-content: flex-start; align-items: center; text-align: left;   background: #009d40; border-radius: 20px; position: absolute; top: var(--btns-top); right: var(--issue-btns-right);     height: 40px; width: 39px; padding-left: 10px; color: white; font-size: 15px; outline: 2px solid white; text-wrap-mode: nowrap; overflow: clip; cursor: pointer; user-select: none; text-decoration: none; z-index: 2; transition: all 0.2s ease; }
+            .issue.report-issue             { display: flex; justify-content: flex-start; align-items: center; text-align: left;   background: #ad0000; border-radius: 20px; position: absolute; top: var(--btns-top); right: var(--issue-btns-right);     height: 40px; width: 39px; padding-left: 10px; color: white; font-size: 15px; outline: 2px solid white; text-wrap-mode: nowrap; overflow: clip; cursor: pointer; user-select: none; text-decoration: none; z-index: 3; transition: all 0.2s ease; }
+            .issue.share-config:hover       { color: #b8d7ff; outline-color: teal}
+            .issue.suggest-idea:hover       { color: #b8d7ff; outline-color: teal }
+            .issue.report-issue:hover       { color: #b8d7ff; outline-color: teal }
+            .issue.share-config:focus       { color: #b8d7ff; outline-color: teal }
+            .issue.suggest-idea:focus       { color: #b8d7ff; outline-color: teal }
+            .issue.report-issue:focus       { color: #b8d7ff; outline-color: teal }
             .issue.share-config.fr.open       { width: 550px; }
             .issue.suggest-idea.fr.open       { width: 380px; }
             .issue.report-issue.fr.open       { width: 220px; }
@@ -124,11 +126,11 @@
 
         // MARK: main average card
         styles += `
-            .main-average-card { background: linear-gradient(135deg, #ffffff 30%, #514ba2ff 75%); border-radius: 20px; padding: 30px; margin-bottom: 15px; border: 2px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; transition: box-shadow 0.3s ease, border-color 0.3s ease; }
+            .main-average-card { display: flex; align-items: center; justify-content: space-between; height: 104px; background: linear-gradient(135deg, #ffffff 30%, #514ba2ff 75%); border-radius: 20px; padding: 30px; margin-bottom: 15px; border: 2px solid #f0f0f0; transition: box-shadow 0.3s ease, border-color 0.3s ease; }
 
             .average-display { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 7px; }
-            .average-number { font-size: 48px; font-weight: 800; -webkit-text-fill-color: #2A2F72; padding-top: 9px; }
-            .average-label { font-size: 18px; color: #666; font-weight: 500; }
+            .average-number     { font-size: 48px; font-weight: 800; -webkit-text-fill-color: #2A2F72; padding-top: 9px; }
+            .average-label      { font-size: 18px; color: #666; font-weight: 500; }
             .average-stats { display: flex; gap: 30px; }
             .stat-item { text-align: center; }
             .stat-value { font-size: 24px; font-weight: 700; color: #c1a7ffff; }
@@ -602,7 +604,7 @@
 
         constructor() {
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.0.4";
+            this.scriptVersion = "2.0.5";
 
             this.now        = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
             this.dateHour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
@@ -618,6 +620,7 @@
             this.repoUserReportIssue        = "https://github.com/Batkillulu/ECAM-Grades-Dashboard/issues/new?template=user-report-issue-template.md";
             this.repoUserSuggestionIssue    = "https://github.com/Batkillulu/ECAM-Grades-Dashboard/issues/new?template=feature-improvement-request-template.md";
             this.repoUserConfigShare        = "https://github.com/Batkillulu/ECAM-Grades-Dashboard/issues/new?template=share-config-template.md";
+            this.repoReadMeHowToUse         = "https://github.com/Batkillulu/ECAM-Grades-Dashboard?tab=readme-ov-file#how-to-use-quick-start"
             this.repoContentsAPI            = "https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/contents";
             this.repoScriptRaw              = "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/ECAM%20Grades%20Dashboard.user.js";
             
@@ -655,7 +658,7 @@
             
             this.configVersion = 2;
             this.ueConfig           = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_UE_CONFIG"))                 || {};
-            this.ignoredGrades      = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_IGNORED_GRADES"))            || [];
+            this.disabledGrades      = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_IGNORED_GRADES"))            || [];
             this.gradesDatas = {};
 
 
@@ -682,6 +685,32 @@
 
             this.init();
         }
+
+
+        // MARK: -INIT
+        init() {
+            this.autoUpdateCheck();
+            this.parseGrades();
+            this.getGradesDatas();
+
+            if (this.savedReadGrades.length == 0) {
+                this.newGrades = [];
+                this.savedReadGrades = this.grades;
+                this.saveReadGrades();
+            }
+            else {
+                this.newGrades = this.compareArraysOfObjects(this.grades, this.savedReadGrades).more;
+            }
+            
+            this.generalKeyboardEvents();
+            this.createNewGradesNotifDiv();
+            this.createDashboard();
+            
+            this.dateOfLastLoad = this.today;
+            localStorage.setItem("ECAM_DASHBOARD_DATE_OF_LAST_LOAD", this.dateOfLastLoad);
+        }
+
+
 
 
         //#region -REGION: Misc methods
@@ -958,7 +987,7 @@
             /** Save the simulated grades in the cache */
             saveSim() { this.deleteUnusedSimPath(); localStorage.setItem("ECAM_DASHBOARD_SIM_GRADES", JSON.stringify(this.sim)); }
             /** Save the ignored grades in the cache */
-            saveIgnoredGrades() { localStorage.setItem("ECAM_DASHBOARD_IGNORED_GRADES", JSON.stringify(this.ignoredGrades)); }
+            saveIgnoredGrades() { localStorage.setItem("ECAM_DASHBOARD_IGNORED_GRADES", JSON.stringify(this.disabledGrades)); }
             /** Save the read grades in the cache */
             saveReadGrades() { localStorage.setItem("ECAM_DASHBOARD_SAVED_READ_GRADES", JSON.stringify(this.savedReadGrades)); }
             /** Ensures that a path composed of `sem`, `ue` and `subj` exists in this.sim */
@@ -1023,7 +1052,7 @@
             getGradeColor(grade) { if (grade >= 10) return 'good'; return 'bad'; }
             getAverageColor(avg) { if (avg >= 12) return 'average-good'; if (avg >= 10) return 'average-medium'; return 'average-bad'; }
             gradeIsDisabled(n) {
-                return this.ignoredGrades?.includes([n.semester, n.subject, (n?.id || n.type + " " + n.date + " " + n.prof)].join("\\"))
+                return this.disabledGrades?.includes([n.semester, n.subject, (n?.id || n.type + " " + n.date + " " + n.prof)].join("\\"))
             }
             moyennePonderee(arr) {
                 if (!arr || arr.length === 0) return 0;
@@ -1089,7 +1118,7 @@
                 const allSubjs = this.getAllSubjectsForUE(sem, ueName);
 
                 // Keep ignored grades that are NOT part of this UE
-                this.ignoredGrades = this.ignoredGrades?.filter(ignoredId => {
+                this.disabledGrades = this.disabledGrades?.filter(ignoredId => {
                     const parts = ignoredId.split("\\");
                     const semX = parts[0];
                     const subj = parts[1];
@@ -1909,31 +1938,6 @@
 
 
 
-        // MARK: -INIT
-        init() {
-            this.autoUpdateCheck();
-            this.parseGrades();
-            this.getGradesDatas();
-
-            if (this.savedReadGrades.length == 0) {
-                this.newGrades = [];
-                this.savedReadGrades = this.grades;
-                this.saveReadGrades();
-            }
-            else {
-                this.newGrades = this.compareArraysOfObjects(this.grades, this.savedReadGrades).more;
-            }
-            
-            this.generalKeyboardEvents();
-            this.createNewGradesNotifDiv();
-            this.createDashboard();
-            
-            this.dateOfLastLoad = this.today;
-            localStorage.setItem("ECAM_DASHBOARD_DATE_OF_LAST_LOAD", this.dateOfLastLoad);
-        }
-
-
-
 
         //#region -REGION: Render
 
@@ -1953,7 +1957,8 @@
                 document.querySelector(".portlet-topper").remove();
 
                 // Creating the content of the dashboard that doesn't vary along with the user's actions besides the language selection.
-                // Therefore, the text isn't yet created, but will be in the generateContent() method later on, to regenerate the text in case the language is changed
+                // Therefore, besides the text that doesn't vary with the language, the text isn't yet created, 
+                // but will be in the generateContent() method later on, to regenerate the text in case the language is changed
                 container.innerHTML = `
                 <div id="emptyDiv"></div>
                 <div class="currently-loading">
@@ -1983,11 +1988,11 @@
                     </div>
                     <div class="header-actions" style="display:flex; align-items:center">
 
-                        <a class="issue share-config ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserConfigShare    }" target="_blank" tabindex="-1">${this.lang == "fr" ? "Partaget une config" : "Share a config" }</a>
-                        <a class="issue suggest-idea ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserSuggestionIssue}" target="_blank" tabindex="-1">${this.lang == "fr" ? "Suggérer une idée"   : "Suggest an idea"}</a>
-                        <a class="issue report-issue ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserReportIssue    }" target="_blank" tabindex="-1">${this.lang == "fr" ? "Signaler un probème" : "Report an issue"}</a>
+                        <a class="issue share-config ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserConfigShare    }" target="_blank" tabindex="-1"></a>
+                        <a class="issue suggest-idea ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserSuggestionIssue}" target="_blank" tabindex="-1"></a>
+                        <a class="issue report-issue ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserReportIssue    }" target="_blank" tabindex="-1"></a>
                         <button class="issue issue-btn" id="reportIssueBtn" tabindex="0">🚩</button>
-
+                        <a class="issue how-to-use-btn" id="howToUseBtn" href="${this.repoReadMeHowToUse}" target="_blank" >?</a>
 
                         <button class="btn btn-edit-mode ${this.editMode ? "on" : "off"}" id="editModeBtn"></button>
                         <div style="display: flex; flex-direction: column; gap: 8px">
@@ -2140,20 +2145,22 @@
                 const dashTitle = document.querySelector(".dash-title");
                 const dashSubtitle = document.querySelector(".dash-subtitle");
                 dashTitle.innerHTML = this.lang == "fr" ? 'Tableau de Bord des Notes ECAM' : "ECAM Grades Dashboard";
-                dashSubtitle.innerHTML = this.lang == "fr" ? 'Vue complète de vos résultats académiques' : "Complete view of your academic results";
+                dashSubtitle.innerHTML = this.lang == "fr" ? 'Vue complète de vos résultats académiques !' : "Complete view of your academic results!";
 
                 const langShortcutText = document.getElementById("langShortcut");
                 langShortcutText.innerHTML = this.lang == "fr" ? "(Ctrl+L)" : "(Shift+L)";
 
-                const shareConfig = document.querySelector(".issue.share-config");
-                const suggestIdea = document.querySelector(".issue.suggest-idea");
-                const reportIssue = document.querySelector(".issue.report-issue");
+                const shareConfig    = document.querySelector(".issue.share-config");
+                const suggestIdea    = document.querySelector(".issue.suggest-idea");
+                const reportIssue    = document.querySelector(".issue.report-issue");
                 const reportIssueBtn = document.querySelector(".issue.issue-btn");
+                const howToUseBtn    = document.querySelector(".issue.how-to-use-btn");
                 if (this.lang == "fr") {
                     shareConfig.innerHTML = "Partager une config\u2197";
                     suggestIdea.innerHTML = "Suggérer une idée\u2197";
                     reportIssue.innerHTML = "Signaler un problème\u2197";
                     reportIssueBtn.title  = "Signaler...";
+                    howToUseBtn.title     = "Comment s'en servir?";
                     shareConfig.classList.replace("en", "fr");
                     suggestIdea.classList.replace("en", "fr");
                     reportIssue.classList.replace("en", "fr");
@@ -2163,6 +2170,7 @@
                     suggestIdea.innerHTML = "Suggest an idea\u2197";
                     reportIssue.innerHTML = "Report an issue\u2197";
                     reportIssueBtn.title  = "Report...";
+                    howToUseBtn.title     = "How to use?";
                     shareConfig.classList.replace("fr", "en");
                     suggestIdea.classList.replace("fr", "en");
                     reportIssue.classList.replace("fr", "en");
@@ -2195,8 +2203,8 @@
                 importFile.children[0].innerHTML   = this.lang == "fr" ? "Importer un fichier de configuration .json"   : "Import a .json configuration file";
                 importOnline.children[1].innerHTML = this.lang == "fr" ? "Obtenir un fichier de configuration en ligne" : "Get a configuration file online";
 
-                const avgLabel = document.querySelector(".average-label");
-                avgLabel.innerHTML = `/20 ${this.lang == "fr" ? "Moyenne Générale" : "Global Average"}`;
+                const avgLabel   = document.querySelector(".average-label");
+                avgLabel.innerHTML   = `/20 ${this.lang == "fr" ? "Moyenne Générale" : "Global Average"}`;
 
                 const statLabelsArray = document.querySelectorAll(".stat-label");
                 statLabelsArray[0].innerHTML = this.lang == "fr" ? "Notes" : "Grades";
@@ -2270,10 +2278,10 @@
 
                 let semesterKeys = [];
                 if (this.currentSemester === "all") {
-                    semesterKeys = Object.keys(this.semesters).sort();
+                    semesterKeys = Object.keys(this.semesters).sort((a,b) => {return a-b});
                 }
                 else if (this.currentSemester === "last") {
-                    semesterKeys = [Object.keys(this.semesters).sort().at(-1)];
+                    semesterKeys = [Object.keys(this.semesters).sort((a,b) => {return a-b}).at(-1)];
                 }
                 else {
                     semesterKeys = [this.currentSemester];
@@ -2284,15 +2292,16 @@
                 semesterKeys.forEach(sem => {
                     const section = document.createElement("div");
                     section.className = `semester-section`;
-                    const moyenneSem = this.moyennePonderee([].concat(...Object.values(this.semesters[sem] || {})));
-                    const avgClass = this.getAverageColor(moyenneSem);
-                    const unclassified = this.getUnclassifiedSubjects(sem);
+                    const moyenneSem    = Object.keys(this.semesters[sem]).length > 0 ? this.moyennePonderee([].concat(...Object.values(this.semesters[sem] || {}))) : " - ";
+                    const avgClass      = Object.keys(this.semesters[sem]).length > 0 ? this.getAverageColor(moyenneSem) : "";
+                    const unclassified  = this.getUnclassifiedSubjects(sem);
                     section.innerHTML = `
                     <div class="semester-header" data-semester="${sem}">
                         <div class="semester-info">
                             <div class="semester-name">📚 ${this.lang == "fr" ? 'Semestre' : "Semester"} ${sem}</div>
                                 <div class="semester-average ${avgClass}">
-                                    <span>${moyenneSem >= 10 ? '✅' : '⚠️'}</span><span>${moyenneSem}/20</span>
+                                    <span>${moyenneSem==" - " ? "" : `${moyenneSem >= 10 ? '✅' : '⚠️'}`}</span>
+                                    <span>${moyenneSem}/20</span>
                                 </div>
                             </div>
                         <div class="semester-toggle open collapse-icon">▲</div>
@@ -2375,10 +2384,10 @@
                             <div class="ue-subject-total-coef-value">${this.lang == "fr" ? `Coef Total des matières :` : `Total Subjects Coef:`}</div>
                             <div class="ue-subject-total-coef-debug"></div>
                         </div>
-                        <div class="ue-moyenne ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'good' : 'bad'}`}" data-semester="${sem}" data-ue="${ueName}">
+                        <div class="ue-moyenne ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'good' : 'bad'}`}" data-semester="${sem}" data-ue="${ueName}" ${this.editMode ? "" : 'style="width:151px"'}>
                             ${moyenne}/20 
                             <div class="ue-toggle collapse-icon ${this.viewMode == "compact" ? "" : "open"}">▲</div>
-                            <button class="ue-delete-btn" ${this.editMode ? `class="display:none"` : ""} id="ue-delete-btn-${ueName}-in-semester-${sem}" title="${this.lang == "fr" ? "Supprimer ce module" : "Delete this module"}" data-semester="${sem}" data-ue="${ueName}">🗑️</button>
+                            <button class="ue-delete-btn" ${this.editMode ? `class="display:none"` : ""} id="ue-delete-btn-${ueName}-in-semester-${sem}" title="${this.lang == "fr" ? "Supprimer ce module" : "Delete this module"}" data-semester="${sem}" data-ue="${ueName}"${this.editMode? "" : " hidden"}>🗑️</button>
                         </div>
                     </div>
                     
@@ -3237,11 +3246,12 @@
                                 const ignoredKey = [semX, subj, simTimeStamp || gradeId].join("\\");
                                 if (e.target.checked) {
                                     // remove this specific ignored key if present
-                                    this.ignoredGrades = this.ignoredGrades?.filter(id => id !== ignoredKey);
+                                    this.disabledGrades = this.disabledGrades?.filter(id => id !== ignoredKey);
                                 } else {
                                     // add ignored key if not already present
-                                    if (!this.ignoredGrades?.includes(ignoredKey)) this.ignoredGrades.push(ignoredKey);
+                                    if (!this.disabledGrades?.includes(ignoredKey)) this.disabledGrades.push(ignoredKey);
                                 }
+                                document.querySelector(".average-number").innerHTML = this.moyennePonderee(this.grades);
                                 this.saveIgnoredGrades();
                                 // this.getGradesDatas({semX, ue:undefined, subj});
                                 this.getGradesDatas();
@@ -5403,7 +5413,7 @@
                     this.generateContent(false);
                 }
                 else if (this.keyInputMatch(e, "R", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
-                    console.warn("You fell into my breakpoint trap!!"); debugger;
+                    debugger;
                 }
             };
         };
