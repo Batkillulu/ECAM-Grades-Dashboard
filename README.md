@@ -6,7 +6,7 @@ Institutional use, official deployment, or integration into the ECAM intranet re
 This project is not affiliated with or endorsed by ECAM LaSalle.
 All trademarks and logos belong to their respective owners.
 
-# [HOW TO USE: Quick start ⤦](#how-to-use-quick-start)
+### [HOW TO USE: Quick start ⤦](#how-to-use-quick-start)
 
 # Installation guide ([Windows and Androids ⤦](#windows-and-androids), [IOS ⤦](#ios))
 
