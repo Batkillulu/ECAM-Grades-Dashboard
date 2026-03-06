@@ -60,14 +60,19 @@
             .issue.issue-btn              { display: flex; justify-content: center; align-items: center; text-align: center; border: none; outline: 2px solid #c022ff; background: #6e00ad; border-radius: 20px; position: absolute; top: 79px; right: 2.4%; height: 40px; width: 40px; padding-left: 6px; font-size: 20px; user-select: none; text-decoration: none; color: inherit; cursor: pointer; z-index: 4; transition: all 0.2s ease; }
             .issue.issue-btn:focus        { outline: 2px solid white; }
             .issue.issue-btn.open         { outline: 2px solid white; }
+            .issue.share-config             { display: flex; justify-content: flex-start; align-items: center; text-align: left; outline: 2px solid white; background: #00569d; border-radius: 20px; position: absolute; top: 79px; right: 2.4%; height: 40px; width: 39px; padding-left: 10px; color: white; font-size: 15px; text-wrap-mode: nowrap; overflow: clip; cursor: pointer; user-select: none; text-decoration: none; z-index: 1; transition: all 0.2s ease; }
             .issue.suggest-idea             { display: flex; justify-content: flex-start; align-items: center; text-align: left; outline: 2px solid white; background: #009d40; border-radius: 20px; position: absolute; top: 79px; right: 2.4%; height: 40px; width: 39px; padding-left: 10px; color: white; font-size: 15px; text-wrap-mode: nowrap; overflow: clip; cursor: pointer; user-select: none; text-decoration: none; z-index: 2; transition: all 0.2s ease; }
             .issue.report-issue             { display: flex; justify-content: flex-start; align-items: center; text-align: left; outline: 2px solid white; background: #ad0000; border-radius: 20px; position: absolute; top: 79px; right: 2.4%; height: 40px; width: 39px; padding-left: 10px; color: white; font-size: 15px; text-wrap-mode: nowrap; overflow: clip; cursor: pointer; user-select: none; text-decoration: none; z-index: 3; transition: all 0.2s ease; }
+            .issue.share-config:hover       { color: #b8d7ff; }
             .issue.suggest-idea:hover       { color: #b8d7ff; }
             .issue.report-issue:hover       { color: #b8d7ff; }
+            .issue.share-config:focus       { color: #b8d7ff; }
             .issue.suggest-idea:focus       { color: #b8d7ff; }
             .issue.report-issue:focus       { color: #b8d7ff; }
+            .issue.share-config.fr.open       { width: 550px; }
             .issue.suggest-idea.fr.open       { width: 380px; }
             .issue.report-issue.fr.open       { width: 220px; }
+            .issue.share-config.en.open       { width: 445px; }
             .issue.suggest-idea.en.open       { width: 315px; }
             .issue.report-issue.en.open       { width: 175px; }
 
@@ -597,7 +602,6 @@
             this.dateHour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
             this.today  = new Date().toISOString().split('T')[0];                                                       // Current date in ISO String
             this.dateTimeOfLastUpdateCheck  = localStorage.getItem("ECAM_DASHBOARD_DATE_TIME_OF_LAST_UPDATE_CHECK") || "2026-02-02T00:00:00Z"; // A day before the date of last update, so that the update check is ran to make sure the correct version is installed
-            this.updateTimeInterval         = 30; // in minutes
 
             this.grades     = [];
             this.semesters  = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{}, 7:{}, 8:{}, 9:{}, 10:{}};
@@ -606,7 +610,8 @@
             this.newGrades = [];
             
             this.repoUserReportIssue        = "https://github.com/Batkillulu/ECAM-Grades-Dashboard/issues/new?template=user-report-issue-template.md";
-            this.repoUserSuggestionIssue    = "https://github.com/Batkillulu/ECAM-Grades-Dashboard/issues/new?template=feature-improvement-request.md";
+            this.repoUserSuggestionIssue    = "https://github.com/Batkillulu/ECAM-Grades-Dashboard/issues/new?template=feature-improvement-request-template.md";
+            this.repoUserConfigShare        = "https://github.com/Batkillulu/ECAM-Grades-Dashboard/issues/new?template=share-config-template.md";
             this.repoContentsAPI            = "https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/contents";
             this.repoScriptRaw              = "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/ECAM%20Grades%20Dashboard.user.js";
             
@@ -663,7 +668,7 @@
             this.mobileVer = this.clientWidth <= 935;
             this.clientWidth = 1920;
 
-            this.selectedSubjectCards = [];
+            this.selectedSubjectCardsId = [];
             this.selectedSubjectCardsSortedByUe = {};
             this.scrollToThisElem = "";
 
@@ -942,14 +947,21 @@
                 })
                 return document.styleSheets[styleSheetIndex].cssRules[ruleIndex]
             }
+            /** Save the ue configuration in the cache */
             saveConfig() { localStorage.setItem('ECAM_DASHBOARD_UE_CONFIG', JSON.stringify(this.ueConfig)); }
+            /** Save the simulated grades in the cache */
             saveSim() { this.deleteUnusedSimPath(); localStorage.setItem("ECAM_DASHBOARD_SIM_GRADES", JSON.stringify(this.sim)); }
+            /** Save the ignored grades in the cache */
             saveIgnoredGrades() { localStorage.setItem("ECAM_DASHBOARD_IGNORED_GRADES", JSON.stringify(this.ignoredGrades)); }
+            /** Save the read grades in the cache */
+            saveReadGrades() { localStorage.setItem("ECAM_DASHBOARD_SAVED_READ_GRADES", JSON.stringify(this.savedReadGrades)); }
+            /** Ensures that a path composed of `sem`, `ue` and `subj` exists in this.sim */
             ensureSimPath(sem=undefined, ue=undefined, subj=undefined) {
                 if (sem)    {if(!this.sim?.[sem])               this.sim[sem]={}; }
                 if (ue)     {if(!this.sim?.[sem]?.[ue])         this.sim[sem][ue]={}; }
                 if (subj)   {if(!this.sim?.[sem]?.[ue]?.[subj]) this.sim[sem][ue][subj]=[]; }
             }
+            /** Delete every unused simulated grade pathes */
             deleteUnusedSimPath(flex=true, sem=undefined, ue=undefined, subj=undefined) {
                 (sem ? [sem] : (flex ? Object.keys(this.sim || []) : [])).forEach(_sem => {
                     (ue ? [ue] : (flex ? Object.keys(this.sim?.[_sem] || []) : [])).forEach(_ue => {
@@ -961,10 +973,18 @@
                     if (Object.keys(this.sim?.[_sem])?.length == 0) {delete this.sim[_sem]}
                 })
             }
-            clearSimGradesForUE(sem, ueName) {
+            /** Clear all simulated grades in the ue if `semester` and `ue` are provided, or in the semester if only `semester` is provided. If no argument is provided, clears all simulated grades */
+            clearSimGrades(sem, ueName) {
                 this.ensureSimPath(sem, ueName);
-                delete this.sim[sem][ueName];
-                if (this.sim[sem] == {}) delete this.sim[sem];
+                if (sem) {
+                    if (ueName) {
+                        delete this.sim[sem][ueName];
+                        if (this.sim[sem] == {}) delete this.sim[sem];
+                    }
+                    else {
+                        delete this.sim[sem];
+                    }
+                }
                 this.saveSim()
                 this.getGradesDatas();
             }
@@ -1886,7 +1906,7 @@
             if (this.savedReadGrades.length == 0) {
                 this.newGrades = [];
                 this.savedReadGrades = this.grades;
-                localStorage.setItem("ECAM_DASHBOARD_SAVED_READ_GRADES", JSON.stringify(this.savedReadGrades));
+                this.saveReadGrades();
             }
             else {
                 this.newGrades = this.compareArraysOfObjects(this.grades, this.savedReadGrades).more;
@@ -1918,7 +1938,7 @@
                 document.querySelector(".portlet-topper").remove();
 
                 // Creating the content of the dashboard that doesn't vary along with the user's actions besides the language selection.
-                // Therefore, the text isn't yet created, but will be in the renderContent() method later on, to regenerate the text in case the language is changed
+                // Therefore, the text isn't yet created, but will be in the generateContent() method later on, to regenerate the text in case the language is changed
                 container.innerHTML = `
                 <div id="emptyDiv"></div>
                 <div class="currently-loading">
@@ -1948,6 +1968,7 @@
                     </div>
                     <div class="header-actions" style="display:flex; align-items:center">
 
+                        <a class="issue share-config ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserConfigShare    }" target="_blank" tabindex="-1">${this.lang == "fr" ? "Partaget une config" : "Share a config" }</a>
                         <a class="issue suggest-idea ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserSuggestionIssue}" target="_blank" tabindex="-1">${this.lang == "fr" ? "Suggérer une idée"   : "Suggest an idea"}</a>
                         <a class="issue report-issue ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserReportIssue    }" target="_blank" tabindex="-1">${this.lang == "fr" ? "Signaler un probème" : "Report an issue"}</a>
                         <button class="issue issue-btn" id="reportIssueBtn" tabindex="0">🚩</button>
@@ -2014,9 +2035,9 @@
                     </div>
                 </div>
 
-                <div class="scroll-field up${this.selectedSubjectCards.length > 0 ? " show" : ""}"${document.body.classList.contains("lfr-dockbar-pinned") ? ` style="transform: translateY(45px)"` : ""}></div>
+                <div class="scroll-field up${this.selectedSubjectCardsId.length > 0 ? " show" : ""}"${document.body.classList.contains("lfr-dockbar-pinned") ? ` style="transform: translateY(45px)"` : ""}></div>
 
-                <div class="drop-field remove-from-ue${this.selectedSubjectCards.length > 0 ? " show" : ""}">
+                <div class="drop-field remove-from-ue${this.selectedSubjectCardsId.length > 0 ? " show" : ""}">
                     <div class="drop-field-remove-from-ue-text top${this.lang == "fr" ? " fr" : " en"}"></div>
                     <div class="drop-field-remove-from-ue-minus">-</div>
                     <div class="drop-field-remove-from-ue-text bottom${this.lang == "fr" ? " fr" : " en"}"></div>
@@ -2025,14 +2046,14 @@
 
                 <div class="content-area" id="contentArea"></div>
 
-                <div class="drop-field create-ue ${this.lang == "fr" ? "fr" : "en"}${this.selectedSubjectCards.length > 0 ? " show" : ""}">
+                <div class="drop-field create-ue ${this.lang == "fr" ? "fr" : "en"}${this.selectedSubjectCardsId.length > 0 ? " show" : ""}">
                     <div class="drop-field-create-ue-text top ${this.lang == "fr" ? "fr" : "en"}"></div>
                     <div class="drop-field-create-ue-plus">+</div>
                     <div class="drop-field-create-ue-text bottom ${this.lang == "fr" ? "fr" : "en"}"></div>
                     <div class="drop-field-create-ue-hitbox"></div>
                 </div>
 
-                <div class="scroll-field down${this.selectedSubjectCards.length > 0 ? " show" : ""}"></div>
+                <div class="scroll-field down${this.selectedSubjectCardsId.length > 0 ? " show" : ""}"></div>
 
                 <div class="intranet-collapse"><div class="intranet-text"><div class="intranet-toggle collapse-icon">▲</div><div class="semester-name"> <div class="intranet-subtext"></div> </div><div class="intranet-toggle collapse-icon">▲</div></div></div>
                 `;
@@ -2046,7 +2067,7 @@
                 container.insertBefore(notifContainer, container.querySelector("dash-header"));
                 originalTable.style.display = "none";
 
-                this.renderContent();
+                this.generateContent();
             }
 
 
@@ -2105,7 +2126,7 @@
 
             //MARK: language Sensitive
             languageSensitiveContent(fadeIn=true) {
-                // Language Sensitive text in the Dashboard Header and Semester filter tab (which don't refresh on calling the renderContent() method)
+                // Language Sensitive text in the Dashboard Header and Semester filter tab (which don't refresh on calling the generateContent() method)
                 const dashTitle = document.querySelector(".dash-title");
                 const dashSubtitle = document.querySelector(".dash-subtitle");
                 dashTitle.innerHTML = this.lang == "fr" ? 'Tableau de Bord des Notes ECAM' : "ECAM Grades Dashboard";
@@ -2114,20 +2135,25 @@
                 const langShortcutText = document.getElementById("langShortcut");
                 langShortcutText.innerHTML = this.lang == "fr" ? "(Ctrl+L)" : "(Shift+L)";
 
+                const shareConfig = document.querySelector(".issue.share-config");
                 const suggestIdea = document.querySelector(".issue.suggest-idea");
                 const reportIssue = document.querySelector(".issue.report-issue");
                 const reportIssueBtn = document.querySelector(".issue.issue-btn");
                 if (this.lang == "fr") {
+                    shareConfig.innerHTML = "Partager une config\u2197";
                     suggestIdea.innerHTML = "Suggérer une idée\u2197";
                     reportIssue.innerHTML = "Signaler un problème\u2197";
                     reportIssueBtn.title  = "Signaler...";
+                    shareConfig.classList.replace("en", "fr");
                     suggestIdea.classList.replace("en", "fr");
                     reportIssue.classList.replace("en", "fr");
                 }
                 else {
+                    shareConfig.innerHTML = "Share a config\u2197";
                     suggestIdea.innerHTML = "Suggest an idea\u2197";
                     reportIssue.innerHTML = "Report an issue\u2197";
                     reportIssueBtn.title  = "Report...";
+                    shareConfig.classList.replace("fr", "en");
                     suggestIdea.classList.replace("fr", "en");
                     reportIssue.classList.replace("fr", "en");
                 }
@@ -2186,7 +2212,18 @@
                 }
 
                 if (document.querySelector(".new-grades-card").children.length > 1) {document.querySelector(".new-grades-card").children[1].remove()}
-                document.querySelector(".new-grades-card-title").innerHTML = `${this.newGrades.length > 0 ? `${this.lang == "fr" ? `Nouvelle Note${this.newGrades.length > 1 ? "s" : ""} !` : `New Grade${this.newGrades.length > 1 ? "s" : ""}!`}` : `${this.lang == "fr" ? `Pas de nouvelle note` : `No new grade`}` }`;
+                document.querySelector(".new-grades-card-title").innerHTML = `
+                    ${this.newGrades.length > 0 
+                        ? `${this.lang == "fr" 
+                            ? `Nouvelle${this.newGrades.length > 1 ? "s" : ""} Note${this.newGrades.length > 1 ? "s" : ""} !` 
+                            : `New Grade${this.newGrades.length > 1 ? "s" : ""}!`
+                        }` 
+                        : `${this.lang == "fr" 
+                            ? `Pas de nouvelle note` 
+                            : `No new grade`
+                        }` 
+                    }
+                `;
                 document.querySelector(".new-grades-mark-as-read-text").innerHTML = this.lang == "fr" ? "Marquer comme lu" : "Mark as read";
                 document.querySelector(".new-grades-mark-as-read").title = this.lang == "fr" ? "Marquer comme lu" : "Mark as read";
                 
@@ -2199,11 +2236,13 @@
                     document.querySelector(".ecam-dash").parentElement.classList.add("fade-in");
                     setTimeout(() => {document.querySelector(".ecam-dash").parentElement.classList.remove("fade-in")}, 300);
                 }
+
+                this.attachAllEventListeners();
             }
 
 
-            // MARK: renderContent
-            renderContent(fadeIn=true) {
+            // MARK: generateContent
+            generateContent(fadeIn=true) {
 
                 if (fadeIn == "big") {this.languageSensitiveContent(true);}
                 else {this.languageSensitiveContent(false);}
@@ -2247,7 +2286,7 @@
                             </div>
                         <div class="semester-toggle open collapse-icon">▲</div>
                     </div>
-                    <div class="semester-content show${this.selectedSubjectCards.length > 0 ? " dragging" : ""}${fadeIn ? " fade-in" : ""}" id="sem-content-${sem}">
+                    <div class="semester-content show${this.selectedSubjectCardsId.length > 0 ? " dragging" : ""}${fadeIn ? " fade-in" : ""}" id="sem-content-${sem}">
                         <div class="semester-grid" ${(unclassified.length == 0 || !this.ueConfig[sem] || Object.keys(this.ueConfig?.[sem])[0] == undefined) ? `style="gap: ${this.editMode ? `20px` : `0px`}"` : ``}>
                             <div class="modules-section" id="modules-section">
                                 ${this.createAllUECards(sem)}
@@ -2278,7 +2317,7 @@
                     this.attachCheckboxListeners(container);
 
                     this.setGradesTableTotalCoef();
-                    this.attachEventListeners();
+                    this.attachAllEventListeners();
                 });
             }
 
@@ -2371,7 +2410,7 @@
             // MARK: createSubjCardDetailed
             createAllSubjCardDetailed(sem, ueName) {
                 const ueData = this.gradesDatas[sem][ueName];
-                const select = this.selectedSubjectCards.length == 0;
+                const select = this.selectedSubjectCardsId.length == 0;
 
                 let html =  this.editMode ? this.createDropFieldInsertionField("subject", {sem, ueName, index:0}) : "";
 
@@ -2443,7 +2482,7 @@
                                     <th class="grades-table-date">
                                         ${this.lang == "fr" ? "Date" : "Date"}
                                     </th>
-                                    <th class="grades-table-teacher" style="border-right-width: 0px;${this.selectedSubjectCards.length > 0 ? " display: none;" : ""}">
+                                    <th class="grades-table-teacher" style="border-right-width: 0px;${this.selectedSubjectCardsId.length > 0 ? " display: none;" : ""}">
                                         ${this.lang == "fr" ? "Prof(s)" : "Teacher(s)"}
                                     </th>
                                     <th style="border-right-width: 0px; border-left-width: 0px;">
@@ -2492,7 +2531,7 @@
                                         : `${grade.date}`
                                     }
                                 </td>
-                                <td class="grades-table-teacher" ${this.selectedSubjectCards.length > 0 ? `style="display: none;"` : ""}>
+                                <td class="grades-table-teacher" ${this.selectedSubjectCardsId.length > 0 ? `style="display: none;"` : ""}>
                                     ${gradeIsSim
                                         ? `<span style="width: 100%; display: flex; justify-content: center;"> — </span>`
                                         : `<span>${`${grade.prof.split(" / ").length <= 3 ? grade.prof : grade.prof.split(" / ").slice(0,3).join(" / ") + " / ... "}`||''}</span>`
@@ -2544,7 +2583,7 @@
             // MARK: createSubjCardCompact
             createAllSubjCardCompact(sem, ueName) {
                 const ueData = this.gradesDatas[sem][ueName];
-                const select = this.selectedSubjectCards.length == 0;
+                const select = this.selectedSubjectCardsId.length == 0;
 
                 let html =  this.editMode ? this.createDropFieldInsertionField("subject", {sem, ueName, index:0}) : "";
 
@@ -2635,8 +2674,8 @@
                 const nbRealGrades =    nbGrades - nbSimGrades;
 
                 html +=`
-                <div class="subject-card unclassified ${subjAvg >= 10 ? `good` : `bad`}" id="subject-card-semester-${sem}-subject-${subject}" ${this.editMode ? `style="user-select: none;"` : ""} ${this.editMode ? `draggable="true"` : ""} data-subject="${subject}" data-semester="${sem}">
-                    <div class="subject-card-header unclassified  ${subjAvg >= 10 ? `good` : `bad`}" style="${this.editMode ? "cursor: grab; padding-left: 10px;" : "padding-left: 50px;"}" data-semester="${sem}" data-subject="${subject}">
+                <div class="subject-card unclassified ${subjAvg >= 10 ? `good` : `bad`}" id="subject-card-semester-${sem}-subject-${subject}" ${this.editMode ? `style="user-select: none;"` : ""} data-subject="${subject}" data-semester="${sem}">
+                    <div class="subject-card-header unclassified  ${subjAvg >= 10 ? `good` : `bad`}" style="${this.editMode ? "cursor: grab; padding-left: 10px;" : "padding-left: 50px;"}" data-semester="${sem}" data-subject="${subject}" ${this.editMode ? `draggable="true"` : ""}>
                         ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("unclassified-subject-card", {type:"unclassified", targetId:`subject-card-semester-${sem}-subject-${subject}`})}</div>` : ""}
                         <div style="width: 40%">
                             ${subject}
@@ -2669,7 +2708,7 @@
                                     <th class="grades-table-date">
                                         ${this.lang == "fr" ? "Date" : "Date"}
                                     </th>
-                                    <th class="grades-table-teacher" style="border-right-width: 0px;${this.selectedSubjectCards.length > 0 ? " display: none;" : ""}">
+                                    <th class="grades-table-teacher" style="border-right-width: 0px;${this.selectedSubjectCardsId.length > 0 ? " display: none;" : ""}">
                                         ${this.lang == "fr" ? "Prof(s)" : "Teacher(s)"}
                                     </th>
                                     <th style="border-right-width: 0px; border-left-width: 0px;">
@@ -2720,7 +2759,7 @@
                                         : `${grade.date}`
                                     }
                                 </td>
-                                <td class="grades-table-teacher" ${this.selectedSubjectCards.length > 0 ? `style="display: none;"` : ""}>
+                                <td class="grades-table-teacher" ${this.selectedSubjectCardsId.length > 0 ? `style="display: none;"` : ""}>
                                     ${gradeIsSim
                                         ? `<span style="width: 100%; display: flex; justify-content: center;"> — </span>`
                                         : `<span>${`${grade.prof.split(" / ").length <= 3 ? grade.prof : grade.prof.split(" / ").slice(0,3).join(" / ") + " / ... "}`||''}</span>`
@@ -2774,9 +2813,9 @@
 
         //#region -REGION: Ev Listeners
 
-            attachEventListeners() {
-                this.attachDocumentMouseEvents();
-                this.attachIssuesBtnsMouseEvents();
+            attachAllEventListeners() {
+                this.attachDocumentMouseListeners();
+                this.attachAllAnyInputsListeners();
 
                 document.body.onresize = (e) => {
                     
@@ -2816,7 +2855,7 @@
                         if (this.mobileVer == false) {
                             this.clientWidth = 935;
                             this.mobileVer = true;
-                            this.renderContent(false)
+                            this.generateContent(false)
                             // document.querySelectorAll(".grades-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
                             // this.getCSSClassCoordInStyleSheet(".grades-table-teacher").style.display = "none";
                         }
@@ -2826,668 +2865,783 @@
                         if (this.mobileVer == true) {
                             this.clientWidth = 1470;
                             this.mobileVer = false;
-                            this.renderContent(false)
+                            this.generateContent(false)
                             // this.getCSSClassCoordInStyleSheet(".grades-table-teacher").style.display = "table-cell";
                         }
                     } 
                     */
                 }; 
 
-                document.querySelector(".pin-dockbar").children[0].children[0].onclick = () => {
-                    // when clicking on the button to unpin the dockbar, this event listener is triggered before the action of unpinning the dockbar is actually done, 
-                    // so the order might seem reverse logical but that's how it works
-                    if (!document.body.classList.contains("lfr-dockbar-pinned")) {
-                        this.pinDockbar = true;
-                        document.querySelector(".scroll-field.up").style.transform = "translateY(45px)";
-                    }
-                    else {
-                        this.pinDockbar = false;
-                        document.querySelector(".scroll-field.up").style.transform = "";
-                    }
-                }
-
                 
+                this.attachLangBtnsListener();
+                this.attachIssuesBtnsMouseListeners();
+                this.attachEditModeListener();
+                this.attachImportBtnListener();
+                this.attachExportBtnListener();
                 
-
-
-                document.querySelector(".new-grades-notif").onclick = () => {
-                    const newGradesCard = document.querySelector(".new-grades-card");
-                    newGradesCard.scrollIntoView({behavior: "instant"});
-                    newGradesCard.classList.add("myhighlight");
-                    setTimeout(() => {newGradesCard.classList.remove("myhighlight")},200)
-                };
-                document.getElementById("closeNewGradesNotif").onmousedown = () => {    // otherwise, clicking the close button of the notif card also clicks on the card itself (behind the button)
-                    document.querySelector(".new-grades-notif").onclick = null;
-                };
-                document.getElementById("closeNewGradesNotif").onclick = () => {
-                    document.querySelector(".new-grades-notif").classList.remove("on");
-                };
-                document.querySelector(".new-grades-mark-as-read").onclick = () => {
-                    this.newGrades = [];
-                    this.savedReadGrades = [];
-                    this.grades.forEach(e => {this.savedReadGrades.push(e)})
-                    localStorage.setItem("ECAM_DASHBOARD_SAVED_READ_GRADES", JSON.stringify(this.savedReadGrades))
-
-                    if (document.querySelector(".new-grades-card").children.length > 1) {document.querySelector(".new-grades-card").children[1].remove()}
-                    document.querySelector(".new-grades-card-title").innerHTML = this.lang == "fr" ? `Pas de nouvelle grade` : `No new grade`;
-                    document.querySelector(".new-grades-mark-as-read").parentElement.disabled = true;
-                    document.querySelector(".new-grades-mark-as-read").parentElement.hidden = true;
-                    document.querySelector(".new-grades-notif").classList.remove("on");
-
-                    this.renderRecentGrades()
-                    this.attachEventListeners()
-                };
-                document.querySelectorAll(".new-grades-subject-card").forEach(card => {   // Scroll to the corresponding subject/grade on which the user clicked
-                    card.onclick = e => {
-                        this.currentSemester = e.target.dataset.semester;
-                        document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-                        document.getElementById('filter-tab-semester-'+this.currentSemester).classList.add('active');
-                        this.renderContent(false);
-                        localStorage.setItem("ECAM_DASHBOARD_DEFAULT_SEMESTER", this.currentSemester);
-
-                        const targetElem = document.getElementById(`subject-card-semester-${e.target.dataset.semester}-subject-${e.target.dataset.subject}`);
-                        targetElem.scrollIntoView({behavior: "instant",block: "center"});
-                        targetElem.onscrollend = ((elem) => {
-                            elem.classList.add("scroll-to");
-                            elem.onanimationend = () => {targetElem.classList.remove("scroll-to")}
-                        })(targetElem);
-                        
-                    }
-                });
-
-                document.querySelectorAll(".subject-card.detailed, .subject-card.compact")
+                this.attachNewGradesNotifListener();
+                this.attachNewGradesMarkAsReadBtnListener();
+                this.attachNewGradesSubjectCardsListener();
                 
-                // Filtres semester
-                document.querySelectorAll('.filter-tab').forEach(tab => {
-                    tab.onclick = (e) => {
-                        if (!e.target.classList.contains('active'))
-                        {
-                            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-                            e.target.classList.add('active');
-                            this.currentSemester = e.target.dataset.filter;
-                            localStorage.setItem("ECAM_DASHBOARD_DEFAULT_SEMESTER", this.currentSemester);
-                            
-                            this.removeSubjectCardFromSubjectSelection();
-                            this.renderContent();
-                            this.attachEventListeners();
-                        }
-                    };
-                });
-
-                // Toggle view mode
-                document.querySelectorAll('.view-btn').forEach(btn => {
-                    btn.onclick = (e) => {
-                        document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-                        e.target.classList.add('active');
-                        this.viewMode = e.target.dataset.view;
-                        localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
-                        this.renderContent();
-                    };
-                });
-
-
-                // Ensures all selected Subject Cards have a tick icon with their assigned event listeners instead of the default drag icon
-                this.selectedSubjectCards.forEach(selectedSubjectCardId => {
-                    const subjectCard = document.getElementById(selectedSubjectCardId);
-                    this.changeDragIconToTickIcon(subjectCard);
-                })
-                document.querySelectorAll(".subject-card").forEach(subjCard => {
-                    if (subjCard.querySelector(".drag-icon")) {
-                        const dragIcon = subjCard.querySelector(".drag-icon");
-                        dragIcon.onclick = (e) => { this.dragIconOnClickEvent(e, dragIcon) };
-                    }
-                    else if (subjCard.querySelector(".tick-icon")) {
-                        const tick = subjCard.querySelector(".tick-icon");
-                        tick.onclick = (e) => { this.tickIconOnClickEvent(e, tick) };
-                    }
-                })
-
-
-                // Attach listeners for every input of class ".any-input"
-                document.querySelectorAll(".any-input").forEach(input => {
-                    input.onfocus    = () =>  {document.onkeydown = null; document.onkeyup = null}
-                    input.onblur     = () =>  {this.generalKeyboardEvents()};
-                    input.ondragover = (e) => {if (e.target.closest(".any-input")) {e.dataTransfer.dropEffect = "none";}}
-                    input.ondrop     = (e) => {e.preventDefault(); e.dataTransfer.dropEffect = "link";};
-                    if (input.classList.contains("ue-title")) {   // Change UEs name
-                        input.onmouseenter  = ( ) => { if (this.editMode) {this.detachOnDragEventListeners(); document.querySelectorAll(".ue-header").forEach(card => {card.draggable = false});} }
-                        input.onmouseleave  = ( ) => { if (this.editMode) {this.attachOnDragEventListeners(); document.querySelectorAll(".ue-header").forEach(card => {card.draggable = true;});} }
-                        input.onchange      = (e) => { this.ueTitleInputChangeAction(e) };
-                    }
-                    else {
-                        input.onmouseenter  = ( ) => { if (this.editMode) {this.detachOnDragEventListeners();} };
-                        input.onmouseleave  = ( ) => { if (this.editMode) {this.attachOnDragEventListeners();} };
-                    }
-                })
-
-
-                // Change custom subject name
-                document.querySelectorAll(".subject-name.input").forEach(input => {
-                    input.onchange = (e) => {
-                        
-                        const subjNewName   = e.target.value;
-                        const subjectCardId = e.target.id.replace(/\bsubject-name-input/, "subject-card");
-                        const subjectCard   = document.getElementById(subjectCardId);
-                        const sem           = subjectCard.dataset.semester;
-                        const ue            = subjectCard.dataset.ue;
-                        const subjOldName   = subjectCard.dataset.subject;
-                        const ueDetails     = subjectCard.parentElement;
-                        const ueCard        = ueDetails.parentElement;
-
-
-                        let diffName = true;
-                        this.ueConfig[sem][ue].subjects.forEach(_subj => {
-                            if (_subj == subjNewName && _subj != subjOldName) {
-                                alert(this.lang == "fr" 
-                                    ? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
-                                    : "This subject already exists! Please choose a different name"
-                                )
-                                diffName = false;
-                                this.scrollToClientHighestElem({id: subjectCardId, smooth: true, block: "center"})
-                            }
-                        });
-
-                        if (diffName) {
-                            this.ueConfig[sem].__ues__.forEach(ueName => {
-                                this.ueConfig[sem][ueName].subjects.forEach(_subj => {
-                                    if (_subj == subjNewName && _subj != subjOldName) {
-                                        alert(this.lang == "fr" 
-                                            ? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
-                                            : "This subject already exists! Please choose a different name"
-                                        )
-                                        diffName = false;
-                                        this.scrollToClientHighestElem({id: subjectCardId, smooth: true, block: "center"})
-                                    }
-                                })
-                            })
-                        }
-                            
-
-                        if (diffName) {
-                            const oldSubjIndex = this.ueConfig[sem][ue].subjects.indexOf(subjOldName);
-                            const pct   = Number(this.ueConfig[sem][ue].coefficients    [subjOldName]);
-
-                            this.ueConfig[sem][ue].subjects[oldSubjIndex]=subjNewName ;    // Replace the subject's old name by the subject's new name
-                            delete  this.ueConfig[sem][ue].coefficients [subjOldName];
-                                    this.ueConfig[sem][ue].coefficients [subjNewName] = pct;
-                                        
-                            this.getGradesDatas();
-
-                            if (this.viewMode == "compact" || ueDetails.classList.contains("compact")) {
-                                ueDetails.innerHTML = this.createAllSubjCardCompact(sem, ue);
-                            }
-                            else if (this.viewMode == "detailed" || !ueDetails.classList.contains("compact")) {
-                                ueDetails.innerHTML = this.createAllSubjCardDetailed(sem, ue);
-                            }
-
-                            const unclassifiedSection = document.querySelector(".unclassified-section");
-                            const unclassifiedContent = unclassifiedSection.querySelector(".unclassified-content");
-                            unclassifiedSection.style.height = "100%";
-                            unclassifiedContent.innerHTML = this.createAllUnclassifiedSubjCard(sem);
-
-                            setTimeout(() => {
-                                const currentUnclassifiedSectionHeight = Number(unclassifiedSection.clientHeight);
-                                unclassifiedSection.style.height = `${currentUnclassifiedSectionHeight+4}px`;}
-                            , 100)
-                            
-
-                            this.attachEventListeners()
-                            this.setGradesTableTotalCoef();
-                            this.saveConfig()
-                            this.getGradesDatas();
-                        }
-                        else {
-                            e.target.focus();
-                            e.target.style.background = "#ff7979";
-                        }                     
-                    }
-                })
-
-                document.querySelectorAll(".ue-delete-btn").forEach(btn => {
-                    btn.onclick = e => {
-                        const sem = e.target.dataset.semester;
-                        const ueName = e.target.dataset.ue;
-                        
-                        const ueIndex = this.ueConfig[sem].__ues__.indexOf(ueName);
-
-                        this.ueConfig[sem].__ues__.splice(ueIndex, 1);
-                        delete this.ueConfig[sem][ueName];
-
-                        if (this.ueConfig[sem].__ues__.length == 0) {delete this.ueConfig[sem]}
-                        
-                        this.clearSimGradesForUE(sem, ueName);
-                        this.saveConfig();
-                        this.getGradesDatas();
-                        this.renderContent();
-                        this.attachEventListeners();
-                    }
-                })
-
+                this.attachFilterSemesterListener();
+                this.attachViewModeBtnsListener();
                 
+                this.attachAllSubjectCardRelatedEvenListenersForEverySubjectCard();
 
-                // Attach on-click event action for the simulated grade addition button
-                document.querySelectorAll('.sim-add-btn').forEach(btn=>{
-                    btn.onclick = (e)=>{
-                        const ueName = e.target.dataset.ue;
-                        const semX = e.target.dataset.semester;
-                        const subj = e.target.dataset.subj;
-                        this.ensureSimPath(semX, ueName, subj);
-                        const typeInp =  document.querySelector(`.grade-simulee-input.sim-inp-type[data-semester="${semX}"][data-subj="${subj}"]`);
-                        const gradeInp = document.querySelector(`.grade-simulee-input.sim-inp-grade[data-semester="${semX}"][data-subj="${subj}"]`);
-                        const coefInp =  document.querySelector(`.grade-simulee-input.sim-inp-coef[data-semester="${semX}"][data-subj="${subj}"]`);
-                        const dateInp =  document.querySelector(`.grade-simulee-input.sim-inp-date[data-semester="${semX}"][data-subj="${subj}"]`);
-                        const type = typeInp?.value||`${this.lang=="fr"? 'Simulé' : "Simulated"}`;
-                        const grade = parseFloat(gradeInp?.value||'');
-                        const coef = parseFloat(coefInp?.value||'');
-                        const date = dateInp?.value||'';
-                        if(isNaN(grade) || isNaN(coef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
-
-                        this.ensureSimPath(semX, ueName, subj);
-
-                        // Making sure the automatically generated name (if the user didn't input any type name) isn't the same as one that already exists 
-                        // (incrementing an index every time it's the case and add it at the end of the new sim grade's name)
-                        let newName = type, validNewName = newName != type, count = 2;
-
-                        while (!validNewName && this.sim[semX][ueName][subj].length > 0) {
-                            validNewName = true;
-                            this.sim[semX][ueName][subj].forEach((_grade, _index) => {
-                                if (_grade.type == newName && validNewName) {
-                                    validNewName = false;
-                                    newName = type + ` (${count})`;
-                                    count++;
-                                }
-                            })
-                        }
-
-                        this.sim[semX][ueName][subj].push({
-                            grade, 
-                            coef,
-                            classAvg: '—',
-                            type: newName,
-                            date: '—',
-                            prof: '—',
-                            subject: subj,
-                            semester: semX,
-                            libelle: `[SIM] ${subj} - ${type}`,
-                            __sim: true,
-                            id: new Date().getYear() + "" + new Date().getMonth() + "" + new Date().getDay() + "" + new Date().getHours() + "" + new Date().getMinutes() + "" + new Date().getSeconds() + "" + new Date().getMilliseconds()
-                        });
-                        this.saveSim();
-                        this.getGradesDatas();
-                        this.renderContent();
-                    }
-                });
-
-                // Attach on-click event action for the simulated grades' deletion button
-                document.querySelectorAll('.sim-del-btn').forEach(btn=>{
-                    btn.onclick = (e) => {
-                        const semX = e.target.dataset.semester;
-                        const ueName = e.target.dataset.ue;
-                        const subj = e.target.dataset.subj;
-                        const id = e.target.dataset.simid;
-                        this.sim[semX][ueName][subj].splice(id, 1);
-
-                        this.deleteUnusedSimPath(false, semX, ueName, subj);
-                        this.saveSim();
-                        this.getGradesDatas();
-                        this.renderContent(false);
-                    }
-                })
-
-                // Attach on-change event action for simulated grades type/grade/coef/date fields
-                document.querySelectorAll(".grade-simulee-input-edit").forEach(input => {
-                    input.onchange = e => {
-                        const ueName = e.target.dataset.ue;
-                        const semX = e.target.dataset.semester;
-                        const subj = e.target.dataset.subj;
-                        const id = e.target.dataset.simid;
-                        const gradeRow = e.target.parentElement.parentElement;
-                        const gradeInp = gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-grade`);
-                        const coefInp =  gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-coef `);
-                        const newGrade = parseFloat(gradeInp?.value||'');
-                        const newCoef = parseFloat(coefInp?.value||'');
-
-                        if(isNaN(newGrade) || isNaN(newCoef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
-                        this.sim[semX][ueName][subj][id][e.target.dataset.modiftype] = e.target.value;
-
-                        this.saveSim();
-                        this.getGradesDatas();
-                        this.renderContent(false);
-                    }
-                })
-
-                
-                document.querySelectorAll(".ue-info-clear.sim").     forEach(simClear => {
-                    simClear.onclick = () => {this.clearSimGradesForUE(    simClear.dataset.semester, simClear.dataset.ue);this.renderContent();}
-                });
-                document.querySelectorAll(".ue-info-clear.disabled").forEach(disClear => {
-                    disClear.onclick = () => {this.clearIgnoredGradesForUE(disClear.dataset.semester, disClear.dataset.ue);this.renderContent();}
-                });
-
-                
-                document.querySelector(".unclassified-content").querySelectorAll(".grades-table").forEach(table => {
-                    table.onmouseenter = () => {
-                        if (this.editMode) document.querySelectorAll(".subject-card.unclassified").forEach(card => {card.draggable = false;})
-                    }
-                    table.onmouseleave = () => {
-                        if (this.editMode) document.querySelectorAll(".subject-card.unclassified").forEach(card => {card.draggable = true;})
-                    }
-                })
-
-
-                // Change to English
-                document.getElementById('en-lang-btn').onclick = () => {
-                    if (this.lang == "fr") {
-                        this.lang = "en";
-                        localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
-                        document.getElementById('fr-lang-btn').classList.remove('active')
-                        document.getElementById('en-lang-btn').classList.add('active')
-                        this.renderContent(false);
-                    }
-                };
-
-                // Change to French
-                document.getElementById('fr-lang-btn').onclick = () => {
-                    if (this.lang == "en") {
-                        this.lang = "fr";
-                        localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
-                        document.getElementById('fr-lang-btn').classList.add('active')
-                        document.getElementById('en-lang-btn').classList.remove('active')
-                        this.renderContent(false);
-                    }
-                };
-                
-                // Edit mode
-                document.getElementById('editModeBtn').onclick = () => {
-                    this.editMode = !this.editMode;
-                    this.renderContent();
-                    this.attachEventListeners();
-                };
-                
-                // Import
-                document.getElementById('importBtn').onclick = () => this.toggleImportMenu();
-
-                // Export
-                document.getElementById('exportBtn').onclick = () => this.exportData();
+                this.attachUeInfoClearBtns();
 
                 if (this.editMode) {this.attachAllOnDragEventListeners();} else {this.detachOnDragEventListeners();}
             }
 
-            attachSubjectCoefInputBoxEventListeners(inputBox) {
-                inputBox.onchange = e => {
-                    const sem = e.target.dataset.semester;
-                    const ueName = e.target.dataset.ue;
-                    const subject = e.target.dataset.subject;
-                    const newCoef = e.target.value;
-                    this.ueConfig[sem][ueName].coefficients[subject] = newCoef;
-                    this.saveConfig();
-                    this.getGradesDatas({sem, ueName, subject});
-                    this.renderContent(false);
-                    this.attachEventListeners();
-                };
-            }
 
-            attachIssuesBtnsMouseEvents() {
-                const issueBtn       = document.querySelector(".issue.issue-btn");
-                const reportIssue    = document.querySelector(".issue.report-issue");
-                const suggestIdea    = document.querySelector(".issue.suggest-idea");
 
-                issueBtn.onclick = (e) => {
-                    if (reportIssue.classList.contains("open")) {
-                        issueBtn.classList.remove("open");
-                        reportIssue.classList.remove("open"); reportIssue.tabIndex = "-1";
-                        suggestIdea.classList.remove("open"); suggestIdea.tabIndex = "-1";
-                        this.attachDocumentMouseEvents("onclick");
-                    }
-                    else {
-                        issueBtn.classList.add("open");
-                        reportIssue.classList.add("open"); reportIssue.tabIndex = "0";
-                        suggestIdea.classList.add("open"); suggestIdea.tabIndex = "0";
+            //#region -Attach Event Listeners
 
-                        document.onclick = (e) => {if (!e.target.closest(".issue")) {
-                            issueBtn.classList.remove("open");
-                            reportIssue.classList.remove("open"); reportIssue.tabIndex = "-1";
-                            suggestIdea.classList.remove("open"); suggestIdea.tabIndex = "-1";
-                            this.attachDocumentMouseEvents("onclick");
-                        }}
-                    }
-                };
-            }
 
-            attachDocumentMouseEvents(eventName="all") {
-                if (eventName == "onclick" || eventName == "all") {
-                    document.onclick = (e) => {
-                        // Toggle semesters
-                        if (e.target.closest('.semester-header')) {
-                            const header = e.target.closest('.semester-header');
-                            const sem = header.dataset.semester;
-                            const content = document.getElementById(`sem-content-${sem}`);
-                            const toggle = header.querySelector('.semester-toggle');
-                            if (content.classList.contains('show')) {
-                                content.classList.remove('show'); toggle.classList.remove('open'); content.style.display = 'none';
-                            } else {
-                                content.classList.add('show'); toggle.classList.add('open'); content.style.display = 'flex';
-                            }
-                        }
 
-                        // Toggle intranet table
-                        else if (e.target.closest('.intranet-collapse')) {
-                            const header = e.target.closest('.intranet-collapse');
-                            const intranetTable = document.querySelector('.greyGridTable');
-                            const intranetToggle = header.querySelectorAll('.intranet-toggle');
-                            intranetToggle.forEach(t => {
-                                if (t.previousElementSibling == null){
-                                    t.classList.toggle('openLeft')
-                                } else {
-                                    t.classList.toggle('openRight');
+
+
+                //#region Document listeners
+                    attachDocumentMouseListeners(eventName="all") {
+                        if (eventName == "onclick" || eventName == "all") {
+                            document.onclick = (e) => {
+                                // Toggle semesters
+                                if (e.target.closest('.semester-header')) {
+                                    const header = e.target.closest('.semester-header');
+                                    const sem = header.dataset.semester;
+                                    const content = document.getElementById(`sem-content-${sem}`);
+                                    const toggle = header.querySelector('.semester-toggle');
+                                    if (content.classList.contains('show')) {
+                                        content.classList.remove('show'); toggle.classList.remove('open'); content.style.display = 'none';
+                                    } else {
+                                        content.classList.add('show'); toggle.classList.add('open'); content.style.display = 'flex';
+                                    }
                                 }
-                            });
 
-                            if (intranetTable.style.display == 'none') {
-                                intranetTable.style.display = 'block';
-                            } else {
-                                intranetTable.style.display = 'none';
-                            }
-                        }
+                                // Toggle intranet table
+                                else if (e.target.closest('.intranet-collapse')) {
+                                    const header = e.target.closest('.intranet-collapse');
+                                    const intranetTable = document.querySelector('.greyGridTable');
+                                    const intranetToggle = header.querySelectorAll('.intranet-toggle');
+                                    intranetToggle.forEach(t => {
+                                        if (t.previousElementSibling == null){
+                                            t.classList.toggle('openLeft')
+                                        } else {
+                                            t.classList.toggle('openRight');
+                                        }
+                                    });
 
-                        if (!e.target.closest(".import-menu") && document.getElementById("importMenu").classList.contains("show")) {
-                            document.getElementById("importMenu").classList.remove("show");
-                            setTimeout(() => {document.getElementById("importMenu").style.display = "none"}, 300);
-                        }
-                    };
-                }
-                
-                if (eventName == "onmousedown" || eventName == "all") {
-                    // Collapse/Develop (fold/unfold) UEs
-                    document.onmousedown = (e) => {
-                        if (e.target.closest('.ue-header') && !e.target.closest('.ue-title.input') && !e.target.closest('.ue-delete-btn')) {
-                            this.ueHeaderClickEvent(e)
-                        }
-                    };
-                }
-            }
+                                    if (intranetTable.style.display == 'none') {
+                                        intranetTable.style.display = 'block';
+                                    } else {
+                                        intranetTable.style.display = 'none';
+                                    }
+                                }
 
-            /** Ensures that the dragend event of the document results in resetting the display if the dragged element is a subject card that is not selected */
-            documentOnDragEndEvent() {
-                const subjectCard = this.currentlyDraggedCard;
-
-                if (this.draggedElementDroppedInInputField && subjectCard) {
-
-                    // checking if the dragged subject card is selected:
-                    let draggedSubjectCardIsSelected = false;
-                    if (this.selectedSubjectCards.length > 0) {
-                        this.selectedSubjectCards.forEach(divId => {if (divId==subjectCard.id) {draggedSubjectCardIsSelected=true}});
-                    }
-
-                    if (!draggedSubjectCardIsSelected) {
-                        const dropFieldAdd          = document.querySelector(".drop-field.create-ue");
-                        const dropFieldAddHitbox    = document.querySelector(".drop-field-create-ue-hitbox");
-                        const dropFieldRemove       = document.querySelector(".drop-field.remove-from-ue");
-                        const dropFieldRemoveHitbox = document.querySelector(".drop-field-remove-from-ue-hitbox");
-                        subjectCard.style.width = "";
-
-                        if (subjectCard.classList.contains("unclassified")) {
-                            subjectCard.querySelector(".grades-table").style.display = "table";
-                            subjectCard.querySelector(".subject-card-header").style.border = "none";
-                            subjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
-                        }
-                        else if (subjectCard.classList.contains("compact")) {
-                            subjectCard.querySelector(".grades-table-coef").style.display = "flex";
-                        }
-                        else {
-                            subjectCard.querySelector(".subject-card-header").children[0].style.width =                          "42%";
-                            subjectCard.querySelector(".subject-card-header").querySelector(".grades-table-coef").style.width =  "58%";
-                            subjectCard.querySelector(".grades-table").style.display = "table";
-                            subjectCard.querySelector(".subject-card-header").style.borderBottom = "4px solid white";
-                            subjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
-                        }
-
-                        if (this.selectedSubjectCards.length == 0) {
-                            setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher => {teacher.style.display = "table-cell"})}, 100)
-                            document.querySelector(".semester-content").classList.remove("dragging");
-                            dropFieldAdd.classList.remove("show");
-                            dropFieldAddHitbox.classList.remove("show");
-                            dropFieldRemove.classList.remove("show");
-                            dropFieldRemoveHitbox.classList.remove("show");
-                            this.removeSubjectCardFromSubjectSelection();
+                                if (!e.target.closest(".import-menu") && document.getElementById("importMenu").classList.contains("show")) {
+                                    document.getElementById("importMenu").classList.remove("show");
+                                    setTimeout(() => {document.getElementById("importMenu").style.display = "none"}, 300);
+                                }
+                            };
                         }
                         
-                    } else {
-                        this.selectedSubjectCards.forEach(selectedSubjectCardId2 => {
-                            const selectedSubjectCard2 = document.getElementById(selectedSubjectCardId2);
-                            selectedSubjectCard2.style.width = "";
+                        if (eventName == "onmousedown" || eventName == "all") {
+                            // Collapse/Develop (fold/unfold) UEs
+                            document.onmousedown = (e) => {
+                                if (e.target.closest('.ue-header') && !e.target.closest('.ue-title.input') && !e.target.closest('.ue-delete-btn')) {
+                                    this.ueHeaderClickAction(e)
+                                }
+                            };
+                        }
+                    }
+                    attachAllAnyInputsListeners() {
+                        document.querySelectorAll(".any-input").forEach(input => {
+                            this.attachAnyInputListeners(input)
+                        })
+                    }
+                    attachAnyInputListeners(input) {
+                        input.onfocus    = () =>  {document.onkeydown = null; document.onkeyup = null}
+                        input.onblur     = () =>  {this.generalKeyboardEvents()};
+                        input.ondragover = (e) => {if (e.target.closest(".any-input")) {e.dataTransfer.dropEffect = "none";}}
+                        input.ondrop     = (e) => {e.preventDefault(); e.dataTransfer.dropEffect = "link";};
+                        if (input.classList.contains("ue-title")) {   // Change UEs name
+                            input.onmouseenter  = ( ) => { if (this.editMode) {this.detachOnDragEventListeners(); document.querySelectorAll(".ue-header").forEach(card => {card.draggable = false});} }
+                            input.onmouseleave  = ( ) => { if (this.editMode) {this.attachOnDragEventListeners(); document.querySelectorAll(".ue-header").forEach(card => {card.draggable = true;});} }
+                            input.onchange      = (e) => { this.ueTitleInputChangeAction(e) };
+                        }
+                        else {
+                            input.onmouseenter  = ( ) => { if (this.editMode) {this.detachOnDragEventListeners();} };
+                            input.onmouseleave  = ( ) => { if (this.editMode) {this.attachOnDragEventListeners();} };
+                        }
+                    }
+                //#endregion
 
-                            if (selectedSubjectCard2.classList.contains("unclassified")) {
-                                selectedSubjectCard2.querySelector(".grades-table").style.display = "table";
-                                selectedSubjectCard2.querySelector(".subject-card-header").style.border = "none";
-                                selectedSubjectCard2.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
-                            
-                            } 
-                            else if (selectedSubjectCard2.classList.contains("compact")) {
-                                selectedSubjectCard2.querySelector(".grades-table-coef").style.display = "flex";
+
+
+
+                //#region Dashboard listeners
+                    attachPinDockbarListener() {
+                        document.querySelector(".pin-dockbar").children[0].children[0].onclick = () => {
+                            // when clicking on the button to unpin the dockbar, this event listener is triggered before the action of unpinning the dockbar is actually done, 
+                            // so the order might seem reverse logical but that's how it works
+                            if (!document.body.classList.contains("lfr-dockbar-pinned")) {
+                                this.pinDockbar = true;
+                                document.querySelector(".scroll-field.up").style.transform = "translateY(45px)";
                             }
                             else {
-                                selectedSubjectCard2.querySelector(".subject-card-header").children[0].style.width =                          "42%";
-                                selectedSubjectCard2.querySelector(".subject-card-header").querySelector(".grades-table-coef").style.width =  "58%";
-                                selectedSubjectCard2.querySelector(".grades-table").style.display = "table";
-                                selectedSubjectCard2.querySelector(".subject-card-header").style.borderBottom = "4px solid white";
-                                selectedSubjectCard2.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
+                                this.pinDockbar = false;
+                                document.querySelector(".scroll-field.up").style.transform = "";
+                            }
+                        }
+                    }
+                    
+                    attachLangBtnsListener() {
+                        // Change to English
+                        document.getElementById('en-lang-btn').onclick = () => {
+                            if (this.lang == "fr") {
+                                this.lang = "en";
+                                localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
+                                document.getElementById('fr-lang-btn').classList.remove('active')
+                                document.getElementById('en-lang-btn').classList.add('active')
+                                this.generateContent(false);
+                            }
+                        };
+
+                        // Change to French
+                        document.getElementById('fr-lang-btn').onclick = () => {
+                            if (this.lang == "en") {
+                                this.lang = "fr";
+                                localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
+                                document.getElementById('fr-lang-btn').classList.add('active')
+                                document.getElementById('en-lang-btn').classList.remove('active')
+                                this.generateContent(false);
+                            }
+                        };
+                    }
+                    attachIssuesBtnsMouseListeners() {
+                        const issueBtn       = document.querySelector(".issue.issue-btn");
+                        const shareConfig    = document.querySelector(".issue.share-config");
+                        const suggestIdea    = document.querySelector(".issue.suggest-idea");
+                        const reportIssue    = document.querySelector(".issue.report-issue");
+
+                        issueBtn.onclick = (e) => {
+                            if (reportIssue.classList.contains("open")) {
+                                issueBtn.classList.remove("open");
+                                shareConfig.classList.remove("open"); shareConfig.tabIndex = "-1";
+                                suggestIdea.classList.remove("open"); suggestIdea.tabIndex = "-1";
+                                reportIssue.classList.remove("open"); reportIssue.tabIndex = "-1";
+                                this.attachDocumentMouseListeners("onclick");
+                            }
+                            else {
+                                issueBtn.classList.add("open");
+                                shareConfig.classList.add("open"); shareConfig.tabIndex = "0";
+                                suggestIdea.classList.add("open"); suggestIdea.tabIndex = "0";
+                                reportIssue.classList.add("open"); reportIssue.tabIndex = "0";
+
+                                document.onclick = (e) => {if (!e.target.closest(".issue")) {
+                                    issueBtn.classList.remove("open");
+                                    shareConfig.classList.remove("open"); shareConfig.tabIndex = "-1";
+                                    suggestIdea.classList.remove("open"); suggestIdea.tabIndex = "-1";
+                                    reportIssue.classList.remove("open"); reportIssue.tabIndex = "-1";
+                                    this.attachDocumentMouseListeners("onclick");
+                                }}
+                            }
+                        };
+                    }
+                    attachEditModeListener() {
+                        document.getElementById('editModeBtn').onclick = () => {
+                            this.editMode = !this.editMode;
+                            this.generateContent();
+                        };
+                    }
+                    attachImportBtnListener() {
+                        document.getElementById('importBtn').onclick = () => this.toggleImportMenu();
+                    }
+                    attachExportBtnListener() {
+                        document.getElementById('exportBtn').onclick = () => this.exportData();
+                    }
+                //#endregion
+
+
+
+
+                //#region New grades listeners
+                    attachNewGradesNotifListener() {
+                        document.querySelector(".new-grades-notif").onclick = (e) => {
+                            if (!e.target.closest("#closeNewGradesNotif")) {
+                                const newGradesCard = document.querySelector(".new-grades-card");
+                                newGradesCard.scrollIntoView({behavior: "instant"});
+                                newGradesCard.classList.add("myhighlight");
+                                setTimeout(() => {newGradesCard.classList.remove("myhighlight")},200)
+                            }
+                            else {
+                                document.querySelector(".new-grades-notif").classList.remove("on");
+                            }
+                        };
+                    }
+                    attachNewGradesMarkAsReadBtnListener() {
+                        document.querySelector(".new-grades-mark-as-read").onclick = () => {
+                            this.newGrades = [];
+                            this.savedReadGrades = Array(...this.grades);
+                            // this.grades.forEach(e => {this.savedReadGrades.push(e)})
+                            this.saveReadGrades();
+
+                            if (document.querySelector(".new-grades-card").children.length > 1) {document.querySelector(".new-grades-card").children[1].remove()}
+                            document.querySelector(".new-grades-card-title").innerHTML = this.lang == "fr" ? `Pas de nouvelle note` : `No new grade`;
+                            document.querySelector(".new-grades-mark-as-read").parentElement.disabled = true;
+                            document.querySelector(".new-grades-mark-as-read").parentElement.hidden = true;
+                            document.querySelector(".new-grades-notif").classList.remove("on");
+
+                            this.renderRecentGrades()
+                            this.attachAllEventListeners()
+                        };
+                    }
+                    attachNewGradesSubjectCardsListener() {
+                        document.querySelectorAll(".new-grades-subject-card").forEach(card => {   // Scroll to the corresponding subject/grade on which the user clicked
+                            card.onclick = e => {
+                                this.currentSemester = e.target.dataset.semester;
+                                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                                document.getElementById('filter-tab-semester-'+this.currentSemester).classList.add('active');
+                                this.generateContent(false);
+                                localStorage.setItem("ECAM_DASHBOARD_DEFAULT_SEMESTER", this.currentSemester);
+
+                                const targetElem = document.getElementById(`subject-card-semester-${e.target.dataset.semester}-subject-${e.target.dataset.subject}`);
+                                targetElem.scrollIntoView({behavior: "instant", block: "center"});
+                                targetElem.onscrollend = ((elem) => {
+                                    elem.classList.add("scroll-to");
+                                    elem.onanimationend = () => {targetElem.classList.remove("scroll-to")}
+                                })(targetElem);
+                                
+                            }
+                        });
+                    }
+                //#endregion
+
+
+
+
+                //#region filter/view mode listeners
+                    attachFilterSemesterListener() {
+                        document.querySelectorAll('.filter-tab').forEach(tab => {
+                            tab.onclick = (e) => {
+                                if (!e.target.classList.contains('active'))
+                                {
+                                    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                                    e.target.classList.add('active');
+                                    this.currentSemester = e.target.dataset.filter;
+                                    localStorage.setItem("ECAM_DASHBOARD_DEFAULT_SEMESTER", this.currentSemester);
+                                    
+                                    this.removeSubjectCardFromSubjectSelection();
+                                    this.generateContent();
+                                }
+                            };
+                        });
+                    }
+                    attachViewModeBtnsListener() {
+                        document.querySelectorAll('.view-btn').forEach(btn => {
+                            btn.onclick = (e) => {
+                                document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                                e.target.classList.add('active');
+                                this.viewMode = e.target.dataset.view;
+                                localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
+                                this.generateContent();
+                            };
+                        });
+                    }
+                //#endregion
+
+
+
+
+                //#region Selection Notifs listeners
+                    attachNotifBtnsListener(notifDiv) {
+                        if (notifDiv instanceof HTMLElement) {
+                            this.attachNotifDelBtnListener(notifDiv.querySelector(".selected-subject-card-notif-div-del-btn"));
+                            this.attachNotifScrollBtnListener(notifDiv.querySelector(".selected-subject-card-notif-div-scroll-btn"));
+                        }
+                        else {
+                            document.querySelectorAll(".selected-subject-card-notif-div-del-btn").forEach(delBtn => {
+                                this.attachNotifDelBtnListener(delBtn);
+                            })
+                            document.querySelectorAll(".selected-subject-card-notif-div-scroll-btn").forEach(scrollBtn => {
+                                this.attachNotifScrollBtnListener(scrollBtn);
+                            })
+                        }
+                    }
+                    attachNotifDelBtnListener(delBtn) {
+                        delBtn.onclick = (e) => {
+                            const notifDiv = e.target.parentElement;
+                            this.removeSubjectCardFromSubjectSelection({notifDiv});
+                        };
+                    }
+                    attachNotifScrollBtnListener(scrollBtn) {
+                        scrollBtn.onclick = (e) => {
+                            this.scrollToClientHighestElem({id: e.target.dataset.targetid, smooth: true, block: "center"})
+                        }
+                    }
+                //#endregion
+
+
+
+
+                //#region UE cards listeners
+                    attachUeInfoClearBtns() {
+                        document.querySelectorAll(".ue-info-clear.sim").     forEach(simClear => {
+                            simClear.onclick = () => {this.clearSimGrades(    simClear.dataset.semester, simClear.dataset.ue);this.generateContent();}
+                        });
+                        document.querySelectorAll(".ue-info-clear.disabled").forEach(disClear => {
+                            disClear.onclick = () => {this.clearIgnoredGradesForUE(disClear.dataset.semester, disClear.dataset.ue);this.generateContent();}
+                        });
+                    }
+                    attachAllUeDeleteBtnsListener() {
+                        document.querySelectorAll(".ue-delete-btn").forEach(btn => {
+                            this.attachUeDeleteBtnListener(btn);
+                        })
+                    }
+                    attachUeDeleteBtnListener(btn) {
+                        btn.onclick = (e) => {this.ueDeleteBtnAction(e)};
+                    }
+                //#endregion
+
+
+
+
+                //#region Subject cards listeners
+
+                    attachAllSubjectCardRelatedEvenListenersForEverySubjectCard() {
+                        this.attachAndManageAllDragOrTickIconsListener();
+                        this.attachAllSubjectCoefInputBoxesListeners();
+                        this.attachCheckboxListeners(document);
+                        this.attachAllSubjectNameInputsListener();
+                        this.attachAllSubjectSimAddBtnsListener();
+                        this.attachAllSubjectSimDelBtnsListener();
+                        this.attachAllSubjectSimInputEditsListener(document);
+                    }
+
+                    attachAllSubjectCardRelatedEventListeners(subjCard) {
+                        const coefInputBox  = subjCard.querySelector(".subject-coef-input-box");
+                        const nameInputBox  = subjCard.querySelector(".subject-name.input");
+                        const simAddBtn     = subjCard.querySelector(".sim-add-btn");
+                        const simDelBtn     = subjCard.querySelector(".sim-del-btn");
+
+                        this.attachDragOrTickIconsListener(subjCard);
+                        this.attachSubjectCoefInputBoxListeners(coefInputBox);
+                        this.attachCheckboxListeners(subjCard);
+                        this.attachSubjectNameInputListener(nameInputBox);
+                        this.attachSubjectSimAddBtnListener(simAddBtn);
+                        this.attachSubjectSimDelBtnListener(simDelBtn);
+                        this.attachAllSubjectSimInputEditsListener(subjCard);
+                    }
+
+                    /** Ensures all selected Subject Cards have a tick icon with their assigned event listeners instead of the default drag icon, and attach them the correct event listener */
+                    attachAndManageAllDragOrTickIconsListener() {
+                        this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {
+                            const subjectCard = document.getElementById(selectedSubjectCardId);
+                            this.changeDragIconToTickIcon(subjectCard);
+                        })
+
+                        document.querySelectorAll(".subject-card").forEach(subjCard => {
+                            this.attachDragOrTickIconsListener(subjCard);
+                        })
+                    }
+                    attachDragOrTickIconsListener(subjCard) {
+                        if (subjCard.querySelector(".drag-icon")) {
+                            const dragIcon = subjCard.querySelector(".drag-icon");
+                            dragIcon.onclick = (e) => { this.dragIconOnClickEvent(e, dragIcon) };
+                        }
+                        else if (subjCard.querySelector(".tick-icon")) {
+                            const tick = subjCard.querySelector(".tick-icon");
+                            tick.onclick = (e) => { this.tickIconOnClickEvent(e, tick) };
+                        }
+                    }
+
+                    attachAllSubjectCoefInputBoxesListeners() {
+                        document.querySelectorAll(".subject-coef-input-box").forEach(inputBox => {
+                            this.attachSubjectCoefInputBoxListeners(inputBox);
+                        })
+                    }
+                    attachSubjectCoefInputBoxListeners(inputBox) {
+                        inputBox.onchange = e => {
+                            const sem = e.target.dataset.semester;
+                            const ueName = e.target.dataset.ue;
+                            const subject = e.target.dataset.subject;
+                            const newCoef = e.target.value;
+                            this.ueConfig[sem][ueName].coefficients[subject] = newCoef;
+                            this.saveConfig();
+                            this.getGradesDatas({sem, ueName, subject});
+                            this.generateContent(false);
+                        };
+                    }
+
+                    attachCheckboxListeners(container) {
+                        // Reusable method to attach listeners to grade checkboxes
+                        container.querySelectorAll('.grade-checkbox').forEach(chbx => {
+                            chbx.onclick = (e) => {
+                                const semX = e.target.dataset.semester;
+                                const subj = e.target.dataset.subj;
+                                const simTimeStamp = e.target.dataset?.simtimestamp;
+                                const gradeId = e.target.dataset?.gradeid;
+                                const ignoredKey = [semX, subj, simTimeStamp || gradeId].join("\\");
+                                if (e.target.checked) {
+                                    // remove this specific ignored key if present
+                                    this.ignoredGrades = this.ignoredGrades?.filter(id => id !== ignoredKey);
+                                } else {
+                                    // add ignored key if not already present
+                                    if (!this.ignoredGrades?.includes(ignoredKey)) this.ignoredGrades.push(ignoredKey);
+                                }
+                                this.saveIgnoredGrades();
+                                // this.getGradesDatas({semX, ue:undefined, subj});
+                                this.getGradesDatas();
+                                this.generateContent(false);
+                            }
+                        });
+                    }
+
+                    attachAllSubjectNameInputsListener() {
+                        document.querySelectorAll(".subject-name.input").forEach(input => {
+                            this.attachSubjectNameInputListener(input);
+                        })
+                    }
+                    attachSubjectNameInputListener(input) {
+                        input.onchange = (e) => {this.subjectNameInputAction(e)};
+                    }
+
+                    attachAllSubjectSimAddBtnsListener() {
+                        document.querySelectorAll('.sim-add-btn').forEach(btn=>{
+                            this.attachSubjectSimAddBtnListener(btn);
+                        });
+                    }
+                    attachSubjectSimAddBtnListener(btn) {
+                        btn.onclick = (e) => {this.subjectSimAddBtnAction(e)};
+                    }
+
+                    attachAllSubjectSimDelBtnsListener() {
+                        document.querySelectorAll('.sim-del-btn').forEach(btn=>{
+                            this.attachSubjectSimDelBtnListener(btn)
+                        })
+                    }
+                    attachSubjectSimDelBtnListener(btn) {
+                        btn.onclick = (e) => {this.subjectSimDelBtnAction(e)};
+                    }
+
+                    attachAllSubjectSimInputEditsListener(container) {
+                        container.querySelectorAll(".grade-simulee-input-edit").forEach(input => {
+                            this.attachSubjectSimInputEditListener(input)
+                        })
+                    }
+                    attachSubjectSimInputEditListener(input) {
+                        input.onchange = (e) => {this.subjectSimInputEditAction(e)};
+                    }
+                    
+                //#endregion
+
+
+            //#endregion
+
+
+            //#region -Events Action
+                
+                /** Ensures that the dragend event of the document results in resetting the display if the dragged element is a subject card that is not selected */
+                documentOnDragEndAction() {
+                    const subjectCard = this.currentlyDraggedCard;
+
+                    if (this.draggedElementDroppedInInputField && subjectCard) {
+
+                        // checking if the dragged subject card is selected:
+                        let draggedSubjectCardIsSelected = false;
+                        if (this.selectedSubjectCardsId.length > 0) {
+                            this.selectedSubjectCardsId.forEach(divId => {if (divId==subjectCard.id) {draggedSubjectCardIsSelected=true}});
+                        }
+
+                        if (!draggedSubjectCardIsSelected) {
+                            const dropFieldAdd          = document.querySelector(".drop-field.create-ue");
+                            const dropFieldAddHitbox    = document.querySelector(".drop-field-create-ue-hitbox");
+                            const dropFieldRemove       = document.querySelector(".drop-field.remove-from-ue");
+                            const dropFieldRemoveHitbox = document.querySelector(".drop-field-remove-from-ue-hitbox");
+                            subjectCard.style.width = "";
+
+                            if (subjectCard.classList.contains("unclassified")) {
+                                subjectCard.querySelector(".grades-table").style.display = "table";
+                                subjectCard.querySelector(".subject-card-header").style.border = "none";
+                                subjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
+                            }
+                            else if (subjectCard.classList.contains("compact")) {
+                                subjectCard.querySelector(".grades-table-coef").style.display = "flex";
+                            }
+                            else {
+                                subjectCard.querySelector(".subject-card-header").children[0].style.width =                          "42%";
+                                subjectCard.querySelector(".subject-card-header").querySelector(".grades-table-coef").style.width =  "58%";
+                                subjectCard.querySelector(".grades-table").style.display = "table";
+                                subjectCard.querySelector(".subject-card-header").style.borderBottom = "4px solid white";
+                                subjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
+                            }
+
+                            if (this.selectedSubjectCardsId.length == 0) {
+                                setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher => {teacher.style.display = "table-cell"})}, 100)
+                                document.querySelector(".semester-content").classList.remove("dragging");
+                                dropFieldAdd.classList.remove("show");
+                                dropFieldAddHitbox.classList.remove("show");
+                                dropFieldRemove.classList.remove("show");
+                                dropFieldRemoveHitbox.classList.remove("show");
+                                this.removeSubjectCardFromSubjectSelection();
+                            }
+                            
+                        } else {
+                            this.selectedSubjectCardsId.forEach(selectedSubjectCardId2 => {
+                                const selectedSubjectCard2 = document.getElementById(selectedSubjectCardId2);
+                                selectedSubjectCard2.style.width = "";
+
+                                if (selectedSubjectCard2.classList.contains("unclassified")) {
+                                    selectedSubjectCard2.querySelector(".grades-table").style.display = "table";
+                                    selectedSubjectCard2.querySelector(".subject-card-header").style.border = "none";
+                                    selectedSubjectCard2.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
+                                
+                                } 
+                                else if (selectedSubjectCard2.classList.contains("compact")) {
+                                    selectedSubjectCard2.querySelector(".grades-table-coef").style.display = "flex";
+                                }
+                                else {
+                                    selectedSubjectCard2.querySelector(".subject-card-header").children[0].style.width =                          "42%";
+                                    selectedSubjectCard2.querySelector(".subject-card-header").querySelector(".grades-table-coef").style.width =  "58%";
+                                    selectedSubjectCard2.querySelector(".grades-table").style.display = "table";
+                                    selectedSubjectCard2.querySelector(".subject-card-header").style.borderBottom = "4px solid white";
+                                    selectedSubjectCard2.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
+                                }
+                            })
+                        }
+                    }
+                }
+
+                ueHeaderClickAction(e) {
+                    document.body.onmousemove = (e) => {
+                        e.preventDefault();
+                        document.body.onmouseup = null;
+                        document.body.onmousemove = null;
+                    };
+                    document.body.onmouseup = (e) => {
+                        const header = e.target.closest('.ue-header');
+                        const toggle = header.querySelector('.ue-toggle');
+                        const sem = header.dataset.semester;
+                        const ueName = header.dataset.ue;
+                        const ueDetails = header.parentElement.querySelector(".ue-details");
+
+                        if (toggle.classList.contains('open')) {
+                            ueDetails.innerHTML = this.createAllSubjCardCompact(sem, ueName);
+                            ueDetails.classList.add('compact');
+                            toggle.classList.remove('open');
+                            this.setGradesTableTotalCoef()
+                        } else {
+                            ueDetails.innerHTML = this.createAllSubjCardDetailed(sem, ueName);
+                            ueDetails.classList.remove('compact');
+                            toggle.classList.add('open');
+                            this.attachCheckboxListeners(ueDetails);
+                            this.setGradesTableTotalCoef()
+                        }
+
+                        ueDetails.querySelectorAll(".subject-card").forEach(subjCard => {
+                            if (this.selectedSubjectCardsId.includes(subjCard.id)) {
+                                this.changeDragIconToTickIcon(subjCard);
+                            }
+                        })
+                        
+                        this.attachDropFieldsEventListeners("insert", ueDetails);
+                        document.body.onmousemove = null;
+                        document.body.onmouseup = null;
+                    }
+                }
+                
+                ueTitleInputChangeAction(e) {
+                    const sem = e.target.dataset.semester;
+                    const oldUeName = e.target.dataset.ue; 
+                    const oldUeIndex = this.ueConfig[sem].__ues__.indexOf(oldUeName);
+                    const newUeName = e.target.value;
+                    
+                    this.ueConfig[sem][newUeName] = this.ueConfig[sem][oldUeName];
+                    delete this.ueConfig[sem][oldUeName];
+                    this.ueConfig[sem].__ues__[oldUeIndex] = newUeName;
+
+                    this.saveConfig()
+                    this.getGradesDatas();
+                    this.generateContent(false)
+                }
+
+                ueDeleteBtnAction(e) {
+                    const sem = e.target.dataset.semester;
+                    const ueName = e.target.dataset.ue;
+                    
+                    const ueIndex = this.ueConfig[sem].__ues__.indexOf(ueName);
+
+                    this.ueConfig[sem].__ues__.splice(ueIndex, 1);
+                    delete this.ueConfig[sem][ueName];
+
+                    if (this.ueConfig[sem].__ues__.length == 0) {delete this.ueConfig[sem]}
+                    
+                    this.clearSimGrades(sem, ueName);
+                    this.saveConfig();
+                    this.getGradesDatas();
+                    this.generateContent();
+                }
+
+                subjectNameInputAction(e) {
+                    const subjNewName   = e.target.value;
+                    const subjectCardId = e.target.id.replace(/\bsubject-name-input/, "subject-card");
+                    const subjectCard   = document.getElementById(subjectCardId);
+                    const sem           = subjectCard.dataset.semester;
+                    const ue            = subjectCard.dataset.ue;
+                    const subjOldName   = subjectCard.dataset.subject;
+                    const ueDetails     = subjectCard.parentElement;
+                    const ueCard        = ueDetails.parentElement;
+
+
+                    let diffName = true;
+                    this.ueConfig[sem][ue].subjects.forEach(_subj => {
+                        if (_subj == subjNewName && _subj != subjOldName) {
+                            alert(this.lang == "fr" 
+                                ? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
+                                : "This subject already exists! Please choose a different name"
+                            )
+                            diffName = false;
+                            this.scrollToClientHighestElem({id: subjectCardId, smooth: true, block: "center"})
+                        }
+                    });
+
+                    if (diffName) {
+                        this.ueConfig[sem].__ues__.forEach(ueName => {
+                            this.ueConfig[sem][ueName].subjects.forEach(_subj => {
+                                if (_subj == subjNewName && _subj != subjOldName) {
+                                    alert(this.lang == "fr" 
+                                        ? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
+                                        : "This subject already exists! Please choose a different name"
+                                    )
+                                    diffName = false;
+                                    this.scrollToClientHighestElem({id: subjectCardId, smooth: true, block: "center"})
+                                }
+                            })
+                        })
+                    }
+                        
+
+                    if (diffName) {
+                        const oldSubjIndex = this.ueConfig[sem][ue].subjects.indexOf(subjOldName);
+                        const pct   = Number(this.ueConfig[sem][ue].coefficients    [subjOldName]);
+
+                        this.ueConfig[sem][ue].subjects[oldSubjIndex]=subjNewName ;    // Replace the subject's old name by the subject's new name
+                        delete  this.ueConfig[sem][ue].coefficients [subjOldName];
+                                this.ueConfig[sem][ue].coefficients [subjNewName] = pct;
+                                    
+                        this.getGradesDatas();
+
+                        if (this.viewMode == "compact" || ueDetails.classList.contains("compact")) {
+                            ueDetails.innerHTML = this.createAllSubjCardCompact(sem, ue);
+                        }
+                        else if (this.viewMode == "detailed" || !ueDetails.classList.contains("compact")) {
+                            ueDetails.innerHTML = this.createAllSubjCardDetailed(sem, ue);
+                        }
+
+                        const unclassifiedSection = document.querySelector(".unclassified-section");
+                        const unclassifiedContent = unclassifiedSection.querySelector(".unclassified-content");
+                        unclassifiedSection.style.height = "100%";
+                        unclassifiedContent.innerHTML = this.createAllUnclassifiedSubjCard(sem);
+
+                        setTimeout(() => {
+                            const currentUnclassifiedSectionHeight = Number(unclassifiedSection.clientHeight);
+                            unclassifiedSection.style.height = `${currentUnclassifiedSectionHeight+4}px`;}
+                        , 100)
+                        
+
+                        this.attachAllEventListeners()
+                        this.setGradesTableTotalCoef();
+                        this.saveConfig()
+                        this.getGradesDatas();
+                    }
+                    else {
+                        e.target.focus();
+                        e.target.style.background = "#ff7979";
+                    }
+                }
+
+                subjectSimAddBtnAction(e) {
+                    const ueName = e.target.dataset.ue;
+                    const semX = e.target.dataset.semester;
+                    const subj = e.target.dataset.subj;
+                    this.ensureSimPath(semX, ueName, subj);
+                    const typeInp =  document.querySelector(`.grade-simulee-input.sim-inp-type[data-semester="${semX}"][data-subj="${subj}"]`);
+                    const gradeInp = document.querySelector(`.grade-simulee-input.sim-inp-grade[data-semester="${semX}"][data-subj="${subj}"]`);
+                    const coefInp =  document.querySelector(`.grade-simulee-input.sim-inp-coef[data-semester="${semX}"][data-subj="${subj}"]`);
+                    const dateInp =  document.querySelector(`.grade-simulee-input.sim-inp-date[data-semester="${semX}"][data-subj="${subj}"]`);
+                    const type = typeInp?.value||`${this.lang=="fr"? 'Simulé' : "Simulated"}`;
+                    const grade = parseFloat(gradeInp?.value||'');
+                    const coef = parseFloat(coefInp?.value||'');
+                    const date = dateInp?.value||'';
+                    if(isNaN(grade) || isNaN(coef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
+
+                    this.ensureSimPath(semX, ueName, subj);
+
+                    // Making sure the automatically generated name (if the user didn't input any type name) isn't the same as one that already exists 
+                    // (incrementing an index every time it's the case and add it at the end of the new sim grade's name)
+                    let newName = type, validNewName = newName != type, count = 2;
+
+                    while (!validNewName && this.sim[semX][ueName][subj].length > 0) {
+                        validNewName = true;
+                        this.sim[semX][ueName][subj].forEach((_grade, _index) => {
+                            if (_grade.type == newName && validNewName) {
+                                validNewName = false;
+                                newName = type + ` (${count})`;
+                                count++;
                             }
                         })
                     }
+
+                    this.sim[semX][ueName][subj].push({
+                        grade, 
+                        coef,
+                        classAvg: '—',
+                        type: newName,
+                        date: '—',
+                        prof: '—',
+                        subject: subj,
+                        semester: semX,
+                        libelle: `[SIM] ${subj} - ${type}`,
+                        __sim: true,
+                        id: new Date().getYear() + "" + new Date().getMonth() + "" + new Date().getDay() + "" + new Date().getHours() + "" + new Date().getMinutes() + "" + new Date().getSeconds() + "" + new Date().getMilliseconds()
+                    });
+                    this.saveSim();
+                    this.getGradesDatas();
+                    this.generateContent();
                 }
-            }
 
-            attachSubjectCardListeners(subjectCard) {
-                subjectCard.querySelectorAll('.subject-coef-input-box').forEach(inputBox => {
-                    this.attachSubjectCoefInputBoxEventListeners(inputBox);
-                })
-            }
-            
-            attachCheckboxListeners(container) {
-                // Reusable method to attach listeners to grade checkboxes
-                container.querySelectorAll('.grade-checkbox').forEach(chbx => {
-                    chbx.onclick = (e) => {
-                        const semX = e.target.dataset.semester;
-                        const subj = e.target.dataset.subj;
-                        const simTimeStamp = e.target.dataset?.simtimestamp;
-                        const gradeId = e.target.dataset?.gradeid;
-                        const ignoredKey = [semX, subj, simTimeStamp || gradeId].join("\\");
-                        if (e.target.checked) {
-                            // remove this specific ignored key if present
-                            this.ignoredGrades = this.ignoredGrades?.filter(id => id !== ignoredKey);
-                        } else {
-                            // add ignored key if not already present
-                            if (!this.ignoredGrades?.includes(ignoredKey)) this.ignoredGrades.push(ignoredKey);
-                        }
-                        this.saveIgnoredGrades();
-                        // this.getGradesDatas({semX, ue:undefined, subj});
-                        this.getGradesDatas();
-                        this.renderContent(false);
-                    }
-                });
-            }
+                subjectSimDelBtnAction(e) {
+                    const semX = e.target.dataset.semester;
+                    const ueName = e.target.dataset.ue;
+                    const subj = e.target.dataset.subj;
+                    const id = e.target.dataset.simid;
+                    this.sim[semX][ueName][subj].splice(id, 1);
 
-            ueHeaderClickEvent(e) {
-                document.body.onmousemove = (e) => {
-                    e.preventDefault();
-                    document.body.onmouseup = null;
-                    document.body.onmousemove = null;
-                };
-                document.body.onmouseup = (e) => {
-                    const header = e.target.closest('.ue-header');
-                    const toggle = header.querySelector('.ue-toggle');
-                    const sem = header.dataset.semester;
-                    const ueName = header.dataset.ue;
-                    const ueDetails = header.parentElement.querySelector(".ue-details");
-
-                    if (toggle.classList.contains('open')) {
-                        ueDetails.innerHTML = this.createAllSubjCardCompact(sem, ueName);
-                        ueDetails.classList.add('compact');
-                        toggle.classList.remove('open');
-                        this.setGradesTableTotalCoef()
-                    } else {
-                        ueDetails.innerHTML = this.createAllSubjCardDetailed(sem, ueName);
-                        ueDetails.classList.remove('compact');
-                        toggle.classList.add('open');
-                        this.attachCheckboxListeners(ueDetails);
-                        this.setGradesTableTotalCoef()
-                    }
-
-                    ueDetails.querySelectorAll(".subject-card").forEach(subjCard => {
-                        if (this.selectedSubjectCards.includes(subjCard.id)) {
-                            this.changeDragIconToTickIcon(subjCard);
-                        }
-                    })
-                    
-                    this.attachDropFieldsEventListeners("insert", ueDetails);
-                    document.body.onmousemove = null;
-                    document.body.onmouseup = null;
+                    this.deleteUnusedSimPath(false, semX, ueName, subj);
+                    this.saveSim();
+                    this.getGradesDatas();
+                    this.generateContent(false);
                 }
-            }
-            
-            ueTitleInputChangeAction(e) {
-                const sem = e.target.dataset.semester;
-                const oldUeName = e.target.dataset.ue; 
-                const oldUeIndex = this.ueConfig[sem].__ues__.indexOf(oldUeName);
-                const newUeName = e.target.value;
-                
-                this.ueConfig[sem][newUeName] = this.ueConfig[sem][oldUeName];
-                delete this.ueConfig[sem][oldUeName];
-                this.ueConfig[sem].__ues__[oldUeIndex] = newUeName;
 
-                this.saveConfig()
-                this.getGradesDatas();
-                this.renderContent(false)
-            }
+                subjectSimInputEditAction(e) {
+                    const ueName = e.target.dataset.ue;
+                    const semX = e.target.dataset.semester;
+                    const subj = e.target.dataset.subj;
+                    const id = e.target.dataset.simid;
+                    const gradeRow = e.target.parentElement.parentElement;
+                    const gradeInp = gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-grade`);
+                    const coefInp =  gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-coef `);
+                    const newGrade = parseFloat(gradeInp?.value||'');
+                    const newCoef = parseFloat(coefInp?.value||'');
 
-            notifBtnsAttachListener(notifDiv) {
-                if (notifDiv instanceof HTMLElement) {
-                    this.notifDelBtnAttachListener(notifDiv.querySelector(".selected-subject-card-notif-div-del-btn"));
-                    this.notifScrollBtnAttachListener(notifDiv.querySelector(".selected-subject-card-notif-div-scroll-btn"));
+                    if(isNaN(newGrade) || isNaN(newCoef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
+                    this.sim[semX][ueName][subj][id][e.target.dataset.modiftype] = e.target.value;
+
+                    this.saveSim();
+                    this.getGradesDatas();
+                    this.generateContent(false);
                 }
-                else {
-                    document.querySelectorAll(".selected-subject-card-notif-div-del-btn").forEach(delBtn => {
-                        this.notifDelBtnAttachListener(delBtn);
-                    })
-                    document.querySelectorAll(".selected-subject-card-notif-div-scroll-btn").forEach(scrollBtn => {
-                        this.notifScrollBtnAttachListener(scrollBtn);
-                    })
-                }
-            }
-
-            notifDelBtnAttachListener(delBtn) {
-                delBtn.onclick = (e) => {
-                    const notifDiv = e.target.parentElement;
-                    this.removeSubjectCardFromSubjectSelection({notifDiv});
-                };
-            }
-
-            notifScrollBtnAttachListener(scrollBtn) {
-                scrollBtn.onclick = (e) => {
-                    this.scrollToClientHighestElem({id: e.target.dataset.targetid, smooth: true, block: "center"})
-                }
-            }
+            //#endregion
 
         //#endregion
 
@@ -3648,7 +3802,7 @@
                         card.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
                     }
                     
-                    if (this.selectedSubjectCards.length == 0) {
+                    if (this.selectedSubjectCardsId.length == 0) {
                         setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher => {teacher.style.display = "table-cell"})}, 100)
                         document.querySelector(".semester-content")                 .classList.remove("dragging");
                         document.querySelector(".drop-field.create-ue")             .classList.remove("show");
@@ -3887,7 +4041,7 @@
                 }
             }
             draggedSelectedElementOnDragStartEvent(e, {draggedElement, card}) {
-                this.selectedSubjectCards.forEach(selectedSubjectCardId => {
+                this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {
                     const selectedSubjectCard = document.getElementById(selectedSubjectCardId);
                     selectedSubjectCard.style.width = "50%";
 
@@ -3921,7 +4075,7 @@
             };
             draggedSelectedElementOnDragEndEvent(e, {draggedElement, card}) {
 
-                this.selectedSubjectCards.forEach(selectedSubjectCardId => {
+                this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {
                     const selectedSubjectCard = document.getElementById(selectedSubjectCardId);
                     selectedSubjectCard.style.width = "";
 
@@ -4033,11 +4187,11 @@
                 
                 e.preventDefault(); 
 
-                if (this.selectedSubjectCards.length == 0) {
+                if (this.selectedSubjectCardsId.length == 0) {
                     this.dropFieldSubjectInsertAction(null, insertField)
                 }
                 else {
-                    this.dropFieldSubjectInsertAction(this.selectedSubjectCards[0], insertField);
+                    this.dropFieldSubjectInsertAction(this.selectedSubjectCardsId[0], insertField);
                 }
             }
 
@@ -4064,8 +4218,8 @@
                         this.insertFieldHitboxOnClickEvent(e);
                     }
                     else {
-                        if (this.selectedSubjectCards.length > 0) {
-                            this.dropFieldToNewUEAction(this.selectedSubjectCards[0], data.index);
+                        if (this.selectedSubjectCardsId.length > 0) {
+                            this.dropFieldToNewUEAction(this.selectedSubjectCardsId[0], data.index);
                         }
                         else {
                             this.dropFieldToNewUEAction(null, data.index);
@@ -4106,7 +4260,7 @@
                         
                         draggableElement.draggable = true;
 
-                        if (!this.selectedSubjectCards.includes(subjectCard.id)) {
+                        if (!this.selectedSubjectCardsId.includes(subjectCard.id)) {
                             draggableElement.ondragstart = (e) => {this.draggedElementOnDragStartEvent( e, {draggableElement, card: subjectCard})};
                             draggableElement.ondragend   = (e) => {this.draggedElementOnDragEndEvent(   e, {draggableElement, card: subjectCard})};
                         }
@@ -4126,7 +4280,7 @@
                     })
                 }
 
-                this.notifBtnsAttachListener();
+                this.attachNotifBtnsListener();
             }
 
 
@@ -4176,7 +4330,7 @@
 
             // MARK: remove from subject selection
             /** 
-            *  Manage all the actions involving the deletion of a subj card from the selection of subj cards (this.selectedSubjectCards)
+            *  Manage all the actions involving the deletion of a subj card from the selection of subj cards (this.selectedSubjectCardsId)
             * 
             * @param {String} notifDiv the div of the notif linked to the selected subject card
             * @param {HTMLElement} elementDroppedInField if this method is called from triggering an ondrop event of a drop field, pass the dropped element in this argument
@@ -4184,7 +4338,7 @@
             removeSubjectCardFromSubjectSelection({notifDiv="all", elementDroppedInField=undefined}={notifDiv:"all", elementDroppedInField:undefined}) {
                 if (notifDiv=="all") {      // clear all subject card selection as well as their respective notif
                     
-                    this.selectedSubjectCards.forEach((selectedSubjectCardId, index) => {
+                    this.selectedSubjectCardsId.forEach((selectedSubjectCardId, index) => {
                         const selectedSubjectCard = document.getElementById(selectedSubjectCardId);
 
                         selectedSubjectCard.style.width = "";
@@ -4235,7 +4389,7 @@
                         totalCoef.parentElement.style.width = "47%";
                     })
 
-                    this.selectedSubjectCards = [];
+                    this.selectedSubjectCardsId = [];
                     this.selectedSubjectCardsSortedByUe = {};
                 } 
                 else {      // clear the specifically given notifDiv from the selection
@@ -4254,11 +4408,11 @@
                         // notifDivContainer.style.left = `calc(99% - ${100 * highestWidth/document.body.clientWidth}%`;
                     }, 300)
 
-                    this.selectedSubjectCards.forEach((selectedSubjectCardId, index) => {
+                    this.selectedSubjectCardsId.forEach((selectedSubjectCardId, index) => {
                         const selectedSubjectCard = document.getElementById(selectedSubjectCardId);
 
                         if (selectedSubjectCard == subjectCard) 
-                            this.selectedSubjectCards.splice(index, 1)
+                            this.selectedSubjectCardsId.splice(index, 1)
                         }
                     )
                     Object.keys(this.selectedSubjectCardsSortedByUe).forEach((ueName, ueIndex) => {
@@ -4270,7 +4424,7 @@
                         }
                     })
                 
-                    if (this.selectedSubjectCards.length == 0) {
+                    if (this.selectedSubjectCardsId.length == 0) {
                         setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
                         setTimeout(() => {document.querySelectorAll(".grades-table-classAvg").forEach(classAvg => {classAvg.style.display = "table-cell"})}, 100)
                         
@@ -4298,7 +4452,7 @@
                 
                 // Ensure the subject insertion drop fields are displaying the right text
                 document.querySelectorAll(".drop-field.insert-field").forEach(subjInsertField => {
-                    if (this.selectedSubjectCards.length == 0) {
+                    if (this.selectedSubjectCardsId.length == 0) {
                         subjInsertField.querySelector(".drop-ue-card-insert-plus , .drop-subject-card-insert-plus ").classList.add("show");
                         subjInsertField.querySelector(".drop-ue-card-insert-arrow, .drop-subject-card-insert-arrow").classList.remove("show");
                         subjInsertField.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").classList.replace("insert", "add");
@@ -4369,20 +4523,20 @@
                 draggableElement.ondragend   = (e) =>   {this.draggedSelectedElementOnDragEndEvent(  e, {draggedElement: draggableElement, card:subjectCard})};
 
                 if (!dontAddToSelection) {
-                    this.selectedSubjectCards.push(subjectCard.id);
+                    this.selectedSubjectCardsId.push(subjectCard.id);
                     if (!this.selectedSubjectCardsSortedByUe[subjectCard.dataset.ue]) { this.selectedSubjectCardsSortedByUe[subjectCard.dataset.ue] = []; };
-                    this.selectedSubjectCardsSortedByUe[subjectCard.dataset.ue].push({subjectCardId: subjectCard.id, selectionIndex: this.selectedSubjectCards.length-1});
+                    this.selectedSubjectCardsSortedByUe[subjectCard.dataset.ue].push({subjectCardId: subjectCard.id, selectionIndex: this.selectedSubjectCardsId.length-1});
 
                     const selectionNotifDiv = this.addSelectedCardNotifDiv(subjectCard.dataset.semester, subjectCard.dataset.subject, type, subjectCard.id);
 
                     document.querySelector(".selected-subject-card-notif-container").appendChild(selectionNotifDiv);
-                    this.notifBtnsAttachListener(selectionNotifDiv);
+                    this.attachNotifBtnsListener(selectionNotifDiv);
 
                     setTimeout(()=>{selectionNotifDiv.classList.add("on")}, 10)
 
                     // Ensure the subject insertion drop fields are showing the right text
                     document.querySelectorAll(".drop-field.insert-field").forEach(subjInsertField => {
-                        if (this.selectedSubjectCards.length == 0) {
+                        if (this.selectedSubjectCardsId.length == 0) {
                             // shouldn't be reached, normally
                             subjInsertField.querySelector(".drop-ue-card-insert-plus , .drop-subject-card-insert-plus ").classList.add("show");
                             subjInsertField.querySelector(".drop-ue-card-insert-arrow, .drop-subject-card-insert-arrow").classList.remove("show");
@@ -4487,8 +4641,8 @@
                             e.preventDefault(); 
                             e.target.classList.remove("hover");
                             e.target.querySelectorAll(".drop-field-create-ue-text, .drop-field-create-ue-plus").forEach(text => {text.classList.remove("hover");})
-                            if (this.selectedSubjectCards.length > 0) {
-                                this.dropFieldToNewUEAction(this.selectedSubjectCards[0]);
+                            if (this.selectedSubjectCardsId.length > 0) {
+                                this.dropFieldToNewUEAction(this.selectedSubjectCardsId[0]);
                             }
                         }};
                     }
@@ -4527,8 +4681,8 @@
                             e.preventDefault(); 
                             dropFieldRemove.classList.remove("hover");
                             dropFieldRemove.querySelectorAll(".drop-field-remove-from-ue-text, .drop-field-remove-from-ue-minus").forEach(text => {text.classList.remove("hover");})
-                            if (this.selectedSubjectCards.length > 0) {
-                                this.dropFieldRemoveAction(this.selectedSubjectCards[0]);
+                            if (this.selectedSubjectCardsId.length > 0) {
+                                this.dropFieldRemoveAction(this.selectedSubjectCardsId[0]);
                             }
                         }};
                     }
@@ -4554,7 +4708,7 @@
                         const card = document.getElementById(cardId);
                         if (card.classList.contains('subject-card')) {
                             let cardIsSelected = false;
-                            this.selectedSubjectCards.forEach(selectedSubjectCardId => {if (selectedSubjectCardId == card.id) cardIsSelected = true;});
+                            this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {if (selectedSubjectCardId == card.id) cardIsSelected = true;});
 
                             let subject, oldUeName, manageSim = true;
                             if (!this.sim[sem]) manageSim = false;
@@ -4637,10 +4791,10 @@
                                         const selectionIndex = selectedSubjectCard.selectionIndex;
                                         subject = subjectCard.dataset.subject;
 
-                                        if (selectionIndex+1 == this.selectedSubjectCards.length) {
+                                        if (selectionIndex+1 == this.selectedSubjectCardsId.length) {
                                             newUeConfig.coefficients[subject] = remainingCoef;
                                         } else {
-                                            const coef = Math.round(100/this.selectedSubjectCards.length);
+                                            const coef = Math.round(100/this.selectedSubjectCardsId.length);
                                             newUeConfig.coefficients[subject] = coef;
                                             remainingCoef -= coef;
                                         }
@@ -4700,8 +4854,7 @@
                     this.removeSubjectCardFromSubjectSelection();
                     this.saveConfig();
                     this.getGradesDatas();
-                    this.renderContent();
-                    this.attachEventListeners();
+                    this.generateContent();
                     this.scrollToClientHighestElem({id: `ue-card-${newUeName}-in-semester-${sem}`, smooth: true})
                 }
 
@@ -4712,7 +4865,7 @@
                     const card = document.getElementById(cardId);
 
                     let cardIsSelected = false;
-                    this.selectedSubjectCards.forEach(selectedSubjectCardId => {if (selectedSubjectCardId == card.id) cardIsSelected = true;})
+                    this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {if (selectedSubjectCardId == card.id) cardIsSelected = true;})
 
                     if (card?.classList?.contains("subject-card") && !card?.classList?.contains("unclassified")) {
                         const sem = card.dataset.semester;
@@ -4733,7 +4886,7 @@
                         }
                         else {
                             let subject = "";
-                            this.selectedSubjectCards.forEach(selectedSubjectCardId => {
+                            this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {
                                 const selectedSubjectCard = document.getElementById(selectedSubjectCardId);
 
                                 subject = selectedSubjectCard.dataset.subject;
@@ -4754,8 +4907,7 @@
                         this.removeSubjectCardFromSubjectSelection({elementDroppedInField:card});
                         this.saveConfig();
                         this.getGradesDatas();
-                        this.renderContent();
-                        this.attachEventListeners();
+                        this.generateContent();
                     }
                     else if (card?.classList?.contains("subject-card") && card?.classList?.contains("unclassified") && cardIsSelected) {
                         this.removeSubjectCardFromSubjectSelection({elementDroppedInField:card});
@@ -4775,13 +4927,13 @@
 
                         if (card?.classList?.contains('subject-card')) {
                             let cardIsSelected = false;
-                            this.selectedSubjectCards.forEach(selectedSubjectCardId => {if (selectedSubjectCardId == card.id) cardIsSelected = true;});
+                            this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {if (selectedSubjectCardId == card.id) cardIsSelected = true;});
 
                             const targetUeName = methodCaller.dataset.ue;
                             const insertionIndex = methodCaller.dataset.index;
                             
                             // The same thing happens whether this method is triggered from a selection or a single subject card, we just have to choose the right card id
-                            (cardIsSelected ? this.selectedSubjectCards : [card.id]).forEach(subjectCardId => {
+                            (cardIsSelected ? this.selectedSubjectCardsId : [card.id]).forEach(subjectCardId => {
                                 const subjectCard = document.getElementById(subjectCardId);
 
                                 const subject = subjectCard.dataset.subject;
@@ -4846,8 +4998,7 @@
                             this.removeSubjectCardFromSubjectSelection();
                             this.saveConfig();
                             this.getGradesDatas();
-                            this.renderContent();
-                            this.attachEventListeners();
+                            this.generateContent();
                             this.setGradesTableTotalCoef();
                         }
                     }
@@ -4878,7 +5029,7 @@
                             ueDetails.innerHTML = this.createAllSubjCardCompact(sem, ue);
                         }
 
-                        this.attachEventListeners()
+                        this.attachAllEventListeners()
                         this.setGradesTableTotalCoef();
                     }
                 }
@@ -4901,8 +5052,7 @@
                             this.ueConfig[sem].__ues__.splice(compensatedNewUEIndex,0,ueName);
                             this.saveConfig();
                             this.getGradesDatas();
-                            this.renderContent();
-                            this.attachEventListeners();
+                            this.generateContent();
                             this.setGradesTableTotalCoef();
                             this.scrollToClientHighestElem({id: card.id, smooth: true})
                         }
@@ -4913,7 +5063,7 @@
                 
                 // MARK: createDropFieldInsertionField
                 createDropFieldInsertionField(type="subject", {sem=0, ueName="", index=-1}={sem:0, ueName:"", index:-1}) {
-                    const thereIsSelection = this.selectedSubjectCards.length > 0;
+                    const thereIsSelection = this.selectedSubjectCardsId.length > 0;
                     return `
                         <div class="drop-field insert-field ${type} show" data-semester="${sem}" ${type=="ue" ? `` : `data-ue="${ueName}" `}data-index="${index}">
                             <div class="drop-${type}-card-insert-content plus">
@@ -4998,7 +5148,7 @@
 
                 const closePickerMenuFunc = () => {
                     pickerMenu.classList.remove("show"); 
-                    setTimeout(() => {pickerMenu.remove(); this.attachDocumentMouseEvents()}, 300);
+                    setTimeout(() => {pickerMenu.remove(); this.attachDocumentMouseListeners()}, 300);
                 };
                 
                 document.onclick = (e) => {if (!e.target.closest(".online-cfg-picker-menu")) {closePickerMenuFunc()}}
@@ -5176,7 +5326,7 @@
                                     pickerMenu?.remove()
                                     this.removeSubjectCardFromSubjectSelection(); 
                                     this.getGradesDatas();
-                                    this.renderContent(); 
+                                    this.generateContent(); 
                                     this.scrollToClientHighestElem("", {id: "main-average-card", margin: 10, smooth: true});
                                 }, 300); 
                             } catch (e) {}
@@ -5264,8 +5414,7 @@
                     
                     this.removeSubjectCardFromSubjectSelection();
                     this.scrollToClientHighestElem();
-                    this.renderContent();
-                    this.attachEventListeners();
+                    this.generateContent();
                 }
                 else if (this.keyInputMatch(e, "D", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
 
@@ -5282,8 +5431,7 @@
                     }
 
                     this.scrollToClientHighestElem();
-                    this.renderContent();
-                    this.attachEventListeners();
+                    this.generateContent();
                 }
                 else if (this.keyInputMatch(e, "L", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
                     
@@ -5299,8 +5447,7 @@
                     }
                     
                     this.scrollToClientHighestElem();
-                    this.renderContent(false);
-                    this.attachEventListeners();
+                    this.generateContent(false);
                 }
                 else if (this.keyInputMatch(e, "R", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
                     console.warn("You fell into my breakpoint trap!!"); debugger;

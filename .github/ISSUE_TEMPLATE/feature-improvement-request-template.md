@@ -1,12 +1,12 @@
 ---
 name: Feature/Improvement request
-about: Suggest an idea for this project
+about: Suggest an idea for this project!
 title: "[USER SUGGESTION] I would loooove to see THIS become real!"
 labels: user suggestion
 assignees: Batkillulu
 
 ---
-> Feel free to write in French or in English! Vous pouvez écrire en français ou en anglais ! Mais je vais partir du principe que vous pouvez comprendre ce que je dis en anglais, j'ai la flemme de traduire et c'est pénible en terme de lisibilité, merci pour votre compréhension :P
+> Feel free to write in French or in English! Vous pouvez écrire en français ou en anglais! Mais je vais partir du principe que vous pouvez comprendre ce que je dis en anglais, c'est pénible en terme de lisibilité et j'ai la flemme de traduire, merci pour votre compréhension :P
 
 
 **Is your feature request related to a problem? Please describe.**

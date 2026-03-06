@@ -1,12 +1,13 @@
 ---
-name: User Report issue template
+name: Report an issue
 about: You were using the ECAM Grades Dashboard, and something unexpected happened...
 title: "[USER REPORT] Unexpected behavior when trying to DO_THIS"
 labels: user report
 assignees: Batkillulu
 
 ---
-> Feel free to write in French or in English! Vous pouvez écrire en français ou en anglais! Mais je vais partir du principe que vous pouvez comprendre ce que je dis en anglais, j'ai la flemme de traduire et c'est pénible en terme de lisibilité, merci pour votre compréhension :P
+> Feel free to write in French or in English! Vous pouvez écrire en français ou en anglais! Mais je vais partir du principe que vous pouvez comprendre ce que je dis en anglais, c'est pénible en terme de lisibilité et j'ai la flemme de traduire, merci pour votre compréhension :P
+
 
 **Quick explanation of the bug**
 THIS bug occured!
