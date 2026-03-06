@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.0.2
+// @version      2.0.3
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/group/education/notes*
@@ -36,20 +36,17 @@
         styles += `
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
             * { box-sizing: border-box; }
-            .ecam-dash { 
-                display: grid; 
-                flex-direction: column; 
-                justify-content:center; 
-                width: 97%; 
-                grid-template-columns: 100%; 
-                font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; 
-                margin: 20px 1.5% 0px 1.5%; 
-                color: #1a1a1a; 
-            }
+            .ecam-dash { display: grid; flex-direction: column; justify-content:center; width: 97%; grid-template-columns: 100%; font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; margin: 20px 1.5% 0px 1.5%; color: #1a1a1a; }
 
             .dash-header { background: linear-gradient(135deg, #5b62bf 0%, #2A2F72 100%); color: white; padding: 30px 40px; border-radius: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 3px 5px 5px 0px #00000042; }
             .dash-title { font-size: 24px; font-weight: 700; margin: 0; }
             .dash-subtitle { font-size: 14px; opacity: 0.95; margin-top: 5px; }
+            
+            .currently-loading      { display: flex; justify-content: center; align-items: center; height: 100px; width: 100px; min-height: 100px; min-width: 100px; position: fixed; top: 20px; right: -100px; opacity: 0; z-index: 1500; transition: opacity 0.2s ease; }
+            .currently-loading.show { right: 20px; opacity: 1; }
+            .loading-symbol         { position: absolute; top: 100px; right: 100px; height: 100px; width: 100px; clip-path: circle(20px); background: #594a8fe0; offset-path: circle(50px); backdrop-filter: blur(2px); offset-distance: var(--offset-offset); }
+            .loading-symbol.show    { animation: loading 1s infinite; }
+            @keyframes loading  { from {offset-distance: var(--offset-offset)} to {offset-distance: calc(var(--offset-offset) + 100%)} }
         `;
         
         
@@ -59,22 +56,45 @@
             .lang-btn.active    { border: 2px solid #ceefffff; }
             .lang-btn:hover     { border: 2px solid #afe4ffff; background: #a6acff; }
 
-            .import-menu        { display: flex; justify-content: space-around; position: absolute; right: 4%; top: 220px; background: white; color: black; box-shadow: 5px 4px 20px 0px #00000066; font-size: 15px; border-radius: 13px; min-height: 60px; width: 35%; align-items: center; opacity: 0; transition: all 0.2s ease; }
-            .import-menu.show   { top: 230px; opacity: 1; }
-            .import-menu-btn        { display: flex; justify-content: center; align-items: center; text-align: center; user-select: none; cursor: pointer; border-radius: 12px; border: 2px solid; height: 40px; width: 45%; padding: 5px; }
+
+            .issue.issue-btn              { display: flex; justify-content: center; align-items: center; text-align: center; border: none; outline: 2px solid #c022ff; background: #6e00ad; border-radius: 20px; position: absolute; top: 79px; right: 2.4%; height: 40px; width: 40px; padding-left: 6px; font-size: 20px; user-select: none; text-decoration: none; color: inherit; cursor: pointer; z-index: 4; transition: all 0.2s ease; }
+            .issue.issue-btn:focus        { outline: 2px solid white; }
+            .issue.issue-btn.open         { outline: 2px solid white; }
+            .issue.share-config             { display: flex; justify-content: flex-start; align-items: center; text-align: left; outline: 2px solid white; background: #00569d; border-radius: 20px; position: absolute; top: 79px; right: 2.4%; height: 40px; width: 39px; padding-left: 10px; color: white; font-size: 15px; text-wrap-mode: nowrap; overflow: clip; cursor: pointer; user-select: none; text-decoration: none; z-index: 1; transition: all 0.2s ease; }
+            .issue.suggest-idea             { display: flex; justify-content: flex-start; align-items: center; text-align: left; outline: 2px solid white; background: #009d40; border-radius: 20px; position: absolute; top: 79px; right: 2.4%; height: 40px; width: 39px; padding-left: 10px; color: white; font-size: 15px; text-wrap-mode: nowrap; overflow: clip; cursor: pointer; user-select: none; text-decoration: none; z-index: 2; transition: all 0.2s ease; }
+            .issue.report-issue             { display: flex; justify-content: flex-start; align-items: center; text-align: left; outline: 2px solid white; background: #ad0000; border-radius: 20px; position: absolute; top: 79px; right: 2.4%; height: 40px; width: 39px; padding-left: 10px; color: white; font-size: 15px; text-wrap-mode: nowrap; overflow: clip; cursor: pointer; user-select: none; text-decoration: none; z-index: 3; transition: all 0.2s ease; }
+            .issue.share-config:hover       { color: #b8d7ff; }
+            .issue.suggest-idea:hover       { color: #b8d7ff; }
+            .issue.report-issue:hover       { color: #b8d7ff; }
+            .issue.share-config:focus       { color: #b8d7ff; }
+            .issue.suggest-idea:focus       { color: #b8d7ff; }
+            .issue.report-issue:focus       { color: #b8d7ff; }
+            .issue.share-config.fr.open       { width: 550px; }
+            .issue.suggest-idea.fr.open       { width: 380px; }
+            .issue.report-issue.fr.open       { width: 220px; }
+            .issue.share-config.en.open       { width: 445px; }
+            .issue.suggest-idea.en.open       { width: 315px; }
+            .issue.report-issue.en.open       { width: 175px; }
+
+
+            .import-menu        { display: flex; justify-content: space-around; position: absolute; right: 4%; top: 220px; background: white; color: black; box-shadow: 5px 4px 20px 0px #00000066; font-size: 15px; border-radius: 13px; min-height: 60px; width: 35%; align-items: center; opacity: 0; z-index: 0; transition: all 0.2s ease; }
+            .import-menu.show   { top: 245px; opacity: 1; }
+            .import-menu-btn        { display: flex; justify-content: center; align-items: center; text-align: center; user-select: none; cursor: pointer; border-radius: 12px; border: 2px solid; height: 40px; width: 45%; padding: 5px; transition: all 0.2s ease; }
+            .import-menu-btn:hover  { background: #dddddd; }
             .import-menu-btn.file   {  }
             .import-menu-btn.online {  }
             
 
-            .online-cfg-picker-menu         { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 20%; display: flex; flex-direction: column; justify-content: flex-start; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; z-index: 1000; border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0; transition: all 0.3s ease; }
+            .online-cfg-picker-menu         { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 20%; display: flex; flex-direction: column; justify-content: flex-start; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; z-index: 1000; border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0; transition: all 0.3s ease; backdrop-filter: blur(1px);  }
             .online-cfg-picker-menu.show    { height: calc(100% - 60px); width: calc(100% - 60px); top: 30px; left: 30px; border: 8px solid #ffffff; opacity: 1; }
             .online-cfg-picker-menu-header          { display: flex; justify-content: flex-end; height: 40px; align-items: center; }
             .online-cfg-picker-menu-close-btn           { display: flex; justify-content: center; align-items: center; width: 30px; height: 30px; border-radius: 15px; border: 2px solid; font-size: 20px; user-select: none; cursor: pointer; margin-right: 3px; transition: all 0.2s ease; }
             .online-cfg-picker-menu-close-btn:hover     { width: 40px; height: 40px; border-radius: 20px; font-size: 30px; margin-right: -2px; gap: 5px; }
 
-            .online-cfg-picker-menu-body            { display: flex; flex-direction: row; justify-content: center; align-items: center; height: calc(100% - 40px); width: 100%; gap: 5px; }
-            .online-cfg-picker-menu-dir-tree            { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 0px; position: relative; color: transparent; border-radius: 16px; border: 2px solid; background: white; overflow: clip; opacity: 0; transition: all 0.3s ease; }
-            .online-cfg-picker-menu-dir-tree.show       { width: 150px; left: 0px; color: black; opacity: 1; }
+            .online-cfg-picker-menu-body            { display: flex; flex-direction: row; justify-content: center;   align-items: center; height: calc(100% - 40px); width: 100%;  gap: 5px; overflow: clip;}
+            .online-cfg-picker-menu-body-container  { display: flex; flex-direction: row; justify-content: flex-end; align-items: center; height:      100%;         width: 620px; gap: 5px; position: relative; right: 14%; }
+            .online-cfg-picker-menu-dir-tree            { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 0px; color: transparent; border-radius: 16px; border: 2px solid; background: white; overflow: clip; opacity: 0; transition: all 0.2s ease; }
+            .online-cfg-picker-menu-dir-tree.show       { width: 150px; color: black; opacity: 1; }
             .online-cfg-picker-menu-dir-tree.section    { z-index: 1004; }
             .online-cfg-picker-menu-dir-tree.year       { z-index: 1003; }
             .online-cfg-picker-menu-dir-tree.prom       { z-index: 1002; }
@@ -84,18 +104,19 @@
             .online-cfg-picker-menu-dir-tree-body       { display: flex; flex-direction: column; justify-content: center; align-items: center; height: calc(100% - 20px); width: 95%; }
 
             .online-cfg-picker-menu-dir-card            { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 40px; width: 90%; position: relative; border-radius: 16px; border: 2px solid; background: white; cursor: pointer; overflow: clip; padding: 5px; margin: 5px 0px; user-select: none; transition: all 0.3s ease; }
-            .online-cfg-picker-menu-dir-card.on         { width: 100%; border-radius: 16px; background: #7c85ff; }
+            .online-cfg-picker-menu-dir-card:hover      { height: 40px; width: 85%; border: 2px solid; background: #dddddd; padding: 5px; margin: 5px 0px; user-select: none; transition: all 0.3s ease; }
+            .online-cfg-picker-menu-dir-card.on         { width: 100%; border-radius: 16px; background: #b9beff; }
 
             
             .header-actions                 { display: flex; gap: 12px; }
-            .btn                                { display: flex; justify-content: center; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-size: 14px; }
+            .btn                                { display: flex; justify-content: center; align-items: center; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-size: 14px; }
             .btn-edit-mode:hover:not(:disabled) { transform: scale(0.95); background: linear-gradient(135deg, #7d92eeff 0%, #8e5ebeff 100%); }
             .btn-edit-mode                      { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: grid; width: 126px; height: 108px; transition: all 0.2s ease }
             .btn-edit-mode.on                   { transform: scale(0.95); box-shadow: inset 0px 0px 6px 4px #ffffff; }
-            .btn-export                         { background: white; color: #666; display: flex; align-items: center; width: 140px; height: 50px; }
-            .btn-import                         { background: white; color: #666; display: flex; align-items: center; width: 140px; height: 50px; }
-            .btn-export:hover                   { border: 1px solid #667eea; color: #667eea; transform: scale(0.95); box-shadow: 3px 5px 5px 0px #00000042; }
-            .btn-import:hover                   { border: 1px solid #667eea; color: #667eea; transform: scale(0.95); box-shadow: 3px 5px 5px 0px #00000042; }
+            .btn-export                         { background: white; color: #666; width: 140px; height: 50px; }
+            .btn-import                         { background: white; color: #666; width: 140px; height: 50px; z-index: 1; }
+            .btn-export:hover                   { background: white; border: 1px solid #667eea; color: #667eea; transform: scale(0.95); box-shadow: 3px 5px 5px 0px #00000042; }
+            .btn-import:hover                   { background: white; border: 1px solid #667eea; color: #667eea; transform: scale(0.95); box-shadow: 3px 5px 5px 0px #00000042; }
             .btn-icon                           { font-size: 20px; margin-bottom: 2px }
             .btn:disabled                       { opacity: 0.5; cursor: not-allowed; }
         `;
@@ -103,7 +124,7 @@
 
         // MARK: main average card
         styles += `
-            .main-average-card { background: linear-gradient(135deg, #ffffff 30%, #514ba2ff 75%); border-radius: 20px; padding: 30px; margin-bottom: 15px; border: 2px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; transition: box-shadow 0.3s ease, border-color 0.3s ease; user-select: none }
+            .main-average-card { background: linear-gradient(135deg, #ffffff 30%, #514ba2ff 75%); border-radius: 20px; padding: 30px; margin-bottom: 15px; border: 2px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; transition: box-shadow 0.3s ease, border-color 0.3s ease; }
 
             .average-display { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 7px; }
             .average-number { font-size: 48px; font-weight: 800; -webkit-text-fill-color: #2A2F72; padding-top: 9px; }
@@ -369,16 +390,16 @@
             .semester-grid      { display: grid; width: 100%; gap: 20px; transition: gap 0.2s ease; }
             .ue-card                { display: flex; flex-direction: column; align-items: center; width: 100%; background: #fafafa; border-radius: 25px; border: 3px solid #e5e5e5; scroll-margin: 70px; transition: all 0.2s ease; }
             .ue-card.collapse       { border-radius: 25px; border: 0px solid #e5e5e5; }
-            .ue-card.validated      { border-color: #10b981ff; background: #f0fdf4ff; }
-            .ue-card.failed         { border-color: #ef4444ff; background: #fef2f2ff; }
-            .ue-card.unknown        { border-color: #6d6d6dff; background: #d1d1d1ff; }
+            .ue-card.validated      { border-color: #10b981ff; background: radial-gradient(transparent 0%, #f0fdf4ff 75%); }
+            .ue-card.failed         { border-color: #ef4444ff; background: radial-gradient(transparent 0%, #fef2f2ff 75%); }
+            .ue-card.unknown        { border-color: #6d6d6dff; background: radial-gradient(transparent 0%, #d1d1d1ff 75%); }
 
-            .ue-header                  { display: flex; align-items: center; padding: 20px 20px 18px 20px; border-bottom: 3px solid #e5e5e5; border-radius: 22px 22px 0px 0px; width: 100%; cursor: pointer; z-index: 1; }
+            .ue-header                  { display: flex; align-items: center; padding: 20px 20px 18px 20px; border-bottom: 3px solid #e5e5e5; border-radius: 22px 22px 0px 0px; width: 100%; cursor: pointer; z-index: 1; transition: all 0.3s ease; }
             .ue-header.collapse         { border-width: 3px; border-style: solid; border-radius: 22px 22px 22px 22px; }
-            .ue-header.validated        { border-color: #10b981ff; background: #e0ffeaff; }
-            .ue-header.failed           { border-color: #ef4444ff; background: #ffd9d9ff; }
-            .ue-header.unknown          { border-color: #6d6d6dff; background: #acacacff; }
-            .ue-header:hover            { background: #f3f4f6; }
+            .ue-header.validated        { border-color: #10b981ff; background: linear-gradient(300deg, #e0ffeaff 30%, transparent); }
+            .ue-header.failed           { border-color: #ef4444ff; background: linear-gradient(300deg, #ffd9d9ff 30%, transparent); }
+            .ue-header.unknown          { border-color: #6d6d6dff; background: linear-gradient(300deg, #acacacff 30%, transparent); }
+            .ue-header:hover            { backdrop-filter: brightness(2); opacity: 0.8; }
             .ue-delete-btn                  { border-radius: 14px; background: transparent; }
             .ue-title                    { font-size: 16px; font-weight: 800; color: #1a1a1a; width:42%; margin-bottom: 2px; }
             .ue-title.input              { font-size: 16px; font-weight: 800; color: #1a1a1a; width:90%; border-radius: 12px; padding-left: 10px; }
@@ -423,37 +444,38 @@
         // MARK: -SUBJECT CARDS
         styles += `
 
-            .subject-card               { display: flex; flex-direction: column; align-items: center; border: 4px solid #ffffffff; border-radius: 20px; width: 100%; background: #c5c5c5; transition: width 0.3s ease, box-shadow 0.1s ease, opacity 0.2s ease, height 0.2s ease, padding 0.2s ease, border-width 0.2s ease; }
-            .subject-card.good          { box-shadow: 0px 0px 0px 0px #39ff8f; background: #f0fdf4; }
-            .subject-card.good:hover    { box-shadow: 0px 0px 7px 0px #39ff8f; }
-            .subject-card.meh           { box-shadow: 0px 0px 0px 0px #fff27b; background: #fff2e4; }
-            .subject-card.meh:hover     { box-shadow: 0px 0px 7px 0px #fff27b; }
-            .subject-card.bad           { box-shadow: 0px 0px 0px 0px #ff7b7b; background: #fef2f2; }
-            .subject-card.bad:hover     { box-shadow: 0px 0px 7px 0px #ff7b7b; }
-            .subject-card.unknown       { box-shadow: 0px 0px 0px 0px #6d6d6d; background: #c5c5c5; }
-            .subject-card.unknown:hover { box-shadow: 0px 0px 7px 0px #6d6d6d; }
+            .subject-card               { display: flex; flex-direction: column; align-items: center; width: 100%; transition: width 0.3s ease, box-shadow 0.2s ease, opacity 0.2s ease, height 0.2s ease, padding 0.2s ease, border-width 0.2s ease; }
+            .subject-card.detailed                  { border: 4px solid #ffffffff; border-radius: 20px; width: 100%; background: #c5c5c5; }
+            .subject-card.detailed.good             { box-shadow: 0px 0px 0px 0px #39ff8f; background: linear-gradient(300deg, #f0fdf4 30%, transparent); }
+            .subject-card.detailed.good:hover       { box-shadow: 0px 0px 7px 0px #39ff8f; }
+            .subject-card.detailed.meh              { box-shadow: 0px 0px 0px 0px #fff27b; background: linear-gradient(300deg, #fff2e4 30%, transparent); }
+            .subject-card.detailed.meh:hover        { box-shadow: 0px 0px 7px 0px #fff27b; }
+            .subject-card.detailed.bad              { box-shadow: 0px 0px 0px 0px #ff7b7b; background: linear-gradient(300deg, #fef2f2 30%, transparent); }
+            .subject-card.detailed.bad:hover        { box-shadow: 0px 0px 7px 0px #ff7b7b; }
+            .subject-card.detailed.unknown          { box-shadow: 0px 0px 0px 0px #6d6d6d; background: linear-gradient(300deg, #c5c5c5 30%, transparent); }
+            .subject-card.detailed.unknown:hover    { box-shadow: 0px 0px 7px 0px #6d6d6d; }
             
-            .subject-card-header        { display: flex; align-items: center; height: 62px; width: 100%; padding: 5px 0px; border-radius: 20px 20px 0px 0px; background: #b8b8b8; font-weight:600; border-bottom: 4px solid white; }
-            .subject-card-header.good   { background: #e3ffeb; }
-            .subject-card-header.meh    { background: #ffe8d0; }
-            .subject-card-header.bad    { background: #ffe0e0; }
+            .subject-card-header        { display: flex; align-items: center; height: 62px; width: 100%; padding: 5px 0px; border-radius: 20px 20px 0px 0px; background: linear-gradient(300deg, #b8b8b8 30%, transparent); font-weight:600; border-bottom: 4px solid white; }
+            .subject-card-header.good   { background: linear-gradient(300deg, #e3ffeb 30%, transparent); }
+            .subject-card-header.meh    { background: linear-gradient(300deg, #ffe8d0 30%, transparent); }
+            .subject-card-header.bad    { background: linear-gradient(300deg, #ffe0e0 30%, transparent); }
             .subject-name               { font-weight: 800; color: #1a1a1a; font-size: 14px }
             .subject-name.input         { font-weight: 800; color: #1a1a1a; font-size: 14px; border: 2px solid #797979; border-radius: 15px; padding-left: 8px; width: 100%; height: 25px;}
             .subject-coef-input-box     { padding-left: 5px; width: 48px; border-radius: 8px; }
-            .subject-card.compact                       { display:flex; flex-direction: row; justify-content:space-between; align-items:center; padding: 7px 0px; border-radius: 16px; border: 3px solid #ffffff; height: 68px; width: 100%; min-width: 380px; transition: all 0.2s ease; background: none; }
+            .subject-card.compact                       { flex-direction: row; justify-content:space-between; padding: 7px 0px; border-radius: 16px; border: 3px solid #ffffff; height: 68px; width: 100%; min-width: 380px; background: none; transition: all 0.2s ease; }
             .subject-card.compact.edit-mode             {  }
-            .subject-card.compact.good                  { background: #e3ffeb; }
-            .subject-card.compact.meh                   { background: #ffe8d0; }
-            .subject-card.compact.bad                   { background: #ffe0e0; }
-            .subject-card.compact.unknown               { background: #c5c5c5; }
-            .subject-card.compact:hover                 { background: #f3f4f6; box-shadow: inset 0px 0px 8px 1px #0032ff42; }
+            .subject-card.compact.good                  { border-color: #c0ffd2; background: linear-gradient(300deg, #e3ffeb 30%, transparent); }
+            .subject-card.compact.meh                   { border-color: #ffe1c2; background: linear-gradient(300deg, #ffe8d0 30%, transparent); }
+            .subject-card.compact.bad                   { border-color: #ffcccc; background: linear-gradient(300deg, #ffe0e0 30%, transparent); }
+            .subject-card.compact.unknown               { border-color: #a3a3a3; background: linear-gradient(300deg, #c5c5c5 30%, transparent); }
+            .subject-card.compact:hover                 { /* backdrop-filter: brightness(2); */ /* opacity: 0.8; */ box-shadow: inset 0px 0px 8px 1px #0032ff42; background: linear-gradient(300deg, var(--subject-card-compact-background-hover) 30%, transparent); }
             .subject-card.compact.edit-mode:hover       { transform: scale(0.995); }
-            .subject-card.unclassified                  { display: flex; flex-direction: column; align-items: center; border: 2px solid #ffe4cd; border-radius: 20px; width:100%; background: white; user-select: none; margin: 0px; transition: width 0.3s ease, box-shadow 0.1s ease; }
+            .subject-card.unclassified                  { border: 2px solid #ffe4cd; border-radius: 20px; width:100%; background: white; user-select: none; margin: 0px; }
             .subject-card.unclassified.good             { box-shadow: 0px 0px 0px 0px #39ff8f; background: #f0fdf4; }
             .subject-card.unclassified.good:hover       { box-shadow: 0px 0px 5px 0px #39ff8f; }
             .subject-card.unclassified.bad              { box-shadow: 0px 0px 0px 0px #ff7b7b; background: #fef2f2; }
             .subject-card.unclassified.bad:hover        { box-shadow: 0px 0px 5px 0px #ff7b7b; }
-            .subject-card-header.unclassified           { display:flex; flex-direction: row; align-items:center; border-radius: 20px 20px 0px 0px; border-bottom: 2px solid #ffe4cd; gap:8px; font-weight:700; height: 60px; width: 100%; vertical-align:top; font-size:15px }
+            .subject-card-header.unclassified           { display: flex; flex-direction: row; align-items:center; border-radius: 20px 20px 0px 0px; border-bottom: 2px solid #ffe4cd; gap:8px; font-weight:700; height: 60px; width: 100%; vertical-align:top; font-size:15px }
             .subject-card-header.unclassified.good      { background: #e3ffeb; }
             .subject-card-header.unclassified.bad       { background: #ffe0e0; }
             
@@ -483,15 +505,15 @@
             .grade-row.last                      { vertical-align: baseline; border-bottom: none; height: 41px; }
             .grade-row.sim                       { background: #e9efff9a; }
             .grade-row:hover                     { background: #eeedfd; }
-            .grades-table                        { width: 98%; background: #c5c5c5; }
+            .grades-table                        { background: linear-gradient(300deg, #c5c5c5 30%, transparent); width: 98%; }
             .grades-table.compact                { margin: -12px 20px 20px 20px; }
-            .grades-table.good                   { background: #f0fdf4}
-            .grades-table.meh                    { background: #fff2e4}
-            .grades-table.bad                    { background: #fef2f2}
+            .grades-table.good                   { background: linear-gradient(300deg, #f0fdf4 30%, transparent); }
+            .grades-table.meh                    { background: linear-gradient(300deg, #fff2e4 30%, transparent); }
+            .grades-table.bad                    { background: linear-gradient(300deg, #fef2f2 30%, transparent); }
             .grades-table th                     { padding: 10px 12px; height: 39px; font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 0.5px; border: 3px solid white; border-right-width: 2px; border-left-width: 2px; border-top-width: 0px; text-align: center; }
             .grades-table td                     { padding: 10px; font-size: 14px; }
             .grades-table-type                   { padding-left:30px; width: 30%; }
-            .grades-table-grade                   { width: 13%; text-align: right; }
+            .grades-table-grade                  { width: 13%; text-align: right; }
             .grades-table-coef                   { width: 10%; text-align: right; }
             .grades-table-classAvg               { width: 10%; text-align: right; }
             .grades-table-date                   { width: 10%; text-align: right; }
@@ -576,23 +598,22 @@
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
             this.scriptVersion = "2.0.2";
 
-            this.now    = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
-            this.hour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
-            this.today  = new Date().toISOString().split('T')[0];                                                   // Current date in ISO String
-            this.dateOfLastLoad                 = localStorage.getItem("ECAM_DASHBOARD_DATE_OF_LAST_LOAD")          || "2026-02-02"; // The day before the date of last update, so that the update check is ran to make sure the correct version is installed
+            this.now        = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
+            this.dateHour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
+            this.today  = new Date().toISOString().split('T')[0];                                                       // Current date in ISO String
+            this.dateTimeOfLastUpdateCheck  = localStorage.getItem("ECAM_DASHBOARD_DATE_TIME_OF_LAST_UPDATE_CHECK") || "2026-02-02T00:00:00Z"; // A day before the date of last update, so that the update check is ran to make sure the correct version is installed
 
             this.grades     = [];
             this.semesters  = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{}, 7:{}, 8:{}, 9:{}, 10:{}};
-            this.savedReadGrades    = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SAVED_READ_GRADES"))         || [] ;
+            this.savedReadGrades    = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SAVED_READ_GRADES"))         || [];
             this.sim                = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SIM_GRADES"))                || {};
             this.newGrades = [];
             
-            this.repo               = "https://github.com/Batkillulu/ECAM-Grades-Dashboard";
-            this.repoAPI            = "https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard";
-            this.repoContentsAPI    = "https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/contents";
-            this.repoMainBranchAPI  = "https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/branches/main";
-            this.repoScriptRaw      = "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/ECAM%20Grades%20Dashboard.user.js";
-            this.fallbackRepoApi    = "https://api.github.com/repos/Batkillulu/Miscelleneous_Tempermonkey_UserScripts/contents";
+            this.repoUserReportIssue        = "https://github.com/Batkillulu/ECAM-Grades-Dashboard/issues/new?template=user-report-issue-template.md";
+            this.repoUserSuggestionIssue    = "https://github.com/Batkillulu/ECAM-Grades-Dashboard/issues/new?template=feature-improvement-request-template.md";
+            this.repoUserConfigShare        = "https://github.com/Batkillulu/ECAM-Grades-Dashboard/issues/new?template=share-config-template.md";
+            this.repoContentsAPI            = "https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/contents";
+            this.repoScriptRaw              = "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/ECAM%20Grades%20Dashboard.user.js";
             
             this.gitFetchScanDoneArray = [];
             this.tempGitConfigParentDirData = {};
@@ -647,7 +668,7 @@
             this.mobileVer = this.clientWidth <= 935;
             this.clientWidth = 1920;
 
-            this.selectedSubjectCards = [];
+            this.selectedSubjectCardsId = [];
             this.selectedSubjectCardsSortedByUe = {};
             this.scrollToThisElem = "";
 
@@ -926,14 +947,21 @@
                 })
                 return document.styleSheets[styleSheetIndex].cssRules[ruleIndex]
             }
+            /** Save the ue configuration in the cache */
             saveConfig() { localStorage.setItem('ECAM_DASHBOARD_UE_CONFIG', JSON.stringify(this.ueConfig)); }
+            /** Save the simulated grades in the cache */
             saveSim() { this.deleteUnusedSimPath(); localStorage.setItem("ECAM_DASHBOARD_SIM_GRADES", JSON.stringify(this.sim)); }
+            /** Save the ignored grades in the cache */
             saveIgnoredGrades() { localStorage.setItem("ECAM_DASHBOARD_IGNORED_GRADES", JSON.stringify(this.ignoredGrades)); }
+            /** Save the read grades in the cache */
+            saveReadGrades() { localStorage.setItem("ECAM_DASHBOARD_SAVED_READ_GRADES", JSON.stringify(this.savedReadGrades)); }
+            /** Ensures that a path composed of `sem`, `ue` and `subj` exists in this.sim */
             ensureSimPath(sem=undefined, ue=undefined, subj=undefined) {
                 if (sem)    {if(!this.sim?.[sem])               this.sim[sem]={}; }
                 if (ue)     {if(!this.sim?.[sem]?.[ue])         this.sim[sem][ue]={}; }
                 if (subj)   {if(!this.sim?.[sem]?.[ue]?.[subj]) this.sim[sem][ue][subj]=[]; }
             }
+            /** Delete every unused simulated grade pathes */
             deleteUnusedSimPath(flex=true, sem=undefined, ue=undefined, subj=undefined) {
                 (sem ? [sem] : (flex ? Object.keys(this.sim || []) : [])).forEach(_sem => {
                     (ue ? [ue] : (flex ? Object.keys(this.sim?.[_sem] || []) : [])).forEach(_ue => {
@@ -945,10 +973,18 @@
                     if (Object.keys(this.sim?.[_sem])?.length == 0) {delete this.sim[_sem]}
                 })
             }
-            clearSimGradesForUE(sem, ueName) {
+            /** Clear all simulated grades in the ue if `semester` and `ue` are provided, or in the semester if only `semester` is provided. If no argument is provided, clears all simulated grades */
+            clearSimGrades(sem, ueName) {
                 this.ensureSimPath(sem, ueName);
-                delete this.sim[sem][ueName];
-                if (this.sim[sem] == {}) delete this.sim[sem];
+                if (sem) {
+                    if (ueName) {
+                        delete this.sim[sem][ueName];
+                        if (this.sim[sem] == {}) delete this.sim[sem];
+                    }
+                    else {
+                        delete this.sim[sem];
+                    }
+                }
                 this.saveSim()
                 this.getGradesDatas();
             }
@@ -1677,10 +1713,30 @@
 
 
         //#region -REGION: Online methods
-            
-            getConfigsFromRepo(repoAPIUrl, endActionCallback) {
 
-                
+            /** Shows/Hides/Toggles the loading symbol when called depending on the argument `show`.
+             * Default call: `this.showLoadingSymbol()`
+             * 
+             * @param {Boolean} show Optional, accepts true, false or nothing, to respectively show, hide or toggle the loading symbol
+             */
+            async showLoadingSymbol(show=undefined) {
+                if (show === undefined) {
+                    document.querySelector(".currently-loading").classList.toggle("show");
+                    document.querySelectorAll(".loading-symbol").forEach(symbol => {symbol.classList.toggle("show")});
+                }
+                else if (show) {
+                    document.querySelector(".currently-loading").classList.add("show");
+                    document.querySelectorAll(".loading-symbol").forEach(symbol => {symbol.classList.add("show")});
+                }
+                else {
+                    document.querySelector(".currently-loading").classList.remove("show");
+                    document.querySelectorAll(".loading-symbol").forEach(symbol => {symbol.classList.remove("show")});
+                }
+            }
+            
+            async getConfigsFromRepo(repoAPIUrl, endActionCallback) {
+                this.showLoadingSymbol(true);
+
                 this.onlineConfigs = {Configs: {nbCfgs: 0, path: ""}, nbCfgs: 0, date: this.today};
                 
                 // Fetch repo's API data
@@ -1737,6 +1793,7 @@
 
                             this.tempGitConfigParentDirData = undefined;
                             localStorage.setItem("ECAM_DASHBOARD_ONLINE_CONFIGS", this.onlineConfigs);
+                            this.showLoadingSymbol(false);
                             endActionCallback();
                         };
                     }})
@@ -1745,8 +1802,30 @@
             }
 
             async autoUpdateCheck() {
-                if (this.dateOfLastLoad < this.today) {
+                const dateTimeOfLastUpdateCheck = this.dateTimeOfLastUpdateCheck;
+                // const minutesOffset = 5;
+                const minutes    = parseInt(dateTimeOfLastUpdateCheck.match(/T\d{2}:(\d{2}):\d{2}Z/)[1]);
+                const hour       = parseInt(dateTimeOfLastUpdateCheck.match(/T(\d{2}):\d{2}:\d{2}Z/)[1]);
+                // let newMinutes   = minutes + minutesOffset;
+                // let newHour      = hour; if (newMinutes >= 60) {newHour++} else if (newMinutes < 0) {newHour--}
+                // newHour = newHour.toString();
+                // if (newHour.length == 1) {newHour = "0" + newHour}
+                // newMinutes %= 60;
+                // newMinutes = newMinutes.toString();
+                // if (newMinutes.length == 1) {newMinutes = "0" + newMinutes}
+
+                const newMinutes  = minutes >= 30 ? "00" : "30";
+                const newHour     = minutes >= 30 
+                    ? ((hour + 1).toString().length > 1 ? (hour + 1).toString() : "0"+(hour + 1).toString()) 
+                    : (hour.toString().length > 1 ? hour.toString() : "0"+hour.toString())
+                ;
+
+                const getPlannedDateTimeOfUpdate = dateTimeOfLastUpdateCheck.replace(/T\d{2}:\d{2}:\d{2}Z/, `T${newHour}:${newMinutes}:00Z`);
+
+                if (getPlannedDateTimeOfUpdate < this.now()) {
                     this.runUpdateCheck();
+                    this.dateTimeOfLastUpdateCheck = this.now();
+                    localStorage.setItem("ECAM_DASHBOARD_DATE_TIME_OF_LAST_UPDATE_CHECK", this.now());
                 }
             }
 
@@ -1827,7 +1906,7 @@
             if (this.savedReadGrades.length == 0) {
                 this.newGrades = [];
                 this.savedReadGrades = this.grades;
-                localStorage.setItem("ECAM_DASHBOARD_SAVED_READ_GRADES", JSON.stringify(this.savedReadGrades));
+                this.saveReadGrades();
             }
             else {
                 this.newGrades = this.compareArraysOfObjects(this.grades, this.savedReadGrades).more;
@@ -1862,9 +1941,17 @@
                 document.querySelector(".portlet-topper").remove();
 
                 // Creating the content of the dashboard that doesn't vary along with the user's actions besides the language selection.
-                // Therefore, the text isn't yet created, but will be in the renderContent() method later on, to regenerate the text in case the language is changed
+                // Therefore, the text isn't yet created, but will be in the generateContent() method later on, to regenerate the text in case the language is changed
                 container.innerHTML = `
                 <div id="emptyDiv"></div>
+                <div class="currently-loading">
+                    <div class="loading-symbol" style="--offset-offset: calc(0 * 100% / 6)"></div>
+                    <div class="loading-symbol" style="--offset-offset: calc(1 * 100% / 6)"></div>
+                    <div class="loading-symbol" style="--offset-offset: calc(2 * 100% / 6)"></div>
+                    <div class="loading-symbol" style="--offset-offset: calc(3 * 100% / 6)"></div>
+                    <div class="loading-symbol" style="--offset-offset: calc(4 * 100% / 6)"></div>
+                    <div class="loading-symbol" style="--offset-offset: calc(5 * 100% / 6)"></div>
+                </div>
                 <div class="dash-header">
                     <div style="display: flex;flex-direction: row;" id="aui_3_2_0_1305">
                         <img draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/5/51/ECAM-LaSalle-bleu-seul.png" alt="ECAM Logo" style="margin: 0px 0px 0px -10px;height: 141px;width: 148px;" id="aui_3_2_0_1304">
@@ -1883,6 +1970,13 @@
                         </div>
                     </div>
                     <div class="header-actions" style="display:flex; align-items:center">
+
+                        <a class="issue share-config ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserConfigShare    }" target="_blank" tabindex="-1">${this.lang == "fr" ? "Partaget une config" : "Share a config" }</a>
+                        <a class="issue suggest-idea ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserSuggestionIssue}" target="_blank" tabindex="-1">${this.lang == "fr" ? "Suggérer une idée"   : "Suggest an idea"}</a>
+                        <a class="issue report-issue ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserReportIssue    }" target="_blank" tabindex="-1">${this.lang == "fr" ? "Signaler un probème" : "Report an issue"}</a>
+                        <button class="issue issue-btn" id="reportIssueBtn" tabindex="0">🚩</button>
+
+
                         <button class="btn btn-edit-mode ${this.editMode ? "on" : "off"}" id="editModeBtn"></button>
                         <div style="display: flex; flex-direction: column; gap: 8px">
                             <button class="btn btn-export" id="exportBtn"></button>
@@ -1939,9 +2033,9 @@
                     </div>
                 </div>
 
-                <div class="scroll-field up${this.selectedSubjectCards.length > 0 ? " show" : ""}"${document.body.classList.contains("lfr-dockbar-pinned") ? ` style="transform: translateY(45px)"` : ""}></div>
+                <div class="scroll-field up${this.selectedSubjectCardsId.length > 0 ? " show" : ""}"${document.body.classList.contains("lfr-dockbar-pinned") ? ` style="transform: translateY(45px)"` : ""}></div>
 
-                <div class="drop-field remove-from-ue${this.selectedSubjectCards.length > 0 ? " show" : ""}">
+                <div class="drop-field remove-from-ue${this.selectedSubjectCardsId.length > 0 ? " show" : ""}">
                     <div class="drop-field-remove-from-ue-text top${this.lang == "fr" ? " fr" : " en"}"></div>
                     <div class="drop-field-remove-from-ue-minus">-</div>
                     <div class="drop-field-remove-from-ue-text bottom${this.lang == "fr" ? " fr" : " en"}"></div>
@@ -1950,14 +2044,14 @@
 
                 <div class="content-area" id="contentArea"></div>
 
-                <div class="drop-field create-ue ${this.lang == "fr" ? "fr" : "en"}${this.selectedSubjectCards.length > 0 ? " show" : ""}">
+                <div class="drop-field create-ue ${this.lang == "fr" ? "fr" : "en"}${this.selectedSubjectCardsId.length > 0 ? " show" : ""}">
                     <div class="drop-field-create-ue-text top ${this.lang == "fr" ? "fr" : "en"}"></div>
                     <div class="drop-field-create-ue-plus">+</div>
                     <div class="drop-field-create-ue-text bottom ${this.lang == "fr" ? "fr" : "en"}"></div>
                     <div class="drop-field-create-ue-hitbox"></div>
                 </div>
 
-                <div class="scroll-field down${this.selectedSubjectCards.length > 0 ? " show" : ""}"></div>
+                <div class="scroll-field down${this.selectedSubjectCardsId.length > 0 ? " show" : ""}"></div>
 
                 <div class="intranet-collapse"><div class="intranet-text"><div class="intranet-toggle collapse-icon">▲</div><div class="semester-name"> <div class="intranet-subtext"></div> </div><div class="intranet-toggle collapse-icon">▲</div></div></div>
                 `;
@@ -1971,7 +2065,7 @@
                 container.insertBefore(notifContainer, container.querySelector("dash-header"));
                 originalTable.style.display = "none";
 
-                this.renderContent();
+                this.generateContent();
             }
 
 
@@ -2030,7 +2124,7 @@
 
             //MARK: language Sensitive
             languageSensitiveContent(fadeIn=true) {
-                // Language Sensitive text in the Dashboard Header and Semester filter tab (which don't refresh on calling the renderContent() method)
+                // Language Sensitive text in the Dashboard Header and Semester filter tab (which don't refresh on calling the generateContent() method)
                 const dashTitle = document.querySelector(".dash-title");
                 const dashSubtitle = document.querySelector(".dash-subtitle");
                 dashTitle.innerHTML = this.lang == "fr" ? 'Tableau de Bord des Notes ECAM' : "ECAM Grades Dashboard";
@@ -2038,6 +2132,29 @@
 
                 const langShortcutText = document.getElementById("langShortcut");
                 langShortcutText.innerHTML = this.lang == "fr" ? "(Ctrl+L)" : "(Shift+L)";
+
+                const shareConfig = document.querySelector(".issue.share-config");
+                const suggestIdea = document.querySelector(".issue.suggest-idea");
+                const reportIssue = document.querySelector(".issue.report-issue");
+                const reportIssueBtn = document.querySelector(".issue.issue-btn");
+                if (this.lang == "fr") {
+                    shareConfig.innerHTML = "Partager une config\u2197";
+                    suggestIdea.innerHTML = "Suggérer une idée\u2197";
+                    reportIssue.innerHTML = "Signaler un problème\u2197";
+                    reportIssueBtn.title  = "Signaler...";
+                    shareConfig.classList.replace("en", "fr");
+                    suggestIdea.classList.replace("en", "fr");
+                    reportIssue.classList.replace("en", "fr");
+                }
+                else {
+                    shareConfig.innerHTML = "Share a config\u2197";
+                    suggestIdea.innerHTML = "Suggest an idea\u2197";
+                    reportIssue.innerHTML = "Report an issue\u2197";
+                    reportIssueBtn.title  = "Report...";
+                    shareConfig.classList.replace("fr", "en");
+                    suggestIdea.classList.replace("fr", "en");
+                    reportIssue.classList.replace("fr", "en");
+                }
                 
                 const importBtn = document.getElementById("importBtn");
                 const editModeBtn = document.getElementById("editModeBtn");
@@ -2093,7 +2210,18 @@
                 }
 
                 if (document.querySelector(".new-grades-card").children.length > 1) {document.querySelector(".new-grades-card").children[1].remove()}
-                document.querySelector(".new-grades-card-title").innerHTML = `${this.newGrades.length > 0 ? `${this.lang == "fr" ? `Nouvelle Note${this.newGrades.length > 1 ? "s" : ""} !` : `New Grade${this.newGrades.length > 1 ? "s" : ""}!`}` : `${this.lang == "fr" ? `Pas de nouvelle note` : `No new grade`}` }`;
+                document.querySelector(".new-grades-card-title").innerHTML = `
+                    ${this.newGrades.length > 0 
+                        ? `${this.lang == "fr" 
+                            ? `Nouvelle${this.newGrades.length > 1 ? "s" : ""} Note${this.newGrades.length > 1 ? "s" : ""} !` 
+                            : `New Grade${this.newGrades.length > 1 ? "s" : ""}!`
+                        }` 
+                        : `${this.lang == "fr" 
+                            ? `Pas de nouvelle note` 
+                            : `No new grade`
+                        }` 
+                    }
+                `;
                 document.querySelector(".new-grades-mark-as-read-text").innerHTML = this.lang == "fr" ? "Marquer comme lu" : "Mark as read";
                 document.querySelector(".new-grades-mark-as-read").title = this.lang == "fr" ? "Marquer comme lu" : "Mark as read";
                 
@@ -2107,11 +2235,13 @@
                     document.querySelector(".ecam-dash").parentElement.classList.add("fade-in");
                     setTimeout(() => {document.querySelector(".ecam-dash").parentElement.classList.remove("fade-in")}, 300);
                 }
+
+                this.attachAllEventListeners();
             }
 
 
-            // MARK: renderContent
-            renderContent(fadeIn=true) {
+            // MARK: generateContent
+            generateContent(fadeIn=true) {
 
                 if (fadeIn == "big") {this.languageSensitiveContent(true);}
                 else {this.languageSensitiveContent(false);}
@@ -2155,7 +2285,7 @@
                             </div>
                         <div class="semester-toggle open collapse-icon">▲</div>
                     </div>
-                    <div class="semester-content show${this.selectedSubjectCards.length > 0 ? " dragging" : ""}${fadeIn ? " fade-in" : ""}" id="sem-content-${sem}">
+                    <div class="semester-content show${this.selectedSubjectCardsId.length > 0 ? " dragging" : ""}${fadeIn ? " fade-in" : ""}" id="sem-content-${sem}">
                         <div class="semester-grid" ${(unclassified.length == 0 || !this.ueConfig[sem] || Object.keys(this.ueConfig?.[sem])[0] == undefined) ? `style="gap: ${this.editMode ? `20px` : `0px`}"` : ``}>
                             <div class="modules-section" id="modules-section">
                                 ${this.createAllUECards(sem)}
@@ -2176,7 +2306,7 @@
                     // Set a fixed height for the unclassified section, so that when dragging a subject card, the unclassified section doesn't change height upon the grades tables disappearing
                     const unclassifiedSection = document.querySelector(".unclassified-section");
                     setTimeout(() => {
-                        const currentUnclassifiedSectionHeight = new Number(unclassifiedSection.clientHeight); 
+                        const currentUnclassifiedSectionHeight = Number(unclassifiedSection.clientHeight); 
                         unclassifiedSection.style.height = `${currentUnclassifiedSectionHeight+4}px`;
                     }, 100)
 
@@ -2186,7 +2316,7 @@
                     this.attachCheckboxListeners(container);
 
                     this.setGradesTableTotalCoef();
-                    this.attachEventListeners();
+                    this.attachAllEventListeners();
                 });
             }
 
@@ -2279,7 +2409,7 @@
             // MARK: createSubjCardDetailed
             createAllSubjCardDetailed(sem, ueName) {
                 const ueData = this.gradesDatas[sem][ueName];
-                const select = this.selectedSubjectCards.length == 0;
+                const select = this.selectedSubjectCardsId.length == 0;
 
                 let html =  this.editMode ? this.createDropFieldInsertionField("subject", {sem, ueName, index:0}) : "";
 
@@ -2302,19 +2432,19 @@
                 const nbSimGrades =     subjectData.simGrades.length;
                 
                 let html = `
-                <div class="subject-card ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" ${this.editMode ? `style="user-select: none;"` : ``} id="subject-card-semester-${sem}-subject-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
+                <div class="subject-card detailed ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" ${this.editMode ? `style="user-select: none;"` : ``} id="subject-card-semester-${sem}-subject-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
                     <div class="subject-card-header ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" ${this.editMode ? `draggable="true"` : ``} data-ue="${ueName}" style="${this.editMode ? `cursor: grab; ` : `${nbGrades > 0 ? `` : `border-radius: 20px; border: none`}`}">
                         <div style="display: flex; width: 42%; padding-left: ${this.editMode ? `10px` : `50px`}">
                             <div style="display: flex; justify-content: flex-start; align-items: center; width: 100%; gap:8px; user-select: text">
                                 ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("detailed-subject-card", {type:"detailed", targetId:`subject-card-semester-${sem}-subject-${subject}`})}</div>` : ""}
                                 <div style="width: 100%">
                                     ${isCustom 
-                                        ? `<input type="text" onmouseover="event.preventDefault()" class="subject-name input any-input" id="subject-name-input-${sem}-${ueName}-${subject}" value="${subject}"/>`
+                                        ? `<input type="text" onmouseover="event.preventDefault()" class="subject-name input any-input" id="subject-name-input-semester-${sem}-subject-${subject}" value="${subject}"/>`
                                         : `<div class="subject-name">${subject}</div>`}
                                     <div class="grade-type">
                                         ${this.lang == "fr" ? "Poids dans module" : "Weight in module"}: 
                                         ${this.editMode 
-                                            ? `<input class="subject-coef-input-box any-input" id="subject-coef-input-box-${sem}-${ueName}-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" type="number" placeholder="%" step="5" min="0" max="100" value="${pct}"/>%`
+                                            ? `<input class="subject-coef-input-box any-input" id="subject-coef-input-box-semester-${sem}-subject-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" type="number" placeholder="%" step="5" min="0" max="100" value="${pct}"/>%`
                                             : `<span style="font-weight: 800;">${pct}%</span>`}
                                         | 
                                         ${this.lang == "fr" ? "Moyenne" : "Average"}: 
@@ -2351,7 +2481,7 @@
                                     <th class="grades-table-date">
                                         ${this.lang == "fr" ? "Date" : "Date"}
                                     </th>
-                                    <th class="grades-table-teacher" style="border-right-width: 0px;${this.selectedSubjectCards.length > 0 ? " display: none;" : ""}">
+                                    <th class="grades-table-teacher" style="border-right-width: 0px;${this.selectedSubjectCardsId.length > 0 ? " display: none;" : ""}">
                                         ${this.lang == "fr" ? "Prof(s)" : "Teacher(s)"}
                                     </th>
                                     <th style="border-right-width: 0px; border-left-width: 0px;">
@@ -2400,7 +2530,7 @@
                                         : `${grade.date}`
                                     }
                                 </td>
-                                <td class="grades-table-teacher" ${this.selectedSubjectCards.length > 0 ? `style="display: none;"` : ""}>
+                                <td class="grades-table-teacher" ${this.selectedSubjectCardsId.length > 0 ? `style="display: none;"` : ""}>
                                     ${gradeIsSim
                                         ? `<span style="width: 100%; display: flex; justify-content: center;"> — </span>`
                                         : `<span>${`${grade.prof.split(" / ").length <= 3 ? grade.prof : grade.prof.split(" / ").slice(0,3).join(" / ") + " / ... "}`||''}</span>`
@@ -2452,7 +2582,7 @@
             // MARK: createSubjCardCompact
             createAllSubjCardCompact(sem, ueName) {
                 const ueData = this.gradesDatas[sem][ueName];
-                const select = this.selectedSubjectCards.length == 0;
+                const select = this.selectedSubjectCardsId.length == 0;
 
                 let html =  this.editMode ? this.createDropFieldInsertionField("subject", {sem, ueName, index:0}) : "";
 
@@ -2464,30 +2594,30 @@
                 return html;
             }
             createSubjCardCompact(sem, ueName, subject, index=-1) {
-                const ueData =  this.gradesDatas[sem][ueName];
-                const subjectData =             ueData.subjects[subject];
-                const subjGrades =              subjectData.grades;
-                const ueMoy =                   ueData.average;
-                const subjAvg =                  subjectData.average;
-                const pct =                     subjectData.coef;
-                const isCustom =                subjectData.isCustom;
-                const nbGrades =                subjGrades.length;
-                const includedGradesLength =    nbGrades - subjectData.disabledRealGrades.length - subjectData.disabledSimGrades.length;
-                const nbSimGrades =          subjectData.simGrades.length;
+                const ueData = this.gradesDatas[sem][ueName];
+                const subjectData           = ueData.subjects[subject];
+                const subjGrades            = subjectData.grades;
+                const ueMoy                 = ueData.average;
+                const subjAvg               = subjectData.average;
+                const pct                   = subjectData.coef;
+                const isCustom              = subjectData.isCustom;
+                const nbGrades              = subjGrades.length;
+                const includedGradesLength  = nbGrades - subjectData.disabledRealGrades.length - subjectData.disabledSimGrades.length;
+                const nbSimGrades           = subjectData.simGrades.length;
 
                 const html = `
-                <div class="subject-card compact ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? "unknown" : `${subjAvg>10 ? `${ueMoy>10 ? `good` : `meh`}` : `bad`}`}" id="subject-card-semester-${sem}-subject-${subject}" style="${this.editMode ? "cursor: grab; user-select: none; " : " "}" ${this.editMode ? `draggable="true"` : ""} data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
-                    <div style="display:flex; align-items:center; gap:8px; padding-left: 11px; width:43%; min-width: 275px">
+                <div class="subject-card compact ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" id="subject-card-semester-${sem}-subject-${subject}" style="${this.editMode ? "cursor: grab; user-select: none; " : " "}" ${this.editMode ? `draggable="true"` : ""} data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
+                    <div style="display:flex; align-items:center; gap:8px; padding-left: ${this.editMode ? "11px" : "53px"}; width:38.8%; min-width: 275px">
                         ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("compact-subject-card", {type:"compact", targetId:`subject-card-semester-${sem}-subject-${subject}`})}</div>` : ""}
                         <div style="width: 87%">
                             ${isCustom 
-                                ? `<input type="text" class="subject-name input any-input" id="subject-name-input-${sem}-${ueName}-${subject}" value="${subject}"/>`
+                                ? `<input type="text" class="subject-name input any-input" id="subject-name-input-semester-${sem}-subject-${subject}" value="${subject}"/>`
                                 : `<div class="subject-name">${subject}</div>`
                             }
                             <div style="font-size:13px;color:#666;">
                                 ${this.lang == "fr" ? "Poids dans module: " : "Weight in module: "}
                                 ${this.editMode 
-                                    ? `<input class="subject-coef-input-box any-input" id="subject-coef-input-box-${sem}-${ueName}-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" type="number" placeholder="%" step="5" min="0" max="100" value="${pct}"/>%`
+                                    ? `<input class="subject-coef-input-box any-input" id="subject-coef-input-box-semester-${sem}-subject-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" type="number" placeholder="%" step="5" min="0" max="100" value="${pct}"/>%`
                                     : `<span style="font-weight: 800">${pct}%</span>`
                                 } • 
                                 ${nbGrades===0 ? `${this.lang == "fr" ? "aucune note publiée" : "no published grade"}` : `${nbGrades} ${this.lang == "fr" ? `note${nbGrades>1?"s":""} au total` : `grade${nbGrades>1?"s":""} total`}`}
@@ -2504,7 +2634,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="grades-table-coef" style="display:flex; flex-direction: column; width:50%; gap:6px; padding: 0px 10px; font-size: 13px; font-weight: 600">
+                    <div class="grades-table-coef" style="display:flex; flex-direction: column; width:50%; gap:4px; padding: 0px 10px; font-size: 13px; font-weight: 600">
                         <div style="text-align: left;">
                             ${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}
                         </div>
@@ -2543,8 +2673,8 @@
                 const nbRealGrades =    nbGrades - nbSimGrades;
 
                 html +=`
-                <div class="subject-card unclassified ${subjAvg >= 10 ? `good` : `bad`}" id="subject-card-semester-${sem}-subject-${subject}" ${this.editMode ? `style="user-select: none;"` : ""} ${this.editMode ? `draggable="true"` : ""} data-subject="${subject}" data-semester="${sem}">
-                    <div class="subject-card-header unclassified  ${subjAvg >= 10 ? `good` : `bad`}" style="${this.editMode ? "cursor: grab; padding-left: 10px;" : "padding-left: 50px;"}" data-semester="${sem}" data-subject="${subject}">
+                <div class="subject-card unclassified ${subjAvg >= 10 ? `good` : `bad`}" id="subject-card-semester-${sem}-subject-${subject}" ${this.editMode ? `style="user-select: none;"` : ""} data-subject="${subject}" data-semester="${sem}">
+                    <div class="subject-card-header unclassified  ${subjAvg >= 10 ? `good` : `bad`}" style="${this.editMode ? "cursor: grab; padding-left: 10px;" : "padding-left: 50px;"}" data-semester="${sem}" data-subject="${subject}" ${this.editMode ? `draggable="true"` : ""}>
                         ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("unclassified-subject-card", {type:"unclassified", targetId:`subject-card-semester-${sem}-subject-${subject}`})}</div>` : ""}
                         <div style="width: 40%">
                             ${subject}
@@ -2577,7 +2707,7 @@
                                     <th class="grades-table-date">
                                         ${this.lang == "fr" ? "Date" : "Date"}
                                     </th>
-                                    <th class="grades-table-teacher" style="border-right-width: 0px;${this.selectedSubjectCards.length > 0 ? " display: none;" : ""}">
+                                    <th class="grades-table-teacher" style="border-right-width: 0px;${this.selectedSubjectCardsId.length > 0 ? " display: none;" : ""}">
                                         ${this.lang == "fr" ? "Prof(s)" : "Teacher(s)"}
                                     </th>
                                     <th style="border-right-width: 0px; border-left-width: 0px;">
@@ -2628,7 +2758,7 @@
                                         : `${grade.date}`
                                     }
                                 </td>
-                                <td class="grades-table-teacher" ${this.selectedSubjectCards.length > 0 ? `style="display: none;"` : ""}>
+                                <td class="grades-table-teacher" ${this.selectedSubjectCardsId.length > 0 ? `style="display: none;"` : ""}>
                                     ${gradeIsSim
                                         ? `<span style="width: 100%; display: flex; justify-content: center;"> — </span>`
                                         : `<span>${`${grade.prof.split(" / ").length <= 3 ? grade.prof : grade.prof.split(" / ").slice(0,3).join(" / ") + " / ... "}`||''}</span>`
@@ -2682,62 +2812,9 @@
 
         //#region -REGION: Ev Listeners
 
-            attachDocumentMouseEvents(eventName="all") {
-                if (eventName == "onclick" || eventName == "all") {
-                    document.onclick = (e) => {
-                        // Toggle semesters
-                        if (e.target.closest('.semester-header')) {
-                            const header = e.target.closest('.semester-header');
-                            const sem = header.dataset.semester;
-                            const content = document.getElementById(`sem-content-${sem}`);
-                            const toggle = header.querySelector('.semester-toggle');
-                            if (content.classList.contains('show')) {
-                                content.classList.remove('show'); toggle.classList.remove('open'); content.style.display = 'none';
-                            } else {
-                                content.classList.add('show'); toggle.classList.add('open'); content.style.display = 'flex';
-                            }
-                        }
-
-                        // Toggle intranet table
-                        else if (e.target.closest('.intranet-collapse')) {
-                            const header = e.target.closest('.intranet-collapse');
-                            const intranetTable = document.querySelector('.greyGridTable');
-                            const intranetToggle = header.querySelectorAll('.intranet-toggle');
-                            intranetToggle.forEach(t => {
-                                if (t.previousElementSibling == null){
-                                    t.classList.toggle('openLeft')
-                                } else {
-                                    t.classList.toggle('openRight');
-                                }
-                            });
-
-                            if (intranetTable.style.display == 'none') {
-                                intranetTable.style.display = 'block';
-                            } else {
-                                intranetTable.style.display = 'none';
-                            }
-                        }
-
-                        if (!e.target.closest(".import-menu") && document.getElementById("importMenu").classList.contains("show")) {
-                            document.getElementById("importMenu").classList.remove("show");
-                            setTimeout(() => {document.getElementById("importMenu").style.display = "none"}, 300);
-                        }
-                    };
-                }
-                
-                if (eventName == "onmousedown" || eventName == "all") {
-                    // Collapse/Develop (fold/unfold) UEs
-                    document.onmousedown = (e) => {
-                        if (e.target.closest('.ue-header') && !e.target.closest('.ue-title.input') && !e.target.closest('.ue-delete-btn')) {
-                            this.ueHeaderClickEvent(e)
-                        }
-                    };
-                }
-
-            }
-
-            attachEventListeners() {
-                this.attachDocumentMouseEvents();
+            attachAllEventListeners() {
+                this.attachDocumentMouseListeners();
+                this.attachAllAnyInputsListeners();
 
                 document.body.onresize = (e) => {   // grade FOR THE FUTURE: DONT RE-RENDER THE CONTENT ON RESIZE, IT MESSES UP WITH THE SELECTED subject CARDS
                     
@@ -2777,7 +2854,7 @@
                         if (this.mobileVer == false) {
                             this.clientWidth = 935;
                             this.mobileVer = true;
-                            this.renderContent(false)
+                            this.generateContent(false)
                             // document.querySelectorAll(".grades-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
                             // this.getCSSClassCoordInStyleSheet(".grades-table-teacher").style.display = "none";
                         }
@@ -2787,169 +2864,647 @@
                         if (this.mobileVer == true) {
                             this.clientWidth = 1470;
                             this.mobileVer = false;
-                            this.renderContent(false)
+                            this.generateContent(false)
                             // this.getCSSClassCoordInStyleSheet(".grades-table-teacher").style.display = "table-cell";
                         }
                     } 
                     */
                 }; 
 
-                document.querySelector(".pin-dockbar").children[0].children[0].onclick = () => {
-                    // when clicking on the button to unpin the dockbar, this event listener is triggered before the action of unpinning the dockbar is actually done, 
-                    // so the order might seem reverse logical but that's how it works
-                    if (!document.body.classList.contains("lfr-dockbar-pinned")) {
-                        this.pinDockbar = true;
-                        document.querySelector(".scroll-field.up").style.transform = "translateY(45px)";
+                
+                this.attachLangBtnsListener();
+                this.attachIssuesBtnsMouseListeners();
+                this.attachEditModeListener();
+                this.attachImportBtnListener();
+                this.attachExportBtnListener();
+                
+                this.attachNewGradesNotifListener();
+                this.attachNewGradesMarkAsReadBtnListener();
+                this.attachNewGradesSubjectCardsListener();
+                
+                this.attachFilterSemesterListener();
+                this.attachViewModeBtnsListener();
+                
+                this.attachAllSubjectCardRelatedEvenListenersForEverySubjectCard();
+
+                this.attachUeInfoClearBtns();
+
+                if (this.editMode) {this.attachAllOnDragEventListeners();} else {this.detachOnDragEventListeners();}
+            }
+
+
+
+            //#region -Attach Event Listeners
+
+
+
+
+
+                //#region Document listeners
+                    attachDocumentMouseListeners(eventName="all") {
+                        if (eventName == "onclick" || eventName == "all") {
+                            document.onclick = (e) => {
+                                // Toggle semesters
+                                if (e.target.closest('.semester-header')) {
+                                    const header = e.target.closest('.semester-header');
+                                    const sem = header.dataset.semester;
+                                    const content = document.getElementById(`sem-content-${sem}`);
+                                    const toggle = header.querySelector('.semester-toggle');
+                                    if (content.classList.contains('show')) {
+                                        content.classList.remove('show'); toggle.classList.remove('open'); content.style.display = 'none';
+                                    } else {
+                                        content.classList.add('show'); toggle.classList.add('open'); content.style.display = 'flex';
+                                    }
+                                }
+
+                                // Toggle intranet table
+                                else if (e.target.closest('.intranet-collapse')) {
+                                    const header = e.target.closest('.intranet-collapse');
+                                    const intranetTable = document.querySelector('.greyGridTable');
+                                    const intranetToggle = header.querySelectorAll('.intranet-toggle');
+                                    intranetToggle.forEach(t => {
+                                        if (t.previousElementSibling == null){
+                                            t.classList.toggle('openLeft')
+                                        } else {
+                                            t.classList.toggle('openRight');
+                                        }
+                                    });
+
+                                    if (intranetTable.style.display == 'none') {
+                                        intranetTable.style.display = 'block';
+                                    } else {
+                                        intranetTable.style.display = 'none';
+                                    }
+                                }
+
+                                if (!e.target.closest(".import-menu") && document.getElementById("importMenu").classList.contains("show")) {
+                                    document.getElementById("importMenu").classList.remove("show");
+                                    setTimeout(() => {document.getElementById("importMenu").style.display = "none"}, 300);
+                                }
+                            };
+                        }
+                        
+                        if (eventName == "onmousedown" || eventName == "all") {
+                            // Collapse/Develop (fold/unfold) UEs
+                            document.onmousedown = (e) => {
+                                if (e.target.closest('.ue-header') && !e.target.closest('.ue-title.input') && !e.target.closest('.ue-delete-btn')) {
+                                    this.ueHeaderClickAction(e)
+                                }
+                            };
+                        }
                     }
-                    else {
-                        this.pinDockbar = false;
-                        document.querySelector(".scroll-field.up").style.transform = "";
+                    attachAllAnyInputsListeners() {
+                        document.querySelectorAll(".any-input").forEach(input => {
+                            this.attachAnyInputListeners(input)
+                        })
+                    }
+                    attachAnyInputListeners(input) {
+                        input.onfocus    = () =>  {document.onkeydown = null; document.onkeyup = null}
+                        input.onblur     = () =>  {this.generalKeyboardEvents()};
+                        input.ondragover = (e) => {if (e.target.closest(".any-input")) {e.dataTransfer.dropEffect = "none";}}
+                        input.ondrop     = (e) => {e.preventDefault(); e.dataTransfer.dropEffect = "link";};
+                        if (input.classList.contains("ue-title")) {   // Change UEs name
+                            input.onmouseenter  = ( ) => { if (this.editMode) {this.detachOnDragEventListeners(); document.querySelectorAll(".ue-header").forEach(card => {card.draggable = false});} }
+                            input.onmouseleave  = ( ) => { if (this.editMode) {this.attachOnDragEventListeners(); document.querySelectorAll(".ue-header").forEach(card => {card.draggable = true;});} }
+                            input.onchange      = (e) => { this.ueTitleInputChangeAction(e) };
+                        }
+                        else {
+                            input.onmouseenter  = ( ) => { if (this.editMode) {this.detachOnDragEventListeners();} };
+                            input.onmouseleave  = ( ) => { if (this.editMode) {this.attachOnDragEventListeners();} };
+                        }
+                    }
+                //#endregion
+
+
+
+
+                //#region Dashboard listeners
+                    attachPinDockbarListener() {
+                        document.querySelector(".pin-dockbar").children[0].children[0].onclick = () => {
+                            // when clicking on the button to unpin the dockbar, this event listener is triggered before the action of unpinning the dockbar is actually done, 
+                            // so the order might seem reverse logical but that's how it works
+                            if (!document.body.classList.contains("lfr-dockbar-pinned")) {
+                                this.pinDockbar = true;
+                                document.querySelector(".scroll-field.up").style.transform = "translateY(45px)";
+                            }
+                            else {
+                                this.pinDockbar = false;
+                                document.querySelector(".scroll-field.up").style.transform = "";
+                            }
+                        }
+                    }
+                    
+                    attachLangBtnsListener() {
+                        // Change to English
+                        document.getElementById('en-lang-btn').onclick = () => {
+                            if (this.lang == "fr") {
+                                this.lang = "en";
+                                localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
+                                document.getElementById('fr-lang-btn').classList.remove('active')
+                                document.getElementById('en-lang-btn').classList.add('active')
+                                this.generateContent(false);
+                            }
+                        };
+
+                        // Change to French
+                        document.getElementById('fr-lang-btn').onclick = () => {
+                            if (this.lang == "en") {
+                                this.lang = "fr";
+                                localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
+                                document.getElementById('fr-lang-btn').classList.add('active')
+                                document.getElementById('en-lang-btn').classList.remove('active')
+                                this.generateContent(false);
+                            }
+                        };
+                    }
+                    attachIssuesBtnsMouseListeners() {
+                        const issueBtn       = document.querySelector(".issue.issue-btn");
+                        const shareConfig    = document.querySelector(".issue.share-config");
+                        const suggestIdea    = document.querySelector(".issue.suggest-idea");
+                        const reportIssue    = document.querySelector(".issue.report-issue");
+
+                        issueBtn.onclick = (e) => {
+                            if (reportIssue.classList.contains("open")) {
+                                issueBtn.classList.remove("open");
+                                shareConfig.classList.remove("open"); shareConfig.tabIndex = "-1";
+                                suggestIdea.classList.remove("open"); suggestIdea.tabIndex = "-1";
+                                reportIssue.classList.remove("open"); reportIssue.tabIndex = "-1";
+                                this.attachDocumentMouseListeners("onclick");
+                            }
+                            else {
+                                issueBtn.classList.add("open");
+                                shareConfig.classList.add("open"); shareConfig.tabIndex = "0";
+                                suggestIdea.classList.add("open"); suggestIdea.tabIndex = "0";
+                                reportIssue.classList.add("open"); reportIssue.tabIndex = "0";
+
+                                document.onclick = (e) => {if (!e.target.closest(".issue")) {
+                                    issueBtn.classList.remove("open");
+                                    shareConfig.classList.remove("open"); shareConfig.tabIndex = "-1";
+                                    suggestIdea.classList.remove("open"); suggestIdea.tabIndex = "-1";
+                                    reportIssue.classList.remove("open"); reportIssue.tabIndex = "-1";
+                                    this.attachDocumentMouseListeners("onclick");
+                                }}
+                            }
+                        };
+                    }
+                    attachEditModeListener() {
+                        document.getElementById('editModeBtn').onclick = () => {
+                            this.editMode = !this.editMode;
+                            this.generateContent();
+                        };
+                    }
+                    attachImportBtnListener() {
+                        document.getElementById('importBtn').onclick = () => this.toggleImportMenu();
+                    }
+                    attachExportBtnListener() {
+                        document.getElementById('exportBtn').onclick = () => this.exportData();
+                    }
+                //#endregion
+
+
+
+
+                //#region New grades listeners
+                    attachNewGradesNotifListener() {
+                        document.querySelector(".new-grades-notif").onclick = (e) => {
+                            if (!e.target.closest("#closeNewGradesNotif")) {
+                                const newGradesCard = document.querySelector(".new-grades-card");
+                                newGradesCard.scrollIntoView({behavior: "instant"});
+                                newGradesCard.classList.add("myhighlight");
+                                setTimeout(() => {newGradesCard.classList.remove("myhighlight")},200)
+                            }
+                            else {
+                                document.querySelector(".new-grades-notif").classList.remove("on");
+                            }
+                        };
+                    }
+                    attachNewGradesMarkAsReadBtnListener() {
+                        document.querySelector(".new-grades-mark-as-read").onclick = () => {
+                            this.newGrades = [];
+                            this.savedReadGrades = Array(...this.grades);
+                            // this.grades.forEach(e => {this.savedReadGrades.push(e)})
+                            this.saveReadGrades();
+
+                            if (document.querySelector(".new-grades-card").children.length > 1) {document.querySelector(".new-grades-card").children[1].remove()}
+                            document.querySelector(".new-grades-card-title").innerHTML = this.lang == "fr" ? `Pas de nouvelle note` : `No new grade`;
+                            document.querySelector(".new-grades-mark-as-read").parentElement.disabled = true;
+                            document.querySelector(".new-grades-mark-as-read").parentElement.hidden = true;
+                            document.querySelector(".new-grades-notif").classList.remove("on");
+
+                            this.renderRecentGrades()
+                            this.attachAllEventListeners()
+                        };
+                    }
+                    attachNewGradesSubjectCardsListener() {
+                        document.querySelectorAll(".new-grades-subject-card").forEach(card => {   // Scroll to the corresponding subject/grade on which the user clicked
+                            card.onclick = e => {
+                                this.currentSemester = e.target.dataset.semester;
+                                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                                document.getElementById('filter-tab-semester-'+this.currentSemester).classList.add('active');
+                                this.generateContent(false);
+                                localStorage.setItem("ECAM_DASHBOARD_DEFAULT_SEMESTER", this.currentSemester);
+
+                                const targetElem = document.getElementById(`subject-card-semester-${e.target.dataset.semester}-subject-${e.target.dataset.subject}`);
+                                targetElem.scrollIntoView({behavior: "instant", block: "center"});
+                                targetElem.onscrollend = ((elem) => {
+                                    elem.classList.add("scroll-to");
+                                    elem.onanimationend = () => {targetElem.classList.remove("scroll-to")}
+                                })(targetElem);
+                                
+                            }
+                        });
+                    }
+                //#endregion
+
+
+
+
+                //#region filter/view mode listeners
+                    attachFilterSemesterListener() {
+                        document.querySelectorAll('.filter-tab').forEach(tab => {
+                            tab.onclick = (e) => {
+                                if (!e.target.classList.contains('active'))
+                                {
+                                    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                                    e.target.classList.add('active');
+                                    this.currentSemester = e.target.dataset.filter;
+                                    localStorage.setItem("ECAM_DASHBOARD_DEFAULT_SEMESTER", this.currentSemester);
+                                    
+                                    this.removeSubjectCardFromSubjectSelection();
+                                    this.generateContent();
+                                }
+                            };
+                        });
+                    }
+                    attachViewModeBtnsListener() {
+                        document.querySelectorAll('.view-btn').forEach(btn => {
+                            btn.onclick = (e) => {
+                                document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                                e.target.classList.add('active');
+                                this.viewMode = e.target.dataset.view;
+                                localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
+                                this.generateContent();
+                            };
+                        });
+                    }
+                //#endregion
+
+
+
+
+                //#region Selection Notifs listeners
+                    attachNotifBtnsListener(notifDiv) {
+                        if (notifDiv instanceof HTMLElement) {
+                            this.attachNotifDelBtnListener(notifDiv.querySelector(".selected-subject-card-notif-div-del-btn"));
+                            this.attachNotifScrollBtnListener(notifDiv.querySelector(".selected-subject-card-notif-div-scroll-btn"));
+                        }
+                        else {
+                            document.querySelectorAll(".selected-subject-card-notif-div-del-btn").forEach(delBtn => {
+                                this.attachNotifDelBtnListener(delBtn);
+                            })
+                            document.querySelectorAll(".selected-subject-card-notif-div-scroll-btn").forEach(scrollBtn => {
+                                this.attachNotifScrollBtnListener(scrollBtn);
+                            })
+                        }
+                    }
+                    attachNotifDelBtnListener(delBtn) {
+                        delBtn.onclick = (e) => {
+                            const notifDiv = e.target.parentElement;
+                            this.removeSubjectCardFromSubjectSelection({notifDiv});
+                        };
+                    }
+                    attachNotifScrollBtnListener(scrollBtn) {
+                        scrollBtn.onclick = (e) => {
+                            this.scrollToClientHighestElem({id: e.target.dataset.targetid, smooth: true, block: "center"})
+                        }
+                    }
+                //#endregion
+
+
+
+
+                //#region UE cards listeners
+                    attachUeInfoClearBtns() {
+                        document.querySelectorAll(".ue-info-clear.sim").     forEach(simClear => {
+                            simClear.onclick = () => {this.clearSimGrades(    simClear.dataset.semester, simClear.dataset.ue);this.generateContent();}
+                        });
+                        document.querySelectorAll(".ue-info-clear.disabled").forEach(disClear => {
+                            disClear.onclick = () => {this.clearIgnoredGradesForUE(disClear.dataset.semester, disClear.dataset.ue);this.generateContent();}
+                        });
+                    }
+                    attachAllUeDeleteBtnsListener() {
+                        document.querySelectorAll(".ue-delete-btn").forEach(btn => {
+                            this.attachUeDeleteBtnListener(btn);
+                        })
+                    }
+                    attachUeDeleteBtnListener(btn) {
+                        btn.onclick = (e) => {this.ueDeleteBtnAction(e)};
+                    }
+                //#endregion
+
+
+
+
+                //#region Subject cards listeners
+
+                    attachAllSubjectCardRelatedEvenListenersForEverySubjectCard() {
+                        this.attachAndManageAllDragOrTickIconsListener();
+                        this.attachAllSubjectCoefInputBoxesListeners();
+                        this.attachCheckboxListeners(document);
+                        this.attachAllSubjectNameInputsListener();
+                        this.attachAllSubjectSimAddBtnsListener();
+                        this.attachAllSubjectSimDelBtnsListener();
+                        this.attachAllSubjectSimInputEditsListener(document);
+                    }
+
+                    attachAllSubjectCardRelatedEventListeners(subjCard) {
+                        const coefInputBox  = subjCard.querySelector(".subject-coef-input-box");
+                        const nameInputBox  = subjCard.querySelector(".subject-name.input");
+                        const simAddBtn     = subjCard.querySelector(".sim-add-btn");
+                        const simDelBtn     = subjCard.querySelector(".sim-del-btn");
+
+                        this.attachDragOrTickIconsListener(subjCard);
+                        this.attachSubjectCoefInputBoxListeners(coefInputBox);
+                        this.attachCheckboxListeners(subjCard);
+                        this.attachSubjectNameInputListener(nameInputBox);
+                        this.attachSubjectSimAddBtnListener(simAddBtn);
+                        this.attachSubjectSimDelBtnListener(simDelBtn);
+                        this.attachAllSubjectSimInputEditsListener(subjCard);
+                    }
+
+                    /** Ensures all selected Subject Cards have a tick icon with their assigned event listeners instead of the default drag icon, and attach them the correct event listener */
+                    attachAndManageAllDragOrTickIconsListener() {
+                        this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {
+                            const subjectCard = document.getElementById(selectedSubjectCardId);
+                            this.changeDragIconToTickIcon(subjectCard);
+                        })
+
+                        document.querySelectorAll(".subject-card").forEach(subjCard => {
+                            this.attachDragOrTickIconsListener(subjCard);
+                        })
+                    }
+                    attachDragOrTickIconsListener(subjCard) {
+                        if (subjCard.querySelector(".drag-icon")) {
+                            const dragIcon = subjCard.querySelector(".drag-icon");
+                            dragIcon.onclick = (e) => { this.dragIconOnClickEvent(e, dragIcon) };
+                        }
+                        else if (subjCard.querySelector(".tick-icon")) {
+                            const tick = subjCard.querySelector(".tick-icon");
+                            tick.onclick = (e) => { this.tickIconOnClickEvent(e, tick) };
+                        }
+                    }
+
+                    attachAllSubjectCoefInputBoxesListeners() {
+                        document.querySelectorAll(".subject-coef-input-box").forEach(inputBox => {
+                            this.attachSubjectCoefInputBoxListeners(inputBox);
+                        })
+                    }
+                    attachSubjectCoefInputBoxListeners(inputBox) {
+                        inputBox.onchange = e => {
+                            const sem = e.target.dataset.semester;
+                            const ueName = e.target.dataset.ue;
+                            const subject = e.target.dataset.subject;
+                            const newCoef = e.target.value;
+                            this.ueConfig[sem][ueName].coefficients[subject] = newCoef;
+                            this.saveConfig();
+                            this.getGradesDatas({sem, ueName, subject});
+                            this.generateContent(false);
+                        };
+                    }
+
+                    attachCheckboxListeners(container) {
+                        // Reusable method to attach listeners to grade checkboxes
+                        container.querySelectorAll('.grade-checkbox').forEach(chbx => {
+                            chbx.onclick = (e) => {
+                                const semX = e.target.dataset.semester;
+                                const subj = e.target.dataset.subj;
+                                const simTimeStamp = e.target.dataset?.simtimestamp;
+                                const gradeId = e.target.dataset?.gradeid;
+                                const ignoredKey = [semX, subj, simTimeStamp || gradeId].join("\\");
+                                if (e.target.checked) {
+                                    // remove this specific ignored key if present
+                                    this.ignoredGrades = this.ignoredGrades?.filter(id => id !== ignoredKey);
+                                } else {
+                                    // add ignored key if not already present
+                                    if (!this.ignoredGrades?.includes(ignoredKey)) this.ignoredGrades.push(ignoredKey);
+                                }
+                                this.saveIgnoredGrades();
+                                // this.getGradesDatas({semX, ue:undefined, subj});
+                                this.getGradesDatas();
+                                this.generateContent(false);
+                            }
+                        });
+                    }
+
+                    attachAllSubjectNameInputsListener() {
+                        document.querySelectorAll(".subject-name.input").forEach(input => {
+                            this.attachSubjectNameInputListener(input);
+                        })
+                    }
+                    attachSubjectNameInputListener(input) {
+                        input.onchange = (e) => {this.subjectNameInputAction(e)};
+                    }
+
+                    attachAllSubjectSimAddBtnsListener() {
+                        document.querySelectorAll('.sim-add-btn').forEach(btn=>{
+                            this.attachSubjectSimAddBtnListener(btn);
+                        });
+                    }
+                    attachSubjectSimAddBtnListener(btn) {
+                        btn.onclick = (e) => {this.subjectSimAddBtnAction(e)};
+                    }
+
+                    attachAllSubjectSimDelBtnsListener() {
+                        document.querySelectorAll('.sim-del-btn').forEach(btn=>{
+                            this.attachSubjectSimDelBtnListener(btn)
+                        })
+                    }
+                    attachSubjectSimDelBtnListener(btn) {
+                        btn.onclick = (e) => {this.subjectSimDelBtnAction(e)};
+                    }
+
+                    attachAllSubjectSimInputEditsListener(container) {
+                        container.querySelectorAll(".grade-simulee-input-edit").forEach(input => {
+                            this.attachSubjectSimInputEditListener(input)
+                        })
+                    }
+                    attachSubjectSimInputEditListener(input) {
+                        input.onchange = (e) => {this.subjectSimInputEditAction(e)};
+                    }
+                    
+                //#endregion
+
+
+            //#endregion
+
+
+            //#region -Events Action
+                
+                /** Ensures that the dragend event of the document results in resetting the display if the dragged element is a subject card that is not selected */
+                documentOnDragEndAction() {
+                    const subjectCard = this.currentlyDraggedCard;
+
+                    if (this.draggedElementDroppedInInputField && subjectCard) {
+
+                        // checking if the dragged subject card is selected:
+                        let draggedSubjectCardIsSelected = false;
+                        if (this.selectedSubjectCardsId.length > 0) {
+                            this.selectedSubjectCardsId.forEach(divId => {if (divId==subjectCard.id) {draggedSubjectCardIsSelected=true}});
+                        }
+
+                        if (!draggedSubjectCardIsSelected) {
+                            const dropFieldAdd          = document.querySelector(".drop-field.create-ue");
+                            const dropFieldAddHitbox    = document.querySelector(".drop-field-create-ue-hitbox");
+                            const dropFieldRemove       = document.querySelector(".drop-field.remove-from-ue");
+                            const dropFieldRemoveHitbox = document.querySelector(".drop-field-remove-from-ue-hitbox");
+                            subjectCard.style.width = "";
+
+                            if (subjectCard.classList.contains("unclassified")) {
+                                subjectCard.querySelector(".grades-table").style.display = "table";
+                                subjectCard.querySelector(".subject-card-header").style.border = "none";
+                                subjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
+                            }
+                            else if (subjectCard.classList.contains("compact")) {
+                                subjectCard.querySelector(".grades-table-coef").style.display = "flex";
+                            }
+                            else {
+                                subjectCard.querySelector(".subject-card-header").children[0].style.width =                          "42%";
+                                subjectCard.querySelector(".subject-card-header").querySelector(".grades-table-coef").style.width =  "58%";
+                                subjectCard.querySelector(".grades-table").style.display = "table";
+                                subjectCard.querySelector(".subject-card-header").style.borderBottom = "4px solid white";
+                                subjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
+                            }
+
+                            if (this.selectedSubjectCardsId.length == 0) {
+                                setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher => {teacher.style.display = "table-cell"})}, 100)
+                                document.querySelector(".semester-content").classList.remove("dragging");
+                                dropFieldAdd.classList.remove("show");
+                                dropFieldAddHitbox.classList.remove("show");
+                                dropFieldRemove.classList.remove("show");
+                                dropFieldRemoveHitbox.classList.remove("show");
+                                this.removeSubjectCardFromSubjectSelection();
+                            }
+                            
+                        } else {
+                            this.selectedSubjectCardsId.forEach(selectedSubjectCardId2 => {
+                                const selectedSubjectCard2 = document.getElementById(selectedSubjectCardId2);
+                                selectedSubjectCard2.style.width = "";
+
+                                if (selectedSubjectCard2.classList.contains("unclassified")) {
+                                    selectedSubjectCard2.querySelector(".grades-table").style.display = "table";
+                                    selectedSubjectCard2.querySelector(".subject-card-header").style.border = "none";
+                                    selectedSubjectCard2.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
+                                
+                                } 
+                                else if (selectedSubjectCard2.classList.contains("compact")) {
+                                    selectedSubjectCard2.querySelector(".grades-table-coef").style.display = "flex";
+                                }
+                                else {
+                                    selectedSubjectCard2.querySelector(".subject-card-header").children[0].style.width =                          "42%";
+                                    selectedSubjectCard2.querySelector(".subject-card-header").querySelector(".grades-table-coef").style.width =  "58%";
+                                    selectedSubjectCard2.querySelector(".grades-table").style.display = "table";
+                                    selectedSubjectCard2.querySelector(".subject-card-header").style.borderBottom = "4px solid white";
+                                    selectedSubjectCard2.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
+                                }
+                            })
+                        }
                     }
                 }
 
-                
+                ueHeaderClickAction(e) {
+                    document.body.onmousemove = (e) => {
+                        e.preventDefault();
+                        document.body.onmouseup = null;
+                        document.body.onmousemove = null;
+                    };
+                    document.body.onmouseup = (e) => {
+                        const header = e.target.closest('.ue-header');
+                        const toggle = header.querySelector('.ue-toggle');
+                        const sem = header.dataset.semester;
+                        const ueName = header.dataset.ue;
+                        const ueDetails = header.parentElement.querySelector(".ue-details");
 
-
-                document.querySelector(".new-grades-notif").onclick = () => {
-                    const newGradesCard = document.querySelector(".new-grades-card");
-                    newGradesCard.scrollIntoView({behavior: "instant"});
-                    newGradesCard.classList.add("myhighlight");
-                    setTimeout(() => {newGradesCard.classList.remove("myhighlight")},200)
-                };
-                document.getElementById("closeNewGradesNotif").onmousedown = () => {    // otherwise, clicking the close button of the notif card also clicks on the card itself (behind the button)
-                    document.querySelector(".new-grades-notif").onclick = null;
-                };
-                document.getElementById("closeNewGradesNotif").onclick = () => {
-                    document.querySelector(".new-grades-notif").classList.remove("on");
-                };
-                document.querySelector(".new-grades-mark-as-read").onclick = () => {
-                    this.newGrades = [];
-                    this.savedReadGrades = [];
-                    this.grades.forEach(e => {this.savedReadGrades.push(e)})
-                    localStorage.setItem("ECAM_DASHBOARD_SAVED_READ_GRADES", JSON.stringify(this.savedReadGrades))
-
-                    if (document.querySelector(".new-grades-card").children.length > 1) {document.querySelector(".new-grades-card").children[1].remove()}
-                    document.querySelector(".new-grades-card-title").innerHTML = this.lang == "fr" ? `Pas de nouvelle grade` : `No new grade`;
-                    document.querySelector(".new-grades-mark-as-read").parentElement.disabled = true;
-                    document.querySelector(".new-grades-mark-as-read").parentElement.hidden = true;
-                    document.querySelector(".new-grades-notif").classList.remove("on");
-
-                    this.renderRecentGrades()
-                    this.attachEventListeners()
-                };
-                document.querySelectorAll(".new-grades-subject-card").forEach(card => {   // Scroll to the corresponding subject/grade on which the user clicked
-                    card.onclick = e => {
-                        this.currentSemester = e.target.dataset.semester;
-                        document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-                        document.getElementById('filter-tab-semester-'+this.currentSemester).classList.add('active');
-                        this.renderContent(false);
-                        localStorage.setItem("ECAM_DASHBOARD_DEFAULT_SEMESTER", this.currentSemester);
-
-                        const targetElem = document.getElementById(`subject-card-semester-${e.target.dataset.semester}-subject-${e.target.dataset.subject}`);
-                        targetElem.scrollIntoView({behavior: "instant",block: "center"});
-                        targetElem.onscrollend = ((elem) => {
-                            elem.classList.add("scroll-to");
-                            elem.onanimationend = () => {targetElem.classList.remove("scroll-to")}
-                        })(targetElem);
-                        
-                    }
-                });
-
-                
-                // Filtres semester
-                document.querySelectorAll('.filter-tab').forEach(tab => {
-                    tab.onclick = (e) => {
-                        if (!e.target.classList.contains('active'))
-                        {
-                            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-                            e.target.classList.add('active');
-                            this.currentSemester = e.target.dataset.filter;
-                            localStorage.setItem("ECAM_DASHBOARD_DEFAULT_SEMESTER", this.currentSemester);
-                            
-                            this.removeSubjectCardFromSubjectSelection();
-                            this.renderContent();
-                            this.attachEventListeners();
+                        if (toggle.classList.contains('open')) {
+                            ueDetails.innerHTML = this.createAllSubjCardCompact(sem, ueName);
+                            ueDetails.classList.add('compact');
+                            toggle.classList.remove('open');
+                            this.setGradesTableTotalCoef()
+                        } else {
+                            ueDetails.innerHTML = this.createAllSubjCardDetailed(sem, ueName);
+                            ueDetails.classList.remove('compact');
+                            toggle.classList.add('open');
+                            this.attachCheckboxListeners(ueDetails);
+                            this.setGradesTableTotalCoef()
                         }
-                    };
-                });
 
-                // Toggle view mode
-                document.querySelectorAll('.view-btn').forEach(btn => {
-                    btn.onclick = (e) => {
-                        document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-                        e.target.classList.add('active');
-                        this.viewMode = e.target.dataset.view;
-                        localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
-                        this.renderContent();
-                    };
-                });
-
-                document.querySelectorAll('.subject-coef-input-box').forEach(inputBox => {
-                    inputBox.onchange = e => {
-                        const sem = e.target.dataset.semester;
-                        const ueName = e.target.dataset.ue;
-                        const subject = e.target.dataset.subject;
-                        const newCoef = e.target.value;
-                        this.ueConfig[sem][ueName].coefficients[subject] = newCoef;
-                        this.saveConfig();
-                        this.getGradesDatas({sem, ueName, subject});
-                        this.renderContent(false);
-                        this.attachEventListeners();
-                    };
-                })
-
-
-                // Ensures all selected Subject Cards have a tick icon with their assigned event listeners instead of the default drag icon
-                this.selectedSubjectCards.forEach(selectedSubjectCardId => {
-                    const subjectCard = document.getElementById(selectedSubjectCardId);
-                    this.changeDragIconToTickIcon(subjectCard);
-                })
-                document.querySelectorAll(".subject-card").forEach(subjCard => {
-                    if (subjCard.querySelector(".drag-icon")) {
-                        const dragIcon = subjCard.querySelector(".drag-icon");
-                        dragIcon.onclick = (e) => { this.dragIconOnClickEvent(e, dragIcon) };
-                    }
-                    else if (subjCard.querySelector(".tick-icon")) {
-                        const tick = subjCard.querySelector(".tick-icon");
-                        tick.onclick = (e) => { this.tickIconOnClickEvent(e, tick) };
-                    }
-                })
-
-
-                // Attach listeners for every input of class ".any-input"
-                document.querySelectorAll(".any-input").forEach(input => {
-                    input.onfocus    = () =>  {document.onkeydown = null; document.onkeyup = null}
-                    input.onblur     = () =>  {this.generalKeyboardEvents()};
-                    input.ondragover = (e) => {if (e.target.closest(".any-input")) {e.dataTransfer.dropEffect = "none";}}
-                    input.ondrop     = (e) => {e.preventDefault(); e.dataTransfer.dropEffect = "link";};
-                    if (input.classList.contains("ue-title")) {   // Change UEs name
-                        input.onmouseenter  = ( ) => { this.detachOnDragEventListeners(); document.querySelectorAll(".ue-header").forEach(card => {card.draggable = false}); }
-                        input.onmouseleave  = ( ) => { this.attachOnDragEventListeners(); document.querySelectorAll(".ue-header").forEach(card => {card.draggable = true;}); }
-                        input.onchange      = (e) => { this.ueTitleInputChangeAction(e) };
-                    }
-                    else {
-                        input.onmouseenter  = ( ) => { this.detachOnDragEventListeners(); };
-                        input.onmouseleave  = ( ) => { this.attachOnDragEventListeners(); };
-                    }
-                })
-
-
-                // Change custom subject name
-                document.querySelectorAll(".subject-name.input").forEach(input => {
-                    input.onchange = (e) => {
+                        ueDetails.querySelectorAll(".subject-card").forEach(subjCard => {
+                            if (this.selectedSubjectCardsId.includes(subjCard.id)) {
+                                this.changeDragIconToTickIcon(subjCard);
+                            }
+                        })
                         
-                        const subjNewName   = e.target.value;
-                        const subjectCard   = e.target.parentElement.parentElement.parentElement.parentElement.parentElement;
-                        const sem           = subjectCard.dataset.semester;
-                        const ue            = subjectCard.dataset.ue;
-                        const subjOldName   = subjectCard.dataset.subject;
-                        const ueContent     = subjectCard.parentElement;
-                        const ueCard        = ueContent.parentElement;
+                        this.attachDropFieldsEventListeners("insert", ueDetails);
+                        document.body.onmousemove = null;
+                        document.body.onmouseup = null;
+                    }
+                }
+                
+                ueTitleInputChangeAction(e) {
+                    const sem = e.target.dataset.semester;
+                    const oldUeName = e.target.dataset.ue; 
+                    const oldUeIndex = this.ueConfig[sem].__ues__.indexOf(oldUeName);
+                    const newUeName = e.target.value;
+                    
+                    this.ueConfig[sem][newUeName] = this.ueConfig[sem][oldUeName];
+                    delete this.ueConfig[sem][oldUeName];
+                    this.ueConfig[sem].__ues__[oldUeIndex] = newUeName;
+
+                    this.saveConfig()
+                    this.getGradesDatas();
+                    this.generateContent(false)
+                }
+
+                ueDeleteBtnAction(e) {
+                    const sem = e.target.dataset.semester;
+                    const ueName = e.target.dataset.ue;
+                    
+                    const ueIndex = this.ueConfig[sem].__ues__.indexOf(ueName);
+
+                    this.ueConfig[sem].__ues__.splice(ueIndex, 1);
+                    delete this.ueConfig[sem][ueName];
+
+                    if (this.ueConfig[sem].__ues__.length == 0) {delete this.ueConfig[sem]}
+                    
+                    this.clearSimGrades(sem, ueName);
+                    this.saveConfig();
+                    this.getGradesDatas();
+                    this.generateContent();
+                }
+
+                subjectNameInputAction(e) {
+                    const subjNewName   = e.target.value;
+                    const subjectCardId = e.target.id.replace(/\bsubject-name-input/, "subject-card");
+                    const subjectCard   = document.getElementById(subjectCardId);
+                    const sem           = subjectCard.dataset.semester;
+                    const ue            = subjectCard.dataset.ue;
+                    const subjOldName   = subjectCard.dataset.subject;
+                    const ueDetails     = subjectCard.parentElement;
+                    const ueCard        = ueDetails.parentElement;
 
 
-                        let diffName = true;
-                        this.ueConfig[sem][ue].subjects.forEach(_subj => {if (_subj == subjNewName) diffName = false});
+                    let diffName = true;
+                    this.ueConfig[sem][ue].subjects.forEach(_subj => {
+                        if (_subj == subjNewName && _subj != subjOldName) {
+                            alert(this.lang == "fr" 
+                                ? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
+                                : "This subject already exists! Please choose a different name"
+                            )
+                            diffName = false;
+                            this.scrollToClientHighestElem({id: subjectCardId, smooth: true, block: "center"})
+                        }
+                    });
 
+                    if (diffName) {
                         this.ueConfig[sem].__ues__.forEach(ueName => {
                             this.ueConfig[sem][ueName].subjects.forEach(_subj => {
                                 if (_subj == subjNewName && _subj != subjOldName) {
@@ -2958,397 +3513,134 @@
                                         : "This subject already exists! Please choose a different name"
                                     )
                                     diffName = false;
+                                    this.scrollToClientHighestElem({id: subjectCardId, smooth: true, block: "center"})
                                 }
                             })
                         })
-                            
-
-                        if (diffName) {
-                            const oldSubjIndex =    this.ueConfig[sem][ue].subjects.indexOf(subjOldName);
-                            const pct = new Number(this.ueConfig[sem][ue].coefficients    [subjOldName]);
-
-                            this.ueConfig[sem][ue].subjects[oldSubjIndex]=subjNewName ;    // Replace the subject's old name by the subject's new name
-                            delete  this.ueConfig[sem][ue].coefficients [subjOldName];
-
-                                    this.ueConfig[sem][ue].coefficients [subjNewName] = pct;
-                                        
-                            this.getGradesDatas();
-
-                            if (this.viewMode == "detailed" || !ueCard.classList.contains("compact")) {
-                                ueContent.innerHTML = this.createAllSubjCardDetailed(sem, ue);
-                            }
-                            else {
-                                ueContent.innerHTML = this.createAllSubjCardCompact(sem, ue);
-                            }
-
-                            const unclassifiedSection = document.querySelector(".unclassified-section");
-                            const unclassifiedContent = unclassifiedSection.querySelector(".unclassified-content");
-                            unclassifiedSection.style.height = "100%";
-                            unclassifiedContent.innerHTML = this.createAllUnclassifiedSubjCard(sem);
-
-                            setTimeout(() => {
-                                const currentUnclassifiedSectionHeight = new Number(unclassifiedSection.clientHeight);
-                                unclassifiedSection.style.height = `${currentUnclassifiedSectionHeight+4}px`;}
-                            , 100)
-                            
-
-                            this.attachEventListeners()
-                            this.setGradesTableTotalCoef();
-                            this.saveConfig()
-                            this.getGradesDatas();
-                        }
-                        else {
-                            e.target.focus();
-                            e.target.style.background = "#ff7979";
-                        }                     
                     }
-                })
-
-                document.querySelectorAll(".ue-delete-btn").forEach(btn => {
-                    btn.onclick = e => {
-                        const sem = e.target.dataset.semester;
-                        const ueName = e.target.dataset.ue;
                         
-                        const ueIndex = this.ueConfig[sem].__ues__.indexOf(ueName);
 
-                        this.ueConfig[sem].__ues__.splice(ueIndex, 1);
-                        delete this.ueConfig[sem][ueName];
+                    if (diffName) {
+                        const oldSubjIndex = this.ueConfig[sem][ue].subjects.indexOf(subjOldName);
+                        const pct   = Number(this.ueConfig[sem][ue].coefficients    [subjOldName]);
 
-                        if (this.ueConfig[sem].__ues__.length == 0) {delete this.ueConfig[sem]}
+                        this.ueConfig[sem][ue].subjects[oldSubjIndex]=subjNewName ;    // Replace the subject's old name by the subject's new name
+                        delete  this.ueConfig[sem][ue].coefficients [subjOldName];
+                                this.ueConfig[sem][ue].coefficients [subjNewName] = pct;
+                                    
+                        this.getGradesDatas();
+
+                        if (this.viewMode == "compact" || ueDetails.classList.contains("compact")) {
+                            ueDetails.innerHTML = this.createAllSubjCardCompact(sem, ue);
+                        }
+                        else if (this.viewMode == "detailed" || !ueDetails.classList.contains("compact")) {
+                            ueDetails.innerHTML = this.createAllSubjCardDetailed(sem, ue);
+                        }
+
+                        const unclassifiedSection = document.querySelector(".unclassified-section");
+                        const unclassifiedContent = unclassifiedSection.querySelector(".unclassified-content");
+                        unclassifiedSection.style.height = "100%";
+                        unclassifiedContent.innerHTML = this.createAllUnclassifiedSubjCard(sem);
+
+                        setTimeout(() => {
+                            const currentUnclassifiedSectionHeight = Number(unclassifiedSection.clientHeight);
+                            unclassifiedSection.style.height = `${currentUnclassifiedSectionHeight+4}px`;}
+                        , 100)
                         
-                        this.clearSimGradesForUE(sem, ueName);
-                        this.saveConfig();
+
+                        this.attachAllEventListeners()
+                        this.setGradesTableTotalCoef();
+                        this.saveConfig()
                         this.getGradesDatas();
-                        this.renderContent();
-                        this.attachEventListeners();
                     }
-                })
-
-                
-
-                // Attach on-click event action for the simulated grade addition button
-                document.querySelectorAll('.sim-add-btn').forEach(btn=>{
-                    btn.onclick = (e)=>{
-                        const ueName = e.target.dataset.ue;
-                        const semX = e.target.dataset.semester;
-                        const subj = e.target.dataset.subj;
-                        this.ensureSimPath(semX, ueName, subj);
-                        const typeInp =  document.querySelector(`.grade-simulee-input.sim-inp-type[data-semester="${semX}"][data-subj="${subj}"]`);
-                        const gradeInp = document.querySelector(`.grade-simulee-input.sim-inp-grade[data-semester="${semX}"][data-subj="${subj}"]`);
-                        const coefInp =  document.querySelector(`.grade-simulee-input.sim-inp-coef[data-semester="${semX}"][data-subj="${subj}"]`);
-                        const dateInp =  document.querySelector(`.grade-simulee-input.sim-inp-date[data-semester="${semX}"][data-subj="${subj}"]`);
-                        const type = typeInp?.value||`${this.lang=="fr"? 'Simulé' : "Simulated"}`;
-                        const grade = parseFloat(gradeInp?.value||'');
-                        const coef = parseFloat(coefInp?.value||'');
-                        const date = dateInp?.value||'';
-                        if(isNaN(grade) || isNaN(coef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
-
-                        this.ensureSimPath(semX, ueName, subj);
-
-                        // Making sure the automatically generated name (if the user didn't input any type name) isn't the same as one that already exists 
-                        // (incrementing an index every time it's the case and add it at the end of the new sim grade's name)
-                        let newName = type, validNewName = newName != type, count = 2;
-
-                        while (!validNewName && this.sim[semX][ueName][subj].length > 0) {
-                            validNewName = true;
-                            this.sim[semX][ueName][subj].forEach((_grade, _index) => {
-                                if (_grade.type == newName && validNewName) {
-                                    validNewName = false;
-                                    newName = type + ` (${count})`;
-                                    count++;
-                                }
-                            })
-                        }
-
-                        this.sim[semX][ueName][subj].push({
-                            grade, 
-                            coef,
-                            classAvg: '—',
-                            type: newName,
-                            date: '—',
-                            prof: '—',
-                            subject: subj,
-                            semester: semX,
-                            libelle: `[SIM] ${subj} - ${type}`,
-                            __sim: true,
-                            id: new Date().getYear() + "" + new Date().getMonth() + "" + new Date().getDay() + "" + new Date().getHours() + "" + new Date().getMinutes() + "" + new Date().getSeconds() + "" + new Date().getMilliseconds()
-                        });
-                        this.saveSim();
-                        this.getGradesDatas();
-                        this.renderContent();
+                    else {
+                        e.target.focus();
+                        e.target.style.background = "#ff7979";
                     }
-                });
+                }
 
-                // Attach on-click event action for the simulated grades' deletion button
-                document.querySelectorAll('.sim-del-btn').forEach(btn=>{
-                    btn.onclick = (e) => {
-                        const semX = e.target.dataset.semester;
-                        const ueName = e.target.dataset.ue;
-                        const subj = e.target.dataset.subj;
-                        const id = e.target.dataset.simid;
-                        this.sim[semX][ueName][subj].splice(id, 1);
+                subjectSimAddBtnAction(e) {
+                    const ueName = e.target.dataset.ue;
+                    const semX = e.target.dataset.semester;
+                    const subj = e.target.dataset.subj;
+                    this.ensureSimPath(semX, ueName, subj);
+                    const typeInp =  document.querySelector(`.grade-simulee-input.sim-inp-type[data-semester="${semX}"][data-subj="${subj}"]`);
+                    const gradeInp = document.querySelector(`.grade-simulee-input.sim-inp-grade[data-semester="${semX}"][data-subj="${subj}"]`);
+                    const coefInp =  document.querySelector(`.grade-simulee-input.sim-inp-coef[data-semester="${semX}"][data-subj="${subj}"]`);
+                    const dateInp =  document.querySelector(`.grade-simulee-input.sim-inp-date[data-semester="${semX}"][data-subj="${subj}"]`);
+                    const type = typeInp?.value||`${this.lang=="fr"? 'Simulé' : "Simulated"}`;
+                    const grade = parseFloat(gradeInp?.value||'');
+                    const coef = parseFloat(coefInp?.value||'');
+                    const date = dateInp?.value||'';
+                    if(isNaN(grade) || isNaN(coef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
 
-                        this.deleteUnusedSimPath(false, semX, ueName, subj);
-                        this.saveSim();
-                        this.getGradesDatas();
-                        this.renderContent(false);
-                    }
-                })
+                    this.ensureSimPath(semX, ueName, subj);
 
-                // Attach on-change event action for simulated grades type/grade/coef/date fields
-                document.querySelectorAll(".grade-simulee-input-edit").forEach(input => {
-                    input.onchange = e => {
-                        const ueName = e.target.dataset.ue;
-                        const semX = e.target.dataset.semester;
-                        const subj = e.target.dataset.subj;
-                        const id = e.target.dataset.simid;
-                        const gradeRow = e.target.parentElement.parentElement;
-                        const gradeInp = gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-grade`);
-                        const coefInp =  gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-coef `);
-                        const newGrade = parseFloat(gradeInp?.value||'');
-                        const newCoef = parseFloat(coefInp?.value||'');
+                    // Making sure the automatically generated name (if the user didn't input any type name) isn't the same as one that already exists 
+                    // (incrementing an index every time it's the case and add it at the end of the new sim grade's name)
+                    let newName = type, validNewName = newName != type, count = 2;
 
-                        if(isNaN(newGrade) || isNaN(newCoef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
-                        this.sim[semX][ueName][subj][id][e.target.dataset.modiftype] = e.target.value;
-
-                        this.saveSim();
-                        this.getGradesDatas();
-                        this.renderContent(false);
-                    }
-                })
-
-                
-                document.querySelectorAll(".ue-info-clear.sim").     forEach(simClear => {
-                    simClear.onclick = () => {this.clearSimGradesForUE(    simClear.dataset.semester, simClear.dataset.ue);this.renderContent();}
-                });
-                document.querySelectorAll(".ue-info-clear.disabled").forEach(disClear => {
-                    disClear.onclick = () => {this.clearIgnoredGradesForUE(disClear.dataset.semester, disClear.dataset.ue);this.renderContent();}
-                });
-
-                
-                document.querySelector(".unclassified-content").querySelectorAll(".grades-table").forEach(table => {
-                    table.onmouseenter = () => {
-                        if (this.editMode) document.querySelectorAll(".subject-card.unclassified").forEach(card => {card.draggable = false;})
-                    }
-                    table.onmouseleave = () => {
-                        if (this.editMode) document.querySelectorAll(".subject-card.unclassified").forEach(card => {card.draggable = true;})
-                    }
-                })
-
-
-                // Change to English
-                document.getElementById('en-lang-btn').onclick = () => {
-                    if (this.lang == "fr") {
-                        this.lang = "en";
-                        localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
-                        document.getElementById('fr-lang-btn').classList.remove('active')
-                        document.getElementById('en-lang-btn').classList.add('active')
-                        this.renderContent(false);
-                    }
-                };
-
-                // Change to French
-                document.getElementById('fr-lang-btn').onclick = () => {
-                    if (this.lang == "en") {
-                        this.lang = "fr";
-                        localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
-                        document.getElementById('fr-lang-btn').classList.add('active')
-                        document.getElementById('en-lang-btn').classList.remove('active')
-                        this.renderContent(false);
-                    }
-                };
-                
-                // Edit mode
-                document.getElementById('editModeBtn').onclick = () => {
-                    this.editMode = !this.editMode;
-                    this.renderContent();
-                    this.attachEventListeners();
-                };
-                
-                // Import
-                document.getElementById('importBtn').onclick = () => this.toggleImportMenu();
-
-                // Export
-                document.getElementById('exportBtn').onclick = () => this.exportData();
-
-                if (this.editMode) {this.attachAllOnDragEventListeners();} else {this.detachOnDragEventListeners();}
-            }
-
-            /** Ensures that the dragend event of the document results in resetting the display if the dragged element is a subject card that is not selected */
-            documentOnDragEndEvent() {
-                const subjectCard = this.currentlyDraggedCard;
-
-                if (this.draggedElementDroppedInInputField && subjectCard) {
-
-                    // checking if the dragged subject card is selected:
-                    let draggedSubjectCardIsSelected = false;
-                    if (this.selectedSubjectCards.length > 0) {
-                        this.selectedSubjectCards.forEach(divId => {if (divId==subjectCard.id) {draggedSubjectCardIsSelected=true}});
-                    }
-
-                    if (!draggedSubjectCardIsSelected) {
-                        const dropFieldAdd          = document.querySelector(".drop-field.create-ue");
-                        const dropFieldAddHitbox    = document.querySelector(".drop-field-create-ue-hitbox");
-                        const dropFieldRemove       = document.querySelector(".drop-field.remove-from-ue");
-                        const dropFieldRemoveHitbox = document.querySelector(".drop-field-remove-from-ue-hitbox");
-                        subjectCard.style.width = "";
-
-                        if (subjectCard.classList.contains("unclassified")) {
-                            subjectCard.querySelector(".grades-table").style.display = "table";
-                            subjectCard.querySelector(".subject-card-header").style.border = "none";
-                            subjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
-                        }
-                        else if (subjectCard.classList.contains("compact")) {
-                            subjectCard.querySelector(".grades-table-coef").style.display = "flex";
-                        }
-                        else {
-                            subjectCard.querySelector(".subject-card-header").children[0].style.width =                         "42%";
-                            subjectCard.querySelector(".subject-card-header").querySelector(".grades-table-coef").style.width =  "58%";
-                            subjectCard.querySelector(".grades-table").style.display = "table";
-                            subjectCard.querySelector(".subject-card-header").style.borderBottom = "4px solid white";
-                            subjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
-                        }
-
-                        if (this.selectedSubjectCards.length == 0) {
-                            setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher => {teacher.style.display = "table-cell"})}, 100)
-                            document.querySelector(".semester-content").classList.remove("dragging");
-                            dropFieldAdd.classList.remove("show");
-                            dropFieldAddHitbox.classList.remove("show");
-                            dropFieldRemove.classList.remove("show");
-                            dropFieldRemoveHitbox.classList.remove("show");
-                            this.removeSubjectCardFromSubjectSelection();
-                        }
-                        
-                    } else {
-                        this.selectedSubjectCards.forEach(selectedSubjectCardId2 => {
-                            const selectedSubjectCard2 = document.getElementById(selectedSubjectCardId2);
-                            selectedSubjectCard2.style.width = "";
-
-                            if (selectedSubjectCard2.classList.contains("unclassified")) {
-                                selectedSubjectCard2.querySelector(".grades-table").style.display = "table";
-                                selectedSubjectCard2.querySelector(".subject-card-header").style.border = "none";
-                                selectedSubjectCard2.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
-                            
-                            } 
-                            else if (selectedSubjectCard2.classList.contains("compact")) {
-                                selectedSubjectCard2.querySelector(".grades-table-coef").style.display = "flex";
-                            }
-                            else {
-                                selectedSubjectCard2.querySelector(".subject-card-header").children[0].style.width =                         "42%";
-                                selectedSubjectCard2.querySelector(".subject-card-header").querySelector(".grades-table-coef").style.width =  "58%";
-                                selectedSubjectCard2.querySelector(".grades-table").style.display = "table";
-                                selectedSubjectCard2.querySelector(".subject-card-header").style.borderBottom = "4px solid white";
-                                selectedSubjectCard2.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
+                    while (!validNewName && this.sim[semX][ueName][subj].length > 0) {
+                        validNewName = true;
+                        this.sim[semX][ueName][subj].forEach((_grade, _index) => {
+                            if (_grade.type == newName && validNewName) {
+                                validNewName = false;
+                                newName = type + ` (${count})`;
+                                count++;
                             }
                         })
                     }
+
+                    this.sim[semX][ueName][subj].push({
+                        grade, 
+                        coef,
+                        classAvg: '—',
+                        type: newName,
+                        date: '—',
+                        prof: '—',
+                        subject: subj,
+                        semester: semX,
+                        libelle: `[SIM] ${subj} - ${type}`,
+                        __sim: true,
+                        id: new Date().getYear() + "" + new Date().getMonth() + "" + new Date().getDay() + "" + new Date().getHours() + "" + new Date().getMinutes() + "" + new Date().getSeconds() + "" + new Date().getMilliseconds()
+                    });
+                    this.saveSim();
+                    this.getGradesDatas();
+                    this.generateContent();
                 }
-            }
-            
-            attachCheckboxListeners(container) {
-                // Reusable method to attach listeners to grade checkboxes
-                container.querySelectorAll('.grade-checkbox').forEach(chbx => {
-                    chbx.onclick = (e) => {
-                        const semX = e.target.dataset.semester;
-                        const subj = e.target.dataset.subj;
-                        const simTimeStamp = e.target.dataset?.simtimestamp;
-                        const gradeId = e.target.dataset?.gradeid;
-                        const ignoredKey = [semX, subj, simTimeStamp || gradeId].join("\\");
-                        if (e.target.checked) {
-                            // remove this specific ignored key if present
-                            this.ignoredGrades = this.ignoredGrades?.filter(id => id !== ignoredKey);
-                        } else {
-                            // add ignored key if not already present
-                            if (!this.ignoredGrades?.includes(ignoredKey)) this.ignoredGrades.push(ignoredKey);
-                        }
-                        this.saveIgnoredGrades();
-                        // this.getGradesDatas({semX, ue:undefined, subj});
-                        this.getGradesDatas();
-                        this.renderContent(false);
-                    }
-                });
-            }
 
-            ueHeaderClickEvent(e) {
-                document.body.onmousemove = (e) => {
-                    e.preventDefault();
-                    document.body.onmouseup = null;
-                    document.body.onmousemove = null;
-                };
-                document.body.onmouseup = (e) => {
-                    const header = e.target.closest('.ue-header');
-                    const toggle = header.querySelector('.ue-toggle');
-                    const sem = header.dataset.semester;
-                    const ueName = header.dataset.ue;
-                    const ueContent = header.parentElement.querySelector(".ue-details");
+                subjectSimDelBtnAction(e) {
+                    const semX = e.target.dataset.semester;
+                    const ueName = e.target.dataset.ue;
+                    const subj = e.target.dataset.subj;
+                    const id = e.target.dataset.simid;
+                    this.sim[semX][ueName][subj].splice(id, 1);
 
-                    if (toggle.classList.contains('open')) {
-                        ueContent.innerHTML = this.createAllSubjCardCompact(sem, ueName);
-                        ueContent.classList.add('compact');
-                        toggle.classList.remove('open');
-                        this.setGradesTableTotalCoef()
-                    } else {
-                        ueContent.innerHTML = this.createAllSubjCardDetailed(sem, ueName);
-                        ueContent.classList.remove('compact');
-                        toggle.classList.add('open');
-                        this.attachCheckboxListeners(ueContent);
-                        this.setGradesTableTotalCoef()
-                    }
-
-                    ueContent.querySelectorAll(".subject-card").forEach(subjCard => {
-                        if (this.selectedSubjectCards.includes(subjCard.id)) {
-                            this.changeDragIconToTickIcon(subjCard);
-                        }
-                    })
-                    
-                    this.attachDropFieldsEventListeners("insert", ueContent.parentElement);
-                    document.body.onmousemove = null;
-                    document.body.onmouseup = null;
+                    this.deleteUnusedSimPath(false, semX, ueName, subj);
+                    this.saveSim();
+                    this.getGradesDatas();
+                    this.generateContent(false);
                 }
-            }
-            
-            ueTitleInputChangeAction(e) {
-                const sem = e.target.dataset.semester;
-                const oldUeName = e.target.dataset.ue; 
-                const oldUeIndex = this.ueConfig[sem].__ues__.indexOf(oldUeName);
-                const newUeName = e.target.value;
-                
-                this.ueConfig[sem][newUeName] = this.ueConfig[sem][oldUeName];
-                delete this.ueConfig[sem][oldUeName];
-                this.ueConfig[sem].__ues__[oldUeIndex] = newUeName;
 
-                this.saveConfig()
-                this.getGradesDatas();
-                this.renderContent(false)
-            }
+                subjectSimInputEditAction(e) {
+                    const ueName = e.target.dataset.ue;
+                    const semX = e.target.dataset.semester;
+                    const subj = e.target.dataset.subj;
+                    const id = e.target.dataset.simid;
+                    const gradeRow = e.target.parentElement.parentElement;
+                    const gradeInp = gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-grade`);
+                    const coefInp =  gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-coef `);
+                    const newGrade = parseFloat(gradeInp?.value||'');
+                    const newCoef = parseFloat(coefInp?.value||'');
 
-            notifBtnsAttachListener(notifDiv) {
-                if (notifDiv instanceof HTMLElement) {
-                    this.notifDelBtnAttachListener(notifDiv.querySelector(".selected-subject-card-notif-div-del-btn"));
-                    this.notifScrollBtnAttachListener(notifDiv.querySelector(".selected-subject-card-notif-div-scroll-btn"));
+                    if(isNaN(newGrade) || isNaN(newCoef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
+                    this.sim[semX][ueName][subj][id][e.target.dataset.modiftype] = e.target.value;
+
+                    this.saveSim();
+                    this.getGradesDatas();
+                    this.generateContent(false);
                 }
-                else {
-                    document.querySelectorAll(".selected-subject-card-notif-div-del-btn").forEach(delBtn => {
-                        this.notifDelBtnAttachListener(delBtn);
-                    })
-                    document.querySelectorAll(".selected-subject-card-notif-div-scroll-btn").forEach(scrollBtn => {
-                        this.notifScrollBtnAttachListener(scrollBtn);
-                    })
-                }
-            }
-
-            notifDelBtnAttachListener(delBtn) {
-                delBtn.onclick = (e) => {
-                    const notifDiv = e.target.parentElement;
-                    this.removeSubjectCardFromSubjectSelection({notifDiv});
-                };
-            }
-
-            notifScrollBtnAttachListener(scrollBtn) {
-                scrollBtn.onclick = (e) => {
-                    this.scrollToClientHighestElem({id: e.target.dataset.targetid, smooth: true, block: "center"})
-                }
-            }
+            //#endregion
 
         //#endregion
 
@@ -3502,14 +3794,14 @@
                         card.querySelector(".grades-table-coef").style.display = "flex";
                     }
                     else {
-                        card.querySelector(".subject-card-header").children[0].style.width =                         "42%";
+                        card.querySelector(".subject-card-header").children[0].style.width =                          "42%";
                         card.querySelector(".subject-card-header").querySelector(".grades-table-coef").style.width =  "58%";
                         card.querySelector(".grades-table").style.display = "table";
                         card.querySelector(".subject-card-header").style.borderBottom = "4px solid white";
                         card.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
                     }
                     
-                    if (this.selectedSubjectCards.length == 0) {
+                    if (this.selectedSubjectCardsId.length == 0) {
                         setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher => {teacher.style.display = "table-cell"})}, 100)
                         document.querySelector(".semester-content")                 .classList.remove("dragging");
                         document.querySelector(".drop-field.create-ue")             .classList.remove("show");
@@ -3531,7 +3823,7 @@
 
                     setTimeout(() => {
                         unclassifiedSection.style.height = "100%";
-                        const currentUnclassifiedSectionHeight = new Number(unclassifiedSection.clientHeight);
+                        const currentUnclassifiedSectionHeight = Number(unclassifiedSection.clientHeight);
                         unclassifiedSection.style.height = `${currentUnclassifiedSectionHeight+4}px`;}
                     , 100)
 
@@ -3748,7 +4040,7 @@
                 }
             }
             draggedSelectedElementOnDragStartEvent(e, {draggedElement, card}) {
-                this.selectedSubjectCards.forEach(selectedSubjectCardId => {
+                this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {
                     const selectedSubjectCard = document.getElementById(selectedSubjectCardId);
                     selectedSubjectCard.style.width = "50%";
 
@@ -3782,7 +4074,7 @@
             };
             draggedSelectedElementOnDragEndEvent(e, {draggedElement, card}) {
 
-                this.selectedSubjectCards.forEach(selectedSubjectCardId => {
+                this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {
                     const selectedSubjectCard = document.getElementById(selectedSubjectCardId);
                     selectedSubjectCard.style.width = "";
 
@@ -3894,11 +4186,11 @@
                 
                 e.preventDefault(); 
 
-                if (this.selectedSubjectCards.length == 0) {
+                if (this.selectedSubjectCardsId.length == 0) {
                     this.dropFieldSubjectInsertAction(null, insertField)
                 }
                 else {
-                    this.dropFieldSubjectInsertAction(this.selectedSubjectCards[0], insertField);
+                    this.dropFieldSubjectInsertAction(this.selectedSubjectCardsId[0], insertField);
                 }
             }
 
@@ -3925,8 +4217,8 @@
                         this.insertFieldHitboxOnClickEvent(e);
                     }
                     else {
-                        if (this.selectedSubjectCards.length > 0) {
-                            this.dropFieldToNewUEAction(this.selectedSubjectCards[0], data.index);
+                        if (this.selectedSubjectCardsId.length > 0) {
+                            this.dropFieldToNewUEAction(this.selectedSubjectCardsId[0], data.index);
                         }
                         else {
                             this.dropFieldToNewUEAction(null, data.index);
@@ -3967,7 +4259,7 @@
                         
                         draggableElement.draggable = true;
 
-                        if (!this.selectedSubjectCards.includes(subjectCard.id)) {
+                        if (!this.selectedSubjectCardsId.includes(subjectCard.id)) {
                             draggableElement.ondragstart = (e) => {this.draggedElementOnDragStartEvent( e, {draggableElement, card: subjectCard})};
                             draggableElement.ondragend   = (e) => {this.draggedElementOnDragEndEvent(   e, {draggableElement, card: subjectCard})};
                         }
@@ -3987,7 +4279,7 @@
                     })
                 }
 
-                this.notifBtnsAttachListener();
+                this.attachNotifBtnsListener();
             }
 
 
@@ -4037,7 +4329,7 @@
 
             // MARK: remove from subject selection
             /** 
-            *  Manage all the actions involving the deletion of a subj card from the selection of subj cards (this.selectedSubjectCards)
+            *  Manage all the actions involving the deletion of a subj card from the selection of subj cards (this.selectedSubjectCardsId)
             * 
             * @param {String} notifDiv the div of the notif linked to the selected subject card
             * @param {HTMLElement} elementDroppedInField if this method is called from triggering an ondrop event of a drop field, pass the dropped element in this argument
@@ -4045,7 +4337,7 @@
             removeSubjectCardFromSubjectSelection({notifDiv="all", elementDroppedInField=undefined}={notifDiv:"all", elementDroppedInField:undefined}) {
                 if (notifDiv=="all") {      // clear all subject card selection as well as their respective notif
                     
-                    this.selectedSubjectCards.forEach((selectedSubjectCardId, index) => {
+                    this.selectedSubjectCardsId.forEach((selectedSubjectCardId, index) => {
                         const selectedSubjectCard = document.getElementById(selectedSubjectCardId);
 
                         selectedSubjectCard.style.width = "";
@@ -4096,7 +4388,7 @@
                         totalCoef.parentElement.style.width = "47%";
                     })
 
-                    this.selectedSubjectCards = [];
+                    this.selectedSubjectCardsId = [];
                     this.selectedSubjectCardsSortedByUe = {};
                 } 
                 else {      // clear the specifically given notifDiv from the selection
@@ -4115,11 +4407,11 @@
                         // notifDivContainer.style.left = `calc(99% - ${100 * highestWidth/document.body.clientWidth}%`;
                     }, 300)
 
-                    this.selectedSubjectCards.forEach((selectedSubjectCardId, index) => {
+                    this.selectedSubjectCardsId.forEach((selectedSubjectCardId, index) => {
                         const selectedSubjectCard = document.getElementById(selectedSubjectCardId);
 
                         if (selectedSubjectCard == subjectCard) 
-                            this.selectedSubjectCards.splice(index, 1)
+                            this.selectedSubjectCardsId.splice(index, 1)
                         }
                     )
                     Object.keys(this.selectedSubjectCardsSortedByUe).forEach((ueName, ueIndex) => {
@@ -4131,7 +4423,7 @@
                         }
                     })
                 
-                    if (this.selectedSubjectCards.length == 0) {
+                    if (this.selectedSubjectCardsId.length == 0) {
                         setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
                         setTimeout(() => {document.querySelectorAll(".grades-table-classAvg").forEach(classAvg => {classAvg.style.display = "table-cell"})}, 100)
                         
@@ -4159,7 +4451,7 @@
                 
                 // Ensure the subject insertion drop fields are displaying the right text
                 document.querySelectorAll(".drop-field.insert-field").forEach(subjInsertField => {
-                    if (this.selectedSubjectCards.length == 0) {
+                    if (this.selectedSubjectCardsId.length == 0) {
                         subjInsertField.querySelector(".drop-ue-card-insert-plus , .drop-subject-card-insert-plus ").classList.add("show");
                         subjInsertField.querySelector(".drop-ue-card-insert-arrow, .drop-subject-card-insert-arrow").classList.remove("show");
                         subjInsertField.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").classList.replace("insert", "add");
@@ -4230,20 +4522,20 @@
                 draggableElement.ondragend   = (e) =>   {this.draggedSelectedElementOnDragEndEvent(  e, {draggedElement: draggableElement, card:subjectCard})};
 
                 if (!dontAddToSelection) {
-                    this.selectedSubjectCards.push(subjectCard.id);
+                    this.selectedSubjectCardsId.push(subjectCard.id);
                     if (!this.selectedSubjectCardsSortedByUe[subjectCard.dataset.ue]) { this.selectedSubjectCardsSortedByUe[subjectCard.dataset.ue] = []; };
-                    this.selectedSubjectCardsSortedByUe[subjectCard.dataset.ue].push({subjectCardId: subjectCard.id, selectionIndex: this.selectedSubjectCards.length-1});
+                    this.selectedSubjectCardsSortedByUe[subjectCard.dataset.ue].push({subjectCardId: subjectCard.id, selectionIndex: this.selectedSubjectCardsId.length-1});
 
                     const selectionNotifDiv = this.addSelectedCardNotifDiv(subjectCard.dataset.semester, subjectCard.dataset.subject, type, subjectCard.id);
 
                     document.querySelector(".selected-subject-card-notif-container").appendChild(selectionNotifDiv);
-                    this.notifBtnsAttachListener(selectionNotifDiv);
+                    this.attachNotifBtnsListener(selectionNotifDiv);
 
                     setTimeout(()=>{selectionNotifDiv.classList.add("on")}, 10)
 
                     // Ensure the subject insertion drop fields are showing the right text
                     document.querySelectorAll(".drop-field.insert-field").forEach(subjInsertField => {
-                        if (this.selectedSubjectCards.length == 0) {
+                        if (this.selectedSubjectCardsId.length == 0) {
                             // shouldn't be reached, normally
                             subjInsertField.querySelector(".drop-ue-card-insert-plus , .drop-subject-card-insert-plus ").classList.add("show");
                             subjInsertField.querySelector(".drop-ue-card-insert-arrow, .drop-subject-card-insert-arrow").classList.remove("show");
@@ -4307,12 +4599,12 @@
 
 
                 // MARK: attach dropFields listeners
-                attachDropFieldsEventListeners(target="all", id="") {
+                attachDropFieldsEventListeners(target="all", insertFieldsContainer="") {
                     const dropFieldAdd          = document.querySelector(".drop-field.create-ue");
                     const dropFieldAddHitbox    = document.querySelector(".drop-field-create-ue-hitbox");
                     const dropFieldRemove       = document.querySelector(".drop-field.remove-from-ue");
                     const dropFieldRemoveHitbox = document.querySelector(".drop-field-remove-from-ue-hitbox");
-                    const insertFieldHitboxes   = (document?.getElementById(id) || document).querySelectorAll(".drop-subject-card-insert-hitbox, .drop-ue-card-insert-hitbox");
+                    const insertFieldHitboxes   = (insertFieldsContainer || document).querySelectorAll(".drop-subject-card-insert-hitbox, .drop-ue-card-insert-hitbox");
                     
                     if (target == "add" || target == "all") {
                         dropFieldAdd.style.background = "";
@@ -4348,8 +4640,8 @@
                             e.preventDefault(); 
                             e.target.classList.remove("hover");
                             e.target.querySelectorAll(".drop-field-create-ue-text, .drop-field-create-ue-plus").forEach(text => {text.classList.remove("hover");})
-                            if (this.selectedSubjectCards.length > 0) {
-                                this.dropFieldToNewUEAction(this.selectedSubjectCards[0]);
+                            if (this.selectedSubjectCardsId.length > 0) {
+                                this.dropFieldToNewUEAction(this.selectedSubjectCardsId[0]);
                             }
                         }};
                     }
@@ -4388,8 +4680,8 @@
                             e.preventDefault(); 
                             dropFieldRemove.classList.remove("hover");
                             dropFieldRemove.querySelectorAll(".drop-field-remove-from-ue-text, .drop-field-remove-from-ue-minus").forEach(text => {text.classList.remove("hover");})
-                            if (this.selectedSubjectCards.length > 0) {
-                                this.dropFieldRemoveAction(this.selectedSubjectCards[0]);
+                            if (this.selectedSubjectCardsId.length > 0) {
+                                this.dropFieldRemoveAction(this.selectedSubjectCardsId[0]);
                             }
                         }};
                     }
@@ -4415,7 +4707,7 @@
                         const card = document.getElementById(cardId);
                         if (card.classList.contains('subject-card')) {
                             let cardIsSelected = false;
-                            this.selectedSubjectCards.forEach(selectedSubjectCardId => {if (selectedSubjectCardId == card.id) cardIsSelected = true;});
+                            this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {if (selectedSubjectCardId == card.id) cardIsSelected = true;});
 
                             let subject, oldUeName, manageSim = true;
                             if (!this.sim[sem]) manageSim = false;
@@ -4498,10 +4790,10 @@
                                         const selectionIndex = selectedSubjectCard.selectionIndex;
                                         subject = subjectCard.dataset.subject;
 
-                                        if (selectionIndex+1 == this.selectedSubjectCards.length) {
+                                        if (selectionIndex+1 == this.selectedSubjectCardsId.length) {
                                             newUeConfig.coefficients[subject] = remainingCoef;
                                         } else {
-                                            const coef = Math.round(100/this.selectedSubjectCards.length);
+                                            const coef = Math.round(100/this.selectedSubjectCardsId.length);
                                             newUeConfig.coefficients[subject] = coef;
                                             remainingCoef -= coef;
                                         }
@@ -4561,8 +4853,7 @@
                     this.removeSubjectCardFromSubjectSelection();
                     this.saveConfig();
                     this.getGradesDatas();
-                    this.renderContent();
-                    this.attachEventListeners();
+                    this.generateContent();
                     this.scrollToClientHighestElem({id: `ue-card-${newUeName}-in-semester-${sem}`, smooth: true})
                 }
 
@@ -4573,7 +4864,7 @@
                     const card = document.getElementById(cardId);
 
                     let cardIsSelected = false;
-                    this.selectedSubjectCards.forEach(selectedSubjectCardId => {if (selectedSubjectCardId == card.id) cardIsSelected = true;})
+                    this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {if (selectedSubjectCardId == card.id) cardIsSelected = true;})
 
                     if (card?.classList?.contains("subject-card") && !card?.classList?.contains("unclassified")) {
                         const sem = card.dataset.semester;
@@ -4594,7 +4885,7 @@
                         }
                         else {
                             let subject = "";
-                            this.selectedSubjectCards.forEach(selectedSubjectCardId => {
+                            this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {
                                 const selectedSubjectCard = document.getElementById(selectedSubjectCardId);
 
                                 subject = selectedSubjectCard.dataset.subject;
@@ -4615,8 +4906,7 @@
                         this.removeSubjectCardFromSubjectSelection({elementDroppedInField:card});
                         this.saveConfig();
                         this.getGradesDatas();
-                        this.renderContent();
-                        this.attachEventListeners();
+                        this.generateContent();
                     }
                     else if (card?.classList?.contains("subject-card") && card?.classList?.contains("unclassified") && cardIsSelected) {
                         this.removeSubjectCardFromSubjectSelection({elementDroppedInField:card});
@@ -4636,13 +4926,13 @@
 
                         if (card?.classList?.contains('subject-card')) {
                             let cardIsSelected = false;
-                            this.selectedSubjectCards.forEach(selectedSubjectCardId => {if (selectedSubjectCardId == card.id) cardIsSelected = true;});
+                            this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {if (selectedSubjectCardId == card.id) cardIsSelected = true;});
 
                             const targetUeName = methodCaller.dataset.ue;
                             const insertionIndex = methodCaller.dataset.index;
                             
                             // The same thing happens whether this method is triggered from a selection or a single subject card, we just have to choose the right card id
-                            (cardIsSelected ? this.selectedSubjectCards : [card.id]).forEach(subjectCardId => {
+                            (cardIsSelected ? this.selectedSubjectCardsId : [card.id]).forEach(subjectCardId => {
                                 const subjectCard = document.getElementById(subjectCardId);
 
                                 const subject = subjectCard.dataset.subject;
@@ -4707,8 +4997,7 @@
                             this.removeSubjectCardFromSubjectSelection();
                             this.saveConfig();
                             this.getGradesDatas();
-                            this.renderContent();
-                            this.attachEventListeners();
+                            this.generateContent();
                             this.setGradesTableTotalCoef();
                         }
                     }
@@ -4717,7 +5006,7 @@
                         const sem = addDivClicked.dataset.semester;
                         const ue =  addDivClicked.dataset.ue;
                         const ueCard = document.getElementById(`ue-card-${ue}-in-semester-${sem}`);
-                        const ueContent = ueCard.querySelector(".ue-details");
+                        const ueDetails = ueCard.querySelector(".ue-details");
 
                         let newSubjName = `${this.lang == "fr" ? "Nouvelle matière" : "New subject"} 1`; let count = 1;
                         while (this.gradesDatas[sem][ue].subjects[newSubjName]) {
@@ -4733,13 +5022,13 @@
                         this.getGradesDatas();
                         
                         if (this.viewMode == "detailed" || !ueCard.classList.contains("compact")) {
-                            ueContent.innerHTML = this.createAllSubjCardDetailed(sem, ue);
+                            ueDetails.innerHTML = this.createAllSubjCardDetailed(sem, ue);
                         }
                         else {
-                            ueContent.innerHTML = this.createAllSubjCardCompact(sem, ue);
+                            ueDetails.innerHTML = this.createAllSubjCardCompact(sem, ue);
                         }
 
-                        this.attachEventListeners()
+                        this.attachAllEventListeners()
                         this.setGradesTableTotalCoef();
                     }
                 }
@@ -4762,8 +5051,7 @@
                             this.ueConfig[sem].__ues__.splice(compensatedNewUEIndex,0,ueName);
                             this.saveConfig();
                             this.getGradesDatas();
-                            this.renderContent();
-                            this.attachEventListeners();
+                            this.generateContent();
                             this.setGradesTableTotalCoef();
                             this.scrollToClientHighestElem({id: card.id, smooth: true})
                         }
@@ -4774,7 +5062,7 @@
                 
                 // MARK: createDropFieldInsertionField
                 createDropFieldInsertionField(type="subject", {sem=0, ueName="", index=-1}={sem:0, ueName:"", index:-1}) {
-                    const thereIsSelection = this.selectedSubjectCards.length > 0;
+                    const thereIsSelection = this.selectedSubjectCardsId.length > 0;
                     return `
                         <div class="drop-field insert-field ${type} show" data-semester="${sem}" ${type=="ue" ? `` : `data-ue="${ueName}" `}data-index="${index}">
                             <div class="drop-${type}-card-insert-content plus">
@@ -4830,7 +5118,8 @@
 
             openOnlineCfgPicker() {
                 document.getElementById("importMenu").classList.remove("show");
-                document.getElementById("importMenu").hidden
+                setTimeout(() => {document.getElementById("importMenu").style.display = "none";}, 300)
+
                 const pickerMenu        = document.createElement("div");
                 pickerMenu.id           = "pickerMenu";
                 pickerMenu.className    = "online-cfg-picker-menu";
@@ -4844,10 +5133,12 @@
                         <div class="online-cfg-picker-menu-close-btn">❌</div>
                     </div>
                     <div class="online-cfg-picker-menu-body">
-                        ${sectionsHTML}
-                        ${yearsHTML}
-                        ${promsHTML}
-                        ${configsHTML}
+                        <div class="online-cfg-picker-menu-body-container">
+                            ${sectionsHTML}
+                            ${yearsHTML}
+                            ${promsHTML}
+                            ${configsHTML}
+                        </div>
                     </div>
                 `;
 
@@ -4856,7 +5147,7 @@
 
                 const closePickerMenuFunc = () => {
                     pickerMenu.classList.remove("show"); 
-                    setTimeout(() => {pickerMenu.remove(); this.attachDocumentMouseEvents()}, 300);
+                    setTimeout(() => {pickerMenu.remove(); this.attachDocumentMouseListeners()}, 300);
                 };
                 
                 document.onclick = (e) => {if (!e.target.closest(".online-cfg-picker-menu")) {closePickerMenuFunc()}}
@@ -4899,14 +5190,15 @@
 
             generateOnlineCfgPickerMenuDirTree(type="section") {
                 // Creating an array containing all the properties' value of this.onlineConfigs.Configs that are objects (so that have a descendance) with at least one property: they are the data of the section folders
-                const sectionsArray = Object.values(this.onlineConfigs.Configs).map(value => {if (value instanceof Object && Object.keys(value).length>0) {return value}}).filter(value => {return value});
+                const sectionsData = this.onlineConfigs.Configs;
+                const sectionsArray = Object.values(sectionsData).map(value => {if (value instanceof Object && Object.keys(value).length>0) {return value}}).filter(value => {return value});
 
 
                 let html = type == "section" ? `
-                    <div class="online-cfg-picker-menu-dir-tree ${type} show" data-path="${this.onlineConfigs.Configs.path}">
+                    <div class="online-cfg-picker-menu-dir-tree ${type} show" data-path="${sectionsData.path}">
                         <div class="online-cfg-picker-menu-dir-tree-header">SECTION</div>
                         <div class="online-cfg-picker-menu-dir-tree-body">
-                        <div class="online-cfg-picker-menu-dir-tree-nb-cfgs">Nb configs: ${this.onlineConfigs.Configs.nbCfgs}</div>
+                        <div class="online-cfg-picker-menu-dir-tree-nb-cfgs">${sectionsData.nbCfgs} config${sectionsData.nbCfgs>1?"s":""}</div>
                 ` : "";
 
                 html += sectionsArray.map(sectionDirData => {       // Dir: Section
@@ -4919,7 +5211,7 @@
                     let out = type == "year" ? `
                     <div class="online-cfg-picker-menu-dir-tree ${type}" style="display: none" data-path="${sectionDirData.path}">
                         <div class="online-cfg-picker-menu-dir-tree-header">${this.lang == "fr" ? "ANNÉE" : "YEAR"}</div>
-                        <div class="online-cfg-picker-menu-dir-tree-nb-cfgs">Nb configs: ${sectionDirData.nbCfgs}</div>
+                        <div class="online-cfg-picker-menu-dir-tree-nb-cfgs">${sectionDirData.nbCfgs} config${sectionDirData.nbCfgs>1?"s":""}</div>
                         <div class="online-cfg-picker-menu-dir-tree-body">
                     ` : "";
                     
@@ -4934,7 +5226,7 @@
                         let out = type == "prom" ? `
                         <div class="online-cfg-picker-menu-dir-tree ${type}" style="display: none" data-path="${yearDirData.path}">
                             <div class="online-cfg-picker-menu-dir-tree-header">${this.lang == "fr" ? "PROMO" : "PROM"}</div>
-                            <div class="online-cfg-picker-menu-dir-tree-nb-cfgs">Nb configs: ${yearDirData.nbCfgs}</div>
+                            <div class="online-cfg-picker-menu-dir-tree-nb-cfgs">${yearDirData.nbCfgs} config${yearDirData.nbCfgs>1?"s":""}</div>
                             <div class="online-cfg-picker-menu-dir-tree-body">
                         ` : "";
                         
@@ -5016,7 +5308,9 @@
                             }
                             else if (parsed?.ueConfig && parsed?.version == this.configVersion) {
                                 try {
-                                    this.ueConfig = parsed.ueConfig || {};
+                                    Object.keys(parsed.ueConfig).forEach(semX => {
+                                        this.ueConfig[semX] = parsed.ueConfig[semX];
+                                    })
                                     this.saveConfig();
                                 } catch (e) {
                                     // ignore storage errors
@@ -5031,11 +5325,12 @@
                                     pickerMenu?.remove()
                                     this.removeSubjectCardFromSubjectSelection(); 
                                     this.getGradesDatas();
-                                    this.renderContent(); 
+                                    this.generateContent(); 
                                     this.scrollToClientHighestElem("", {id: "main-average-card", margin: 10, smooth: true});
                                 }, 300); 
                             } catch (e) {}
 
+                            this.showLoadingSymbol(false);
                             resolve(parsed);
                         } catch (err) {
                             reject(err);
@@ -5044,6 +5339,7 @@
 
                     // If a File object was passed, read it
                     if (file instanceof File) {
+                        this.showLoadingSymbol(true)
                         const reader = new FileReader();
                         reader.onload = (e) => handleText(e.target.result);
                         reader.onerror = (e) => reject(e);
@@ -5117,8 +5413,7 @@
                     
                     this.removeSubjectCardFromSubjectSelection();
                     this.scrollToClientHighestElem();
-                    this.renderContent();
-                    this.attachEventListeners();
+                    this.generateContent();
                 }
                 else if (this.keyInputMatch(e, "D", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
 
@@ -5135,8 +5430,7 @@
                     }
 
                     this.scrollToClientHighestElem();
-                    this.renderContent();
-                    this.attachEventListeners();
+                    this.generateContent();
                 }
                 else if (this.keyInputMatch(e, "L", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
                     
@@ -5152,8 +5446,7 @@
                     }
                     
                     this.scrollToClientHighestElem();
-                    this.renderContent(false);
-                    this.attachEventListeners();
+                    this.generateContent(false);
                 }
                 else if (this.keyInputMatch(e, "R", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
                     console.warn("You fell into my breakpoint trap!!"); debugger;
