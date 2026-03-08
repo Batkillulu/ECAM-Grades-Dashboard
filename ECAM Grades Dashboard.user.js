@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.0.6
+// @version      2.0.7
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/group/education/notes*
@@ -194,8 +194,11 @@
 
         // MARK: view mode buttons
         styles += `
-            .view-toggle        { display: flex; background: #f7f7f7; padding: 4px; border-radius: 8px; gap: 8px; align-items: center; }
-            .view-btn           { background: transparent; padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 18px; transition: all 0.2s ease; width: 48px; height: 40px; }
+            .view-toggle        { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 4px; background: #f7f7f7; border-radius: 8px; }
+            .fold-toggle        { display: flex; align-items: center; justify-content: center; gap: 8px; height: 40px; width: 250px; background: #f7f7f7; outline: 1px solid; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; user-select: none; transition: all 0.3s ease; }
+            .fold-toggle:hover  { background: white; box-shadow: 3px 5px 5px 0px #00000042; transform: scale(0.95); }
+            .fold-toggle.active { background: white; box-shadow: 3px 5px 5px 0px #00000042; }
+            .view-btn           { background: transparent; padding: 8px 12px; border: none; outline: 1px solid; border-radius: 6px; cursor: pointer; font-size: 18px; transition: all 0.2s ease; width: 48px; height: 40px; }
             .view-btn:hover     { background: white; box-shadow: 3px 5px 5px 0px #00000042; transform: scale(0.95); }
             .view-btn.active    { background: white; box-shadow: 3px 5px 5px 0px #00000042; }
         `;
@@ -439,12 +442,12 @@
 
             .ue-details                     { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 15px; opacity: 100%; transition: all 0.2s ease; }
             .ue-details.edit-mode           { gap: 8px; }
-            .ue-details.fold            { gap: 0px; opacity: 0%; }
-            .ue-moyenne                     { font-size: 24px; font-weight: 800; display: flex; align-items: center; gap:10px; width: 193px; }
+            .ue-details.fold                { gap: 0px; opacity: 0%; }
+            .ue-moyenne                     { display: flex; align-items: center; justify-content: flex-end; font-size: 24px; font-weight: 800; gap:10px; width: 193px; }
             .ue-moyenne.good                { color: #10b981; }
             .ue-moyenne.bad                 { color: #ef4444; }
             .ue-moyenne.unknown             { color: #6d6d6dff; }
-            .ue-toggle                      { width: 24px; height: 24px; font-size: 18px; color: #000000; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; margin-left: 5px; }
+            .ue-toggle                      { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; margin-left: 5px; font-size: 18px; color: #000000; transition: transform 0.3s ease; }
             .ue-toggle.open                 { transform: rotate(180deg); }
 
         `;
@@ -626,7 +629,7 @@
 
         constructor() {
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.0.6";
+            this.scriptVersion = "2.0.7";
 
             this.now        = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
             this.dateHour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
@@ -2106,10 +2109,13 @@
                         <button class="filter-tab ${this.currentSemester == "all" ? "active" : ""}" id="filter-tab-all-semesters" data-filter="all"></button>
                         ${Object.keys(this.semesters).sort((a,b) => a-b).map(s => `<button class="filter-tab ${s == this.currentSemester ? "active" : ""}" id="filter-tab-semester-${s}" data-filter="${s}">S${s}</button>`).join('')}
                     </div>
-                    <div class="view-toggle">
-                        <div style="padding: 0px 5px 0px 8px; font-size: 14px; font-weight: 500"></div>
-                        <button class="view-btn ${this.defView == "detailed" ? "active" : ""}" id="view-btn-detailed" data-view="detailed">📊</button>
-                        <button class="view-btn ${this.defView == "compact" ? "active" :  ""}" id="view-btn-compact"  data-view="compact" >📋</button>
+                    <div style="display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 8px;">
+                        <div class="view-toggle">
+                            <div style="padding: 0px 5px 0px 8px; font-size: 14px; font-weight: 500"></div>
+                            <button class="view-btn ${this.defView == "detailed" ? "active" : ""}" id="view-btn-detailed" data-view="detailed">📊</button>
+                            <button class="view-btn ${this.defView == "compact"  ? "active" : ""}" id="view-btn-compact"  data-view="compact" >📋</button>
+                        </div>
+                        <div class="fold-toggle"></div>
                     </div>
                 </div>
 
@@ -2275,7 +2281,8 @@
 
                 document.querySelector(".filter-tab").innerHTML = this.lang == "fr" ? "Tous" : "All";
 
-                document.querySelector(".view-toggle").children[0].innerHTML = this.lang == "fr" ? `Basculer le mode d'affichage (Maj+D)` : `Toggle display mode (Shift+D)`;
+                document.querySelector(`.view-toggle`).children[0].innerHTML = this.lang == "fr" ? `Basculer le mode d'affichage (Maj+D)` : `Toggle display mode (Shift+D)`;
+                document.querySelector(`.fold-toggle`).innerHTML = this.lang == "fr" ? `Plier tous les modules (Maj+F)` : `Fold every module (Shift+F)`;
                 const viewBtnsArray = document.querySelectorAll(".view-btn");
                 viewBtnsArray[0].title = this.lang == "fr" ? "Vue détaillée" : "Detailed view";
                 viewBtnsArray[1].title = this.lang == "fr" ? "Vue compacte" : "Compact view";
@@ -2906,6 +2913,7 @@
                 
                 this.attachFilterSemesterListener();
                 this.attachViewModeBtnsListener();
+                this.attachFoldToggleBtnListener();
                 
                 this.attachAllSubjectCardRelatedEvenListenersForEverySubjectCard();
 
@@ -3182,9 +3190,19 @@
                                 e.target.classList.add('active');
                                 this.viewMode = e.target.dataset.view;
                                 localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
+
+                                this.foldedUeCardsId = [];
+                                document.querySelector(".fold-toggle").classList.remove("active");
+                                
                                 this.generateContent();
                             };
                         });
+                    }
+                    attachFoldToggleBtnListener() {
+                        document.querySelector(".fold-toggle").onclick = (e) => {
+                            e.target.classList.toggle("active");
+                            this.toggleFoldAllUeCards();
+                        }
                     }
                 //#endregion
 
@@ -3484,22 +3502,36 @@
                     }
                 }
 
+                // MARK: -toggle ue card folding
                 /** Call this method to switch a UE card's state between folded and unfolded 
                  * 
                  * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a UE header HTML Element or an event triggered by a UE header
                  * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other ues are to be hidden (if true) or not (if false)
-                 * @param {Boolean} hideAdjacentUeInsertionFields   Default: false — Destined to control whether the upper and lower ue insertion fields are to be hidden (if true) or not (if false)
-                */
-                toggleFoldUeCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentUeInsertionFields=false) {
+                 * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be hidden (if true) or not (if false)
+                 * @param {Boolean} bypassFoldedUeCardsId Default: false — Destined to control whether the folded UE card ID's addition to/deletion from this.foldedUeCardsId will be bypassed (if true) or not (if false)
+                 */
+                toggleFoldUeCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentUeInsertionFields=false, bypassFoldedUeCardsId=false) {
                     if (trigger?.classList?.contains("ue-header") || (trigger?.target?.classList?.contains("ue-header"))) {
                         const ueHeader = trigger?.target || trigger;
                         if (ueHeader.classList.contains("fold")) {
-                            this.unfoldUeCard(ueHeader, hideOtherSubjectInsertionFields, hideAdjacentUeInsertionFields)
+                            this.unfoldUeCard(ueHeader, hideOtherSubjectInsertionFields, hideAdjacentUeInsertionFields, bypassFoldedUeCardsId)
                         }
                         else {
-                            this.foldUeCard(ueHeader, hideOtherSubjectInsertionFields, hideAdjacentUeInsertionFields)
+                            this.foldUeCard(ueHeader, hideOtherSubjectInsertionFields, hideAdjacentUeInsertionFields, bypassFoldedUeCardsId)
                         }
                     }
+                }
+                /** Call this method to switch all UE cards' state between folded and unfolded 
+                 * 
+                 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a UE header HTML Element or an event triggered by a UE header
+                 * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other ues are to be hidden (if true) or not (if false)
+                 * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be hidden (if true) or not (if false)
+                 * @param {Boolean} bypassFoldedUeCardsId Default: false — Destined to control whether the folded UE card ID's addition to/deletion from this.foldedUeCardsId will be bypassed (if true) or not (if false)
+                 */
+                toggleFoldAllUeCards(hideOtherSubjectInsertionFields=false, hideAdjacentUeInsertionFields=false, bypassFoldedUeCardsId=false) {
+                    document.querySelectorAll(".ue-header").forEach(ueHeader => {
+                        this.toggleFoldUeCard(ueHeader, hideOtherSubjectInsertionFields, hideAdjacentUeInsertionFields, bypassFoldedUeCardsId)
+                    })
                 }
 
                 // MARK: -fold ue card
@@ -3508,8 +3540,9 @@
                  * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a UE header HTML Element or an event triggered by a UE header
                  * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other ues are to be hidden (if true) or not (if false)
                  * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be hidden (if true) or not (if false)
+                 * @param {Boolean} bypassFoldedUeCardsId Default: false — Destined to control whether the folded UE card ID's addition to this.foldedUeCardsId will be bypassed (if true) or not (if false)
                  */
-                foldUeCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentUeInsertionFields=false) {
+                foldUeCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentUeInsertionFields=false, bypassFoldedUeCardsId=false) {
                     // testing if the trigger argument is an HTML of class ue-card or an Event triggered by a UE header or one of its elements
                     if (trigger?.classList?.contains("ue-header") || (trigger?.target?.classList?.contains("ue-header"))) {
                         // Identifying the ueCard depending on whether the trigger argument is a UE header or an event triggered by a UE header
@@ -3576,19 +3609,34 @@
                             })
                         }, 200)
 
-                        this.foldedUeCardsId.push(ueCard.id);
+                        if (!bypassFoldedUeCardsId) {
+                            this.foldedUeCardsId.push(ueCard.id);
+                        }
                     }
                     
+                }
+                /** Call this method to fold all UE cards 
+                 * 
+                 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a UE header HTML Element or an event triggered by a UE header
+                 * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other ues are to be hidden (if true) or not (if false)
+                 * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be hidden (if true) or not (if false)
+                 * @param {Boolean} bypassFoldedUeCardsId Default: false — Destined to control whether the folded UE card ID's addition to this.foldedUeCardsId will be bypassed (if true) or not (if false)
+                 */
+                foldAllUeCards(hideOtherSubjectInsertionFields=false, hideAdjacentUeInsertionFields=false, bypassFoldedUeCardsId=false) {
+                    document.querySelectorAll(".ue-header").forEach(ueHeader => {
+                        this.foldUeCard(ueHeader, hideOtherSubjectInsertionFields, hideAdjacentUeInsertionFields, bypassFoldedUeCardsId)
+                    })
                 }
 
                 // MARK: -unfold ue card
                 /** Call this method to unfold a UE card
                  * 
                  * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a UE header HTML Element or an event triggered by a UE header
-                 * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other ues are to be hidden (if true) or not (if false)
-                 * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be hidden (if true) or not (if false)
+                 * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other ues are to be shown (if true) or not (if false)
+                 * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be shown (if true) or not (if false)
+                 * @param {Boolean} bypassFoldedUeCardsId Default: false — Destined to control whether the unfolded UE card ID's deletion from this.foldedUeCardsId will be bypassed (if true) or not (if false)
                  */
-                unfoldUeCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentUeInsertionFields=false) {
+                unfoldUeCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentUeInsertionFields=false, bypassFoldedUeCardsId=false) {
                     // testing if the trigger argument is an HTML of class ue-card or an Event triggered by a UE header or one of its elements
                     if (trigger?.classList?.contains("ue-header") || (trigger?.target?.classList?.contains("ue-header"))) {
                         // Identifying the ueCard depending on whether the trigger argument is a UE header or an event triggered by a UE header
@@ -3675,9 +3723,24 @@
                             }, 10)
                         }
 
-                        this.foldedUeCardsId.splice(0, this.foldedUeCardsId.indexOf(ueCard.id)+1);
+                        if (!bypassFoldedUeCardsId) {
+                            this.foldedUeCardsId.splice(0, this.foldedUeCardsId.indexOf(ueCard.id)+1);
+                        }
                     }
                 }
+                /** Call this method to unfold all UE cards
+                 * 
+                 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a UE header HTML Element or an event triggered by a UE header
+                 * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other ues are to be shown (if true) or not (if false)
+                 * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be shown (if true) or not (if false)
+                 * @param {Boolean} bypassFoldedUeCardsId Default: false — Destined to control whether the unfolded UE card ID's deletion from this.foldedUeCardsId will be bypassed (if true) or not (if false)
+                 */
+                unfoldAllUeCards(hideOtherSubjectInsertionFields=false, hideAdjacentUeInsertionFields=false, bypassFoldedUeCardsId=false) {
+                    document.querySelectorAll(".ue-header").forEach(ueHeader => {
+                        this.unfoldUeCard(ueHeader, hideOtherSubjectInsertionFields, hideAdjacentUeInsertionFields, bypassFoldedUeCardsId)
+                    })
+                }
+
 
                 ueHeaderClickAction(e) {
                     document.body.onmousemove = (e) => {
@@ -3989,8 +4052,9 @@
                     document.querySelector(".drop-field-remove-from-ue-hitbox") .classList.add("show");
                     
                     if (!this.foldedUeCardsId.includes(card.id)) {
-                        this.foldUeCard(e, true, true);
+                        this.foldUeCard(e, true, true, true);
                     }
+                    document.querySelector(".semester-content").classList.add("dragging");
                 }
 
                 e.dataTransfer.effectAllowed = "link";
@@ -4084,8 +4148,9 @@
                     document.querySelector(".drop-field-remove-from-ue-hitbox") .classList.remove("show");
 
                     if (!this.foldedUeCardsId.includes(card.id)) {
-                        this.unfoldUeCard(e, true, true);
+                        this.unfoldUeCard(e, true, true, true);
                     }
+                    document.querySelector(".semester-content").classList.remove("dragging");
                 }
             }
             draggedSelectedElementOnDragStartEvent(e, {draggedElement, card}) {
@@ -5464,6 +5529,10 @@
                     
                     this.editMode = !this.editMode;
                     localStorage.setItem("ECAM_DASHBOARD_DEFAULT_EDIT_MODE", this.editMode);
+                    
+                    this.foldedUeCardsId = [];
+                    document.querySelector(".fold-toggle").classList.remove("active");
+
                     this.removeSubjectCardFromSubjectSelection();
                     this.scrollToClientHighestElem();
                     this.generateContent();
@@ -5472,6 +5541,9 @@
 
                     this.viewMode = this.viewMode == "detailed" ? "compact" : "detailed";
                     localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
+                    this.foldedUeCardsId = [];
+                    document.querySelector(".fold-toggle").classList.remove("active");
+
                     if (this.viewMode == "detailed") {
                         document.getElementById('view-btn-detailed').classList.add("active")
                         document.getElementById('view-btn-compact').classList.remove("active")
@@ -5489,6 +5561,9 @@
                     
                     this.lang = this.lang == "fr" ? "en" : "fr";
                     localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
+                    this.foldedUeCardsId = [];
+                    document.querySelector(".fold-toggle").classList.remove("active");
+
                     if (this.lang == "fr") {
                         document.getElementById('fr-lang-btn').classList.add('active')
                         document.getElementById('en-lang-btn').classList.remove('active')
@@ -5503,19 +5578,16 @@
                 }
                 else if (this.keyInputMatch(e, "F", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
                     const className = "ue-header", timeout = 210, highestElemInPageHandleType = "last above", smooth = true;
+
                     if (this.foldedUeCardsId.length == 0) {
                         this.scrollToClientHighestElem("first", {className, timeout, highestElemInPageHandleType, smooth, block: "center"});
-
-                        document.querySelectorAll(".ue-header").forEach(ueHeader => {
-                            this.foldUeCard(ueHeader);
-                        })
+                        document.querySelector(".fold-toggle").classList.add("active");
+                        this.foldAllUeCards();
                     }
                     else {
                         this.scrollToClientHighestElem("first", {className, timeout, highestElemInPageHandleType, smooth, block: "start"});
-                        
-                        document.querySelectorAll(".ue-header").forEach(ueHeader => {
-                            this.unfoldUeCard(ueHeader);
-                        })
+                        document.querySelector(".fold-toggle").classList.remove("active");
+                        this.unfoldAllUeCards();
                     }
                     
                 }
