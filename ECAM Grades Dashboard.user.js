@@ -407,7 +407,7 @@
         styles += `
 
             .semester-grid      { display: grid; width: 100%; gap: 20px; transition: gap 0.2s ease; }
-            .ue-card                { display: flex; flex-direction: column; align-items: center; width: 100%; background: #fafafa; border-radius: 25px; border: 3px solid #e5e5e5; scroll-margin: 70px; transition: border-radius 0.2s ease; }
+            .ue-card                { display: flex; flex-direction: column; align-items: center; width: 100%; background: #fafafa; border-radius: 25px; border: 3px solid #e5e5e5; scroll-margin: 70px; transition: border-radius 0.2s ease, margin 0.2s ease; }
             .ue-card.fold           { border-radius: 25px; border-width: 0px; }
             .ue-card.validated      { border-color: #10b981ff; background: radial-gradient(transparent 0%, #f0fdf4ff 75%); }
             .ue-card.failed         { border-color: #ef4444ff; background: radial-gradient(transparent 0%, #fef2f2ff 75%); }
@@ -467,7 +467,7 @@
         // MARK: -SUBJECT CARDS
         styles += `
 
-            .subject-card               { display: flex; flex-direction: column; align-items: center; width: 100%; opacity: 100%; transition: all 0.3s ease, box-shadow 0.2s ease, opacity 0.2s ease, height 0.2s ease, padding 0.2s ease, border-width 0.2s ease; }
+            .subject-card               { display: flex; flex-direction: column; align-items: center; width: 100%; opacity: 100%; transition: all 0.2s ease; }
             .subject-card.detailed                  { border: 4px solid #ffffffff; border-radius: 20px; width: 100%; background: #c5c5c5; }
             .subject-card.detailed.good             { box-shadow: 0px 0px 0px 0px #39ff8f; background: linear-gradient(300deg, #f0fdf4 30%, transparent); }
             .subject-card.detailed.good:hover       { box-shadow: 0px 0px 7px 0px #39ff8f; }
@@ -485,7 +485,7 @@
             .subject-name               { font-weight: 800; color: #1a1a1a; font-size: 14px }
             .subject-name.input         { font-weight: 800; color: #1a1a1a; font-size: 14px; border: 2px solid #797979; border-radius: 15px; padding-left: 8px; width: 100%; height: 25px;}
             .subject-coef-input-box     { padding-left: 5px; width: 48px; border-radius: 8px; }
-            .subject-card.compact                       { flex-direction: row; justify-content:space-between; padding: 7px 0px; border-radius: 16px; border: 3px solid #ffffff; height: 68px; width: 100%; min-width: 380px; background: none; transition: all 0.2s ease; }
+            .subject-card.compact                       { flex-direction: row; justify-content:space-between; padding: 7px 0px; border-radius: 16px; border: 3px solid #ffffff; height: 68px; width: 100%; min-width: 380px; background: none; }
             .subject-card.compact.edit-mode             {  }
             .subject-card.compact.good                  { border-color: #c0ffd2; background: linear-gradient(300deg, #e3ffeb 30%, transparent); }
             .subject-card.compact.meh                   { border-color: #ffe1c2; background: linear-gradient(300deg, #ffe8d0 30%, transparent); }
@@ -3507,7 +3507,7 @@
                  * 
                  * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a UE header HTML Element or an event triggered by a UE header
                  * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other ues are to be hidden (if true) or not (if false)
-                 * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be hidden (if true) or not (if false)
+                 * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
                  * @param {Boolean} bypassFoldedUeCardsId Default: false — Destined to control whether the folded UE card ID's addition to/deletion from this.foldedUeCardsId will be bypassed (if true) or not (if false)
                  */
                 toggleFoldUeCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentUeInsertionFields=false, bypassFoldedUeCardsId=false) {
@@ -3525,7 +3525,7 @@
                  * 
                  * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a UE header HTML Element or an event triggered by a UE header
                  * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other ues are to be hidden (if true) or not (if false)
-                 * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be hidden (if true) or not (if false)
+                 * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
                  * @param {Boolean} bypassFoldedUeCardsId Default: false — Destined to control whether the folded UE card ID's addition to/deletion from this.foldedUeCardsId will be bypassed (if true) or not (if false)
                  */
                 toggleFoldAllUeCards(hideOtherSubjectInsertionFields=false, hideAdjacentUeInsertionFields=false, bypassFoldedUeCardsId=false) {
@@ -3539,7 +3539,7 @@
                  * 
                  * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a UE header HTML Element or an event triggered by a UE header
                  * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other ues are to be hidden (if true) or not (if false)
-                 * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be hidden (if true) or not (if false)
+                 * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
                  * @param {Boolean} bypassFoldedUeCardsId Default: false — Destined to control whether the folded UE card ID's addition to this.foldedUeCardsId will be bypassed (if true) or not (if false)
                  */
                 foldUeCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentUeInsertionFields=false, bypassFoldedUeCardsId=false) {
@@ -3552,25 +3552,29 @@
                         const index         = ueCard.dataset.index;
                         const ueCardElems   = ueCard.querySelectorAll(".ue-card, .ue-header, .ue-info, .ue-card-content, .ue-details");
                         const toggle        = ueCard.querySelector('.ue-toggle');
-                        toggle.classList.remove("open");
-                        
-                        const subjectInsertFields = document.querySelectorAll(`.drop-field.insert-field.subject[data-semester="${sem}"]${hideOtherSubjectInsertionFields ? "" : `[data-ue="${ue}"]`}`)
-                        const subjectInsertFieldHitboxes = Object.values(subjectInsertFields).map(elem => {return elem.querySelector(".drop-subject-card-insert-hitbox")});
+                        let subjectCards    = [];
 
-                        const subjectCards = document.querySelectorAll(`.subject-card[data-semester="${sem}"][data-ue="${ue}"]`);
+                        if (hideAdjacentUeInsertionFields != "only") {
+                            toggle.classList.remove("open");
+                            
+                            const subjectInsertFields = document.querySelectorAll(`.drop-field.insert-field.subject[data-semester="${sem}"]${hideOtherSubjectInsertionFields ? "" : `[data-ue="${ue}"]`}`)
+                            const subjectInsertFieldHitboxes = Object.values(subjectInsertFields).map(elem => {return elem.querySelector(".drop-subject-card-insert-hitbox")});
+
+                            subjectCards = document.querySelectorAll(`.subject-card[data-semester="${sem}"][data-ue="${ue}"]`);
 
 
-                        subjectInsertFieldHitboxes.forEach(subjInsFieldHitbox => {
-                            this.detachInsertFieldHitboxEventListeners(subjInsFieldHitbox);
-                        })
-                        subjectInsertFields.forEach(subjInsField => {
-                            subjInsField.classList.remove("show");
-                        })
-                        subjectCards.forEach(subjCard => {
-                            subjCard.classList.add("fold");
-                        })
-                        ueCardElems.forEach(elem => {elem.classList.add("fold")})
-                        ueCard.classList.add("fold");
+                            subjectInsertFieldHitboxes.forEach(subjInsFieldHitbox => {
+                                this.detachInsertFieldHitboxEventListeners(subjInsFieldHitbox);
+                            })
+                            subjectInsertFields.forEach(subjInsField => {
+                                subjInsField.classList.remove("show");
+                            })
+                            subjectCards.forEach(subjCard => {
+                                subjCard.classList.add("fold");
+                            })
+                            ueCardElems.forEach(elem => {elem.classList.add("fold")})
+                            ueCard.classList.add("fold");
+                        }
 
                         let upperInsertField = "";
                         let lowerInsertField = "";
@@ -3600,13 +3604,15 @@
                                 upperInsertField.style.display = "none";
                                 lowerInsertField.style.display = "none";
                             }
-                            
-                            subjectCards.forEach(subjCard => {
-                                subjCard.style.display = "none";
-                            })
-                            ueCardElems.forEach(elem => {
-                                if (!elem.classList.contains("ue-header")) {elem.style.display = "none";}
-                            })
+
+                            if (hideAdjacentUeInsertionFields != "only") {
+                                subjectCards.forEach(subjCard => {
+                                    subjCard.style.display = "none";
+                                })
+                                ueCardElems.forEach(elem => {
+                                    if (!elem.classList.contains("ue-header")) {elem.style.display = "none";}
+                                })
+                            }
                         }, 200)
 
                         if (!bypassFoldedUeCardsId) {
@@ -3619,7 +3625,7 @@
                  * 
                  * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a UE header HTML Element or an event triggered by a UE header
                  * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other ues are to be hidden (if true) or not (if false)
-                 * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be hidden (if true) or not (if false)
+                 * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
                  * @param {Boolean} bypassFoldedUeCardsId Default: false — Destined to control whether the folded UE card ID's addition to this.foldedUeCardsId will be bypassed (if true) or not (if false)
                  */
                 foldAllUeCards(hideOtherSubjectInsertionFields=false, hideAdjacentUeInsertionFields=false, bypassFoldedUeCardsId=false) {
@@ -3633,7 +3639,7 @@
                  * 
                  * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a UE header HTML Element or an event triggered by a UE header
                  * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other ues are to be shown (if true) or not (if false)
-                 * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be shown (if true) or not (if false)
+                 * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
                  * @param {Boolean} bypassFoldedUeCardsId Default: false — Destined to control whether the unfolded UE card ID's deletion from this.foldedUeCardsId will be bypassed (if true) or not (if false)
                  */
                 unfoldUeCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentUeInsertionFields=false, bypassFoldedUeCardsId=false) {
@@ -3646,22 +3652,19 @@
                         const index         = ueCard.dataset.index;
                         const ueCardElems   = ueCard.querySelectorAll(".ue-card, .ue-header, .ue-info, .ue-card-content, .ue-details");
                         const toggle        = ueCard.querySelector('.ue-toggle');
-                        toggle.classList.add("open");
-
-                        const subjectInsertFields   = document.querySelectorAll(`.drop-field.insert-field.subject[data-semester="${sem}"]${hideOtherSubjectInsertionFields ? `[data-ue="${ue}"]` : ""}`);
-                        const subjectCards          = document.querySelectorAll(`.subject-card[data-semester="${sem}"][data-ue="${ue}"]`);
-
+                        let subjectCards    = [];
                         let upperInsertField = "";
                         let lowerInsertField = "";
+
+
+                        clearTimeout(this.foldUeCardTimeout);
+
 
                         if (hideAdjacentUeInsertionFields) {
                             upperInsertField = document.querySelector(   `.drop-field.insert-field.ue[data-semester="${sem}"][data-index="${index}"]`);
                             lowerInsertField = document.querySelector(   `.drop-field.insert-field.ue[data-semester="${sem}"][data-index="${parseInt(index)+1}"]`);
                         }
-
                         
-                        clearTimeout(this.foldUeCardTimeout);
-
                         if (upperInsertField) {
                             upperInsertField.style.display = "";
                             this.timeouts.upperInsertFieldUnfoldTimeout = setTimeout(() => {
@@ -3682,49 +3685,57 @@
                             }, 10)
                         }
 
-                        if (subjectInsertFields.length > 0) {
-                            subjectInsertFields.forEach(subjInsField => {
-                                subjInsField.classList.display = "";
-                            })
-                            this.timeouts.subjectInsertFieldUnfoldTimeout = setTimeout(() => {
-                                subjectInsertFields.forEach(subjInsField => {
-                                    subjInsField.classList.add("show");
-                                })
+
+                        if (hideAdjacentUeInsertionFields != "only") {
+                            toggle.classList.add("open");
                             
-                                const subjectInsertFieldHitboxes = Object.values(subjectInsertFields).map(elem => {return elem.querySelector(".drop-subject-card-insert-hitbox")});
-                                subjectInsertFieldHitboxes.forEach(subjInsFieldHitbox => {this.attachInsertFieldHitboxEventListeners(subjInsFieldHitbox)})
-                            }, 10)
-                        }
+                            subjectCards = document.querySelectorAll(`.subject-card[data-semester="${sem}"][data-ue="${ue}"]`);
 
-                        if (subjectCards.length > 0) {
-                            subjectCards.forEach(subjCard => {
-                                subjCard.style.display = "";
-                            })
-                            this.timeouts.subjectCardsUnfoldTimeout = setTimeout(() => {
-                                subjectCards.forEach(subjCard => {
-                                    subjCard.classList.remove("fold");
+                            const subjectInsertFields   = document.querySelectorAll(`.drop-field.insert-field.subject[data-semester="${sem}"]${hideOtherSubjectInsertionFields ? `[data-ue="${ue}"]` : ""}`);
+                            if (subjectInsertFields.length > 0) {
+                                subjectInsertFields.forEach(subjInsField => {
+                                    subjInsField.classList.display = "";
                                 })
-                            }, 10)
-                        }
+                                this.timeouts.subjectInsertFieldUnfoldTimeout = setTimeout(() => {
+                                    subjectInsertFields.forEach(subjInsField => {
+                                        subjInsField.classList.add("show");
+                                    })
+                                
+                                    const subjectInsertFieldHitboxes = Object.values(subjectInsertFields).map(elem => {return elem.querySelector(".drop-subject-card-insert-hitbox")});
+                                    subjectInsertFieldHitboxes.forEach(subjInsFieldHitbox => {this.attachInsertFieldHitboxEventListeners(subjInsFieldHitbox)})
+                                }, 10)
+                            }
 
-                        if (ueCardElems.length > 0) {
-                            ueCardElems.forEach(elem => {
-                                if (!elem.classList.contains("ue-header")) {elem.style.display = "";}
-                            })
-                            this.timeouts.ueCardElemsUnfoldTimeout = setTimeout(() => {
-                                ueCardElems.forEach(elem => {elem.classList.remove("fold")})
-                            }, 10)
-                        }
-                        
-                        if (ueCard) {
-                            ueCard.style.display = "";
-                            this.timeouts.ueCardUnfoldTimeout = setTimeout(() => {
-                                ueCard.classList.remove("fold");
-                            }, 10)
-                        }
+                            if (subjectCards.length > 0) {
+                                subjectCards.forEach(subjCard => {
+                                    subjCard.style.display = "";
+                                })
+                                this.timeouts.subjectCardsUnfoldTimeout = setTimeout(() => {
+                                    subjectCards.forEach(subjCard => {
+                                        subjCard.classList.remove("fold");
+                                    })
+                                }, 10)
+                            }
 
-                        if (!bypassFoldedUeCardsId) {
-                            this.foldedUeCardsId.splice(0, this.foldedUeCardsId.indexOf(ueCard.id)+1);
+                            if (ueCardElems.length > 0) {
+                                ueCardElems.forEach(elem => {
+                                    if (!elem.classList.contains("ue-header")) {elem.style.display = "";}
+                                })
+                                this.timeouts.ueCardElemsUnfoldTimeout = setTimeout(() => {
+                                    ueCardElems.forEach(elem => {elem.classList.remove("fold")})
+                                }, 10)
+                            }
+                            
+                            if (ueCard) {
+                                ueCard.style.display = "";
+                                this.timeouts.ueCardUnfoldTimeout = setTimeout(() => {
+                                    ueCard.classList.remove("fold");
+                                }, 10)
+                            }
+
+                            if (!bypassFoldedUeCardsId) {
+                                this.foldedUeCardsId.splice(0, this.foldedUeCardsId.indexOf(ueCard.id)+1);
+                            }
                         }
                     }
                 }
@@ -3732,7 +3743,7 @@
                  * 
                  * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a UE header HTML Element or an event triggered by a UE header
                  * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other ues are to be shown (if true) or not (if false)
-                 * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be shown (if true) or not (if false)
+                 * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
                  * @param {Boolean} bypassFoldedUeCardsId Default: false — Destined to control whether the unfolded UE card ID's deletion from this.foldedUeCardsId will be bypassed (if true) or not (if false)
                  */
                 unfoldAllUeCards(hideOtherSubjectInsertionFields=false, hideAdjacentUeInsertionFields=false, bypassFoldedUeCardsId=false) {
@@ -3980,7 +3991,7 @@
                     this.currentlyDraggedElement = draggedElement;
                     this.currentlyDraggedCard = card;
                     this.currentlyDraggedCard.style.width = "50%";
-
+                    
                     if (this.currentlyDraggedCard.classList.contains("unclassified")) {
                         this.currentlyDraggedCard.querySelector(".grades-table")        .style.display = "none";
                         this.currentlyDraggedCard.querySelector(".subject-card-header") .style.border = "none";
@@ -3988,9 +3999,11 @@
                         
                     } 
                     else if (this.currentlyDraggedCard.classList.contains("compact")) {
+                        this.currentlyDraggedCard.style.margin = "38px 0px";
                         this.currentlyDraggedCard.querySelector(".grades-table-subject-total-coef-div").style.display = "none";
                     }
                     else {
+                        this.currentlyDraggedCard.style.margin = "38px 0px";
                         this.currentlyDraggedCard.querySelector(".subject-card-header") .children[0].style.width =    "50%";
                         this.currentlyDraggedCard.querySelector(".grades-table-subject-total-coef-div").style.width = "50%";
                         this.currentlyDraggedCard.querySelector(".grades-table")        .style.display = "none";
@@ -4021,8 +4034,8 @@
 
 
                     if (!this.currentlyDraggedCard.classList.contains("unclassified")) {
-                        const sem = this.currentlyDraggedCard.dataset.semester;
-                        const ue = this.currentlyDraggedCard.dataset.ue;
+                        const sem   = this.currentlyDraggedCard.dataset.semester;
+                        const ue    = this.currentlyDraggedCard.dataset.ue;
                         const index = this.currentlyDraggedCard.dataset.index;
 
                         const upperInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-ue="${ue}"][data-index="${index}"]`)
@@ -4054,7 +4067,12 @@
                     if (!this.foldedUeCardsId.includes(card.id)) {
                         this.foldUeCard(e, true, true, true);
                     }
+                    else {
+                        this.foldUeCard(e, true, "only", true);
+                    }
+                    
                     document.querySelector(".semester-content").classList.add("dragging");
+                    this.currentlyDraggedCard.style.margin = "75px 0px";
                 }
 
                 e.dataTransfer.effectAllowed = "link";
@@ -4063,6 +4081,7 @@
             };
             draggedElementOnDragEndEvent(e, {draggedElement, card}) {
                 card.style.width = "";
+                card.style.margin = "";
                 this.currentlyDraggedElement = undefined;
                 this.currentlyDraggedCard    = undefined;
 
@@ -4150,6 +4169,10 @@
                     if (!this.foldedUeCardsId.includes(card.id)) {
                         this.unfoldUeCard(e, true, true, true);
                     }
+                    else {
+                        this.unfoldUeCard(e, true, "only", true);
+                    }
+
                     document.querySelector(".semester-content").classList.remove("dragging");
                 }
             }
