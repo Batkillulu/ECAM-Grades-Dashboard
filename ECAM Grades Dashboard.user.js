@@ -2402,8 +2402,6 @@
                     const container = document.getElementById(`sem-content-${sem}`)
                     this.attachCheckboxListeners(container);
 
-                    this.foldedUeCardsId = [];
-
                     this.setGradesTableTotalCoef();
                     this.attachAllEventListeners();
                 });
@@ -3786,6 +3784,16 @@
                     this.generateContent(false);
                     this.attachOnDragEventListeners();
                     this.scrollToClientHighestElem({id: `ue-card-${newUeName}-in-semester-${sem}`, smooth: true})
+                    this.foldedUeCardsId.forEach(foldedUeCardId => {
+                        const ueCardToFold = document.getElementById(foldedUeCardId);
+                        if (ueCardToFold) {
+                            this.foldUeCard(ueCardToFold.querySelector(`.ue-header`));
+                        }
+                        else {
+                            const newUeCardToFold = document.getElementById(`ue-card-${newUeName}-in-semester-${sem}`);
+                            this.foldUeCard(newUeCardToFold.querySelector(`.ue-header`));
+                        }
+                    })
                 }
 
                 ueDeleteBtnAction(e) {
