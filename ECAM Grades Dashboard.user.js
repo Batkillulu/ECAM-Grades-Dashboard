@@ -2395,18 +2395,14 @@
                     `;
                     contentArea.appendChild(section);
 
-                    // Set a fixed height for the unclassified section, so that when dragging a subject card, the unclassified section doesn't change height upon the grades tables disappearing
-                    
-                    // setTimeout(() => {const unclassifiedSection = document.querySelector(".unclassified-section");
-                    //     const currentUnclassifiedSectionHeight = Number(unclassifiedSection.clientHeight); 
-                    //     unclassifiedSection.style.height = `${currentUnclassifiedSectionHeight+4}px`;
-                    // }, 100)
+
                     this.timeouts.resizeUnclassifiedSection;
 
-                    const container = document.getElementById(`sem-content-${sem}`)
-
                     // Attach on-click event action for the grades' checkbox
+                    const container = document.getElementById(`sem-content-${sem}`)
                     this.attachCheckboxListeners(container);
+
+                    this.foldedUeCardsId = [];
 
                     this.setGradesTableTotalCoef();
                     this.attachAllEventListeners();
@@ -3664,7 +3660,7 @@
                             upperInsertField = document.querySelector(   `.drop-field.insert-field.ue[data-semester="${sem}"][data-index="${index}"]`);
                             lowerInsertField = document.querySelector(   `.drop-field.insert-field.ue[data-semester="${sem}"][data-index="${parseInt(index)+1}"]`);
                         }
-                        
+
                         if (upperInsertField) {
                             upperInsertField.style.display = "";
                             this.timeouts.upperInsertFieldUnfoldTimeout = setTimeout(() => {
@@ -3789,6 +3785,7 @@
                     this.getGradesDatas();
                     this.generateContent(false);
                     this.attachOnDragEventListeners();
+                    this.scrollToClientHighestElem({id: `ue-card-${newUeName}-in-semester-${sem}`, smooth: true})
                 }
 
                 ueDeleteBtnAction(e) {
