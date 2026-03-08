@@ -1,0 +1,44 @@
+{
+  "date": "2026-02-01",
+  "version": "2",
+  "ueConfig": {
+    "3": {
+      "__ues__" : [
+        "Mathematics for Engineers 3",
+        "Mechanical Engineering 3",
+        "Electrical Engineering 3",
+        "Multidisciplinary Project 3",
+        "Society, Management & Entrepreneurship 3",
+        "Internship"
+      ],
+      "Mathematics for Engineers 3": {
+        "subjects": [
+          "Mathematics for Engineers 3",
+          "Databases",
+          "Introduction to Numerical Simulations"
+        ],
+        "coefficients": {
+          "Mathematics for Engineers 3": 60,
+          "Databases": 10,
+          "Introduction to Numerical Simulations": 30
+        }
+      },
+      "Mechanical Engineering 3": {
+        "subjects": [
+          "General Mechanics 3",
+          "Mechanical Design 3",
+          "Fluid Mechanics"
+        ],
+        "coefficients": {
+          "Mechanical Engineering 3": 60,
+          "Databases": 10,
+          "Introduction to Numerical Simulations": 30
+        }
+      }
+    },
+    "4": {
+      "__ues__" : [
+      ]
+    }
+  }
+}
