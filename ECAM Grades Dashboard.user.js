@@ -1383,7 +1383,7 @@
                             color = meh;
                         }
                     }
-                    else if (totalCoefRealGrades > 100) {
+                    else if (totalCoefEnabledRealGrades > 100) {
                         advice = this.lang == "fr" ? `Trop de notes (erreur du côté de l'ECAM), désactive les notes en trop !` : `Too many grades (error on ECAM's side), turn off all irrelevant grades!`;
                         color = bad;
                     }
@@ -3193,7 +3193,7 @@
 
                                 this.foldedUeCardsId = [];
                                 document.querySelector(".fold-toggle").classList.remove("active");
-                                
+
                                 this.generateContent();
                             };
                         });
