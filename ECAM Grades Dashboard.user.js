@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.1.3
+// @version      2.1.4
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/group/education/notes*
@@ -635,7 +635,7 @@
 
         constructor() {
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.1.3";
+            this.scriptVersion = "2.1.4";
 
             this.now        = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
             this.dateHour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
@@ -1987,26 +1987,24 @@
                     setTimeout(() => {updateAvailableNotif.remove()}, 300)
                 };
                 updateAvailableNotif.querySelector(".update-btn").onclick = () => {
-                    setTimeout(() => {
-                        const reloadRequest = document.createElement("div");
-                        reloadRequest.className = "online-cfg-picker-menu";
-                        reloadRequest.style.cursor = "pointer";
-                        reloadRequest.style.justifyContent = "space-evenly";
-                        reloadRequest.style.textAlign = "center";
-                        reloadRequest.style.fontSize = "50px";
-                        reloadRequest.style.fontWeight = "100";
-                        reloadRequest.style.textEmphasisStyle = '" "';
-                        reloadRequest.style.outline = '60px solid white';
-                        reloadRequest.title = this.lang == "fr" ? "Rafraichir" : "Reload";
-                        reloadRequest.innerHTML = this.lang == "fr" 
-                            ? `<div>Clique sur l'écran pour rafraichir la page et appliquer la mise à jour !</div>
-                            <div>Utilisateurs de MAC, copiez le script qui s'est ouvert et collez-le dans votre extension à la place de l'ancien script</div>`
-                            : `<div>Click on the screen to reload the page and apply the update!</div>
-                            <div>MAC users, copy the script that opened up and paste it in your extension to replace the old script</div>`;
-                        document.querySelector(".ecam-dash").appendChild(reloadRequest);
-                        setTimeout(() => {reloadRequest.classList.add("show");}, 10)
-                        reloadRequest.onclick = () => {window.location.reload();};
-                    }, 100)
+                    const reloadRequest = document.createElement("div");
+                    reloadRequest.className = "online-cfg-picker-menu";
+                    reloadRequest.style.cursor = "pointer";
+                    reloadRequest.style.justifyContent = "space-evenly";
+                    reloadRequest.style.textAlign = "center";
+                    reloadRequest.style.fontSize = "50px";
+                    reloadRequest.style.fontWeight = "100";
+                    reloadRequest.style.textEmphasisStyle = '" "';
+                    reloadRequest.style.outline = '60px solid white';
+                    reloadRequest.title = this.lang == "fr" ? "Rafraichir" : "Reload";
+                    reloadRequest.innerHTML = this.lang == "fr" 
+                        ? `<div>Clique sur l'écran pour rafraichir la page et appliquer la mise à jour !</div>
+                        <div>Utilisateurs de MAC, copiez le script qui s'est ouvert et collez-le dans votre extension à la place de l'ancien script</div>`
+                        : `<div>Click on the screen to reload the page and apply the update!</div>
+                        <div>MAC users, copy the script that opened up and paste it in your extension to replace the old script</div>`;
+                    document.querySelector(".ecam-dash").appendChild(reloadRequest);
+                    setTimeout(() => {reloadRequest.classList.add("show");}, 10)
+                    reloadRequest.onclick = () => {window.location.reload();};
                 };
             }
             
