@@ -577,7 +577,12 @@
         styles += `
 
             .fold-icon  { cursor: pointer; user-select: none; }
-            .drag-icon      { cursor: pointer; user-select: none; }
+
+            .drag-icon                              { display: flex; justify-content: center; align-items: center; cursor: pointer; user-select: none; }
+            .drag-icon.for-detailed-subject-card        { border: 2px solid; border-radius: 8px; }
+            .drag-icon.for-compact-subject-card         { border: 2px solid; border-radius: 8px; }
+            .drag-icon.for-unclassified-subject-card    { border: 2px solid; border-radius: 8px; }
+
             .tick-icon      { height: 23px; width: 23px; font-size: 35px; color: #004cff; cursor:pointer; user-select:none; }
         `;
             
@@ -1280,7 +1285,8 @@
 
             }
             draggableIcon(source="subject-card", {height=25, type="unknown", targetId="none"}={height: 25, type: "unknown", targetId:"none"}) {
-                return `<img class="drag-icon for-${source}" data-targetid="${targetId}" data-type="${type}" draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/960px-Hamburger_icon.svg.png" alt="☰" style="height:${height}px; ${source.match(/-subject-card/) ? "border: 2px solid; border-radius: 8px;" : ""}">`
+                // return `<a class="drag-icon for-${source}" data-targetid="${targetId}" data-type="${type}" draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/960px-Hamburger_icon.svg.png" alt="☰" style="height:${height}px">`
+                return `<div class="drag-icon for-${source}" data-targetid="${targetId}" data-type="${type}" draggable="false" style="height:${height}px; width:${height}px; font-size: ${height*0.75}px">☰</div>`
             }
             /** Call inside a onkeydown or onkeyup event listener
              *  
@@ -3789,11 +3795,14 @@
                     this.saveConfig()
                     this.getGradesDatas();
                     this.generateContent(false);
+
                     this.foldedUeCardsId.forEach(foldedUeCardId => {
-                        const ueCardToFold = document.getElementById(foldedUeCardId);
-                        if (!ueCardToFold) {
-                            const newUeCardToFold = document.getElementById(`ue-card-${newUeName}-in-semester-${sem}`);
-                            this.foldUeCard(newUeCardToFold.querySelector(`.ue-header`));
+                        if (foldedUeCardId == `ue-card-${oldUeName}-in-semester-${sem}`) {
+                            const ueCardToFold = document.getElementById(foldedUeCardId);
+                            if (!ueCardToFold) {
+                                const newUeCardToFold = document.getElementById(`ue-card-${newUeName}-in-semester-${sem}`);
+                                this.foldUeCard(newUeCardToFold.querySelector(`.ue-header`));
+                            }
                         }
                     })
                     
@@ -4288,17 +4297,22 @@
                 const insertFieldHitbox  = insertField.querySelector(`.drop-${type}-card-insert-hitbox`);
                 const dataTransfer       = e.dataTransfer.getData("text");
                 const dataTransferMatch  = dataTransfer.match(/ue-card|subject-card/);
-
+                const eventCallerMatch   = e.target.className.match(/drop-(ue|subject)-card/);
 
                 e.preventDefault(); 
 
                 insertFieldHitbox.ondragover = (e) => {this.insertFieldHitboxOnDragOverEvent(e)};
 
-                if (dataTransferMatch?.[0] == "subject-card") {
-                    this.dropFieldSubjectInsertAction(dataTransfer, insertField);
-                }
-                else if (dataTransferMatch?.[0] == "ue-card") {
-                    this.dropFieldUEInsertAction(dataTransfer, insertField);
+                switch (`${dataTransferMatch?.[0] ? dataTransferMatch?.[0] : "errr... somthing"} dropped in ${eventCallerMatch?.[1] ? "a " + eventCallerMatch?.[1] + " insertion field" : "errr... somthing?"}`) {
+                    case "ue-card dropped in a ue insertion field":
+                        this.dropFieldUEInsertAction(dataTransfer, insertField);
+                    break;
+                    case "subject-card dropped in a ue insertion field":
+                        this.dropFieldToNewUEAction(dataTransfer, e.target.dataset.index);
+                    break;
+                    case "subject-card dropped in a subject insertion field":
+                        this.dropFieldSubjectInsertAction(dataTransfer, insertField);
+                    break;
                 }
             }
             insertFieldHitboxOnMouseEnterEvent(e) {
