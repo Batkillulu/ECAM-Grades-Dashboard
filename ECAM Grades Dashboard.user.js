@@ -5551,6 +5551,8 @@
 
             exportData() {
                 const data = {
+                    date: new Date().toISOString().split('T')[0],
+                    version: this.configVersion,
                     ueConfig: this.ueConfig
                 };
                 const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
