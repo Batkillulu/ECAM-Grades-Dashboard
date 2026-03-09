@@ -1,6 +1,6 @@
 {
-  "date": "2026-02-01",
-  "version": "2",
+  "date": "2026-03-09",
+  "version": 2,
   "ueConfig": {
     "3": {
       "__ues__": [
@@ -13,7 +13,6 @@
       ],
       "Mathematics for Engineers 3": {
         "subjects": [
-          "Campus - Mathematics for Engineers 7",
           "Mathematics for Engineers 3",
           "Introduction to Numerical Simulations",
           "Databases"
@@ -21,8 +20,7 @@
         "coefficients": {
           "Introduction to Numerical Simulations": "30",
           "Databases": "10",
-          "Mathematics for Engineers 3": "60",
-          "Campus - Mathematics for Engineers 7": 0
+          "Mathematics for Engineers 3": "60"
         }
       },
       "Multidisciplinary Projects 3": {
