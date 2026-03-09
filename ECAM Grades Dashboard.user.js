@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.0.7
+// @version      2.0.8
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/group/education/notes*
@@ -634,7 +634,7 @@
 
         constructor() {
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.0.7";
+            this.scriptVersion = "2.0.8";
 
             this.now        = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
             this.dateHour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
@@ -3325,14 +3325,42 @@
                     }
                     attachSubjectCoefInputBoxListeners(inputBox) {
                         inputBox.onchange = e => {
-                            const sem = e.target.dataset.semester;
+                            const semX = e.target.dataset.semester;
                             const ueName = e.target.dataset.ue;
                             const subject = e.target.dataset.subject;
                             const newCoef = e.target.value;
-                            this.ueConfig[sem][ueName].coefficients[subject] = newCoef;
+                            this.ueConfig[semX][ueName].coefficients[subject] = newCoef;
                             this.saveConfig();
-                            this.getGradesDatas({sem, ueName, subject});
-                            this.generateContent(false);
+                            this.getGradesDatas({semX, ueName, subject});
+                            // this.generateContent(false);
+                            this.setGradesTableTotalCoef();
+
+                            const subjAvg = this.gradesDatas[semX][ueName||"__#unclassified#__"].subjects[subj].average;
+                            const subjAvgSpan = document.querySelector(`.subject-card[data-subject="${subj}"]`).querySelector(".subj-moyenne");
+                            subjAvgSpan.innerHTML = subjAvg + "/20";
+                            subjAvgSpan.classList.remove("good"); subjAvgSpan.classList.remove("bad");
+                            if (subjAvg >= 10) {
+                                subjAvgSpan.classList.add("good"); 
+                            }
+                            else {
+                                subjAvgSpan.classList.add("bad");
+                            }
+                            
+                            if (ueName) {
+                                const ueAvg = this.gradesDatas[semX][ueName].average;
+                                const ueAvgDiv = document.querySelector(`.ue-moyenne[data-ue="${ueName}"]`);
+                                ueAvgDiv.childNodes[0].data = ueAvg + "/20";
+                                ueAvgDiv.classList.remove("good"); ueAvgDiv.classList.remove("bad"); ueAvgDiv.classList.remove("unknown");
+                                if (ueAvg == " - ") {
+                                    ueAvgDiv.classList.add("unknown");
+                                }
+                                else if (ueAvg >= 10) {
+                                    ueAvgDiv.classList.add("good");
+                                }
+                                else {
+                                    ueAvgDiv.classList.add("bad");
+                                }
+                            }
                         };
                     }
 
