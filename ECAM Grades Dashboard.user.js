@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.0.8
+// @version      2.1.0
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/group/education/notes*
@@ -81,9 +81,10 @@
 
             .import-menu        { display: flex; justify-content: space-around; position: absolute; right: 4%; top: 220px; background: white; color: black; box-shadow: 5px 4px 20px 0px #00000066; font-size: 15px; border-radius: 13px; min-height: 60px; width: 35%; align-items: center; opacity: 0%; z-index: 0; transition: all 0.2s ease; }
             .import-menu.show   { top: 245px; opacity: 100%; }
-            .import-menu-btn        { display: flex; justify-content: center; align-items: center; text-align: center; user-select: none; cursor: pointer; border-radius: 12px; border: 2px solid; height: 40px; width: 45%; padding: 5px; transition: all 0.2s ease; }
+            .import-menu-btn        { display: flex; justify-content: center; align-items: center; text-align: center; user-select: none; cursor: pointer; border-radius: 12px; border: 2px solid; height: 40px; width: 40%; padding: 5px; transition: all 0.2s ease; }
             .import-menu-btn:hover  { background: #dddddd; }
             .import-menu-btn.file   {  }
+            .import-menu-btn.clear  { width: 15%; }
             .import-menu-btn.online {  }
             
 
@@ -634,7 +635,7 @@
 
         constructor() {
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.0.8";
+            this.scriptVersion = "2.1.0";
 
             this.now        = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
             this.dateHour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
@@ -2078,6 +2079,9 @@
                                     <div></div>
                                     <img src="https://www.iconpacks.net/icons/2/free-file-icon-1453-thumb.png" style="height: 100%;">
                                 </div>
+                                <div class="import-menu-btn clear">
+                                    <div></div>
+                                </div>
                                 <div class="import-menu-btn online">
                                     <img src="https://cdn-icons-png.flaticon.com/512/9205/9205302.png" style="height: 100%;">
                                     <div></div>
@@ -2255,7 +2259,13 @@
                 
                 const importMenu    = document.getElementById("importMenu");
                 const importFile    = importMenu.querySelector(".import-menu-btn.file");
+                const importClear  = importMenu.querySelector(".import-menu-btn.clear");
                 const importOnline  = importMenu.querySelector(".import-menu-btn.online");
+
+                importFile.children[0].innerHTML   = this.lang == "fr" ? "Importer un fichier de configuration .json"   : "Import a .json configuration file";
+                importClear.innerHTML              = this.lang == "fr" ? "Effacer Config" : "Clear Config";
+                importOnline.children[1].innerHTML = this.lang == "fr" ? "Obtenir un fichier de configuration en ligne" : "Get a configuration file online";
+
 
                 if (this.lang == "fr") {
                     document.querySelectorAll(".drop-ue-card-insert-text, .drop-field-remove-from-ue-text, .drop-field-create-ue-text").forEach(dropFieldText => {
@@ -2273,10 +2283,6 @@
                         dirTreeHeader.classList.replace("fr","en")
                     })
                 }
-
-                importFile.children[0].innerHTML   = this.lang == "fr" ? "Importer un fichier de configuration .json"   : "Import a .json configuration file";
-                importOnline.children[1].innerHTML = this.lang == "fr" ? "Obtenir un fichier de configuration en ligne" : "Get a configuration file online";
-
                 const avgLabel   = document.querySelector(".average-label");
                 avgLabel.innerHTML   = `/20 ${this.lang == "fr" ? "Moyenne Générale" : "Global Average"}`;
 
@@ -5280,9 +5286,11 @@
             toggleImportMenu(open=undefined) {
                 const importMenu    = document.getElementById("importMenu");
                 const importFile    = importMenu.querySelector(".import-menu-btn.file");
+                const importClear   = importMenu.querySelector(".import-menu-btn.clear");
                 const importOnline  = importMenu.querySelector(".import-menu-btn.online");
 
                 importFile.children[0].innerHTML   = this.lang == "fr" ? "Importer fichier de configuration .json"   : "Import a .json configuration file";
+                importClear.innerHTML = this.lang == "fr" ? "Effacer Config"   : "Clear Config";
                 importOnline.children[1].innerHTML = this.lang == "fr" ? "Obtenir fichier de configuration en ligne" : "Get a configuration file online";
                 
                 if (!importMenu.classList.contains("show") || open == true) {
@@ -5290,6 +5298,7 @@
                     importMenu.style.display = "";
                     setTimeout(() => {importMenu.classList.add("show")}, 10)
                     importFile.onclick   = () => this.importData();
+                    importClear.onclick  = () => {this.ueConfig = {}; this.getGradesDatas(); this.generateContent(true)};
                     importOnline.onclick = () => {
                         if (this.onlineConfigs)
                         this.getConfigsFromRepo(this.repoContentsAPI, () => this.openOnlineCfgPicker())
