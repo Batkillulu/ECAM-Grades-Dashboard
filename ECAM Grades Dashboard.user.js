@@ -2451,7 +2451,7 @@
                         ${this.editMode 
                             ? 
                             `<div style="display: flex; align-items: center; justify-content: flex-start; width: 42%;">
-                                <div style="margin-right: 5px;">${this.draggableIcon("ue-card", {height: 29, type: "ue", targetId: `ue-card-${ueName}-in-semester-${sem}`})}</div>
+                                <div style="margin-right: 5px; margin-bottom: 3px;">${this.draggableIcon("ue-card", {height: 29, type: "ue", targetId: `ue-card-${ueName}-in-semester-${sem}`})}</div>
                                 <input type="text" class="ue-title input any-input" id="ue-title-input-${sem}-${ueName}" value="${ueName}" data-semester="${sem}" data-ue="${ueName}" draggable="false"/>
                                 <div class="ue-title-state">
                                 </div>
@@ -2534,7 +2534,7 @@
                     <div class="subject-card-header ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" ${this.editMode ? `draggable="true"` : ``} data-ue="${ueName}" style="${this.editMode ? `cursor: grab; ` : `${nbGrades > 0 ? `` : `border-radius: 20px; border: none`}`}">
                         <div style="display: flex; width: 42%; padding-left: ${this.editMode ? `10px` : `50px`}">
                             <div style="display: flex; justify-content: flex-start; align-items: center; width: 100%; gap:8px; user-select: text">
-                                ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("detailed-subject-card", {type:"detailed", targetId:`subject-card-semester-${sem}-subject-${subject}`})}</div>` : ""}
+                                ${this.editMode ? `<div style="margin: 0px 5px; margin-bottom: 3px;">${this.draggableIcon("detailed-subject-card", {type:"detailed", targetId:`subject-card-semester-${sem}-subject-${subject}`})}</div>` : ""}
                                 <div style="width: 100%">
                                     ${isCustom 
                                         ? `<input type="text" onmouseover="event.preventDefault()" class="subject-name input any-input" id="subject-name-input-semester-${sem}-subject-${subject}" value="${subject}"/>`
@@ -2704,7 +2704,7 @@
                 const html = `
                 <div class="subject-card compact ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" id="subject-card-semester-${sem}-subject-${subject}" style="${this.editMode ? "cursor: grab; user-select: none; " : " "}" ${this.editMode ? `draggable="true"` : ""} data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
                     <div style="display:flex; align-items:center; gap:8px; padding-left: ${this.editMode ? "11px" : "53px"}; width:38.8%; min-width: 275px">
-                        ${this.editMode ? `<div style="margin: 0px 5px;">${this.draggableIcon("compact-subject-card", {type:"compact", targetId:`subject-card-semester-${sem}-subject-${subject}`})}</div>` : ""}
+                        ${this.editMode ? `<div style="margin: 0px 5px; margin-bottom: 3px;">${this.draggableIcon("compact-subject-card", {type:"compact", targetId:`subject-card-semester-${sem}-subject-${subject}`})}</div>` : ""}
                         <div style="width: 87%">
                             ${isCustom 
                                 ? `<input type="text" class="subject-name input any-input" id="subject-name-input-semester-${sem}-subject-${subject}" value="${subject}"/>`
