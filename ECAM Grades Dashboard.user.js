@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.1.0
+// @version      2.1.1
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/group/education/notes*
@@ -115,8 +115,8 @@
             .online-cfg-picker-menu-dir-tree-body           { display: flex; flex-direction: column; justify-content: center; align-items: center; height: calc(100% - 20px); width: 95%; }
 
             .online-cfg-picker-menu-dir-card            { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 40px; width: 90%; position: relative; border-radius: 16px; border: 2px solid; background: white; cursor: pointer; overflow: clip; padding: 5px; margin: 5px 0px; user-select: none; transition: all 0.3s ease; }
-            .online-cfg-picker-menu-dir-card:hover      { height: 40px; width: 85%; border: 2px solid; background: #dddddd; padding: 5px; margin: 5px 0px; user-select: none; transition: all 0.3s ease; }
             .online-cfg-picker-menu-dir-card.on         { width: 100%; border-radius: 16px; background: #b9beff; }
+            .online-cfg-picker-menu-dir-card:hover      { transform: scale(95%); background: #dddddd; }
 
             
             .header-actions                 { display: flex; gap: 12px; }
@@ -635,7 +635,7 @@
 
         constructor() {
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.1.0";
+            this.scriptVersion = "2.1.1";
 
             this.now        = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
             this.dateHour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
