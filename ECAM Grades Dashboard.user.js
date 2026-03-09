@@ -3330,13 +3330,14 @@
                             const subject = e.target.dataset.subject;
                             const newCoef = e.target.value;
                             this.ueConfig[semX][ueName].coefficients[subject] = newCoef;
+
                             this.saveConfig();
-                            this.getGradesDatas({semX, ueName, subject});
+                            this.getGradesDatas();
                             // this.generateContent(false);
                             this.setGradesTableTotalCoef();
 
-                            const subjAvg = this.gradesDatas[semX][ueName||"__#unclassified#__"].subjects[subj].average;
-                            const subjAvgSpan = document.querySelector(`.subject-card[data-subject="${subj}"]`).querySelector(".subj-moyenne");
+                            const subjAvg = this.gradesDatas[semX][ueName||"__#unclassified#__"].subjects[subject].average;
+                            const subjAvgSpan = document.querySelector(`.subject-card[data-subject="${subject}"]`).querySelector(".subj-moyenne");
                             subjAvgSpan.innerHTML = subjAvg + "/20";
                             subjAvgSpan.classList.remove("good"); subjAvgSpan.classList.remove("bad");
                             if (subjAvg >= 10) {
