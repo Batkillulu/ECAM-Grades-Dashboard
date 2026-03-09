@@ -5298,7 +5298,7 @@
                     importMenu.style.display = "";
                     setTimeout(() => {importMenu.classList.add("show")}, 10)
                     importFile.onclick   = () => this.importData();
-                    importClear.onclick  = () => {this.ueConfig = {}; this.getGradesDatas(); this.generateContent(true)};
+                    importClear.onclick  = () => {this.ueConfig = {}; this.getGradesDatas(); this.saveConfig(); this.generateContent(true)};
                     importOnline.onclick = () => {
                         if (this.onlineConfigs)
                         this.getConfigsFromRepo(this.repoContentsAPI, () => this.openOnlineCfgPicker())
