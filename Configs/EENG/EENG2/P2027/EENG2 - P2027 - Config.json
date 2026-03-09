@@ -1,44 +1,159 @@
 {
-  "date": "2026-02-01",
-  "version": "2",
   "ueConfig": {
     "3": {
-      "__ues__" : [
+      "__ues__": [
         "Mathematics for Engineers 3",
         "Mechanical Engineering 3",
-        "Electrical Engineering 3",
-        "Multidisciplinary Project 3",
+        "Eletrical Engineering 3",
+        "Multidisciplinary Projects 3",
         "Society, Management & Entrepreneurship 3",
-        "Internship"
+        "Operator Internship"
       ],
       "Mathematics for Engineers 3": {
         "subjects": [
+          "Campus - Mathematics for Engineers 7",
           "Mathematics for Engineers 3",
-          "Databases",
-          "Introduction to Numerical Simulations"
+          "Introduction to Numerical Simulations",
+          "Databases"
         ],
         "coefficients": {
-          "Mathematics for Engineers 3": 60,
-          "Databases": 10,
-          "Introduction to Numerical Simulations": 30
+          "Introduction to Numerical Simulations": "30",
+          "Databases": "10",
+          "Mathematics for Engineers 3": "60",
+          "Campus - Mathematics for Engineers 7": 0
+        }
+      },
+      "Multidisciplinary Projects 3": {
+        "subjects": [
+          "Multidisciplinary Project 1",
+          "Sustainable Development 3",
+          "Pathway Discovery Workshops / Winter Schools"
+        ],
+        "coefficients": {
+          "Multidisciplinary Project 1": 33,
+          "Sustainable Development 3": 33,
+          "Pathway Discovery Workshops / Winter Schools": 34
         }
       },
       "Mechanical Engineering 3": {
         "subjects": [
-          "General Mechanics 3",
           "Mechanical Design 3",
+          "General Mechanics 3",
           "Fluid Mechanics"
         ],
         "coefficients": {
-          "Mechanical Engineering 3": 60,
-          "Databases": 10,
-          "Introduction to Numerical Simulations": 30
+          "Mechanical Design 3": "30",
+          "General Mechanics 3": "25",
+          "Fluid Mechanics": "45"
+        }
+      },
+      "Society, Management & Entrepreneurship 3": {
+        "subjects": [
+          "Communication",
+          "Microeconomics",
+          "Sports Activities 3",
+          "Advanced English Skills 3",
+          "Japanese",
+          "Seminar 1"
+        ],
+        "coefficients": {
+          "Microeconomics": "15",
+          "Communication": 25,
+          "Sports Activities 3": "15",
+          "Advanced English Skills 3": "20",
+          "Seminar 1": 10,
+          "Japanese": "15"
+        }
+      },
+      "Eletrical Engineering 3": {
+        "subjects": [
+          "Electrical Networks",
+          "Electronic Circuits & Systems",
+          "Digital Design"
+        ],
+        "coefficients": {
+          "Digital Design": "20",
+          "Electrical Networks": "50",
+          "Electronic Circuits & Systems": "30"
+        }
+      },
+      "Operator Internship": {
+        "subjects": [
+          "Operator Internship"
+        ],
+        "coefficients": {
+          "Operator Internship": 100
         }
       }
     },
     "4": {
-      "__ues__" : [
-      ]
+      "__ues__": [
+        "Mathematics for Engineers 4",
+        "Mechanical Engineering 4",
+        "Electrical Engineering 4",
+        "Multidisciplinary Projects 4",
+        "Society, Management & Entrepreneurship 4"
+      ],
+      "Multidisciplinary Projects 4": {
+        "subjects": [
+          "Sustainable Comsumption & Production 2",
+          "Multidisciplinary Project 2",
+          "Pathway Discovery Workshops / Summer Schools"
+        ],
+        "coefficients": {
+          "Multidisciplinary Project 2": "25",
+          "Pathway Discovery Workshops / Summer Schools": 50,
+          "Sustainable Comsumption & Production 2": 25
+        }
+      },
+      "Electrical Engineering 4": {
+        "subjects": [
+          "Electrostatics & Magnetostatics",
+          "Embedded Software"
+        ],
+        "coefficients": {
+          "Electrostatics & Magnetostatics": "60",
+          "Embedded Software": "40"
+        }
+      },
+      "Mathematics for Engineers 4": {
+        "subjects": [
+          "Mathematics for Engineers 4",
+          "Simulations & Numerical Methods"
+        ],
+        "coefficients": {
+          "Simulations & Numerical Methods": "30",
+          "Mathematics for Engineers 4": "70"
+        }
+      },
+      "Society, Management & Entrepreneurship 4": {
+        "subjects": [
+          "Management",
+          "Advanced English Skills 4",
+          "Sports Activities 4",
+          "Macroeconomics",
+          "Japanese"
+        ],
+        "coefficients": {
+          "Management": "30",
+          "Advanced English Skills 4": "20",
+          "Sports Activities 4": "15",
+          "Macroeconomics": "20",
+          "Japanese": "15"
+        }
+      },
+      "Mechanical Engineering 4": {
+        "subjects": [
+          "Mechanical Design 4",
+          "Materials 1",
+          "Solid Mechanics"
+        ],
+        "coefficients": {
+          "Mechanical Design 4": "30",
+          "Materials 1": "30",
+          "Solid Mechanics": "40"
+        }
+      }
     }
   }
 }

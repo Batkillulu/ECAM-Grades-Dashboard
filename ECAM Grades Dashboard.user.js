@@ -687,7 +687,7 @@
             };
             
             this.configVersion = 2;
-            this.ueConfig           = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_UE_CONFIG"))                 || {};
+            this.ueConfig            = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_UE_CONFIG"))                 || {};
             this.disabledGrades      = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_IGNORED_GRADES"))            || [];
             this.gradesDatas = {};
 
@@ -4855,7 +4855,7 @@
                 // MARK: dropFieldToNewUEAction
                 dropFieldToNewUEAction(cardId, index=0) {
                     const sem = this.currentSemester;
-                    let newUeConfig = {subjects: [], coefficients: {}, custom: {}};
+                    let newUeConfig = {subjects: [], coefficients: {}};
                     let newUeName = "Module 1"; let count = 1;
                     if (!this.ueConfig[sem]) this.ueConfig[sem] = {__ues__: []};
                     while (this.ueConfig?.[sem]?.[newUeName]) {count++; newUeName = `Module ${count}`;}
@@ -4887,7 +4887,7 @@
                                         newUeConfig.coefficients[subject] = 100;
                                     } 
                                     else {
-                                        newUeConfig = {subjects: [subject], coefficients: {[subject]: 100}, custom: {[subject]: false}};
+                                        newUeConfig = {subjects: [subject], coefficients: {[subject]: 100}};
 
                                         this.ueConfig[sem][oldUeName].subjects.splice(subjectIndex,1);
                                         delete this.ueConfig[sem][oldUeName].coefficients[subject];
@@ -4912,7 +4912,7 @@
 
                                 } 
                                 else {
-                                    newUeConfig = {subjects: [subject], coefficients: {[subject]: 100}, custom: {[subject]: false}};
+                                    newUeConfig = {subjects: [subject], coefficients: {[subject]: 100}};
                                 }
 
                             } else {  // mutliple subj cards dropped through selection in the drop field "add"
