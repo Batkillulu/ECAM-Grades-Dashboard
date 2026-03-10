@@ -76,12 +76,12 @@
     },
     "6": {
       "__ues__" : [
+        "Industrial Engineering & Supply Chain Management 6", 
         "Mathematics for Engineers 6", 
         "Control Engineering 6", 
         "Systems Engineering 6", 
         "Multidisciplinary Project 6", 
-        "Society, Management & Entrepreneurship 6", 
-        "Industrial Engineering & Supply Chain Management 6"
+        "Society, Management & Entrepreneurship 6"
       ],
       "Mathematics for Engineers 6": {
         "subjects": [

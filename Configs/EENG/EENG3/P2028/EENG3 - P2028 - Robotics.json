@@ -76,13 +76,25 @@
     },
     "6": {
       "__ues__" : [
+        "Robotics and Automation Engineering 6",
         "Mathematics for Engineers 6", 
         "Control Engineering 6", 
         "Systems Engineering 6", 
         "Multidisciplinary Project 6", 
-        "Society, Management & Entrepreneurship 6", 
-        "Robotics and Automation Engineering 6"
+        "Society, Management & Entrepreneurship 6"
       ],
+      "Robotics and Automation Engineering 6": {
+        "subjects": [
+          "Introduction to Robotics",
+          "Signal Processing + Wireless Communications",
+          "Sensing & Perception"
+        ],
+        "coefficients": {
+          "Introduction to Robotics": 35,
+          "Sensing & Perception": 25,
+          "Signal Processing + Wireless Communications": 40
+        }
+      },
       "Mathematics for Engineers 6": {
         "subjects": [
           "Probabilities and Inferential Statistics",
@@ -135,18 +147,6 @@
           "Global affairs": 25,
           "Advanced English Skills 6": 35,
           "Professional Project": 15
-        }
-      },
-      "Robotics and Automation Engineering 6": {
-        "subjects": [
-          "Introduction to Robotics",
-          "Sensing & Perception",
-          "Signal Processing + Wireless Communications"
-        ],
-        "coefficients": {
-          "Introduction to Robotics": 35,
-          "Sensing & Perception": 25,
-          "Signal Processing + Wireless Communications": 40
         }
       }
     }
