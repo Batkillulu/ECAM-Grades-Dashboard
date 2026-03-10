@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.1.6
+// @version      2.1.7
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/group/education/notes*
@@ -104,16 +104,16 @@
             .import-menu-btn.online {  }
             
 
-            .online-cfg-picker-menu         { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 20%; display: flex; flex-direction: column; justify-content: flex-start; position: fixed; height: calc(100% - 500px); width: calc(100% - 700px); top: 250px; left: 350px; transform: translateZ(0) scale(110%); z-index: 1000; border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0%; transition: opacity 0.3s ease, border-width 0.3s ease, transform 0.3s ease; backdrop-filter: blur(1px); }
+            .online-cfg-picker-menu         { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 20%; display: flex; flex-direction: column; justify-content: flex-start; position: fixed; width: 750px; height: 500px; left: calc(50% - 750px / 2); top: calc(50% - 500px / 2); transform: translateZ(0) scale(110%); z-index: 1000; border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0%; backdrop-filter: blur(1.4px); transition: opacity 0.3s ease, border-width 0.3s ease, transform 0.3s ease; }
             .online-cfg-picker-menu.show    { border-width: 8px; transform: translateZ(0) scale(100%); opacity: 100%; }
             .online-cfg-picker-menu-header          { display: flex; justify-content: flex-end; height: 40px; align-items: center; }
             .online-cfg-picker-menu-close-btn           { display: flex; justify-content: center; align-items: center; width: 30px; height: 30px; border-radius: 15px; border: 2px solid; font-size: 20px; user-select: none; cursor: pointer; margin-right: 3px; transition: all 0.2s ease; }
             .online-cfg-picker-menu-close-btn:hover     { width: 40px; height: 40px; border-radius: 20px; font-size: 30px; margin-right: -2px; gap: 5px; }
 
-            .online-cfg-picker-menu-body            { display: flex; flex-direction: row; justify-content: center; align-items: center; height: calc(100% - 40px); width: 100%; gap: 5px; overflow: clip;}
-            .online-cfg-picker-menu-body-container  { display: flex; flex-direction: row; justify-content: center; align-items: flex-start; width: 620px; gap: 5px; }
-            .online-cfg-picker-menu-dir-tree            { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 0px; color: black; margin: 0px -5px; border-radius: 16px; border: 2px solid; background: white; overflow: clip; opacity: 0%; transition: all 0.2s ease; }
-            .online-cfg-picker-menu-dir-tree.show       { width: 150px; opacity: 100%; margin: 0px; }
+            .online-cfg-picker-menu-body            { display: flex; flex-direction: row; justify-content: center; align-items: center; height: 500px; width: 100%; position: fixed; top: -8px; gap: 5px; overflow: clip; }
+            .online-cfg-picker-menu-body-container  { display: flex; flex-direction: row; justify-content: center; align-items: flex-start; width: 640px; }
+            .online-cfg-picker-menu-dir-tree            { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 0px; color: black; margin: 0px 0px; border-radius: 16px; outline: 2px solid; background: white; overflow: clip; opacity: 0%; transition: all 0.2s ease; }
+            .online-cfg-picker-menu-dir-tree.show       { width: 150px; opacity: 100%; margin: 0px 5px; }
             .online-cfg-picker-menu-dir-tree.section    { z-index: 1004; }
             .online-cfg-picker-menu-dir-tree.year       { z-index: 1003; }
             .online-cfg-picker-menu-dir-tree.prom       { z-index: 1002; }
@@ -464,7 +464,7 @@
         styles += `
 
             .unclassified-section   { display: flex; flex-direction: column; align-items: center; width: 100%; background: #fff8f0; border-radius: 20px; padding: 20px; border: 2px dashed #fbbf24; transition: height 0.2s ease; }
-            .unclassified-content   { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 99%; height: 100%; }
+            .unclassified-content   { display: flex; flex-direction: column; align-items: center; gap: 25px; width: 99%; height: 100%; }
             .unclassified-title     { display: flex; align-items: center; gap: 8px; width: 97%; font-size: 16px; font-weight: 600; color: #92400e; margin-bottom: 16px; }
         `;
             
@@ -473,52 +473,38 @@
         // MARK: -SUBJECT CARDS
         styles += `
 
-            .subject-card               { display: flex; flex-direction: column; align-items: center; width: 100%; opacity: 100%; transition: all 0.2s ease; }
-            .subject-card.detailed                  { border: 4px solid #ffffffff; border-radius: 20px; width: 100%; background: #c5c5c5; }
-            .subject-card.detailed.good             { box-shadow: 0px 0px 0px 0px #39ff8f; background: linear-gradient(300deg, #f0fdf4 30%, transparent); }
-            .subject-card.detailed.good:hover       { box-shadow: 0px 0px 7px 0px #39ff8f; }
-            .subject-card.detailed.meh              { box-shadow: 0px 0px 0px 0px #fff27b; background: linear-gradient(300deg, #fff2e4 30%, transparent); }
-            .subject-card.detailed.meh:hover        { box-shadow: 0px 0px 7px 0px #fff27b; }
-            .subject-card.detailed.bad              { box-shadow: 0px 0px 0px 0px #ff7b7b; background: linear-gradient(300deg, #fef2f2 30%, transparent); }
-            .subject-card.detailed.bad:hover        { box-shadow: 0px 0px 7px 0px #ff7b7b; }
-            .subject-card.detailed.unknown          { box-shadow: 0px 0px 0px 0px #6d6d6d; background: linear-gradient(300deg, #c5c5c5 30%, transparent); }
-            .subject-card.detailed.unknown:hover    { box-shadow: 0px 0px 7px 0px #6d6d6d; }
+            .subject-card               { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; border-radius: 20px; outline: 4px solid #ffffffff; opacity: 100%; transition: all 0.2s ease; }
+            .subject-card.good                  { box-shadow: 0px 0px 0px 0px #39ff8f; background: linear-gradient(300deg, #f0fdf4 30%, transparent); }
+            .subject-card.good:hover            { box-shadow: 0px 0px 7px 0px #39ff8f; }
+            .subject-card.meh                   { box-shadow: 0px 0px 0px 0px #fff27b; background: linear-gradient(300deg, #fff2e4 30%, transparent); }
+            .subject-card.meh:hover             { box-shadow: 0px 0px 7px 0px #fff27b; }
+            .subject-card.bad                   { box-shadow: 0px 0px 0px 0px #ff7b7b; background: linear-gradient(300deg, #fef2f2 30%, transparent); }
+            .subject-card.bad:hover             { box-shadow: 0px 0px 7px 0px #ff7b7b; }
+            .subject-card.unknown               { box-shadow: 0px 0px 0px 0px #6d6d6d; background: linear-gradient(300deg, #c5c5c5 30%, transparent); }
+            .subject-card.unknown:hover         { box-shadow: 0px 0px 7px 0px #6d6d6d; }
             
-            .subject-card-header        { display: flex; align-items: center; height: 62px; width: 100%; padding: 5px 0px; border-radius: 20px 20px 0px 0px; background: linear-gradient(300deg, #b8b8b8 30%, transparent); font-weight:600; border-bottom: 4px solid white; }
-            .subject-card-header.good   { background: linear-gradient(300deg, #e3ffeb 30%, transparent); }
-            .subject-card-header.meh    { background: linear-gradient(300deg, #ffe8d0 30%, transparent); }
-            .subject-card-header.bad    { background: linear-gradient(300deg, #ffe0e0 30%, transparent); }
-            .subject-name               { font-weight: 800; color: #1a1a1a; font-size: 14px }
-            .subject-name.input         { font-weight: 800; color: #1a1a1a; font-size: 14px; border: 2px solid #797979; border-radius: 15px; padding-left: 8px; width: 100%; height: 25px;}
-            .subject-coef-input-box     { padding-left: 5px; width: 48px; border-radius: 8px; }
-            .subject-card.compact                       { flex-direction: row; justify-content:space-between; padding: 7px 0px; border-radius: 16px; border: 3px solid #ffffff; height: 68px; width: 100%; min-width: 380px; background: none; }
-            .subject-card.compact.edit-mode             {  }
-            .subject-card.compact.good                  { border-color: #c0ffd2; background: linear-gradient(300deg, #e3ffeb 30%, transparent); }
-            .subject-card.compact.meh                   { border-color: #ffe1c2; background: linear-gradient(300deg, #ffe8d0 30%, transparent); }
-            .subject-card.compact.bad                   { border-color: #ffcccc; background: linear-gradient(300deg, #ffe0e0 30%, transparent); }
-            .subject-card.compact.unknown               { border-color: #a3a3a3; background: linear-gradient(300deg, #c5c5c5 30%, transparent); }
-            .subject-card.compact:hover                 { filter: brightness(calc(0.01 * 120)); box-shadow: inset 0px 0px 8px 1px #0032ff42; }
-            .subject-card.compact.edit-mode:hover       { transform: scale(0.995); }
-            .subject-card.unclassified                  { border: 2px solid #ffe4cd; border-radius: 20px; width:100%; background: white; margin: 0px; }
-            .subject-card.unclassified.good             { box-shadow: 0px 0px 0px 0px #39ff8f; background: #f0fdf4; }
-            .subject-card.unclassified.good:hover       { box-shadow: 0px 0px 5px 0px #39ff8f; }
-            .subject-card.unclassified.bad              { box-shadow: 0px 0px 0px 0px #ff7b7b; background: #fef2f2; }
-            .subject-card.unclassified.bad:hover        { box-shadow: 0px 0px 5px 0px #ff7b7b; }
-            .subject-card-header.unclassified           { display: flex; flex-direction: row; align-items:center; border-radius: 20px 20px 0px 0px; border-bottom: 2px solid #ffe4cd; gap:8px; font-weight:700; height: 60px; width: 100%; vertical-align:top; font-size:15px }
-            .subject-card-header.unclassified.good      { background: #e3ffeb; }
-            .subject-card-header.unclassified.bad       { background: #ffe0e0; }
+            .subject-card-header        { display: flex; flex-direction: row;    justify-content: space-between; align-items: center; width: 100%; height: 64px; border-radius: 20px 20px 0px 0px; border-bottom: 4px solid white; padding: 5px 0px; font-weight:700; font-size: 15px; vertical-align: top; }
+            .subject-card-header.compact    { border-radius: 20px; border-bottom: none; padding: 5px 0px 7px 0px; }
+            .subject-card-header.good       { background: linear-gradient(300deg, #e3ffeb 30%, transparent); }
+            .subject-card-header.meh        { background: linear-gradient(300deg, #ffe8d0 30%, transparent); }
+            .subject-card-header.bad        { background: linear-gradient(300deg, #ffe0e0 30%, transparent); }
+            .subject-card-header.unknown    { background: linear-gradient(300deg, #b8b8b8 30%, transparent); }
+            .subject-name                   { font-weight: 800; color: #1a1a1a; font-size: 14px }
+            .subject-name.input             { font-weight: 800; color: #1a1a1a; font-size: 14px; border: 2px solid #797979; border-radius: 15px; padding-left: 8px; width: 100%; height: 25px;}
+            .subject-coef-input-box         { padding-left: 5px; width: 48px; border-radius: 8px; }
             
             .subject-card.fold      { height: 0px; border-width: 0px; padding: 0px; opacity: 0%; }
 
+            .subj-moyenne        { font-size: 16px; font-weight: 800; }
+            .subj-moyenne.good   { color: #10b981; }
+            .subj-moyenne.bad    { color: #ef4444; }
 
             .grades-table-subject-total-coef-div        { display: flex; flex-direction: column; gap: 4px; text-align: left; width:58%; padding: 0px 10px; font-size: 13px}
             .grades-table-subject-total-coef-value      { display: flex; gap: 15px; text-align: left; font-weight: 600; gap: 8px; }
             .grades-table-subject-total-coef-debug      { display: flex; gap: 15px; text-align: left; font-weight: 400; }
             .subject-insert-field                           { display: flex: flex-direction: column; align-items: center; height: 0px; width: 100%; margin: 0px 0px; transition: height 0.2s ease, margin 0.2s ease; }
             .subject-insert-field.show                      { height: 50px; margin: 10px 0px; }
-            .subj-moyenne        { font-size: 16px; font-weight: 800; }
-            .subj-moyenne.good   { color: #10b981; }
-            .subj-moyenne.bad    { color: #ef4444; }
+
             .selected-subject-card-notif-container              { display: grid; justify-items: end; gap: 10px; position: fixed; top: 50px; right: 10px; z-index: 301; transition: width 0.3s ease; }
             .selected-subject-card-notif-div                    { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; position: relative; left: 500px; height: 60px; width: max-content; background: #9696ff; border-radius: 18px; border: 5px solid #d4daff; font-size: 13px; font-weight: 500; color: black; padding: 10px; gap: 5px; transition: left 0.3s ease, box-shadow 0.3s ease; }
             .selected-subject-card-notif-div.on                 { left: 0px; box-shadow: 4px 5px 11px 0px #00000061; }
@@ -640,7 +626,7 @@
 
         constructor() {
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.1.6";
+            this.scriptVersion = "2.1.7";
 
             this.now        = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
             this.dateHour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
@@ -2401,7 +2387,8 @@
                                 </div>
                             </div>
                         <div class="semester-toggle open fold-icon">△</div>
-                    </div>
+                    </div>`;
+                    section.innerHTML += `
                     <div class="semester-content show${this.selectedSubjectCardsId.length > 0 ? " dragging" : ""}${this.editMode ? " edit" : ""}${fadeIn ? " fade-in" : ""}" id="sem-content-${sem}">
                         <div class="semester-grid">
                             <div class="modules-section ${this.editMode ? "edit" : ""}" id="modules-section">
@@ -2412,7 +2399,10 @@
                                     ${this.lang == "fr" ? `Matière${unclassified.length > 1 ?  `s` : ``} non classée${unclassified.length > 1 ?  `s` : ``} dans un module` : `Subject${unclassified.length > 1 ?  `s` : ``} not classified in a module`}
                                 </div>
                                 <div class="unclassified-content">
-                                    ${unclassified.length > 0 ?  `${this.createAllSubjCards(sem, "__#unclassified#__")}` : ``}
+                                    ${unclassified.length > 0 
+                                        ? `<div style="margin: -10px 0px"></div>${this.createAllSubjCards(sem, "__#unclassified#__")}<div style="margin: -10px 0px"></div>` 
+                                        : ``
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -2505,10 +2495,7 @@
                     
                     <div class="ue-card-content ${this.editMode ? "edit-mode": ""}">
                     <div class="ue-details ${this.editMode ? "edit-mode": ""}${this.viewMode == "detailed" ? " detailed" :  " compact"}" id="ue-details-${ueName}-in-semester${sem}">
-                        ${
-                            // this.viewMode == "detailed" ? this.createAllDetailedClassifiedSubjCards(sem, ueName) : this.createAllCompactClassifiedSubjCards(sem, ueName)
-                            this.createAllSubjCards(sem, ueName)
-                        }
+                        ${this.createAllSubjCards(sem, ueName)}
                     </div>
                     </div>
                     
@@ -2521,100 +2508,109 @@
 
             
             // MARK: Create Subject Card
+            /** 
+             * Call this method to create all subject cards of a module.
+             * 
+             * Detects automatically from the name of the ueName and from `this.gradesDatas` (as a safe guard, also from `this.ueConfig`) if the card is classified or unclassified, 
+             * and detects automatically from this.compactSubjCardsId if the card is detailed or compact.
+             * 
+             * @param {number | string} sem Number of the semester of the subject
+             * @param {string} ueName Name of the subject's module
+             */
             createAllSubjCards(sem, ueName) {
                 const ueData = this.gradesDatas[sem][ueName];
                 
-                let html =  this.editMode && ueName != "__#unclassified#__" ? this.createDropFieldInsertionField("subject", {sem, ueName, index:0}) : "";
+                let html  = this.editMode && ueName != "__#unclassified#__" && this.ueConfig[sem]?.[ueName] != undefined 
+                        ? this.createDropFieldInsertionField("subject", {sem, ueName, index:0}) 
+                        : ""
+                ;
 
                 Object.values(ueData.subjects).forEach((_value, _index) => {
                     html += this.createSubjCard(sem, ueName, _value.subjName, _index);
-                    html += this.editMode && ueName != "__#unclassified#__" ? this.createDropFieldInsertionField("subject", {sem, ueName, index:_index+1}) : "";
+                    html += this.editMode && ueName != "__#unclassified#__" && this.ueConfig[sem]?.[ueName] != undefined 
+                        ? this.createDropFieldInsertionField("subject", {sem, ueName, index:_index+1}) 
+                        : ""
+                    ;
                 })
 
                 return html;
             }
-            createSubjCard(sem, ueName, subject, index) {
-                let html = "";
-
-                // If the card has to be displayed in detailed view
-                if (!this.compactSubjCardsId.includes(`subject-card-semester-${sem}-subject-${subject}`) && this.viewMode == "mixed" || this.viewMode == "detailed") {
-                    // If the card is classified
-                    if (this.ueConfig?.[sem]?.[ueName]?.subjects?.includes(subject)) {
-                        html = this.createDetailedClassifiedSubjCard(sem, ueName, subject, index);
-                    }
-                    else {
-                        html = this.createDetailedUnclassifiedSubjCard(sem, subject);
-                    }
-                }
-                // If the card has to be displayed in compact view
-                else if (this.compactSubjCardsId.includes(`subject-card-semester-${sem}-subject-${subject}`) && this.viewMode == "mixed" || this.viewMode == "compact") {
-                    // If the card is classified
-                    if (this.ueConfig?.[sem]?.[ueName]?.subjects?.includes(subject)) {
-                        html = this.createCompactClassifiedSubjCard(sem, ueName, subject, index);
-                    }
-                    else {
-                        html = this.createCompactUnclassifiedSubjCard(sem, subject);
-                    }
-                }
-
-                return html;
-            }
-
-
-
-
-            // MARK: createDetailedClassifiedSubjCard
-            createAllDetailedClassifiedSubjCards(sem, ueName) {
-                const ueData = this.gradesDatas[sem][ueName];
-
-                let html =  this.editMode ? this.createDropFieldInsertionField("subject", {sem, ueName, index:0}) : "";
-
-                Object.values(ueData.subjects).forEach((_value, _index) => {
-                    html += this.createDetailedClassifiedSubjCard(sem, ueName, _value.subjName, _index);
-                    html += this.editMode ? this.createDropFieldInsertionField("subject", {sem, ueName, index:_index+1}) : "";
-                })
-
-                return html;
-            }
-            createDetailedClassifiedSubjCard(sem, ueName, subject, index=-1) {
-                const ueData        = this.gradesDatas[sem][ueName];
-                const subjectData   = ueData.subjects[subject];
-                const subjGrades    = subjectData.grades;
-                const ueMoy         = ueData.average;
-                const subjAvg       = subjectData.average;
-                const pct           = subjectData.coef;
-                const isCustom      = subjectData.isCustom;
-                const nbGrades      = subjGrades.length;
-                const nbSimGrades   = subjectData.simGrades.length;
-                const nbRealGrades  = nbGrades - nbSimGrades;
+            /** 
+             * Call this method to create a subject card. 
+             * 
+             * Detects automatically from the name of the ueName and from `this.gradesDatas` (to error-proof the ueName, also from `this.ueConfig`) if the card is classified or unclassified, 
+             * and detects automatically from this.compactSubjCardsId if the card is detailed or compact.
+             * 
+             * @param {number | string} sem Number of the semester of the subject
+             * @param {string} ueName Name of the subject's module
+             * @param {string} subject Name of the subject
+             * @param {number} [index=-1] Default: -1 — Index of the subject in its module, necessary if the subject is classified, useless if the subject is unclassified
+             */
+            createSubjCard(sem, ueName, subject, index=-1) {
+                const ueData                = this.gradesDatas[sem][ueName];
+                const subjectData           = ueData.subjects[subject];
+                const subjectGrades         = subjectData.grades;
+                const ueMoy                 = ueData.average;
+                const subjAvg               = subjectData?.average >= 0 ? subjectData.average : " - ";
+                const pct                   = subjectData.coef;
+                const isCustom              = subjectData.isCustom;
+                const nbGrades              = subjectGrades.length;
+                const includedGradesLength  = nbGrades - subjectData.disabledRealGrades.length - subjectData.disabledSimGrades.length;
+                const nbSimGrades           = subjectData.simGrades.length;
+                const nbRealGrades          = nbGrades - nbSimGrades;
+                const classified            = ueName != "__#unclassified#__" && this.ueConfig[sem]?.[ueName] != undefined;
+                const detailed              = !this.compactSubjCardsId.includes(`subject-card-semester-${sem}-subject-${subject}`);
                 
                 let html = `
-                <div class="subject-card classified detailed ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" ${this.editMode ? `style="user-select: none;"` : ``} id="subject-card-semester-${sem}-subject-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
-                    <div class="subject-card-header ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" ${this.editMode ? `draggable="true"` : ``} data-ue="${ueName}" style="${this.editMode ? `cursor: grab; ` : `${nbGrades > 0 ? `` : `border-radius: 20px; border: none`}`}">
-                        <div style="display: flex; width: 42%; padding-left: ${this.editMode ? `10px` : `50px`}">
-                            <div style="display: flex; justify-content: flex-start; align-items: center; width: 100%; gap:8px; user-select: text">
-                                ${this.editMode 
-                                    ? `<div style="margin: 0px 5px; margin-bottom: 3px;">
-                                    ${this.selectedSubjectCardsId.includes(`subject-card-semester-${sem}-subject-${subject}`) 
-                                        ? `<div class="tick-icon for-detailed-subject-card" data-type="detailed" data-targetid="subject-card-semester-${sem}-subject-${subject}">✔</div>`
-                                        : this.draggableIcon("detailed-subject-card", {type:"detailed", targetId:`subject-card-semester-${sem}-subject-${subject}`}) 
-                                    }</div>`
-                                    : ""
+                <div class="subject-card ${classified ? "classified" : "unclassified"} ${detailed ? "detailed" : "compact"} ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" id="subject-card-semester-${sem}-subject-${subject}" ${this.editMode ? `style="cursor: grab; user-select: none;"` : ""} data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
+                    <div class="subject-card-header${detailed ? "" : " compact"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`} ${classified ? "classified" : "unclassified"}" ${this.editMode ? `style="cursor: grab;" draggable="true"` : `${nbGrades > 0 ? `` : `style="border-radius: 20px; border: none"`}`} data-ue="${ueName}">
+                        <div style="display:flex; align-items:center; gap:8px; padding-left: ${this.editMode ? "11px" : "53px"}; width:38.8%; min-width: 275px">
+                            ${this.editMode
+                                ? `<div style="margin: 0px 5px; margin-bottom: 3px;">
+                                ${this.selectedSubjectCardsId.includes(`subject-card-semester-${sem}-subject-${subject}`) 
+                                    ? `<div class="tick-icon for-${detailed ? "detailed" : "compact"}-subject-card" data-type="${detailed ? "detailed" : "compact"}" data-targetid="subject-card-semester-${sem}-subject-${subject}">✔</div>`
+                                    : this.draggableIcon(`${detailed ? "detailed" : "compact"}-subject-card`, {type:`${detailed ? "detailed" : "compact"}`, targetId:`subject-card-semester-${sem}-subject-${subject}`}) 
+                                }</div>`
+                                : ""
+                            }
+                            <div style="width: 87%">
+                                ${isCustom 
+                                    ? `<input type="text" class="subject-name input any-input" id="subject-name-input-semester-${sem}-subject-${subject}" value="${subject}"/>`
+                                    : `<div class="subject-name">${subject}</div>`
                                 }
-                                <div style="width: 100%">
-                                    ${isCustom 
-                                        ? `<input type="text" onmouseover="event.preventDefault()" class="subject-name input any-input" id="subject-name-input-semester-${sem}-subject-${subject}" value="${subject}"/>`
-                                        : `<div class="subject-name">${subject}</div>`}
-                                    <div class="grade-type">
-                                        ${this.lang == "fr" ? "Poids dans module" : "Weight in module"}: 
-                                        ${this.editMode 
-                                            ? `<input class="subject-coef-input-box any-input" id="subject-coef-input-box-semester-${sem}-subject-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" type="number" placeholder="%" step="5" min="0" max="100" value="${pct}"/>%`
-                                            : `<span style="font-weight: 800;">${pct}%</span>`}
-                                        | 
-                                        ${this.lang == "fr" ? "Moyenne" : "Average"}: 
-                                        <span class="subj-moyenne ${subjAvg == " - " ? '' : `${subjAvg>=10 ? 'good' : 'bad'}`}">${subjAvg}/20</span> 
-                                        ${nbGrades===0 ? `<span style="margin-left:2px;font-size:12px;color:#6b7280">${this.lang == "fr" ? "(aucune note publiée)" : "(no published grade)"}</span>` : ''}
-                                    </div>
+                                <div style="font-size: 13px; color: #666;">
+                                    ${classified 
+                                        ? ` ${this.lang == "fr" 
+                                                ? "Poids dans module: " 
+                                                : "Weight in module: "
+                                            }
+                                            ${this.editMode 
+                                                ? `<input class="subject-coef-input-box any-input" id="subject-coef-input-box-semester-${sem}-subject-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" type="number" placeholder="%" step="5" min="0" max="100" value="${pct}"/>%`
+                                                : `<span style="font-weight: 800">${pct}%</span>`
+                                            }
+                                        ` 
+                                        : ""
+                                    }
+                                    ${!detailed 
+                                        ? ` ${classified ? "• " : ""}
+                                            ${nbGrades===0 
+                                                ? `${this.lang == "fr" ? "aucune note publiée" : "no published grade"}` 
+                                                : `${nbGrades} ${this.lang == "fr" ? `note${nbGrades>1?"s":""} au total` : `grade${nbGrades>1?"s":""} total`}`
+                                            }
+                                            ${nbGrades>0 
+                                                ? ` • <span ${includedGradesLength<nbGrades ? `style="color: #df0000"` : ``}>
+                                                    <span style="font-weight: 700; ">${includedGradesLength}/${nbGrades}</span> 
+                                                    ${this.lang == "fr" ? `note${includedGradesLength>1?"s":""} activée${includedGradesLength>1?"s":""}` : `grade${includedGradesLength>1?"s":""} enabled`}${includedGradesLength<nbGrades ? `!` : ``}
+                                                </span>` 
+                                                : ``
+                                            }
+                                            ${nbSimGrades>0 
+                                                ? ` • ${nbSimGrades} ${this.lang == "fr" ? `note${nbSimGrades>1?"s":""} simulée${nbSimGrades>1?"s":""}` : `simulated grade${nbSimGrades>1?"s":""}`}`
+                                                : ``
+                                            }
+                                        `
+                                        : ""
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -2622,7 +2618,16 @@
                             <div class="grades-table-subject-total-coef-value"></div>
                             <div class="grades-table-subject-total-coef-debug">${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}</div>
                         </div>
+                        <div class="subj-moyenne ${subjAvg == " - " ? '' : `${subjAvg>=10 ? 'good' : 'bad'}`}" style="display: flex; justify-content: flex-end; width: 80px; padding-right: 20px; font-size: 20px">
+                            ${subjAvg}/20
+                        </div>
                     </div>
+
+                `;
+                
+                if (detailed) {
+                    html += `
+
                     <table class="grades-table ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" style="${this.editMode ? `user-select: text;` : ``}" id="grades-table-${subject}-semester${sem}" data-subject="${subject}">
 
                         <thead>
@@ -2653,13 +2658,13 @@
                             }
                         </thead>
                         <tbody>
-                `;
+                    `;
 
-                subjGrades.forEach((grade, index) => {
-                    const gradeClass = this.getGradeColor(grade.grade);
-                    const gradeIsSim = grade.__sim ? true : false;
+                    subjectGrades.forEach((grade, index) => {
+                        const gradeClass = this.getGradeColor(grade.grade);
+                        const gradeIsSim = grade.__sim ? true : false;
 
-                    html += `
+                        html += `
                             <tr class="grade-row ${index == nbGrades-1 ? `last` : ``} ${gradeIsSim ? `sim` : ``}" data-sim="${gradeIsSim}">
                                 <td class="grades-table-type" style="display: flex; align-items: center; gap: 6px; width: auto">
                                     <input type="checkbox" class="grade-checkbox any-input" id="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}" data-semester="${sem}" data-subj="${subject}" data-ue="${ueName||''}" data-prof="${grade.prof}" data-gradeid="${grade.type + " " + grade.date + " " + grade.prof}" ${gradeIsSim ? `data-simtimestamp="${grade.id}"` : ""} ${!this.gradeIsDisabled(grade) ? "checked" : ""}></input>
@@ -2706,246 +2711,10 @@
                                     }
                                 </td>
                             </tr>
-                    `;
-                });
-
-                html += `
-                            <tr ${this.editMode ? "" : "hidden=true"}>
-                                <td class="grades-table-type">
-                                    <div class="grade-type" style="display:flex; align-items:center; justify-content: flex-start">
-                                        <div style="width: 140px">${this.lang == "fr" ? "Ajouter une note simulée: " : "Add a simulated grade: "}</div>
-                                        <input class="grade-simulee-input sim-inp-type any-input" id="grade-simulee-input-type-for-${subject}-from-${ueName}-in-semester${sem}" data-semester="${sem}" data-subj="${subject}" placeholder="${this.lang == "fr" ? "Titre" : "Title"}" />
-                                    </div>
-                                </td>
-                                <td class="grades-table-grade">
-                                    <input class="grade-simulee-input sim-inp-grade any-input" id="grade-simulee-input-grade-for-${subject}-from-${ueName}-in-semester${sem}" type="number" step="0.5" min="0" max="20" data-semester="${sem}" data-subj="${subject}" placeholder="/20"> /20
-                                </td>
-                                <td class="grades-table-coef">
-                                    <input class="grade-simulee-input sim-inp-coef any-input" id="grade-simulee-input-coef-for-${subject}-from-${ueName}-in-semester${sem}" type="number" step="5" min="0" max="100" data-semester="${sem}" data-subj="${subject}" placeholder="%"> %
-                                </td>
-                                <td colspan="3">
-                                </td>
-                                <td class="grades-table-add-sim-cell" style="border-right-width: 0px; border-left-width: 0px;">
-                                    <button class="btn-export sim-add-btn" data-semester="${sem}" data-subj="${subject}" data-ue="${ueName||''}">${this.lang == "fr" ? "Ajouter" : "Add"}</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                `;
-
-                return html;
-            }
-
-
-
-
-            // MARK: createCompactClassifiedSubjCard
-            createAllCompactClassifiedSubjCards(sem, ueName) {
-                const ueData = this.gradesDatas[sem][ueName];
-
-                let html =  this.editMode ? this.createDropFieldInsertionField("subject", {sem, ueName, index:0}) : "";
-
-                Object.values(ueData.subjects).forEach((_value, _index) => {
-                    html += this.createCompactClassifiedSubjCard(sem, ueName, _value.subjName, _index);
-                    html += this.editMode ? this.createDropFieldInsertionField("subject", {sem, ueName, index:_index+1}) : "";
-                })
-
-                return html;
-            }
-            createCompactClassifiedSubjCard(sem, ueName, subject, index=-1) {
-                const ueData = this.gradesDatas[sem][ueName];
-                const subjectData           = ueData.subjects[subject];
-                const subjectGrades         = subjectData.grades;
-                const ueMoy                 = ueData.average;
-                const subjAvg               = subjectData.average;
-                const pct                   = subjectData.coef;
-                const isCustom              = subjectData.isCustom;
-                const nbGrades              = subjectGrades.length;
-                const includedGradesLength  = nbGrades - subjectData.disabledRealGrades.length - subjectData.disabledSimGrades.length;
-                const nbSimGrades           = subjectData.simGrades.length;
-
-                const html = `
-                <div class="subject-card classified compact ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" id="subject-card-semester-${sem}-subject-${subject}" style="${this.editMode ? "cursor: grab; user-select: none; " : " "}" ${this.editMode ? `draggable="true"` : ""} data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
-                    <div style="display:flex; align-items:center; gap:8px; padding-left: ${this.editMode ? "11px" : "53px"}; width:38.8%; min-width: 275px">
-                        ${this.editMode 
-                            ? `<div style="margin: 0px 5px; margin-bottom: 3px;">
-                            ${this.selectedSubjectCardsId.includes(`subject-card-semester-${sem}-subject-${subject}`) 
-                                ? `<div class="tick-icon for-compact-subject-card" data-type="compact" data-targetid="subject-card-semester-${sem}-subject-${subject}">✔</div>`
-                                : this.draggableIcon("compact-subject-card", {type:"compact", targetId:`subject-card-semester-${sem}-subject-${subject}`}) 
-                            }</div>`
-                            : ""
-                        }
-                        <div style="width: 87%">
-                            ${isCustom 
-                                ? `<input type="text" class="subject-name input any-input" id="subject-name-input-semester-${sem}-subject-${subject}" value="${subject}"/>`
-                                : `<div class="subject-name">${subject}</div>`
-                            }
-                            <div style="font-size: 13px; color: #666;">
-                                ${this.lang == "fr" ? "Poids dans module: " : "Weight in module: "}
-                                ${this.editMode 
-                                    ? `<input class="subject-coef-input-box any-input" id="subject-coef-input-box-semester-${sem}-subject-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" type="number" placeholder="%" step="5" min="0" max="100" value="${pct}"/>%`
-                                    : `<span style="font-weight: 800">${pct}%</span>`
-                                } • 
-                                ${nbGrades===0 ? `${this.lang == "fr" ? "aucune note publiée" : "no published grade"}` : `${nbGrades} ${this.lang == "fr" ? `note${nbGrades>1?"s":""} au total` : `grade${nbGrades>1?"s":""} total`}`}
-                                ${nbGrades>0 
-                                    ? ` • <span ${includedGradesLength<nbGrades ? `style="color: #df0000"` : ``}>
-                                        <span style="font-weight: 700; ">${includedGradesLength}/${nbGrades}</span> 
-                                        ${this.lang == "fr" ? `note${includedGradesLength>1?"s":""} activée${includedGradesLength>1?"s":""}` : `grade${includedGradesLength>1?"s":""} enabled`}${includedGradesLength<nbGrades ? `!` : ``}
-                                    </span>` 
-                                    : ``}
-                                ${nbSimGrades>0 
-                                    ? ` • ${nbSimGrades} ${this.lang == "fr" ? `note${nbSimGrades>1?"s":""} simulée${nbSimGrades>1?"s":""}` : `simulated grade${nbSimGrades>1?"s":""}`}`
-                                    : ``}
-                                
-                            </div>
-                        </div>
-                    </div>
-                    <div class="grades-table-subject-total-coef-div" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}">
-                        <div class="grades-table-subject-total-coef-value"></div>
-                        <div class="grades-table-subject-total-coef-debug">${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}</div>
-                    </div>
-                    <div class="subj-moyenne ${subjAvg == " - " ? '' : `${subjAvg>=10 ? 'good' : 'bad'}`}" style="display: flex; justify-content: flex-end; width: 80px; padding-right: 20px; font-size: 20px">${subjAvg}/20</div>
-                </div>
-                `;
-                return html;
-            }
-
-
-
-
-            // MARK: createDetailedUnclassifiedSubjCard
-            createAllDetailedUnclassifiedSubjCards(sem) {
-                const unclassified = this.getUnclassifiedSubjects(sem);
-                let html = ``;
-
-                unclassified.forEach(subject => {
-                    html += this.createDetailedUnclassifiedSubjCard(sem, subject);
-                })
-                return html
-            }
-            createDetailedUnclassifiedSubjCard(sem, subject) {
-                let html = ``;
-                let totalCoef = 0;
-                let totalClassAvg = 0;
-                const ueName = "__#unclassified#__";
-                const subjData      = this.gradesDatas?.[sem]?.[ueName]?.subjects?.[subject] || {};
-                const grades        = subjData?.grades || [];
-                const simGrades     = subjData?.simGrades || [];
-                const subjAvg       = subjData?.average >= 0 ? subjData.average : " - ";
-                const nbGrades      = grades.length;
-                const nbSimGrades   = simGrades.length;
-                const nbRealGrades  = nbGrades - nbSimGrades;
-
-                html +=`
-                <div class="subject-card detailed unclassified ${subjAvg >= 10 ? `good` : `bad`}" id="subject-card-semester-${sem}-subject-${subject}" ${this.editMode ? `style="user-select: none;"` : ""} data-subject="${subject}" data-ue="${ueName}" data-semester="${sem}">
-                    <div class="subject-card-header unclassified  ${subjAvg >= 10 ? `good` : `bad`}" style="${this.editMode ? "cursor: grab; padding-left: 10px;" : "padding-left: 50px; user-select: text"}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" ${this.editMode ? `draggable="true"` : ""}>
-                        ${this.editMode 
-                            ? `<div style="margin: 0px 5px; margin-bottom: 3px;">
-                            ${this.selectedSubjectCardsId.includes(`subject-card-semester-${sem}-subject-${subject}`) 
-                                ? `<div class="tick-icon for-detailed-subject-card" data-type="detailed" data-targetid="subject-card-semester-${sem}-subject-${subject}">✔</div>`
-                                : this.draggableIcon("detailed-subject-card", {type:"detailed", targetId:`subject-card-semester-${sem}-subject-${subject}`}) 
-                            }</div>`
-                            : ""
-                        }
-                        <div style="width: 40%">
-                            ${subject}
-                            <div style="font-size:12px;margin-top:4px;">${this.lang == "fr" ? "Moyenne" : "Average"}: <span class="subj-moyenne ${subjAvg>=10 ? 'good' : 'bad'}" >${subjAvg}/20</span></div>
-                        </div>
-                        <div class="grades-table-subject-total-coef-div" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}">
-                            <div class="grades-table-subject-total-coef-value"></div>
-                            <div class="grades-table-subject-total-coef-debug">${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}</div>
-                        </div>
-                    </div>
-
-                    <table class="grades-table ${subjAvg >= 10 ? "good" : "bad"}" id="grades-table-${subject}-semester${sem}">
-                        <thead>
-                            ${nbGrades > 0 || this.editMode
-                                ? `<tr style="/* border-bottom: 2px solid #d5d5d5; */">
-                                    <th class="grades-table-type" style="padding-left: 30px; border-left-width: 0px;">
-                                        ${this.lang == "fr" ? "Intitulé" : "Title"}
-                                    </th>
-                                    <th class="grades-table-grade">
-                                        ${this.lang == "fr" ? "Note" : "Grade"}
-                                    </th>
-                                    <th class="grades-table-coef">
-                                        ${this.lang == "fr" ? "Coef" : "Coef"}
-                                    </th>
-                                    <th class="grades-table-classAvg">
-                                        ${this.lang == "fr" ? "Moy. Classe" : "Class Avg"}
-                                    </th>
-                                    <th class="grades-table-date">
-                                        ${this.lang == "fr" ? "Date" : "Date"}
-                                    </th>
-                                    <th class="grades-table-teacher" style="border-right-width: 0px;${this.selectedSubjectCardsId.length > 0 ? " display: none;" : ""}">
-                                        ${this.lang == "fr" ? "Prof(s)" : "Teacher(s)"}
-                                    </th>
-                                    <th class="grades-table-add-sim-cell" style="border-right-width: 0px; border-left-width: 0px;">
-                                    </th>
-                                </tr>`
-                                : ``
-                            }
-                        </thead>
-                        <tbody>
-                `;
-                grades.forEach((grade, index) => {
-                    totalCoef += grade.coef;
-                    totalClassAvg += grade.classAvg;
-
-                    const gradeClass = this.getGradeColor(grade.grade);
-                    const gradeIsSim = grade.__sim ? true : false;
+                        `;
+                    });
 
                     html += `
-                            <tr class="grade-row-unsorted-grades ${index == nbRealGrades-1 ? `last` : ``} ${gradeIsSim ? `sim` : ``}" data-sim="${gradeIsSim}">
-                                <td class="grades-table-type" style="display: flex; align-items: center; gap: 6px; width: auto">
-                                    <input type="checkbox" class="grade-checkbox any-input" id="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}-${index-nbRealGrades}" data-semester="${sem}" data-subj="${subject}" data-ue="${ueName||''}" data-prof="${grade.prof}" data-gradeid="${grade.type + " " + grade.date + " " + grade.prof}" ${gradeIsSim ? `data-simtimestamp="${grade.id}"` : ""} ${!this.gradeIsDisabled(grade) ? "checked" : ""}></input>
-                                    ${gradeIsSim && this.editMode
-                                        ? `<input class="grade-type grade-simulee-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="grade-simulee-input-type-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" data-modifType="type" data-simid="${index-nbRealGrades}" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-ue="${ueName||''}" value="${grade.type}"/>` 
-                                        : `<label class="grade-type" style="width: auto"  id="grade-type-${grade.type}-${grade.date}" for="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}-${index-nbRealGrades}">${grade.type || ''}${gradeIsSim ? ` • ${this.lang == "fr" ? "Simulée" : "Simulated"}` : ''}</label>`
-                                    }
-                                </td>
-                                <td class="grade-value grade-${gradeClass} grades-table-grade" data-sim="${gradeIsSim}">
-                                    ${gradeIsSim && this.editMode
-                                        ? `<input class="grade-simulee-input-edit sim-inp-grade any-input" style="width: 100%; max-width: 75px;" id="grade-simulee-input-grade-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="number" step="0.5" min="0" max="20" data-simid="${index-nbRealGrades}" data-modifType="grade" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-ue="${ueName||''}" style="width:75px; height:25px" value="${grade.grade}"> /20`
-                                        : `${grade.grade}/20`
-                                    }
-                                </td>
-                                <td class="grades-table-coef" data-sim="${gradeIsSim}">
-                                    ${gradeIsSim && this.editMode
-                                        ? `<input class="grade-simulee-input-edit sim-inp-coef any-input" style="width: 100%; max-width: 60px;" id="grade-simulee-input-coef-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="number" step="5" min="0" max="100" data-simid="${index-nbRealGrades}" data-modifType="coef" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-ue="${ueName||''}" style="width:60px; height:25px"value="${grade.coef}"> %`
-                                        : `${grade.coef} %`
-                                    }
-                                </td>
-                                <td class="grades-table-classAvg" data-sim="${gradeIsSim}">
-                                    ${gradeIsSim
-                                        ? `<span style="width: 100%; display: flex; justify-content: center;"> — </span>`
-                                        : `${grade.classAvg}/20`
-                                    }
-                                </td>
-                                <td class="grades-table-date grade-date" data-sim="${gradeIsSim}">
-                                    ${gradeIsSim
-                                        ? `<span style="width: 100%; display: flex; justify-content: center;"> — </span>`
-                                        : `${grade.date}`
-                                    }
-                                </td>
-                                <td class="grades-table-teacher" ${this.selectedSubjectCardsId.length > 0 ? `style="display: none;"` : ""}>
-                                    ${gradeIsSim
-                                        ? `<span style="width: 100%; display: flex; justify-content: center;"> — </span>`
-                                        : `<span>${`${grade.prof.split(" / ").length <= 3 ? grade.prof : grade.prof.split(" / ").slice(0,3).join(" / ") + " / ... "}`||''}</span>`
-                                    }
-                                </td>
-                                <td class="grades-table-add-sim-cell" style="${gradeIsSim ? `width: 52px; padding: 3px; text-align: center;` : ``}">
-                                    ${
-                                        gradeIsSim 
-                                        ? `<button class="sim-del-btn" data-semester="${sem}" data-subj="${subject}" data-ue="${ueName||''}" data-type="${grade.type}" data-simid="${index-nbRealGrades}">🗑️</button>` 
-                                        : `<div style="width:32px"></div>`
-                                    }
-                                </td>
-                            </tr>
-                    `;
-                });
-
-                html += `
                             <tr ${this.editMode ? "" : "hidden=true"}>
                                 <td class="grades-table-type">
                                     <div class="grade-type" style="display:flex; align-items:center; justify-content: flex-start">
@@ -2967,74 +2736,17 @@
                             </tr>
                         </tbody>
                     </table>
+                    `;
+                }
+
+                html += `
                 </div>
                 `;
-                
+
                 return html;
             }
 
-
-
-
-            // MARK: createDetailedUnclassifiedSubjCard
-            createAllCompactUnclassifiedSubjCards(sem) {
-                const unclassified = this.getUnclassifiedSubjects(sem);
-                let html = ``;
-
-                unclassified.forEach(subject => {
-                    html += this.createCompactUnclassifiedSubjCard(sem, subject);
-                })
-                return html
-            }
-            createCompactUnclassifiedSubjCard(sem, subject) {
-                const ueName = "__#unclassified#__";
-                const subjectData           = this.gradesDatas?.[sem]?.[ueName]?.subjects?.[subject] || {};
-                const subjectGrades         = subjectData?.grades || [];
-                const simGrades             = subjectData?.simGrades || [];
-                const subjAvg               = subjectData?.average >= 0 ? subjectData.average : " - ";
-                const nbGrades              = subjectGrades.length;
-                const includedGradesLength  = nbGrades - subjectData.disabledRealGrades.length - subjectData.disabledSimGrades.length;
-                const nbSimGrades           = simGrades.length;
-                
-                
-                const html = `
-                <div class="subject-card unclassified compact ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `good` : `bad`}`}" id="subject-card-semester-${sem}-subject-${subject}" style="${this.editMode ? "cursor: grab; user-select: none; " : " "}" ${this.editMode ? `draggable="true"` : ""} data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}">
-                    <div style="display:flex; align-items:center; gap:8px; padding-left: ${this.editMode ? "11px" : "53px"}; width:38.8%; min-width: 275px">
-                        ${this.editMode 
-                            ? `<div style="margin: 0px 5px; margin-bottom: 3px;">
-                            ${this.selectedSubjectCardsId.includes(`subject-card-semester-${sem}-subject-${subject}`) 
-                                ? `<div class="tick-icon for-compact-subject-card" data-type="compact" data-targetid="subject-card-semester-${sem}-subject-${subject}">✔</div>`
-                                : this.draggableIcon("compact-subject-card", {type:"compact", targetId:`subject-card-semester-${sem}-subject-${subject}`}) 
-                            }</div>`
-                            : ""
-                        }
-                        <div style="width: 87%">
-                            <div class="subject-name">${subject}</div>
-                            <div style="font-size: 13px; color: #666;">
-                                ${nbGrades===0 ? `${this.lang == "fr" ? "aucune note publiée" : "no published grade"}` : `${nbGrades} ${this.lang == "fr" ? `note${nbGrades>1?"s":""} au total` : `grade${nbGrades>1?"s":""} total`}`}
-                                ${nbGrades>0 
-                                    ? ` • <span ${includedGradesLength<nbGrades ? `style="color: #df0000"` : ``}>
-                                        <span style="font-weight: 700; ">${includedGradesLength}/${nbGrades}</span> 
-                                        ${this.lang == "fr" ? `note${includedGradesLength>1?"s":""} activée${includedGradesLength>1?"s":""}` : `grade${includedGradesLength>1?"s":""} enabled`}${includedGradesLength<nbGrades ? `!` : ``}
-                                    </span>` 
-                                    : ``}
-                                ${nbSimGrades>0 
-                                    ? ` • ${nbSimGrades} ${this.lang == "fr" ? `note${nbSimGrades>1?"s":""} simulée${nbSimGrades>1?"s":""}` : `simulated grade${nbSimGrades>1?"s":""}`}`
-                                    : ``}
-                                
-                            </div>
-                        </div>
-                    </div>
-                    <div class="grades-table-subject-total-coef-div" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}">
-                        <div class="grades-table-subject-total-coef-value"></div>
-                        <div class="grades-table-subject-total-coef-debug">${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}</div>
-                    </div>
-                    <div class="subj-moyenne ${subjAvg == " - " ? '' : `${subjAvg>=10 ? 'good' : 'bad'}`}" style="display: flex; justify-content: flex-end; width: 80px; padding-right: 20px; font-size: 20px">${subjAvg}/20</div>
-                </div>
-                `;
-                
-                return html;
-            }
+            
 
         //#endregion
 
@@ -3974,6 +3686,7 @@
                             const sem       = subjCard.dataset.semester;
                             const ueName    = subjCard.dataset.ue || "__#unclassified#__";
                             const subjName  = subjCard.dataset.subject;
+                            const index     = subjCard.dataset.index;
                             let newSubjCard = "";
                             this.viewMode   = "mixed";
 
@@ -3988,7 +3701,7 @@
                                 this.compactSubjCardsId.push(subjCard.id);
                             }
                             
-                            subjCard.outerHTML = this.createSubjCard(sem, ueName, subjName);
+                            subjCard.outerHTML = this.createSubjCard(sem, ueName, subjName, index);
 
 
 
@@ -5910,6 +5623,7 @@
                 }
             };
         };
+
     }
 
     window.onload = () => { new ECAMDashboard(); };
