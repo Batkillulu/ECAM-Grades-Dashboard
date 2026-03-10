@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.1.5
+// @version      2.1.6
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/group/education/notes*
@@ -77,7 +77,23 @@
             .issue.share-config.en.open       { width: 445px; }
             .issue.suggest-idea.en.open       { width: 315px; }
             .issue.report-issue.en.open       { width: 175px; }
+            
+            .header-actions                 { display: flex; gap: 12px; }
+            .btn                                { display: flex; justify-content: center; align-items: center; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-size: 14px; }
+            .btn-edit-mode:hover:not(:disabled) { transform: scale(0.95); background: linear-gradient(135deg, #7d92eeff 0%, #8e5ebeff 100%); }
+            .btn-edit-mode                      { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: grid; width: 126px; height: 108px; transition: all 0.2s ease }
+            .btn-edit-mode.on                   { transform: scale(0.95); box-shadow: inset 0px 0px 6px 4px #ffffff; }
+            .btn-export                         { background: white; color: #666; width: 140px; height: 50px; }
+            .btn-import                         { background: white; color: #666; width: 140px; height: 50px; z-index: 1; }
+            .btn-export:hover                   { background: white; border: 1px solid #667eea; color: #667eea; transform: scale(0.95); box-shadow: 3px 5px 5px 0px #00000042; }
+            .btn-import:hover                   { background: white; border: 1px solid #667eea; color: #667eea; transform: scale(0.95); box-shadow: 3px 5px 5px 0px #00000042; }
+            .btn-icon                           { font-size: 20px; margin-bottom: 2px }
+            .btn:disabled                       { opacity: 50%; cursor: not-allowed; }
+        `;
 
+
+        // MARK: import menu
+        styles += `
 
             .import-menu        { display: flex; justify-content: space-around; position: absolute; right: 4%; top: 220px; background: white; color: black; box-shadow: 5px 4px 20px 0px #00000066; font-size: 15px; border-radius: 13px; min-height: 60px; width: 35%; align-items: center; opacity: 0%; z-index: 0; transition: all 0.2s ease; }
             .import-menu.show   { top: 245px; opacity: 100%; }
@@ -88,16 +104,16 @@
             .import-menu-btn.online {  }
             
 
-            .online-cfg-picker-menu         { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 20%; display: flex; flex-direction: column; justify-content: flex-start; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; z-index: 1000; border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0%; transition: all 0.3s ease; backdrop-filter: blur(1px);  }
-            .online-cfg-picker-menu.show    { height: calc(100% - 60px); width: calc(100% - 60px); top: 30px; left: 30px; border: 8px solid #ffffff; opacity: 100%; }
+            .online-cfg-picker-menu         { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 20%; display: flex; flex-direction: column; justify-content: flex-start; position: fixed; height: calc(100% - 500px); width: calc(100% - 700px); top: 250px; left: 350px; transform: translateZ(0) scale(110%); z-index: 1000; border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0%; transition: opacity 0.3s ease, border-width 0.3s ease, transform 0.3s ease; backdrop-filter: blur(1px); }
+            .online-cfg-picker-menu.show    { border-width: 8px; transform: translateZ(0) scale(100%); opacity: 100%; }
             .online-cfg-picker-menu-header          { display: flex; justify-content: flex-end; height: 40px; align-items: center; }
             .online-cfg-picker-menu-close-btn           { display: flex; justify-content: center; align-items: center; width: 30px; height: 30px; border-radius: 15px; border: 2px solid; font-size: 20px; user-select: none; cursor: pointer; margin-right: 3px; transition: all 0.2s ease; }
             .online-cfg-picker-menu-close-btn:hover     { width: 40px; height: 40px; border-radius: 20px; font-size: 30px; margin-right: -2px; gap: 5px; }
 
-            .online-cfg-picker-menu-body            { display: flex; flex-direction: row; justify-content: center;   align-items: center; height: calc(100% - 40px); width: 100%; gap: 5px; overflow: clip;}
-            .online-cfg-picker-menu-body-container  { display: flex; flex-direction: row; justify-content: flex-end; align-items: flex-start; width: 620px; gap: 5px; position: relative; right: 14%; }
-            .online-cfg-picker-menu-dir-tree            { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 0px; color: transparent; margin: 0px -5px; border-radius: 16px; border: 2px solid; background: white; overflow: clip; opacity: 0%; transition: all 0.2s ease; }
-            .online-cfg-picker-menu-dir-tree.show       { width: 150px; color: black; opacity: 100%; margin: 0px; }
+            .online-cfg-picker-menu-body            { display: flex; flex-direction: row; justify-content: center; align-items: center; height: calc(100% - 40px); width: 100%; gap: 5px; overflow: clip;}
+            .online-cfg-picker-menu-body-container  { display: flex; flex-direction: row; justify-content: center; align-items: flex-start; width: 620px; gap: 5px; }
+            .online-cfg-picker-menu-dir-tree            { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 0px; color: black; margin: 0px -5px; border-radius: 16px; border: 2px solid; background: white; overflow: clip; opacity: 0%; transition: all 0.2s ease; }
+            .online-cfg-picker-menu-dir-tree.show       { width: 150px; opacity: 100%; margin: 0px; }
             .online-cfg-picker-menu-dir-tree.section    { z-index: 1004; }
             .online-cfg-picker-menu-dir-tree.year       { z-index: 1003; }
             .online-cfg-picker-menu-dir-tree.prom       { z-index: 1002; }
@@ -119,18 +135,6 @@
             .online-cfg-picker-menu-dir-card:hover      { transform: scale(95%); background: #dddddd; }
             .online-cfg-picker-menu-dir-card.on:hover   { transform: scale(95%); background: #dbddff; }
 
-            
-            .header-actions                 { display: flex; gap: 12px; }
-            .btn                                { display: flex; justify-content: center; align-items: center; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-size: 14px; }
-            .btn-edit-mode:hover:not(:disabled) { transform: scale(0.95); background: linear-gradient(135deg, #7d92eeff 0%, #8e5ebeff 100%); }
-            .btn-edit-mode                      { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: grid; width: 126px; height: 108px; transition: all 0.2s ease }
-            .btn-edit-mode.on                   { transform: scale(0.95); box-shadow: inset 0px 0px 6px 4px #ffffff; }
-            .btn-export                         { background: white; color: #666; width: 140px; height: 50px; }
-            .btn-import                         { background: white; color: #666; width: 140px; height: 50px; z-index: 1; }
-            .btn-export:hover                   { background: white; border: 1px solid #667eea; color: #667eea; transform: scale(0.95); box-shadow: 3px 5px 5px 0px #00000042; }
-            .btn-import:hover                   { background: white; border: 1px solid #667eea; color: #667eea; transform: scale(0.95); box-shadow: 3px 5px 5px 0px #00000042; }
-            .btn-icon                           { font-size: 20px; margin-bottom: 2px }
-            .btn:disabled                       { opacity: 50%; cursor: not-allowed; }
         `;
 
 
@@ -636,7 +640,7 @@
 
         constructor() {
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.1.5";
+            this.scriptVersion = "2.1.6";
 
             this.now        = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
             this.dateHour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
@@ -5559,7 +5563,8 @@
                     if (dirCard) {
                         const addOnToDirCard = dirCard.classList.contains("on");
                         const path = dirCard.dataset.path;
-    
+
+                        // Start by removing all "show" and "on" classes to all descendant dirTrees and descendant/sibling dirCards
                         if (dirCard.classList.contains("config")) {
                             this.importData(dirCard.dataset.url);
                         }
@@ -5576,6 +5581,7 @@
                             pickerMenu.querySelectorAll(`.online-cfg-picker-menu-dir-card.section.on`) .forEach(_dirCard => {_dirCard.classList.remove("on")})
                         }
 
+                        // Then, adding the "on" class to the clicked dirCard and the "show" class to the target dirTree associated to the dirCard clicked
                         if (!addOnToDirCard) {
                             dirCard.classList.add("on");
                         }
