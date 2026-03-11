@@ -10,7 +10,7 @@ All trademarks and logos belong to their respective owners.
 
 # Installation guide ([Windows and Androids ⤦](#windows-and-androids), [IOS ⤦](#ios))
 
-## Windows and Androids
+## - Windows and Androids - 
 For Windows, any web browser works, and for Androids, only the [Firefox Nightly ↗](https://play.google.com/store/apps/details?id=org.mozilla.fenix&hl=en&pli=1) web browser manages extension, to my knowledge, so if you want to use the ECAM Grades Dashboard, install [Firefox Nightly ↗](https://play.google.com/store/apps/details?id=org.mozilla.fenix&hl=en&pli=1). For now, there's no proper mobile display, this is coming in the next major update, so for now, you may use the `Desktop version` that you can enabled when taping on the three dots in the top-right corner of the Firefox Nightly.
 
 ### Step 1: [Install Tampermonkey ↗](https://www.tampermonkey.net/)
@@ -25,7 +25,7 @@ This will redirect you to a Tampermonkey page that will ask you to install the s
 ### Step 4: Enjoy! [Go to ECAM Grades! ↗](https://espace.ecam.fr/group/education/notes)
 Your ECAM Grades Dashboard is fully operational! If you're lucky enough, you may already have configurations prepared, you can go and check on `Import Config`, `Get a configuration online` and browse through the menu. If you don't find it and you're feeling generous, please share with me the details of your modules (specifically what subjects are in what modules, as well as their coefficients in their respective modules, you should have received a mail from ECAM with all the details somewhere, you can just provide me with this) at the following mail address baptiste.jacquin@ecam.fr, or in the message box on which will be redirected when clicking on the flag button, `Share a config`. You can also do the 2nd option if you already configured a semester, and want to share it, after pressing `Export config`. Thank you!
 
-## IOS
+## - IOS - 
 
 ### Step 1: [Install Userscripts ↗](https://apps.apple.com/us/app/userscripts/id1463298887)
 It's a web browser extension that allows to run JavaScript scripts upon loading a specified website.
