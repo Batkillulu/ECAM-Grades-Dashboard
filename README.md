@@ -26,7 +26,6 @@ This will redirect you to a Tampermonkey page that will ask you to install the s
 Your ECAM Grades Dashboard is fully operational! If you're lucky enough, you may already have configurations prepared, you can go and check on `Import Config`, `Get a configuration online` and browse through the menu. If you don't find it and you're feeling generous, please share with me the details of your modules (specifically what subjects are in what modules, as well as their coefficients in their respective modules, you should have received a mail from ECAM with all the details somewhere, you can just provide me with this) at the following mail address baptiste.jacquin@ecam.fr, or in the message box on which will be redirected when clicking on the flag button, `Share a config`. You can also do the 2nd option if you already configured a semester, and want to share it, after pressing `Export config`. Thank you!
 
 ## IOS
-(it's a bit less practical, i'm sorry)
 
 ### Step 1: [Install Userscripts ↗](https://apps.apple.com/us/app/userscripts/id1463298887)
 It's a web browser extension that allows to run JavaScript scripts upon loading a specified website.
@@ -43,7 +42,7 @@ In the Extension Page, click the + button, then click "New JS". Keep this page o
 ### Step 5: [Get the ECAM Grades Dashboard Script ↗](https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/ECAM%20Grades%20Dashboard.user.js)
 Open the script's page by clicking on the header of this step, select the whole code by pressing `Command + A` and copy it with `Command + C`. Now come back on the previously opened Userscript New JS page, and paste the code with `Command + V`, and click on `Save`.
 
-### Step6: Fewww, that's done! Enjoy! [Go to ECAM Grades! ↗](https://espace.ecam.fr/group/education/notes)
+### Step6:Enjoy! [Go to ECAM Grades! ↗](https://espace.ecam.fr/group/education/notes)
 Your ECAM Grades Dashboard is fully operational! If you're lucky enough, you may already have configurations prepared, you can go and check on `Import Config`, `Get a configuration online` and browse through the menu. If you don't find it and you're feeling generous, please share with me the details of your modules (specifically what subjects are in what modules, as well as their coefficients in their respective modules, you should have received a mail from ECAM with all the details somewhere, you can just provide me with this) at the following mail address baptiste.jacquin@ecam.fr, or in the message box on which will be redirected when clicking on the flag button, `Share a config`. You can also do the 2nd option if you already configured a semester, and want to share it, after pressing `Export config`. Thank you!
 
 
