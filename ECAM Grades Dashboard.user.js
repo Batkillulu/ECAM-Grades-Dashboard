@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.2.2
+// @version      2.2.3
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/group/education/notes*
@@ -27,7 +27,7 @@
 (function() {
     'use strict';
 
-    //#region -======== STYLES CSS =========
+    //#region -======= STYLES  CSS ========
 
         let styles = ``;
 
@@ -106,14 +106,14 @@
 
             .online-cfg-picker-menu         { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 20%; display: flex; flex-direction: column; justify-content: flex-start; position: fixed; width: 750px; height: 500px; left: calc(50% - 750px / 2); top: calc(50% - 500px / 2); transform: translateZ(0) scale(110%); z-index: 1000; border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0%; backdrop-filter: blur(1.4px); transition: opacity 0.3s ease, border-width 0.3s ease, transform 0.3s ease; }
             .online-cfg-picker-menu.show    { border-width: 8px; transform: translateZ(0) scale(100%); opacity: 100%; }
-            .online-cfg-picker-menu-header          { display: flex; justify-content: flex-end; height: 40px; align-items: center; }
+            .online-cfg-picker-menu-header          { display: flex; justify-content: flex-end; height: 40px; align-items: center; z-index: 1010; }
             .online-cfg-picker-menu-close-btn           { display: flex; justify-content: center; align-items: center; width: 30px; height: 30px; border-radius: 15px; border: 2px solid; font-size: 20px; user-select: none; cursor: pointer; margin-right: 3px; transition: all 0.2s ease; }
             .online-cfg-picker-menu-close-btn:hover     { width: 40px; height: 40px; border-radius: 20px; font-size: 30px; margin-right: -2px; gap: 5px; }
 
             .online-cfg-picker-menu-body            { display: flex; flex-direction: row; justify-content: center; align-items: center; height: 500px; width: 100%; position: fixed; top: -8px; gap: 5px; overflow: clip; }
             .online-cfg-picker-menu-body-container  { display: flex; flex-direction: row; justify-content: center; align-items: flex-start; width: 640px; }
-            .online-cfg-picker-menu-dir-tree            { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 0px; color: black; margin: 0px 0px; border-radius: 16px; outline: 2px solid; background: white; overflow: clip; opacity: 0%; transition: all 0.2s ease; }
-            .online-cfg-picker-menu-dir-tree.show       { width: 150px; opacity: 100%; margin: 0px 5px; }
+            .online-cfg-picker-menu-dir-tree            { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 0px; color: black; margin: 0px 0px; border-radius: 16px; outline: 2px solid; background: white; overflow: clip; opacity: 0%; user-select: none; transition: all 0.2s ease; }
+            .online-cfg-picker-menu-dir-tree.show       { width: 150px; opacity: 100%; margin: 0px 5px; user-select: text; }
             .online-cfg-picker-menu-dir-tree.section    { z-index: 1004; }
             .online-cfg-picker-menu-dir-tree.year       { z-index: 1003; }
             .online-cfg-picker-menu-dir-tree.prom       { z-index: 1002; }
@@ -346,7 +346,7 @@
                 .drop-ue-card-insert-arrow.show                     { opacity: 50%; }
                 .drop-ue-card-insert-arrow.show.hover               { left: 50%; opacity: 100%; }
 
-                .drop-ue-card-insert-plus                           { transform: translate(  0px, 14px) rotate(  0deg); font-size: 50px ;  position: relative; left: 0px; display: flex; justify-content: center; height: 50px; width: 100%; background: transparent; opacity: 0%; transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); line-height: 40%; }
+                .drop-ue-card-insert-plus                           { transform: translate(  0px, 14px) rotate(  0deg); font-size: 50px ;  position: relative; left: 0px; display: flex; justify-content: center; height: 50px; width: 100%; background: transparent; opacity: 0%; transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); line-height: 39%; }
                 .drop-ue-card-insert-plus.show                      { opacity: 50%; }
                 .drop-ue-card-insert-plus.show.hover                { transform: translate(130px, 30px) rotate(180deg); font-size: 280px; opacity: 100%; line-height: 10%; }
 
@@ -606,7 +606,7 @@
     
     
     
-    // MARK: -=========================
+    // MARK: -========================
 
 
 
@@ -626,7 +626,7 @@
 
         constructor() {
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.2.2";
+            this.scriptVersion = "2.2.3";
 
             this.now        = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
             this.dateHour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
@@ -740,7 +740,6 @@
 
 
         //#region -REGION: Misc methods
-
 
 
 
@@ -1067,7 +1066,7 @@
                     if (Object.keys(this.sim?.[_sem])?.length == 0) {delete this.sim[_sem]}
                 })
             }
-            /** Clear all simulated grades in the ue if `semester` and `ue` are provided, or in the semester if only `semester` is provided. If no argument is provided, clears all simulated grades */
+            /** Clear all simulated grades in the ue if `sem` (semester) and `ueName` (name of the ue to clear) are provided, or in the semester if only `semester` is provided. If no argument is provided, clears all simulated grades */
             clearSimGrades(sem, ueName) {
                 this.ensureSimPath(sem, ueName);
                 if (sem) {
@@ -1082,6 +1081,12 @@
                 this.saveSim()
                 this.getGradesDatas();
             }
+            /** Obtain the list of simulated grades in the `sem`, `ue` and `subj` provided.
+             * @param {String|Number} sem semester's number
+             * @param {String} ue ue's name
+             * @param {String} subj subject's name
+             * @returns {Array<Grade>|Array<undefined>} The list of all simulated grades in function of the given parameters. If none was found, gives an empty array instead
+             */
             getSimGrades(sem, ue, subj){ return (this.sim[sem]&&this.sim[sem][ue]&&this.sim[sem][ue][subj])||[]; }
             getAllSubjectsForUE(sem, ueName){
                 const real = this.ueConfig?.[sem]?.[ueName]?.subjects || [];
@@ -1269,12 +1274,18 @@
             /** Call inside a onkeydown or onkeyup event listener
              *  
              * @param {KeyboardEvent} keyboardEvent Pass the keyboard event trigger onkey event from which this method is called
-             * @param {String} keyPressed The key expected to be pressed
-             * @param {Object} param2 All the modifiers. Each element of this object `alt`, `ctrl`, `shift`, `meta`, and `repeat` take as value on of the following Strings: "required", "allowed", "dont care", 
+             * @param {String | Array} keyPressed The key expected to be pressed, an array of keys expected to be pressed or a regular expression to match the key pressed
+             * @param {Object} param3 All the modifiers. Each element of this object `alt`, `ctrl`, `shift`, `meta`, and `repeat` take as value on of the following Strings: "required", "allowed", "dont care", 
              * @returns {RegExpMatchArray} A formated RegExpMatchArray result following the key and the modifiers given as parameters
              */
-            keyInputMatch(keyboardEvent, keyPressed="(.+)", {alt="whatever", ctrl="whatever", shift="whatever", meta="whatever", repeat="whatever"}={alt:"whatever", ctrl:"whatever", shift:"whatever", meta:"whatever", repeat:"whatever"}) {
+            keyInputMatch(keyboardEvent, keyPressed="([a-zA-Z])", {alt="whatever", ctrl="whatever", shift="whatever", meta="whatever", repeat="whatever"}={alt:"whatever", ctrl:"whatever", shift:"whatever", meta:"whatever", repeat:"whatever"}) {
                 const e = keyboardEvent;
+
+                let keyExpected = keyPressed;
+                if      (keyPressed instanceof Array)   { keyExpected = keyPressed.map((s) => {if (s.match(/[^a-z]+/i)) {return "\\"+s} else {return s}}).join("|"); }
+                else if (keyPressed instanceof String)  { keyExpected = "\\"+ keyPressed; }
+                else if (keyPressed instanceof RegExp)  { keyExpected = keyPressed.source; }
+
                 const key = `${e.altKey ? "alt" : "no-alt"} ${e.ctrlKey ? "+ ctrl" : "+ no-ctrl"} ${e.shiftKey ? "+ shift" : "+ no-shift"} ${e.metaKey ? "+ meta" : "+ no-meta"} + ${e.key} (${e.repeat ? "repeat" : "no-repeat"})`;
 
                 let altPattern, ctrlPattern, shiftPattern, metaPattern, repeatPattern;
@@ -1284,7 +1295,7 @@
                 if (meta   === "required") {metaPattern   = "(meta)"}   else if (meta   === "whatever") {metaPattern   = "(meta|no-meta)"}      else if (meta   === "forbidden") {metaPattern   = "(no-meta)"}          
                 if (repeat === "required") {repeatPattern = "(repeat)"} else if (repeat === "whatever") {repeatPattern = "(repeat|no-repeat)"}  else if (repeat === "forbidden") {repeatPattern = "(no-repeat)"}       
 
-                const keyPattern = RegExp(`${altPattern} \\+ ${ctrlPattern} \\+ ${shiftPattern} \\+ ${metaPattern} \\+ ${keyPressed} \\(${repeatPattern}\\)`);
+                const keyPattern = RegExp(`${altPattern} \\+ ${ctrlPattern} \\+ ${shiftPattern} \\+ ${metaPattern} \\+ ${keyExpected} \\(${repeatPattern}\\)`);
                 const match = key.match(keyPattern);
                 return match;
             }
@@ -2281,7 +2292,11 @@
                 statLabelsArray[1].innerHTML = this.lang == "fr" ? "Semestres" : "Semesters";
                 statLabelsArray[2].innerHTML = this.lang == "fr" ? "Modules Validés" : "Validated module";
 
-                document.querySelector(".filter-tab").innerHTML = this.lang == "fr" ? "Tous" : "All";
+                const allFilterTabs = document.querySelectorAll(`.filter-tab`);
+                allFilterTabs.forEach(tab => {
+                    if (tab.dataset.filter == "all") {tab.innerHTML = this.lang == "fr" ? `Tous` : `All`}
+                    tab.title = this.lang == "fr" ? `Appuye sur Maj+Flèche Droite/Gauche` : `Press Shift+Left/Right Arrow`;
+                })
 
                 document.querySelector(`.view-toggle`).children[0].innerHTML = this.lang == "fr" ? `Basculer le mode d'affichage (Maj+D)` : `Toggle display mode (Shift+D)`;
                 document.querySelector(`.fold-toggle`).innerHTML = this.lang == "fr" ? `Plier tous les modules (Maj+F)` : `Fold every module (Shift+F)`;
@@ -2840,10 +2855,10 @@
                             // Fold/Unfold UEs
                             document.onmousedown = (e) => {
                                 if (e.target.closest('.ue-header') && !e.target.closest('.ue-title.input, .ue-delete-btn')) {
-                                    this.ueHeaderClickAction(e)
+                                    this.ueHeaderMouseUpNoMoveAction(e)
                                 }
                                 else if (e.target.closest('.subject-card-header, .subject-card.compact') && !e.target.closest('.any-input, .drag-icon, .tick-icon')) {
-                                    this.subjHeaderClickAction(e)
+                                    this.subjHeaderMouseUpNoMoveAction(e)
                                 }
                             };
                         }
@@ -2862,7 +2877,7 @@
                         if (input.classList.contains("ue-title")) {   // Change UEs name
                             input.onmouseenter  = ( ) => { if (this.editMode) {this.detachOnDragEventListeners(); document.querySelectorAll(".ue-header").forEach(card => {card.draggable = false});} }
                             input.onmouseleave  = ( ) => { if (this.editMode) {this.attachOnDragEventListeners(); document.querySelectorAll(".ue-header").forEach(card => {card.draggable = true;});} }
-                            input.onchange      = (e) => { this.ueTitleInputChangeAction(e) };
+                            input.onchange      = (e) => { this.ueTitleInputChangeAction(e.target) };
                         }
                         else {
                             input.onmouseenter  = ( ) => { if (this.editMode) {this.detachOnDragEventListeners();} };
@@ -3106,7 +3121,7 @@
                         })
                     }
                     attachUeDeleteBtnListener(btn) {
-                        btn.onclick = (e) => {this.ueDeleteBtnAction(e)};
+                        btn.onclick = (e) => {this.ueDeleteBtnAction(e.target)};
                     }
                 //#endregion
 
@@ -3273,7 +3288,7 @@
                         })
                     }
                     attachSubjectNameInputListener(input) {
-                        input.onchange = (e) => {this.subjectNameInputAction(e)};
+                        input.onchange = (e) => {this.subjectNameInputAction(e.target)};
                     }
 
                     attachAllSubjectSimAddBtnsListener(container=document) {
@@ -3291,7 +3306,7 @@
                         })
                     }
                     attachSubjectSimDelBtnListener(btn) {
-                        btn.onclick = (e) => {this.subjectSimDelBtnAction(e)};
+                        btn.onclick = (e) => {this.subjectSimDelBtnAction(e.target)};
                     }
 
                     attachAllSubjectSimInputEditsListener(container=document) {
@@ -3300,7 +3315,7 @@
                         })
                     }
                     attachSubjectSimInputEditListener(input) {
-                        input.onchange = (e) => {this.subjectSimInputEditAction(e)};
+                        input.onchange = (e) => {this.subjectSimInputEditAction(e.target)};
                     }
                     
                 //#endregion
@@ -3313,78 +3328,6 @@
 
 
             //#region -Events Action
-                
-                /** Ensures that the dragend event of the document results in resetting the display if the dragged element is a subject card that is not selected */
-                documentOnDragEndAction() {
-                    const subjectCard = this.currentlyDraggedCard;
-
-                    if (this.draggedElementDroppedInInputField && subjectCard) {
-
-                        // checking if the dragged subject card is selected:
-                        let draggedSubjectCardIsSelected = false;
-                        if (this.selectedSubjectCardsId.length > 0) {
-                            this.selectedSubjectCardsId.forEach(divId => {if (divId==subjectCard.id) {draggedSubjectCardIsSelected=true}});
-                        }
-
-                        if (!draggedSubjectCardIsSelected) {
-                            const dropFieldAdd          = document.querySelector(".drop-field.create-ue");
-                            const dropFieldAddHitbox    = document.querySelector(".drop-field-create-ue-hitbox");
-                            const dropFieldRemove       = document.querySelector(".drop-field.remove-from-ue");
-                            const dropFieldRemoveHitbox = document.querySelector(".drop-field-remove-from-ue-hitbox");
-                            subjectCard.style.width = "";
-
-                            if (subjectCard.classList.contains("unclassified")) {
-                                subjectCard.querySelector(".grades-table").style.display = "table";
-                                subjectCard.querySelector(".subject-card-header").style.border = "none";
-                                subjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
-                            }
-                            else if (subjectCard.classList.contains("compact")) {
-                                subjectCard.querySelector(".subject-total-coef-div").style.display = "flex";
-                            }
-                            else {
-                                subjectCard.querySelector(".subject-card-header").children[0].style.width = "42%";
-                                subjectCard.querySelector(".subject-total-coef-div").style.width = "58%";
-                                subjectCard.querySelector(".grades-table").style.display = "table";
-                                subjectCard.querySelector(".subject-card-header").style.borderBottom = "4px solid white";
-                                subjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
-                            }
-
-                            if (this.selectedSubjectCardsId.length == 0) {
-                                if (!this?.timeouts?.documentOnDragEnd) {this.timeouts.documentOnDragEnd = {};}
-                                this.timeouts.documentOnDragEnd.showTeacherTable = setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher => {teacher.style.display = "table-cell"})}, 100)
-                                document.querySelector(".semester-content").classList.remove("dragging");
-                                dropFieldAdd.classList.remove("show");
-                                dropFieldAddHitbox.classList.remove("show");
-                                dropFieldRemove.classList.remove("show");
-                                dropFieldRemoveHitbox.classList.remove("show");
-                                this.removeSubjectCardFromSubjectSelection();
-                            }
-                            
-                        } else {
-                            this.selectedSubjectCardsId.forEach(selectedSubjectCardId2 => {
-                                const selectedSubjectCard2 = document.getElementById(selectedSubjectCardId2);
-                                selectedSubjectCard2.style.width = "";
-
-                                if (selectedSubjectCard2.classList.contains("unclassified")) {
-                                    selectedSubjectCard2.querySelector(".grades-table").style.display = "table";
-                                    selectedSubjectCard2.querySelector(".subject-card-header").style.border = "none";
-                                    selectedSubjectCard2.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
-                                
-                                } 
-                                else if (selectedSubjectCard2.classList.contains("compact")) {
-                                    selectedSubjectCard2.querySelector(".subject-total-coef-div").style.display = "flex";
-                                }
-                                else {
-                                    selectedSubjectCard2.querySelector(".subject-card-header").children[0].style.width = "42%";
-                                    selectedSubjectCard2.querySelector(".subject-total-coef-div").style.width = "58%";
-                                    selectedSubjectCard2.querySelector(".grades-table").style.display = "table";
-                                    selectedSubjectCard2.querySelector(".subject-card-header").style.borderBottom = "4px solid white";
-                                    selectedSubjectCard2.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
-                                }
-                            })
-                        }
-                    }
-                }
 
                 // MARK: -toggle ue card folding
                 /** Call this method to switch all UE cards' state between folded and unfolded 
@@ -3638,8 +3581,15 @@
                     }
                 }
 
-
-                ueHeaderClickAction(e) {
+                /** Method temporarily attaching an onmousemove and an onmouseup event listener to the document's body.
+                 * 
+                 * Meant to be invoked when the mouse down event is triggered if the target is or is contained in a ue header.
+                 * 
+                 * In practice, when the onmousedown event of the document is triggered on a ue header, call this method to:
+                 * - attach an onmousemove event listener to the document's body that will clear the onmousemove and onmouseup events of the document's body in order to "cancel" the action (safe guard for when the edit mode is off and the user attempts to drag the ue header, it will not do anything instead of triggering an onclick event)
+                 * - attach an onmouseup event listener to the document's body that will make the action intended to happen when the user clicks on the ue header (folding the ue card) WITHOUT moving the mouse (so if it wasn't an attempt to drag the ue header). Both the onmousemove and onmouseup event listeners of the document's body will then be cleared.
+                 */
+                ueHeaderMouseUpNoMoveAction() {
                     document.body.onmousemove = (e) => {
                         e.preventDefault();
                         document.body.onmouseup = null;
@@ -3647,8 +3597,6 @@
                     };
                     document.body.onmouseup = (e) => {
                         const header    = e.target.closest('.ue-header');
-                        const sem       = header.dataset.semester;
-                        const ueName    = header.dataset.ue;
                         const ueDetails = header.parentElement.querySelector(".ue-details");
                         
                         ueDetails.querySelectorAll(".subject-card").forEach( subjCard => { if (this.selectedSubjectCardsId.includes(subjCard.id)) {this.changeDragIconToTickIcon(subjCard);} } )
@@ -3661,7 +3609,15 @@
                     }
                 }
 
-                subjHeaderClickAction(e) {
+                /** Method temporarily attaching an onmousemove and an onmouseup event listener to the document's body.
+                 * 
+                 * Meant to be invoked when the mouse down event is triggered if the target is or is contained in a card header.
+                 * 
+                 * In practice, when the onmousedown event of the document is triggered on a card header, call this method to:
+                 * - attach an onmousemove event listener to the document's body that will clear the onmousemove and onmouseup events of the document's body in order to "cancel" the action (safe guard for when the edit mode is off and the user attempts to drag the card header, it will not do anything instead of triggering an onclick event)
+                 * - attach an onmouseup event listener to the document's body that will make the action intended to happen when the user clicks on the card header (switching the card card between detailed and comapct view modes) WITHOUT moving the mouse (so if it wasn't an attempt to drag the card header). Both the onmousemove and onmouseup event listeners of the document's body will then be cleared.
+                 */
+                subjHeaderMouseUpNoMoveAction() {
 
                     document.body.onmousemove = (e) => {
                         e.preventDefault();
@@ -3706,11 +3662,11 @@
                     }
                 }
                 
-                ueTitleInputChangeAction(e) {
-                    const sem = e.target.dataset.semester;
-                    const oldUeName = e.target.dataset.ue; 
-                    const oldUeIndex = this.ueConfig[sem].__ues__.indexOf(oldUeName);
-                    const newUeName = e.target.value;
+                ueTitleInputChangeAction(target) {
+                    const sem           = target.dataset.semester;
+                    const newUeName     = target.value;
+                    const oldUeName     = target.dataset.ue; 
+                    const oldUeIndex    = this.ueConfig[sem].__ues__.indexOf(oldUeName);
                     
                     this.ueConfig[sem][newUeName] = this.ueConfig[sem][oldUeName];
                     delete this.ueConfig[sem][oldUeName];
@@ -3734,9 +3690,9 @@
                     this.scrollToClientHighestElem({id: `ue-card-${newUeName}-in-semester-${sem}`, smooth: true})
                 }
 
-                ueDeleteBtnAction(e) {
-                    const sem = e.target.dataset.semester;
-                    const ueName = e.target.dataset.ue;
+                ueDeleteBtnAction(target) {
+                    const sem       = target.dataset.semester;
+                    const ueName    = target.dataset.ue;
                     
                     const ueIndex = this.ueConfig[sem].__ues__.indexOf(ueName);
 
@@ -3751,9 +3707,9 @@
                     this.generateContent();
                 }
 
-                subjectNameInputAction(e) {
-                    const subjNewName   = e.target.value;
-                    const subjectCardId = e.target.id.replace(/\bsubject-name-input/, "subject-card");
+                subjectNameInputAction(target) {
+                    const subjNewName   = target.value;
+                    const subjectCardId = target.id.replace(/\bsubject-name-input/, "subject-card");
                     const subjectCard   = document.getElementById(subjectCardId);
                     const sem           = subjectCard.dataset.semester;
                     const ue            = subjectCard.dataset.ue;
@@ -3819,8 +3775,8 @@
                         this.getGradesDatas();
                     }
                     else {
-                        e.target.focus();
-                        e.target.style.background = "#ff7979";
+                        target.focus();
+                        target.style.background = "#ff7979";
                     }
                 }
 
@@ -3874,11 +3830,11 @@
                     this.generateContent();
                 }
 
-                subjectSimDelBtnAction(e) {
-                    const semX = e.target.dataset.semester;
-                    const ueName = e.target.dataset.ue;
-                    const subj = e.target.dataset.subj;
-                    const id = e.target.dataset.simid;
+                subjectSimDelBtnAction(target) {
+                    const semX      = target.dataset.semester;
+                    const ueName    = target.dataset.ue;
+                    const subj      = target.dataset.subj;
+                    const id        = target.dataset.simid;
                     this.sim[semX][ueName][subj].splice(id, 1);
 
                     this.deleteUnusedSimPath(false, semX, ueName, subj);
@@ -3887,19 +3843,19 @@
                     this.generateContent(false);
                 }
 
-                subjectSimInputEditAction(e) {
-                    const ueName = e.target.dataset.ue;
-                    const semX = e.target.dataset.semester;
-                    const subj = e.target.dataset.subj;
-                    const id = e.target.dataset.simid;
-                    const gradeRow = e.target.parentElement.parentElement;
-                    const gradeInp = gradeRow.querySelector(`.simulated-grade-input-edit.sim-inp-grade`);
-                    const coefInp =  gradeRow.querySelector(`.simulated-grade-input-edit.sim-inp-coef `);
-                    const newGrade = parseFloat(gradeInp?.value||'');
-                    const newCoef = parseFloat(coefInp?.value||'');
+                subjectSimInputEditAction(target) {
+                    const ueName    = target.dataset.ue;
+                    const semX      = target.dataset.semester;
+                    const subj      = target.dataset.subj;
+                    const id        = target.dataset.simid;
+                    const gradeRow  = target.parentElement.parentElement;
+                    const gradeInp  = gradeRow.querySelector(`.simulated-grade-input-edit.sim-inp-grade`);
+                    const coefInp   = gradeRow.querySelector(`.simulated-grade-input-edit.sim-inp-coef `);
+                    const newGrade  = parseFloat(gradeInp?.value||'');
+                    const newCoef   = parseFloat(coefInp?.value||'');
 
                     if(isNaN(newGrade) || isNaN(newCoef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
-                    this.sim[semX][ueName][subj][id][e.target.dataset.modiftype] = e.target.value;
+                    this.sim[semX][ueName][subj][id][target.dataset.modiftype] = target.value;
 
                     this.saveSim();
                     this.getGradesDatas();
@@ -5202,7 +5158,7 @@
                     importMenu.style.display = "";
                     setTimeout(() => {importMenu.classList.add("show")}, 10)
                     importFile.onclick   = () => this.importData();
-                    importClear.onclick  = () => {this.ueConfig = {}; this.getGradesDatas(); this.saveConfig(); this.generateContent(true)};
+                    importClear.onclick  = () => {this.ueConfig = {}; this.compactSubjCardsId = []; this.foldedUeCardsId = []; this.getGradesDatas(); this.saveConfig(); this.generateContent(true)};
                     importOnline.onclick = () => {
                         if (this.onlineConfigs)
                         this.getConfigsFromRepo(this.repoContentsAPI, () => this.openOnlineCfgPicker())
@@ -5394,6 +5350,7 @@
             }
 
 
+
             importData(file) {
                 this.sim = {};
                 return new Promise((resolve, reject) => {
@@ -5520,9 +5477,11 @@
 
         // MARK: -Keyboard Events
         generalKeyboardEvents(mode="general", target=undefined) {
+            const noModifierAllowed = {alt:"forbidden", ctrl:"forbidden", shift:"forbidden", meta:"forbidden", repeat:"forbidden"};
+            const shiftRequired = {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"};
             if (mode == "general") {
                 document.onkeydown = (e) => {
-                    if      (this.keyInputMatch(e, "E", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
+                    if      (this.keyInputMatch(e, "E", shiftRequired)) {
                         
                         this.editMode = !this.editMode;
                         localStorage.setItem("ECAM_DASHBOARD_DEFAULT_EDIT_MODE", this.editMode);
@@ -5531,7 +5490,7 @@
                         this.scrollToClientHighestElem();
                         this.generateContent();
                     }
-                    else if (this.keyInputMatch(e, "D", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
+                    else if (this.keyInputMatch(e, "D", shiftRequired)) {
                         const subjectCards            = document.querySelectorAll(".subject-card");
                         const nbSubjectCards          = subjectCards.length;
                         const nbCompactSubjectCards   = document.querySelectorAll(".subject-card.compact").length;
@@ -5571,7 +5530,7 @@
                         this.scrollToClientHighestElem();
                         this.generateContent();
                     }
-                    else if (this.keyInputMatch(e, "L", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
+                    else if (this.keyInputMatch(e, "L", shiftRequired)) {
                         
                         this.lang = this.lang == "fr" ? "en" : "fr";
                         localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
@@ -5588,7 +5547,7 @@
                         this.scrollToClientHighestElem();
                         this.generateContent(false);
                     }
-                    else if (this.keyInputMatch(e, "F", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
+                    else if (this.keyInputMatch(e, "F", shiftRequired)) {
                         const className = "ue-header", timeout = 210, highestElemInPageHandleType = "last above", smooth = true;
 
                         if (this.foldedUeCardsId.length == 0) {
@@ -5603,14 +5562,27 @@
                         }
                         
                     }
-                    else if (this.keyInputMatch(e, "R", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
+                    else if (this.keyInputMatch(e, "R", shiftRequired)) {
                         debugger;
+                    }
+                    else if (this.keyInputMatch(e, ["ArrowLeft", "ArrowRight", "/"], shiftRequired)) {
+                        const increment = e.key == "ArrowLeft" ? -1 : 1;
+                        document.querySelectorAll('.filter-tab').forEach((t, _index) => {if (t.classList.contains("active")) {this.currentSemester = _index}; t.classList.remove('active')});
+
+                        const newSem = (this.currentSemester + increment)%11;
+                        const newActiveSemFilterTab = document.querySelector(".filter-tabs").children[newSem >= 0 ? newSem : 10];
+                        newActiveSemFilterTab.classList.add("active");
+                        this.currentSemester = newActiveSemFilterTab.dataset.filter;
+                        localStorage.setItem("ECAM_DASHBOARD_DEFAULT_SEMESTER", this.currentSemester);
+                        
+                        this.removeSubjectCardFromSubjectSelection();
+                        this.generateContent();
                     }
                 };
             }
             if (mode == "edit sim grade") {
                 document.onkeydown = (e) => {
-                    if (this.keyInputMatch(e, "Enter", {alt:"forbidden", ctrl:"forbidden", shift:"forbidden", meta:"forbidden", repeat:"forbidden"})) {
+                    if (this.keyInputMatch(e, "Enter", noModifierAllowed)) {
                         if (target.classList.contains("simulated-grade-input")) {
 
                             if      (target.classList.contains("sim-inp-type")) {
