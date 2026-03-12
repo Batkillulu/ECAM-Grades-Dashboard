@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.2.1
+// @version      2.2.2
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/group/education/notes*
@@ -342,15 +342,15 @@
                 .drop-ue-card-insert-content.text.add               { justify-content: center; }
                 .drop-ue-card-insert-content.text.insert            { justify-content: flex-start; }
 
-                .drop-ue-card-insert-arrow                          { font-size: 500px; display: flex; align-items: flex-start; justify-content: center; height: 50px; position: relative; left: calc(50% - 145px); background: transparent; opacity: 0%;                         transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+                .drop-ue-card-insert-arrow                          { font-size: 500px; display: flex; align-items: flex-start; justify-content: center; height: 50px; position: relative; left: calc(50% - 145px); background: transparent; opacity: 0%;                          transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); line-height: 5%; }
                 .drop-ue-card-insert-arrow.show                     { opacity: 50%; }
                 .drop-ue-card-insert-arrow.show.hover               { left: 50%; opacity: 100%; }
 
-                .drop-ue-card-insert-plus                           { transform: translate(  0px, 14px) rotate(  0deg); font-size: 50px ;  position: relative; left: 0px; display: flex; justify-content: center; height: 50px; width: 100%; background: transparent; opacity: 0%;   transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+                .drop-ue-card-insert-plus                           { transform: translate(  0px, 14px) rotate(  0deg); font-size: 50px ;  position: relative; left: 0px; display: flex; justify-content: center; height: 50px; width: 100%; background: transparent; opacity: 0%; transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); line-height: 40%; }
                 .drop-ue-card-insert-plus.show                      { opacity: 50%; }
-                .drop-ue-card-insert-plus.show.hover                { transform: translate(130px, 30px) rotate(180deg); font-size: 280px; opacity: 100%; }
+                .drop-ue-card-insert-plus.show.hover                { transform: translate(130px, 30px) rotate(180deg); font-size: 280px; opacity: 100%; line-height: 10%; }
 
-                .drop-ue-card-insert-text                           { display: flex; justify-content: flex-start; align-items: center; position: relative; overflow-x: clip; text-wrap: nowrap; width: 0px; height: 50px; background: transparent; opacity: 50%;                transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+                .drop-ue-card-insert-text                           { display: flex; justify-content: flex-start; align-items: center; position: relative; overflow-x: clip; text-wrap: nowrap; width: 0px; height: 50px; background: transparent; opacity: 50%;                   transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
 
                 .drop-ue-card-insert-text.add.fr                { --width: 263px; --x-translation: calc(0.5*var(--width) - 20px); }
                 .drop-ue-card-insert-text.add.en                { --width: 230px; --x-translation: calc(0.5*var(--width) - 20px); }
@@ -377,13 +377,13 @@
                 .drop-subject-card-insert-content.text.add          { justify-content: center; }
                 .drop-subject-card-insert-content.text.insert       { justify-content: flex-start; }
                 
-                .drop-subject-card-insert-arrow                     { font-size: 280px; display: flex; align-items: flex-start; justify-content: center; height: 30px; position: relative; left: calc(50% - 120px); background: transparent; opacity: 0%;                       transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+                .drop-subject-card-insert-arrow                     { font-size: 280px; display: flex; align-items: flex-start; justify-content: center; height: 30px; position: relative; left: calc(50% - 120px); background: transparent; opacity: 0%;                       transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); line-height: 7%; }
                 .drop-subject-card-insert-arrow.show                { opacity: 50%; }
                 .drop-subject-card-insert-arrow.show.hover          { left: 50%; opacity: 100%; }
 
-                .drop-subject-card-insert-plus                      { transform: translate(0%, 4px) rotate(0deg)   ; font-size: 50px;  position: relative; left: 0px; display: flex; justify-content: center; height: 30px; width: 100%; background: transparent; opacity: 0%;  transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+                .drop-subject-card-insert-plus                      { transform: translate(0%, 4px) rotate(0deg)   ; font-size: 50px;  position: relative; left: 0px; display: flex; justify-content: center; height: 30px; width: 100%; background: transparent; opacity: 0%;  transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); line-height: 33%; }
                 .drop-subject-card-insert-plus.show                 { opacity: 50%; }
-                .drop-subject-card-insert-plus.show.hover           { transform: translate(9%, 80%) rotate(180deg); opacity: 100%; font-size: 200px; }
+                .drop-subject-card-insert-plus.show.hover           { transform: translate(9%, 80%) rotate(180deg); opacity: 100%; font-size: 200px; line-height: 10%; }
 
                 .drop-subject-card-insert-text                      { display: flex; justify-content: flex-start; align-items: center; position: relative; overflow-x: clip; text-wrap: nowrap; width: 0px; height: 50px; background: transparent;  opacity: 50%;              transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
 
@@ -419,7 +419,7 @@
             .ue-card.failed         { border-color: #ef4444ff; background: radial-gradient(transparent 0%, #fef2f2ff 75%); }
             .ue-card.unknown        { border-color: #6d6d6dff; background: radial-gradient(transparent 0%, #d1d1d1ff 75%); }
 
-            .ue-header                  { display: flex; align-items: center; padding: 20px 20px 18px 20px; border-bottom: 3px solid #e5e5e5; border-radius: 25px 25px 0px 0px; width: 100%; cursor: pointer; z-index: 1; transition: border-radius 0.3s ease, border-color 0.3s ease, opacity 0.3s ease, filter 0.3s ease; }
+            .ue-header                  { display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 18px 20px; border-bottom: 3px solid #e5e5e5; border-radius: 25px 25px 0px 0px; width: 100%; cursor: pointer; z-index: 1; transition: border-radius 0.3s ease, border-color 0.3s ease, opacity 0.3s ease, filter 0.3s ease; }
             .ue-header.fold             { border-width: 3px; border-style: solid; border-radius: 25px; }
             .ue-header.validated        { border-color: #10b981ff; background: linear-gradient(300deg, #e0ffeaff 30%, transparent); }
             .ue-header.failed           { border-color: #ef4444ff; background: linear-gradient(300deg, #ffd9d9ff 30%, transparent); }
@@ -499,9 +499,9 @@
             .subj-moyenne.good   { color: #10b981; }
             .subj-moyenne.bad    { color: #ef4444; }
 
-            .grades-table-subject-total-coef-div        { display: flex; flex-direction: column; gap: 4px; text-align: left; width:58%; padding: 0px 10px; font-size: 13px}
-            .grades-table-subject-total-coef-value      { display: flex; gap: 15px; text-align: left; font-weight: 600; gap: 8px; }
-            .grades-table-subject-total-coef-debug      { display: flex; gap: 15px; text-align: left; font-weight: 400; }
+            .subject-total-coef-div        { display: flex; flex-direction: column; gap: 4px; text-align: left; width:58%; padding: 0px 10px; font-size: 13px}
+            .subject-total-coef-value      { display: flex; gap: 15px; text-align: left; font-weight: 600; gap: 8px; }
+            .subject-total-coef-debug      { display: flex; gap: 15px; text-align: left; font-weight: 400; }
             .subject-insert-field                           { display: flex: flex-direction: column; align-items: center; height: 0px; width: 100%; margin: 0px 0px; transition: height 0.2s ease, margin 0.2s ease; }
             .subject-insert-field.show                      { height: 50px; margin: 10px 0px; }
 
@@ -554,12 +554,12 @@
             .grade-date      { font-size: 12px; color: #999; }
             .subject-sim-del-btn        { border: 1px solid #A7CEDF; border-radius: 6px; cursor: pointer; }
             .sim-add-btn                { display: flex; align-items: center; justify-content: center; height: 25px; width: 67px; max-width: 140px; padding: 6px 10px; border: 1px solid; border-radius: 15px; user-select: none; }
-            .grade-simulee-input         { border-radius: 10px; border-color: #667eea; padding: 2px 10px}
-            .grade-simulee-input.sim-inp-type    { width: 55%;  max-width:250px; height:25px }
-            .grade-simulee-input.sim-inp-grade    { width: 100%; max-width:75px;  height:25px }
-            .grade-simulee-input.sim-inp-coef    { width: 100%; max-width:60px;  height:25px }
-            .grade-simulee-input.sim-inp-date    { width: 100%; max-width:140px; height:25px }
-            .grade-simulee-input-edit    { border-radius: 10px; border-color: #667eea; padding: 2px 10px}
+            .simulated-grade-input         { border-radius: 10px; border-color: #667eea; padding: 2px 10px}
+            .simulated-grade-input.sim-inp-type    { width: 55%;  max-width:250px; height:25px }
+            .simulated-grade-input.sim-inp-grade    { width: 100%; max-width:75px;  height:25px }
+            .simulated-grade-input.sim-inp-coef    { width: 100%; max-width:60px;  height:25px }
+            .simulated-grade-input.sim-inp-date    { width: 100%; max-width:140px; height:25px }
+            .simulated-grade-input-edit    { border-radius: 10px; border-color: #667eea; padding: 2px 10px}
             .grade-sim-del-btn           { border: none; border-radius: 6px; cursor: pointer; }
             .grade-checkbox  { cursor: pointer; }
         `;
@@ -626,7 +626,7 @@
 
         constructor() {
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.2.1";
+            this.scriptVersion = "2.2.2";
 
             this.now        = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
             this.dateHour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
@@ -694,7 +694,7 @@
             this.lang                           = localStorage.getItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE")           || "en";
             this.tempSelection = {};
             this.draggedSubjId = "";
-            this.editMode                       = localStorage.getItem("ECAM_DASHBOARD_DEFAULT_EDIT_MODE")          || false;
+            this.editMode                       = localStorage['ECAM_DASHBOARD_DEFAULT_EDIT_MODE']                  || false;
             this.pinDockbar = false;
             this.timeouts = {};
 
@@ -728,7 +728,7 @@
                 this.newGrades = this.compareArraysOfObjects(this.grades, this.savedReadGrades).more;
             }
             
-            this.generalKeyboardEvents();
+            this.generalKeyboardEvents("general");
             this.createNewGradesNotifDiv();
             this.createDashboard();
             
@@ -832,9 +832,9 @@
                     effectivePriority = "first";
                 }
 
-                const abovePattern    =    /(first |last |)above( (\d{1,2}|100)%|)/i;
-                const partialPattern  =  /(first |last |)partial( (\d{1,2}|100)%|)/i;
-                const absolutePattern = /(first |last |)absolute( (\d{1,2}|100)%|)/i;
+                const abovePattern    = /(first |last |)above( (\d{1,2}|100)%|)/i;
+                const partialPattern  =              /partial( (\d{1,2}|100)%|)/i;
+                const absolutePattern =             /absolute( (\d{1,2}|100)%|)/i;
                 const highestElemInPageHandleTypePattern = RegExp("none|" + abovePattern.source + "|" + partialPattern.source + "|" + absolutePattern.source, "i");
                 
                 this.scrollToThisElem = ""; let targetDataIndex = -1;
@@ -1264,7 +1264,6 @@
                 }
             }
             draggableIcon(source="subject-card", {height=25, type="unknown", targetId="none"}={height: 25, type: "unknown", targetId:"none"}) {
-                // return `<a class="drag-icon for-${source}" data-targetid="${targetId}" data-type="${type}" draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/960px-Hamburger_icon.svg.png" alt="☰" style="height:${height}px">`
                 return `<div class="drag-icon for-${source}" data-targetid="${targetId}" data-type="${type}" draggable="false" style="height:${height}px; width:${height}px; font-size: ${height*0.75}px">☰</div>`
             }
             /** Call inside a onkeydown or onkeyup event listener
@@ -1424,10 +1423,10 @@
                     totalCoefValue.innerHTML = `${this.lang == "fr" ? "Coef Total des Matières :" : "Total Subjects Coef:"} <span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}% / ${totalCoefSubjects}%</span>`;
                     totalCoefDebug.innerHTML = `${advice}`;
                 })
-                container.querySelectorAll(".grades-table-subject-total-coef-div").forEach(totalCoefDiv => {
+                container.querySelectorAll(".subject-total-coef-div").forEach(totalCoefDiv => {
                     const 
-                        totalCoefValue  = totalCoefDiv.querySelector(".grades-table-subject-total-coef-value"),
-                        totalCoefDebug  = totalCoefDiv.querySelector(".grades-table-subject-total-coef-debug"),
+                        totalCoefValue  = totalCoefDiv.querySelector(".subject-total-coef-value"),
+                        totalCoefDebug  = totalCoefDiv.querySelector(".subject-total-coef-debug"),
                         sem             = totalCoefDiv.dataset.semester,
                         ue              = totalCoefDiv.dataset.ue,
                         subject         = totalCoefDiv.dataset.subject,
@@ -1467,8 +1466,8 @@
                     else if (totalCoefRealGrades < 100) {
                         if (totalCoefEnabledSimGrades > 0) {
                             advice = this.lang == "fr" 
-                                ? `${nbEnabledSimGrades}% de tes notes est simulé, toutes tes notes ne sont encore pas là !` 
-                                : `${nbEnabledSimGrades}% of your grades is simulated, all your grades aren't out yet!`
+                                ? `${totalCoefEnabledSimGrades}% de tes notes est simulé, toutes tes notes ne sont encore pas là !` 
+                                : `${totalCoefEnabledSimGrades}% of your grades is simulated, all your grades aren't out yet!`
                             ;
                             color = meh;
                         }
@@ -2045,7 +2044,7 @@
                                 <div class="lang-btn " id="en-lang-btn">
                                     <img style="display: flex; margin: 6px 0px 0px 6px; width:20px; height:20px" alt="🇬🇧" src="data:image/png;base64,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">
                                 </div>
-                                <div id="langShortcut" style="display: flex; align-content: center; justify-content: center; align-items: center; padding-left: 9px;">(Ctrl+L)</div>
+                                <div id="langShortcut" style="display: flex; align-content: center; justify-content: center; align-items: center; padding-left: 9px;"></div>
                             </div>
                         </div>
                     </div>
@@ -2210,7 +2209,7 @@
                 dashSubtitle.innerHTML = this.lang == "fr" ? 'Vue complète de vos résultats académiques !' : "Complete view of your academic results!";
 
                 const langShortcutText = document.getElementById("langShortcut");
-                langShortcutText.innerHTML = this.lang == "fr" ? "(Ctrl+L)" : "(Shift+L)";
+                langShortcutText.innerHTML = this.lang == "fr" ? "(Maj+L)" : "(Shift+L)";
 
                 const reportIssueBtn = document.querySelector(".issue.issue-btn");
                 const howToUseBtn    = document.querySelector(".issue.how-to-use-btn");
@@ -2606,9 +2605,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="grades-table-subject-total-coef-div" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}">
-                            <div class="grades-table-subject-total-coef-value"></div>
-                            <div class="grades-table-subject-total-coef-debug">${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}</div>
+                        <div class="subject-total-coef-div" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}">
+                            <div class="subject-total-coef-value"></div>
+                            <div class="subject-total-coef-debug">${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}</div>
                         </div>
                         <div class="subj-moyenne ${subjAvg == " - " ? '' : `${subjAvg>=10 ? 'good' : 'bad'}`}" style="display: flex; justify-content: flex-end; width: 80px; padding-right: 20px; font-size: 20px">
                             ${subjAvg}/20
@@ -2623,31 +2622,28 @@
                     <table class="grades-table ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" style="${this.editMode ? `user-select: text;` : ``}" id="grades-table-${subject}-semester${sem}" data-subject="${subject}">
 
                         <thead>
-                            ${nbGrades > 0 || this.editMode
-                                ? `<tr>
-                                    <th class="grades-table-type" style="padding-left: 30px; border-left-width: 0px;">
-                                        ${this.lang == "fr" ? "Intitulé" : "Title"}
-                                    </th>
-                                    <th class="grades-table-grade">
-                                        ${this.lang == "fr" ? "Note" : "Grade"}
-                                    </th>
-                                    <th class="grades-table-coef">
-                                        ${this.lang == "fr" ? "Coef" : "Coef"}
-                                    </th>
-                                    <th class="grades-table-classAvg">
-                                        ${this.lang == "fr" ? "Moy. Classe" : "Class Avg"}
-                                    </th>
-                                    <th class="grades-table-date">
-                                        ${this.lang == "fr" ? "Date" : "Date"}
-                                    </th>
-                                    <th class="grades-table-teacher" style="border-right-width: 0px;${this.selectedSubjectCardsId.length > 0 ? " display: none;" : ""}">
-                                        ${this.lang == "fr" ? "Prof(s)" : "Teacher(s)"}
-                                    </th>
-                                    <th class="grades-table-add-sim-cell" style="border-right-width: 0px; border-left-width: 0px;">
-                                    </th>
-                                </tr>`
-                                : ``
-                            }
+                            <tr>
+                                <th class="grades-table-type" style="padding-left: 30px; border-left-width: 0px;">
+                                    ${this.lang == "fr" ? "Intitulé" : "Title"}
+                                </th>
+                                <th class="grades-table-grade">
+                                    ${this.lang == "fr" ? "Note" : "Grade"}
+                                </th>
+                                <th class="grades-table-coef">
+                                    ${this.lang == "fr" ? "Coef" : "Coef"}
+                                </th>
+                                <th class="grades-table-classAvg">
+                                    ${this.lang == "fr" ? "Moy. Classe" : "Class Avg"}
+                                </th>
+                                <th class="grades-table-date">
+                                    ${this.lang == "fr" ? "Date" : "Date"}
+                                </th>
+                                <th class="grades-table-teacher" style="border-right-width: 0px;${this.selectedSubjectCardsId.length > 0 ? " display: none;" : ""}">
+                                    ${this.lang == "fr" ? "Prof(s)" : "Teacher(s)"}
+                                </th>
+                                <th class="grades-table-add-sim-cell" style="border-right-width: 0px; border-left-width: 0px;">
+                                </th>
+                            </tr>
                         </thead>
                         <tbody>
                     `;
@@ -2660,20 +2656,20 @@
                             <tr class="grade-row ${index == nbGrades-1 ? `last` : ``} ${gradeIsSim ? `sim` : ``}" data-sim="${gradeIsSim}">
                                 <td class="grades-table-type" style="display: flex; align-items: center; gap: 6px; width: auto">
                                     <input type="checkbox" class="grade-checkbox any-input" id="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}" data-semester="${sem}" data-subj="${subject}" data-ue="${ueName||''}" data-prof="${grade.prof}" data-gradeid="${grade.type + " " + grade.date + " " + grade.prof}" ${gradeIsSim ? `data-simtimestamp="${grade.id}"` : ""} ${!this.gradeIsDisabled(grade) ? "checked" : ""}></input>
-                                    ${gradeIsSim && this.editMode
-                                        ? `<input class="grade-type grade-simulee-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="grade-simulee-input-type-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" data-modifType="type" data-simid="${nbSimGrades-1}" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-ue="${ueName||''}" value="${grade.type}"/>` 
+                                    ${gradeIsSim
+                                        ? `<input class="grade-type simulated-grade-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="simulated-grade-input-type-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" data-modifType="type" data-simid="${nbSimGrades-1}" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-ue="${ueName||''}" value="${grade.type}"/>` 
                                         : `<label class="grade-type" style="width: auto"  id="grade-type-${grade.type}-${grade.date}" for="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}">${grade.type || ''}${gradeIsSim ? ` • ${this.lang == "fr" ? "Simulée" : "Simulated"}` : ''}</label>`
                                     }
                                 </td>
                                 <td class="grade-value grade-${gradeClass} grades-table-grade" data-sim="${gradeIsSim}">
-                                    ${gradeIsSim && this.editMode
-                                        ? `<input class="grade-simulee-input-edit sim-inp-grade any-input" style="width: 100%; max-width: 75px;" id="grade-simulee-input-grade-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="number" step="0.5" min="0" max="20" data-simid="${nbSimGrades-1}" data-modifType="grade" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-ue="${ueName||''}" style="width:75px; height:25px" value="${grade.grade}"> /20`
+                                    ${gradeIsSim
+                                        ? `<input class="simulated-grade-input-edit sim-inp-grade any-input" style="width: 100%; max-width: 75px;" id="simulated-grade-input-grade-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="number" step="0.5" min="0" max="20" data-simid="${nbSimGrades-1}" data-modifType="grade" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-ue="${ueName||''}" style="width:75px; height:25px" value="${grade.grade}"> /20`
                                         : `${grade.grade}/20`
                                     }
                                 </td>
                                 <td class="grades-table-coef" data-sim="${gradeIsSim}">
-                                    ${gradeIsSim && this.editMode
-                                        ? `<input class="grade-simulee-input-edit sim-inp-coef any-input" style="width: 100%; max-width: 60px;" id="grade-simulee-input-coef-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="number" step="5" min="0" max="100" data-simid="${nbSimGrades-1}" data-modifType="coef" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-ue="${ueName||''}" style="width:60px; height:25px"value="${grade.coef}"> %`
+                                    ${gradeIsSim
+                                        ? `<input class="simulated-grade-input-edit sim-inp-coef any-input" style="width: 100%; max-width: 60px;" id="simulated-grade-input-coef-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="number" step="5" min="0" max="100" data-simid="${nbSimGrades-1}" data-modifType="coef" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-ue="${ueName||''}" style="width:60px; height:25px"value="${grade.coef}"> %`
                                         : `${grade.coef} %`
                                     }
                                 </td>
@@ -2707,18 +2703,18 @@
                     });
 
                     html += `
-                            <tr ${this.editMode ? "" : "hidden=true"}>
+                            <tr>
                                 <td class="grades-table-type">
                                     <div class="grade-type" style="display:flex; align-items:center; justify-content: flex-start">
                                         <div style="width: 140px">${this.lang == "fr" ? "Ajouter une note simulée: " : "Add a simulated grade: "}</div>
-                                        <input class="grade-simulee-input sim-inp-type any-input" id="grade-simulee-input-type-for-${subject}-from-${ueName}-in-semester${sem}" data-semester="${sem}" data-subj="${subject}" placeholder="${this.lang == "fr" ? "Titre" : "Title"}" />
+                                        <input class="simulated-grade-input sim-inp-type any-input" id="simulated-grade-input-type-for-${subject}-from-${ueName}-in-semester${sem}" data-semester="${sem}" data-subj="${subject}" placeholder="${this.lang == "fr" ? "Titre" : "Title"}" />
                                     </div>
                                 </td>
                                 <td class="grades-table-grade">
-                                    <input class="grade-simulee-input sim-inp-grade any-input" id="grade-simulee-input-grade-for-${subject}-from-${ueName}-in-semester${sem}" type="number" step="0.5" min="0" max="20" data-semester="${sem}" data-subj="${subject}" placeholder="/20"> /20
+                                    <input class="simulated-grade-input sim-inp-grade any-input" id="simulated-grade-input-grade-for-${subject}-from-${ueName}-in-semester${sem}" type="number" step="0.5" min="0" max="20" data-semester="${sem}" data-subj="${subject}" placeholder="/20"> /20
                                 </td>
                                 <td class="grades-table-coef">
-                                    <input class="grade-simulee-input sim-inp-coef any-input" id="grade-simulee-input-coef-for-${subject}-from-${ueName}-in-semester${sem}" type="number" step="5" min="0" max="100" data-semester="${sem}" data-subj="${subject}" placeholder="%"> %
+                                    <input class="simulated-grade-input sim-inp-coef any-input" id="simulated-grade-input-coef-for-${subject}-from-${ueName}-in-semester${sem}" type="number" step="5" min="0" max="100" data-semester="${sem}" data-subj="${subject}" placeholder="%"> %
                                 </td>
                                 <td colspan="3">
                                 </td>
@@ -2859,8 +2855,8 @@
                         })
                     }
                     attachAnyInputListeners(input) {
-                        input.onfocus    = () =>  {document.onkeydown = null; document.onkeyup = null}
-                        input.onblur     = () =>  {this.generalKeyboardEvents()};
+                        input.onfocus    = () =>  {this.generalKeyboardEvents("edit sim grade", input)}
+                        input.onblur     = () =>  {this.generalKeyboardEvents("general")};
                         input.ondragover = (e) => {if (e.target.closest(".any-input")) {e.preventDefault(); e.dataTransfer.dropEffect = "none";}}
                         input.ondrop     = (e) => {e.preventDefault(); e.dataTransfer.dropEffect = "link";};
                         if (input.classList.contains("ue-title")) {   // Change UEs name
@@ -3286,7 +3282,7 @@
                         });
                     }
                     attachSubjectSimAddBtnListener(btn) {
-                        btn.onclick = (e) => {this.subjectSimAddBtnAction(e)};
+                        btn.onclick = (e) => {this.subjectSimAddBtnAction(e.target)};
                     }
 
                     attachAllSubjectSimDelBtnsListener(container=document) {
@@ -3299,7 +3295,7 @@
                     }
 
                     attachAllSubjectSimInputEditsListener(container=document) {
-                        container.querySelectorAll(".grade-simulee-input-edit").forEach(input => {
+                        container.querySelectorAll(".simulated-grade-input-edit").forEach(input => {
                             this.attachSubjectSimInputEditListener(input)
                         })
                     }
@@ -3343,11 +3339,11 @@
                                 subjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
                             }
                             else if (subjectCard.classList.contains("compact")) {
-                                subjectCard.querySelector(".ue-subject-total-coef-div").style.display = "flex";
+                                subjectCard.querySelector(".subject-total-coef-div").style.display = "flex";
                             }
                             else {
-                                subjectCard.querySelector(".subject-card-header").children[0].style.width =                          "42%";
-                                subjectCard.querySelector(".subject-card-header").querySelector(".ue-subject-total-coef-div").style.width =  "58%";
+                                subjectCard.querySelector(".subject-card-header").children[0].style.width = "42%";
+                                subjectCard.querySelector(".subject-total-coef-div").style.width = "58%";
                                 subjectCard.querySelector(".grades-table").style.display = "table";
                                 subjectCard.querySelector(".subject-card-header").style.borderBottom = "4px solid white";
                                 subjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
@@ -3376,11 +3372,11 @@
                                 
                                 } 
                                 else if (selectedSubjectCard2.classList.contains("compact")) {
-                                    selectedSubjectCard2.querySelector(".ue-subject-total-coef-div").style.display = "flex";
+                                    selectedSubjectCard2.querySelector(".subject-total-coef-div").style.display = "flex";
                                 }
                                 else {
-                                    selectedSubjectCard2.querySelector(".subject-card-header").children[0].style.width =                          "42%";
-                                    selectedSubjectCard2.querySelector(".subject-card-header").querySelector(".ue-subject-total-coef-div").style.width =  "58%";
+                                    selectedSubjectCard2.querySelector(".subject-card-header").children[0].style.width = "42%";
+                                    selectedSubjectCard2.querySelector(".subject-total-coef-div").style.width = "58%";
                                     selectedSubjectCard2.querySelector(".grades-table").style.display = "table";
                                     selectedSubjectCard2.querySelector(".subject-card-header").style.borderBottom = "4px solid white";
                                     selectedSubjectCard2.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
@@ -3828,15 +3824,15 @@
                     }
                 }
 
-                subjectSimAddBtnAction(e) {
-                    const ueName = e.target.dataset.ue;
-                    const semX = e.target.dataset.semester;
-                    const subj = e.target.dataset.subj;
+                subjectSimAddBtnAction(target) {
+                    const ueName = target.dataset.ue;
+                    const semX = target.dataset.semester;
+                    const subj = target.dataset.subj;
                     this.ensureSimPath(semX, ueName, subj);
-                    const typeInp =  document.querySelector(`.grade-simulee-input.sim-inp-type[data-semester="${semX}"][data-subj="${subj}"]`);
-                    const gradeInp = document.querySelector(`.grade-simulee-input.sim-inp-grade[data-semester="${semX}"][data-subj="${subj}"]`);
-                    const coefInp =  document.querySelector(`.grade-simulee-input.sim-inp-coef[data-semester="${semX}"][data-subj="${subj}"]`);
-                    const dateInp =  document.querySelector(`.grade-simulee-input.sim-inp-date[data-semester="${semX}"][data-subj="${subj}"]`);
+                    const typeInp =  document.querySelector(`.simulated-grade-input.sim-inp-type[data-semester="${semX}"][data-subj="${subj}"]`);
+                    const gradeInp = document.querySelector(`.simulated-grade-input.sim-inp-grade[data-semester="${semX}"][data-subj="${subj}"]`);
+                    const coefInp =  document.querySelector(`.simulated-grade-input.sim-inp-coef[data-semester="${semX}"][data-subj="${subj}"]`);
+                    const dateInp =  document.querySelector(`.simulated-grade-input.sim-inp-date[data-semester="${semX}"][data-subj="${subj}"]`);
                     const type = typeInp?.value||`${this.lang=="fr"? 'Simulé' : "Simulated"}`;
                     const grade = parseFloat(gradeInp?.value||'');
                     const coef = parseFloat(coefInp?.value||'');
@@ -3897,8 +3893,8 @@
                     const subj = e.target.dataset.subj;
                     const id = e.target.dataset.simid;
                     const gradeRow = e.target.parentElement.parentElement;
-                    const gradeInp = gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-grade`);
-                    const coefInp =  gradeRow.querySelector(`.grade-simulee-input-edit.sim-inp-coef `);
+                    const gradeInp = gradeRow.querySelector(`.simulated-grade-input-edit.sim-inp-grade`);
+                    const coefInp =  gradeRow.querySelector(`.simulated-grade-input-edit.sim-inp-coef `);
                     const newGrade = parseFloat(gradeInp?.value||'');
                     const newCoef = parseFloat(coefInp?.value||'');
 
@@ -4007,7 +4003,7 @@
                     
                     if (card.classList.contains("classified") && card.classList.contains("compact")) {
                         this.currentlyDraggedCard.style.margin = "38px 0px";
-                        this.currentlyDraggedCard.querySelector(".grades-table-subject-total-coef-div").style.display = "none";
+                        this.currentlyDraggedCard.querySelector(".subject-total-coef-div").style.display = "none";
                     }
                     else if (card.classList.contains("classified") && card.classList.contains("detailed")) {
                         this.currentlyDraggedCard.style.margin = "38px 0px";
@@ -4016,10 +4012,10 @@
                         this.currentlyDraggedCard.querySelector(".subject-card-header") .style.borderRadius = "20px 20px 20px 20px";
 
                         this.currentlyDraggedCard.querySelector(".subject-card-header") .children[0].style.width =    "50%";
-                        this.currentlyDraggedCard.querySelector(".grades-table-subject-total-coef-div").style.display = "none";
+                        this.currentlyDraggedCard.querySelector(".subject-total-coef-div").style.display = "none";
                     }
                     else if (card.classList.contains("unclassified") && card.classList.contains("compact")) {
-                        this.currentlyDraggedCard.querySelector(".grades-table-subject-total-coef-div").style.display = "none";
+                        this.currentlyDraggedCard.querySelector(".subject-total-coef-div").style.display = "none";
                     }
                     else if (card.classList.contains("unclassified") && card.classList.contains("detailed")) {
                         this.currentlyDraggedCard.querySelector(".grades-table")        .style.display = "none";
@@ -4027,7 +4023,7 @@
                         this.currentlyDraggedCard.querySelector(".subject-card-header") .style.borderRadius = "20px 20px 20px 20px";
 
                         this.currentlyDraggedCard.querySelector(".subject-card-header") .children[1].style.width =    "50%";
-                        this.currentlyDraggedCard.querySelector(".grades-table-subject-total-coef-div").style.display = "none";
+                        this.currentlyDraggedCard.querySelector(".subject-total-coef-div").style.display = "none";
                     }
 
                     clearTimeout(this?.timeouts?.documentOnDragEnd?.hideTeacherTable);
@@ -4106,7 +4102,7 @@
 
                 if (card.classList.contains("subject-card")) {
                     if (card.classList.contains("classified") && card.classList.contains("compact")) {
-                        card.querySelector(".grades-table-subject-total-coef-div").style.display = "";
+                        card.querySelector(".subject-total-coef-div").style.display = "";
                     }
                     else if (card.classList.contains("classified") && card.classList.contains("detailed")) {
                         card.querySelector(".grades-table").style.display = "table";
@@ -4114,10 +4110,10 @@
                         card.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
 
                         card.querySelector(".subject-card-header").children[0].style.width =     "42%";
-                        card.querySelector(".grades-table-subject-total-coef-div").style.display = "";
+                        card.querySelector(".subject-total-coef-div").style.display = "";
                     }
                     else if (card.classList.contains("unclassified") && card.classList.contains("compact")) {
-                        card.querySelector(".grades-table-subject-total-coef-div").style.display = "";
+                        card.querySelector(".subject-total-coef-div").style.display = "";
                     }
                     else if (card.classList.contains("unclassified") && card.classList.contains("detailed")) {
                         card.querySelector(".grades-table").style.display = "table";
@@ -4125,7 +4121,7 @@
                         card.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
 
                         card.querySelector(".subject-card-header").children[1].style.width =     "40%";
-                        card.querySelector(".grades-table-subject-total-coef-div").style.display = "";
+                        card.querySelector(".subject-total-coef-div").style.display = "";
                     }
                     
                     if (this.selectedSubjectCardsId.length == 0) {
@@ -4207,11 +4203,11 @@
                     
                     } 
                     else if (selectedSubjectCard.classList.contains("compact")) {
-                        selectedSubjectCard.querySelector(".grades-table-subject-total-coef-div").style.display = "none";
+                        selectedSubjectCard.querySelector(".subject-total-coef-div").style.display = "none";
                     }
                     else {
                         selectedSubjectCard.querySelector(".subject-card-header").children[0].style.width =     "50%";
-                        selectedSubjectCard.querySelector(".grades-table-subject-total-coef-div").style.width = "50%";
+                        selectedSubjectCard.querySelector(".subject-total-coef-div").style.width = "50%";
                         setTimeout(() => {selectedSubjectCard.querySelector(".grades-table").style.display = "none";}, 10)
                         selectedSubjectCard.querySelector(".subject-card-header").style.borderBottom = "none";
                         selectedSubjectCard.querySelector(".subject-card-header").style.borderRadius = "20px";
@@ -4243,11 +4239,11 @@
                     
                     } 
                     else if (selectedSubjectCard.classList.contains("compact")) {
-                        selectedSubjectCard.querySelector(".grades-table-subject-total-coef-div").style.display = "flex";
+                        selectedSubjectCard.querySelector(".subject-total-coef-div").style.display = "flex";
                     }
                     else {
                         selectedSubjectCard.querySelector(".subject-card-header").children[0].style.width =     "42%";
-                        selectedSubjectCard.querySelector(".grades-table-subject-total-coef-div").style.width = "58%";
+                        selectedSubjectCard.querySelector(".subject-total-coef-div").style.width = "58%";
                         selectedSubjectCard.querySelector(".grades-table").style.display = "table";
                         selectedSubjectCard.querySelector(".subject-card-header").style.borderBottom = "4px solid white";
                         selectedSubjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
@@ -4408,20 +4404,22 @@
 
             //#region -card selection
             
-                // MARK: addSelectedCardNotifDiv
-                addSelectedCardNotifDiv(semester, subject, type, targetId="none") {
+                // MARK: createSelectedCardNotifDiv
+                createSelectedCardNotifDiv(subjectCard) {
+                    const semester = subjectCard.dataset.semester;
+                    const subject  = subjectCard.dataset.subject;
+                    const targetId = subjectCard.id;
                     const selectionNotifDiv = document.createElement("div");
                     selectionNotifDiv.className = `selected-subject-card-notif-div`;
-                    selectionNotifDiv.id = `selected-subject-card-notif-div-for-${type}-${subject}-from-semester-${semester}`;
-                    selectionNotifDiv.dataset.type = type;
+                    selectionNotifDiv.id = `selected-subject-card-notif-div-for-${subject}-from-semester-${semester}`;
                     selectionNotifDiv.dataset.subject = subject;
                     selectionNotifDiv.dataset.semester = semester;
                     selectionNotifDiv.dataset.targetid = targetId;
                     selectionNotifDiv.innerHTML = `
-                        <div class="selected-subject-card-notif-div-scroll-btn" id="selected-subject-card-notif-div-del-btn-for-${type}-${subject}-from-semester-${semester}" data-targetId="${targetId}">${">"}</div>
+                        <div class="selected-subject-card-notif-div-scroll-btn" id="selected-subject-card-notif-div-del-btn-for-${subject}-from-semester-${semester}" data-targetId="${targetId}">${">"}</div>
                         <span style="font-weight: 600; font-size: 14px; color: white">${subject}</span>
                         ${this.lang == "fr" ? `est sélectionné!` : `is selected!`}
-                        <div class="selected-subject-card-notif-div-del-btn" id="selected-subject-card-notif-div-del-btn-for-${type}-${subject}-from-semester-${semester}" data-targetId="${targetId}">x</div>
+                        <div class="selected-subject-card-notif-div-del-btn" id="selected-subject-card-notif-div-del-btn-for-${subject}-from-semester-${semester}" data-targetId="${targetId}">x</div>
                     `;
 
                     return selectionNotifDiv;
@@ -4449,11 +4447,11 @@
                                 selectedSubjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
                             }
                             else if (selectedSubjectCard.classList.contains("compact")) {
-                                selectedSubjectCard.querySelector(".ue-subject-total-coef-div").style.display = "flex";
+                                selectedSubjectCard.querySelector(".subject-total-coef-div").style.display = "flex";
                             }
                             else {
                                 selectedSubjectCard.querySelector(".subject-card-header").children[0].style.width = "42%";
-                                selectedSubjectCard.querySelector(".subject-card-header").querySelector(".ue-subject-total-coef-div").style.width =  "58%";
+                                selectedSubjectCard.querySelector(".subject-total-coef-div").style.width = "58%";
                                 selectedSubjectCard.querySelector(".grades-table").style.display = "table";
                                 selectedSubjectCard.querySelector(".subject-card-header").style.borderBottom = "4px solid white";
                                 selectedSubjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
@@ -4482,7 +4480,7 @@
                             input.parentElement.style.transition = "";
                             input.parentElement.style.width = "42%";
                         })
-                        document.querySelectorAll(".ue-subject-total-coef-div").forEach(totalCoefDiv => {
+                        document.querySelectorAll(".subject-total-coef-div").forEach(totalCoefDiv => {
                             totalCoefDiv.style.transition = "";
                             totalCoefDiv.style.width = "47%";
                         })
@@ -4531,7 +4529,7 @@
                                 input.parentElement.style.transition = "";
                                 input.parentElement.style.width = "42%";
                             })
-                            document.querySelectorAll(".ue-subject-total-coef-div").forEach(totalCoefDiv => {
+                            document.querySelectorAll(".subject-total-coef-div").forEach(totalCoefDiv => {
                                 totalCoefDiv.style.transition = "";
                                 totalCoefDiv.style.width = "47%";
                             })
@@ -4603,19 +4601,13 @@
 
                 // MARK: dragIconOnClickEvent
                 dragIconOnClickEvent(e, dragIcon, dontAddToSelection=false) {
-                    let subjectCard = e?.target ? e.target.parentElement.parentElement.parentElement : e;
+                    let subjectCard = e?.target ? document.getElementById(e.target.dataset.targetid) : e;
                     let draggableElement = subjectCard;
                     const dropFieldAdd          = document.querySelector(".drop-field.create-ue");
                     const dropFieldAddHitbox    = document.querySelector(".drop-field-create-ue-hitbox");
                     const dropFieldRemove       = document.querySelector(".drop-field.remove-from-ue");
                     const dropFieldRemoveHitbox = document.querySelector(".drop-field-remove-from-ue-hitbox");
                     const type = dragIcon.dataset.type;
-                    if (type=="detailed" && e?.target) {
-                        subjectCard = e.target.parentElement.parentElement.parentElement.parentElement.parentElement;
-                    }
-                    if (type != "compact") {
-                        draggableElement = subjectCard.querySelector(".subject-card-header");
-                    }
                     
                     draggableElement.draggable = true;
                     draggableElement.ondragstart = (e) =>   {this.draggedSelectedElementOnDragStartEvent(e, {draggedElement: draggableElement, card:subjectCard})};
@@ -4626,7 +4618,7 @@
                         if (!this.selectedSubjectCardsSortedByUe[subjectCard.dataset.ue]) { this.selectedSubjectCardsSortedByUe[subjectCard.dataset.ue] = []; };
                         this.selectedSubjectCardsSortedByUe[subjectCard.dataset.ue].push({subjectCardId: subjectCard.id, selectionIndex: this.selectedSubjectCardsId.length-1});
 
-                        const selectionNotifDiv = this.addSelectedCardNotifDiv(subjectCard.dataset.semester, subjectCard.dataset.subject, type, subjectCard.id);
+                        const selectionNotifDiv = this.createSelectedCardNotifDiv(subjectCard);
 
                         document.querySelector(".selected-subject-card-notif-container").appendChild(selectionNotifDiv);
                         this.attachNotifBtnsListener(selectionNotifDiv);
@@ -4656,7 +4648,7 @@
                         input.parentElement.style.transition = "width 0.3s ease";
                         input.parentElement.style.width = "30%";
                     })
-                    document.querySelectorAll(".ue-subject-total-coef-div").forEach(totalCoefDiv => {
+                    document.querySelectorAll(".subject-total-coef-div").forEach(totalCoefDiv => {
                         totalCoefDiv.style.transition = "width 0.3s ease";
                         totalCoefDiv.style.width = "56%";
                     })
@@ -5527,93 +5519,127 @@
 
 
         // MARK: -Keyboard Events
-        generalKeyboardEvents() {
-            document.onkeydown = (e) => {
-                if      (this.keyInputMatch(e, "E", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
-                    
-                    this.editMode = !this.editMode;
-                    localStorage.setItem("ECAM_DASHBOARD_DEFAULT_EDIT_MODE", this.editMode);
+        generalKeyboardEvents(mode="general", target=undefined) {
+            if (mode == "general") {
+                document.onkeydown = (e) => {
+                    if      (this.keyInputMatch(e, "E", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
+                        
+                        this.editMode = !this.editMode;
+                        localStorage.setItem("ECAM_DASHBOARD_DEFAULT_EDIT_MODE", this.editMode);
 
-                    this.removeSubjectCardFromSubjectSelection();
-                    this.scrollToClientHighestElem();
-                    this.generateContent();
-                }
-                else if (this.keyInputMatch(e, "D", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
-                    const subjectCards            = document.querySelectorAll(".subject-card");
-                    const nbSubjectCards          = subjectCards.length;
-                    const nbCompactSubjectCards   = document.querySelectorAll(".subject-card.compact").length;
-                    const detailedBtn             = document.getElementById('view-btn-detailed');
-                    const compactBtn              = document.getElementById('view-btn-compact');
+                        this.removeSubjectCardFromSubjectSelection();
+                        this.scrollToClientHighestElem();
+                        this.generateContent();
+                    }
+                    else if (this.keyInputMatch(e, "D", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
+                        const subjectCards            = document.querySelectorAll(".subject-card");
+                        const nbSubjectCards          = subjectCards.length;
+                        const nbCompactSubjectCards   = document.querySelectorAll(".subject-card.compact").length;
+                        const detailedBtn             = document.getElementById('view-btn-detailed');
+                        const compactBtn              = document.getElementById('view-btn-compact');
 
-                    this.compactSubjCardsId = [];
+                        this.compactSubjCardsId = [];
 
-                    if (detailedBtn.classList.contains("active")) {
-                        if (nbCompactSubjectCards == nbSubjectCards) {
-                            this.viewMode = "detailed";
-                            detailedBtn.classList.add("active")
-                            compactBtn.classList.remove("active")
+                        if (detailedBtn.classList.contains("active")) {
+                            if (nbCompactSubjectCards == nbSubjectCards) {
+                                this.viewMode = "detailed";
+                                detailedBtn.classList.add("active")
+                                compactBtn.classList.remove("active")
+                            }
+                            else {
+                                this.viewMode = "compact";
+                                subjectCards.forEach(subjCard => {this.compactSubjCardsId.push(subjCard.id)})
+                                detailedBtn.classList.remove("active")
+                                compactBtn.classList.add("active")
+                            }
                         }
                         else {
-                            this.viewMode = "compact";
-                            subjectCards.forEach(subjCard => {this.compactSubjCardsId.push(subjCard.id)})
-                            detailedBtn.classList.remove("active")
-                            compactBtn.classList.add("active")
+                            if (nbCompactSubjectCards == 0) {
+                                this.viewMode = "compact";
+                                subjectCards.forEach(subjCard => {this.compactSubjCardsId.push(subjCard.id)})
+                                detailedBtn.classList.remove("active")
+                                compactBtn.classList.add("active")
+                            }
+                            else {
+                                this.viewMode = "detailed";
+                                detailedBtn.classList.add("active")
+                                compactBtn.classList.remove("active")
+                            }
                         }
+
+                        localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
+                        this.scrollToClientHighestElem();
+                        this.generateContent();
                     }
-                    else {
-                        if (nbCompactSubjectCards == 0) {
-                            this.viewMode = "compact";
-                            subjectCards.forEach(subjCard => {this.compactSubjCardsId.push(subjCard.id)})
-                            detailedBtn.classList.remove("active")
-                            compactBtn.classList.add("active")
+                    else if (this.keyInputMatch(e, "L", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
+                        
+                        this.lang = this.lang == "fr" ? "en" : "fr";
+                        localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
+
+                        if (this.lang == "fr") {
+                            document.getElementById('fr-lang-btn').classList.add('active')
+                            document.getElementById('en-lang-btn').classList.remove('active')
                         }
                         else {
-                            this.viewMode = "detailed";
-                            detailedBtn.classList.add("active")
-                            compactBtn.classList.remove("active")
+                            document.getElementById('fr-lang-btn').classList.remove('active')
+                            document.getElementById('en-lang-btn').classList.add('active')
+                        }
+                        
+                        this.scrollToClientHighestElem();
+                        this.generateContent(false);
+                    }
+                    else if (this.keyInputMatch(e, "F", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
+                        const className = "ue-header", timeout = 210, highestElemInPageHandleType = "last above", smooth = true;
+
+                        if (this.foldedUeCardsId.length == 0) {
+                            this.scrollToClientHighestElem("first", {className, timeout, highestElemInPageHandleType, smooth, block: "center"});
+                            document.querySelector(".fold-toggle").classList.add("active");
+                            this.foldAllUeCards();
+                        }
+                        else {
+                            this.scrollToClientHighestElem("first", {className, timeout, highestElemInPageHandleType, smooth, block: "start"});
+                            document.querySelector(".fold-toggle").classList.remove("active");
+                            this.unfoldAllUeCards();
+                        }
+                        
+                    }
+                    else if (this.keyInputMatch(e, "R", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
+                        debugger;
+                    }
+                };
+            }
+            if (mode == "edit sim grade") {
+                document.onkeydown = (e) => {
+                    if (this.keyInputMatch(e, "Enter", {alt:"forbidden", ctrl:"forbidden", shift:"forbidden", meta:"forbidden", repeat:"forbidden"})) {
+                        if (target.classList.contains("simulated-grade-input")) {
+
+                            if      (target.classList.contains("sim-inp-type")) {
+                                const simInpGrade = document.querySelector(`.simulated-grade-input.sim-inp-grade[data-subj="${target.dataset.subj}"][data-semester="${target.dataset.semester}"]`);
+                                simInpGrade.focus({preventScroll: true, focusVisible: true});
+                                const simInpGradeCoord = simInpGrade.getBoundingClientRect().top;
+                                
+                                if (simInpGradeCoord < 0 || simInpGradeCoord > window.innerHeight) {
+                                    simInpGrade.scrollIntoView({block: "center", smooth: true});
+                                }
+                            }
+                            else if (target.classList.contains("sim-inp-grade")) {
+                                const simInpCoef = document.querySelector(`.simulated-grade-input.sim-inp-coef[data-subj="${target.dataset.subj}"][data-semester="${target.dataset.semester}"]`);
+                                simInpCoef.focus({preventScroll: true, focusVisible: true});
+                                const simInpCoefTopCoord = simInpCoef.getBoundingClientRect().top;
+                                
+                                if (simInpCoefTopCoord < 0 || simInpCoefTopCoord > window.innerHeight) {
+                                    simInpCoef.scrollIntoView({block: "center", smooth: true});
+                                }
+                            }
+                            else if (target.classList.contains("sim-inp-coef")) {
+                                const simAddBtn = document.querySelector(`.sim-add-btn[data-subj="${target.dataset.subj}"][data-semester="${target.dataset.semester}"]`);
+                                this.subjectSimAddBtnAction(simAddBtn);
+                            }
+
                         }
                     }
-
-                    localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
-                    this.scrollToClientHighestElem();
-                    this.generateContent();
                 }
-                else if (this.keyInputMatch(e, "L", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
-                    
-                    this.lang = this.lang == "fr" ? "en" : "fr";
-                    localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
-
-                    if (this.lang == "fr") {
-                        document.getElementById('fr-lang-btn').classList.add('active')
-                        document.getElementById('en-lang-btn').classList.remove('active')
-                    }
-                    else {
-                        document.getElementById('fr-lang-btn').classList.remove('active')
-                        document.getElementById('en-lang-btn').classList.add('active')
-                    }
-                    
-                    this.scrollToClientHighestElem();
-                    this.generateContent(false);
-                }
-                else if (this.keyInputMatch(e, "F", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
-                    const className = "ue-header", timeout = 210, highestElemInPageHandleType = "last above", smooth = true;
-
-                    if (this.foldedUeCardsId.length == 0) {
-                        this.scrollToClientHighestElem("first", {className, timeout, highestElemInPageHandleType, smooth, block: "center"});
-                        document.querySelector(".fold-toggle").classList.add("active");
-                        this.foldAllUeCards();
-                    }
-                    else {
-                        this.scrollToClientHighestElem("first", {className, timeout, highestElemInPageHandleType, smooth, block: "start"});
-                        document.querySelector(".fold-toggle").classList.remove("active");
-                        this.unfoldAllUeCards();
-                    }
-                    
-                }
-                else if (this.keyInputMatch(e, "R", {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"})) {
-                    debugger;
-                }
-            };
+            }
         };
 
     }
