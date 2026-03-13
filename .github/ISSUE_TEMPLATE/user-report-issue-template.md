@@ -6,6 +6,8 @@ labels: user report
 assignees: Batkillulu
 
 ---
+> Please check by pressing *CTRL + Right Click* on the `Issue` tab that you can see at the top left of your screen if the issue you're about to share already has been reported! Thank youuu <3
+
 > Feel free to write in French or in English! Vous pouvez écrire en français ou en anglais! Mais je vais partir du principe que vous pouvez comprendre ce que je dis en anglais, c'est pénible en terme de lisibilité et j'ai la flemme de traduire, merci pour votre compréhension :P
 
 

@@ -1,0 +1,158 @@
+{
+  "date": "2026-02-01",
+  "version": "3",
+  "moduleConfig": {
+    "7": {
+      "__modules__": [
+        "Sustainable Management 7",
+        "Society, Management & Entrepreneurship 7",
+        "Systems Engineering 7",
+        "Applied Internship",
+        "Innovation Project 7",
+        "Industrial Engineering & Supply Chain Management S7"
+      ],
+      "Sustainable Management 7": {
+        "subjects": [
+          "Operational Quality and Lean Management",
+          "Carbon Footprint",
+          "Research Methods"
+        ],
+        "coefficients": {
+          "Operational Quality and Lean Management": 35,
+          "Carbon Footprint": 35,
+          "Research Methods": 30
+        }
+      },
+      "Society, Management & Entrepreneurship 7": {
+        "subjects": [
+          "Society, Management & Entrepreneurship Final Project 1"
+        ],
+        "coefficients": {
+          "Society, Management & Entrepreneurship Final Project 1": 100
+        }
+      },
+      "Systems Engineering 7": {
+        "subjects": [
+          "Multibody Dynamics Systems",
+          "Electrical Machines & Drives"
+        ],
+        "coefficients": {
+          "Multibody Dynamics Systems": 50,
+          "Electrical Machines & Drives": 50
+        }
+      },
+      "Applied Internship": {
+        "subjects": [
+          "Applied Internship"
+        ],
+        "coefficients": {
+          "Applied Internship": 100
+        }
+      },
+      "Innovation Project 7": {
+        "subjects": [
+          "IP Project Management",
+          "IP Users Research",
+          "IP Ideation",
+          "IP Marketing",
+          "IP Requirements"
+        ],
+        "coefficients": {
+          "IP Project Management": 20,
+          "IP Users Research": 15,
+          "IP Ideation": 20,
+          "IP Marketing": 25,
+          "IP Requirements": 20
+        }
+      },
+      "Industrial Engineering & Supply Chain Management S7": {
+        "subjects": [
+          "Manufacturing Digital Transformation",
+          "The Blue Connection",
+          "Global Supply Chain and Information System"
+        ],
+        "coefficients": {
+          "Manufacturing Digital Transformation": 30,
+          "The Blue Connection": 30,
+          "Global Supply Chain and Information System": 40
+        }
+      }
+    },
+    "8": {
+      "__modules__": [
+        "Sustainable Management 8",
+        "Data and Engineering",
+        "Society, Management & Entrepreneurship S8",
+        "Innovation Project S8 - Road to Business",
+        "Innovation Project S8 - Engineering Developments",
+        "Industrial and Supply Chain Management S8"
+      ],
+      "Data and Engineering": {
+        "subjects": [
+          "Data",
+          "Operations Research",
+          "Introduction to AI"
+        ],
+        "coefficients": {
+          "Data": 50,
+          "Operations Research": 25,
+          "Introduction to AI": 25
+        }
+      },
+      "Sustainable Management 8": {
+        "subjects": [
+          "Innovation Management & Intellectual Property",
+          "Circular Economy",
+          "Corporate Social Responsibility",
+          "Climate Transformation of Industries"
+        ],
+        "coefficients": {
+          "Innovation Management & Intellectual Property": 50,
+          "Circular Economy": 10,
+          "Corporate Social Responsibility": 20,
+          "Climate Transformation of Industries": 20
+        }
+      },
+      "Society, Management & Entrepreneurship S8": {
+        "subjects": [
+          "Society, Management & Entrepreneurship Final Project 2"
+        ],
+        "coefficients": {
+          "Society, Management & Entrepreneurship Final Project 2": 100
+        }
+      },
+      "Innovation Project S8 - Road to Business": {
+        "subjects": [
+          "IP Business Plan",
+          "IP Project Closure"
+        ],
+        "coefficients": {
+          "IP Business Plan": 60,
+          "IP Project Closure": 40
+        }
+      },
+      "Innovation Project S8 - Engineering Developments": {
+        "subjects": [
+          "IP Project Management and Technical Requirements",
+          "IP Technical Deployment"
+        ],
+        "coefficients": {
+          "IP Project Management and Technical Requirements": 40,
+          "IP Technical Deployment": 60
+        }
+      },
+      "Industrial and Supply Chain Management S8": {
+        "subjects": [
+          "Industry of the Future",
+          "CSCA Certification",
+          "Robust Supply Chain"
+        ],
+        "coefficients": {
+          "Industry of the Future": 50,
+          "CSCA Certification": 30,
+          "Robust Supply Chain": 20
+        }
+      }
+    }
+  }
+}

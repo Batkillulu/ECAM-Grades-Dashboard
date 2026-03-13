@@ -1,15 +1,87 @@
 {
   "date": "2026-02-01",
-  "version": "2",
-  "ueConfig": {
+  "version": "3",
+  "moduleConfig": {
+    "5": {
+      "__modules__" : [
+        "Mathematics for Engineers 5",
+        "Mechanical Engineering 5",
+        "Electrical Engineering 5",
+        "Industrial Organisation 5",
+        "Multidisciplinary Project 5",
+        "Society, Management & Entrepreneurship 5"
+      ],
+      "Mathematics for Engineers 5": {
+        "subjects": [
+          "Mathematics for Engineers 5",
+          "Network & Security"
+        ],
+        "coefficients": {
+          "Mathematics for Engineers 5": 75,
+          "Network & Security": 25
+        }
+      },
+      "Mechanical Engineering 5": {
+        "subjects": [
+          "Strength of Materials",
+          "Materials 2",
+          "Introduction to Heat Transfer"
+        ],
+        "coefficients": {
+          "Strength of Materials": 40,
+          "Materials 2": 25,
+          "Introduction to Heat Transfer": 35
+        }
+      },
+      "Electrical Engineering 5": {
+        "subjects": [
+          "Electrical Machines"
+        ],
+        "coefficients": {
+          "Electrical Machines": 100
+        }
+      },
+      "Industrial Organisation 5": {
+        "subjects": [
+          "Industrial Methods",
+          "Industrial Organisation"
+        ],
+        "coefficients": {
+          "Industrial Methods": 30,
+          "Industrial Organisation": 70
+        }
+      },
+      "Multidisciplinary Project 5": {
+        "subjects": [
+          "Ecodesign Project Part 1 - Environment",
+          "Ecodesign Project Part 1 - Technical"
+        ],
+        "coefficients": {
+          "Ecodesign Project Part 1 - Environment": 50,
+          "Ecodesign Project Part 1 - Technical": 50
+        }
+      },
+      "Society, Management & Entrepreneurship 5": {
+        "subjects": [
+          "Professional Engineering Project",
+          "Engineering Ethics",
+          "Advanced English Skills 5: (IELTS Preparation)"
+        ],
+        "coefficients": {
+          "Professional Engineering Project": 15,
+          "Engineering Ethics": 35,
+          "Advanced English Skills 5: (IELTS Preparation)": 50
+        }
+      }
+    },
     "6": {
-      "__ues__" : [
+      "__modules__" : [
+        "Industrial Engineering & Supply Chain Management 6", 
         "Mathematics for Engineers 6", 
         "Control Engineering 6", 
         "Systems Engineering 6", 
         "Multidisciplinary Project 6", 
-        "Society, Management & Entrepreneurship 6", 
-        "Industrial Engineering & Supply Chain Management 6"
+        "Society, Management & Entrepreneurship 6"
       ],
       "Mathematics for Engineers 6": {
         "subjects": [
@@ -75,78 +147,6 @@
           "Introduction to Supply Chain Management": 35,
           "The Fresh Connection": 25,
           "Industrial Engineering & Project Management": 40
-        }
-      }
-    },
-    "5": {
-      "__ues__" : [
-        "Mathematics for Engineers 5",
-        "Mechanical Engineering 5",
-        "Electrical Engineering 5",
-        "Industrial Organisation 5",
-        "Multidisciplinary Project 5",
-        "Society, Management & Entrepreneurship 5"
-      ],
-      "Mathematics for Engineers 5": {
-        "subjects": [
-          "Mathematics for Engineers 5",
-          "Network & Security"
-        ],
-        "coefficients": {
-          "Mathematics for Engineers 5": 70,
-          "Network & Security": 30
-        }
-      },
-      "Mechanical Engineering 5": {
-        "subjects": [
-          "Strength of Materials",
-          "Materials 2",
-          "Introduction to Heat Transfer"
-        ],
-        "coefficients": {
-          "Strength of Materials": 40,
-          "Materials 2": 25,
-          "Introduction to Heat Transfer": 35
-        }
-      },
-      "Electrical Engineering 5": {
-        "subjects": [
-          "Electrical Machines"
-        ],
-        "coefficients": {
-          "Electrical Machines": 100
-        }
-      },
-      "Industrial Organisation 5": {
-        "subjects": [
-          "Industrial Methods",
-          "Industrial Organisation"
-        ],
-        "coefficients": {
-          "Industrial Methods": 30,
-          "Industrial Organisation": 70
-        }
-      },
-      "Multidisciplinary Project 5": {
-        "subjects": [
-          "Ecodesign Project Part 1 - Environment",
-          "Ecodesign Project Part 1 - Technical"
-        ],
-        "coefficients": {
-          "Ecodesign Project Part 1 - Environment": 50,
-          "Ecodesign Project Part 1 - Technical": 50
-        }
-      },
-      "Society, Management & Entrepreneurship 5": {
-        "subjects": [
-          "Professional Engineering Project",
-          "Engineering Ethics",
-          "Advanced English Skills 5: (IELTS Preparation)"
-        ],
-        "coefficients": {
-          "Professional Engineering Project": 15,
-          "Engineering Ethics": 35,
-          "Advanced English Skills 5: (IELTS Preparation)": 50
         }
       }
     }
