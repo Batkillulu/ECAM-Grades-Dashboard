@@ -650,7 +650,8 @@
             
             this.gitFetchScanDoneArray = [];
             this.tempGitConfigParentDirData = {};
-            this.onlineConfigs          = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_ONLINE_CONFIGS"))                || {
+            this.onlineConfigs          = (localStorage.getItem("ECAM_DASHBOARD_ONLINE_CONFIGS") != "[object Object]" ? JSON.parse( localStorage.getItem("ECAM_DASHBOARD_ONLINE_CONFIGS")) : undefined)
+            || {
                 Configs: {
                     EENG:   {
                         EENG1: {},
