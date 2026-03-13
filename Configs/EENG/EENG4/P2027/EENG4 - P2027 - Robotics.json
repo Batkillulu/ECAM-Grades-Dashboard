@@ -1,9 +1,9 @@
 {
   "date": "2026-02-01",
-  "version": "2",
+  "version": "3",
   "ueConfig": {
     "7": {
-      "__ues__": [
+      "__modules__": [
         "Sustainable Management 7",
         "Society, Management & Entrepreneurship 7",
         "Systems Engineering 7",
@@ -81,7 +81,7 @@
       }
     },
     "8": {
-      "__ues__": [
+      "__modules__": [
         "Sustainable Management 8",
         "Data and Engineering",
         "Society, Management & Entrepreneurship S8",

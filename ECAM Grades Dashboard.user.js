@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.2.3
+// @version      2.2.4
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/group/education/notes*
@@ -277,24 +277,24 @@
 
             // MARK: drop create fields
             styles += `
-                .drop-field.create-ue                           { position: fixed; top: 50px; right:0px; height: calc(100% - 100px); width: 0%; border: 2px dashed #7fc2ff; border-radius: 20px 0px 0px 20px; border-color: #7fc2ff00; background: #bdb8ff00; font-weight: 800; color: #7fc2ff00; z-index: 297; transition: all 0.2s ease; }
-                .drop-field.create-ue.show                      { width: 15%; border-width: 2px 0px 2px 2px; border-color: #7fc2ff; color: #7fc2ff; background: #bdb8ff3d; }
-                .drop-field.create-ue.hover                     { background: #d3d0ffce; }
-                .drop-field-create-ue-plus                      { position: relative; font-size: 50px; transform: rotate( 0deg); transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
-                .drop-field-create-ue-plus.hover                { right: 4px; font-size: 90px; transform: rotate(-90deg); }
-                .drop-field-create-ue-text                      { font-size: 25px; position: relative; overflow-x: clip; text-wrap-mode: nowrap; transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
-                .drop-field-create-ue-text.top                  { bottom:  10px; right:0px; }
-                .drop-field-create-ue-text.bottom               { top:     10px; left: 0px; }
-                .drop-field-create-ue-text.top.hover            { bottom:  30px; right:20px; font-size: 30px; }
-                .drop-field-create-ue-text.bottom.hover         { top:     30px; left: 20px; font-size: 30px; }
+                .drop-field.create-module                           { position: fixed; top: 50px; right:0px; height: calc(100% - 100px); width: 0%; border: 2px dashed #7fc2ff; border-radius: 20px 0px 0px 20px; border-color: #7fc2ff00; background: #bdb8ff00; font-weight: 800; color: #7fc2ff00; z-index: 297; transition: all 0.2s ease; }
+                .drop-field.create-module.show                      { width: 15%; border-width: 2px 0px 2px 2px; border-color: #7fc2ff; color: #7fc2ff; background: #bdb8ff3d; }
+                .drop-field.create-module.hover                     { background: #d3d0ffce; }
+                .drop-field-create-module-plus                      { position: relative; font-size: 50px; transform: rotate( 0deg); transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+                .drop-field-create-module-plus.hover                { right: 4px; font-size: 90px; transform: rotate(-90deg); }
+                .drop-field-create-module-text                      { font-size: 25px; position: relative; overflow-x: clip; text-wrap-mode: nowrap; transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+                .drop-field-create-module-text.top                  { bottom:  10px; right:0px; }
+                .drop-field-create-module-text.bottom               { top:     10px; left: 0px; }
+                .drop-field-create-module-text.top.hover            { bottom:  30px; right:20px; font-size: 30px; }
+                .drop-field-create-module-text.bottom.hover         { top:     30px; left: 20px; font-size: 30px; }
 
-                .drop-field-create-ue-text.top.fr::before       { content: "Créer un"; }
-                .drop-field-create-ue-text.bottom.fr::after     { content: "nouveau module"; }
-                .drop-field-create-ue-text.top.en::before       { content: "Create a"; }
-                .drop-field-create-ue-text.bottom.en::after     { content: "new module"; }
+                .drop-field-create-module-text.top.fr::before       { content: "Créer un"; }
+                .drop-field-create-module-text.bottom.fr::after     { content: "nouveau module"; }
+                .drop-field-create-module-text.top.en::before       { content: "Create a"; }
+                .drop-field-create-module-text.bottom.en::after     { content: "new module"; }
 
-                .drop-field-create-ue-hitbox                    { position: fixed; top: 50px; right:0px; height: calc(100% - 100px); width: 0%; border-radius: 20px 0px 0px 20px; transition: all 0.2s ease; }
-                .drop-field-create-ue-hitbox.show               { width: 15%; border-width: 2px 0px 2px 2px; cursor: pointer; z-index: 298; }
+                .drop-field-create-module-hitbox                    { position: fixed; top: 50px; right:0px; height: calc(100% - 100px); width: 0%; border-radius: 20px 0px 0px 20px; transition: all 0.2s ease; }
+                .drop-field-create-module-hitbox.show               { width: 15%; border-width: 2px 0px 2px 2px; cursor: pointer; z-index: 298; }
             `;
                 
 
@@ -302,72 +302,72 @@
             styles += `
 
                 
-                .drop-field.remove-from-ue                      { position: fixed; top: 50px; left:0px; height: calc(100% - 100px); width: 0%; border: 2px dashed #ff7f7f; border-radius: 0px 20px 20px 0px; border-color: #ff7f7f00; background: #ffb8b800; font-weight: 800; color: #ff7f7f00; z-index: 297; transition: all 0.2s ease; }
-                .drop-field.remove-from-ue.show                 { width: 15%; border-width: 2px 2px 2px 0px; border-color: #ff7f7f; color: #ff7f7f; background: #ffb8b83d; cursor: pointer; }
-                .drop-field.remove-from-ue.hover                     { background: #ffb8b8ce; }
-                .drop-field-remove-from-ue-minus                     { position: relative; font-size: 50px; transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
-                .drop-field-remove-from-ue-minus.hover               { font-size: 90px; animation: 0.3s slightHorizShake ease; }
-                .drop-field-remove-from-ue-text                      { font-size: 25px; position: relative; overflow-x: clip; text-wrap-mode: nowrap; transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
-                .drop-field-remove-from-ue-text.top                  { bottom:  10px; left: 0px; }
-                .drop-field-remove-from-ue-text.bottom               { top:     10px; right:0px; }
-                .drop-field-remove-from-ue-text.top.hover            { bottom:  30px; left: 20px; font-size: 30px; }
-                .drop-field-remove-from-ue-text.bottom.hover         { top:     30px; right:20px; font-size: 30px; }
+                .drop-field.remove-from-module                      { position: fixed; top: 50px; left:0px; height: calc(100% - 100px); width: 0%; border: 2px dashed #ff7f7f; border-radius: 0px 20px 20px 0px; border-color: #ff7f7f00; background: #ffb8b800; font-weight: 800; color: #ff7f7f00; z-index: 297; transition: all 0.2s ease; }
+                .drop-field.remove-from-module.show                 { width: 15%; border-width: 2px 2px 2px 0px; border-color: #ff7f7f; color: #ff7f7f; background: #ffb8b83d; cursor: pointer; }
+                .drop-field.remove-from-module.hover                     { background: #ffb8b8ce; }
+                .drop-field-remove-from-module-minus                     { position: relative; font-size: 50px; transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+                .drop-field-remove-from-module-minus.hover               { font-size: 90px; animation: 0.3s slightHorizShake ease; }
+                .drop-field-remove-from-module-text                      { font-size: 25px; position: relative; overflow-x: clip; text-wrap-mode: nowrap; transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+                .drop-field-remove-from-module-text.top                  { bottom:  10px; left: 0px; }
+                .drop-field-remove-from-module-text.bottom               { top:     10px; right:0px; }
+                .drop-field-remove-from-module-text.top.hover            { bottom:  30px; left: 20px; font-size: 30px; }
+                .drop-field-remove-from-module-text.bottom.hover         { top:     30px; right:20px; font-size: 30px; }
 
-                .drop-field-remove-from-ue-text.top.fr::before       { content: "Enlever"; }
-                .drop-field-remove-from-ue-text.bottom.fr::after     { content: "du module"; }
-                .drop-field-remove-from-ue-text.top.en::before       { content: "Remove"; }
-                .drop-field-remove-from-ue-text.bottom.en::after     { content: "from module"; }
+                .drop-field-remove-from-module-text.top.fr::before       { content: "Enlever"; }
+                .drop-field-remove-from-module-text.bottom.fr::after     { content: "du module"; }
+                .drop-field-remove-from-module-text.top.en::before       { content: "Remove"; }
+                .drop-field-remove-from-module-text.bottom.en::after     { content: "from module"; }
                 @keyframes slightHorizShake { 0% {left: 0px} 25% {left: 3px} 50% {left: -3px} 75% {left: 3px} 100% {left: 0px} }
 
-                .drop-field-remove-from-ue-hitbox                    { position: fixed; top: 50px; left:0px; height: calc(100% - 100px); width: 0%; border-radius: 0px 20px 20px 0px; transition: all 0.2s ease; }
-                .drop-field-remove-from-ue-hitbox.show               { width: 15%; border-width: 2px 2px 2px 0px; cursor: pointer; z-index: 298; }
+                .drop-field-remove-from-module-hitbox                    { position: fixed; top: 50px; left:0px; height: calc(100% - 100px); width: 0%; border-radius: 0px 20px 20px 0px; transition: all 0.2s ease; }
+                .drop-field-remove-from-module-hitbox.show               { width: 15%; border-width: 2px 2px 2px 0px; cursor: pointer; z-index: 298; }
             `;
                 
 
             // MARK: drop insert fields
             styles += `
 
-                .drop-field.insert-field.ue                      { justify-content: flex-start; height: 0px; width: 98%; color: #9b9b9b00; border: 2px dashed #9b9b9b00; background: #bdb8ff00; font-size: 25px; font-weight: 800; user-select: none; margin: -12px 0px; transition: all 0.2s ease; }
-                .drop-field.insert-field.ue.show                 { color: #9b9b9bff; border-color: #9b9b9bff; opacity: 50%; border-width: 2px 0px; border-radius: 0px;   height: 50px; background: #bdb8ff3d; margin: 0px; }
-                .drop-field.insert-field.ue.show.hover           { color: #887bffff; border-color: #7fc2ffff; opacity: 100%;   border-width: 2px 2px; border-radius: 20px; }
+                .drop-field.insert-field.module                      { justify-content: flex-start; height: 0px; width: 98%; color: #9b9b9b00; border: 2px dashed #9b9b9b00; background: #bdb8ff00; font-size: 25px; font-weight: 800; user-select: none; margin: -12px 0px; transition: all 0.2s ease; }
+                .drop-field.insert-field.module.show                 { color: #9b9b9bff; border-color: #9b9b9bff; opacity: 50%; border-width: 2px 0px; border-radius: 0px;   height: 50px; background: #bdb8ff3d; margin: 0px; }
+                .drop-field.insert-field.module.show.hover           { color: #887bffff; border-color: #7fc2ffff; opacity: 100%;   border-width: 2px 2px; border-radius: 20px; }
 
                 .drop-field.insert-field.subject                 { justify-content: flex-start; height: 0px; width: 98%; color: #9b9b9b00; border: 2px dashed #9b9b9b00; background: #bdb8ff00; font-size: 25px; font-weight: 800; user-select: none; margin: -6px 0px; transition: all 0.2s ease; }
                 .drop-field.insert-field.subject.show            { color: #9b9b9bff; border-color: #9b9b9b54; opacity: 50%; border-width: 2px 0px; border-radius: 0px;  height: 30px; background: #bdb8ff1a; margin: 0px; }
                 .drop-field.insert-field.subject.show.hover      { color: #887bffff; border-color: #7fc2ffff; opacity: 100%;   border-width: 2px 2px; border-radius: 20px; }
                 
-                .drop-ue-card-insert-content                        { position: relative; display: flex; align-items: center; width: 100%; height: 50px; overflow: clip; top:-2px; }
-                .drop-ue-card-insert-content.plus                   {  }
-                .drop-ue-card-insert-content.arrow                  { top: -52px; }
-                .drop-ue-card-insert-content.text                   { overflow: visible; top: -102px }
-                .drop-ue-card-insert-content.text.add               { justify-content: center; }
-                .drop-ue-card-insert-content.text.insert            { justify-content: flex-start; }
+                .drop-module-card-insert-content                        { position: relative; display: flex; align-items: center; width: 100%; height: 50px; overflow: clip; top:-2px; }
+                .drop-module-card-insert-content.plus                   {  }
+                .drop-module-card-insert-content.arrow                  { top: -52px; }
+                .drop-module-card-insert-content.text                   { overflow: visible; top: -102px }
+                .drop-module-card-insert-content.text.add               { justify-content: center; }
+                .drop-module-card-insert-content.text.insert            { justify-content: flex-start; }
 
-                .drop-ue-card-insert-arrow                          { font-size: 500px; display: flex; align-items: flex-start; justify-content: center; height: 50px; position: relative; left: calc(50% - 145px); background: transparent; opacity: 0%;                          transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); line-height: 5%; }
-                .drop-ue-card-insert-arrow.show                     { opacity: 50%; }
-                .drop-ue-card-insert-arrow.show.hover               { left: 50%; opacity: 100%; }
+                .drop-module-card-insert-arrow                          { font-size: 500px; display: flex; align-items: flex-start; justify-content: center; height: 50px; position: relative; left: calc(50% - 145px); background: transparent; opacity: 0%;                          transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); line-height: 5%; }
+                .drop-module-card-insert-arrow.show                     { opacity: 50%; }
+                .drop-module-card-insert-arrow.show.hover               { left: 50%; opacity: 100%; }
 
-                .drop-ue-card-insert-plus                           { transform: translate(  0px, 14px) rotate(  0deg); font-size: 50px ;  position: relative; left: 0px; display: flex; justify-content: center; height: 50px; width: 100%; background: transparent; opacity: 0%; transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); line-height: 39%; }
-                .drop-ue-card-insert-plus.show                      { opacity: 50%; }
-                .drop-ue-card-insert-plus.show.hover                { transform: translate(130px, 30px) rotate(180deg); font-size: 280px; opacity: 100%; line-height: 10%; }
+                .drop-module-card-insert-plus                           { transform: translate(  0px, 14px) rotate(  0deg); font-size: 50px ;  position: relative; left: 0px; display: flex; justify-content: center; height: 50px; width: 100%; background: transparent; opacity: 0%; transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); line-height: 39%; }
+                .drop-module-card-insert-plus.show                      { opacity: 50%; }
+                .drop-module-card-insert-plus.show.hover                { transform: translate(130px, 30px) rotate(180deg); font-size: 280px; opacity: 100%; line-height: 10%; }
 
-                .drop-ue-card-insert-text                           { display: flex; justify-content: flex-start; align-items: center; position: relative; overflow-x: clip; text-wrap: nowrap; width: 0px; height: 50px; background: transparent; opacity: 50%;                   transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
+                .drop-module-card-insert-text                           { display: flex; justify-content: flex-start; align-items: center; position: relative; overflow-x: clip; text-wrap: nowrap; width: 0px; height: 50px; background: transparent; opacity: 50%;                   transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
 
-                .drop-ue-card-insert-text.add.fr                { --width: 263px; --x-translation: calc(0.5*var(--width) - 20px); }
-                .drop-ue-card-insert-text.add.en                { --width: 230px; --x-translation: calc(0.5*var(--width) - 20px); }
-                .drop-ue-card-insert-text.insert.fr             { --width: 150px; --x-translation:  50px; }
-                .drop-ue-card-insert-text.insert.en             { --width: 150px; --x-translation:  50px; }
+                .drop-module-card-insert-text.add.fr                { --width: 263px; --x-translation: calc(0.5*var(--width) - 20px); }
+                .drop-module-card-insert-text.add.en                { --width: 230px; --x-translation: calc(0.5*var(--width) - 20px); }
+                .drop-module-card-insert-text.insert.fr             { --width: 150px; --x-translation:  50px; }
+                .drop-module-card-insert-text.insert.en             { --width: 150px; --x-translation:  50px; }
 
-                .drop-ue-card-insert-text.add.fr::before            { content: "Ajouter un module ici";}
-                .drop-ue-card-insert-text.add.en::before            { content: "Add a module here";}
-                .drop-ue-card-insert-text.add                       { width: 0px; right: 0px; }
-                .drop-ue-card-insert-text.add.hover                 { width: var(--width); right: var(--x-translation); opacity: 100%; }
+                .drop-module-card-insert-text.add.fr::before            { content: "Ajouter un module ici";}
+                .drop-module-card-insert-text.add.en::before            { content: "Add a module here";}
+                .drop-module-card-insert-text.add                       { width: 0px; right: 0px; }
+                .drop-module-card-insert-text.add.hover                 { width: var(--width); right: var(--x-translation); opacity: 100%; }
                 
-                .drop-ue-card-insert-text.insert.fr::before         { content: "Insérer ici"; }
-                .drop-ue-card-insert-text.insert.en::before         { content: "Insert here"; }
-                .drop-ue-card-insert-text.insert                    { width: 0px; right: calc(var(--x-translation) + var(--width) - 50%); }
-                .drop-ue-card-insert-text.insert.hover              { width: var(--width); right: calc(var(--width) - 50%); opacity: 100%; }
+                .drop-module-card-insert-text.insert.fr::before         { content: "Insérer ici"; }
+                .drop-module-card-insert-text.insert.en::before         { content: "Insert here"; }
+                .drop-module-card-insert-text.insert                    { width: 0px; right: calc(var(--x-translation) + var(--width) - 50%); }
+                .drop-module-card-insert-text.insert.hover              { width: var(--width); right: calc(var(--width) - 50%); opacity: 100%; }
 
-                .drop-ue-card-insert-hitbox                     { display: flex; position: relative; top: -152px; width: calc(100% - -4px); min-height: 50px; border-radius: 20px; cursor: pointer; }
+                .drop-module-card-insert-hitbox                     { display: flex; position: relative; top: -152px; width: calc(100% - -4px); min-height: 50px; border-radius: 20px; cursor: pointer; }
                 
 
                 .drop-subject-card-insert-content                   { position: relative; display: flex; align-items: center; width: 100%; height: 30px; overflow: clip; top:-2px; }
@@ -409,52 +409,52 @@
             
 
 
-        // MARK: -UE CARDS
+        // MARK: -MODULE CARDS
         styles += `
 
             .semester-grid      { display: grid; width: 100%; gap: 20px; transition: gap 0.2s ease; }
-            .ue-card                { display: flex; flex-direction: column; align-items: center; width: 100%; background: #fafafa; border-radius: 25px; border: 3px solid #e5e5e5; scroll-margin: 70px; transition: border-radius 0.2s ease, margin 0.2s ease; }
-            .ue-card.fold           { border-radius: 25px; border-width: 0px; }
-            .ue-card.validated      { border-color: #10b981ff; background: radial-gradient(transparent 0%, #f0fdf4ff 75%); }
-            .ue-card.failed         { border-color: #ef4444ff; background: radial-gradient(transparent 0%, #fef2f2ff 75%); }
-            .ue-card.unknown        { border-color: #6d6d6dff; background: radial-gradient(transparent 0%, #d1d1d1ff 75%); }
+            .module-card                { display: flex; flex-direction: column; align-items: center; width: 100%; background: #fafafa; border-radius: 25px; border: 3px solid #e5e5e5; scroll-margin: 70px; transition: border-radius 0.2s ease, margin 0.2s ease; }
+            .module-card.fold           { border-radius: 25px; border-width: 0px; }
+            .module-card.validated      { border-color: #10b981ff; background: radial-gradient(transparent 0%, #f0fdf4ff 75%); }
+            .module-card.failed         { border-color: #ef4444ff; background: radial-gradient(transparent 0%, #fef2f2ff 75%); }
+            .module-card.unknown        { border-color: #6d6d6dff; background: radial-gradient(transparent 0%, #d1d1d1ff 75%); }
 
-            .ue-header                  { display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 18px 20px; border-bottom: 3px solid #e5e5e5; border-radius: 25px 25px 0px 0px; width: 100%; cursor: pointer; z-index: 1; transition: border-radius 0.3s ease, border-color 0.3s ease, opacity 0.3s ease, filter 0.3s ease; }
-            .ue-header.fold             { border-width: 3px; border-style: solid; border-radius: 25px; }
-            .ue-header.validated        { border-color: #10b981ff; background: linear-gradient(300deg, #e0ffeaff 30%, transparent); }
-            .ue-header.failed           { border-color: #ef4444ff; background: linear-gradient(300deg, #ffd9d9ff 30%, transparent); }
-            .ue-header.unknown          { border-color: #6d6d6dff; background: linear-gradient(300deg, #acacacff 30%, transparent); }
-            .ue-header:hover            { filter: brightness(calc(0.01 * 105)); opacity: 90%; }
-            .ue-delete-btn                  { border-radius: 14px; background: transparent; }
-            .ue-title                    { font-size: 16px; font-weight: 800; color: #1a1a1a; width:42%; margin-bottom: 2px; }
-            .ue-title.input              { font-size: 16px; font-weight: 800; color: #1a1a1a; width:90%; border-radius: 12px; padding-left: 10px; }
+            .module-header                  { display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 18px 20px; border-bottom: 3px solid #e5e5e5; border-radius: 25px 25px 0px 0px; width: 100%; cursor: pointer; z-index: 1; transition: border-radius 0.3s ease, border-color 0.3s ease, opacity 0.3s ease, filter 0.3s ease; }
+            .module-header.fold             { border-width: 3px; border-style: solid; border-radius: 25px; }
+            .module-header.validated        { border-color: #10b981ff; background: linear-gradient(300deg, #e0ffeaff 30%, transparent); }
+            .module-header.failed           { border-color: #ef4444ff; background: linear-gradient(300deg, #ffd9d9ff 30%, transparent); }
+            .module-header.unknown          { border-color: #6d6d6dff; background: linear-gradient(300deg, #acacacff 30%, transparent); }
+            .module-header:hover            { filter: brightness(calc(0.01 * 105)); opacity: 90%; }
+            .module-delete-btn                  { border-radius: 14px; background: transparent; }
+            .module-title                    { font-size: 16px; font-weight: 800; color: #1a1a1a; width:42%; margin-bottom: 2px; }
+            .module-title.input              { font-size: 16px; font-weight: 800; color: #1a1a1a; width:90%; border-radius: 12px; padding-left: 10px; }
 
-            .ue-subject-total-coef-div   { display: flex; flex-direction: column; text-align: left; width:47%; gap:4px; padding: 0px 10px; font-size: 14px; }
-            .ue-subject-total-coef-value { display: flex; text-align: left; font-size: 13px; font-weight: 600; gap: 8px; }
-            .ue-subject-total-coef-debug { display: flex; text-align: left; font-size: 13px; }
+            .module-subject-total-coef-div   { display: flex; flex-direction: column; text-align: left; width:47%; gap:4px; padding: 0px 10px; font-size: 14px; }
+            .module-subject-total-coef-value { display: flex; text-align: left; font-size: 13px; font-weight: 600; gap: 8px; }
+            .module-subject-total-coef-debug { display: flex; text-align: left; font-size: 13px; }
 
 
-            .ue-card-content            { display: flex; flex-direction: row; width: 98%; height: 100%; align-items: center; gap: 0px; margin: 8px 0px 18px 0px; opacity: 100%; transition: all 0.2s ease; }
-            .ue-card-content.fold   { height: 0%; margin: 0px; opacity: 0%; }
-            .ue-card-content.edit-mode  { gap: 1% }
+            .module-card-content            { display: flex; flex-direction: row; width: 98%; height: 100%; align-items: center; gap: 0px; margin: 8px 0px 18px 0px; opacity: 100%; transition: all 0.2s ease; }
+            .module-card-content.fold   { height: 0%; margin: 0px; opacity: 0%; }
+            .module-card-content.edit-mode  { gap: 1% }
 
-            .ue-info                        { display: flex; flex-direction: row; justify-content: space-around; align-items: center; width:97%; background: #eef2ff00; border:1px solid #c7d2fe00; padding: 0px 8px 3px 8px; border-radius: 0px 0px 8px 8px; margin-top: -1px; height: 36px; opacity: 100%; transition: all 0.2s ease; }
-            .ue-info.fold               { height: 0px; padding: 0px; opacity: 0%; }
-            .ue-info-bar                    { display: flex; flex-direction: row; justify-content: space-between; align-items: center; width:48%; background: #eef2ff; border:1px solid #c7d2fe; padding: 3px 15px; border-radius: 0px 0px 8px 8px; }
-            .ue-info-clear                  { display: flex; flex-direction: row; justify-content: center; align-items: center; font-size: 12px; background: #d7e0ff; border: 2px solid; border-radius: 10px; padding: 2px 7px; user-select: none; width: 220px; margin-right: 8px; cursor: pointer; transition: all 0.2s ease; }
-            .ue-info-clear:hover            { width: 240px; font-size: 11.5px; margin-right: 0px; background: #eef2ff; }
-            .ue-info-clear.disabled         {  }
-            .ue-info-clear.sim              {  }
+            .module-info                        { display: flex; flex-direction: row; justify-content: space-around; align-items: center; width:97%; background: #eef2ff00; border:1px solid #c7d2fe00; padding: 0px 8px 3px 8px; border-radius: 0px 0px 8px 8px; margin-top: -1px; height: 36px; opacity: 100%; transition: all 0.2s ease; }
+            .module-info.fold               { height: 0px; padding: 0px; opacity: 0%; }
+            .module-info-bar                    { display: flex; flex-direction: row; justify-content: space-between; align-items: center; width:48%; background: #eef2ff; border:1px solid #c7d2fe; padding: 3px 15px; border-radius: 0px 0px 8px 8px; }
+            .module-info-clear                  { display: flex; flex-direction: row; justify-content: center; align-items: center; font-size: 12px; background: #d7e0ff; border: 2px solid; border-radius: 10px; padding: 2px 7px; user-select: none; width: 220px; margin-right: 8px; cursor: pointer; transition: all 0.2s ease; }
+            .module-info-clear:hover            { width: 240px; font-size: 11.5px; margin-right: 0px; background: #eef2ff; }
+            .module-info-clear.disabled         {  }
+            .module-info-clear.sim              {  }
 
-            .ue-details                     { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 15px; opacity: 100%; transition: all 0.2s ease; }
-            .ue-details.edit-mode           { gap: 8px; }
-            .ue-details.fold                { gap: 0px; opacity: 0%; }
-            .ue-moyenne                     { display: flex; align-items: center; justify-content: flex-end; font-size: 24px; font-weight: 800; gap:10px; width: 193px; }
-            .ue-moyenne.good                { color: #10b981; }
-            .ue-moyenne.bad                 { color: #ef4444; }
-            .ue-moyenne.unknown             { color: #6d6d6dff; }
-            .ue-toggle                      { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; margin-left: 5px; font-size: 18px; color: #000000; transition: transform 0.3s ease; }
-            .ue-toggle.open                 { transform: rotate(180deg); }
+            .module-details                     { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 15px; opacity: 100%; transition: all 0.2s ease; }
+            .module-details.edit-mode           { gap: 8px; }
+            .module-details.fold                { gap: 0px; opacity: 0%; }
+            .module-moyenne                     { display: flex; align-items: center; justify-content: flex-end; font-size: 24px; font-weight: 800; gap:10px; width: 193px; }
+            .module-moyenne.good                { color: #10b981; }
+            .module-moyenne.bad                 { color: #ef4444; }
+            .module-moyenne.unknown             { color: #6d6d6dff; }
+            .module-toggle                      { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; margin-left: 5px; font-size: 18px; color: #000000; transition: transform 0.3s ease; }
+            .module-toggle.open                 { transform: rotate(180deg); }
 
         `;
             
@@ -626,7 +626,8 @@
 
         constructor() {
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.2.3";
+            this.scriptVersion = "2.2.4";
+            this.configVersion = 3;
 
             this.now        = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
             this.dateHour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
@@ -679,9 +680,8 @@
                 date: this.today,
             };
             
-            this.configVersion = 2;
-            this.ueConfig            = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_UE_CONFIG"))                 || {};
-            this.disabledGrades      = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_IGNORED_GRADES"))            || [];
+            this.moduleConfig                   = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_MODULE_CONFIG")) || {};
+            this.disabledGrades                 = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_DISABLED_GRADES"))|| [];
             this.gradesDatas = {};
 
 
@@ -702,9 +702,9 @@
             this.clientWidth = 1920;
 
             this.selectedSubjectCardsId = [];
-            this.selectedSubjectCardsSortedByUe = {};
+            this.selectedSubjectCardsSortedByModule = {};
             this.compactSubjCardsId = [];
-            this.foldedUeCardsId = [];
+            this.foldedModuleCardsId = [];
             this.scrollToThisElem = "";
 
             this.ERROR503 = document.title == '503 Service Unavailable' || document.title == 'ECAM Grades Dashboard - Transform Your Grade Experience';
@@ -795,7 +795,7 @@
             scrollToClientHighestElem(priority="first", ...{className= "subject-card", id="", margin=this.editMode ? 100 : 25, timeout=20, smooth=false, highestElemInPageHandleType="none", block="start"}) {
                 const defaultTargetElementDatas = [
                     {className: "modules-section",         margin: 20,                        highestElemInPageHandleType:"partial"}, 
-                    {className: "ue-card",                 margin: this.editMode ? 100 : 25,   highestElemInPageHandleType:"above"},
+                    {className: "module-card",                 margin: this.editMode ? 100 : 25,   highestElemInPageHandleType:"above"},
                     {className: "unclassified-section",    margin: this.editMode ? 100 : 25,   highestElemInPageHandleType:"partial"},
                     {className: "subject-card",            margin: 10,                        highestElemInPageHandleType:"above"},
                 ];
@@ -1040,38 +1040,38 @@
                 })
                 return document.styleSheets[styleSheetIndex].cssRules[ruleIndex]
             }
-            /** Save the ue configuration in the cache */
-            saveConfig() { localStorage.setItem('ECAM_DASHBOARD_UE_CONFIG', JSON.stringify(this.ueConfig)); }
+            /** Save the module configuration in the cache */
+            saveConfig() { localStorage.setItem('ECAM_DASHBOARD_MODULE_CONFIG', JSON.stringify(this.moduleConfig)); }
             /** Save the simulated grades in the cache */
             saveSim() { this.deleteUnusedSimPath(); localStorage.setItem("ECAM_DASHBOARD_SIM_GRADES", JSON.stringify(this.sim)); }
             /** Save the ignored grades in the cache */
-            saveIgnoredGrades() { localStorage.setItem("ECAM_DASHBOARD_IGNORED_GRADES", JSON.stringify(this.disabledGrades)); }
+            saveIgnoredGrades() { localStorage.setItem("ECAM_DASHBOARD_DISABLED_GRADES", JSON.stringify(this.disabledGrades)); }
             /** Save the read grades in the cache */
             saveReadGrades() { localStorage.setItem("ECAM_DASHBOARD_SAVED_READ_GRADES", JSON.stringify(this.savedReadGrades)); }
-            /** Ensures that a path composed of `sem`, `ue` and `subj` exists in this.sim */
-            ensureSimPath(sem=undefined, ue=undefined, subj=undefined) {
+            /** Ensures that a path composed of `sem`, `module` and `subj` exists in this.sim */
+            ensureSimPath(sem=undefined, module=undefined, subj=undefined) {
                 if (sem)    {if(!this.sim?.[sem])               this.sim[sem]={}; }
-                if (ue)     {if(!this.sim?.[sem]?.[ue])         this.sim[sem][ue]={}; }
-                if (subj)   {if(!this.sim?.[sem]?.[ue]?.[subj]) this.sim[sem][ue][subj]=[]; }
+                if (module)     {if(!this.sim?.[sem]?.[module])         this.sim[sem][module]={}; }
+                if (subj)   {if(!this.sim?.[sem]?.[module]?.[subj]) this.sim[sem][module][subj]=[]; }
             }
             /** Delete every unused simulated grade pathes */
-            deleteUnusedSimPath(flex=true, sem=undefined, ue=undefined, subj=undefined) {
+            deleteUnusedSimPath(flex=true, sem=undefined, module=undefined, subj=undefined) {
                 (sem ? [sem] : (flex ? Object.keys(this.sim || []) : [])).forEach(_sem => {
-                    (ue ? [ue] : (flex ? Object.keys(this.sim?.[_sem] || []) : [])).forEach(_ue => {
-                        (subj ? [subj] : (flex ? Object.keys(this.sim?.[_sem]?.[_ue] || []) : [])).forEach(_subj => {
-                            if (Object.keys(this.sim?.[_sem]?.[_ue]?.[_subj])?.length == 0) {delete this.sim[_sem][_ue][_subj]}
+                    (module ? [module] : (flex ? Object.keys(this.sim?.[_sem] || []) : [])).forEach(_module => {
+                        (subj ? [subj] : (flex ? Object.keys(this.sim?.[_sem]?.[_module] || []) : [])).forEach(_subj => {
+                            if (Object.keys(this.sim?.[_sem]?.[_module]?.[_subj])?.length == 0) {delete this.sim[_sem][_module][_subj]}
                         })
-                        if (Object.keys(this.sim?.[_sem]?.[_ue])?.length == 0) {delete this.sim[_sem][_ue]}
+                        if (Object.keys(this.sim?.[_sem]?.[_module])?.length == 0) {delete this.sim[_sem][_module]}
                     })
                     if (Object.keys(this.sim?.[_sem])?.length == 0) {delete this.sim[_sem]}
                 })
             }
-            /** Clear all simulated grades in the ue if `sem` (semester) and `ueName` (name of the ue to clear) are provided, or in the semester if only `semester` is provided. If no argument is provided, clears all simulated grades */
-            clearSimGrades(sem, ueName) {
-                this.ensureSimPath(sem, ueName);
+            /** Clear all simulated grades in the module if `sem` (semester) and `moduleName` (name of the module to clear) are provided, or in the semester if only `semester` is provided. If no argument is provided, clears all simulated grades */
+            clearSimGrades(sem, moduleName) {
+                this.ensureSimPath(sem, moduleName);
                 if (sem) {
-                    if (ueName) {
-                        delete this.sim[sem][ueName];
+                    if (moduleName) {
+                        delete this.sim[sem][moduleName];
                         if (this.sim[sem] == {}) delete this.sim[sem];
                     }
                     else {
@@ -1081,32 +1081,32 @@
                 this.saveSim()
                 this.getGradesDatas();
             }
-            /** Obtain the list of simulated grades in the `sem`, `ue` and `subj` provided.
+            /** Obtain the list of simulated grades in the `sem`, `module` and `subj` provided.
              * @param {String|Number} sem semester's number
-             * @param {String} ue ue's name
+             * @param {String} module module's name
              * @param {String} subj subject's name
              * @returns {Array<Grade>|Array<undefined>} The list of all simulated grades in function of the given parameters. If none was found, gives an empty array instead
              */
-            getSimGrades(sem, ue, subj){ return (this.sim[sem]&&this.sim[sem][ue]&&this.sim[sem][ue][subj])||[]; }
-            getAllSubjectsForUE(sem, ueName){
-                const real = this.ueConfig?.[sem]?.[ueName]?.subjects || [];
-                const simOnly = Object.keys(((this.sim[sem]||{})[ueName]||{}));
+            getSimGrades(sem, module, subj){ return (this.sim[sem]&&this.sim[sem][module]&&this.sim[sem][module][subj])||[]; }
+            getAllSubjectsForModule(sem, moduleName){
+                const real = this.moduleConfig?.[sem]?.[moduleName]?.subjects || [];
+                const simOnly = Object.keys(((this.sim[sem]||{})[moduleName]||{}));
                 return Array.from(new Set([...real, ...simOnly]));
             }
-            calculateUEGrades(sem, ueName){
+            calculateModuleGrades(sem, moduleName){
                 const grades = [];
-                const allSubjs = this.getAllSubjectsForUE(sem, ueName);
+                const allSubjs = this.getAllSubjectsForModule(sem, moduleName);
                 allSubjs.forEach(subject=>{
-                    const pct =         this.ueConfig?.[sem]?.[ueName]?.coefficients?.[subject] || 0;
+                    const pct =         this.moduleConfig?.[sem]?.[moduleName]?.coefficients?.[subject] || 0;
                     const realGrades =  this.semesters?.[sem]?.[subject] || [];
-                    const simGrades  =  this.getSimGrades(sem, ueName, subject).map(n=>({ ...n, __sim:true }));
+                    const simGrades  =  this.getSimGrades(sem, moduleName, subject).map(n=>({ ...n, __sim:true }));
 
                     const src = [...realGrades, ...simGrades];
                     src.forEach(n=>{
                         grades.push({
                             ...n,
                             coef: n.coef,
-                            coefInUE: (n.coef||0) * (pct/100),
+                            coefInModule: (n.coef||0) * (pct/100),
                             subject
                         });
                     });
@@ -1162,26 +1162,26 @@
             }
             getUnclassifiedSubjects(sem) {
                 const classified = new Set();
-                const ueConfig = this.ueConfig?.[sem] || {};
-                Object.values(ueConfig).forEach(ue => { (ue.subjects||[]).forEach(m => classified.add(m)); });
+                const moduleConfig = this.moduleConfig?.[sem] || {};
+                Object.values(moduleConfig).forEach(module => { (module.subjects||[]).forEach(m => classified.add(m)); });
                 return Object.keys(this.semesters[sem]||{}).filter(m => !classified.has(m));
             }
-            getUEStats() {
+            getModuleStats() {
                 let validated = 0, total = 0;
-                Object.keys(this.ueConfig).forEach(sem => {
-                    Object.keys(this.ueConfig[sem]).forEach(ueName => {
-                        const ueGrades = this.calculateUEGrades(sem, ueName);
-                        const moyenne = this.moyennePonderee(ueGrades);
-                        if (moyenne != 0 && ueGrades.length > 0) total++; if (moyenne >= 10) validated++;
+                Object.keys(this.moduleConfig).forEach(sem => {
+                    Object.keys(this.moduleConfig[sem]).forEach(moduleName => {
+                        const moduleGrades = this.calculateModuleGrades(sem, moduleName);
+                        const moyenne = this.moyennePonderee(moduleGrades);
+                        if (moyenne != 0 && moduleGrades.length > 0) total++; if (moyenne >= 10) validated++;
                     });
                 });
                 return { validated, total };
             }
-            clearIgnoredGradesForUE(sem, ueName) {
-                // Clear ignored grades only for the specified UE
-                const allSubjs = this.getAllSubjectsForUE(sem, ueName);
+            clearIgnoredGradesForModule(sem, moduleName) {
+                // Clear ignored grades only for the specified module
+                const allSubjs = this.getAllSubjectsForModule(sem, moduleName);
 
-                // Keep ignored grades that are NOT part of this UE
+                // Keep ignored grades that are NOT part of this module
                 this.disabledGrades = this.disabledGrades?.filter(ignoredId => {
                     const parts = ignoredId.split("\\");
                     const semX = parts[0];
@@ -1315,33 +1315,33 @@
             setGradesTableTotalCoef(container=document) {
                 const good="#10b981", meh="#e98c00", bad="#e90000", unknown="#7a7a7a";
 
-                container.querySelectorAll(".ue-subject-total-coef-div").forEach(totalCoefDiv => {
+                container.querySelectorAll(".module-subject-total-coef-div").forEach(totalCoefDiv => {
                     const 
-                        totalCoefValue  = totalCoefDiv.querySelector(".ue-subject-total-coef-value"),
-                        totalCoefDebug  = totalCoefDiv.querySelector(".ue-subject-total-coef-debug"),
+                        totalCoefValue  = totalCoefDiv.querySelector(".module-subject-total-coef-value"),
+                        totalCoefDebug  = totalCoefDiv.querySelector(".module-subject-total-coef-debug"),
                         sem             = totalCoefDiv.dataset.semester,
-                        ue              = totalCoefDiv.dataset.ue,
-                        ueData          = this.gradesDatas[sem][ue],
-                        nbSubjects      = Object.keys(ueData.subjects).length,
+                        module          = totalCoefDiv.dataset.module,
+                        moduleData      = this.gradesDatas[sem][module],
+                        nbSubjects      = Object.keys(moduleData.subjects).length,
                         
-                        nbGrades                    = ueData.nbGrades,
-                        simGrades                   = ueData.simGrades, 
-                        disabledRealGrades          = ueData.disabledRealGrades, 
-                        disabledSimGrades           = ueData.disabledSimGrades, 
+                        nbGrades                    = moduleData.nbGrades,
+                        simGrades                   = moduleData.simGrades, 
+                        disabledRealGrades          = moduleData.disabledRealGrades, 
+                        disabledSimGrades           = moduleData.disabledSimGrades, 
 
-                        totalCoefSubjects           = ueData.totalCoefSubjects, 
-                        totalCoefGrades             = ueData.totalCoefGrades,  
-                        totalCoefRealGrades         = ueData.totalCoefRealGrades, 
-                        totalCoefSimGrades          = ueData.totalCoefSimGrades, 
-                        totalCoefEnabledGrades      = ueData.totalCoefEnabledGrades, 
-                        totalCoefEnabledRealGrades  = ueData.totalCoefEnabledRealGrades, 
-                        totalCoefEnabledSimGrades   = ueData.totalCoefEnabledSimGrades, 
+                        totalCoefSubjects           = moduleData.totalCoefSubjects, 
+                        totalCoefGrades             = moduleData.totalCoefGrades,  
+                        totalCoefRealGrades         = moduleData.totalCoefRealGrades, 
+                        totalCoefSimGrades          = moduleData.totalCoefSimGrades, 
+                        totalCoefEnabledGrades      = moduleData.totalCoefEnabledGrades, 
+                        totalCoefEnabledRealGrades  = moduleData.totalCoefEnabledRealGrades, 
+                        totalCoefEnabledSimGrades   = moduleData.totalCoefEnabledSimGrades, 
 
 
-                        subjectsBelow100            = ueData.subjectsBelow100, 
-                        subjectsOver100             = ueData.subjectsOver100,
-                        subjectsReallyBelow100      = ueData.subjectsReallyBelow100, 
-                        subjectsReallyOver100       = ueData.subjectsReallyOver100,
+                        subjectsBelow100            = moduleData.subjectsBelow100, 
+                        subjectsOver100             = moduleData.subjectsOver100,
+                        subjectsReallyBelow100      = moduleData.subjectsReallyBelow100, 
+                        subjectsReallyOver100       = moduleData.subjectsReallyOver100,
 
                         nbSubjectsBelow100          = subjectsBelow100.length, 
                         nbSubjectsOver100           = subjectsOver100.length, 
@@ -1439,9 +1439,9 @@
                         totalCoefValue  = totalCoefDiv.querySelector(".subject-total-coef-value"),
                         totalCoefDebug  = totalCoefDiv.querySelector(".subject-total-coef-debug"),
                         sem             = totalCoefDiv.dataset.semester,
-                        ue              = totalCoefDiv.dataset.ue,
+                        module          = totalCoefDiv.dataset.module,
                         subject         = totalCoefDiv.dataset.subject,
-                        subjectData     = this.gradesDatas[sem][ue].subjects[subject],
+                        subjectData     = this.gradesDatas[sem][module].subjects[subject],
 
                         disabledRealGrades          = subjectData.disabledRealGrades,
                         simGrades                   = subjectData.simGrades,
@@ -1523,9 +1523,9 @@
                 })
             }
             // MARK: getGradesDatas
-            getGradesDatas({sem=undefined, ue=undefined, subj=undefined}={sem: undefined, ue: undefined, subj: undefined}) {
+            getGradesDatas({sem=undefined, module=undefined, subj=undefined}={sem: undefined, module: undefined, subj: undefined}) {
                 // FOR EACH SEMESTER
-                (sem && this.ueConfig[sem] ? [sem] : Object.keys(this.semesters)).forEach((semX) => {
+                (sem && this.moduleConfig[sem] ? [sem] : Object.keys(this.semesters)).forEach((semX) => {
                     this.gradesDatas[semX] = {
                         "__#unclassified#__": {subjects: {}}
                     };
@@ -1614,62 +1614,62 @@
                     }
 
 
-                    // FOR EACH UE IN SEMESTER (if any)
-                    if (this.ueConfig?.[semX]?.__ues__) {
-                        (ue && this.ueConfig?.[sem]?.__ues__.includes(ue) ? [ue] : this.ueConfig[semX].__ues__).forEach((ueName) => {
-                            const allSubjs = this.getAllSubjectsForUE(semX, ueName);
-                            const ueGrades = this.calculateUEGrades(semX, ueName);
+                    // FOR EACH MODULE IN SEMESTER (if any)
+                    if (this.moduleConfig?.[semX]?.__modules__) {
+                        (module && this.moduleConfig?.[sem]?.__modules__.includes(module) ? [module] : this.moduleConfig[semX].__modules__).forEach((moduleName) => {
+                            const allSubjs = this.getAllSubjectsForModule(semX, moduleName);
+                            const moduleGrades = this.calculateModuleGrades(semX, moduleName);
 
-                            semData[ueName] = {};
+                            semData[moduleName] = {};
                             
-                            let ueData = semData[ueName];
+                            let moduleData = semData[moduleName];
                             
-                            ueData.ueName                       = ueName;
-                            ueData.subjects                     = {};
-                            ueData.nbGrades                     = 0;
-                            ueData.simGrades                    = [];
-                            ueData.disabledRealGrades           = [];
-                            ueData.disabledSimGrades            = [];
-                            ueData.subjectsBelow100             = [];
-                            ueData.subjectsOver100              = [];
-                            ueData.subjectsReallyBelow100       = [];
-                            ueData.subjectsReallyOver100        = [];
-                            ueData.subjectsNoGrade              = [];
-                            ueData.coefSubjectsNoGrade          = 0;
-                            ueData.average                      = 0;
-                            ueData.classAvg                     = 0;
-                            ueData.totalCoefSubjects            = 0;
-                            ueData.totalCoefGrades              = 0;
-                            ueData.totalCoefRealGrades          = 0;
-                            ueData.totalCoefSimGrades           = 0;
-                            ueData.totalCoefEnabledGrades       = 0;
-                            ueData.totalCoefEnabledRealGrades   = 0;
-                            ueData.totalCoefEnabledSimGrades    = 0;
+                            moduleData.moduleName                   = moduleName;
+                            moduleData.subjects                     = {};
+                            moduleData.nbGrades                     = 0;
+                            moduleData.simGrades                    = [];
+                            moduleData.disabledRealGrades           = [];
+                            moduleData.disabledSimGrades            = [];
+                            moduleData.subjectsBelow100             = [];
+                            moduleData.subjectsOver100              = [];
+                            moduleData.subjectsReallyBelow100       = [];
+                            moduleData.subjectsReallyOver100        = [];
+                            moduleData.subjectsNoGrade              = [];
+                            moduleData.coefSubjectsNoGrade          = 0;
+                            moduleData.average                      = 0;
+                            moduleData.classAvg                     = 0;
+                            moduleData.totalCoefSubjects            = 0;
+                            moduleData.totalCoefGrades              = 0;
+                            moduleData.totalCoefRealGrades          = 0;
+                            moduleData.totalCoefSimGrades           = 0;
+                            moduleData.totalCoefEnabledGrades       = 0;
+                            moduleData.totalCoefEnabledRealGrades   = 0;
+                            moduleData.totalCoefEnabledSimGrades    = 0;
 
-                            (this.ueConfig?.[semX]?.[ueName]?.subjects?.length > 0 ? this.ueConfig[semX][ueName].subjects : []).forEach(subject => {
-                                ueData.subjects[subject] = {grades: []};
+                            (this.moduleConfig?.[semX]?.[moduleName]?.subjects?.length > 0 ? this.moduleConfig[semX][moduleName].subjects : []).forEach(subject => {
+                                moduleData.subjects[subject] = {grades: []};
                             })
                             
-                            ueGrades.forEach(n => {
+                            moduleGrades.forEach(n => {
                                 const subjectName = n.subject;
-                                let subjectData = ueData.subjects[subjectName];
+                                let subjectData = moduleData.subjects[subjectName];
                                 
                                 if (!subjectData) {
                                     subjectData = {grades: []};
                                 }
                                 subjectData.grades.push(n);
-                                ueData.nbGrades++;
+                                moduleData.nbGrades++;
                             });
 
                             
 
-                            // FOR EACH SUBJECT IN UE
-                            (subj && this.ueConfig?.[sem]?.[ue]?.subjects?.includes(subj) ? [subj] : allSubjs).forEach(subjectName => {
+                            // FOR EACH SUBJECT IN MODULE
+                            (subj && this.moduleConfig?.[sem]?.[module]?.subjects?.includes(subj) ? [subj] : allSubjs).forEach(subjectName => {
 
-                                let subjectData = ueData.subjects[subjectName];
+                                let subjectData = moduleData.subjects[subjectName];
 
                                 subjectData.subjName                    = subjectName;
-                                subjectData.coef                        = this.ueConfig[semX][ueName].coefficients[subjectName];
+                                subjectData.coef                        = this.moduleConfig[semX][moduleName].coefficients[subjectName];
                                 subjectData.isCustom                    = true;
                                 subjectData.disabledRealGrades          = [];
                                 subjectData.simGrades                   = [];
@@ -1684,7 +1684,7 @@
                                 subjectData.totalCoefEnabledSimGrades   = 0;
                                 
 
-                                ueData.totalCoefSubjects += parseInt(subjectData.coef);
+                                moduleData.totalCoefSubjects += parseInt(subjectData.coef);
                                 
                                 
                                 // FOR EACH GRADE IN SUBJECT
@@ -1708,11 +1708,11 @@
                                             subjectData.totalCoefEnabledRealGrades  += coef;
 
 
-                                            ueData.totalCoefGrades                  += coef*subjCoef/100;
-                                            ueData.totalCoefRealGrades              += coef*subjCoef/100;
+                                            moduleData.totalCoefGrades              += coef*subjCoef/100;
+                                            moduleData.totalCoefRealGrades          += coef*subjCoef/100;
 
-                                            ueData.totalCoefEnabledGrades           += coef*subjCoef/100;
-                                            ueData.totalCoefEnabledRealGrades       += coef*subjCoef/100;
+                                            moduleData.totalCoefEnabledGrades       += coef*subjCoef/100;
+                                            moduleData.totalCoefEnabledRealGrades   += coef*subjCoef/100;
                                         break;
 
                                         case `disabled real grade`:
@@ -1720,10 +1720,10 @@
                                             subjectData.totalCoefRealGrades         += coef;
                                             subjectData.disabledRealGrades.push(grade);
 
-                                            ueData.totalCoefGrades                  += coef*subjCoef/100;
-                                            ueData.totalCoefRealGrades              += coef*subjCoef/100;
+                                            moduleData.totalCoefGrades              += coef*subjCoef/100;
+                                            moduleData.totalCoefRealGrades          += coef*subjCoef/100;
 
-                                            ueData.disabledRealGrades.push(grade);
+                                            moduleData.disabledRealGrades.push(grade);
                                         break;
 
                                         case `enabled sim grade`:
@@ -1735,12 +1735,12 @@
                                             subjectData.totalCoefEnabledSimGrades   += coef;
 
 
-                                            ueData.simGrades.push(grade);
-                                            ueData.totalCoefGrades                  += coef*subjCoef/100;
-                                            ueData.totalCoefSimGrades               += coef*subjCoef/100;
+                                            moduleData.simGrades.push(grade);
+                                            moduleData.totalCoefGrades              += coef*subjCoef/100;
+                                            moduleData.totalCoefSimGrades           += coef*subjCoef/100;
 
-                                            ueData.totalCoefEnabledGrades           += coef*subjCoef/100;
-                                            ueData.totalCoefEnabledSimGrades        += coef*subjCoef/100;
+                                            moduleData.totalCoefEnabledGrades       += coef*subjCoef/100;
+                                            moduleData.totalCoefEnabledSimGrades    += coef*subjCoef/100;
                                         break;
 
                                         case `disabled sim grade`:
@@ -1748,11 +1748,11 @@
                                             subjectData.totalCoefSimGrades          += coef;
                                             subjectData.disabledSimGrades.push(grade);
 
-                                            ueData.simGrades.push(grade);
-                                            ueData.totalCoefGrades                  += coef*subjCoef/100;
-                                            ueData.totalCoefSimGrades               += coef*subjCoef/100;
+                                            moduleData.simGrades.push(grade);
+                                            moduleData.totalCoefGrades              += coef*subjCoef/100;
+                                            moduleData.totalCoefSimGrades           += coef*subjCoef/100;
 
-                                            ueData.disabledSimGrades.push(grade);
+                                            moduleData.disabledSimGrades.push(grade);
                                         break;
                                     }
                                 })
@@ -1762,15 +1762,15 @@
                                 if (subjectData.totalCoefEnabledGrades == 0) {
                                     subjectData.average  = " - ";
                                     subjectData.classAvg = " - ";
-                                    ueData.subjectsNoGrade.push(subjectName);
-                                    ueData.coefSubjectsNoGrade += parseInt(subjectData.coef);
+                                    moduleData.subjectsNoGrade.push(subjectName);
+                                    moduleData.coefSubjectsNoGrade += parseInt(subjectData.coef);
                                 }
                                 else {
                                     subjectData.average     =  Math.round(100*subjectData.average /(subjectData.totalCoefEnabledGrades/100))/100;
                                     subjectData.classAvg    =  Math.round(100*subjectData.classAvg/(subjectData.totalCoefEnabledGrades/100))/100;
 
-                                    ueData.average          += subjectData.average *subjectData.coef/100;
-                                    ueData.classAvg         += subjectData.classAvg*subjectData.coef/100;
+                                    moduleData.average          += subjectData.average *subjectData.coef/100;
+                                    moduleData.classAvg         += subjectData.classAvg*subjectData.coef/100;
                                 }
 
                                 subjectData.totalCoefGrades             = Math.round(subjectData.totalCoefGrades);
@@ -1781,37 +1781,37 @@
                                 subjectData.totalCoefEnabledSimGrades   = Math.round(subjectData.totalCoefEnabledSimGrades);
 
 
-                                if      (subjectData.totalCoefGrades < 100) ueData.subjectsBelow100.push(subjectName);
-                                else if (subjectData.totalCoefGrades > 100) ueData.subjectsOver100 .push(subjectName);
+                                if      (subjectData.totalCoefGrades < 100) moduleData.subjectsBelow100.push(subjectName);
+                                else if (subjectData.totalCoefGrades > 100) moduleData.subjectsOver100 .push(subjectName);
 
-                                if      (subjectData.totalCoefRealGrades < 100) ueData.subjectsReallyBelow100.push(subjectName);
-                                else if (subjectData.totalCoefRealGrades > 100) ueData.subjectsReallyOver100 .push(subjectName);
+                                if      (subjectData.totalCoefRealGrades < 100) moduleData.subjectsReallyBelow100.push(subjectName);
+                                else if (subjectData.totalCoefRealGrades > 100) moduleData.subjectsReallyOver100 .push(subjectName);
                             });
 
 
-                            if (ueData.subjectsNoGrade.length == Object.keys(ueData.subjects).length) {
-                                ueData.average  = " - ";
-                                ueData.classAvg = " - ";
+                            if (moduleData.subjectsNoGrade.length == Object.keys(moduleData.subjects).length) {
+                                moduleData.average  = " - ";
+                                moduleData.classAvg = " - ";
                             }
 
-                            if (!isNaN(Number(ueData.average))) {
-                                ueData.average  =  Math.round(100*ueData.average /((ueData.totalCoefSubjects-ueData.coefSubjectsNoGrade)/100))/100;
-                                ueData.classAvg =  Math.round(100*ueData.classAvg/((ueData.totalCoefSubjects-ueData.coefSubjectsNoGrade)/100))/100;
+                            if (!isNaN(Number(moduleData.average))) {
+                                moduleData.average  =  Math.round(100*moduleData.average /((moduleData.totalCoefSubjects-moduleData.coefSubjectsNoGrade)/100))/100;
+                                moduleData.classAvg =  Math.round(100*moduleData.classAvg/((moduleData.totalCoefSubjects-moduleData.coefSubjectsNoGrade)/100))/100;
                             }
 
-                            if (isNaN(Number(ueData.average))) {
-                                ueData.average  = " - ";
-                                ueData.classAvg = " - ";
+                            if (isNaN(Number(moduleData.average))) {
+                                moduleData.average  = " - ";
+                                moduleData.classAvg = " - ";
                             } 
                             
 
-                            ueData.totalCoefSubjects                =  Math.round(ueData.totalCoefSubjects);
-                            ueData.totalCoefGrades                  =  Math.round(ueData.totalCoefGrades);
-                            ueData.totalCoefRealGrades              =  Math.round(ueData.totalCoefRealGrades);
-                            ueData.totalCoefSimGrades               =  Math.round(ueData.totalCoefSimGrades);
-                            ueData.totalCoefEnabledGrades           =  Math.round(ueData.totalCoefEnabledGrades);
-                            ueData.totalCoefEnabledRealGrades       =  Math.round(ueData.totalCoefEnabledRealGrades);
-                            ueData.totalCoefEnabledSimGrades        =  Math.round(ueData.totalCoefEnabledSimGrades);
+                            moduleData.totalCoefSubjects                =  Math.round(moduleData.totalCoefSubjects);
+                            moduleData.totalCoefGrades                  =  Math.round(moduleData.totalCoefGrades);
+                            moduleData.totalCoefRealGrades              =  Math.round(moduleData.totalCoefRealGrades);
+                            moduleData.totalCoefSimGrades               =  Math.round(moduleData.totalCoefSimGrades);
+                            moduleData.totalCoefEnabledGrades           =  Math.round(moduleData.totalCoefEnabledGrades);
+                            moduleData.totalCoefEnabledRealGrades       =  Math.round(moduleData.totalCoefEnabledRealGrades);
+                            moduleData.totalCoefEnabledSimGrades        =  Math.round(moduleData.totalCoefEnabledSimGrades);
                             
                         })
                     }
@@ -2024,7 +2024,7 @@
                 container.className = "ecam-dash";
                 const moyenneGenerale = this.moyennePonderee(this.grades);
                 const totalGrades = this.grades.length;
-                const ueStats = this.getUEStats();
+                const moduleStats = this.getModuleStats();
 
                 document.querySelector(".site-breadcrumbs").remove();
                 document.querySelector(".portlet-topper").remove();
@@ -2047,7 +2047,7 @@
                         <img draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/5/51/ECAM-LaSalle-bleu-seul.png" alt="ECAM Logo" style="margin: 0px 0px 0px -10px;height: 141px;width: 148px;" id="aui_3_2_0_1304">
                         <div style="margin: 30px 0px 0px 0px;">
                             <div class="dash-title">Tableau de Bord des Notes ECAM ${this.scriptVersion}</div>
-                            <p class="dash-subtitle">Vue complète de vos résultats académiques</p>
+                            <p class="dash-subtitle"></p>
                             <div style="display: flex; gap: 2px">
                                 <div class="lang-btn active" id="fr-lang-btn">
                                     <img style="display: flex; margin: 6px 0px 0px 6px; width:20px; height:20px" alt="🇫🇷" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAACTUExURUdwTAAkjM7Pzs7OzrMGE74QIMPEx4hTeAAkjQARewAagbIFEgAfhc3NzdDQ0M7PzrYMG8zMzbcMG8EXKcUbLQAMd7UKGLUKGMMWJ7OhrcMVJv///+oPIO4bLgAmoOwWKAAZmQArpO8iNgAfnQATlAIyqLUGFAEoksUSIwAYhgANePnCyMbO6djY2NUWJ+7u7sCep4f8c74AAAAbdFJOUwDL+z19ffsVe3qU1jy51pA+bLyNc+Vrnu+m2KjIWToAAALxSURBVFjD7djJcuIwEIDhAAMOxuwTCAnyKgxOxg7v/3SjtraWDJKTUw60K1Vc+OqX5APK09NjHvOLJxDz3a+t9Mcoeg7DgZrDcrkejUZBL2X7NuYfo4gRZ2MmNZvhYjEHz1EYrHab18tl3LaEEonFnOPT5KtWM1zMhReY27DabUG5ABQ8cyXLTnIy9pz+vcN8seFWPRxC32G7Hf+FGW/3m7fXVmkagJ5NpGXYCOjd5Or6ejGmaRpCctJw6HTqOgaEvM8GT07ynP0RXhTbSqcIzWduDWOIgHBRJqmeELkJtQB34v4QUUs7o8MSC4t7FYECkF2UKYW9Sb2KRI8FqVWB06OI4KJSQRnuyXoUiW0mHUj2iPFAJEdOoiGVE/OV+SCxqLxTpI+LT+GGcE8Cj4AypAiqcEDyrPTSFHSS25zxnMIH6W2GnsQsitVGM8sBEf36AAOOASkDHg+EcuyiWLw+TAHGCdk5EqrOKqhQjgfCJ8ahPxxCx1W0K0tdUG4qCJKrAoMXpd4i7BwFpM+rkJNmbijh7w+xIHRanPFAiXx/khuQ7mFM6i9CzFFAlQiSDHPcRQneoCM8uqhA29NOfB/Sr48MUkWF3uY0bVfmgqyF6aIKHVcqgpxFMETlGHtkrMoDdXKYVMqlqRxhUReUmBuNiro9KXVCcllcOaoiq4emlPaAOJMoaCogHdNSXgg7GEqRRL1FR709FqRzKO0PdYt0D6X+IrWqTlGnh9LzPYgk1rIQlKogqqj70NHYZgR9VN0eJ2Ttj1GkT6udygN1BhVR/vQp6m6RUYRzfl5k1lSeItfSOFBVH3KqCfw8vwPZTRddhAgx1+GE3T6GdW2CN4oYU5Y7gITy8jIIwymfMDzM54tJOy1XC86E2G0GlHKzCxjUIoNwGtmXqGA0Wi+X0uPgVd1DhFGWs/0KvjgFhSGOyyl4su9aGjPbcAWglzDqdd9k99L1ennYzMRs9tvdaqW/GkXfvAbL+/NT8PhXwmN+7/wHgdqiCaxyTNQAAAAASUVORK5CYII=">
@@ -2099,7 +2099,7 @@
                     <div class="average-stats">
                         <div class="stat-item"><div class="stat-value">${totalGrades                       }</div><div class="stat-label"></div></div>
                         <div class="stat-item"><div class="stat-value">${Object.keys(this.semesters).length}</div><div class="stat-label"></div></div>
-                        <div class="stat-item"><div class="stat-value">${ueStats.validated}/${ueStats.total}</div><div class="stat-label"></div></div>
+                        <div class="stat-item"><div class="stat-value">${moduleStats.validated}/${moduleStats.total}</div><div class="stat-label"></div></div>
                     </div>
                 </div>
 
@@ -2131,20 +2131,20 @@
 
                 <div class="scroll-field up${this.selectedSubjectCardsId.length > 0 ? " show" : ""}"${document.body.classList.contains("lfr-dockbar-pinned") ? ` style="transform: translateY(45px)"` : ""}></div>
 
-                <div class="drop-field remove-from-ue${this.selectedSubjectCardsId.length > 0 ? " show" : ""}">
-                    <div class="drop-field-remove-from-ue-text top${this.lang == "fr" ? " fr" : " en"}"></div>
-                    <div class="drop-field-remove-from-ue-minus">-</div>
-                    <div class="drop-field-remove-from-ue-text bottom${this.lang == "fr" ? " fr" : " en"}"></div>
-                    <div class="drop-field-remove-from-ue-hitbox"></div>
+                <div class="drop-field remove-from-module${this.selectedSubjectCardsId.length > 0 ? " show" : ""}">
+                    <div class="drop-field-remove-from-module-text top${this.lang == "fr" ? " fr" : " en"}"></div>
+                    <div class="drop-field-remove-from-module-minus">-</div>
+                    <div class="drop-field-remove-from-module-text bottom${this.lang == "fr" ? " fr" : " en"}"></div>
+                    <div class="drop-field-remove-from-module-hitbox"></div>
                 </div>
 
                 <div class="content-area" id="contentArea"></div>
 
-                <div class="drop-field create-ue ${this.lang == "fr" ? "fr" : "en"}${this.selectedSubjectCardsId.length > 0 ? " show" : ""}">
-                    <div class="drop-field-create-ue-text top ${this.lang == "fr" ? "fr" : "en"}"></div>
-                    <div class="drop-field-create-ue-plus">+</div>
-                    <div class="drop-field-create-ue-text bottom ${this.lang == "fr" ? "fr" : "en"}"></div>
-                    <div class="drop-field-create-ue-hitbox"></div>
+                <div class="drop-field create-module ${this.lang == "fr" ? "fr" : "en"}${this.selectedSubjectCardsId.length > 0 ? " show" : ""}">
+                    <div class="drop-field-create-module-text top ${this.lang == "fr" ? "fr" : "en"}"></div>
+                    <div class="drop-field-create-module-plus">+</div>
+                    <div class="drop-field-create-module-text bottom ${this.lang == "fr" ? "fr" : "en"}"></div>
+                    <div class="drop-field-create-module-hitbox"></div>
                 </div>
 
                 <div class="scroll-field down${this.selectedSubjectCardsId.length > 0 ? " show" : ""}"></div>
@@ -2186,8 +2186,8 @@
                     let html = `<div class="new-grades-content">`;
                     Object.keys(grades).forEach(subject => {
                         html += `
-                        <div class="new-grades-subject-card" id="new-grades-subject-card-${subject}" data-subject="${subject}" data-ue="${grades[subject][0].ue}" data-semester="${grades[subject][0].semester}">
-                            <div class="new-grades-subject-card-title" data-subject="${subject}" data-ue="${grades[subject][0].ue}" data-semester="${grades[subject][0].semester}">
+                        <div class="new-grades-subject-card" id="new-grades-subject-card-${subject}" data-subject="${subject}" data-module="${grades[subject][0].module}" data-semester="${grades[subject][0].semester}">
+                            <div class="new-grades-subject-card-title" data-subject="${subject}" data-module="${grades[subject][0].module}" data-semester="${grades[subject][0].semester}">
                                 ${subject}
                             </div>
                         <table class="new-grades-table">`;
@@ -2269,7 +2269,7 @@
 
 
                 if (this.lang == "fr") {
-                    document.querySelectorAll(".drop-ue-card-insert-text, .drop-field-remove-from-ue-text, .drop-field-create-ue-text").forEach(dropFieldText => {
+                    document.querySelectorAll(".drop-module-card-insert-text, .drop-field-remove-from-module-text, .drop-field-create-module-text").forEach(dropFieldText => {
                         dropFieldText.classList.replace("en", "fr")
                     })
                     document.querySelectorAll(".online-cfg-picker-menu-dir-tree-header").forEach(dirTreeHeader => {
@@ -2277,7 +2277,7 @@
                     })
                 }
                 else {
-                    document.querySelectorAll(".drop-ue-card-insert-text, .drop-field-remove-from-ue-text, .drop-field-create-ue-text").forEach(dropFieldText => {
+                    document.querySelectorAll(".drop-module-card-insert-text, .drop-field-remove-from-module-text, .drop-field-create-module-text").forEach(dropFieldText => {
                         dropFieldText.classList.replace("fr", "en")
                     })
                     document.querySelectorAll(".online-cfg-picker-menu-dir-tree-header").forEach(dirTreeHeader => {
@@ -2360,9 +2360,9 @@
 
 
                 // Content area, refreshing often
-                const ueStats = this.getUEStats();
+                const moduleStats = this.getModuleStats();
                 const validatedEUsStatLabel = document.querySelectorAll(".stat-value")[2];
-                validatedEUsStatLabel.innerHTML = `${ueStats.validated}/${ueStats.total}`;
+                validatedEUsStatLabel.innerHTML = `${moduleStats.validated}/${moduleStats.total}`;
 
                 let semesterKeys = [];
                 if (this.currentSemester === "all") {
@@ -2398,7 +2398,7 @@
                     <div class="semester-content show${this.selectedSubjectCardsId.length > 0 ? " dragging" : ""}${this.editMode ? " edit" : ""}${fadeIn ? " fade-in" : ""}" id="sem-content-${sem}">
                         <div class="semester-grid">
                             <div class="modules-section ${this.editMode ? "edit" : ""}" id="modules-section">
-                                ${this.createAllUECards(sem)}
+                                ${this.createAllModuleCards(sem)}
                             </div>
                             <div class="unclassified-section" id="unclassified-section" style="height: 100%${unclassified.length > 0 ? `` : `; display: none`}">
                                 <div class="unclassified-title">
@@ -2418,10 +2418,10 @@
 
                     this.resizeUnclassifiedSection();
 
-                    this.foldedUeCardsId.forEach(foldedUeCardId => {
-                        const ueCardToFold = document.getElementById(foldedUeCardId);
-                        if (ueCardToFold) {
-                            this.foldUeCard(ueCardToFold.querySelector(`.ue-header`));
+                    this.foldedModuleCardsId.forEach(foldedModuleCardId => {
+                        const moduleCardToFold = document.getElementById(foldedModuleCardId);
+                        if (moduleCardToFold) {
+                            this.foldModuleCard(moduleCardToFold.querySelector(`.module-header`));
                         }
                     })
 
@@ -2433,75 +2433,75 @@
 
 
 
-            // MARK: createUECard
-            createAllUECards(sem) {
-                const ueConfig = this.ueConfig?.[sem] || {};
+            // MARK: createModuleCard
+            createAllModuleCards(sem) {
+                const moduleConfig = this.moduleConfig?.[sem] || {};
 
-                let html =  this.editMode ? this.createDropFieldInsertionField("ue", {sem, index:0}) : "";
+                let html =  this.editMode ? this.createDropFieldInsertionField("module", {sem, index:0}) : "";
 
-                ueConfig?.__ues__?.forEach((ueName, ueIndex) => {
-                    html += this.createUECard(sem, ueName, ueIndex);
-                    html += this.editMode ? this.createDropFieldInsertionField("ue", {sem, index:ueIndex+1}) : "";
+                moduleConfig?.__modules__?.forEach((moduleName, moduleIndex) => {
+                    html += this.createModuleCard(sem, moduleName, moduleIndex);
+                    html += this.editMode ? this.createDropFieldInsertionField("module", {sem, index:moduleIndex+1}) : "";
                 });
 
                 return html;
             }
-            createUECard(sem, ueName, ueIndex=-1) {
-                const ueGrades = this.calculateUEGrades(sem, ueName);
-                const includedGrades = (ueGrades || []).filter(n => !this.gradeIsDisabled(n));
+            createModuleCard(sem, moduleName, moduleIndex=-1) {
+                const moduleGrades = this.calculateModuleGrades(sem, moduleName);
+                const includedGrades = (moduleGrades || []).filter(n => !this.gradeIsDisabled(n));
                 let weight = 0; includedGrades.forEach(grade => {weight += grade.coef/100})
-                const moyenne       = this.gradesDatas[sem][ueName].average;
-                const hasSim        = this.gradesDatas[sem][ueName].simGrades.length > 0 ? true : false;
-                const hasDisabled   = this.gradesDatas[sem][ueName].disabledSimGrades.length + this.gradesDatas[sem][ueName].disabledRealGrades.length > 0 ? true : false;
+                const moyenne       = this.gradesDatas[sem][moduleName].average;
+                const hasSim        = this.gradesDatas[sem][moduleName].simGrades.length > 0 ? true : false;
+                const hasDisabled   = this.gradesDatas[sem][moduleName].disabledSimGrades.length + this.gradesDatas[sem][moduleName].disabledRealGrades.length > 0 ? true : false;
 
                 let html = `
-                <div class="ue-card ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'validated' : 'failed'}`}" id="ue-card-${ueName}-in-semester-${sem}" data-semester="${sem}" data-ue="${ueName}" data-index="${ueIndex}">
+                <div class="module-card ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'validated' : 'failed'}`}" id="module-card-${moduleName}-in-semester-${sem}" data-semester="${sem}" data-module="${moduleName}" data-index="${moduleIndex}">
                 
-                    <div class="ue-header ${this.editMode ? "edit-mode" : ""} ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'validated' : 'failed'}`}" id="ue-header-${ueName}-in-semester${sem}" data-semester="${sem}" data-ue="${ueName}" ${this.editMode ? `draggable="true"` : ""}>
+                    <div class="module-header ${this.editMode ? "edit-mode" : ""} ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'validated' : 'failed'}`}" id="module-header-${moduleName}-in-semester${sem}" data-semester="${sem}" data-module="${moduleName}" ${this.editMode ? `draggable="true"` : ""}>
                         ${this.editMode 
                             ? 
                             `<div style="display: flex; align-items: center; justify-content: flex-start; width: 42%;">
-                                <div style="margin-right: 5px; margin-bottom: 3px;">${this.draggableIcon("ue-card", {height: 29, type: "ue", targetId: `ue-card-${ueName}-in-semester-${sem}`})}</div>
-                                <input type="text" class="ue-title input any-input" id="ue-title-input-${sem}-${ueName}" value="${ueName}" data-semester="${sem}" data-ue="${ueName}" draggable="false"/>
-                                <div class="ue-title-state">
+                                <div style="margin-right: 5px; margin-bottom: 3px;">${this.draggableIcon("module-card", {height: 29, type: "module", targetId: `module-card-${moduleName}-in-semester-${sem}`})}</div>
+                                <input type="text" class="module-title input any-input" id="module-title-input-${sem}-${moduleName}" value="${moduleName}" data-semester="${sem}" data-module="${moduleName}" draggable="false"/>
+                                <div class="module-title-state">
                                 </div>
                             </div>` 
                             : 
-                            `<div class="ue-title">${ueName}</div>`
+                            `<div class="module-title">${moduleName}</div>`
                         }
-                        <div class="ue-subject-total-coef-div" data-semester="${sem}" data-ue="${ueName}">
-                            <div class="ue-subject-total-coef-value">${this.lang == "fr" ? `Coef Total des matières :` : `Total Subjects Coef:`}</div>
-                            <div class="ue-subject-total-coef-debug"></div>
+                        <div class="module-subject-total-coef-div" data-semester="${sem}" data-module="${moduleName}">
+                            <div class="module-subject-total-coef-value">${this.lang == "fr" ? `Coef Total des matières :` : `Total Subjects Coef:`}</div>
+                            <div class="module-subject-total-coef-debug"></div>
                         </div>
-                        <div class="ue-moyenne ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'good' : 'bad'}`}" data-semester="${sem}" data-ue="${ueName}" ${this.editMode ? "" : 'style="width:151px"'}>
+                        <div class="module-moyenne ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'good' : 'bad'}`}" data-semester="${sem}" data-module="${moduleName}" ${this.editMode ? "" : 'style="width:151px"'}>
                             ${moyenne}/20 
-                            <div class="ue-toggle fold-icon open">△</div>
-                            <button class="ue-delete-btn" ${this.editMode ? `class="display:none"` : ""} id="ue-delete-btn-${ueName}-in-semester-${sem}" title="${this.lang == "fr" ? "Supprimer ce module" : "Delete this module"}" data-semester="${sem}" data-ue="${ueName}"${this.editMode? "" : " hidden"}>🗑️</button>
+                            <div class="module-toggle fold-icon open">△</div>
+                            <button class="module-delete-btn" ${this.editMode ? `class="display:none"` : ""} id="module-delete-btn-${moduleName}-in-semester-${sem}" title="${this.lang == "fr" ? "Supprimer ce module" : "Delete this module"}" data-semester="${sem}" data-module="${moduleName}"${this.editMode? "" : " hidden"}>🗑️</button>
                         </div>
                     </div>
                     
-                    <div class="ue-info">
+                    <div class="module-info">
                         ${hasDisabled 
                             ? 
-                            `<div class="ue-info-bar">
+                            `<div class="module-info-bar">
                                 <div style="font-weight: 700; font-size: 15px;">${this.lang == "fr" ? "Inclus des notes désactivées" : "Includes disabled grades"}</div>
-                                <div class="ue-info-clear disabled" data-semester="${sem}" data-ue="${ueName}">${this.lang == "fr" ? "Activer toutes ces notes" : "Enable all the grades"}</div>
+                                <div class="module-info-clear disabled" data-semester="${sem}" data-module="${moduleName}">${this.lang == "fr" ? "Activer toutes ces notes" : "Enable all the grades"}</div>
                             </div>` 
                             : ``
                         }
                         ${hasSim 
                             ? 
-                            `<div class="ue-info-bar">
+                            `<div class="module-info-bar">
                                 <div style="font-weight: 700; font-size: 15px;">${this.lang == "fr" ? "Inclus des notes simulées" : "Includes simulated grades"}</div>
-                                <div class="ue-info-clear sim" data-semester="${sem}" data-ue="${ueName}">${this.lang == "fr" ? "Effacer toutes ces notes simulées" : "Erase all the simulated grades"}</div>
+                                <div class="module-info-clear sim" data-semester="${sem}" data-module="${moduleName}">${this.lang == "fr" ? "Effacer toutes ces notes simulées" : "Erase all the simulated grades"}</div>
                             </div>` 
                             : ``
                         }
                     </div>
                     
-                    <div class="ue-card-content ${this.editMode ? "edit-mode": ""}">
-                    <div class="ue-details ${this.editMode ? "edit-mode": ""}${this.viewMode == "detailed" ? " detailed" :  " compact"}" id="ue-details-${ueName}-in-semester${sem}">
-                        ${this.createAllSubjCards(sem, ueName)}
+                    <div class="module-card-content ${this.editMode ? "edit-mode": ""}">
+                    <div class="module-details ${this.editMode ? "edit-mode": ""}${this.viewMode == "detailed" ? " detailed" :  " compact"}" id="module-details-${moduleName}-in-semester${sem}">
+                        ${this.createAllSubjCards(sem, moduleName)}
                     </div>
                     </div>
                     
@@ -2517,24 +2517,24 @@
             /** 
              * Call this method to create all subject cards of a module.
              * 
-             * Detects automatically from the name of the ueName and from `this.gradesDatas` (as a safe guard, also from `this.ueConfig`) if the card is classified or unclassified, 
+             * Detects automatically from the name of the moduleName and from `this.gradesDatas` (as a safe guard, also from `this.moduleConfig`) if the card is classified or unclassified, 
              * and detects automatically from this.compactSubjCardsId if the card is detailed or compact.
              * 
              * @param {number | string} sem Number of the semester of the subject
-             * @param {string} ueName Name of the subject's module
+             * @param {string} moduleName Name of the subject's module
              */
-            createAllSubjCards(sem, ueName) {
-                const ueData = this.gradesDatas[sem][ueName];
+            createAllSubjCards(sem, moduleName) {
+                const moduleData = this.gradesDatas[sem][moduleName];
                 
-                let html  = this.editMode && ueName != "__#unclassified#__" && this.ueConfig[sem]?.[ueName] != undefined 
-                        ? this.createDropFieldInsertionField("subject", {sem, ueName, index:0}) 
+                let html  = this.editMode && moduleName != "__#unclassified#__" && this.moduleConfig[sem]?.[moduleName] != undefined 
+                        ? this.createDropFieldInsertionField("subject", {sem, moduleName, index:0}) 
                         : ""
                 ;
 
-                Object.values(ueData.subjects).forEach((_value, _index) => {
-                    html += this.createSubjCard(sem, ueName, _value.subjName, _index);
-                    html += this.editMode && ueName != "__#unclassified#__" && this.ueConfig[sem]?.[ueName] != undefined 
-                        ? this.createDropFieldInsertionField("subject", {sem, ueName, index:_index+1}) 
+                Object.values(moduleData.subjects).forEach((_value, _index) => {
+                    html += this.createSubjCard(sem, moduleName, _value.subjName, _index);
+                    html += this.editMode && moduleName != "__#unclassified#__" && this.moduleConfig[sem]?.[moduleName] != undefined 
+                        ? this.createDropFieldInsertionField("subject", {sem, moduleName, index:_index+1}) 
                         : ""
                     ;
                 })
@@ -2544,19 +2544,19 @@
             /** 
              * Call this method to create a subject card. 
              * 
-             * Detects automatically from the name of the ueName and from `this.gradesDatas` (to error-proof the ueName, also from `this.ueConfig`) if the card is classified or unclassified, 
+             * Detects automatically from the name of the moduleName and from `this.gradesDatas` (to error-proof the moduleName, also from `this.moduleConfig`) if the card is classified or unclassified, 
              * and detects automatically from this.compactSubjCardsId if the card is detailed or compact.
              * 
              * @param {number | string} sem Number of the semester of the subject
-             * @param {string} ueName Name of the subject's module
+             * @param {string} moduleName Name of the subject's module
              * @param {string} subject Name of the subject
              * @param {number} [index=-1] Default: -1 — Index of the subject in its module, necessary if the subject is classified, useless if the subject is unclassified
              */
-            createSubjCard(sem, ueName, subject, index=-1) {
-                const ueData                = this.gradesDatas[sem][ueName];
-                const subjectData           = ueData.subjects[subject];
+            createSubjCard(sem, moduleName, subject, index=-1) {
+                const moduleData            = this.gradesDatas[sem][moduleName];
+                const subjectData           = moduleData.subjects[subject];
                 const subjectGrades         = subjectData.grades;
-                const ueMoy                 = ueData.average;
+                const moduleMoy             = moduleData.average;
                 const subjAvg               = subjectData?.average >= 0 ? subjectData.average : " - ";
                 const pct                   = subjectData.coef;
                 const isCustom              = subjectData.isCustom;
@@ -2564,12 +2564,12 @@
                 const includedGradesLength  = nbGrades - subjectData.disabledRealGrades.length - subjectData.disabledSimGrades.length;
                 const nbSimGrades           = subjectData.simGrades.length;
                 const nbRealGrades          = nbGrades - nbSimGrades;
-                const classified            = ueName != "__#unclassified#__" && this.ueConfig[sem]?.[ueName] != undefined;
+                const classified            = moduleName != "__#unclassified#__" && this.moduleConfig[sem]?.[moduleName] != undefined;
                 const detailed              = !this.compactSubjCardsId.includes(`subject-card-semester-${sem}-subject-${subject}`);
                 
                 let html = `
-                <div class="subject-card ${classified ? "classified" : "unclassified"} ${detailed ? "detailed" : "compact"} ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" id="subject-card-semester-${sem}-subject-${subject}" ${this.editMode ? `style="cursor: grab; user-select: none;"` : ""} data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
-                    <div class="subject-card-header${detailed ? "" : " compact"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`} ${classified ? "classified" : "unclassified"}" ${this.editMode ? `style="cursor: grab;" draggable="true"` : `${nbGrades > 0 ? `` : `style="border-radius: 20px; border: none"`}`} data-ue="${ueName}">
+                <div class="subject-card ${classified ? "classified" : "unclassified"} ${detailed ? "detailed" : "compact"} ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" id="subject-card-semester-${sem}-subject-${subject}" ${this.editMode ? `style="cursor: grab; user-select: none;"` : ""} data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
+                    <div class="subject-card-header${detailed ? "" : " compact"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`} ${classified ? "classified" : "unclassified"}" ${this.editMode ? `style="cursor: grab;" draggable="true"` : `${nbGrades > 0 ? `` : `style="border-radius: 20px; border: none"`}`} data-module="${moduleName}">
                         <div style="display:flex; align-items:center; gap:8px; padding-left: ${this.editMode ? "11px" : "53px"}; width:38.8%; min-width: 275px">
                             ${this.editMode
                                 ? `<div style="margin: 0px 5px; margin-bottom: 3px;">
@@ -2591,7 +2591,7 @@
                                                 : "Weight in module: "
                                             }
                                             ${this.editMode 
-                                                ? `<input class="subject-coef-input-box any-input" id="subject-coef-input-box-semester-${sem}-subject-${subject}" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}" type="number" placeholder="%" step="5" min="0" max="100" value="${pct}"/>%`
+                                                ? `<input class="subject-coef-input-box any-input" id="subject-coef-input-box-semester-${sem}-subject-${subject}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" type="number" placeholder="%" step="5" min="0" max="100" value="${pct}"/>%`
                                                 : `<span style="font-weight: 800">${pct}%</span>`
                                             }
                                         ` 
@@ -2620,7 +2620,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="subject-total-coef-div" data-semester="${sem}" data-ue="${ueName}" data-subject="${subject}">
+                        <div class="subject-total-coef-div" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}">
                             <div class="subject-total-coef-value"></div>
                             <div class="subject-total-coef-debug">${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}</div>
                         </div>
@@ -2634,7 +2634,7 @@
                 if (detailed) {
                     html += `
 
-                    <table class="grades-table ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${ueMoy < 10 ? `meh` : `good`}` : `${ueMoy >= 10 ? `meh` : `bad`}`}`}" style="${this.editMode ? `user-select: text;` : ``}" id="grades-table-${subject}-semester${sem}" data-subject="${subject}">
+                    <table class="grades-table ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" style="${this.editMode ? `user-select: text;` : ``}" id="grades-table-${subject}-semester${sem}" data-subject="${subject}">
 
                         <thead>
                             <tr>
@@ -2670,21 +2670,21 @@
                         html += `
                             <tr class="grade-row ${index == nbGrades-1 ? `last` : ``} ${gradeIsSim ? `sim` : ``}" data-sim="${gradeIsSim}">
                                 <td class="grades-table-type" style="display: flex; align-items: center; gap: 6px; width: auto">
-                                    <input type="checkbox" class="grade-checkbox any-input" id="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}" data-semester="${sem}" data-subj="${subject}" data-ue="${ueName||''}" data-prof="${grade.prof}" data-gradeid="${grade.type + " " + grade.date + " " + grade.prof}" ${gradeIsSim ? `data-simtimestamp="${grade.id}"` : ""} ${!this.gradeIsDisabled(grade) ? "checked" : ""}></input>
+                                    <input type="checkbox" class="grade-checkbox any-input" id="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}" data-semester="${sem}" data-subj="${subject}" data-module="${moduleName||''}" data-prof="${grade.prof}" data-gradeid="${grade.type + " " + grade.date + " " + grade.prof}" ${gradeIsSim ? `data-simtimestamp="${grade.id}"` : ""} ${!this.gradeIsDisabled(grade) ? "checked" : ""}></input>
                                     ${gradeIsSim
-                                        ? `<input class="grade-type simulated-grade-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="simulated-grade-input-type-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" data-modifType="type" data-simid="${nbSimGrades-1}" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-ue="${ueName||''}" value="${grade.type}"/>` 
+                                        ? `<input class="grade-type simulated-grade-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="simulated-grade-input-type-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" data-modifType="type" data-simid="${nbSimGrades-1}" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" value="${grade.type}"/>` 
                                         : `<label class="grade-type" style="width: auto"  id="grade-type-${grade.type}-${grade.date}" for="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}">${grade.type || ''}${gradeIsSim ? ` • ${this.lang == "fr" ? "Simulée" : "Simulated"}` : ''}</label>`
                                     }
                                 </td>
                                 <td class="grade-value grade-${gradeClass} grades-table-grade" data-sim="${gradeIsSim}">
                                     ${gradeIsSim
-                                        ? `<input class="simulated-grade-input-edit sim-inp-grade any-input" style="width: 100%; max-width: 75px;" id="simulated-grade-input-grade-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="number" step="0.5" min="0" max="20" data-simid="${nbSimGrades-1}" data-modifType="grade" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-ue="${ueName||''}" style="width:75px; height:25px" value="${grade.grade}"> /20`
+                                        ? `<input class="simulated-grade-input-edit sim-inp-grade any-input" style="width: 100%; max-width: 75px;" id="simulated-grade-input-grade-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" type="number" step="0.5" min="0" max="20" data-simid="${nbSimGrades-1}" data-modifType="grade" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" style="width:75px; height:25px" value="${grade.grade}"> /20`
                                         : `${grade.grade}/20`
                                     }
                                 </td>
                                 <td class="grades-table-coef" data-sim="${gradeIsSim}">
                                     ${gradeIsSim
-                                        ? `<input class="simulated-grade-input-edit sim-inp-coef any-input" style="width: 100%; max-width: 60px;" id="simulated-grade-input-coef-for-${subject}-from-${ueName}-in-semester${sem}-${grade.type}" type="number" step="5" min="0" max="100" data-simid="${nbSimGrades-1}" data-modifType="coef" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-ue="${ueName||''}" style="width:60px; height:25px"value="${grade.coef}"> %`
+                                        ? `<input class="simulated-grade-input-edit sim-inp-coef any-input" style="width: 100%; max-width: 60px;" id="simulated-grade-input-coef-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" type="number" step="5" min="0" max="100" data-simid="${nbSimGrades-1}" data-modifType="coef" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" style="width:60px; height:25px"value="${grade.coef}"> %`
                                         : `${grade.coef} %`
                                     }
                                 </td>
@@ -2709,7 +2709,7 @@
                                 <td class="grades-table-add-sim-cell" style="${gradeIsSim ? `width: 52px; padding: 3px; text-align: center;` : ``}">
                                     ${
                                         gradeIsSim 
-                                        ? `<button class="sim-del-btn" data-semester="${sem}" data-subj="${subject}" data-ue="${ueName||''}" data-type="${grade.type}" data-simid="${index-nbRealGrades}">🗑️</button>` 
+                                        ? `<button class="sim-del-btn" data-semester="${sem}" data-subj="${subject}" data-module="${moduleName||''}" data-type="${grade.type}" data-simid="${index-nbRealGrades}">🗑️</button>` 
                                         : `<div style="width:32px"></div>`
                                     }
                                 </td>
@@ -2722,19 +2722,19 @@
                                 <td class="grades-table-type">
                                     <div class="grade-type" style="display:flex; align-items:center; justify-content: flex-start">
                                         <div style="width: 140px">${this.lang == "fr" ? "Ajouter une note simulée: " : "Add a simulated grade: "}</div>
-                                        <input class="simulated-grade-input sim-inp-type any-input" id="simulated-grade-input-type-for-${subject}-from-${ueName}-in-semester${sem}" data-semester="${sem}" data-subj="${subject}" placeholder="${this.lang == "fr" ? "Titre" : "Title"}" />
+                                        <input class="simulated-grade-input sim-inp-type any-input" id="simulated-grade-input-type-for-${subject}-from-${moduleName}-in-semester${sem}" data-semester="${sem}" data-subj="${subject}" placeholder="${this.lang == "fr" ? "Titre" : "Title"}" />
                                     </div>
                                 </td>
                                 <td class="grades-table-grade">
-                                    <input class="simulated-grade-input sim-inp-grade any-input" id="simulated-grade-input-grade-for-${subject}-from-${ueName}-in-semester${sem}" type="number" step="0.5" min="0" max="20" data-semester="${sem}" data-subj="${subject}" placeholder="/20"> /20
+                                    <input class="simulated-grade-input sim-inp-grade any-input" id="simulated-grade-input-grade-for-${subject}-from-${moduleName}-in-semester${sem}" type="number" step="0.5" min="0" max="20" data-semester="${sem}" data-subj="${subject}" placeholder="/20"> /20
                                 </td>
                                 <td class="grades-table-coef">
-                                    <input class="simulated-grade-input sim-inp-coef any-input" id="simulated-grade-input-coef-for-${subject}-from-${ueName}-in-semester${sem}" type="number" step="5" min="0" max="100" data-semester="${sem}" data-subj="${subject}" placeholder="%"> %
+                                    <input class="simulated-grade-input sim-inp-coef any-input" id="simulated-grade-input-coef-for-${subject}-from-${moduleName}-in-semester${sem}" type="number" step="5" min="0" max="100" data-semester="${sem}" data-subj="${subject}" placeholder="%"> %
                                 </td>
                                 <td colspan="3">
                                 </td>
                                 <td class="grades-table-add-sim-cell" style="border-right-width: 0px; border-left-width: 0px;">
-                                    <button class="btn-export sim-add-btn" data-semester="${sem}" data-subj="${subject}" data-ue="${ueName||''}">${this.lang == "fr" ? "Ajouter" : "Add"}</button>
+                                    <button class="btn-export sim-add-btn" data-semester="${sem}" data-subj="${subject}" data-module="${moduleName||''}">${this.lang == "fr" ? "Ajouter" : "Add"}</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -2749,6 +2749,49 @@
                 return html;
             }
 
+
+            // MARK: Regenerate subject and module averages and total coef debug texts
+            regenAveragesAndTotalCoefs(sem, moduleName, subject) {
+
+                // subject average modification
+                if (subject) {
+                    const subjAvg = this.gradesDatas[sem][moduleName||"__#unclassified#__"].subjects[subject].average;
+                    const subjAvgSpan = document.querySelector(`.subject-card[data-subject="${subject}"]`).querySelector(".subj-moyenne");
+                    subjAvgSpan.innerHTML = subjAvg + "/20";
+                    subjAvgSpan.classList.remove("good"); subjAvgSpan.classList.remove("bad");
+                    if (subjAvg >= 10) {
+                        subjAvgSpan.classList.add("good"); 
+                    }
+                    else {
+                        subjAvgSpan.classList.add("bad");
+                    }
+                }
+                
+                // module average modification
+                if (moduleName != "__#unclassified#__") {
+                    const moduleAvg     = this.gradesDatas[sem][moduleName].average;
+                    const moduleCard    = document.querySelector(`.module-card[data-module="${moduleName}"]`);
+                    const moduleAvgDiv  = moduleCard.querySelector(`.module-moyenne[data-module="${moduleName}"]`);
+                    moduleAvgDiv.childNodes[0].data = moduleAvg + "/20";
+                    moduleAvgDiv.classList.remove("good"); moduleAvgDiv.classList.remove("bad"); moduleAvgDiv.classList.remove("unknown");
+                    if (moduleAvg == " - ") {
+                        moduleAvgDiv.classList.add("unknown");
+                    }
+                    else if (moduleAvg >= 10) {
+                        moduleAvgDiv.classList.add("good");
+                    }
+                    else {
+                        moduleAvgDiv.classList.add("bad");
+                    }
+
+                    this.setGradesTableTotalCoef(moduleCard);
+                }
+                else if (subject) {
+                    const subjCard = document.querySelector(`.subject-card[data-semester="${sem}"][data-subject="${subject}"]`);
+                    this.setGradesTableTotalCoef(subjCard);
+                }
+
+            }
             
 
         //#endregion
@@ -2780,8 +2823,8 @@
                 
                 this.attachAllSubjectCardRelatedEvenListenersForEverySubjectCard();
 
-                this.attachUeInfoClearBtns();
-                this.attachAllUeDeleteBtnsListener();
+                this.attachModuleInfoClearBtns();
+                this.attachAllModuleDeleteBtnsListener();
 
                 if (this.editMode) {this.attachAllOnDragEventListeners();} else {this.detachOnDragEventListeners();}
             }
@@ -2852,10 +2895,10 @@
                         }
                         
                         if (eventName == "onmousedown" || eventName == "all") {
-                            // Fold/Unfold UEs
+                            // Fold/Unfold modules
                             document.onmousedown = (e) => {
-                                if (e.target.closest('.ue-header') && !e.target.closest('.ue-title.input, .ue-delete-btn')) {
-                                    this.ueHeaderMouseUpNoMoveAction(e)
+                                if (e.target.closest('.module-header') && !e.target.closest('.module-title.input, .module-delete-btn')) {
+                                    this.moduleHeaderMouseUpNoMoveAction(e)
                                 }
                                 else if (e.target.closest('.subject-card-header, .subject-card.compact') && !e.target.closest('.any-input, .drag-icon, .tick-icon')) {
                                     this.subjHeaderMouseUpNoMoveAction(e)
@@ -2874,10 +2917,10 @@
                         input.onblur     = () =>  {this.generalKeyboardEvents("general")};
                         input.ondragover = (e) => {if (e.target.closest(".any-input")) {e.preventDefault(); e.dataTransfer.dropEffect = "none";}}
                         input.ondrop     = (e) => {e.preventDefault(); e.dataTransfer.dropEffect = "link";};
-                        if (input.classList.contains("ue-title")) {   // Change UEs name
-                            input.onmouseenter  = ( ) => { if (this.editMode) {this.detachOnDragEventListeners(); document.querySelectorAll(".ue-header").forEach(card => {card.draggable = false});} }
-                            input.onmouseleave  = ( ) => { if (this.editMode) {this.attachOnDragEventListeners(); document.querySelectorAll(".ue-header").forEach(card => {card.draggable = true;});} }
-                            input.onchange      = (e) => { this.ueTitleInputChangeAction(e.target) };
+                        if (input.classList.contains("module-title")) {   // Change modules name
+                            input.onmouseenter  = ( ) => { if (this.editMode) {this.detachOnDragEventListeners(); document.querySelectorAll(".module-header").forEach(card => {card.draggable = false});} }
+                            input.onmouseleave  = ( ) => { if (this.editMode) {this.attachOnDragEventListeners(); document.querySelectorAll(".module-header").forEach(card => {card.draggable = true;});} }
+                            input.onchange      = (e) => { this.moduleTitleInputChangeAction(e.target) };
                         }
                         else {
                             input.onmouseenter  = ( ) => { if (this.editMode) {this.detachOnDragEventListeners();} };
@@ -3057,7 +3100,7 @@
                                 this.viewMode = e.target.dataset.view;
                                 localStorage.setItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE", this.viewMode);
 
-                                this.foldedUeCardsId = [];
+                                this.foldedModuleCardsId = [];
                                 document.querySelector(".fold-toggle").classList.remove("active");
 
                                 this.generateContent();
@@ -3067,7 +3110,7 @@
                     attachFoldToggleBtnListener() {
                         document.querySelector(".fold-toggle").onclick = (e) => {
                             e.target.classList.toggle("active");
-                            this.toggleFoldAllUeCards();
+                            this.toggleFoldAllModuleCards();
                         }
                     }
                 //#endregion
@@ -3106,22 +3149,22 @@
 
 
 
-                //#region UE cards listeners
-                    attachUeInfoClearBtns() {
-                        document.querySelectorAll(".ue-info-clear.sim").     forEach(simClear => {
-                            simClear.onclick = () => {this.clearSimGrades(    simClear.dataset.semester, simClear.dataset.ue);this.generateContent();}
+                //#region Module cards listeners
+                    attachModuleInfoClearBtns() {
+                        document.querySelectorAll(".module-info-clear.sim").     forEach(simClear => {
+                            simClear.onclick = () => {this.clearSimGrades(    simClear.dataset.semester, simClear.dataset.module);this.generateContent();}
                         });
-                        document.querySelectorAll(".ue-info-clear.disabled").forEach(disClear => {
-                            disClear.onclick = () => {this.clearIgnoredGradesForUE(disClear.dataset.semester, disClear.dataset.ue);this.generateContent();}
+                        document.querySelectorAll(".module-info-clear.disabled").forEach(disClear => {
+                            disClear.onclick = () => {this.clearIgnoredGradesForModule(disClear.dataset.semester, disClear.dataset.module);this.generateContent();}
                         });
                     }
-                    attachAllUeDeleteBtnsListener() {
-                        document.querySelectorAll(".ue-delete-btn").forEach(btn => {
-                            this.attachUeDeleteBtnListener(btn);
+                    attachAllModuleDeleteBtnsListener() {
+                        document.querySelectorAll(".module-delete-btn").forEach(btn => {
+                            this.attachModuleDeleteBtnListener(btn);
                         })
                     }
-                    attachUeDeleteBtnListener(btn) {
-                        btn.onclick = (e) => {this.ueDeleteBtnAction(e.target)};
+                    attachModuleDeleteBtnListener(btn) {
+                        btn.onclick = (e) => {this.moduleDeleteBtnAction(e.target)};
                     }
                 //#endregion
 
@@ -3188,43 +3231,15 @@
                     }
                     attachSubjectCoefInputBoxListeners(inputBox) {
                         inputBox.onchange = e => {
-                            const semX = e.target.dataset.semester;
-                            const ueName = e.target.dataset.ue;
-                            const subject = e.target.dataset.subject;
-                            const newCoef = e.target.value;
-                            this.ueConfig[semX][ueName].coefficients[subject] = newCoef;
+                            const semX          = e.target.dataset.semester;
+                            const moduleName    = e.target.dataset.module;
+                            const subject       = e.target.dataset.subject;
+                            const newCoef       = e.target.value;
+                            this.moduleConfig[semX][moduleName].coefficients[subject] = newCoef;
 
                             this.saveConfig();
                             this.getGradesDatas();
-                            // this.generateContent(false);
-                            this.setGradesTableTotalCoef();
-
-                            const subjAvg = this.gradesDatas[semX][ueName||"__#unclassified#__"].subjects[subject].average;
-                            const subjAvgSpan = document.querySelector(`.subject-card[data-subject="${subject}"]`).querySelector(".subj-moyenne");
-                            subjAvgSpan.innerHTML = subjAvg + "/20";
-                            subjAvgSpan.classList.remove("good"); subjAvgSpan.classList.remove("bad");
-                            if (subjAvg >= 10) {
-                                subjAvgSpan.classList.add("good"); 
-                            }
-                            else {
-                                subjAvgSpan.classList.add("bad");
-                            }
-                            
-                            if (ueName) {
-                                const ueAvg = this.gradesDatas[semX][ueName].average;
-                                const ueAvgDiv = document.querySelector(`.ue-moyenne[data-ue="${ueName}"]`);
-                                ueAvgDiv.childNodes[0].data = ueAvg + "/20";
-                                ueAvgDiv.classList.remove("good"); ueAvgDiv.classList.remove("bad"); ueAvgDiv.classList.remove("unknown");
-                                if (ueAvg == " - ") {
-                                    ueAvgDiv.classList.add("unknown");
-                                }
-                                else if (ueAvg >= 10) {
-                                    ueAvgDiv.classList.add("good");
-                                }
-                                else {
-                                    ueAvgDiv.classList.add("bad");
-                                }
-                            }
+                            this.regenAveragesAndTotalCoefs(semX, moduleName, subject);
                         };
                     }
 
@@ -3233,7 +3248,7 @@
                         container.querySelectorAll('.grade-checkbox').forEach(chbx => {
                             chbx.onclick = (e) => {
                                 const semX = e.target.dataset.semester;
-                                const ue = e.target.dataset.ue;
+                                const module = e.target.dataset.module;
                                 const subj = e.target.dataset.subj;
                                 const simTimeStamp = e.target.dataset.simtimestamp;
                                 const gradeId = e.target.dataset.gradeid;
@@ -3248,36 +3263,9 @@
                                 this.saveIgnoredGrades();
                                 this.getGradesDatas();
                                 document.querySelector(".average-number").innerHTML = this.moyennePonderee(this.grades);
-                                // this.getGradesDatas({semX, ue:undefined, subj});
+                                // this.getGradesDatas({semX, module:undefined, subj});
                                 // this.generateContent(false);
-                                this.setGradesTableTotalCoef();
-
-                                const subjAvg = this.gradesDatas[semX][ue||"__#unclassified#__"].subjects[subj].average;
-                                const subjAvgSpan = document.querySelector(`.subject-card[data-subject="${subj}"]`).querySelector(".subj-moyenne");
-                                subjAvgSpan.innerHTML = subjAvg + "/20";
-                                subjAvgSpan.classList.remove("good"); subjAvgSpan.classList.remove("bad");
-                                if (subjAvg >= 10) {
-                                    subjAvgSpan.classList.add("good"); 
-                                }
-                                else {
-                                    subjAvgSpan.classList.add("bad");
-                                }
-                                
-                                if (ue) {
-                                    const ueAvg = this.gradesDatas[semX][ue].average;
-                                    const ueAvgDiv = document.querySelector(`.ue-moyenne[data-ue="${ue}"]`);
-                                    ueAvgDiv.childNodes[0].data = ueAvg + "/20";
-                                    ueAvgDiv.classList.remove("good"); ueAvgDiv.classList.remove("bad"); ueAvgDiv.classList.remove("unknown");
-                                    if (ueAvg == " - ") {
-                                        ueAvgDiv.classList.add("unknown");
-                                    }
-                                    else if (ueAvg >= 10) {
-                                        ueAvgDiv.classList.add("good");
-                                    }
-                                    else {
-                                        ueAvgDiv.classList.add("bad");
-                                    }
-                                }
+                                this.regenAveragesAndTotalCoefs(semX, module, subj)
                             }
                         });
                     }
@@ -3329,78 +3317,78 @@
 
             //#region -Events Action
 
-                // MARK: -toggle ue card folding
-                /** Call this method to switch all UE cards' state between folded and unfolded 
+                // MARK: -toggle module card folding
+                /** Call this method to switch all Module cards' state between folded and unfolded 
                  * 
-                 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a UE header HTML Element or an event triggered by a UE header
-                 * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other ues are to be hidden (if true) or not (if false)
-                 * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
-                 * @param {Boolean} bypassFoldedUeCardsId Default: false — Destined to control whether the folded UE card ID's addition to/deletion from this.foldedUeCardsId will be bypassed (if true) or not (if false)
+                 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module header HTML Element or an event triggered by a module header
+                 * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
+                 * @param {Boolean} hideAdjacentModuleInsertionFields Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
+                 * @param {Boolean} bypassFoldedModuleCardsId Default: false — Destined to control whether the folded module card ID's addition to/deletion from this.foldedModuleCardsId will be bypassed (if true) or not (if false)
                  */
-                toggleFoldAllUeCards(hideOtherSubjectInsertionFields=false, hideAdjacentUeInsertionFields=false, bypassFoldedUeCardsId=false) {
-                    document.querySelectorAll(".ue-header").forEach(ueHeader => {
-                        this.toggleFoldUeCard(ueHeader, hideOtherSubjectInsertionFields, hideAdjacentUeInsertionFields, bypassFoldedUeCardsId)
+                toggleFoldAllModuleCards(hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
+                    document.querySelectorAll(".module-header").forEach(moduleHeader => {
+                        this.toggleFoldModuleCard(moduleHeader, hideOtherSubjectInsertionFields, hideAdjacentModuleInsertionFields, bypassFoldedModuleCardsId)
                     })
                 }
-                /** Call this method to switch a UE card's state between folded and unfolded 
+                /** Call this method to switch a module card's state between folded and unfolded 
                  * 
-                 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a UE header HTML Element or an event triggered by a UE header
-                 * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other ues are to be hidden (if true) or not (if false)
-                 * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
-                 * @param {Boolean} bypassFoldedUeCardsId Default: false — Destined to control whether the folded UE card ID's addition to/deletion from this.foldedUeCardsId will be bypassed (if true) or not (if false)
+                 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module header HTML Element or an event triggered by a module header
+                 * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
+                 * @param {Boolean} hideAdjacentModuleInsertionFields Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
+                 * @param {Boolean} bypassFoldedModuleCardsId Default: false — Destined to control whether the folded module card ID's addition to/deletion from this.foldedModuleCardsId will be bypassed (if true) or not (if false)
                  */
-                toggleFoldUeCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentUeInsertionFields=false, bypassFoldedUeCardsId=false) {
-                    if (trigger?.classList?.contains("ue-header") || (trigger?.target?.classList?.contains("ue-header"))) {
-                        const ueHeader = trigger?.target || trigger;
-                        if (ueHeader.classList.contains("fold")) {
-                            this.unfoldUeCard(ueHeader, hideOtherSubjectInsertionFields, hideAdjacentUeInsertionFields, bypassFoldedUeCardsId)
+                toggleFoldModuleCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
+                    if (trigger?.classList?.contains("module-header") || (trigger?.target?.classList?.contains("module-header"))) {
+                        const moduleHeader = trigger?.target || trigger;
+                        if (moduleHeader.classList.contains("fold")) {
+                            this.unfoldModuleCard(moduleHeader, hideOtherSubjectInsertionFields, hideAdjacentModuleInsertionFields, bypassFoldedModuleCardsId)
                         }
                         else {
-                            this.foldUeCard(ueHeader, hideOtherSubjectInsertionFields, hideAdjacentUeInsertionFields, bypassFoldedUeCardsId)
+                            this.foldModuleCard(moduleHeader, hideOtherSubjectInsertionFields, hideAdjacentModuleInsertionFields, bypassFoldedModuleCardsId)
                         }
                     }
                 }
 
 
-                // MARK: -fold ue card
-                /** Call this method to fold all UE cards 
+                // MARK: -fold module card
+                /** Call this method to fold all module cards 
                  * 
-                 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a UE header HTML Element or an event triggered by a UE header
-                 * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other ues are to be hidden (if true) or not (if false)
-                 * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
-                 * @param {Boolean} bypassFoldedUeCardsId Default: false — Destined to control whether the folded UE card ID's addition to this.foldedUeCardsId will be bypassed (if true) or not (if false)
+                 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module header HTML Element or an event triggered by a module header
+                 * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
+                 * @param {Boolean} hideAdjacentModuleInsertionFields Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
+                 * @param {Boolean} bypassFoldedModuleCardsId Default: false — Destined to control whether the folded module card ID's addition to this.foldedModuleCardsId will be bypassed (if true) or not (if false)
                  */
-                foldAllUeCards(hideOtherSubjectInsertionFields=false, hideAdjacentUeInsertionFields=false, bypassFoldedUeCardsId=false) {
-                    document.querySelectorAll(".ue-header").forEach(ueHeader => {
-                        this.foldUeCard(ueHeader, hideOtherSubjectInsertionFields, hideAdjacentUeInsertionFields, bypassFoldedUeCardsId)
+                foldAllModuleCards(hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
+                    document.querySelectorAll(".module-header").forEach(moduleHeader => {
+                        this.foldModuleCard(moduleHeader, hideOtherSubjectInsertionFields, hideAdjacentModuleInsertionFields, bypassFoldedModuleCardsId)
                     })
                 }
-                /** Call this method to fold a UE card
+                /** Call this method to fold a module card
                  * 
-                 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a UE header HTML Element or an event triggered by a UE header
-                 * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other ues are to be hidden (if true) or not (if false)
-                 * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
-                 * @param {Boolean} bypassFoldedUeCardsId Default: false — Destined to control whether the folded UE card ID's addition to this.foldedUeCardsId will be bypassed (if true) or not (if false)
+                 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module header HTML Element or an event triggered by a module header
+                 * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
+                 * @param {Boolean} hideAdjacentModuleInsertionFields Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
+                 * @param {Boolean} bypassFoldedModuleCardsId Default: false — Destined to control whether the folded module card ID's addition to this.foldedModuleCardsId will be bypassed (if true) or not (if false)
                  */
-                foldUeCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentUeInsertionFields=false, bypassFoldedUeCardsId=false) {
-                    // testing if the trigger argument is an HTML of class ue-card or an Event triggered by a UE header or one of its elements
-                    if (trigger?.classList?.contains("ue-header") || (trigger?.target?.classList?.contains("ue-header"))) {
-                        // Identifying the ueCard depending on whether the trigger argument is a UE header or an event triggered by a UE header
-                        const ueCard        = trigger?.target?.parentElement || trigger.parentElement;
-                        const sem           = ueCard.dataset.semester;
-                        const ue            = ueCard.dataset.ue;
-                        const index         = ueCard.dataset.index;
-                        const ueCardElems   = ueCard.querySelectorAll(".ue-card, .ue-header, .ue-info, .ue-card-content, .ue-details");
-                        const toggle        = ueCard.querySelector('.ue-toggle');
-                        let subjectCards    = [];
+                foldModuleCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
+                    // testing if the trigger argument is an HTML of class module-card or an Event triggered by a module header or one of its elements
+                    if (trigger?.classList?.contains("module-header") || (trigger?.target?.classList?.contains("module-header"))) {
+                        // Identifying the moduleCard depending on whether the trigger argument is a module header or an event triggered by a module header
+                        const moduleCard        = trigger?.target?.parentElement || trigger.parentElement;
+                        const sem               = moduleCard.dataset.semester;
+                        const module            = moduleCard.dataset.module;
+                        const index             = moduleCard.dataset.index;
+                        const moduleCardElems   = moduleCard.querySelectorAll(".module-card, .module-header, .module-info, .module-card-content, .module-details");
+                        const toggle            = moduleCard.querySelector('.module-toggle');
+                        let subjectCards        = [];
 
-                        if (hideAdjacentUeInsertionFields != "only") {
+                        if (hideAdjacentModuleInsertionFields != "only") {
                             toggle.classList.remove("open");
                             
-                            const subjectInsertFields = document.querySelectorAll(`.drop-field.insert-field.subject[data-semester="${sem}"]${hideOtherSubjectInsertionFields ? "" : `[data-ue="${ue}"]`}`)
+                            const subjectInsertFields = document.querySelectorAll(`.drop-field.insert-field.subject[data-semester="${sem}"]${hideOtherSubjectInsertionFields ? "" : `[data-module="${module}"]`}`)
                             const subjectInsertFieldHitboxes = Object.values(subjectInsertFields).map(elem => {return elem.querySelector(".drop-subject-card-insert-hitbox")});
 
-                            subjectCards = document.querySelectorAll(`.subject-card[data-semester="${sem}"][data-ue="${ue}"]`);
+                            subjectCards = document.querySelectorAll(`.subject-card[data-semester="${sem}"][data-module="${module}"]`);
 
 
                             subjectInsertFieldHitboxes.forEach(subjInsFieldHitbox => {
@@ -3412,19 +3400,19 @@
                             subjectCards.forEach(subjCard => {
                                 subjCard.classList.add("fold");
                             })
-                            ueCardElems.forEach(elem => {elem.classList.add("fold")})
-                            ueCard.classList.add("fold");
+                            moduleCardElems.forEach(elem => {elem.classList.add("fold")})
+                            moduleCard.classList.add("fold");
                         }
 
                         let upperInsertField = "";
                         let lowerInsertField = "";
 
-                        if (hideAdjacentUeInsertionFields) {
-                            upperInsertField = document.querySelector(`.drop-field.insert-field.ue[data-semester="${sem}"][data-index="${index}"]`)
-                            const upperInsertFieldHitbox = upperInsertField.querySelector(".drop-ue-card-insert-hitbox");
+                        if (hideAdjacentModuleInsertionFields) {
+                            upperInsertField = document.querySelector(`.drop-field.insert-field.module[data-semester="${sem}"][data-index="${index}"]`)
+                            const upperInsertFieldHitbox = upperInsertField.querySelector(".drop-module-card-insert-hitbox");
 
-                            lowerInsertField = document.querySelector(`.drop-field.insert-field.ue[data-semester="${sem}"][data-index="${parseInt(index)+1}"]`)
-                            const lowerInsertFieldHitbox = lowerInsertField.querySelector(".drop-ue-card-insert-hitbox");
+                            lowerInsertField = document.querySelector(`.drop-field.insert-field.module[data-semester="${sem}"][data-index="${parseInt(index)+1}"]`)
+                            const lowerInsertFieldHitbox = lowerInsertField.querySelector(".drop-module-card-insert-hitbox");
                             
                             this.detachInsertFieldHitboxEventListeners(upperInsertFieldHitbox);
                             this.detachInsertFieldHitboxEventListeners(lowerInsertFieldHitbox);
@@ -3437,73 +3425,73 @@
                         clearTimeout(this.timeouts.lowerInsertFieldUnfoldTimeout);
                         clearTimeout(this.timeouts.subjectInsertFieldUnfoldTimeout);
                         clearTimeout(this.timeouts.subjectCardsUnfoldTimeout);
-                        clearTimeout(this.timeouts.ueCardElemsUnfoldTimeout);
-                        clearTimeout(this.timeouts.ueCardUnfoldTimeout);
-                        this.timeouts.foldUeCardTimeout = setTimeout(() => {
-                            if (hideAdjacentUeInsertionFields) {
+                        clearTimeout(this.timeouts.moduleCardElemsUnfoldTimeout);
+                        clearTimeout(this.timeouts.moduleCardUnfoldTimeout);
+                        this.timeouts.foldModuleCardTimeout = setTimeout(() => {
+                            if (hideAdjacentModuleInsertionFields) {
                                 upperInsertField.style.display = "none";
                                 lowerInsertField.style.display = "none";
                             }
 
-                            if (hideAdjacentUeInsertionFields != "only") {
+                            if (hideAdjacentModuleInsertionFields != "only") {
                                 subjectCards.forEach(subjCard => {
                                     subjCard.style.display = "none";
                                 })
-                                ueCardElems.forEach(elem => {
-                                    if (!elem.classList.contains("ue-header")) {elem.style.display = "none";}
+                                moduleCardElems.forEach(elem => {
+                                    if (!elem.classList.contains("module-header")) {elem.style.display = "none";}
                                 })
                             }
                         }, 200)
 
-                        if (!bypassFoldedUeCardsId) {
-                            this.foldedUeCardsId.push(ueCard.id);
+                        if (!bypassFoldedModuleCardsId) {
+                            this.foldedModuleCardsId.push(moduleCard.id);
                         }
                     }
                     
                 }
 
 
-                // MARK: -unfold ue card
-                /** Call this method to unfold all UE cards
+                // MARK: -unfold module card
+                /** Call this method to unfold all module cards
                  * 
-                 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a UE header HTML Element or an event triggered by a UE header
-                 * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other ues are to be shown (if true) or not (if false)
-                 * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
-                 * @param {Boolean} bypassFoldedUeCardsId Default: false — Destined to control whether the unfolded UE card ID's deletion from this.foldedUeCardsId will be bypassed (if true) or not (if false)
+                 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module header HTML Element or an event triggered by a module header
+                 * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be shown (if true) or not (if false)
+                 * @param {Boolean} hideAdjacentModuleInsertionFields Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
+                 * @param {Boolean} bypassFoldedModuleCardsId Default: false — Destined to control whether the unfolded module card ID's deletion from this.foldedModuleCardsId will be bypassed (if true) or not (if false)
                  */
-                unfoldAllUeCards(hideOtherSubjectInsertionFields=false, hideAdjacentUeInsertionFields=false, bypassFoldedUeCardsId=false) {
-                    document.querySelectorAll(".ue-header").forEach(ueHeader => {
-                        this.unfoldUeCard(ueHeader, hideOtherSubjectInsertionFields, hideAdjacentUeInsertionFields, bypassFoldedUeCardsId)
+                unfoldAllModuleCards(hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
+                    document.querySelectorAll(".module-header").forEach(moduleHeader => {
+                        this.unfoldModuleCard(moduleHeader, hideOtherSubjectInsertionFields, hideAdjacentModuleInsertionFields, bypassFoldedModuleCardsId)
                     })
                 }
-                /** Call this method to unfold a UE card
+                /** Call this method to unfold a module card
                  * 
-                 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a UE header HTML Element or an event triggered by a UE header
-                 * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other ues are to be shown (if true) or not (if false)
-                 * @param {Boolean} hideAdjacentUeInsertionFields Default: false — Destined to control whether the upper and lower ue insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
-                 * @param {Boolean} bypassFoldedUeCardsId Default: false — Destined to control whether the unfolded UE card ID's deletion from this.foldedUeCardsId will be bypassed (if true) or not (if false)
+                 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module header HTML Element or an event triggered by a module header
+                 * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be shown (if true) or not (if false)
+                 * @param {Boolean} hideAdjacentModuleInsertionFields Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
+                 * @param {Boolean} bypassFoldedModuleCardsId Default: false — Destined to control whether the unfolded module card ID's deletion from this.foldedModuleCardsId will be bypassed (if true) or not (if false)
                  */
-                unfoldUeCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentUeInsertionFields=false, bypassFoldedUeCardsId=false) {
-                    // testing if the trigger argument is an HTML of class ue-card or an Event triggered by a UE header or one of its elements
-                    if (trigger?.classList?.contains("ue-header") || (trigger?.target?.classList?.contains("ue-header"))) {
-                        // Identifying the ueCard depending on whether the trigger argument is a UE header or an event triggered by a UE header
-                        const ueCard        = trigger?.target?.parentElement || trigger.parentElement;
-                        const sem           = ueCard.dataset.semester;
-                        const ue            = ueCard.dataset.ue;
-                        const index         = ueCard.dataset.index;
-                        const ueCardElems   = ueCard.querySelectorAll(".ue-card, .ue-header, .ue-info, .ue-card-content, .ue-details");
-                        const toggle        = ueCard.querySelector('.ue-toggle');
-                        let subjectCards    = [];
-                        let upperInsertField = "";
-                        let lowerInsertField = "";
+                unfoldModuleCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
+                    // testing if the trigger argument is an HTML of class module-card or an Event triggered by a module header or one of its elements
+                    if (trigger?.classList?.contains("module-header") || (trigger?.target?.classList?.contains("module-header"))) {
+                        // Identifying the moduleCard depending on whether the trigger argument is a module header or an event triggered by a module header
+                        const moduleCard        = trigger?.target?.parentElement || trigger.parentElement;
+                        const sem               = moduleCard.dataset.semester;
+                        const module            = moduleCard.dataset.module;
+                        const index             = moduleCard.dataset.index;
+                        const moduleCardElems   = moduleCard.querySelectorAll(".module-card, .module-header, .module-info, .module-card-content, .module-details");
+                        const toggle            = moduleCard.querySelector('.module-toggle');
+                        let subjectCards        = [];
+                        let upperInsertField    = "";
+                        let lowerInsertField    = "";
 
 
-                        clearTimeout(this.foldUeCardTimeout);
+                        clearTimeout(this.foldModuleCardTimeout);
 
 
-                        if (hideAdjacentUeInsertionFields) {
-                            upperInsertField = document.querySelector(   `.drop-field.insert-field.ue[data-semester="${sem}"][data-index="${index}"]`);
-                            lowerInsertField = document.querySelector(   `.drop-field.insert-field.ue[data-semester="${sem}"][data-index="${parseInt(index)+1}"]`);
+                        if (hideAdjacentModuleInsertionFields) {
+                            upperInsertField = document.querySelector(   `.drop-field.insert-field.module[data-semester="${sem}"][data-index="${index}"]`);
+                            lowerInsertField = document.querySelector(   `.drop-field.insert-field.module[data-semester="${sem}"][data-index="${parseInt(index)+1}"]`);
                         }
 
                         if (upperInsertField) {
@@ -3511,7 +3499,7 @@
                             this.timeouts.upperInsertFieldUnfoldTimeout = setTimeout(() => {
                                 upperInsertField.classList.add("show");
 
-                                const upperInsertFieldHitbox = upperInsertField.querySelector(".drop-ue-card-insert-hitbox");
+                                const upperInsertFieldHitbox = upperInsertField.querySelector(".drop-module-card-insert-hitbox");
                                 this.attachInsertFieldHitboxEventListeners(upperInsertFieldHitbox)
                             }, 10);
                         }
@@ -3521,18 +3509,18 @@
                             this.timeouts.lowerInsertFieldUnfoldTimeout = setTimeout(() => {
                                 lowerInsertField.classList.add("show");
                                 
-                                const lowerInsertFieldHitbox = lowerInsertField.querySelector(".drop-ue-card-insert-hitbox");
+                                const lowerInsertFieldHitbox = lowerInsertField.querySelector(".drop-module-card-insert-hitbox");
                                 this.attachInsertFieldHitboxEventListeners(lowerInsertFieldHitbox)
                             }, 10)
                         }
 
 
-                        if (hideAdjacentUeInsertionFields != "only") {
+                        if (hideAdjacentModuleInsertionFields != "only") {
                             toggle.classList.add("open");
                             
-                            subjectCards = document.querySelectorAll(`.subject-card[data-semester="${sem}"][data-ue="${ue}"]`);
+                            subjectCards = document.querySelectorAll(`.subject-card[data-semester="${sem}"][data-module="${module}"]`);
 
-                            const subjectInsertFields   = document.querySelectorAll(`.drop-field.insert-field.subject[data-semester="${sem}"]${hideOtherSubjectInsertionFields ? `[data-ue="${ue}"]` : ""}`);
+                            const subjectInsertFields   = document.querySelectorAll(`.drop-field.insert-field.subject[data-semester="${sem}"]${hideOtherSubjectInsertionFields ? `[data-module="${module}"]` : ""}`);
                             if (subjectInsertFields.length > 0) {
                                 subjectInsertFields.forEach(subjInsField => {
                                     subjInsField.classList.display = "";
@@ -3558,24 +3546,24 @@
                                 }, 10)
                             }
 
-                            if (ueCardElems.length > 0) {
-                                ueCardElems.forEach(elem => {
-                                    if (!elem.classList.contains("ue-header")) {elem.style.display = "";}
+                            if (moduleCardElems.length > 0) {
+                                moduleCardElems.forEach(elem => {
+                                    if (!elem.classList.contains("module-header")) {elem.style.display = "";}
                                 })
-                                this.timeouts.ueCardElemsUnfoldTimeout = setTimeout(() => {
-                                    ueCardElems.forEach(elem => {elem.classList.remove("fold")})
+                                this.timeouts.moduleCardElemsUnfoldTimeout = setTimeout(() => {
+                                    moduleCardElems.forEach(elem => {elem.classList.remove("fold")})
                                 }, 10)
                             }
                             
-                            if (ueCard) {
-                                ueCard.style.display = "";
-                                this.timeouts.ueCardUnfoldTimeout = setTimeout(() => {
-                                    ueCard.classList.remove("fold");
+                            if (moduleCard) {
+                                moduleCard.style.display = "";
+                                this.timeouts.moduleCardUnfoldTimeout = setTimeout(() => {
+                                    moduleCard.classList.remove("fold");
                                 }, 10)
                             }
 
-                            if (!bypassFoldedUeCardsId) {
-                                this.foldedUeCardsId.splice(this.foldedUeCardsId.indexOf(ueCard.id), 1);
+                            if (!bypassFoldedModuleCardsId) {
+                                this.foldedModuleCardsId.splice(this.foldedModuleCardsId.indexOf(moduleCard.id), 1);
                             }
                         }
                     }
@@ -3583,27 +3571,27 @@
 
                 /** Method temporarily attaching an onmousemove and an onmouseup event listener to the document's body.
                  * 
-                 * Meant to be invoked when the mouse down event is triggered if the target is or is contained in a ue header.
+                 * Meant to be invoked when the mouse down event is triggered if the target is or is contained in a module header.
                  * 
-                 * In practice, when the onmousedown event of the document is triggered on a ue header, call this method to:
-                 * - attach an onmousemove event listener to the document's body that will clear the onmousemove and onmouseup events of the document's body in order to "cancel" the action (safe guard for when the edit mode is off and the user attempts to drag the ue header, it will not do anything instead of triggering an onclick event)
-                 * - attach an onmouseup event listener to the document's body that will make the action intended to happen when the user clicks on the ue header (folding the ue card) WITHOUT moving the mouse (so if it wasn't an attempt to drag the ue header). Both the onmousemove and onmouseup event listeners of the document's body will then be cleared.
+                 * In practice, when the onmousedown event of the document is triggered on a module header, call this method to:
+                 * - attach an onmousemove event listener to the document's body that will clear the onmousemove and onmouseup events of the document's body in order to "cancel" the action (safe guard for when the edit mode is off and the user attempts to drag the module header, it will not do anything instead of triggering an onclick event)
+                 * - attach an onmouseup event listener to the document's body that will make the action intended to happen when the user clicks on the module header (folding the module card) WITHOUT moving the mouse (so if it wasn't an attempt to drag the module header). Both the onmousemove and onmouseup event listeners of the document's body will then be cleared.
                  */
-                ueHeaderMouseUpNoMoveAction() {
+                moduleHeaderMouseUpNoMoveAction() {
                     document.body.onmousemove = (e) => {
                         e.preventDefault();
                         document.body.onmouseup = null;
                         document.body.onmousemove = null;
                     };
                     document.body.onmouseup = (e) => {
-                        const header    = e.target.closest('.ue-header');
-                        const ueDetails = header.parentElement.querySelector(".ue-details");
+                        const header        = e.target.closest('.module-header');
+                        const moduleDetails = header.parentElement.querySelector(".module-details");
                         
-                        ueDetails.querySelectorAll(".subject-card").forEach( subjCard => { if (this.selectedSubjectCardsId.includes(subjCard.id)) {this.changeDragIconToTickIcon(subjCard);} } )
+                        moduleDetails.querySelectorAll(".subject-card").forEach( subjCard => { if (this.selectedSubjectCardsId.includes(subjCard.id)) {this.changeDragIconToTickIcon(subjCard);} } )
 
-                        this.toggleFoldUeCard(header);
+                        this.toggleFoldModuleCard(header);
                         
-                        this.attachDropFieldsEventListeners("insert", ueDetails);
+                        this.attachDropFieldsEventListeners("insert", moduleDetails);
                         document.body.onmousemove = null;
                         document.body.onmouseup = null;
                     }
@@ -3627,12 +3615,12 @@
                     document.body.onmouseup = (e) => {
                         const subjCard  = e.target.closest('.subject-card');
                         if (subjCard) {
-                            const sem       = subjCard.dataset.semester;
-                            const ueName    = subjCard.dataset.ue || "__#unclassified#__";
-                            const subjName  = subjCard.dataset.subject;
-                            const index     = subjCard.dataset.index;
-                            let newSubjCard = "";
-                            this.viewMode   = "mixed";
+                            const sem           = subjCard.dataset.semester;
+                            const moduleName    = subjCard.dataset.module || "__#unclassified#__";
+                            const subjName      = subjCard.dataset.subject;
+                            const index         = subjCard.dataset.index;
+                            let newSubjCard     = "";
+                            this.viewMode       = "mixed";
 
                             const unclassifiedSection = document.querySelector(".unclassified-section");
                             unclassifiedSection.style.height = "";
@@ -3645,7 +3633,7 @@
                                 this.compactSubjCardsId.push(subjCard.id);
                             }
                             
-                            subjCard.outerHTML = this.createSubjCard(sem, ueName, subjName, index);
+                            subjCard.outerHTML = this.createSubjCard(sem, moduleName, subjName, index);
 
 
 
@@ -3662,46 +3650,46 @@
                     }
                 }
                 
-                ueTitleInputChangeAction(target) {
-                    const sem           = target.dataset.semester;
-                    const newUeName     = target.value;
-                    const oldUeName     = target.dataset.ue; 
-                    const oldUeIndex    = this.ueConfig[sem].__ues__.indexOf(oldUeName);
+                moduleTitleInputChangeAction(target) {
+                    const sem               = target.dataset.semester;
+                    const newModuleName     = target.value;
+                    const oldModuleName     = target.dataset.module; 
+                    const oldModuleIndex    = this.moduleConfig[sem].__modules__.indexOf(oldModuleName);
                     
-                    this.ueConfig[sem][newUeName] = this.ueConfig[sem][oldUeName];
-                    delete this.ueConfig[sem][oldUeName];
-                    this.ueConfig[sem].__ues__[oldUeIndex] = newUeName;
+                    this.moduleConfig[sem][newModuleName] = this.moduleConfig[sem][oldModuleName];
+                    delete this.moduleConfig[sem][oldModuleName];
+                    this.moduleConfig[sem].__modules__[oldModuleIndex] = newModuleName;
 
                     this.saveConfig()
                     this.getGradesDatas();
                     this.generateContent(false);
 
-                    this.foldedUeCardsId.forEach(foldedUeCardId => {
-                        if (foldedUeCardId == `ue-card-${oldUeName}-in-semester-${sem}`) {
-                            const ueCardToFold = document.getElementById(foldedUeCardId);
-                            if (!ueCardToFold) {
-                                const newUeCardToFold = document.getElementById(`ue-card-${newUeName}-in-semester-${sem}`);
-                                this.foldUeCard(newUeCardToFold.querySelector(`.ue-header`));
+                    this.foldedModuleCardsId.forEach(foldedModuleCardId => {
+                        if (foldedModuleCardId == `module-card-${oldModuleName}-in-semester-${sem}`) {
+                            const moduleCardToFold = document.getElementById(foldedModuleCardId);
+                            if (!moduleCardToFold) {
+                                const newModuleCardToFold = document.getElementById(`module-card-${newModuleName}-in-semester-${sem}`);
+                                this.foldModuleCard(newModuleCardToFold.querySelector(`.module-header`));
                             }
                         }
                     })
                     
                     this.attachOnDragEventListeners();
-                    this.scrollToClientHighestElem({id: `ue-card-${newUeName}-in-semester-${sem}`, smooth: true})
+                    this.scrollToClientHighestElem({id: `module-card-${newModuleName}-in-semester-${sem}`, smooth: true})
                 }
 
-                ueDeleteBtnAction(target) {
-                    const sem       = target.dataset.semester;
-                    const ueName    = target.dataset.ue;
+                moduleDeleteBtnAction(target) {
+                    const sem           = target.dataset.semester;
+                    const moduleName    = target.dataset.module;
                     
-                    const ueIndex = this.ueConfig[sem].__ues__.indexOf(ueName);
+                    const moduleIndex = this.moduleConfig[sem].__modules__.indexOf(moduleName);
 
-                    this.ueConfig[sem].__ues__.splice(ueIndex, 1);
-                    delete this.ueConfig[sem][ueName];
+                    this.moduleConfig[sem].__modules__.splice(moduleIndex, 1);
+                    delete this.moduleConfig[sem][moduleName];
 
-                    if (this.ueConfig[sem].__ues__.length == 0) {delete this.ueConfig[sem]}
+                    if (this.moduleConfig[sem].__modules__.length == 0) {delete this.moduleConfig[sem]}
                     
-                    this.clearSimGrades(sem, ueName);
+                    this.clearSimGrades(sem, moduleName);
                     this.saveConfig();
                     this.getGradesDatas();
                     this.generateContent();
@@ -3712,14 +3700,14 @@
                     const subjectCardId = target.id.replace(/\bsubject-name-input/, "subject-card");
                     const subjectCard   = document.getElementById(subjectCardId);
                     const sem           = subjectCard.dataset.semester;
-                    const ue            = subjectCard.dataset.ue;
+                    const module        = subjectCard.dataset.module;
                     const subjOldName   = subjectCard.dataset.subject;
-                    const ueDetails     = subjectCard.parentElement;
-                    const ueCard        = ueDetails.parentElement;
+                    const moduleDetails = subjectCard.parentElement;
+                    const moduleCard    = moduleDetails.parentElement;
 
 
                     let diffName = true;
-                    this.ueConfig[sem][ue].subjects.forEach(_subj => {
+                    this.moduleConfig[sem][module].subjects.forEach(_subj => {
                         if (_subj == subjNewName && _subj != subjOldName) {
                             alert(this.lang == "fr" 
                                 ? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
@@ -3731,8 +3719,8 @@
                     });
 
                     if (diffName) {
-                        this.ueConfig[sem].__ues__.forEach(ueName => {
-                            this.ueConfig[sem][ueName].subjects.forEach(_subj => {
+                        this.moduleConfig[sem].__modules__.forEach(moduleName => {
+                            this.moduleConfig[sem][moduleName].subjects.forEach(_subj => {
                                 if (_subj == subjNewName && _subj != subjOldName) {
                                     alert(this.lang == "fr" 
                                         ? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
@@ -3747,20 +3735,20 @@
                         
 
                     if (diffName) {
-                        const oldSubjIndex = this.ueConfig[sem][ue].subjects.indexOf(subjOldName);
-                        const pct   = Number(this.ueConfig[sem][ue].coefficients    [subjOldName]);
+                        const oldSubjIndex = this.moduleConfig[sem][module].subjects.indexOf(subjOldName);
+                        const pct   = Number(this.moduleConfig[sem][module].coefficients    [subjOldName]);
 
-                        this.ueConfig[sem][ue].subjects[oldSubjIndex]=subjNewName ;    // Replace the subject's old name by the subject's new name
-                        delete this.ueConfig[sem][ue].coefficients [subjOldName];
-                        this.ueConfig[sem][ue].coefficients [subjNewName] = pct;
+                        this.moduleConfig[sem][module].subjects[oldSubjIndex]=subjNewName ;    // Replace the subject's old name by the subject's new name
+                        delete this.moduleConfig[sem][module].coefficients [subjOldName];
+                        this.moduleConfig[sem][module].coefficients [subjNewName] = pct;
                                     
                         this.getGradesDatas();
 
                         if (this.compactSubjCardsId.includes(subjectCardId)) {
-                            ueDetails.innerHTML = this.createAllCompactClassifiedSubjCards(sem, ue);
+                            moduleDetails.innerHTML = this.createAllCompactClassifiedSubjCards(sem, module);
                         }
                         else {
-                            ueDetails.innerHTML = this.createAllDetailedClassifiedSubjCards(sem, ue);
+                            moduleDetails.innerHTML = this.createAllDetailedClassifiedSubjCards(sem, module);
                         }
 
                         const unclassifiedSection = document.querySelector(".unclassified-section");
@@ -3781,10 +3769,10 @@
                 }
 
                 subjectSimAddBtnAction(target) {
-                    const ueName = target.dataset.ue;
+                    const moduleName = target.dataset.module;
                     const semX = target.dataset.semester;
                     const subj = target.dataset.subj;
-                    this.ensureSimPath(semX, ueName, subj);
+                    this.ensureSimPath(semX, moduleName, subj);
                     const typeInp =  document.querySelector(`.simulated-grade-input.sim-inp-type[data-semester="${semX}"][data-subj="${subj}"]`);
                     const gradeInp = document.querySelector(`.simulated-grade-input.sim-inp-grade[data-semester="${semX}"][data-subj="${subj}"]`);
                     const coefInp =  document.querySelector(`.simulated-grade-input.sim-inp-coef[data-semester="${semX}"][data-subj="${subj}"]`);
@@ -3795,15 +3783,15 @@
                     const date = dateInp?.value||'';
                     if(isNaN(grade) || isNaN(coef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
 
-                    this.ensureSimPath(semX, ueName, subj);
+                    this.ensureSimPath(semX, moduleName, subj);
 
                     // Making sure the automatically generated name (if the user didn't input any type name) isn't the same as one that already exists 
                     // (incrementing an index every time it's the case and add it at the end of the new sim grade's name)
                     let newName = type, validNewName = newName != type, count = 2;
 
-                    while (!validNewName && this.sim[semX][ueName][subj].length > 0) {
+                    while (!validNewName && this.sim[semX][moduleName][subj].length > 0) {
                         validNewName = true;
-                        this.sim[semX][ueName][subj].forEach((_grade, _index) => {
+                        this.sim[semX][moduleName][subj].forEach((_grade, _index) => {
                             if (_grade.type == newName && validNewName) {
                                 validNewName = false;
                                 newName = type + ` (${count})`;
@@ -3812,7 +3800,7 @@
                         })
                     }
 
-                    this.sim[semX][ueName][subj].push({
+                    this.sim[semX][moduleName][subj].push({
                         grade, 
                         coef,
                         classAvg: '—',
@@ -3831,35 +3819,36 @@
                 }
 
                 subjectSimDelBtnAction(target) {
-                    const semX      = target.dataset.semester;
-                    const ueName    = target.dataset.ue;
-                    const subj      = target.dataset.subj;
-                    const id        = target.dataset.simid;
-                    this.sim[semX][ueName][subj].splice(id, 1);
+                    const semX          = target.dataset.semester;
+                    const moduleName    = target.dataset.module;
+                    const subj          = target.dataset.subj;
+                    const id            = target.dataset.simid;
+                    this.sim[semX][moduleName][subj].splice(id, 1);
 
-                    this.deleteUnusedSimPath(false, semX, ueName, subj);
+                    this.deleteUnusedSimPath(false, semX, moduleName, subj);
                     this.saveSim();
                     this.getGradesDatas();
                     this.generateContent(false);
                 }
 
                 subjectSimInputEditAction(target) {
-                    const ueName    = target.dataset.ue;
-                    const semX      = target.dataset.semester;
-                    const subj      = target.dataset.subj;
-                    const id        = target.dataset.simid;
-                    const gradeRow  = target.parentElement.parentElement;
-                    const gradeInp  = gradeRow.querySelector(`.simulated-grade-input-edit.sim-inp-grade`);
-                    const coefInp   = gradeRow.querySelector(`.simulated-grade-input-edit.sim-inp-coef `);
-                    const newGrade  = parseFloat(gradeInp?.value||'');
-                    const newCoef   = parseFloat(coefInp?.value||'');
+                    const moduleName    = target.dataset.module;
+                    const semX          = target.dataset.semester;
+                    const subj          = target.dataset.subj;
+                    const id            = target.dataset.simid;
+                    const gradeRow      = target.parentElement.parentElement;
+                    const gradeInp      = gradeRow.querySelector(`.simulated-grade-input-edit.sim-inp-grade`);
+                    const coefInp       = gradeRow.querySelector(`.simulated-grade-input-edit.sim-inp-coef `);
+                    const newGrade      = parseFloat(gradeInp?.value||'');
+                    const newCoef       = parseFloat(coefInp?.value||'');
 
                     if(isNaN(newGrade) || isNaN(newCoef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
-                    this.sim[semX][ueName][subj][id][target.dataset.modiftype] = target.value;
+                    this.sim[semX][moduleName][subj][id][target.dataset.modiftype] = target.value;
 
                     this.saveSim();
                     this.getGradesDatas();
-                    this.generateContent(false);
+                    this.regenAveragesAndTotalCoefs(semX, moduleName, subj);
+
                 }
             //#endregion
 
@@ -3884,15 +3873,15 @@
             attachOnDragEventListeners(target="all") {   // Add ONDRAG cards event
 
                 if (target == "subject" || target == "all") {
-                    const targetUe = target.match(/subject (.+)/)?.[1];
-                    document.querySelectorAll(`.subject-card${targetUe ? `[data-ue:"${targetUe}"]` : ""}`).forEach(subjectCard => {
+                    const targetModule = target.match(/subject (.+)/)?.[1];
+                    document.querySelectorAll(`.subject-card${targetModule ? `[data-module:"${targetModule}"]` : ""}`).forEach(subjectCard => {
                         this.attachSubjectCardOnDragEventListeners(subjectCard);
                     })
                 }
 
-                if (target == "ue" || target == "all") {
-                    document.querySelectorAll(".ue-card").forEach(ueCard => {
-                        this.attachUeCardOnDragEventListeners(ueCard);
+                if (target == "module" || target == "all") {
+                    document.querySelectorAll(".module-card").forEach(moduleCard => {
+                        this.attachModuleCardOnDragEventListeners(moduleCard);
                     })
                 }
 
@@ -3915,11 +3904,11 @@
                     draggableElement.ondragend   = (e) => {this.draggedSelectedElementOnDragEndEvent(   e, {draggedElement: draggableElement, card: subjectCard})};
                 }
             }
-            attachUeCardOnDragEventListeners(ueCard) {
-                const ueHeader = ueCard.querySelector(".ue-header");
-                ueHeader.draggable = true;
-                ueHeader.ondragstart = (e) => {this.draggedElementOnDragStartEvent(e, {ueHeader, card: ueCard})}
-                ueHeader.ondragend   = (e) => {this.draggedElementOnDragEndEvent(  e, {ueHeader, card: ueCard})}
+            attachModuleCardOnDragEventListeners(moduleCard) {
+                const moduleHeader = moduleCard.querySelector(".module-header");
+                moduleHeader.draggable = true;
+                moduleHeader.ondragstart = (e) => {this.draggedElementOnDragStartEvent(e, {moduleHeader, card: moduleCard})}
+                moduleHeader.ondragend   = (e) => {this.draggedElementOnDragEndEvent(  e, {moduleHeader, card: moduleCard})}
             }
 
 
@@ -3936,10 +3925,10 @@
                     draggableElement.ondragend   = null;
                 })
 
-                document.querySelectorAll(".ue-header").forEach(ueHeader => {
-                    ueHeader.draggable   = false;
-                    ueHeader.ondragstart = null;
-                    ueHeader.ondragend   = null;
+                document.querySelectorAll(".module-header").forEach(moduleHeader => {
+                    moduleHeader.draggable   = false;
+                    moduleHeader.ondragstart = null;
+                    moduleHeader.ondragend   = null;
                 })
             }
 
@@ -3989,15 +3978,15 @@
                     this.timeouts.draggedElementOnDragStartEvent.hideTeacherTable = setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher => {teacher.style.display = "none";})}, 50);
                     // document.querySelectorAll(".grades-table-add-sim-cell, .grades-table-teacher, .grades-table-date, .grades-table-classAvg, .grades-table-coef, .grades-table-grade, .grades-table-type").forEach(cell => {cell.classList.add("dragging")})
                     document.querySelector(".semester-content")                 .classList.add("dragging");
-                    document.querySelector(".drop-field.create-ue")             .classList.add("show");
-                    document.querySelector(".drop-field-create-ue-hitbox")      .classList.add("show");
-                    document.querySelector(".drop-field.remove-from-ue")        .classList.add("show");
-                    document.querySelector(".drop-field-remove-from-ue-hitbox") .classList.add("show");
+                    document.querySelector(".drop-field.create-module")             .classList.add("show");
+                    document.querySelector(".drop-field-create-module-hitbox")      .classList.add("show");
+                    document.querySelector(".drop-field.remove-from-module")        .classList.add("show");
+                    document.querySelector(".drop-field-remove-from-module-hitbox") .classList.add("show");
 
-                    document.querySelectorAll(".drop-ue-card-insert-plus,  .drop-subject-card-insert-plus ").forEach(plus  => {plus.classList.remove("show");})
-                    document.querySelectorAll(".drop-ue-card-insert-arrow, .drop-subject-card-insert-arrow").forEach(arrow => {arrow.classList.add("show");})
+                    document.querySelectorAll(".drop-module-card-insert-plus,  .drop-subject-card-insert-plus ").forEach(plus  => {plus.classList.remove("show");})
+                    document.querySelectorAll(".drop-module-card-insert-arrow, .drop-subject-card-insert-arrow").forEach(arrow => {arrow.classList.add("show");})
 
-                    const insertFieldTexts = document.querySelectorAll(".drop-ue-card-insert-text,  .drop-subject-card-insert-text");
+                    const insertFieldTexts = document.querySelectorAll(".drop-module-card-insert-text,  .drop-subject-card-insert-text");
                     insertFieldTexts.forEach(insertFieldText => {
                         insertFieldText.classList.replace("add", "insert");
                         insertFieldText.parentElement.classList.replace("add", "insert");
@@ -4005,14 +3994,14 @@
 
 
                     if (!this.currentlyDraggedCard.classList.contains("unclassified")) {
-                        const sem   = this.currentlyDraggedCard.dataset.semester;
-                        const ue    = this.currentlyDraggedCard.dataset.ue;
-                        const index = this.currentlyDraggedCard.dataset.index;
+                        const sem       = this.currentlyDraggedCard.dataset.semester;
+                        const module    = this.currentlyDraggedCard.dataset.module;
+                        const index     = this.currentlyDraggedCard.dataset.index;
 
-                        const upperInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-ue="${ue}"][data-index="${index}"]`)
+                        const upperInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${module}"][data-index="${index}"]`)
                         const upperInsertFieldHitbox = upperInsertField.querySelector(".drop-subject-card-insert-hitbox");
 
-                        const lowerInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-ue="${ue}"][data-index="${parseInt(index)+1}"]`)
+                        const lowerInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${module}"][data-index="${parseInt(index)+1}"]`)
                         const lowerInsertFieldHitbox = lowerInsertField.querySelector(".drop-subject-card-insert-hitbox");
 
                         this.detachInsertFieldHitboxEventListeners(upperInsertFieldHitbox);
@@ -4027,19 +4016,19 @@
                         }, 200)
                     }
                 }
-                else if (card.classList.contains("ue-card")) {
+                else if (card.classList.contains("module-card")) {
                     this.currentlyDraggedElement = draggedElement;
                     this.currentlyDraggedCard = card;
-                    document.querySelector(".drop-field.create-ue")             .classList.add("show");
-                    document.querySelector(".drop-field-create-ue-hitbox")      .classList.add("show");
-                    document.querySelector(".drop-field.remove-from-ue")        .classList.add("show");
-                    document.querySelector(".drop-field-remove-from-ue-hitbox") .classList.add("show");
+                    document.querySelector(".drop-field.create-module")             .classList.add("show");
+                    document.querySelector(".drop-field-create-module-hitbox")      .classList.add("show");
+                    document.querySelector(".drop-field.remove-from-module")        .classList.add("show");
+                    document.querySelector(".drop-field-remove-from-module-hitbox") .classList.add("show");
                     
-                    if (!this.foldedUeCardsId.includes(card.id)) {
-                        this.foldUeCard(e, true, true, true);
+                    if (!this.foldedModuleCardsId.includes(card.id)) {
+                        this.foldModuleCard(e, true, true, true);
                     }
                     else {
-                        this.foldUeCard(e, true, "only", true);
+                        this.foldModuleCard(e, true, "only", true);
                     }
                     
                     document.querySelector(".semester-content").classList.add("dragging");
@@ -4087,15 +4076,15 @@
 
                         this.timeouts.draggedElementOnDragEndEvent.showTeacherTable = setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher => {teacher.style.display = "table-cell"})}, 50);
                         document.querySelector(".semester-content")                 .classList.remove("dragging");
-                        document.querySelector(".drop-field.create-ue")             .classList.remove("show");
-                        document.querySelector(".drop-field-create-ue-hitbox")      .classList.remove("show");
-                        document.querySelector(".drop-field.remove-from-ue")        .classList.remove("show");
-                        document.querySelector(".drop-field-remove-from-ue-hitbox") .classList.remove("show");
+                        document.querySelector(".drop-field.create-module")             .classList.remove("show");
+                        document.querySelector(".drop-field-create-module-hitbox")      .classList.remove("show");
+                        document.querySelector(".drop-field.remove-from-module")        .classList.remove("show");
+                        document.querySelector(".drop-field-remove-from-module-hitbox") .classList.remove("show");
 
-                        document.querySelectorAll(".drop-ue-card-insert-plus,  .drop-subject-card-insert-plus ").forEach(plus  => {plus.classList.add("show");})
-                        document.querySelectorAll(".drop-ue-card-insert-arrow, .drop-subject-card-insert-arrow").forEach(arrow => {arrow.classList.remove("show");})
+                        document.querySelectorAll(".drop-module-card-insert-plus,  .drop-subject-card-insert-plus ").forEach(plus  => {plus.classList.add("show");})
+                        document.querySelectorAll(".drop-module-card-insert-arrow, .drop-subject-card-insert-arrow").forEach(arrow => {arrow.classList.remove("show");})
 
-                        const insertFieldTexts = document.querySelectorAll(".drop-ue-card-insert-text,  .drop-subject-card-insert-text");
+                        const insertFieldTexts = document.querySelectorAll(".drop-module-card-insert-text,  .drop-subject-card-insert-text");
                         insertFieldTexts.forEach(insertFieldText => {
                             insertFieldText.classList.replace("insert", "add");
                             insertFieldText.parentElement.classList.replace("insert", "add");
@@ -4105,11 +4094,11 @@
                     this.resizeUnclassifiedSection();
 
                     if (!card.classList.contains("unclassified")) {
-                        const sem   = card.dataset.semester;
-                        const ue    = card.dataset.ue;
-                        const index = card.dataset.index;
-                        const upperInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-ue="${ue}"][data-index="${index}"]`)
-                        const lowerInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-ue="${ue}"][data-index="${parseInt(index)+1}"]`)
+                        const sem       = card.dataset.semester;
+                        const module    = card.dataset.module;
+                        const index     = card.dataset.index;
+                        const upperInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${module}"][data-index="${index}"]`)
+                        const lowerInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${module}"][data-index="${parseInt(index)+1}"]`)
 
                         clearTimeout(this?.timeouts?.draggedElementOnDragStartEvent?.collapseSubjectCardAdjacentInsertFields);
                         setTimeout(() => {
@@ -4131,17 +4120,17 @@
                         }, 10);
                     }
                 }
-                else if (card.classList.contains("ue-card")) {
-                    document.querySelector(".drop-field.create-ue")             .classList.remove("show");
-                    document.querySelector(".drop-field-create-ue-hitbox")      .classList.remove("show");
-                    document.querySelector(".drop-field.remove-from-ue")        .classList.remove("show");
-                    document.querySelector(".drop-field-remove-from-ue-hitbox") .classList.remove("show");
+                else if (card.classList.contains("module-card")) {
+                    document.querySelector(".drop-field.create-module")             .classList.remove("show");
+                    document.querySelector(".drop-field-create-module-hitbox")      .classList.remove("show");
+                    document.querySelector(".drop-field.remove-from-module")        .classList.remove("show");
+                    document.querySelector(".drop-field-remove-from-module-hitbox") .classList.remove("show");
 
-                    if (!this.foldedUeCardsId.includes(card.id)) {
-                        this.unfoldUeCard(e, true, true, true);
+                    if (!this.foldedModuleCardsId.includes(card.id)) {
+                        this.unfoldModuleCard(e, true, true, true);
                     }
                     else {
-                        this.unfoldUeCard(e, true, "only", true);
+                        this.unfoldModuleCard(e, true, "only", true);
                     }
 
                     document.querySelector(".semester-content").classList.remove("dragging");
@@ -4173,10 +4162,10 @@
                 clearTimeout(this?.timeouts?.documentOnDragEnd?.hideTeacherTable);
                 document.querySelectorAll(".grades-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
                 document.querySelector(".semester-content")                 .classList.add("dragging");
-                document.querySelector(".drop-field.create-ue")             .classList.add("show");
-                document.querySelector(".drop-field-create-ue-hitbox")      .classList.add("show");
-                document.querySelector(".drop-field.remove-from-ue")        .classList.add("show");
-                document.querySelector(".drop-field-remove-from-ue-hitbox") .classList.add("show");
+                document.querySelector(".drop-field.create-module")             .classList.add("show");
+                document.querySelector(".drop-field-create-module-hitbox")      .classList.add("show");
+                document.querySelector(".drop-field.remove-from-module")        .classList.add("show");
+                document.querySelector(".drop-field-remove-from-module-hitbox") .classList.add("show");
 
                 e.dataTransfer.effectAllowed = "link";
                 e.dataTransfer.setDragImage(document.getElementById("emptyDiv"), 0, 0);
@@ -4249,19 +4238,19 @@
                 const insertField        = e.target.closest(        `.drop-field.insert-field.${type}`);
                 const insertFieldHitbox  = insertField.querySelector(`.drop-${type}-card-insert-hitbox`);
                 const dataTransfer       = e.dataTransfer.getData("text");
-                const dataTransferMatch  = dataTransfer.match(/ue-card|subject-card/);
-                const eventCallerMatch   = e.target.className.match(/drop-(ue|subject)-card/);
+                const dataTransferMatch  = dataTransfer.match(/module-card|subject-card/);
+                const eventCallerMatch   = e.target.className.match(/drop-(module|subject)-card/);
 
                 e.preventDefault(); 
 
                 insertFieldHitbox.ondragover = (e) => {this.insertFieldHitboxOnDragOverEvent(e)};
 
                 switch (`${dataTransferMatch?.[0] ? dataTransferMatch?.[0] : "errr... somthing"} dropped in ${eventCallerMatch?.[1] ? "a " + eventCallerMatch?.[1] + " insertion field" : "errr... somthing?"}`) {
-                    case "ue-card dropped in a ue insertion field":
-                        this.dropFieldUEInsertAction(dataTransfer, insertField);
+                    case "module-card dropped in a module insertion field":
+                        this.dropFieldModuleInsertAction(dataTransfer, insertField);
                     break;
-                    case "subject-card dropped in a ue insertion field":
-                        this.dropFieldToNewUEAction(dataTransfer, e.target.dataset.index);
+                    case "subject-card dropped in a module insertion field":
+                        this.dropFieldToNewModuleAction(dataTransfer, e.target.dataset.index);
                     break;
                     case "subject-card dropped in a subject insertion field":
                         this.dropFieldSubjectInsertAction(dataTransfer, insertField);
@@ -4317,11 +4306,11 @@
                     e.preventDefault();
                     e.dataTransfer.dropEffect = "link";
                     const data = e.target.dataset;
-                    if (data.type.match(/subject|ue/)) {
+                    if (data.type.match(/subject|module/)) {
                         this.insertFieldHitboxOnDropEvent(e);
                     }
                     else {
-                        this.dropFieldToNewUEAction(e.dataTransfer.getData("text"), data.index);
+                        this.dropFieldToNewModuleAction(e.dataTransfer.getData("text"), data.index);
                     }
                 };
 
@@ -4334,10 +4323,10 @@
                     }
                     else {
                         if (this.selectedSubjectCardsId.length > 0) {
-                            this.dropFieldToNewUEAction(this.selectedSubjectCardsId[0], data.index);
+                            this.dropFieldToNewModuleAction(this.selectedSubjectCardsId[0], data.index);
                         }
                         else {
-                            this.dropFieldToNewUEAction(null, data.index);
+                            this.dropFieldToNewModuleAction(null, data.index);
                         }
                     }
                 };
@@ -4427,12 +4416,12 @@
                         setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
                         
                         document.querySelector(".semester-content")                 .classList.remove("dragging");
-                        document.querySelector(".drop-field.create-ue")             .classList.remove("show");
-                        document.querySelector(".drop-field-create-ue-hitbox")      .classList.remove("show");
-                        document.querySelector(".drop-field.remove-from-ue")        .classList.remove("show");
-                        document.querySelector(".drop-field-remove-from-ue-hitbox") .classList.remove("show");
+                        document.querySelector(".drop-field.create-module")             .classList.remove("show");
+                        document.querySelector(".drop-field-create-module-hitbox")      .classList.remove("show");
+                        document.querySelector(".drop-field.remove-from-module")        .classList.remove("show");
+                        document.querySelector(".drop-field-remove-from-module-hitbox") .classList.remove("show");
 
-                        document.querySelectorAll(".ue-title.input").forEach(input => {
+                        document.querySelectorAll(".module-title.input").forEach(input => {
                             input.parentElement.style.transition = "";
                             input.parentElement.style.width = "42%";
                         })
@@ -4442,7 +4431,7 @@
                         })
 
                         this.selectedSubjectCardsId = [];
-                        this.selectedSubjectCardsSortedByUe = {};
+                        this.selectedSubjectCardsSortedByModule = {};
                     } 
                     else {      // clear the specifically given notifDiv from the selection
                         let subjectCard = "";
@@ -4463,12 +4452,12 @@
                                 this.selectedSubjectCardsId.splice(index, 1)
                             }
                         )
-                        Object.keys(this.selectedSubjectCardsSortedByUe).forEach((ueName, ueIndex) => {
-                            this.selectedSubjectCardsSortedByUe[ueName].forEach((selectedSubjectCard, subjIndex) => {
-                                this.selectedSubjectCardsSortedByUe[ueName].splice(subjIndex, 1);
+                        Object.keys(this.selectedSubjectCardsSortedByModule).forEach((moduleName, moduleIndex) => {
+                            this.selectedSubjectCardsSortedByModule[moduleName].forEach((selectedSubjectCard, subjIndex) => {
+                                this.selectedSubjectCardsSortedByModule[moduleName].splice(subjIndex, 1);
                             })
-                            if (this.selectedSubjectCardsSortedByUe[ueName].length == 0) {
-                                delete this.selectedSubjectCardsSortedByUe[ueName];
+                            if (this.selectedSubjectCardsSortedByModule[moduleName].length == 0) {
+                                delete this.selectedSubjectCardsSortedByModule[moduleName];
                             }
                         })
                     
@@ -4477,11 +4466,11 @@
                             setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
                             
                             document.querySelector(".semester-content")                 .classList.remove("dragging");
-                            document.querySelector(".drop-field.create-ue")             .classList.remove("show");
-                            document.querySelector(".drop-field-create-ue-hitbox")      .classList.remove("show");
-                            document.querySelector(".drop-field.remove-from-ue")        .classList.remove("show");
-                            document.querySelector(".drop-field-remove-from-ue-hitbox") .classList.remove("show");
-                            document.querySelectorAll(".ue-title.input").forEach(input => {
+                            document.querySelector(".drop-field.create-module")             .classList.remove("show");
+                            document.querySelector(".drop-field-create-module-hitbox")      .classList.remove("show");
+                            document.querySelector(".drop-field.remove-from-module")        .classList.remove("show");
+                            document.querySelector(".drop-field-remove-from-module-hitbox") .classList.remove("show");
+                            document.querySelectorAll(".module-title.input").forEach(input => {
                                 input.parentElement.style.transition = "";
                                 input.parentElement.style.width = "42%";
                             })
@@ -4501,16 +4490,16 @@
                     // Ensure the subject insertion drop fields are displaying the right text
                     document.querySelectorAll(".drop-field.insert-field").forEach(subjInsertField => {
                         if (this.selectedSubjectCardsId.length == 0) {
-                            subjInsertField.querySelector(".drop-ue-card-insert-plus , .drop-subject-card-insert-plus ").classList.add("show");
-                            subjInsertField.querySelector(".drop-ue-card-insert-arrow, .drop-subject-card-insert-arrow").classList.remove("show");
-                            subjInsertField.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").classList.replace("insert", "add");
-                            subjInsertField.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").parentElement.classList.replace("insert", "add");
+                            subjInsertField.querySelector(".drop-module-card-insert-plus , .drop-subject-card-insert-plus ").classList.add("show");
+                            subjInsertField.querySelector(".drop-module-card-insert-arrow, .drop-subject-card-insert-arrow").classList.remove("show");
+                            subjInsertField.querySelector(".drop-module-card-insert-text, .drop-subject-card-insert-text").classList.replace("insert", "add");
+                            subjInsertField.querySelector(".drop-module-card-insert-text, .drop-subject-card-insert-text").parentElement.classList.replace("insert", "add");
                         }
                         else {
-                            subjInsertField.querySelector(".drop-ue-card-insert-plus , .drop-subject-card-insert-plus ").classList.remove("show");
-                            subjInsertField.querySelector(".drop-ue-card-insert-arrow, .drop-subject-card-insert-arrow").classList.add("show");
-                            subjInsertField.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").classList.replace("add", "insert");
-                            subjInsertField.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").parentElement.classList.replace("add", "insert");
+                            subjInsertField.querySelector(".drop-module-card-insert-plus , .drop-subject-card-insert-plus ").classList.remove("show");
+                            subjInsertField.querySelector(".drop-module-card-insert-arrow, .drop-subject-card-insert-arrow").classList.add("show");
+                            subjInsertField.querySelector(".drop-module-card-insert-text, .drop-subject-card-insert-text").classList.replace("add", "insert");
+                            subjInsertField.querySelector(".drop-module-card-insert-text, .drop-subject-card-insert-text").parentElement.classList.replace("add", "insert");
                         }
                     });
                 }
@@ -4559,10 +4548,10 @@
                 dragIconOnClickEvent(e, dragIcon, dontAddToSelection=false) {
                     let subjectCard = e?.target ? document.getElementById(e.target.dataset.targetid) : e;
                     let draggableElement = subjectCard;
-                    const dropFieldAdd          = document.querySelector(".drop-field.create-ue");
-                    const dropFieldAddHitbox    = document.querySelector(".drop-field-create-ue-hitbox");
-                    const dropFieldRemove       = document.querySelector(".drop-field.remove-from-ue");
-                    const dropFieldRemoveHitbox = document.querySelector(".drop-field-remove-from-ue-hitbox");
+                    const dropFieldAdd          = document.querySelector(".drop-field.create-module");
+                    const dropFieldAddHitbox    = document.querySelector(".drop-field-create-module-hitbox");
+                    const dropFieldRemove       = document.querySelector(".drop-field.remove-from-module");
+                    const dropFieldRemoveHitbox = document.querySelector(".drop-field-remove-from-module-hitbox");
                     const type = dragIcon.dataset.type;
                     
                     draggableElement.draggable = true;
@@ -4571,8 +4560,8 @@
 
                     if (!dontAddToSelection) {
                         this.selectedSubjectCardsId.push(subjectCard.id);
-                        if (!this.selectedSubjectCardsSortedByUe[subjectCard.dataset.ue]) { this.selectedSubjectCardsSortedByUe[subjectCard.dataset.ue] = []; };
-                        this.selectedSubjectCardsSortedByUe[subjectCard.dataset.ue].push({subjectCardId: subjectCard.id, selectionIndex: this.selectedSubjectCardsId.length-1});
+                        if (!this.selectedSubjectCardsSortedByModule[subjectCard.dataset.module]) { this.selectedSubjectCardsSortedByModule[subjectCard.dataset.module] = []; };
+                        this.selectedSubjectCardsSortedByModule[subjectCard.dataset.module].push({subjectCardId: subjectCard.id, selectionIndex: this.selectedSubjectCardsId.length-1});
 
                         const selectionNotifDiv = this.createSelectedCardNotifDiv(subjectCard);
 
@@ -4585,22 +4574,22 @@
                         document.querySelectorAll(".drop-field.insert-field").forEach(subjInsertField => {
                             if (this.selectedSubjectCardsId.length == 0) {
                                 // shouldn't be reached, normally
-                                subjInsertField.querySelector(".drop-ue-card-insert-plus , .drop-subject-card-insert-plus ").classList.add("show");
-                                subjInsertField.querySelector(".drop-ue-card-insert-arrow, .drop-subject-card-insert-arrow").classList.remove("show");
-                                subjInsertField.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").classList.replace("insert", "add");
-                                subjInsertField.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").parentElement.classList.replace("insert", "add");
+                                subjInsertField.querySelector(".drop-module-card-insert-plus , .drop-subject-card-insert-plus ").classList.add("show");
+                                subjInsertField.querySelector(".drop-module-card-insert-arrow, .drop-subject-card-insert-arrow").classList.remove("show");
+                                subjInsertField.querySelector(".drop-module-card-insert-text, .drop-subject-card-insert-text").classList.replace("insert", "add");
+                                subjInsertField.querySelector(".drop-module-card-insert-text, .drop-subject-card-insert-text").parentElement.classList.replace("insert", "add");
                             }
                             else {
-                                subjInsertField.querySelector(".drop-ue-card-insert-plus , .drop-subject-card-insert-plus ").classList.remove("show");
-                                subjInsertField.querySelector(".drop-ue-card-insert-arrow, .drop-subject-card-insert-arrow").classList.add("show");
-                                subjInsertField.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").classList.replace("add", "insert");
-                                subjInsertField.querySelector(".drop-ue-card-insert-text, .drop-subject-card-insert-text").parentElement.classList.replace("add", "insert");
+                                subjInsertField.querySelector(".drop-module-card-insert-plus , .drop-subject-card-insert-plus ").classList.remove("show");
+                                subjInsertField.querySelector(".drop-module-card-insert-arrow, .drop-subject-card-insert-arrow").classList.add("show");
+                                subjInsertField.querySelector(".drop-module-card-insert-text, .drop-subject-card-insert-text").classList.replace("add", "insert");
+                                subjInsertField.querySelector(".drop-module-card-insert-text, .drop-subject-card-insert-text").parentElement.classList.replace("add", "insert");
                             }
                         });
                     }
 
                     document.querySelectorAll(".grades-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
-                    document.querySelectorAll(".ue-title.input").forEach(input => {
+                    document.querySelectorAll(".module-title.input").forEach(input => {
                         input.parentElement.style.transition = "width 0.3s ease";
                         input.parentElement.style.width = "30%";
                     })
@@ -4651,48 +4640,48 @@
 
                 // MARK: attach dropFields listeners
                 attachDropFieldsEventListeners(target="all", insertFieldsContainer="") {
-                    const dropFieldAdd          = document.querySelector(".drop-field.create-ue");
-                    const dropFieldAddHitbox    = document.querySelector(".drop-field-create-ue-hitbox");
-                    const dropFieldRemove       = document.querySelector(".drop-field.remove-from-ue");
-                    const dropFieldRemoveHitbox = document.querySelector(".drop-field-remove-from-ue-hitbox");
-                    const insertFieldHitboxes   = (insertFieldsContainer || document).querySelectorAll(".drop-subject-card-insert-hitbox, .drop-ue-card-insert-hitbox");
+                    const dropFieldAdd          = document.querySelector(".drop-field.create-module");
+                    const dropFieldAddHitbox    = document.querySelector(".drop-field-create-module-hitbox");
+                    const dropFieldRemove       = document.querySelector(".drop-field.remove-from-module");
+                    const dropFieldRemoveHitbox = document.querySelector(".drop-field-remove-from-module-hitbox");
+                    const insertFieldHitboxes   = (insertFieldsContainer || document).querySelectorAll(".drop-subject-card-insert-hitbox, .drop-module-card-insert-hitbox");
                     
                     if (target == "add" || target == "all") {
                         dropFieldAdd.style.background = "";
                         dropFieldAddHitbox.ondragover =    (e) => {if (e.target.classList.contains("show")) {
                             e.preventDefault(); 
                             dropFieldAdd.classList.add("hover");
-                            dropFieldAdd.querySelectorAll(".drop-field-create-ue-text, .drop-field-create-ue-plus").forEach(text => {text.classList.add("hover");})
+                            dropFieldAdd.querySelectorAll(".drop-field-create-module-text, .drop-field-create-module-plus").forEach(text => {text.classList.add("hover");})
                         }};
                         dropFieldAddHitbox.ondragleave =   (e) => {if (e.target.classList.contains("show")) {
                             e.preventDefault(); 
                             dropFieldAdd.classList.remove("hover");
-                            dropFieldAdd.querySelectorAll(".drop-field-create-ue-text, .drop-field-create-ue-plus").forEach(text => {text.classList.remove("hover");})
+                            dropFieldAdd.querySelectorAll(".drop-field-create-module-text, .drop-field-create-module-plus").forEach(text => {text.classList.remove("hover");})
                         }};
                         dropFieldAddHitbox.ondrop =        (e) => {if (e.target.classList.contains("show")) {
                             e.preventDefault(); 
                             e.dataTransfer.dropEffect = "link";
                             dropFieldAdd.classList.remove("hover");
-                            dropFieldAdd.querySelectorAll(".drop-field-create-ue-text, .drop-field-create-ue-plus").forEach(text => {text.classList.remove("hover");})
-                            this.dropFieldToNewUEAction(e.dataTransfer.getData("text"));
+                            dropFieldAdd.querySelectorAll(".drop-field-create-module-text, .drop-field-create-module-plus").forEach(text => {text.classList.remove("hover");})
+                            this.dropFieldToNewModuleAction(e.dataTransfer.getData("text"));
                         }};
                         // Custom :hover event, cuz otherwise it would trigger when the fields are not shown
                         dropFieldAddHitbox.onmouseenter =  (e) => {if (e.target.classList.contains("show")) {
                             e.preventDefault(); 
                             dropFieldAdd.classList.add("hover");
-                            dropFieldAdd.querySelectorAll(".drop-field-create-ue-text, .drop-field-create-ue-plus").forEach(text => {text.classList.add("hover");})
+                            dropFieldAdd.querySelectorAll(".drop-field-create-module-text, .drop-field-create-module-plus").forEach(text => {text.classList.add("hover");})
                         }};
                         dropFieldAddHitbox.onmouseleave =  (e) => {if (e.target.classList.contains("show")) {
                             e.preventDefault(); 
                             dropFieldAdd.classList.remove("hover");
-                            dropFieldAdd.querySelectorAll(".drop-field-create-ue-text, .drop-field-create-ue-plus").forEach(text => {text.classList.remove("hover");})
+                            dropFieldAdd.querySelectorAll(".drop-field-create-module-text, .drop-field-create-module-plus").forEach(text => {text.classList.remove("hover");})
                         }};
                         dropFieldAddHitbox.onclick =       (e) => {if (e.target.classList.contains("show")) {
                             e.preventDefault(); 
                             e.target.classList.remove("hover");
-                            e.target.querySelectorAll(".drop-field-create-ue-text, .drop-field-create-ue-plus").forEach(text => {text.classList.remove("hover");})
+                            e.target.querySelectorAll(".drop-field-create-module-text, .drop-field-create-module-plus").forEach(text => {text.classList.remove("hover");})
                             if (this.selectedSubjectCardsId.length > 0) {
-                                this.dropFieldToNewUEAction(this.selectedSubjectCardsId[0]);
+                                this.dropFieldToNewModuleAction(this.selectedSubjectCardsId[0]);
                             }
                         }};
                     }
@@ -4702,35 +4691,35 @@
                         dropFieldRemoveHitbox.ondragover =    (e) => {if (e.target.classList.contains("show")) {
                             e.preventDefault(); 
                             dropFieldRemove.classList.add("hover");
-                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-ue-text, .drop-field-remove-from-ue-minus").forEach(text => {text.classList.add("hover");})
+                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-text, .drop-field-remove-from-module-minus").forEach(text => {text.classList.add("hover");})
                         }};
                         dropFieldRemoveHitbox.ondragleave =   (e) => {if (e.target.classList.contains("show")) {
                             e.preventDefault(); 
                             dropFieldRemove.classList.remove("hover");
-                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-ue-text, .drop-field-remove-from-ue-minus").forEach(text => {text.classList.remove("hover");})
+                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-text, .drop-field-remove-from-module-minus").forEach(text => {text.classList.remove("hover");})
                         }};
                         dropFieldRemoveHitbox.ondrop =        (e) => {if (e.target.classList.contains("show")){
                             e.preventDefault(); 
                             e.dataTransfer.dropEffect = "link";
                             dropFieldRemove.classList.remove("hover");
-                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-ue-text, .drop-field-remove-from-ue-minus").forEach(text => {text.classList.remove("hover");})
+                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-text, .drop-field-remove-from-module-minus").forEach(text => {text.classList.remove("hover");})
                             this.dropFieldRemoveAction(e.dataTransfer.getData("text"));
                         }};
                         // Custom :hover event, cuz otherwise it would trigger when the fields are not shown
                         dropFieldRemoveHitbox.onmouseenter =  (e) => {if (e.target.classList.contains("show")) {
                             e.preventDefault(); 
                             dropFieldRemove.classList.add("hover");
-                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-ue-text, .drop-field-remove-from-ue-minus").forEach(text => {text.classList.add("hover");})
+                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-text, .drop-field-remove-from-module-minus").forEach(text => {text.classList.add("hover");})
                         }};
                         dropFieldRemoveHitbox.onmouseleave =  (e) => {if (e.target.classList.contains("show")) {
                             e.preventDefault(); 
                             dropFieldRemove.classList.remove("hover");
-                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-ue-text, .drop-field-remove-from-ue-minus").forEach(text => {text.classList.remove("hover");})
+                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-text, .drop-field-remove-from-module-minus").forEach(text => {text.classList.remove("hover");})
                         }};
                         dropFieldRemoveHitbox.onclick =       (e) => {if (e.target.classList.contains("show")) {
                             e.preventDefault(); 
                             dropFieldRemove.classList.remove("hover");
-                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-ue-text, .drop-field-remove-from-ue-minus").forEach(text => {text.classList.remove("hover");})
+                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-text, .drop-field-remove-from-module-minus").forEach(text => {text.classList.remove("hover");})
                             if (this.selectedSubjectCardsId.length > 0) {
                                 this.dropFieldRemoveAction(this.selectedSubjectCardsId[0]);
                             }
@@ -4746,13 +4735,13 @@
 
 
 
-                // MARK: dropFieldToNewUEAction
-                dropFieldToNewUEAction(cardId, index=0) {
+                // MARK: dropFieldToNewModuleAction
+                dropFieldToNewModuleAction(cardId, index=0) {
                     const sem = this.currentSemester;
-                    let newUeConfig = {subjects: [], coefficients: {}};
-                    let newUeName = "Module 1"; let count = 1;
-                    if (!this.ueConfig[sem]) this.ueConfig[sem] = {__ues__: []};
-                    while (this.ueConfig?.[sem]?.[newUeName]) {count++; newUeName = `Module ${count}`;}
+                    let newModuleConfig = {subjects: [], coefficients: {}};
+                    let newModuleName = "Module 1"; let count = 1;
+                    if (!this.moduleConfig[sem]) this.moduleConfig[sem] = {__modules__: []};
+                    while (this.moduleConfig?.[sem]?.[newModuleName]) {count++; newModuleName = `Module ${count}`;}
 
                     if (cardId) {
                         const card = document.getElementById(cardId);
@@ -4760,120 +4749,120 @@
                             let cardIsSelected = false;
                             this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {if (selectedSubjectCardId == card.id) cardIsSelected = true;});
 
-                            let subject, oldUeName, manageSim = true;
+                            let subject, oldModuleName, manageSim = true;
                             if (!this.sim[sem]) manageSim = false;
                             
                             if (!cardIsSelected) {  // 1 unselected subj card dropped in the drop field "add"
                                 subject = card.dataset.subject;
-                                oldUeName = card.dataset.ue;
-                                const ueIndex = this.ueConfig[sem].__ues__.indexOf(oldUeName);
+                                oldModuleName = card.dataset.module;
+                                const moduleIndex = this.moduleConfig[sem].__modules__.indexOf(oldModuleName);
 
                                 if (!card.classList.contains("unclassified")) { // If the subj card doesn't come from the unclassified container:
-                                    // We get its index in its UE configured in ueConfig
-                                    const subjectIndex = this.ueConfig[sem][oldUeName].subjects.indexOf(subject);
+                                    // We get its index in its module configured in moduleConfig
+                                    const subjectIndex = this.moduleConfig[sem][oldModuleName].subjects.indexOf(subject);
 
-                                    if (this.ueConfig[sem][oldUeName].subjects.toSpliced(subjectIndex,1).length == 0 && oldUeName.match(/Module (\d)/)) {
-                                        // If the action of removing the subject's name from the list of subject names of the ue empties the list, then we don't delete anything at all:
-                                        // the subj card was the only subj card of its previous ue card, therefore we don't need to create nor make a new one, we just set the subject's coef to 100%.
-                                        // This case is only to avoid taking a subj card from a UE named "Module [X]", putting it in a new UE named "Module [X+1]", deleting "Module [X]",
+                                    if (this.moduleConfig[sem][oldModuleName].subjects.toSpliced(subjectIndex,1).length == 0 && oldModuleName.match(/Module (\d)/)) {
+                                        // If the action of removing the subject's name from the list of subject names of the module empties the list, then we don't delete anything at all:
+                                        // the subj card was the only subj card of its previous module card, therefore we don't need to create nor make a new one, we just set the subject's coef to 100%.
+                                        // This case is only to avoid taking a subj card from a module named "Module [X]", putting it in a new module named "Module [X+1]", deleting "Module [X]",
                                         // and realizing that it was pointless lol
-                                        newUeName = oldUeName;
-                                        newUeConfig.coefficients[subject] = 100;
+                                        newModuleName = oldModuleName;
+                                        newModuleConfig.coefficients[subject] = 100;
                                     } 
                                     else {
-                                        newUeConfig = {subjects: [subject], coefficients: {[subject]: 100}};
+                                        newModuleConfig = {subjects: [subject], coefficients: {[subject]: 100}};
 
-                                        this.ueConfig[sem][oldUeName].subjects.splice(subjectIndex,1);
-                                        delete this.ueConfig[sem][oldUeName].coefficients[subject];
+                                        this.moduleConfig[sem][oldModuleName].subjects.splice(subjectIndex,1);
+                                        delete this.moduleConfig[sem][oldModuleName].coefficients[subject];
 
 
-                                        if (manageSim) {if (!this.sim[sem][oldUeName]) manageSim = false;}
+                                        if (manageSim) {if (!this.sim[sem][oldModuleName]) manageSim = false;}
                                         if (manageSim) {
-                                            this.sim[sem] = {[newUeName]: {}, ...this.sim[sem]}
-                                            this.sim[sem][newUeName][subject] = [];
-                                            this.sim[sem][oldUeName][subject].forEach((_, index) => {
-                                                this.sim[sem][newUeName][subject].push(this.sim[sem][oldUeName][subject][index].shift())
+                                            this.sim[sem] = {[newModuleName]: {}, ...this.sim[sem]}
+                                            this.sim[sem][newModuleName][subject] = [];
+                                            this.sim[sem][oldModuleName][subject].forEach((_, index) => {
+                                                this.sim[sem][newModuleName][subject].push(this.sim[sem][oldModuleName][subject][index].shift())
                                             })
-                                            this.deleteUnusedSimPath(false, sem, oldUeName, subject);
+                                            this.deleteUnusedSimPath(false, sem, oldModuleName, subject);
                                             this.saveSim();
                                         }
                                     }
 
-                                    if (this.ueConfig[sem][oldUeName].subjects.length == 0) {
-                                        this.ueConfig[sem].__ues__.splice(ueIndex, 1);
-                                        delete this.ueConfig[sem][oldUeName];
+                                    if (this.moduleConfig[sem][oldModuleName].subjects.length == 0) {
+                                        this.moduleConfig[sem].__modules__.splice(moduleIndex, 1);
+                                        delete this.moduleConfig[sem][oldModuleName];
                                     }
 
                                 } 
                                 else {
-                                    newUeConfig = {subjects: [subject], coefficients: {[subject]: 100}};
+                                    newModuleConfig = {subjects: [subject], coefficients: {[subject]: 100}};
                                 }
 
                             } else {  // mutliple subj cards dropped through selection in the drop field "add"
                                 let remainingCoef = 100;
                                 
-                                // Scanning through all the ues of the selected matiere cards to get the name of the ue of name "Module [x]", so that instead of creating a new Module,
-                                // we replace the ue with the lowest x that would have been deleted
+                                // Scanning through all the modules of the selected matiere cards to get the name of the module of name "Module [x]", so that instead of creating a new Module,
+                                // we replace the module with the lowest x that would have been deleted
                                 let lowestModuleIndexNameToReplace = -1;
-                                Object.keys(this.selectedSubjectCardsSortedByUe).forEach((_ueName, _ueIndex) => {
-                                    const _ueSelection = this.selectedSubjectCardsSortedByUe[_ueName];
-                                    const match = _ueName.match(/Module (\d+)/);
+                                Object.keys(this.selectedSubjectCardsSortedByModule).forEach((_moduleName, _moduleIndex) => {
+                                    const _moduleSelection = this.selectedSubjectCardsSortedByModule[_moduleName];
+                                    const match = _moduleName.match(/Module (\d+)/);
 
                                     // if the name matches "Module [x]" (1st condition) 
-                                    // and if the selection of subj cards of same ue that will be removed from their ue matches the number of subj in the said ue (cond 2): 
+                                    // and if the selection of subj cards of same module that will be removed from their module matches the number of subj in the said module (cond 2): 
                                     // we save the number of the module
-                                    if (match && _ueSelection.length == this.ueConfig[sem][_ueName].subjects.length) {
+                                    if (match && _moduleSelection.length == this.moduleConfig[sem][_moduleName].subjects.length) {
                                         lowestModuleIndexNameToReplace = match[1];
                                     }
                                 })
 
                                 if (lowestModuleIndexNameToReplace > -1) {
-                                    newUeName = "Module "+lowestModuleIndexNameToReplace;
+                                    newModuleName = "Module "+lowestModuleIndexNameToReplace;
                                 }
 
-                                Object.keys(this.selectedSubjectCardsSortedByUe).forEach((_ueName, _ueIndex) => {
-                                    oldUeName = _ueName;
-                                    const _ueSelection = this.selectedSubjectCardsSortedByUe[oldUeName];
+                                Object.keys(this.selectedSubjectCardsSortedByModule).forEach((_moduleName, _moduleIndex) => {
+                                    oldModuleName = _moduleName;
+                                    const _moduleSelection = this.selectedSubjectCardsSortedByModule[oldModuleName];
 
 
-                                    _ueSelection.forEach((selectedSubjectCard, _subjIndex) => {
+                                    _moduleSelection.forEach((selectedSubjectCard, _subjIndex) => {
                                         const subjectCard = document.getElementById(selectedSubjectCard.subjectCardId);
                                         const selectionIndex = selectedSubjectCard.selectionIndex;
                                         subject = subjectCard.dataset.subject;
 
                                         if (selectionIndex+1 == this.selectedSubjectCardsId.length) {
-                                            newUeConfig.coefficients[subject] = remainingCoef;
+                                            newModuleConfig.coefficients[subject] = remainingCoef;
                                         } else {
                                             const coef = Math.round(100/this.selectedSubjectCardsId.length);
-                                            newUeConfig.coefficients[subject] = coef;
+                                            newModuleConfig.coefficients[subject] = coef;
                                             remainingCoef -= coef;
                                         }
 
-                                        newUeConfig.subjects[selectionIndex] = subject;
+                                        newModuleConfig.subjects[selectionIndex] = subject;
                                         
 
                                         if (!subjectCard.classList.contains("unclassified")) {
 
-                                            // removing the subject card from its former UE
-                                            const oldUeIndex = this.ueConfig[sem].__ues__.indexOf(oldUeName);                       // get the old ue's index in the ues ordered array of the semester
-                                            const subjectIndexInOldUe = this.ueConfig[sem][oldUeName].subjects.indexOf(subject);    // get the subject's index in the subjects ordered array of the old ue
-                                            delete  this.ueConfig[sem][oldUeName].coefficients[subject];                            // delete coefficient data
-                                                    this.ueConfig[sem][oldUeName].subjects.splice(subjectIndexInOldUe,1);           // remove the subject from the subjects ordered array of the old ue
+                                            // removing the subject card from its former module
+                                            const oldModuleIndex = this.moduleConfig[sem].__modules__.indexOf(oldModuleName);                       // get the old module's index in the modules ordered array of the semester
+                                            const subjectIndexInOldModule = this.moduleConfig[sem][oldModuleName].subjects.indexOf(subject);    // get the subject's index in the subjects ordered array of the old module
+                                            delete  this.moduleConfig[sem][oldModuleName].coefficients[subject];                            // delete coefficient data
+                                                    this.moduleConfig[sem][oldModuleName].subjects.splice(subjectIndexInOldModule,1);           // remove the subject from the subjects ordered array of the old module
 
-                                            if (this.ueConfig[sem][oldUeName].subjects.length == 0) {
-                                                // If, after removing the subject card from its former UE, the said UE is empty, we remove it
-                                                delete this.ueConfig[sem][oldUeName];
-                                                this.ueConfig[sem].__ues__.splice(oldUeIndex, 1);
+                                            if (this.moduleConfig[sem][oldModuleName].subjects.length == 0) {
+                                                // If, after removing the subject card from its former module, the said module is empty, we remove it
+                                                delete this.moduleConfig[sem][oldModuleName];
+                                                this.moduleConfig[sem].__modules__.splice(oldModuleIndex, 1);
                                             }
 
-                                            if (manageSim) {if (!this.sim[sem][oldUeName][subject]) manageSim = false} // checking if the subject card had sim grades
+                                            if (manageSim) {if (!this.sim[sem][oldModuleName][subject]) manageSim = false} // checking if the subject card had sim grades
                                             if (manageSim) {
-                                                // if the subject card had sim grades, change their path in this.sim to match the ue change
-                                                this.sim[sem][newUeName][subject] = [];
-                                                this.sim[sem][oldUeName][subject].forEach((_, index) => {
-                                                    this.sim[sem][newUeName][subject].push(this.sim[sem][oldUeName][subject][index].shift())
+                                                // if the subject card had sim grades, change their path in this.sim to match the module change
+                                                this.sim[sem][newModuleName][subject] = [];
+                                                this.sim[sem][oldModuleName][subject].forEach((_, index) => {
+                                                    this.sim[sem][newModuleName][subject].push(this.sim[sem][oldModuleName][subject][index].shift())
                                                 })
-                                                this.deleteUnusedSimPath(false, sem, oldUeName, subject);
+                                                this.deleteUnusedSimPath(false, sem, oldModuleName, subject);
                                                 this.saveSim();
                                             }
                                         }
@@ -4881,31 +4870,31 @@
                                 })
 
                                 // this the last step, so that if the new module has the same same as an old module that gets deleted (in order to replace it, "Module [x]" case), we don't remove the wrong one
-                                this.ueConfig[sem][newUeName] = newUeConfig;
-                                this.ueConfig[sem].__ues__.splice(index, 0, newUeName);
+                                this.moduleConfig[sem][newModuleName] = newModuleConfig;
+                                this.moduleConfig[sem].__modules__.splice(index, 0, newModuleName);
                             }
                         }
                     }
                     else {
                         const newSubjName = this.lang == "fr" ? "Nouvelle matière" : "New subject";
-                        newUeConfig.subjects.push(newSubjName);
-                        newUeConfig.coefficients[newSubjName] = 100;
+                        newModuleConfig.subjects.push(newSubjName);
+                        newModuleConfig.coefficients[newSubjName] = 100;
                     }
 
-                    this.ueConfig[sem][newUeName] = newUeConfig;
-                    const newUeIndexInSem = this.ueConfig[sem].__ues__.indexOf(newUeName);
-                    if (newUeIndexInSem > -1) {
-                        this.ueConfig[sem].__ues__.splice(newUeIndexInSem, 1, newUeName)
+                    this.moduleConfig[sem][newModuleName] = newModuleConfig;
+                    const newModuleIndexInSem = this.moduleConfig[sem].__modules__.indexOf(newModuleName);
+                    if (newModuleIndexInSem > -1) {
+                        this.moduleConfig[sem].__modules__.splice(newModuleIndexInSem, 1, newModuleName)
                     }
                     else {
-                        this.ueConfig[sem].__ues__.splice(index, 0, newUeName)
+                        this.moduleConfig[sem].__modules__.splice(index, 0, newModuleName)
                     }                
 
                     this.removeSubjectCardFromSubjectSelection();
                     this.saveConfig();
                     this.getGradesDatas();
                     this.generateContent();
-                    this.scrollToClientHighestElem({id: `ue-card-${newUeName}-in-semester-${sem}`, smooth: true})
+                    this.scrollToClientHighestElem({id: `module-card-${newModuleName}-in-semester-${sem}`, smooth: true})
                 }
 
 
@@ -4919,19 +4908,19 @@
 
                     if (card?.classList?.contains("subject-card") && !card?.classList?.contains("unclassified")) {
                         const sem = card.dataset.semester;
-                        const ue = card.dataset.ue;
+                        const module = card.dataset.module;
                         const subj = card.dataset.subject;
 
                         if (!cardIsSelected) {
 
-                            const ueIndex = this.ueConfig[sem].__ues__.indexOf(ue);
-                            const subjectIndex = this.ueConfig[sem][ue].subjects.indexOf(subj);
-                                    this.ueConfig[sem][ue].subjects.splice(subjectIndex,1);
-                            delete  this.ueConfig[sem][ue].coefficients[subj];
+                            const moduleIndex = this.moduleConfig[sem].__modules__.indexOf(module);
+                            const subjectIndex = this.moduleConfig[sem][module].subjects.indexOf(subj);
+                                    this.moduleConfig[sem][module].subjects.splice(subjectIndex,1);
+                            delete  this.moduleConfig[sem][module].coefficients[subj];
 
-                            if (this.ueConfig[sem][ue].subjects.length == 0) {
-                                this.ueConfig[sem].__ues__.splice(ueIndex, 1);
-                                delete this.ueConfig[sem][ue];
+                            if (this.moduleConfig[sem][module].subjects.length == 0) {
+                                this.moduleConfig[sem].__modules__.splice(moduleIndex, 1);
+                                delete this.moduleConfig[sem][module];
                             }
                         }
                         else {
@@ -4940,19 +4929,19 @@
                                 const selectedSubjectCard = document.getElementById(selectedSubjectCardId);
 
                                 subject = selectedSubjectCard.dataset.subject;
-                                const ueIndex = this.ueConfig[sem].__ues__.indexOf(ue);
-                                const subjectIndex = this.ueConfig[sem][ue].subjects.indexOf(subject);
-                                        this.ueConfig[sem][ue].subjects.splice(subjectIndex,1);
-                                delete  this.ueConfig[sem][ue].coefficients[subject];
+                                const moduleIndex = this.moduleConfig[sem].__modules__.indexOf(module);
+                                const subjectIndex = this.moduleConfig[sem][module].subjects.indexOf(subject);
+                                        this.moduleConfig[sem][module].subjects.splice(subjectIndex,1);
+                                delete  this.moduleConfig[sem][module].coefficients[subject];
 
-                                if (this.ueConfig[sem][ue].subjects.length == 0) {
-                                    this.ueConfig[sem].__ues__.splice(ueIndex, 1);
-                                    delete this.ueConfig[sem][ue];
+                                if (this.moduleConfig[sem][module].subjects.length == 0) {
+                                    this.moduleConfig[sem].__modules__.splice(moduleIndex, 1);
+                                    delete this.moduleConfig[sem][module];
                                 }
                             })
                         }
 
-                        if (this.ueConfig[sem].__ues__.length == 0) {delete this.ueConfig[sem]}
+                        if (this.moduleConfig[sem].__modules__.length == 0) {delete this.moduleConfig[sem]}
 
                         this.removeSubjectCardFromSubjectSelection({elementDroppedInField:card});
                         this.saveConfig();
@@ -4962,7 +4951,7 @@
                     else if (card?.classList?.contains("subject-card") && card?.classList?.contains("unclassified") && cardIsSelected) {
                         this.removeSubjectCardFromSubjectSelection({elementDroppedInField:card});
                     }
-                    else if (card?.classList?.contains("ue-card")) {}
+                    else if (card?.classList?.contains("module-card")) {}
 
                 }
 
@@ -4979,7 +4968,7 @@
                             let cardIsSelected = false;
                             this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {if (selectedSubjectCardId == card.id) cardIsSelected = true;});
 
-                            const targetUeName = methodCaller.dataset.ue;
+                            const targetModuleName = methodCaller.dataset.module;
                             const insertionIndex = methodCaller.dataset.index;
                             
                             // The same thing happens whether this method is triggered from a selection or a single subject card, we just have to choose the right card id
@@ -4987,59 +4976,59 @@
                                 const subjectCard = document.getElementById(subjectCardId);
 
                                 const subject = subjectCard.dataset.subject;
-                                const oldUeName = subjectCard.dataset.ue;
-                                const oldUeIndex = this.ueConfig[sem].__ues__.indexOf(oldUeName);
-                                const subjectOldIndex = this.ueConfig?.[sem]?.[oldUeName]?.subjects?.indexOf(subject);
+                                const oldModuleName = subjectCard.dataset.module;
+                                const oldModuleIndex = this.moduleConfig[sem].__modules__.indexOf(oldModuleName);
+                                const subjectOldIndex = this.moduleConfig?.[sem]?.[oldModuleName]?.subjects?.indexOf(subject);
                             
-                                // CASE 1: subject card comes from unclassified section to a UE             -> (default/easy case)
-                                // CASE 2: subject card comes from a UE to another UE                       -> (moving case)
-                                // CASE 3: subject card comes from a UE to the same UE at a different index -> (reordering case)
-                                // CASE 4: subject card comes from a UE to the same UE at the same index    -> (a no-use case, so nothing happens)
+                                // CASE 1: subject card comes from unclassified section to a module             -> (default/easy case)
+                                // CASE 2: subject card comes from a module to another module                       -> (moving case)
+                                // CASE 3: subject card comes from a module to the same module at a different index -> (reordering case)
+                                // CASE 4: subject card comes from a module to the same module at the same index    -> (a no-use case, so nothing happens)
 
                                 switch (`
-                                    subject card comes from ${oldUeName 
-                                        ? `a UE and is ${targetUeName==oldUeName 
+                                    subject card comes from ${oldModuleName 
+                                        ? `a module and is ${targetModuleName==oldModuleName 
                                             ? `reorganized to ${subjectOldIndex == insertionIndex || subjectOldIndex+1 == insertionIndex 
                                                 ? "the same index" 
                                                 : "a different index"}` 
-                                            : "moved to a different UE"}` 
+                                            : "moved to a different module"}` 
                                         : "the unclassified section"}
                                 `.trim()) {
                                     case "subject card comes from the unclassified section":
-                                        // Just set the unclassified subject in the ueConfig
-                                        this.ueConfig[sem][targetUeName].subjects.splice(insertionIndex, 0, subject);
-                                        this.ueConfig[sem][targetUeName].coefficients[subject] = this.gradesDatas[sem][targetUeName].totalCoefSubjects <= 100 ? (100 - this.gradesDatas[sem][targetUeName].totalCoefSubjects) : 0;
+                                        // Just set the unclassified subject in the moduleConfig
+                                        this.moduleConfig[sem][targetModuleName].subjects.splice(insertionIndex, 0, subject);
+                                        this.moduleConfig[sem][targetModuleName].coefficients[subject] = this.gradesDatas[sem][targetModuleName].totalCoefSubjects <= 100 ? (100 - this.gradesDatas[sem][targetModuleName].totalCoefSubjects) : 0;
                                     break;
 
-                                    case "subject card comes from a UE and is moved to a different UE":
-                                        // We move the datas from the old UE to the new UE
-                                        this.ueConfig[sem][targetUeName].subjects.splice(insertionIndex, 0, subject);
-                                        this.ueConfig[sem][targetUeName].coefficients[subject]  = Number (this.ueConfig[sem][oldUeName].coefficients[subject]);
+                                    case "subject card comes from a module and is moved to a different module":
+                                        // We move the datas from the old module to the new module
+                                        this.moduleConfig[sem][targetModuleName].subjects.splice(insertionIndex, 0, subject);
+                                        this.moduleConfig[sem][targetModuleName].coefficients[subject]  = Number (this.moduleConfig[sem][oldModuleName].coefficients[subject]);
 
-                                        this.ueConfig[sem][oldUeName].subjects.splice(subjectOldIndex, 1);
-                                        delete this.ueConfig[sem][oldUeName].coefficients[subject];
+                                        this.moduleConfig[sem][oldModuleName].subjects.splice(subjectOldIndex, 1);
+                                        delete this.moduleConfig[sem][oldModuleName].coefficients[subject];
                                     break;
 
-                                    case "subject card comes from a UE and is reorganized to a different index":
+                                    case "subject card comes from a module and is reorganized to a different index":
                                         // We move the datas while paying attention to at which index was the original subject before moving it (in order to not mess up with the insertion index)
-                                        this.ueConfig[sem][targetUeName].subjects.splice(insertionIndex, 0, subject);
-                                        this.ueConfig[sem][targetUeName].coefficients[subject]  = Number (this.ueConfig[sem][oldUeName].coefficients[subject]);
+                                        this.moduleConfig[sem][targetModuleName].subjects.splice(insertionIndex, 0, subject);
+                                        this.moduleConfig[sem][targetModuleName].coefficients[subject]  = Number (this.moduleConfig[sem][oldModuleName].coefficients[subject]);
 
-                                        const subjectCorrectOldIndex = subjectOldIndex + (insertionIndex<=subjectOldIndex && this.ueConfig[sem][targetUeName].subjects.includes(subject) ? 1 : 0);
-                                        this.ueConfig[sem][oldUeName].subjects.splice(subjectCorrectOldIndex, 1);
+                                        const subjectCorrectOldIndex = subjectOldIndex + (insertionIndex<=subjectOldIndex && this.moduleConfig[sem][targetModuleName].subjects.includes(subject) ? 1 : 0);
+                                        this.moduleConfig[sem][oldModuleName].subjects.splice(subjectCorrectOldIndex, 1);
                                     break;
 
-                                    case "subject card comes from a UE and is reorganized to the same index":
+                                    case "subject card comes from a module and is reorganized to the same index":
                                         "Alas, nothing happens... This case is never reached!";
                                     break;
                                 }
 
-                                if (this.ueConfig[sem]?.[oldUeIndex]?.subjects?.length == 0) {
-                                    this.ueConfig[sem]?.__ues__?.splice(oldUeIndex, 1);
-                                    delete this.ueConfig[sem][oldUeIndex];
+                                if (this.moduleConfig[sem]?.[oldModuleIndex]?.subjects?.length == 0) {
+                                    this.moduleConfig[sem]?.__modules__?.splice(oldModuleIndex, 1);
+                                    delete this.moduleConfig[sem][oldModuleIndex];
 
-                                    if (this.ueConfig?.[sem]?.__ues__?.length == 0) {
-                                        delete this.ueConfig[sem]
+                                    if (this.moduleConfig?.[sem]?.__modules__?.length == 0) {
+                                        delete this.moduleConfig[sem]
                                     }
                                 }
                                 
@@ -5055,28 +5044,28 @@
                     else {          // When clicking on a ".drop-field.insert-field.subject" class div
                         const addDivClicked = methodCaller;
                         const sem = addDivClicked.dataset.semester;
-                        const ue =  addDivClicked.dataset.ue;
-                        const ueCard = document.getElementById(`ue-card-${ue}-in-semester-${sem}`);
-                        const ueDetails = ueCard.querySelector(".ue-details");
+                        const module =  addDivClicked.dataset.module;
+                        const moduleCard = document.getElementById(`module-card-${module}-in-semester-${sem}`);
+                        const moduleDetails = moduleCard.querySelector(".module-details");
 
                         let newSubjName = `${this.lang == "fr" ? "Nouvelle matière" : "New subject"} 1`; let count = 1;
-                        while (this.gradesDatas[sem][ue].subjects[newSubjName]) {
+                        while (this.gradesDatas[sem][module].subjects[newSubjName]) {
                             count++; newSubjName = `${this.lang == "fr" ? "Nouvelle matière" : "New subject"} ${count}`;
                         }
 
-                        const insertionIndex = methodCaller ? methodCaller.dataset.index : this.ueConfig[sem][ue].subjects.length;
+                        const insertionIndex = methodCaller ? methodCaller.dataset.index : this.moduleConfig[sem][module].subjects.length;
 
-                        this.ueConfig   [sem][ue].subjects.splice(insertionIndex, 0, newSubjName);
-                        this.ueConfig   [sem][ue].coefficients [newSubjName] = 0;
+                        this.moduleConfig   [sem][module].subjects.splice(insertionIndex, 0, newSubjName);
+                        this.moduleConfig   [sem][module].coefficients [newSubjName] = 0;
 
                         this.saveConfig();
                         this.getGradesDatas();
                         
-                        if (this.viewMode == "detailed" || !ueDetails.classList.contains("compact")) {
-                            ueDetails.innerHTML = this.createAllDetailedClassifiedSubjCards(sem, ue);
+                        if (this.viewMode == "detailed" || !moduleDetails.classList.contains("compact")) {
+                            moduleDetails.innerHTML = this.createAllDetailedClassifiedSubjCards(sem, module);
                         }
                         else {
-                            ueDetails.innerHTML = this.createAllCompactClassifiedSubjCards(sem, ue);
+                            moduleDetails.innerHTML = this.createAllCompactClassifiedSubjCards(sem, module);
                         }
 
                         this.attachAllEventListeners()
@@ -5086,20 +5075,20 @@
 
 
 
-                // MARK: dropFieldUEInsertAction
-                dropFieldUEInsertAction(cardId=null, methodCaller=null) {
+                // MARK: dropFieldModuleInsertAction
+                dropFieldModuleInsertAction(cardId=null, methodCaller=null) {
                     const sem = this.currentSemester;
 
                     if (cardId) {
                         const card = document.getElementById(cardId);
 
-                        if (card?.classList?.contains("ue-card")) {
-                            const oldUEIndex = card.dataset.index;
-                            const newUEIndex = methodCaller?.dataset?.index || 0;
-                            const compensatedNewUEIndex = oldUEIndex > newUEIndex ? newUEIndex : newUEIndex - 1;
-                            const ueName = this.ueConfig[sem].__ues__.splice(oldUEIndex, 1)[0];
+                        if (card?.classList?.contains("module-card")) {
+                            const oldModuleIndex = card.dataset.index;
+                            const newModuleIndex = methodCaller?.dataset?.index || 0;
+                            const compensatedNewModuleIndex = oldModuleIndex > newModuleIndex ? newModuleIndex : newModuleIndex - 1;
+                            const moduleName = this.moduleConfig[sem].__modules__.splice(oldModuleIndex, 1)[0];
 
-                            this.ueConfig[sem].__ues__.splice(compensatedNewUEIndex,0,ueName);
+                            this.moduleConfig[sem].__modules__.splice(compensatedNewModuleIndex,0,moduleName);
                             this.saveConfig();
                             this.getGradesDatas();
                             this.generateContent();
@@ -5112,10 +5101,10 @@
 
                 
                 // MARK: createDropFieldInsertionField
-                createDropFieldInsertionField(type="subject", {sem=0, ueName="", index=-1}={sem:0, ueName:"", index:-1}) {
+                createDropFieldInsertionField(type="subject", {sem=0, moduleName="", index=-1}={sem:0, moduleName:"", index:-1}) {
                     const thereIsSelection = this.selectedSubjectCardsId.length > 0;
                     return `
-                        <div class="drop-field insert-field ${type} show" data-semester="${sem}" ${type=="ue" ? `` : `data-ue="${ueName}" `}data-index="${index}">
+                        <div class="drop-field insert-field ${type} show" data-semester="${sem}" ${type=="module" ? `` : `data-module="${moduleName}" `}data-index="${index}">
                             <div class="drop-${type}-card-insert-content plus">
                                 <div class="drop-${type}-card-insert-plus${thereIsSelection ? "" : " show"}">+</div>
                             </div>
@@ -5158,7 +5147,7 @@
                     importMenu.style.display = "";
                     setTimeout(() => {importMenu.classList.add("show")}, 10)
                     importFile.onclick   = () => this.importData();
-                    importClear.onclick  = () => {this.ueConfig = {}; this.compactSubjCardsId = []; this.foldedUeCardsId = []; this.getGradesDatas(); this.saveConfig(); this.generateContent(true)};
+                    importClear.onclick  = () => {this.moduleConfig = {}; this.compactSubjCardsId = []; this.foldedModuleCardsId = []; this.getGradesDatas(); this.saveConfig(); this.generateContent(true)};
                     importOnline.onclick = () => {
                         if (this.onlineConfigs)
                         this.getConfigsFromRepo(this.repoContentsAPI, () => this.openOnlineCfgPicker())
@@ -5358,18 +5347,18 @@
                         try {
                             const parsed = JSON.parse(text);
 
-                            // If parsed contains ueConfig, apply it to the dashboard and persist
+                            // If parsed contains moduleConfig, apply it to the dashboard and persist
                             if (parsed?.version != this.configVersion) {
                                 alert(this.lang == "fr" 
-                                    ? `Ce fichier de configuration n'est pas de la bonne version ! Assure-toi de télécharger la dernière version ! (Ce fichier est de version "${parsed?.version}", alors que la version de fichier attendue est "${this.configVersion}")`
+                                    ? `Ce fichier de configuration n'est pas de la bonne version ! Assure-toi de télécharger la dernière version ! (Ce fichier est de version "${parsed?.version}", alors qmodule la version de fichier attendmodule est "${this.configVersion}")`
                                     : `This configuration file isn't of the right version! Make sure you download the latest version! (This file's version is "${parsed?.version}", whereas the file's version expected is "${this.configVersion}")`
                                 )
                             }
-                            else if (parsed?.version == this.configVersion && parsed?.ueConfig) {
+                            else if (parsed?.version == this.configVersion && parsed?.moduleConfig) {
                                 try {
-                                    Object.keys(parsed.ueConfig).sort((a,b) => a-b).forEach(semX => {
+                                    Object.keys(parsed.moduleConfig).sort((a,b) => a-b).forEach(semX => {
                                         this.currentSemester = parseInt(semX);
-                                        this.ueConfig[semX] = parsed.ueConfig[semX];
+                                        this.moduleConfig[semX] = parsed.moduleConfig[semX];
                                     })
                                     document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
                                     document.getElementById('filter-tab-semester-'+this.currentSemester).classList.add('active');
@@ -5381,7 +5370,7 @@
                             }
                             else {
                                 alert(this.lang == "fr" 
-                                    ? `Ce fichier de configuration est invalide ! Je ne trouve pas les données attendues !`
+                                    ? `Ce fichier de configuration est invalide ! Je ne trouve pas les données attendmodules !`
                                     : `This configuration file is invalid! I don't find the expected datas!`
                                 )
                             }
@@ -5457,7 +5446,7 @@
                 const data = {
                     date: new Date().toISOString().split('T')[0],
                     version: this.configVersion,
-                    ueConfig: this.ueConfig
+                    moduleConfig: this.moduleConfig
                 };
                 const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
@@ -5548,17 +5537,17 @@
                         this.generateContent(false);
                     }
                     else if (this.keyInputMatch(e, "F", shiftRequired)) {
-                        const className = "ue-header", timeout = 210, highestElemInPageHandleType = "last above", smooth = true;
+                        const className = "module-header", timeout = 210, highestElemInPageHandleType = "last above", smooth = true;
 
-                        if (this.foldedUeCardsId.length == 0) {
+                        if (this.foldedModuleCardsId.length == 0) {
                             this.scrollToClientHighestElem("first", {className, timeout, highestElemInPageHandleType, smooth, block: "center"});
                             document.querySelector(".fold-toggle").classList.add("active");
-                            this.foldAllUeCards();
+                            this.foldAllModuleCards();
                         }
                         else {
                             this.scrollToClientHighestElem("first", {className, timeout, highestElemInPageHandleType, smooth, block: "start"});
                             document.querySelector(".fold-toggle").classList.remove("active");
-                            this.unfoldAllUeCards();
+                            this.unfoldAllModuleCards();
                         }
                         
                     }

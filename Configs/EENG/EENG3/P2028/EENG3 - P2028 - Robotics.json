@@ -1,9 +1,9 @@
 {
   "date": "2026-02-01",
-  "version": "2",
+  "version": "3",
   "ueConfig": {
     "5": {
-      "__ues__" : [
+      "__modules__" : [
         "Mathematics for Engineers 5",
         "Mechanical Engineering 5",
         "Electrical Engineering 5",
@@ -75,7 +75,7 @@
       }
     },
     "6": {
-      "__ues__" : [
+      "__modules__" : [
         "Robotics and Automation Engineering 6",
         "Mathematics for Engineers 6", 
         "Control Engineering 6", 
