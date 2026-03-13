@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.2.5
+// @version      2.2.6
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/group/education/notes*
@@ -613,20 +613,17 @@
 
 
 
-
-    const ERROR503 = document.title == '503 Service Unavailable' || document.title == 'ECAM Grades Dashboard - Transform Your Grade Experience';
     
     const styleSheet = document.createElement("style");
     styleSheet.textContent = styles;
     document.head.appendChild(styleSheet);
-    if (ERROR503) { document.body.children[0].remove(); document.body.children[0].remove(); }
 
     //MARK: -
     class ECAMDashboard {
 
         constructor() {
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.2.5";
+            this.scriptVersion = "2.2.6";
             this.configVersion = 3;
 
             this.now        = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
@@ -708,10 +705,10 @@
             this.foldedModuleCardsId = [];
             this.scrollToThisElem = "";
 
-            this.ERROR503 = document.title == '503 Service Unavailable' || document.title == 'ECAM Grades Dashboard - Transform Your Grade Experience';
-
             this.init();
         }
+
+
 
 
         // MARK: -INIT
@@ -1132,34 +1129,29 @@
                 return Number.isFinite(v) ? Number(v.toFixed(2)) : 0;
             }
             parseGrades() {
-                if (!this.ERROR503) {
-                    const rows = document.querySelectorAll("table.greyGridTable tbody tr");
-                    rows.forEach(row => {
-                        const cells = row.querySelectorAll("td");
-                        if (cells.length >= 6 && cells[0].textContent.includes("/20")) {
-                            const grade = parseFloat(cells[0].textContent.replace("/20", "").replace(",", ".")) || 0;
-                            const classAvg = parseFloat(cells[3].textContent.replace("/20", "").replace(",", ".")) || 0;
-                            const libelle = cells[1].textContent.trim();
-                            const coef = parseFloat(cells[2].textContent.replace("%", "").replace(",", ".")) || 0;
-                            const prof = cells[4].textContent.trim();
-                            const date = cells[5].textContent.trim();
-                            const semMatch = libelle.match(/Semester\s+(\d+)/i);
-                            const semester = semMatch ? semMatch[1] : "?";
-                            const parts = libelle.split(" - ").map(p => p.trim());
-                            const subject = parts.length >= 3 ? parts.slice(1,-1).join(" - ") : libelle;
-                            const type = parts.length >= 2 ? parts.at(-1) : "";
-                            this.grades.push({ grade, classAvg, coef, semester, subject, type, prof, date, libelle });
-                        }
-                    });
-                    this.grades.forEach(n => {
-                        if (!this.semesters[n.semester]) this.semesters[n.semester] = {};
-                        if (!this.semesters[n.semester][n.subject]) this.semesters[n.semester][n.subject] = [];
-                        this.semesters[n.semester][n.subject].push(n);
-                    });
-                }
-                else {
-                    this.grades = new Array(this.savedReadGrades);
-                }
+                const rows = document.querySelectorAll("table.greyGridTable tbody tr");
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll("td");
+                    if (cells.length >= 6 && cells[0].textContent.includes("/20")) {
+                        const grade = parseFloat(cells[0].textContent.replace("/20", "").replace(",", ".")) || 0;
+                        const classAvg = parseFloat(cells[3].textContent.replace("/20", "").replace(",", ".")) || 0;
+                        const libelle = cells[1].textContent.trim();
+                        const coef = parseFloat(cells[2].textContent.replace("%", "").replace(",", ".")) || 0;
+                        const prof = cells[4].textContent.trim();
+                        const date = cells[5].textContent.trim();
+                        const semMatch = libelle.match(/Semester\s+(\d+)/i);
+                        const semester = semMatch ? semMatch[1] : "?";
+                        const parts = libelle.split(" - ").map(p => p.trim());
+                        const subject = parts.length >= 3 ? parts.slice(1,-1).join(" - ") : libelle;
+                        const type = parts.length >= 2 ? parts.at(-1) : "";
+                        this.grades.push({ grade, classAvg, coef, semester, subject, type, prof, date, libelle });
+                    }
+                });
+                this.grades.forEach(n => {
+                    if (!this.semesters[n.semester]) this.semesters[n.semester] = {};
+                    if (!this.semesters[n.semester][n.subject]) this.semesters[n.semester][n.subject] = [];
+                    this.semesters[n.semester][n.subject].push(n);
+                });
             }
             getUnclassifiedSubjects(sem) {
                 const classified = new Set();
@@ -1247,21 +1239,13 @@
                 return out;
             }
             createNewGradesNotifDiv() {
-                if (document.querySelector(".new-grades-notif") == null && !this.ERROR503) {
+                if (document.querySelector(".new-grades-notif") == null) {
                     const notifDiv = document.createElement("div");
                     notifDiv.className = "new-grades-notif";
                     notifDiv.innerHTML = this.lang == "fr" ? `NOUVELLE NOTE${this.newGrades.length>1 ? "S !" : " !"}` : `NEW GRADE${this.newGrades.length>1 ? "S!" : "!"}`;
                     notifDiv.innerHTML += `<button id="closeNewGradesNotif" style="padding-bottom: 3px;font-size: 10px;display: flex;width: 21px;height: 21px;position: fixed;right: calc(5% - -15px);border-radius: 5px;border: 3px solid #e0e6ff;justify-content: center;align-items: center;align-content: center;">❌</button>`;
                     document.querySelector(".portlet-boundary").appendChild(notifDiv);
                     setTimeout(() => {if (this.newGrades.length > 0) {document.querySelector(".new-grades-notif").classList.add("on")}}, 10)
-                }
-                else if (this.ERROR503) {
-                    const notifDiv = document.createElement("div");
-                    notifDiv.className = "new-grades-notif";
-                    notifDiv.innerHTML = `Debug mode: Service is unavailable`;
-                    notifDiv.innerHTML += `<button id="closeNewGradesNotif" style="padding-bottom: 3px;font-size: 10px;display: flex;width: 21px;height: 21px;position: fixed;right: calc(5% - -15px);border-radius: 5px;border: 3px solid #e0e6ff;justify-content: center;align-items: center;align-content: center;">❌</button>`;
-                    document.body.appendChild(notifDiv);
-                    setTimeout(() => {document.querySelector(".new-grades-notif").classList.add("on")}, 10)
                 }
                 else
                 {
@@ -1840,6 +1824,7 @@
 
 
 
+
         //#region -REGION: Online methods
 
             /** Shows/Hides/Toggles the loading symbol when called depending on the argument `show`.
@@ -2025,6 +2010,7 @@
             }
             
         //#endregion
+
 
 
 
