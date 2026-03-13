@@ -1,7 +1,7 @@
 {
   "date": "2026-03-09",
   "version": "3",
-  "ueConfig": {
+  "moduleConfig": {
     "3": {
       "__modules__": [
         "Mathematics for Engineers 3",
