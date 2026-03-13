@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.2.4
+// @version      2.2.5
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/group/education/notes*
@@ -446,7 +446,7 @@
             .module-info-clear.disabled         {  }
             .module-info-clear.sim              {  }
 
-            .module-details                     { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 15px; opacity: 100%; transition: all 0.2s ease; }
+            .module-details                     { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 30px; opacity: 100%; transition: all 0.2s ease; }
             .module-details.edit-mode           { gap: 8px; }
             .module-details.fold                { gap: 0px; opacity: 0%; }
             .module-moyenne                     { display: flex; align-items: center; justify-content: flex-end; font-size: 24px; font-weight: 800; gap:10px; width: 193px; }
@@ -626,19 +626,19 @@
 
         constructor() {
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.2.4";
+            this.scriptVersion = "2.2.5";
             this.configVersion = 3;
 
             this.now        = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
             this.dateHour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
             this.today  = new Date().toISOString().split('T')[0];                                                       // Current date in ISO String
-            this.dateTimeOfLastUpdateCheck  = localStorage.getItem("ECAM_DASHBOARD_DATE_TIME_OF_LAST_UPDATE_CHECK") || "2026-02-02T00:00:00Z"; // A day before the date of last update, so that the update check is ran to make sure the correct version is installed
-            this.isUpdateAvailable          = localStorage.getItem("ECAM_DASHBOARD_IS_UPDATE_AVAILABLE")            || false;
+            this.dateTimeOfLastUpdateCheck          = localStorage.getItem("ECAM_DASHBOARD_DATE_TIME_OF_LAST_UPDATE_CHECK") || "2026-02-02T00:00:00Z"; // A day before the date of last update, so that the update check is ran to make sure the correct version is installed
+            this.isUpdateAvailable                  = localStorage.getItem("ECAM_DASHBOARD_IS_UPDATE_AVAILABLE")            || false;
 
             this.grades     = [];
             this.semesters  = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{}, 7:{}, 8:{}, 9:{}, 10:{}};
-            this.savedReadGrades    = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SAVED_READ_GRADES"))         || [];
-            this.sim                = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SIM_GRADES"))                || {};
+            this.savedReadGrades        = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SAVED_READ_GRADES"))             || [];
+            this.sim                    = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SIM_GRADES"))                    || {};
             this.newGrades = [];
             
             this.repoUserReportIssue        = "https://github.com/Batkillulu/ECAM-Grades-Dashboard/issues/new?template=user-report-issue-template.md";
@@ -650,7 +650,7 @@
             
             this.gitFetchScanDoneArray = [];
             this.tempGitConfigParentDirData = {};
-            this.onlineConfigs                  = localStorage.getItem("ECAM_DASHBOARD_ONLINE_CONFIGS")             || {
+            this.onlineConfigs          = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_ONLINE_CONFIGS"))                || {
                 Configs: {
                     EENG:   {
                         EENG1: {},
@@ -677,24 +677,24 @@
                     nbCfgs: 4,
                 },
                 nbCfgs: 4,
-                date: this.today,
+                date: "0000-00-00T00:00:00Z",
             };
             
-            this.moduleConfig                   = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_MODULE_CONFIG")) || {};
-            this.disabledGrades                 = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_DISABLED_GRADES"))|| [];
+            this.moduleConfig           = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_MODULE_CONFIG"))                 || {};
+            this.disabledGrades         = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_DISABLED_GRADES"))               || [];
             this.gradesDatas = {};
 
 
-            this.defSem                         = localStorage.getItem("ECAM_DASHBOARD_DEFAULT_SEMESTER")           || "all";
+            this.defSem                             = localStorage.getItem("ECAM_DASHBOARD_DEFAULT_SEMESTER")               || "all";
             this.currentSemester = this.defSem;
 
-            this.defView                        = localStorage.getItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE")          || "detailed";
+            this.defView                            = localStorage.getItem("ECAM_DASHBOARD_DEFAULT_VIEW_MODE")              || "detailed";
             this.viewMode = this.defView;
 
-            this.lang                           = localStorage.getItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE")           || "en";
+            this.lang                               = localStorage.getItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE")               || "en";
             this.tempSelection = {};
             this.draggedSubjId = "";
-            this.editMode                       = localStorage['ECAM_DASHBOARD_DEFAULT_EDIT_MODE']                  || false;
+            this.editMode               = JSON.parse( localStorage.getItem('ECAM_DASHBOARD_DEFAULT_EDIT_MODE'))             || false;
             this.pinDockbar = false;
             this.timeouts = {};
 
@@ -795,8 +795,8 @@
             scrollToClientHighestElem(priority="first", ...{className= "subject-card", id="", margin=this.editMode ? 100 : 25, timeout=20, smooth=false, highestElemInPageHandleType="none", block="start"}) {
                 const defaultTargetElementDatas = [
                     {className: "modules-section",         margin: 20,                        highestElemInPageHandleType:"partial"}, 
-                    {className: "module-card",                 margin: this.editMode ? 100 : 25,   highestElemInPageHandleType:"above"},
-                    {className: "unclassified-section",    margin: this.editMode ? 100 : 25,   highestElemInPageHandleType:"partial"},
+                    {className: "module-card",             margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"above"},
+                    {className: "unclassified-section",    margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"partial"},
                     {className: "subject-card",            margin: 10,                        highestElemInPageHandleType:"above"},
                 ];
 
@@ -1270,6 +1270,20 @@
             }
             draggableIcon(source="subject-card", {height=25, type="unknown", targetId="none"}={height: 25, type: "unknown", targetId:"none"}) {
                 return `<div class="drag-icon for-${source}" data-targetid="${targetId}" data-type="${type}" draggable="false" style="height:${height}px; width:${height}px; font-size: ${height*0.75}px">☰</div>`
+            }
+            dateTimeSlice(dateTime=this.now(), minutesOffset=5) {
+                const minutes    = parseInt(dateTime.match(/T\d{2}:(\d{2}):\d{2}Z/)[1]);
+                const hour       = parseInt(dateTime.match(/T(\d{2}):\d{2}:\d{2}Z/)[1]);
+                
+                const newMinutes  = minutes + (minutesOffset-minutes%minutesOffset);
+                const newHour     = minutes >= 60 
+                ? ((hour + 1).toString().length > 1 ? (hour + 1).toString() : "0"+(hour + 1).toString()) 
+                : (hour.toString().length > 1 ? hour.toString() : "0"+hour.toString())
+                ;
+
+                const formatedMinutes = (newMinutes%60).toString().length > 1 ? (newMinutes%60).toString() : "0"+(newMinutes%60).toString();
+
+                return dateTime.replace(/T\d{2}:\d{2}:\d{2}Z/, `T${newHour}:${formatedMinutes}:00Z`);
             }
             /** Call inside a onkeydown or onkeyup event listener
              *  
@@ -1846,96 +1860,97 @@
                     document.querySelectorAll(".loading-symbol").forEach(symbol => {symbol.classList.remove("show")});
                 }
             }
-            
-            async getConfigsFromRepo(repoAPIUrl, endActionCallback) {
-                this.showLoadingSymbol(true);
-
-                this.onlineConfigs = {Configs: {nbCfgs: 0, path: ""}, nbCfgs: 0, date: this.today};
+            /** Send a request to my repo to obtain the configs. The request is allowed to be sent by slices of 5 minutes 
+             * (if a request was sent at 12:43PM, next request is allowed at 12:45PM, and the next at 12:50PM), 
+             * so if this method is called before the validity date and time is passed, runs it from memory instead of from a new request.
+             * 
+             * @param {URL} repoAPIUrl URL of the repo's API to fetch the data to
+             */
+            async getConfigsFromRepoAPI(repoAPIUrl) {
                 
-                // Fetch repo's API data
-                const xhttp = new XMLHttpRequest();
-                xhttp.open("GET", repoAPIUrl, true);
-                xhttp.send();
+                // Making sure a request isn't sent everytime the import online config button is clicked by saving in the cache the previous online config fetch, and giving it a validity date and time.
+                const dateTimeOfLastConfigFetchValidUntil = this.onlineConfigs.date;
+                
+                if (dateTimeOfLastConfigFetchValidUntil < this.now()) {
+                    // Sending a request if the validity date and time is passed
+                    this.showLoadingSymbol(true);
+                    const newDateTimeOfLastConfigFetchValidUntil = this.dateTimeSlice(dateTimeOfLastConfigFetchValidUntil, 10);
+    
+                    this.onlineConfigs = {Configs: {nbCfgs: 0, path: ""}, nbCfgs: 0, date: newDateTimeOfLastConfigFetchValidUntil};
 
-                xhttp.onload = () => {
-                    // If couldn't find the repo's API data, try again with the test repo Miscelleneous_Tempermonkey_UserScripts
-                    if (xhttp?.status != "200") {
-                        alert("A problem has occured... this configuration file isn't accessible anymore? Let the devs!");
-                        return;
+                    // Fetch repo's API data
+                    const xhttp = new XMLHttpRequest();
+                    xhttp.open("GET", repoAPIUrl, true);
+                    xhttp.send();
+
+                    xhttp.onload = () => {
+                        // If couldn't find the repo's API data
+                        if (xhttp?.status != "200") {
+                            alert("A problem has occured... this configuration file isn't accessible anymore? Let the devs know!");
+                            return;
+                        }
+                        
+                        const repoContent = JSON.parse(xhttp.response);
+    
+    
+                        repoContent.forEach(elem => {if (elem.name == "Configs" && elem.type == "dir") {
+                            const configsTreeUrl = repoAPIUrl.replace("/contents", "/git/trees/"+elem.sha+"?recursive=true");
+                            const configsTreeReq = new XMLHttpRequest();
+                            configsTreeReq.open("GET", configsTreeUrl, true);
+                            configsTreeReq.send();
+    
+                            configsTreeReq.onload = () => {
+                                const configsTree = JSON.parse(configsTreeReq.response).tree;
+                                configsTree.forEach(dir => {
+                                    if (dir?.type == "blob") {
+                                        const path      = dir.path;
+                                        const pathArray = path.split("/");
+    
+                                        this.onlineConfigs.nbCfgs++;
+                                        this.onlineConfigs.Configs.nbCfgs++;
+                                        this.onlineConfigs.Configs.path = "Configs";
+                                        this.tempGitConfigParentDirData = this.onlineConfigs.Configs;
+                                        
+                                        pathArray.forEach((dirName, hierarchyIndex, pathArray) => {
+                                            if (hierarchyIndex == pathArray.length-1) {
+                                                const url = repoAPIUrl.replace("api.github.com/repos", "raw.githubusercontent.com").replace("/contents", "/refs/heads/main/") + (this.tempGitConfigParentDirData.path+"/"+dirName).replace(/ /g, "%20");
+                                                this.tempGitConfigParentDirData[dirName] = url;
+                                            }
+                                            else if (!this.tempGitConfigParentDirData[dirName]) {
+                                                const pathSubArray = Object.values(pathArray).splice(0,hierarchyIndex+1);
+                                                this.tempGitConfigParentDirData[dirName] = {nbCfgs: 1, path: `Configs${pathSubArray.length>0 ? "/" : ""}` + pathSubArray.join("/").replace(/ /g, "%20")}
+                                                this.tempGitConfigParentDirData = this.tempGitConfigParentDirData[dirName];
+                                            }
+                                            else if (this.tempGitConfigParentDirData[dirName]) {
+                                                this.tempGitConfigParentDirData[dirName].nbCfgs++;
+                                                this.tempGitConfigParentDirData = this.tempGitConfigParentDirData[dirName];
+                                            }
+    
+                                        })
+                                    }
+                                })
+    
+                                this.tempGitConfigParentDirData = undefined;
+                                localStorage.setItem("ECAM_DASHBOARD_ONLINE_CONFIGS", JSON.stringify(this.onlineConfigs));
+                                this.showLoadingSymbol(false);
+                                this.openOnlineCfgPicker();
+                            };
+                        }})
                     }
-                    
-                    const repoContent = JSON.parse(xhttp.response);
-
-
-                    repoContent.forEach(elem => {if (elem.name == "Configs" && elem.type == "dir") {
-                        const configsTreeUrl = repoAPIUrl.replace("/contents", "/git/trees/"+elem.sha+"?recursive=true");
-                        const configsTreeReq = new XMLHttpRequest();
-                        configsTreeReq.open("GET", configsTreeUrl, true);
-                        configsTreeReq.send();
-
-                        configsTreeReq.onload = () => {
-                            const configsTree = JSON.parse(configsTreeReq.response).tree;
-                            configsTree.forEach(dir => {
-                                if (dir?.type == "blob") {
-                                    const path      = dir.path;
-                                    const pathArray = path.split("/");
-
-                                    this.onlineConfigs.nbCfgs++;
-                                    this.onlineConfigs.Configs.nbCfgs++;
-                                    this.onlineConfigs.Configs.path = "Configs";
-                                    this.tempGitConfigParentDirData = this.onlineConfigs.Configs;
-                                    
-                                    pathArray.forEach((dirName, hierarchyIndex, pathArray) => {
-                                        if (hierarchyIndex == pathArray.length-1) {
-                                            const url = repoAPIUrl.replace("api.github.com/repos", "raw.githubusercontent.com").replace("/contents", "/refs/heads/main/") + (this.tempGitConfigParentDirData.path+"/"+dirName).replace(/ /g, "%20");
-                                            this.tempGitConfigParentDirData[dirName] = url;
-                                        }
-                                        else if (!this.tempGitConfigParentDirData[dirName]) {
-                                            const pathSubArray = Object.values(pathArray).splice(0,hierarchyIndex+1);
-                                            this.tempGitConfigParentDirData[dirName] = {nbCfgs: 1, path: `Configs${pathSubArray.length>0 ? "/" : ""}` + pathSubArray.join("/").replace(/ /g, "%20")}
-                                            this.tempGitConfigParentDirData = this.tempGitConfigParentDirData[dirName];
-                                        }
-                                        else if (this.tempGitConfigParentDirData[dirName]) {
-                                            this.tempGitConfigParentDirData[dirName].nbCfgs++;
-                                            this.tempGitConfigParentDirData = this.tempGitConfigParentDirData[dirName];
-                                        }
-
-                                    })
-                                }
-                            })
-
-                            this.tempGitConfigParentDirData = undefined;
-                            localStorage.setItem("ECAM_DASHBOARD_ONLINE_CONFIGS", this.onlineConfigs);
-                            this.showLoadingSymbol(false);
-                            endActionCallback();
-                        };
-                    }})
                 }
+                else {
+                    // If the validity date and time isn't passed yet, don't send a request and open the online picker menu using the online configs from memory
+                    this.openOnlineCfgPicker();
+                }
+                
                 
             }
 
             async autoUpdateCheck() {
-                const dateTimeOfLastUpdateCheck = this.dateTimeOfLastUpdateCheck;
-                // const minutesOffset = 5;
-                const minutes    = parseInt(dateTimeOfLastUpdateCheck.match(/T\d{2}:(\d{2}):\d{2}Z/)[1]);
-                const hour       = parseInt(dateTimeOfLastUpdateCheck.match(/T(\d{2}):\d{2}:\d{2}Z/)[1]);
-                // let newMinutes   = minutes + minutesOffset;
-                // let newHour      = hour; if (newMinutes >= 60) {newHour++} else if (newMinutes < 0) {newHour--}
-                // newHour = newHour.toString();
-                // if (newHour.length == 1) {newHour = "0" + newHour}
-                // newMinutes %= 60;
-                // newMinutes = newMinutes.toString();
-                // if (newMinutes.length == 1) {newMinutes = "0" + newMinutes}
+                const dateTimeOfLastUpdate = this.dateTimeOfLastUpdateCheck;
+                const dateTimeOfLastUpdateValidity = this.dateTimeSlice(dateTimeOfLastUpdate, 20);
 
-                const newMinutes  = minutes >= 30 ? "00" : "30";
-                const newHour     = minutes >= 30 
-                    ? ((hour + 1).toString().length > 1 ? (hour + 1).toString() : "0"+(hour + 1).toString()) 
-                    : (hour.toString().length > 1 ? hour.toString() : "0"+hour.toString())
-                ;
-
-                const getPlannedDateTimeOfUpdate = dateTimeOfLastUpdateCheck.replace(/T\d{2}:\d{2}:\d{2}Z/, `T${newHour}:${newMinutes}:00Z`);
-
-                if (getPlannedDateTimeOfUpdate < this.now() || this.isUpdateAvailable) {
+                if (dateTimeOfLastUpdateValidity < this.now() || this.isUpdateAvailable) {
                     this.runUpdateCheck();
                     this.isUpdateAvailable = true;
                     localStorage.setItem("ECAM_DASHBOARD_IS_UPDATE_AVAILABLE", this.isUpdateAvailable);
@@ -1993,6 +2008,8 @@
                     reloadRequest.style.fontSize = "50px";
                     reloadRequest.style.fontWeight = "100";
                     reloadRequest.style.textEmphasisStyle = '" "';
+                    reloadRequest.style.width  = "100%";
+                    reloadRequest.style.height = "100%";
                     reloadRequest.style.outline = '60px solid white';
                     reloadRequest.title = this.lang == "fr" ? "Rafraichir" : "Reload";
                     reloadRequest.innerHTML = this.lang == "fr" 
@@ -3026,6 +3043,7 @@
                             }
                             else {
                                 document.querySelector(".new-grades-notif").classList.remove("on");
+                                setTimeout(() => {document.querySelector(".new-grades-notif").remove();}, 500)
                             }
                         };
                     }
@@ -3046,6 +3064,7 @@
                             document.querySelector(".new-grades-mark-as-read").parentElement.disabled = true;
                             document.querySelector(".new-grades-mark-as-read").parentElement.hidden = true;
                             document.querySelector(".new-grades-notif").classList.remove("on");
+                            setTimeout(() => {document.querySelector(".new-grades-notif").remove();}, 500)
 
                             this.renderRecentGrades()
                             this.attachAllEventListeners()
@@ -5150,7 +5169,7 @@
                     importClear.onclick  = () => {this.moduleConfig = {}; this.compactSubjCardsId = []; this.foldedModuleCardsId = []; this.getGradesDatas(); this.saveConfig(); this.generateContent(true)};
                     importOnline.onclick = () => {
                         if (this.onlineConfigs)
-                        this.getConfigsFromRepo(this.repoContentsAPI, () => this.openOnlineCfgPicker())
+                        this.getConfigsFromRepoAPI(this.repoContentsAPI)
                     };
                 }
                 else if (importMenu.classList.contains("show") || open == false) {
@@ -5207,9 +5226,6 @@
                         const path = dirCard.dataset.path;
 
                         // Start by removing all "show" and "on" classes to all descendant dirTrees and descendant/sibling dirCards
-                        if (dirCard.classList.contains("config")) {
-                            this.importData(dirCard.dataset.url);
-                        }
                         if (dirCard.classList.contains("prom") || dirCard.classList.contains("year") || dirCard.classList.contains("section")) {
                             pickerMenu.querySelectorAll(`.online-cfg-picker-menu-dir-tree.config.show`).forEach(dirTree  => { dirTree.classList.remove("show")})
                             pickerMenu.querySelectorAll(`.online-cfg-picker-menu-dir-card.prom.on`)    .forEach(_dirCard => {_dirCard.classList.remove("on")})
@@ -5229,6 +5245,11 @@
                         }
                         if (dirCard.classList.contains("on") && !dirCard.classList.contains("config")) {
                             pickerMenu.querySelector(`.online-cfg-picker-menu-dir-tree[data-path="${path}"]`).classList.add("show");
+                        }
+
+                        // Import that data of the url dataset of the dir card clicked if it's a config dir card
+                        if (dirCard.classList.contains("config")) {
+                            this.importData(dirCard.dataset.url);
                         }
                     }
                 }
@@ -5369,6 +5390,8 @@
                                 }
                             }
                             else {
+                                console.log(parsed);
+                                debugger;
                                 alert(this.lang == "fr" 
                                     ? `Ce fichier de configuration est invalide ! Je ne trouve pas les données attendmodules !`
                                     : `This configuration file is invalid! I don't find the expected datas!`
@@ -5408,6 +5431,7 @@
                     // If a JSON string was passed, try to parse directly
                     if (typeof file === 'string') {
                         if (file.match(RegExp("https://raw.githubusercontent.com/(.+).json"))) {
+                            // send a request at the url provided in the file parameter
                             const xhttp = new XMLHttpRequest();
                             xhttp.open("GET", file, true);
                             xhttp.send();
