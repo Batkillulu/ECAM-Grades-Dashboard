@@ -52,8 +52,12 @@
                 .loading-symbol.show    { animation: loading 1s infinite; }
                 @keyframes loading  { from {offset-distance: var(--offset-offset)} to {offset-distance: calc(var(--offset-offset) + 100%)} }
 
-                .new-user-notif     { display: flex; justify-content: center; align-items: center; padding: 10px; position: absolute; width: 250px; font-size: 15px; text-wrap-mode: wrap; background: #00037b; border-radius: 20px; outline: 2px solid; text-align: center; z-index: 10; transition: all 0.3s ease; } 
-                @keyframes hoveringElem { 0% { transform: translateY(0px); } 50% { transform: translateY(var(--hoverAmp)); } 100% { transform: translateY(0px); } }
+                .new-user-notif     { display: flex; justify-content: center; align-items: center; padding: 10px; position: absolute; font-size: 15px; text-wrap-mode: wrap; background: #00037b; border-radius: 20px; outline: 2px solid; text-align: center; z-index: 10; transition: all 0.3s ease; } 
+                .new-user-notif-arrow       { animation: hoveringArrow 3s infinite ease-in-out }
+                .new-user-notif-arrow.outside   { fill: none; stroke: #ffffff; stroke-width: 12; stroke-linejoin: var(--arrow-join); }
+                .new-user-notif-arrow.inside    { fill: none; stroke: #00037b; stroke-width: 8;  stroke-linejoin: var(--arrow-join); }
+                @keyframes hoveringElem  { 0% { transform: translateY(0px); --arrow-path: path('M 0 30 c 10,50, 128,77, 147,13 m -21,5 l 23,-8 l 9,19'); } 50% { transform: translateY(var(--hoverAmp)); --arrow-path: path('M 0 30 c 20,46, 130,71, 156,-12 m -21,5 l 23,-8 l 9,19'); } 100% { transform: translateY(0px); --arrow-path: path('M 0 30 c 10,50, 128,77, 147,13 m -21,5 l 23,-8 l 9,19'); } }
+                @keyframes hoveringArrow { 0% { d: path('M 0 30 c 10,50, 128,77, 147,13 m -21,5 l 23,-8 l 9,19'); } 50% { d: path('M 0 30 c 20,46, 130,71, 156,-12 m -21,5 l 23,-8 l 9,19'); } 100% { d: path('M 0 30 c 10,50, 128,77, 147,13 m -21,5 l 23,-8 l 9,19'); } }
             `;
             
             
@@ -688,7 +692,7 @@
             this.today  = new Date().toISOString().split('T')[0];                                                       // Current date in ISO String
             this.dateTimeOfLastUpdateCheck          = localStorage.getItem("ECAM_DASHBOARD_DATE_TIME_OF_LAST_UPDATE_CHECK") || "2000-00-00T00:00:00Z"; // A day before the date of last update, so that the update check is ran to make sure the correct version is installed
             this.isUpdateAvailable                  = localStorage.getItem("ECAM_DASHBOARD_IS_UPDATE_AVAILABLE")            || false;
-            this.firstLoad                          = localStorage.getItem("ECAM_DASHBOARD_FIRST_LOAD")                     || true;
+            this.firstLoad              = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_FIRST_LOAD")                     || "true");
 
             this.grades     = [];
             this.semesters  = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{}, 7:{}, 8:{}, 9:{}, 10:{}};
@@ -2156,12 +2160,12 @@
                                     <a   class="over-header-btn issue doc-btn"  href="${this.repoReadMeHowToUse}" target="_blank" ></a>
                                     <div class="over-header-btn issue tuto-btn"></div>
                                 </div>
-                                <div class="new-user-notif" style="top: 60px; right: -7px; --hoverAmp: 15px; animation: hoveringElem 3s infinite ease-in-out;" hidden>
-                                    <svg viewBox="0 0 2 1" style="position: absolute; bottom: 69px; right: 14px; width: 28px; height: 14px;">
-                                        <polyline fill="white" stroke="none" points="0,1 1,0 2,1"></polyline>
+                                <div class="new-user-notif" style="width: 400px; top: -9px; right: 103px; --hoverAmp: 15px; animation: hoveringElem 3s infinite ease-in-out; cursor: pointer; --arrow-path: path('M 0 30 c 20,46, 130,71, 156,-12 m -21,5 l 23,-8 l 9,19'); --arrow-join: round;" hidden>
+                                    <svg viewBox="0 0 100 100" style="position: absolute; bottom: -46px; right: -105px; width: 200px; height: 70px; z-index: 9; ">
+                                        <path class="new-user-notif-arrow outside"></path>
                                     </svg>
-                                    <svg viewBox="0 0 2 1" style="position: absolute; bottom: 69px; right: 14px; width: 28px; height: 14px;">
-                                        <polyline fill="#00037b" stroke="none" points="0.2,1 1,0.2 1.8,1"></polyline>
+                                    <svg viewBox="0 0 100 100" style="position: absolute; bottom: -46px; right: -105px; width: 200px; height: 70px; z-index: 11;">
+                                        <path class="new-user-notif-arrow inside"></path>
                                     </svg>
                                     <div class="new-user-notif-text"></div>
                                 </div>
@@ -2940,7 +2944,10 @@
                 if (this.firstLoad) {
                     const newUserNotif = document.querySelector(".new-user-notif");
                     newUserNotif.hidden = false;
+
                     newUserNotif.onclick = () => {
+                        localStorage.setItem("ECAM_DASHBOARD_FIRST_LOAD", false);
+
                         newUserNotif.style.animationPlayState = "paused";
                         newUserNotif.style.top = `${newUserNotif.getBoundingClientRect().top - newUserNotif.getBoundingClientRect().height - 10}px`;
                         newUserNotif.style.opacity = "0%";
@@ -3209,6 +3216,15 @@
                                 this.timeouts.openHelpMenu = setTimeout(()=>{helpMenu.classList.add("open");}, 10);
                                 docBtn  .tabIndex = "0";
                                 tutoBtn .tabIndex = "0";
+                                if (this.firstLoad) {
+                                    const newUserNotif = document.querySelector(".new-user-notif");
+                                    localStorage.setItem("ECAM_DASHBOARD_FIRST_LOAD", false);
+
+                                    newUserNotif.style.animationPlayState = "paused";
+                                    newUserNotif.style.top = `${newUserNotif.getBoundingClientRect().top - newUserNotif.getBoundingClientRect().height - 10}px`;
+                                    newUserNotif.style.opacity = "0%";
+                                    setTimeout(() => {newUserNotif.remove();}, 300);
+                                }
                             }
                         }
 
