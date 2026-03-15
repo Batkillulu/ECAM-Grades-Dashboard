@@ -51,6 +51,9 @@
                 .loading-symbol         { position: absolute; top: 100px; right: 100px; height: 100px; width: 100px; clip-path: circle(20px); background: #594a8fe0; offset-path: circle(50px); backdrop-filter: blur(2px); offset-distance: var(--offset-offset); }
                 .loading-symbol.show    { animation: loading 1s infinite; }
                 @keyframes loading  { from {offset-distance: var(--offset-offset)} to {offset-distance: calc(var(--offset-offset) + 100%)} }
+
+                .new-user-notif     { display: flex; justify-content: center; align-items: center; padding: 10px; position: absolute; width: 250px; font-size: 15px; text-wrap-mode: wrap; background: #00037b; border-radius: 20px; outline: 2px solid; text-align: center; z-index: 10; transition: all 0.3s ease; } 
+                @keyframes hoveringElem { 0% { transform: translateY(0px); } 50% { transform: translateY(var(--hoverAmp)); } 100% { transform: translateY(0px); } }
             `;
             
             
@@ -64,10 +67,20 @@
                 .over-header-btns                   { display: flex; flex-direction: row; justify-content: flex-end; align-items: center; position: absolute; top: 59px; right: 2.4%; gap: 8px; }
                 .over-header-report-btns                { display: flex; flex-direction: row; justify-content: flex-end; align-items: center; }
                 .over-header-help-btns                  { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+                
                 .over-header-btn                            { display: flex; justify-content: center; align-items: center; border-radius: 20px; position: relative; transition: all 0.2s ease; height: 40px; cursor: pointer; user-select: none; text-decoration: none; text-wrap-mode: nowrap; overflow: clip; }
+                .over-header-btn.how-to-use-btn                 { justify-content: center;  background: #0059ad; width: 40px; padding-left: 0px;  font-size: 20px; outline: 3px solid #c022ff; border: none; color: inherit; z-index: 5; }
+                .over-header-btn.how-to-use-btn:hover           { outline-color: white; background: #2888e2; }
+                .over-header-btn.how-to-use-btn.open            { outline-color: white; }
+                .over-header-how-to-use-btns                        { display: flex; justify-content: center; align-items: center; gap: 9px; position: absolute; top: 30px; right: 0px; opacity: 0%; z-index: 6; transition: all 0.2s ease; }
+                .over-header-how-to-use-btns.open                   { top: 50px; opacity: 100%; }
+                .over-header-btn.issue.doc-btn                          { background: #0059ad; outline: 2px solid #c022ff; box-shadow: 5px 7px 6px 0px black; padding: 0px 10px; font-size: 15px; border: none; color: inherit; }
+                .over-header-btn.issue.tuto-btn                         { background: #0059ad; outline: 2px solid #c022ff; box-shadow: 5px 7px 6px 0px black; padding: 0px 10px; font-size: 15px; border: none; color: inherit; }
+                .over-header-btn.issue.doc-btn:hover                    { background: #1672c9; outline-color: #ffffff;     box-shadow: 7px 9px 6px 2px black; }
+                .over-header-btn.issue.tuto-btn:hover                   { background: #1672c9; outline-color: #ffffff;     box-shadow: 7px 9px 6px 2px black; }
+                .over-header-btn.issue.doc-btn:focus                    { background: #1672c9; outline-color: #ffffff;     box-shadow: 7px 9px 6px 2px black; }
+                .over-header-btn.issue.tuto-btn:focus                   { background: #1672c9; outline-color: #ffffff;     box-shadow: 7px 9px 6px 2px black; }
 
-                .over-header-btn.issue.how-to-use-btn           { justify-content: center;     background: #0059ad; width: 40px;                padding-left: 0px;  font-size: 20px; outline: 3px solid #c022ff; border: none; color: inherit; z-index: 5; }
-                .over-header-btn.issue.how-to-use-btn:hover     { outline: 3px solid white;    background: #2888e2; }
                 .over-header-btn.issue.issue-btn                { justify-content: center;     background: #6e00ad; width: 40px;                padding-left: 6px;  font-size: 20px; outline: 3px solid #c022ff; border: none; color: inherit; z-index: 5; }
                 .over-header-btn.issue.issue-btn:focus          { outline: 3px solid white; }
                 .over-header-btn.issue.issue-btn:hover          { outline: 3px solid white;    background: #8b15cf; }
@@ -82,24 +95,24 @@
                 .over-header-btn-copied-cue.show            { animation: overHeaderBtnCopiedCue 1.5s ease; }
                 @keyframes overHeaderBtnCopiedCue           { 0% {top: -20px; opacity: 0%;} 20% {top: 0px; opacity: 100%;} 50% {top: 0px; opacity: 100%} 100% {top: 20px; opacity: 0%;} }
                 @keyframes overHeaderBtnMailInfoText        { 0% {color: white;} 20% {color: #ffffff75;} 50% {color: #ffffff75;} 100% {color: white;} }
+                
+                .over-header-btn.issue.mail-info.fr.open            { width: 330px; right: -685px; box-shadow: 5px 7px 6px 0px black; }
+                .over-header-btn.issue.share-config.fr.open         { width: 550px; right: -640px; box-shadow: 5px 7px 6px 0px black; }
+                .over-header-btn.issue.suggest-idea.fr.open         { width: 380px; right: -261px; box-shadow: 5px 7px 6px 0px black; }
+                .over-header-btn.issue.report-issue.fr.open         { width: 220px; right: -40px;  box-shadow: 5px 7px 6px 0px black; }
+                .over-header-btn.issue.mail-info.en.open            { width: 330px; right: -580px; box-shadow: 5px 7px 6px 0px black; }
+                .over-header-btn.issue.share-config.en.open         { width: 445px; right: -530px; box-shadow: 5px 7px 6px 0px black; }
+                .over-header-btn.issue.suggest-idea.en.open         { width: 315px; right: -215px; box-shadow: 5px 7px 6px 0px black; }
+                .over-header-btn.issue.report-issue.en.open         { width: 175px; right: -40px;  box-shadow: 5px 7px 6px 0px black; }
 
-                .over-header-btn.issue.mail-info:hover          { color: #b8d7ff; outline-color: teal }
-                .over-header-btn.issue.share-config:hover       { color: #b8d7ff; outline-color: teal }
-                .over-header-btn.issue.suggest-idea:hover       { color: #b8d7ff; outline-color: teal }
-                .over-header-btn.issue.report-issue:hover       { color: #b8d7ff; outline-color: teal }
-                .over-header-btn.issue.mail-info:focus          { color: #b8d7ff; outline-color: teal }
-                .over-header-btn.issue.share-config:focus       { color: #b8d7ff; outline-color: teal }
-                .over-header-btn.issue.suggest-idea:focus       { color: #b8d7ff; outline-color: teal }
-                .over-header-btn.issue.report-issue:focus       { color: #b8d7ff; outline-color: teal }
-
-                .over-header-btn.issue.mail-info.fr.open            { width: 330px; right: -685px; }
-                .over-header-btn.issue.share-config.fr.open         { width: 550px; right: -640px; }
-                .over-header-btn.issue.suggest-idea.fr.open         { width: 380px; right: -261px; }
-                .over-header-btn.issue.report-issue.fr.open         { width: 220px; right: -40px;  }
-                .over-header-btn.issue.mail-info.en.open            { width: 330px; right: -580px; }
-                .over-header-btn.issue.share-config.en.open         { width: 445px; right: -530px; }
-                .over-header-btn.issue.suggest-idea.en.open         { width: 315px; right: -215px; }
-                .over-header-btn.issue.report-issue.en.open         { width: 175px; right: -40px;  }
+                .over-header-btn.issue.mail-info.open:hover          { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
+                .over-header-btn.issue.share-config.open:hover       { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
+                .over-header-btn.issue.suggest-idea.open:hover       { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
+                .over-header-btn.issue.report-issue.open:hover       { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
+                .over-header-btn.issue.mail-info.open:focus          { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
+                .over-header-btn.issue.share-config.open:focus       { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
+                .over-header-btn.issue.suggest-idea.open:focus       { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
+                .over-header-btn.issue.report-issue.open:focus       { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
                 
 
                 .header-actions                 { display: flex; gap: 12px; }
@@ -2138,7 +2151,20 @@
                                 <button class="over-header-btn issue issue-btn" id="reportIssueBtn" tabindex="0">🚩</button>
                             </div>
                             <div class="over-header-help-btns">
-                                <a      class="over-header-btn issue how-to-use-btn" id="howToUseBtn" href="${this.repoReadMeHowToUse}" target="_blank" >?</a>
+                                <div class="over-header-btn how-to-use-btn">?</div>
+                                <div class="over-header-how-to-use-btns">
+                                    <a   class="over-header-btn issue doc-btn"  href="${this.repoReadMeHowToUse}" target="_blank" ></a>
+                                    <div class="over-header-btn issue tuto-btn"></div>
+                                </div>
+                                <div class="new-user-notif" style="top: 60px; right: -7px; --hoverAmp: 15px; animation: hoveringElem 3s infinite ease-in-out;" hidden>
+                                    <svg viewBox="0 0 2 1" style="position: absolute; bottom: 69px; right: 14px; width: 28px; height: 14px;">
+                                        <polyline fill="white" stroke="none" points="0,1 1,0 2,1"></polyline>
+                                    </svg>
+                                    <svg viewBox="0 0 2 1" style="position: absolute; bottom: 69px; right: 14px; width: 28px; height: 14px;">
+                                        <polyline fill="#00037b" stroke="none" points="0.2,1 1,0.2 1.8,1"></polyline>
+                                    </svg>
+                                    <div class="new-user-notif-text"></div>
+                                </div>
                             </div>
                         </div>
 
@@ -2147,7 +2173,7 @@
                             <div class="btn btn-export" id="exportBtn"></div>
                             <div class="btn btn-import" id="importBtn"></div>
                             <div class="import-menu" id="importMenu" style="display: none">
-                                <svg viewBox="0 0 2 1" style="position: absolute;bottom: 60px;right: 11px;width: 28px;height: 14px;" id="aui_3_2_0_1345">
+                                <svg viewBox="0 0 2 1" style="position: absolute; bottom: 60px; right: 11px; width: 28px; height: 14px;">
                                     <polyline fill="white" stroke="none" points="0,1 1,0 2,1"></polyline>
                                 </svg>
                                 <div class="import-menu-btn file">
@@ -2305,43 +2331,59 @@
                 const langShortcutText = document.getElementById("langShortcut");
                 langShortcutText.innerHTML = this.lang == "fr" ? "(Maj+L)" : "(Shift+L)";
 
-                const reportIssueBtn = document.querySelector(".issue.issue-btn");
-                const howToUseBtn    = document.querySelector(".issue.how-to-use-btn");
-                const mailInfo       = document.querySelector(".issue.mail-info");
-                const mailInfoText   = document.querySelector(".over-header-btn-mail-info-text");
-                const mailInfoCopied = document.querySelector(".over-header-btn-copied-cue");
-                const shareConfig    = document.querySelector(".issue.share-config");
-                const suggestIdea    = document.querySelector(".issue.suggest-idea");
-                const reportIssue    = document.querySelector(".issue.report-issue");
+                const reportIssueBtn    = document.querySelector(".issue.issue-btn");
+                const mailInfo          = document.querySelector(".issue.mail-info");
+                const mailInfoText      = document.querySelector(".over-header-btn-mail-info-text");
+                const mailInfoCopied    = document.querySelector(".over-header-btn-copied-cue");
+                const shareConfig       = document.querySelector(".issue.share-config");
+                const suggestIdea       = document.querySelector(".issue.suggest-idea");
+                const reportIssue       = document.querySelector(".issue.report-issue");
+                const helpMenu          = document.querySelector(".over-header-btn.how-to-use-btn");
+                const docBtn            = document.querySelector(".over-header-btn.doc-btn");
+                const tutoBtn           = document.querySelector(".over-header-btn.tuto-btn");
+                const newUserNotif      = document.querySelector(".new-user-notif");
+                const newUserNotifText  = document.querySelector(".new-user-notif-text");
                 if (this.lang == "fr") {
-                    reportIssueBtn.title     = "Signaler...";
-                    howToUseBtn   .title     = "Comment s'en servir?";
-                    mailInfo      .title     = "Clique pour copier l'adresse email";
-                    shareConfig   .title     = "Partage une configuration sur mon GitHub";
-                    suggestIdea   .title     = "Suggère une idée sur mon GitHub";
-                    reportIssue   .title     = "Signale un problème sur mon GitHub";
-                    shareConfig   .innerHTML = "Partager une config\u2197";
-                    suggestIdea   .innerHTML = "Suggérer une idée\u2197";
-                    reportIssue   .innerHTML = "Signaler un problème\u2197";
-                    mailInfoText  .innerHTML = "Par mail: baptiste.jacquin@ecam.fr 📋";
-                    mailInfoCopied.innerHTML = "Copié !";
+                    reportIssueBtn  .title     = "Signaler...";
+                    mailInfo        .title     = "Clique pour copier l'adresse email";
+                    shareConfig     .title     = "Partage une configuration sur mon GitHub";
+                    suggestIdea     .title     = "Suggère une idée sur mon GitHub";
+                    reportIssue     .title     = "Signale un problème sur mon GitHub";
+                    helpMenu        .title     = "Comment s'en servir?";
+                    docBtn          .title     = "Aller vers la documentation";
+                    tutoBtn         .title     = "Démarrer le tutoriel";
+                    newUserNotif    .title     = "Clique pour fermer";
+                    shareConfig     .innerHTML = "Partager une config\u2197";
+                    suggestIdea     .innerHTML = "Suggérer une idée\u2197";
+                    reportIssue     .innerHTML = "Signaler un problème\u2197";
+                    mailInfoText    .innerHTML = "Par mail: baptiste.jacquin@ecam.fr 📋";
+                    mailInfoCopied  .innerHTML = "Copié !";
+                    docBtn          .innerHTML = "Voir documentation\u2197";
+                    tutoBtn         .innerHTML = "Démarrer tutoriel ▶︎";
+                    newUserNotifText.innerHTML = "Bonjour! Nouveau ici? Clique ici pour apprendre à utiliser cette extension!";
                     mailInfo   .classList.replace("en", "fr");
                     shareConfig.classList.replace("en", "fr");
                     suggestIdea.classList.replace("en", "fr");
                     reportIssue.classList.replace("en", "fr");
                 }
                 else {
-                    reportIssueBtn.title     = "Report...";
-                    howToUseBtn   .title     = "How to use?";
-                    mailInfo      .title     = "Click to copy the email adress";
-                    shareConfig   .title     = "Share a configuration on my GitHub";
-                    suggestIdea   .title     = "Suggest an idea on my GitHub";
-                    reportIssue   .title     = "Report an issue on my GitHub";
-                    shareConfig   .innerHTML = "Share a config\u2197";
-                    suggestIdea   .innerHTML = "Suggest an idea\u2197";
-                    reportIssue   .innerHTML = "Report an issue\u2197";
-                    mailInfoText  .innerHTML = "By mail: baptiste.jacquin@ecam.fr 📋";
-                    mailInfoCopied.innerHTML = "Copied!";
+                    reportIssueBtn  .title     = "Report...";
+                    mailInfo        .title     = "Click to copy the email adress";
+                    shareConfig     .title     = "Share a configuration on my GitHub";
+                    suggestIdea     .title     = "Suggest an idea on my GitHub";
+                    reportIssue     .title     = "Report an issue on my GitHub";
+                    helpMenu        .title     = "How to use?";
+                    docBtn          .title     = "Go to the documentation";
+                    tutoBtn         .title     = "Start the tutorial";
+                    newUserNotif    .title     = "Click to dismiss";
+                    shareConfig     .innerHTML = "Share a config\u2197";
+                    suggestIdea     .innerHTML = "Suggest an idea\u2197";
+                    reportIssue     .innerHTML = "Report an issue\u2197";
+                    mailInfoText    .innerHTML = "By mail: baptiste.jacquin@ecam.fr 📋";
+                    mailInfoCopied  .innerHTML = "Copied!";
+                    docBtn          .innerHTML = "See documentation\u2197";
+                    tutoBtn         .innerHTML = "Start tutorial ▶︎";
+                    newUserNotifText.innerHTML = "Hey! New here? Click here to find a tutorial on how to use this extension!";
                     mailInfo   .classList.replace("fr", "en");
                     shareConfig.classList.replace("fr", "en");
                     suggestIdea.classList.replace("fr", "en");
@@ -2896,8 +2938,19 @@
 
             firstLoadEvent() {
                 if (this.firstLoad) {
-
+                    const newUserNotif = document.querySelector(".new-user-notif");
+                    newUserNotif.hidden = false;
+                    newUserNotif.onclick = () => {
+                        newUserNotif.style.animationPlayState = "paused";
+                        newUserNotif.style.top = `${newUserNotif.getBoundingClientRect().top - newUserNotif.getBoundingClientRect().height - 10}px`;
+                        newUserNotif.style.opacity = "0%";
+                        setTimeout(() => {newUserNotif.remove();}, 300);
+                    }
                 }
+            }
+
+            startTutorial() {
+
             }
             
 
@@ -2988,17 +3041,28 @@
                                     this.timeouts.closeImportMenu = setTimeout(() => {document.getElementById("importMenu").style.display = "none"}, 300);
                                 }
 
-                                if (!e.target.closest(".issue")) {
-                                    const issueBtn       = document.querySelector(".issue.issue-btn");
-                                    const mailInfo       = document.querySelector(".issue.mail-info");
-                                    const shareConfig    = document.querySelector(".issue.share-config");
-                                    const suggestIdea    = document.querySelector(".issue.suggest-idea");
-                                    const reportIssue    = document.querySelector(".issue.report-issue");
+                                if (!e.target.closest(".over-header-btn")) {
+                                    const issueBtn      = document.querySelector(".issue.issue-btn");
+                                    const mailInfo      = document.querySelector(".issue.mail-info");
+                                    const shareConfig   = document.querySelector(".issue.share-config");
+                                    const suggestIdea   = document.querySelector(".issue.suggest-idea");
+                                    const reportIssue   = document.querySelector(".issue.report-issue");
+                                    const helpBtn       = document.querySelector(".over-header-btn.how-to-use-btn");
+                                    const helpMenu      = document.querySelector(".over-header-how-to-use-btns");
+                                    const docBtn        = document.querySelector(".over-header-btn.doc-btn");
+                                    const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
+
                                     issueBtn   .classList.remove("open");
                                     mailInfo   .classList.remove("open"); mailInfo   .tabIndex = "-1";
                                     shareConfig.classList.remove("open"); shareConfig.tabIndex = "-1";
                                     suggestIdea.classList.remove("open"); suggestIdea.tabIndex = "-1";
                                     reportIssue.classList.remove("open"); reportIssue.tabIndex = "-1";
+                                    helpBtn    .classList.remove("open");
+                                    helpMenu   .classList.remove("open");
+                                    clearTimeout(this.timeouts?.openHelpMenu);
+                                    this.timeouts.openHelpMenu = setTimeout(()=>{helpMenu.hidden = true;}, 200);
+                                    docBtn     .tabIndex = "-1";
+                                    tutoBtn    .tabIndex = "-1";
                                 }
                             };
                         }
@@ -3087,13 +3151,18 @@
 
 
                     attachIssuesBtnsMouseListeners() {
-                        const issueBtn       = document.querySelector(".issue.issue-btn");
-                        const mailInfo       = document.querySelector(".issue.mail-info");
-                        const shareConfig    = document.querySelector(".issue.share-config");
-                        const suggestIdea    = document.querySelector(".issue.suggest-idea");
-                        const reportIssue    = document.querySelector(".issue.report-issue");
+                        const issueBtn      = document.querySelector(".issue.issue-btn");
+                        const mailInfo      = document.querySelector(".issue.mail-info");
+                        const shareConfig   = document.querySelector(".issue.share-config");
+                        const suggestIdea   = document.querySelector(".issue.suggest-idea");
+                        const reportIssue   = document.querySelector(".issue.report-issue");
 
-                        issueBtn.onclick = (e) => {
+                        const helpBtn       = document.querySelector(".over-header-btn.how-to-use-btn");
+                        const helpMenu      = document.querySelector(".over-header-how-to-use-btns");
+                        const docBtn        = document.querySelector(".over-header-btn.doc-btn");
+                        const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
+
+                        issueBtn.onclick = () => {
                             if (reportIssue.classList.contains("open")) {
                                 issueBtn   .classList.remove("open");
                                 mailInfo   .classList.remove("open"); mailInfo   .tabIndex = "-1";
@@ -3110,8 +3179,9 @@
                             }
                         };
 
-                        mailInfo.onclick = (e) => {
+                        mailInfo.onclick = () => {
                             navigator.clipboard.writeText("baptiste.jacquin@ecam.fr");
+
                             const mailInfoText = document.querySelector(".over-header-btn-mail-info-text");
                             const mailInfoCopied = document.querySelector(".over-header-btn-copied-cue");
                             mailInfoText  .classList.add("lighten");
@@ -3121,6 +3191,29 @@
                                 mailInfoText  .classList.remove("lighten");
                                 mailInfoCopied.classList.remove("show");
                             }
+                        }
+
+                        helpBtn.onclick = () => {
+                            if (helpBtn.classList.contains("open")) {
+                                helpBtn .classList.remove("open");
+                                helpMenu.classList.remove("open");
+                                clearTimeout(this.timeouts?.openHelpMenu);
+                                this.timeouts.openHelpMenu = setTimeout(()=>{helpMenu.hidden = true;}, 200);
+                                docBtn  .tabIndex = "-1";
+                                tutoBtn .tabIndex = "-1";
+                            }
+                            else {
+                                helpBtn .classList.add("open");
+                                helpMenu.hidden = false;
+                                clearTimeout(this.timeouts?.openHelpMenu);
+                                this.timeouts.openHelpMenu = setTimeout(()=>{helpMenu.classList.add("open");}, 10);
+                                docBtn  .tabIndex = "0";
+                                tutoBtn .tabIndex = "0";
+                            }
+                        }
+
+                        tutoBtn.onclick = () => {
+                            this.startTutorial();
                         }
                     }
 
