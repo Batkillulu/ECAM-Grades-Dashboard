@@ -38,9 +38,14 @@
         //#region -DASHBOARD
 
             styles += `
+                :root {
+                    --modal-blur-amount: calc(250px / 100);
+                }
+                
+
                 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
                 * { box-sizing: border-box; }
-                .ecam-dash { display: grid; flex-direction: column; justify-content:center; width: 97%; grid-template-columns: 100%; font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; margin: 20px 1.5% 0px 1.5%; color: #1a1a1a; }
+                .ecam-dash { display: grid; flex-direction: column; justify-content:center; width: 97%; grid-template-columns: 100%; font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; margin: 20px 1.5% 0px 1.5%; color: #1a1a1a; overflow: clip; }
 
                 .dash-header { background: linear-gradient(135deg, #5b62bf 0%, #2A2F72 100%); color: white; padding: 30px 40px; border-radius: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 3px 5px 5px 0px #00000042; }
                 .dash-title { font-size: 24px; font-weight: 700; margin: 0; }
@@ -52,84 +57,151 @@
                 .loading-symbol.show    { animation: loading 1s infinite; }
                 @keyframes loading  { from {offset-distance: var(--offset-offset)} to {offset-distance: calc(var(--offset-offset) + 100%)} }
 
-                .new-user-notif     { display: flex; justify-content: center; align-items: center; padding: 10px; position: absolute; font-size: 15px; text-wrap-mode: wrap; background: #00037b; border-radius: 20px; outline: 2px solid; text-align: center; z-index: 10; transition: all 0.3s ease; } 
+                .new-user-notif     { display: flex; justify-content: center; align-items: center; position: absolute; background: #00037b; border-radius: 20px; outline: 2px solid; text-align: center; z-index: 10; transition: all 0.3s ease; } 
+                .new-user-notif-text    { padding: 10px; border-radius: 20px; font-size: 18px; text-wrap-mode: wrap; }
                 .new-user-notif-arrow       { animation: hoveringArrow 3s infinite ease-in-out }
                 .new-user-notif-arrow.outside   { fill: none; stroke: #ffffff; stroke-width: 12; stroke-linejoin: var(--arrow-join); }
                 .new-user-notif-arrow.inside    { fill: none; stroke: #00037b; stroke-width: 8;  stroke-linejoin: var(--arrow-join); }
-                @keyframes hoveringElem  { 0% { transform: translateY(0px); --arrow-path: path('M 0 30 c 10,50, 128,77, 147,13 m -21,5 l 23,-8 l 9,19'); } 50% { transform: translateY(var(--hoverAmp)); --arrow-path: path('M 0 30 c 20,46, 130,71, 156,-12 m -21,5 l 23,-8 l 9,19'); } 100% { transform: translateY(0px); --arrow-path: path('M 0 30 c 10,50, 128,77, 147,13 m -21,5 l 23,-8 l 9,19'); } }
+                @keyframes hoveringElem  { 0% { transform: translateY(0px); } 50% { transform: translateY(var(--hoverAmp)); } 100% { transform: translateY(0px); } }
                 @keyframes hoveringArrow { 0% { d: path('M 0 30 c 10,50, 128,77, 147,13 m -21,5 l 23,-8 l 9,19'); } 50% { d: path('M 0 30 c 20,46, 130,71, 156,-12 m -21,5 l 23,-8 l 9,19'); } 100% { d: path('M 0 30 c 10,50, 128,77, 147,13 m -21,5 l 23,-8 l 9,19'); } }
+
+                .new-user-notif-attention-catcher   { position: absolute; border-radius: 20px; background: black; opacity: 0%; width: 800%; height: 100%; right: calc(-700% / 2); top: 0; transition: all 0.5s ease; }
+                .new-user-notif-attention-catcher.focus { width: 80px; height: 10px; top: 80px; right: 350px; opacity: 100%; }
+                .new-user-notif-attention-catcher.hide  { opacity: 0%; }
             `;
             
             
-            // MARK: buttons
+            //#region -Buttons
+                styles += `
+                    .lang-btn           { border: 2px solid #000000ff; background: #6f79ff; border-radius: 18px; width: 36px; height: 36px; }
+                    .lang-btn.active    { border: 2px solid #ceefffff; }
+                    .lang-btn:hover     { border: 2px solid #afe4ffff; background: #a6acff; }
+                    `;
+            
+            
+                //#region -over header buttons
+                
+                    styles += `
+
+                        .over-header-btns                   { display: flex; flex-direction: row; justify-content: flex-end; align-items: center; position: absolute; top: 59px; right: 2.4%; gap: 8px; }                        
+                        .over-header-btn                            { display: flex; justify-content: center; align-items: center; border-radius: 20px; position: relative; transition: all 0.2s ease; height: 40px; cursor: pointer; user-select: none; text-decoration: none; text-wrap-mode: nowrap; overflow: clip; }
+                    `;
+
+
+                    // MARK: help buttons
+                    styles += `
+                        .over-header-help-btns                  { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+
+
+                        .over-header-btn.how-to-use-btn                 { justify-content: center;  background: #0059ad; width: 40px; padding-left: 0px;  font-size: 20px; outline: 3px solid #c022ff; border: none; color: inherit; z-index: 5; }
+                        .over-header-btn.how-to-use-btn:hover           { outline-color: white; background: #2888e2; }
+                        .over-header-btn.how-to-use-btn.open            { outline-color: white; }
+
+                        .over-header-how-to-use-btns                        { display: flex; justify-content: center; align-items: center; gap: 9px; position: absolute; top: 30px; right: 0px; opacity: 0%; z-index: 6; transition: all 0.2s ease; }
+                        .over-header-how-to-use-btns.open                   { top: 50px; opacity: 100%; }
+
+                        .over-header-btn.help                                   { background: #0059ad; outline: 2px solid #c022ff; box-shadow: 5px 7px 6px 0px black; padding: 0px 10px; font-size: 15px; border: none; color: inherit; }
+                        .over-header-btn.help:hover                             { background: #1672c9; outline-color:     #ffffff; box-shadow: 7px 9px 6px 2px black; }
+                        .over-header-btn.help:focus                             { background: #1672c9; outline-color:     #ffffff; box-shadow: 7px 9px 6px 2px black; }
+
+                        .over-header-btn.help.doc-btn                               {  }
+                        .over-header-btn.help.doc-btn.fr                            { width: 180px; }
+                        .over-header-btn.help.doc-btn.fr::before                    { content: "Voir documentation\u2197"; }
+                        .over-header-btn.help.doc-btn.en                            { width: 180px; }
+                        .over-header-btn.help.doc-btn.en::before                    { content: "See documentation\u2197"; }
+
+                        .over-header-btn.help.tuto-btn                              { font-weight: 700; }
+                        .over-header-btn.help.tuto-btn.fr                           { width: 168px; }
+                        .over-header-btn.help.tuto-btn.fr::before                   { content: "Démarrer tutoriel ▶︎"; }
+                        .over-header-btn.help.tuto-btn.en                           { width: 135px; }
+                        .over-header-btn.help.tuto-btn.en::before                   { content: "Start tutorial ▶︎"; }
+
+                        .over-header-btn.help.keybinds-btn                          {  }
+                        .over-header-btn.help.keybinds-btn.fr                       { width: 180px; }
+                        .over-header-btn.help.keybinds-btn.fr::before               { content: "Raccourcis clavier ⌨️"; }
+                        .over-header-btn.help.keybinds-btn.en                       { width: 190px; }
+                        .over-header-btn.help.keybinds-btn.en::before               { content: "Keyboard shortcuts ⌨️"; }
+                    `;
+
+
+
+                    // MARK: settings button
+                    styles += `
+                        .over-header-btn.settings-btn           { justify-content: center;  background: #0059ad; width: 40px; padding-left: 0px;  font-size: 20px; outline: 3px solid #c022ff; border: none; color: inherit; z-index: 5; }
+                        .over-header-btn.settings-btn:hover     { outline-color: white; background: #2888e2; }
+                        .over-header-btn.settings-btn.open      { outline-color: white; }
+                    `;
+
+
+                    // MARK: issues buttons
+                    styles += `
+                        .over-header-report-btns                { display: flex; flex-direction: row; justify-content: flex-end; align-items: center; }
+
+
+                        .over-header-btn.issue.issue-btn                { justify-content: center;     background: #6e00ad; width: 40px;                padding-left: 6px;  font-size: 20px; outline: 3px solid #c022ff; border: none; color: inherit; z-index: 5; }
+                        .over-header-btn.issue.issue-btn:focus          { outline: 3px solid white; }
+                        .over-header-btn.issue.issue-btn:hover          { outline: 3px solid white;    background: #8b15cf; }
+                        .over-header-btn.issue.issue-btn.open           { outline: 3px solid white; }
+                        .over-header-btn.issue.mail-info                { justify-content: flex-start; background: #005f10; width: 39px; right: -156px; padding-left: 10px; font-size: 15px; outline: 2px solid #ffffff; border: none; color: white;   z-index: 1; }
+                        .over-header-btn.issue.share-config             { justify-content: flex-start; background: #00569d; width: 39px; right: -117px; padding-left: 10px; font-size: 15px; outline: 2px solid #ffffff; border: none; color: white;   z-index: 2; }
+                        .over-header-btn.issue.suggest-idea             { justify-content: flex-start; background: #009d40; width: 39px; right: -78px;  padding-left: 10px; font-size: 15px; outline: 2px solid #ffffff; border: none; color: white;   z-index: 3; }
+                        .over-header-btn.issue.report-issue             { justify-content: flex-start; background: #ad0000; width: 39px; right: -40px;  padding-left: 10px; font-size: 15px; outline: 2px solid #ffffff; border: none; color: white;   z-index: 4; }
+                        .over-header-btn-mail-info-text             { color: white; transition: all 0.5s ease; }
+                        .over-header-btn-mail-info-text.lighten     { animation: overHeaderBtnMailInfoText 1.5s ease; }
+                        .over-header-btn-copied-cue                 { background: #555555; color: white; font-size: 17px; position: relative; left: -158px; top: -20px; opacity: 0%; }
+                        .over-header-btn-copied-cue.show            { animation: overHeaderBtnCopiedCue 1.5s ease; }
+                        @keyframes overHeaderBtnCopiedCue           { 0% {top: -20px; opacity: 0%;} 20% {top: 0px; opacity: 100%;} 50% {top: 0px; opacity: 100%} 100% {top: 20px; opacity: 0%;} }
+                        @keyframes overHeaderBtnMailInfoText        { 0% {color: white;} 20% {color: #ffffff75;} 50% {color: #ffffff75;} 100% {color: white;} }
+                        
+                        .over-header-btn.issue.mail-info.fr.open            { width: 330px; right: -685px; box-shadow: 5px 7px 6px 0px black; }
+                        .over-header-btn.issue.share-config.fr.open         { width: 550px; right: -640px; box-shadow: 5px 7px 6px 0px black; }
+                        .over-header-btn.issue.suggest-idea.fr.open         { width: 380px; right: -261px; box-shadow: 5px 7px 6px 0px black; }
+                        .over-header-btn.issue.report-issue.fr.open         { width: 220px; right: -40px;  box-shadow: 5px 7px 6px 0px black; }
+                        .over-header-btn.issue.mail-info.en.open            { width: 330px; right: -580px; box-shadow: 5px 7px 6px 0px black; }
+                        .over-header-btn.issue.share-config.en.open         { width: 445px; right: -530px; box-shadow: 5px 7px 6px 0px black; }
+                        .over-header-btn.issue.suggest-idea.en.open         { width: 315px; right: -215px; box-shadow: 5px 7px 6px 0px black; }
+                        .over-header-btn.issue.report-issue.en.open         { width: 175px; right: -40px;  box-shadow: 5px 7px 6px 0px black; }
+
+                        .over-header-btn.issue.mail-info.open:hover          { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
+                        .over-header-btn.issue.share-config.open:hover       { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
+                        .over-header-btn.issue.suggest-idea.open:hover       { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
+                        .over-header-btn.issue.report-issue.open:hover       { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
+                        .over-header-btn.issue.mail-info.open:focus          { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
+                        .over-header-btn.issue.share-config.open:focus       { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
+                        .over-header-btn.issue.suggest-idea.open:focus       { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
+                        .over-header-btn.issue.report-issue.open:focus       { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
+                    `;
+
+                //#endregion
+
+                
+
+
+                // MARK: -other buttons
+                styles += `
+                
+                    .header-actions                 { display: flex; gap: 12px; }
+                    .btn                                { display: flex; justify-content: center; align-items: center; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-size: 14px; }
+                    .btn-edit-mode:hover:not(:disabled) { transform: scale(0.95); background: linear-gradient(135deg, #7d92eeff 0%, #8e5ebeff 100%); }
+                    .btn-edit-mode                      { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: grid; width: 126px; height: 108px; transition: all 0.2s ease }
+                    .btn-edit-mode.on                   { transform: scale(0.95); box-shadow: inset 0px 0px 6px 4px #ffffff; }
+                    .btn-export                         { background: white; color: #666; width: 140px; height: 50px; }
+                    .btn-import                         { background: white; color: #666; width: 140px; height: 50px; z-index: 1; }
+                    .btn-export:hover                   { background: white; border: 1px solid #667eea; color: #667eea; transform: scale(0.95); box-shadow: 3px 5px 5px 0px #00000042; }
+                    .btn-import:hover                   { background: white; border: 1px solid #667eea; color: #667eea; transform: scale(0.95); box-shadow: 3px 5px 5px 0px #00000042; }
+                    .btn-icon                           { font-size: 20px; margin-bottom: 2px }
+                    .btn:disabled                       { opacity: 50%; cursor: not-allowed; }
+                `;
+
+            //#endregion
+
+
+
+
+            //MARK: -help and tutorial
             styles += `
-                .lang-btn           { border: 2px solid #000000ff; background: #6f79ff; border-radius: 18px; width: 36px; height: 36px; }
-                .lang-btn.active    { border: 2px solid #ceefffff; }
-                .lang-btn:hover     { border: 2px solid #afe4ffff; background: #a6acff; }
-
-
-                .over-header-btns                   { display: flex; flex-direction: row; justify-content: flex-end; align-items: center; position: absolute; top: 59px; right: 2.4%; gap: 8px; }
-                .over-header-report-btns                { display: flex; flex-direction: row; justify-content: flex-end; align-items: center; }
-                .over-header-help-btns                  { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
-                
-                .over-header-btn                            { display: flex; justify-content: center; align-items: center; border-radius: 20px; position: relative; transition: all 0.2s ease; height: 40px; cursor: pointer; user-select: none; text-decoration: none; text-wrap-mode: nowrap; overflow: clip; }
-                .over-header-btn.how-to-use-btn                 { justify-content: center;  background: #0059ad; width: 40px; padding-left: 0px;  font-size: 20px; outline: 3px solid #c022ff; border: none; color: inherit; z-index: 5; }
-                .over-header-btn.how-to-use-btn:hover           { outline-color: white; background: #2888e2; }
-                .over-header-btn.how-to-use-btn.open            { outline-color: white; }
-                .over-header-how-to-use-btns                        { display: flex; justify-content: center; align-items: center; gap: 9px; position: absolute; top: 30px; right: 0px; opacity: 0%; z-index: 6; transition: all 0.2s ease; }
-                .over-header-how-to-use-btns.open                   { top: 50px; opacity: 100%; }
-                .over-header-btn.issue.doc-btn                          { background: #0059ad; outline: 2px solid #c022ff; box-shadow: 5px 7px 6px 0px black; padding: 0px 10px; font-size: 15px; border: none; color: inherit; }
-                .over-header-btn.issue.tuto-btn                         { background: #0059ad; outline: 2px solid #c022ff; box-shadow: 5px 7px 6px 0px black; padding: 0px 10px; font-size: 15px; border: none; color: inherit; }
-                .over-header-btn.issue.doc-btn:hover                    { background: #1672c9; outline-color: #ffffff;     box-shadow: 7px 9px 6px 2px black; }
-                .over-header-btn.issue.tuto-btn:hover                   { background: #1672c9; outline-color: #ffffff;     box-shadow: 7px 9px 6px 2px black; }
-                .over-header-btn.issue.doc-btn:focus                    { background: #1672c9; outline-color: #ffffff;     box-shadow: 7px 9px 6px 2px black; }
-                .over-header-btn.issue.tuto-btn:focus                   { background: #1672c9; outline-color: #ffffff;     box-shadow: 7px 9px 6px 2px black; }
-
-                .over-header-btn.issue.issue-btn                { justify-content: center;     background: #6e00ad; width: 40px;                padding-left: 6px;  font-size: 20px; outline: 3px solid #c022ff; border: none; color: inherit; z-index: 5; }
-                .over-header-btn.issue.issue-btn:focus          { outline: 3px solid white; }
-                .over-header-btn.issue.issue-btn:hover          { outline: 3px solid white;    background: #8b15cf; }
-                .over-header-btn.issue.issue-btn.open           { outline: 3px solid white; }
-                .over-header-btn.issue.mail-info                { justify-content: flex-start; background: #005f10; width: 39px; right: -156px; padding-left: 10px; font-size: 15px; outline: 2px solid #ffffff; border: none; color: white;   z-index: 1; }
-                .over-header-btn.issue.share-config             { justify-content: flex-start; background: #00569d; width: 39px; right: -117px; padding-left: 10px; font-size: 15px; outline: 2px solid #ffffff; border: none; color: white;   z-index: 2; }
-                .over-header-btn.issue.suggest-idea             { justify-content: flex-start; background: #009d40; width: 39px; right: -78px;  padding-left: 10px; font-size: 15px; outline: 2px solid #ffffff; border: none; color: white;   z-index: 3; }
-                .over-header-btn.issue.report-issue             { justify-content: flex-start; background: #ad0000; width: 39px; right: -40px;  padding-left: 10px; font-size: 15px; outline: 2px solid #ffffff; border: none; color: white;   z-index: 4; }
-                .over-header-btn-mail-info-text             { color: white; transition: all 0.5s ease; }
-                .over-header-btn-mail-info-text.lighten     { animation: overHeaderBtnMailInfoText 1.5s ease; }
-                .over-header-btn-copied-cue                 { background: #555555; color: white; font-size: 17px; position: relative; left: -158px; top: -20px; opacity: 0%; }
-                .over-header-btn-copied-cue.show            { animation: overHeaderBtnCopiedCue 1.5s ease; }
-                @keyframes overHeaderBtnCopiedCue           { 0% {top: -20px; opacity: 0%;} 20% {top: 0px; opacity: 100%;} 50% {top: 0px; opacity: 100%} 100% {top: 20px; opacity: 0%;} }
-                @keyframes overHeaderBtnMailInfoText        { 0% {color: white;} 20% {color: #ffffff75;} 50% {color: #ffffff75;} 100% {color: white;} }
-                
-                .over-header-btn.issue.mail-info.fr.open            { width: 330px; right: -685px; box-shadow: 5px 7px 6px 0px black; }
-                .over-header-btn.issue.share-config.fr.open         { width: 550px; right: -640px; box-shadow: 5px 7px 6px 0px black; }
-                .over-header-btn.issue.suggest-idea.fr.open         { width: 380px; right: -261px; box-shadow: 5px 7px 6px 0px black; }
-                .over-header-btn.issue.report-issue.fr.open         { width: 220px; right: -40px;  box-shadow: 5px 7px 6px 0px black; }
-                .over-header-btn.issue.mail-info.en.open            { width: 330px; right: -580px; box-shadow: 5px 7px 6px 0px black; }
-                .over-header-btn.issue.share-config.en.open         { width: 445px; right: -530px; box-shadow: 5px 7px 6px 0px black; }
-                .over-header-btn.issue.suggest-idea.en.open         { width: 315px; right: -215px; box-shadow: 5px 7px 6px 0px black; }
-                .over-header-btn.issue.report-issue.en.open         { width: 175px; right: -40px;  box-shadow: 5px 7px 6px 0px black; }
-
-                .over-header-btn.issue.mail-info.open:hover          { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
-                .over-header-btn.issue.share-config.open:hover       { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
-                .over-header-btn.issue.suggest-idea.open:hover       { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
-                .over-header-btn.issue.report-issue.open:hover       { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
-                .over-header-btn.issue.mail-info.open:focus          { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
-                .over-header-btn.issue.share-config.open:focus       { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
-                .over-header-btn.issue.suggest-idea.open:focus       { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
-                .over-header-btn.issue.report-issue.open:focus       { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
-                
-
-                .header-actions                 { display: flex; gap: 12px; }
-                .btn                                { display: flex; justify-content: center; align-items: center; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-size: 14px; }
-                .btn-edit-mode:hover:not(:disabled) { transform: scale(0.95); background: linear-gradient(135deg, #7d92eeff 0%, #8e5ebeff 100%); }
-                .btn-edit-mode                      { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: grid; width: 126px; height: 108px; transition: all 0.2s ease }
-                .btn-edit-mode.on                   { transform: scale(0.95); box-shadow: inset 0px 0px 6px 4px #ffffff; }
-                .btn-export                         { background: white; color: #666; width: 140px; height: 50px; }
-                .btn-import                         { background: white; color: #666; width: 140px; height: 50px; z-index: 1; }
-                .btn-export:hover                   { background: white; border: 1px solid #667eea; color: #667eea; transform: scale(0.95); box-shadow: 3px 5px 5px 0px #00000042; }
-                .btn-import:hover                   { background: white; border: 1px solid #667eea; color: #667eea; transform: scale(0.95); box-shadow: 3px 5px 5px 0px #00000042; }
-                .btn-icon                           { font-size: 20px; margin-bottom: 2px }
-                .btn:disabled                       { opacity: 50%; cursor: not-allowed; }
+                .keyboard-shortcut-list-container   { display: flex; flex-direction: column; justify-content: center; align-items: center; position: fixed; width: 100%; height: 100%; z-index: 900; }
+                .keyboard-shortcut-list-body            { padding: 30px; display: flex; }
             `;
 
 
@@ -145,11 +217,8 @@
                 .import-menu-btn.online {  }
                 
 
-                .online-cfg-picker-menu         { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 20%; display: flex; flex-direction: column; justify-content: flex-start; position: fixed; width: 750px; height: 500px; left: calc(50% - 750px / 2); top: calc(50% - 500px / 2); transform: translateZ(0) scale(110%); z-index: 1000; border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0%; backdrop-filter: blur(1.4px); transition: opacity 0.3s ease, border-width 0.3s ease, transform 0.3s ease; }
-                .online-cfg-picker-menu.show    { border-width: 8px; transform: translateZ(0) scale(100%); opacity: 100%; }
+                .online-cfg-picker-menu         { display: flex; flex-direction: column; justify-content: flex-start; position: fixed; width: 750px; height: 500px; left: calc(50% - 750px / 2); top: calc(50% - 500px / 2); z-index: 1000; }
                 .online-cfg-picker-menu-header          { display: flex; justify-content: flex-end; height: 40px; align-items: center; z-index: 1010; }
-                .online-cfg-picker-menu-close-btn           { display: flex; justify-content: center; align-items: center; width: 30px; height: 30px; border-radius: 15px; border: 2px solid; font-size: 20px; user-select: none; cursor: pointer; margin-right: 3px; transition: all 0.2s ease; }
-                .online-cfg-picker-menu-close-btn:hover     { width: 40px; height: 40px; border-radius: 20px; font-size: 30px; margin-right: -2px; gap: 5px; }
 
                 .online-cfg-picker-menu-body            { display: flex; flex-direction: row; justify-content: center; align-items: center; height: 500px; width: 100%; position: fixed; top: -8px; gap: 5px; overflow: clip; }
                 .online-cfg-picker-menu-body-container  { display: flex; flex-direction: row; justify-content: center; align-items: flex-start; width: 640px; }
@@ -242,7 +311,7 @@
             // MARK: view mode buttons
             styles += `
                 .view-toggle        { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 4px; background: #f7f7f7; border-radius: 8px; }
-                .fold-toggle        { display: flex; align-items: center; justify-content: center; gap: 8px; height: 40px; width: 250px; background: #f7f7f7; outline: 1px solid; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; user-select: none; transition: all 0.3s ease; }
+                .fold-toggle        { display: flex; align-items: center; justify-content: center; gap: 8px; height: 40px; width: 180px; background: #f7f7f7; outline: 1px solid; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; user-select: none; transition: all 0.3s ease; }
                 .fold-toggle:hover  { background: white; box-shadow: 3px 5px 5px 0px #00000042; transform: scale(0.95); }
                 .fold-toggle.active { background: white; box-shadow: 3px 5px 5px 0px #00000042; }
                 .view-btn           { background: transparent; padding: 8px 12px; border: none; outline: 1px solid; border-radius: 6px; cursor: pointer; font-size: 18px; transition: all 0.2s ease; width: 48px; height: 40px; }
@@ -660,6 +729,18 @@
         `;
 
 
+        // MARK: -Highest instance styles
+        styles += `
+        
+            .modal  { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 20%; transform: translateZ(0) scale(110%); border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0%; backdrop-filter: blur(var(--modal-blur-amount)); transition: opacity 0.3s ease, border-width 0.3s ease, transform 0.3s ease; }
+            .modal.blur { backdrop-filter: blur(var(--modal-blur-amount)); }
+            .modal.show     { border-width: 8px; transform: translateZ(0) scale(100%); opacity: 100%; }
+
+            .modal-close-btn           { display: flex; justify-content: center; align-items: center; width: 30px; height: 30px; border-radius: 15px; border: 2px solid; font-size: 20px; user-select: none; cursor: pointer; margin-right: 3px; transition: all 0.2s ease; }
+            .modal-close-btn:hover     { transform: scale(101%); border-radius: 20px; font-size: 30px; gap: 5px; }
+        `;
+
+
 
     //#endregion
     
@@ -686,6 +767,10 @@
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
             this.scriptVersion = "2.2.6";
             this.configVersion = 3;
+
+            this.settings = {
+                blurEnabled: JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SETTINGS_BLUR_ENABLED")) || "true",
+            };
 
             this.now        = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
             this.dateHour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
@@ -2060,26 +2145,7 @@
                     setTimeout(() => {updateAvailableNotif.remove()}, 300)
                 };
                 updateAvailableNotif.querySelector(".update-btn").onclick = () => {
-                    const reloadRequest = document.createElement("div");
-                    reloadRequest.className = "online-cfg-picker-menu";
-                    reloadRequest.style.cursor = "pointer";
-                    reloadRequest.style.justifyContent = "space-evenly";
-                    reloadRequest.style.textAlign = "center";
-                    reloadRequest.style.fontSize = "50px";
-                    reloadRequest.style.fontWeight = "100";
-                    reloadRequest.style.textEmphasisStyle = '" "';
-                    reloadRequest.style.width  = "100%";
-                    reloadRequest.style.height = "100%";
-                    reloadRequest.style.outline = '60px solid white';
-                    reloadRequest.title = this.lang == "fr" ? "Rafraichir" : "Reload";
-                    reloadRequest.innerHTML = this.lang == "fr" 
-                        ? `<div>Clique sur l'écran pour rafraichir la page et appliquer la mise à jour !</div>
-                        <div>Utilisateurs de MAC, copiez le script qui s'est ouvert et collez-le dans votre extension à la place de l'ancien script</div>`
-                        : `<div>Click on the screen to reload the page and apply the update!</div>
-                        <div>MAC users, copy the script that opened up and paste it in your extension to replace the old script</div>`;
-                    document.querySelector(".ecam-dash").appendChild(reloadRequest);
-                    setTimeout(() => {reloadRequest.classList.add("show");}, 10)
-                    reloadRequest.onclick = () => {window.location.reload();};
+                    this.createFullScreenNotif();
                 };
             }
             
@@ -2111,7 +2177,7 @@
                 // Therefore, besides the text that doesn't vary with the language, the text isn't yet created, 
                 // but will be in the generateContent() method later on, to regenerate the text in case the language is changed
                 container.innerHTML = `
-                <div id="emptyDiv"></div>
+                <div id="emptyDivToRemoveTheDragImage"></div>
                 <div class="currently-loading">
                     <div class="loading-symbol" style="--offset-offset: calc(0 * 100% / 6)"></div>
                     <div class="loading-symbol" style="--offset-offset: calc(1 * 100% / 6)"></div>
@@ -2120,6 +2186,10 @@
                     <div class="loading-symbol" style="--offset-offset: calc(4 * 100% / 6)"></div>
                     <div class="loading-symbol" style="--offset-offset: calc(5 * 100% / 6)"></div>
                 </div>
+
+                </svg>
+
+
                 <div class="dash-header">
                     <div style="display: flex;flex-direction: row;" id="aui_3_2_0_1305">
                         <img draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/5/51/ECAM-LaSalle-bleu-seul.png" alt="ECAM Logo" style="margin: 0px 0px 0px -10px;height: 141px;width: 148px;" id="aui_3_2_0_1304">
@@ -2137,13 +2207,13 @@
                                             data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAECUExURUdwTL6/w7pOXQcmd3aItpsCC7IaMURBdgAKW8rJy7QIJtPS0gIUZgASY7h7hZ4BDgADTwMofAASYxEka8/KywATZby0uQgda6gFGbpoc6QTIgAHVgAdcrC0v56jsszMzKkCFk1djU1Yg32Prv///8sBGNMHJs8CHdQLLAAegwATeNEDIAAujwAKZtYRMgANa9YgPAAoiP79/cQAEeZ9i+vt89Xc6wEKXPn3+N9vfhg/lOmKlwImfPPKzwIZb83U5fvu8AADTdtGXN9YaoydwxcwgfK8w11zrPfV2UNfovnh5Nk0TOycp7jD2t3d3TFLk6iz0fCttqsBEr0OLcy5vMWboL7jb4MAAAAkdFJOUwD+/X39/3kQfoH+/ShvJ4HW15JNuady6j+76b+/7/FQt331fQrzi9EAAAaxSURBVFjD7Zhpe6JYE4bd2mVMJz0TJ1t30t3zIiIkigjIIkoDsrihifn/f+WtOueAmjhz9XybD/1ovEyE26eqTp0lhcIv/dJ/VzXQWY3oX913fr5HnF1+/OPPL78zffnzj/LHy7Pzn+HVbi5uGwz4tdWqWOPxYHys3+9btxfVm5t/4NXOq9/uSjsE1b62muv1urmJrMHgkTxRCJoVm+ZvoLtvt42ry7Ozo4ghCWeXjVbp+bm0azYK51etNUozFGMaWY+HGlhTzXx5QZTZvJ9dX3+BiOvlj6ByHfJwfV3ZIcdZA6haMl8doHCKwnHGJjnAAEhXVKEnCC8v5ro4m+Tq9+HZf5oFu9Jw6MUcAb28yJ4auhyVHlgZBkRBIMFWpla32x2L4h6XrhxPkoCjrB++E5AsL/zlXCEkZZWZgjxlIEGwOd3qDsgjU6SHC8LhuOKsDqEtZLkHLC9DaRVr8EgfWWgZCCmM9BhoW1mSfOAoWjqqFxrN3Vb1ZIQBipAMMEUrR0CCkDnaY7rpyrV7Eu/jHVr0BKD/BStNmW/NBUQg+6FBMxU9Dvah5Y5yzCDSY5+XBNUlHBFB5bGVVFaa4agEZcY0vMA6cCTsHRFZgYbp6dmMw0BQHysJdCMmqMXSpTlPGYhHDn8IiqauDemRlwrj7EFY6YpuOKa8N6VHp0Fgx4GwJM/hMs4RiKDcrYemtgat3mMG4nPQAC5CO4I5p98m7kHjfCyngTa35Z4gq+QqI0gIiOdzULIyQrQjL8l3TRPCEUdHjrBfyYUwFnwH41emGoB4PnOEX6SCHZ5+zK1SkYEm5b0jK4mCYDM1ONdxnNCh44BDkEAdJRDVEoolyaRa0JgW41jRQ4OCoGorHTuXKX9DQCDJ5jTdDX1hb0cLBgjpzqKN3mwiaJAEU+3g3iPtQZxrL4DDhgekuSsO0qSy0Q1OaRavCuVko9HGmMfh1lZVE6Sq9nLrxHNXUVQpAxlzJ9wu6djgtE0F8qDTBLivpSr02lqBa0Lb92AQYT/wPB3MPXnh+aqXOzo2nf/iOrb3/OGi0FivsdOg6LSpiDC/pOoS+YGHH8auYbyJX3HBgNdrDwloZ6IVMnvlKJ5xmKBSPPozMeIQiho7GKUNd/Lt9rDdRhBMbD3G6b2xk7nBJ1Gn05F4AScvCKDTJgwUcVT97YXZEU7akY4FrDZT/uYtKDOUYagb9rrnEB1S2sMD0GF6hKPcvLHDIJ09Bkk56DDLp5Jz6KZ95Idw2h9yUGaGZhIH1InkUDfv/WBoVQIiww+qy4oLtcXiqr4Hw+sYw0hHfoZtufTaQBDY8O0Q+uHNcDNc6BqvwzBYp3dBIQWWxGaRgHw7dt/3fda01IxnYgtJxyQB1ujtnDVttfRKKYY2XW2CDZuHYggyxmsYSEV/dDibPggaG9p6Tm/VHv4qs6bVVkGUWoNuotNG3C6gKRYwgSlqm8SlUrPKu9kG9jBBOvqBK+1a20TpgM7sZEZRYlOAZlhsXZjrTJoZ9eRkpemrSjLrP/1AULFCKV3RCkhc7lKG9Mr2XMPJH0GQlwxkwCwcQ0qN6WYTRMls0n8CIej7bMJW4nRFzDs+2JHVWNuk4myKoDZxpOnk4xAXLN8xNmkfGYRDQOXJhC58ND1gp9Ph8cKkK2Yg4miabNgXQdVh/tej8VOmQ1BE0gNbA7CzdKcwI4sMRCoOoNk4INe4tgDDxwth0zJ+BxoQjgJbA7QDWwi6zlBQm4H6YjQleQo9MCWYobaqzPIclfsIIuUyMCwwPU264mlQn+UREgCDmjcdQw/SydMIQXUEEY6rCh3JC7VgJoqnQZBeGp5CM4WuXLBFxhGCSFxzk+/w5lyPuuLfg2A7S8PDMTvEVoNtnqE9RN8RRDm+1IGdU74MH4GGWWjgqT+jbaTArgRRQ+ja191Vof6UICf2pM5iq1UO7Ij9U47QFGsAJVYpavjhrlqop0X4I9kwO2y3k3MYCKevQ1Afck57W4ltEiDOkN/voWmdBUwUzirts3Exwhe4IQ/tEISfjSt6ttBuTfkZQdC0XAzY0q4yGb3V5H5deibm9yDaFqOUbRkUY717Ld2Rtd8hB5zK9afPcGSp45GlDkeWz58/ja4fiqUPoOdnU1uNn6gbanvUh02Zoa2bRVDrqoYbduS06Cmq8OYUddW4/XaHqFLxAYbdkd0fo78ekHLf+Ir3NXalu29VONnV/vZkd3NTvbhtPVz/eCdANb6yU+jV7cXNT503zy8vP2LEn5ggD3BWrZ061v7s6blGjpK1X/9K+KX/sP4PsW55UIo2Nb0AAAAASUVORK5CYII=
                                     `}">
                                 </div>
-                                <div id="langShortcut" style="display: flex; align-content: center; justify-content: center; align-items: center; padding-left: 9px;"></div>
                             </div>
                         </div>
                     </div>
                     <div class="header-actions" style="display:flex; align-items:center">
 
                         <div class="over-header-btns">
+
                             <div class="over-header-report-btns">
                                 <div    class="over-header-btn issue mail-info    ${this.lang == "fr" ? "fr" : "en"}">
                                     <div class="over-header-btn-mail-info-text"></div>
@@ -2154,13 +2224,16 @@
                                 <a      class="over-header-btn issue report-issue ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserReportIssue    }" target="_blank" tabindex="-1"></a>
                                 <button class="over-header-btn issue issue-btn" id="reportIssueBtn" tabindex="0">🚩</button>
                             </div>
+
                             <div class="over-header-help-btns">
                                 <div class="over-header-btn how-to-use-btn">?</div>
-                                <div class="over-header-how-to-use-btns">
-                                    <a   class="over-header-btn issue doc-btn"  href="${this.repoReadMeHowToUse}" target="_blank" ></a>
-                                    <div class="over-header-btn issue tuto-btn"></div>
+                                <div class="over-header-how-to-use-btns" hidden>
+                                    <a   class="over-header-btn help doc-btn fr"  href="${this.repoReadMeHowToUse}" target="_blank" ></a>
+                                    <div class="over-header-btn help tuto-btn fr"></div>
+                                    <div class="over-header-btn help keybinds-btn fr"></div>
                                 </div>
-                                <div class="new-user-notif" style="width: 400px; top: -9px; right: 103px; --hoverAmp: 15px; animation: hoveringElem 3s infinite ease-in-out; cursor: pointer; --arrow-path: path('M 0 30 c 20,46, 130,71, 156,-12 m -21,5 l 23,-8 l 9,19'); --arrow-join: round;" hidden>
+
+                                <div class="new-user-notif" style="width: 400px; height: 53px; top: -9px; right: 153px; --hoverAmp: 15px; animation: hoveringElem 3s infinite ease-in-out; cursor: pointer; --arrow-path: path('M 0 30 c 20,46, 130,71, 156,-12 m -21,5 l 23,-8 l 9,19'); --arrow-join: round;" hidden>
                                     <svg viewBox="0 0 100 100" style="position: absolute; bottom: -46px; right: -105px; width: 200px; height: 70px; z-index: 9; ">
                                         <path class="new-user-notif-arrow outside"></path>
                                     </svg>
@@ -2170,6 +2243,9 @@
                                     <div class="new-user-notif-text"></div>
                                 </div>
                             </div>
+
+                            <div class="over-header-btn settings-btn">⚙️</div>
+
                         </div>
 
                         <button class="btn btn-edit-mode ${this.editMode ? "on" : "off"}" id="editModeBtn"></button>
@@ -2274,6 +2350,14 @@
                 container.insertBefore(notifContainer, container.querySelector("dash-header"));
                 originalTable.style.display = "none";
 
+                const newUserNotifFocusSVG = document.createElement("svg");
+                newUserNotifFocusSVG.className = `new-user-notif-attention-catcher-svg`;
+                newUserNotifFocusSVG.viewBox = `0 0 800 100`;
+                newUserNotifFocusSVG.style.position = `absolute`;
+                newUserNotifFocusSVG.style.zIndex = `8`;
+                newUserNotifFocusSVG.hidden = "true";
+                document.body.appendChild(newUserNotifFocusSVG);
+
                 this.generateContent();
             }
 
@@ -2327,13 +2411,15 @@
             //MARK: language Sensitive
             languageSensitiveContent(fadeIn=true) {
                 // Language Sensitive text in the Dashboard Header and Semester filter tab (which don't refresh on calling the generateContent() method)
-                const dashTitle = document.querySelector(".dash-title");
-                const dashSubtitle = document.querySelector(".dash-subtitle");
-                dashTitle.innerHTML = this.lang == "fr" ? 'Tableau de Bord des Notes ECAM ' + this.scriptVersion : "ECAM Grades Dashboard " + this.scriptVersion;
-                dashSubtitle.innerHTML = this.lang == "fr" ? 'Vue complète de vos résultats académiques !' : "Complete view of your academic results!";
+                const dashTitle     = document.querySelector(".dash-title");
+                const dashSubtitle  = document.querySelector(".dash-subtitle");
+                dashTitle.innerHTML     = this.lang == "fr" ? 'Tableau de Bord des Notes ECAM ' + this.scriptVersion : "ECAM Grades Dashboard " + this.scriptVersion;
+                dashSubtitle.innerHTML  = this.lang == "fr" ? 'Vue complète de vos résultats académiques !' : "Complete view of your academic results!";
 
-                const langShortcutText = document.getElementById("langShortcut");
-                langShortcutText.innerHTML = this.lang == "fr" ? "(Maj+L)" : "(Shift+L)";
+                const frBtn = document.querySelectorAll("#fr-lang-btn");
+                const enBtn = document.querySelectorAll("#en-lang-btn");
+                frBtn.title = this.lang == "fr" ? "Maj+L" : "Shift+L";
+                enBtn.title = this.lang == "fr" ? "Maj+L" : "Shift+L";
 
                 const reportIssueBtn    = document.querySelector(".issue.issue-btn");
                 const mailInfo          = document.querySelector(".issue.mail-info");
@@ -2342,70 +2428,101 @@
                 const shareConfig       = document.querySelector(".issue.share-config");
                 const suggestIdea       = document.querySelector(".issue.suggest-idea");
                 const reportIssue       = document.querySelector(".issue.report-issue");
+
                 const helpMenu          = document.querySelector(".over-header-btn.how-to-use-btn");
                 const docBtn            = document.querySelector(".over-header-btn.doc-btn");
                 const tutoBtn           = document.querySelector(".over-header-btn.tuto-btn");
+                const keybindsBtn       = document.querySelector(".over-header-btn.keybinds-btn");
+
+                const settingsBtn       = document.querySelector(".over-header-btn.settings-btn");
+
                 const newUserNotif      = document.querySelector(".new-user-notif");
                 const newUserNotifText  = document.querySelector(".new-user-notif-text");
+
                 if (this.lang == "fr") {
                     reportIssueBtn  .title     = "Signaler...";
-                    mailInfo        .title     = "Clique pour copier l'adresse email";
+                    mailInfo        .title     = "Clique pour copier mon adresse email !";
                     shareConfig     .title     = "Partage une configuration sur mon GitHub";
                     suggestIdea     .title     = "Suggère une idée sur mon GitHub";
                     reportIssue     .title     = "Signale un problème sur mon GitHub";
+
                     helpMenu        .title     = "Comment s'en servir?";
                     docBtn          .title     = "Aller vers la documentation";
                     tutoBtn         .title     = "Démarrer le tutoriel";
-                    newUserNotif    .title     = "Clique pour fermer";
+                    keybindsBtn     .title     = "Voir les raccourcis clavier";
+
+                    settingsBtn     .title     = "Ouvrir les paramètres";
+
+                    if (newUserNotif?.hidden?.toString() || "true" == "false") newUserNotif.title     = "Clique pour fermer";
+
                     shareConfig     .innerHTML = "Partager une config\u2197";
                     suggestIdea     .innerHTML = "Suggérer une idée\u2197";
                     reportIssue     .innerHTML = "Signaler un problème\u2197";
                     mailInfoText    .innerHTML = "Par mail: baptiste.jacquin@ecam.fr 📋";
                     mailInfoCopied  .innerHTML = "Copié !";
-                    docBtn          .innerHTML = "Voir documentation\u2197";
-                    tutoBtn         .innerHTML = "Démarrer tutoriel ▶︎";
-                    newUserNotifText.innerHTML = "Bonjour! Nouveau ici? Clique ici pour apprendre à utiliser cette extension!";
+
+                    if (newUserNotif?.hidden?.toString() || "true" == "false") newUserNotifText.innerHTML = "Bonjour! Nouveau ici? Clique ici pour apprendre à utiliser cette extension!";
+
                     mailInfo   .classList.replace("en", "fr");
                     shareConfig.classList.replace("en", "fr");
                     suggestIdea.classList.replace("en", "fr");
                     reportIssue.classList.replace("en", "fr");
+
+                    docBtn     .classList.replace("en", "fr");
+                    tutoBtn    .classList.replace("en", "fr");
+                    keybindsBtn.classList.replace("en", "fr");
                 }
                 else {
                     reportIssueBtn  .title     = "Report...";
-                    mailInfo        .title     = "Click to copy the email adress";
+                    mailInfo        .title     = "Click to copy my email adress!";
                     shareConfig     .title     = "Share a configuration on my GitHub";
                     suggestIdea     .title     = "Suggest an idea on my GitHub";
                     reportIssue     .title     = "Report an issue on my GitHub";
+
                     helpMenu        .title     = "How to use?";
                     docBtn          .title     = "Go to the documentation";
                     tutoBtn         .title     = "Start the tutorial";
-                    newUserNotif    .title     = "Click to dismiss";
+                    keybindsBtn     .title     = "See the keyboard shortcuts";
+
+                    settingsBtn     .title     = "Open the settings";
+                    
+                    if (newUserNotif?.hidden?.toString() || "true" == "false") newUserNotif.title     = "Click to dismiss";
+
                     shareConfig     .innerHTML = "Share a config\u2197";
                     suggestIdea     .innerHTML = "Suggest an idea\u2197";
                     reportIssue     .innerHTML = "Report an issue\u2197";
                     mailInfoText    .innerHTML = "By mail: baptiste.jacquin@ecam.fr 📋";
                     mailInfoCopied  .innerHTML = "Copied!";
-                    docBtn          .innerHTML = "See documentation\u2197";
-                    tutoBtn         .innerHTML = "Start tutorial ▶︎";
-                    newUserNotifText.innerHTML = "Hey! New here? Click here to find a tutorial on how to use this extension!";
+
+                    if (newUserNotif?.hidden?.toString() || "true" == "false") newUserNotifText.innerHTML = "Hey! New here? Click here to find a tutorial on how to use this extension!";
+
                     mailInfo   .classList.replace("fr", "en");
                     shareConfig.classList.replace("fr", "en");
                     suggestIdea.classList.replace("fr", "en");
                     reportIssue.classList.replace("fr", "en");
+
+                    docBtn     .classList.replace("fr", "en");
+                    tutoBtn    .classList.replace("fr", "en");
+                    keybindsBtn.classList.replace("fr", "en");
                 }
                 
-                const importBtn = document.getElementById("importBtn");
-                const editModeBtn = document.getElementById("editModeBtn");
-                const exportBtn = document.getElementById("exportBtn");
-                importBtn.innerHTML =   `${this.lang == "fr" ? "Importer Config": "Import Config"}<span class="btn-icon">⬇️</span>`;
-                editModeBtn.innerHTML = `<div style="display:flex; flex-direction:column; gap:3px"><span style="font-size:40px">🖊️</span><div>${this.lang == "fr" ? "Mode Édition" : "Edit Mode"}</div><div>${this.lang == "fr" ? "(Maj+E)" : "(Shift+E)"}</div></div>`;
+
+                const keybindsTable = document.querySelector(".keyboard-shortcut-list-body");
+                if (keybindsTable) { keybindsTable.innerHTML = this.createKeyboardShortcutsList(); }
+                
+                const importBtn     = document.getElementById("importBtn");
+                const editModeBtn   = document.getElementById("editModeBtn");
+                const exportBtn     = document.getElementById("exportBtn");
+                importBtn   .innerHTML  = `${this.lang == "fr" ? "Importer Config": "Import Config"}<span class="btn-icon">⬇️</span>`;
+                editModeBtn .innerHTML  = `<div style="display:flex; flex-direction:column; gap:3px"><span style="font-size:40px">🖊️</span><div>${this.lang == "fr" ? "Mode Édition" : "Edit Mode"}</div></div>`;
+                exportBtn   .innerHTML  = `${this.lang == "fr" ? "Exporter Config": "Export Config"}<span class="btn-icon">⬆️</span>`;
+                editModeBtn .title      = this.lang == "fr" ? "Maj+E" : "Shift+E";
                 if (this.editMode) {editModeBtn.classList.add('on')}
                 else    {editModeBtn.classList.remove('on')}
-                exportBtn.innerHTML =   `${this.lang == "fr" ? "Exporter Config": "Export Config"}<span class="btn-icon">⬆️</span>`;
                 
                 const importMenu    = document.getElementById("importMenu");
                 const importFile    = importMenu.querySelector(".import-menu-btn.file");
-                const importClear  = importMenu.querySelector(".import-menu-btn.clear");
+                const importClear   = importMenu.querySelector(".import-menu-btn.clear");
                 const importOnline  = importMenu.querySelector(".import-menu-btn.online");
 
                 importFile.children[0].innerHTML   = this.lang == "fr" ? "Importer un fichier de configuration .json"   : "Import a .json configuration file";
@@ -2430,8 +2547,10 @@
                         dirTreeHeader.classList.replace("fr","en")
                     })
                 }
-                const avgLabel   = document.querySelector(".average-label");
-                avgLabel.innerHTML   = `/20 ${this.lang == "fr" ? "Moyenne Générale" : "Global Average"}`;
+
+
+                const avgLabel = document.querySelector(".average-label");
+                avgLabel.innerHTML  = `/20 ${this.lang == "fr" ? "Moyenne Générale" : "Global Average"}`;
 
                 const statLabelsArray = document.querySelectorAll(".stat-label");
                 statLabelsArray[0].innerHTML = this.lang == "fr" ? "Notes" : "Grades";
@@ -2441,11 +2560,15 @@
                 const allFilterTabs = document.querySelectorAll(`.filter-tab`);
                 allFilterTabs.forEach(tab => {
                     if (tab.dataset.filter == "all") {tab.innerHTML = this.lang == "fr" ? `Tous` : `All`}
-                    tab.title = this.lang == "fr" ? `Appuye sur Maj+Flèche Droite/Gauche` : `Press Shift+Left/Right Arrow`;
+                    tab.title = this.lang == "fr" ? `Maj+Flèche Droite/Gauche` : `Shift+Left/Right Arrow`;
                 })
 
-                document.querySelector(`.view-toggle`).children[0].innerHTML = this.lang == "fr" ? `Basculer le mode d'affichage (Maj+D)` : `Toggle display mode (Shift+D)`;
-                document.querySelector(`.fold-toggle`).innerHTML = this.lang == "fr" ? `Plier tous les modules (Maj+F)` : `Fold every module (Shift+F)`;
+                document.querySelector(`.view-toggle`).children[0].innerHTML = this.lang == "fr" ? `Basculer le mode d'affichage` : `Toggle display mode`;
+                document.querySelector(`.fold-toggle`)            .innerHTML = this.lang == "fr" ? `Plier tous les modules` : `Fold every module`;
+                document.querySelector(`.view-toggle`).children[0].title     = this.lang == "fr" ? `Maj+D` : `Shift+D`;
+                document.querySelector(`.fold-toggle`)            .title     = this.lang == "fr" ? `Maj+F` : `Shift+F`;
+
+
                 const viewBtnsArray = document.querySelectorAll(".view-btn");
                 viewBtnsArray[0].title = this.lang == "fr" ? "Vue détaillée" : "Detailed view";
                 viewBtnsArray[1].title = this.lang == "fr" ? "Vue compacte" : "Compact view";
@@ -2478,7 +2601,6 @@
                 document.querySelector(".new-grades-mark-as-read").title = this.lang == "fr" ? "Marquer comme lu" : "Mark as read";
                 
 
-                let highestWidth = 0;
                 document.querySelectorAll(".selected-subject-card-notif-div").forEach(notifDiv => {
                     notifDiv.childNodes[4].data = this.lang == "fr" ? `est sélectionné!` : `is selected!`;
                 })
@@ -2490,7 +2612,7 @@
                     this.timeouts.renderFadeIn = setTimeout(() => {document.querySelector(".ecam-dash").parentElement.classList.remove("fade-in")}, 300);
                 }
 
-                this.attachAllEventListeners();
+                // this.attachAllEventListeners();
             }
 
 
@@ -2940,18 +3062,140 @@
             }
 
 
+            createKeyboardShortcutsList() {
+                let html = `
+                <table style="font-size: 20px; --row-height: 30px;">
+                    <thead>
+                        <tr>
+                            <td style="width: 580px;"></td>   <td style="width: 160px;"></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                `;
+
+                html += `
+                        <tr style="height: var(--row-height); border-bottom: 1px solid black;">
+                            <td style="padding-left: 15px; border-right: 1px solid black;">
+                                ${this.lang == "fr" ? "Plier/Déplier tous les modules (basculer)" : "Fold/Unfold all modules (toggle)"}
+                            </td>
+                            <td style="padding-left: 15px">
+                                ${this.lang == "fr" ? "Maj + F" : "Shift + F"}
+                            </td>
+                        </tr>
+                `;
+                
+                html += `
+
+                        <tr style="height: var(--row-height); border-bottom: 1px solid black;">
+                            <td style="padding-left: 15px; border-right: 1px solid black;">
+                                ${this.lang == "fr" ? "Vue détaillée/compacte pour toutes les matières (basculer)" : "Detailed/Compact view all subjects (toggle)"}
+                            </td>
+                            <td style="padding-left: 15px">
+                                ${this.lang == "fr" ? "Maj + D" : "Shift + D"}
+                            </td>
+                        </tr>
+                `;
+                
+                html += `
+
+                        <tr style="height: var(--row-height); border-bottom: 1px solid black;">
+                            <td style="padding-left: 15px; border-right: 1px solid black;">
+                                ${this.lang == "fr" ? "Mode édition (basculer)" : "Edit mode (toggle)"}
+                            </td>
+                            <td style="padding-left: 15px">
+                                ${this.lang == "fr" ? "Maj + E" : "Shift + E"}
+                            </td>
+                        </tr>
+                `;
+                
+                html += `
+
+                        <tr style="height: var(--row-height); border-bottom: 1px solid black;">
+                            <td style="padding-left: 15px; border-right: 1px solid black;">
+                                ${this.lang == "fr" ? "Langue français/anglais (basculer)" : "Language French/English (toggle)"}
+                            </td>
+                            <td style="padding-left: 15px">
+                                ${this.lang == "fr" ? "Maj + L" : "Shift + L"}
+                            </td>
+                        </tr>
+                `;
+                
+                html += `
+
+                        <tr style="height: var(--row-height);">
+                            <td style="padding-left: 15px; border-right: 1px solid black;">
+                                ${this.lang == "fr" ? "Changer de semestre (cycle)" : "Change semester (cycle)"}
+                            </td>
+                            <td style="padding-left: 15px">
+                                ${this.lang == "fr" ? "Maj + ←/→" : "Shift + ←/→"}
+                            </td>
+                        </tr>
+                `;
+                
+                html += `
+                    </tbody>
+                </table>
+                `
+
+                return html;
+            }
+
+            createFullScreenNotif(text) {
+                if (!text) {
+                    text = this.lang == "fr" 
+                        ? `<div>Clique sur l'écran pour rafraichir la page et appliquer la mise à jour !</div><div>Utilisateurs de MAC, copiez le script qui s'est ouvert et collez-le dans votre extension à la place de l'ancien script</div>`
+                        : `<div>Click on the screen to reload the page and apply the update!</div><div>MAC users, copy the script that opened up and paste it in your extension to replace the old script</div>
+                    `;
+                }
+
+                document.body.style.height = "290px";
+                document.body.style.overflow = "hidden";
+                const reloadRequest = document.createElement("div");
+                const fullScreenNotif = document.createElement("div");
+                document.querySelector(".ecam-dash").appendChild(fullScreenNotif);
+                reloadRequest.className = `modal${this.settings.blurEnabled ? " blur" : ""}`;
+                reloadRequest.style.cursor = "pointer";
+                reloadRequest.style.justifyContent = "space-evenly";
+                reloadRequest.style.textAlign = "center";
+                reloadRequest.style.fontSize = "50px";
+                reloadRequest.style.fontWeight = "100";
+                reloadRequest.style.textEmphasisStyle = '" "';
+                reloadRequest.style.width  = "100%";
+                reloadRequest.style.height = "100%";
+                reloadRequest.style.outline = '60px solid white';
+                reloadRequest.title = this.lang == "fr" ? "Rafraichir" : "Reload";
+                reloadRequest.innerHTML = text;
+
+                fullScreenNotif.outerHTML = `
+                    <div class="modal${this.settings.blurEnabled ? " blur" : ""}" id="fullScreeNotif" style="display: flex; flex-direction: column; justify-content: space-evenly; position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; text-align: center; font-size: 50px; font-weight: 100; text-emphasis-style: ' '; cursor: pointer; z-index: 1000">
+                        ${text}
+                    </div>
+                `;
+                const newFullScreenNotif = document.querySelector("#fullScreeNotif");
+                newFullScreenNotif.title = this.lang == "fr" ? "Rafraichir" : "Reload";
+                setTimeout(() => {newFullScreenNotif.classList.add("show");}, 100)
+                newFullScreenNotif.onclick = () => {window.location.reload();};
+            }
+
+
             firstLoadEvent() {
                 if (this.firstLoad) {
-                    const newUserNotif = document.querySelector(".new-user-notif");
+                    const newUserNotif          = document.querySelector(".new-user-notif");
+                    const newUserNotifFocus     = document.querySelector(".new-user-notif-attention-catcher");
+                    const newUserNotifFocusSVG  = document.querySelector(".new-user-notif-attention-catcher-svg");
+
                     newUserNotif.hidden = false;
+                    newUserNotifFocus.hidden = false;
+                    newUserNotifFocusSVG.hidden = false;
+                    setTimeout(() => {newUserNotifFocus.classList.add("focus");}, 10);
 
                     newUserNotif.onclick = () => {
-                        localStorage.setItem("ECAM_DASHBOARD_FIRST_LOAD", false);
+                        // localStorage.setItem("ECAM_DASHBOARD_FIRST_LOAD", false);
 
                         newUserNotif.style.animationPlayState = "paused";
                         newUserNotif.style.top = `${newUserNotif.getBoundingClientRect().top - newUserNotif.getBoundingClientRect().height - 10}px`;
                         newUserNotif.style.opacity = "0%";
-                        setTimeout(() => {newUserNotif.remove();}, 300);
+                        setTimeout(() => {newUserNotif.hidden = true;}, 300);
                     }
                 }
             }
@@ -3005,6 +3249,7 @@
 
 
                 //#region Document listeners
+
                     attachDocumentMouseListeners(eventName="all") {
                         if (eventName == "onclick" || eventName == "all") {
                             document.onclick = (e) => {
@@ -3048,28 +3293,8 @@
                                     this.timeouts.closeImportMenu = setTimeout(() => {document.getElementById("importMenu").style.display = "none"}, 300);
                                 }
 
-                                if (!e.target.closest(".over-header-btn")) {
-                                    const issueBtn      = document.querySelector(".issue.issue-btn");
-                                    const mailInfo      = document.querySelector(".issue.mail-info");
-                                    const shareConfig   = document.querySelector(".issue.share-config");
-                                    const suggestIdea   = document.querySelector(".issue.suggest-idea");
-                                    const reportIssue   = document.querySelector(".issue.report-issue");
-                                    const helpBtn       = document.querySelector(".over-header-btn.how-to-use-btn");
-                                    const helpMenu      = document.querySelector(".over-header-how-to-use-btns");
-                                    const docBtn        = document.querySelector(".over-header-btn.doc-btn");
-                                    const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
-
-                                    issueBtn   .classList.remove("open");
-                                    mailInfo   .classList.remove("open"); mailInfo   .tabIndex = "-1";
-                                    shareConfig.classList.remove("open"); shareConfig.tabIndex = "-1";
-                                    suggestIdea.classList.remove("open"); suggestIdea.tabIndex = "-1";
-                                    reportIssue.classList.remove("open"); reportIssue.tabIndex = "-1";
-                                    helpBtn    .classList.remove("open");
-                                    helpMenu   .classList.remove("open");
-                                    clearTimeout(this.timeouts?.openHelpMenu);
-                                    this.timeouts.openHelpMenu = setTimeout(()=>{helpMenu.hidden = true;}, 200);
-                                    docBtn     .tabIndex = "-1";
-                                    tutoBtn    .tabIndex = "-1";
+                                if (!e.target.closest(".over-header-btn.issue.issue-btn, .over-header-btn.issue.mail-info, .over-header-btn.how-to-use-btn")) {
+                                    this.dismissAllOverHeaderBtns();
                                 }
                             };
                         }
@@ -3110,6 +3335,7 @@
                             input.onmouseleave  = ( ) => { if (this.editMode) {this.attachOnDragEventListeners();} };
                         }
                     }
+
                 //#endregion
 
 
@@ -3160,29 +3386,17 @@
                     attachIssuesBtnsMouseListeners() {
                         const issueBtn      = document.querySelector(".issue.issue-btn");
                         const mailInfo      = document.querySelector(".issue.mail-info");
-                        const shareConfig   = document.querySelector(".issue.share-config");
-                        const suggestIdea   = document.querySelector(".issue.suggest-idea");
-                        const reportIssue   = document.querySelector(".issue.report-issue");
 
                         const helpBtn       = document.querySelector(".over-header-btn.how-to-use-btn");
-                        const helpMenu      = document.querySelector(".over-header-how-to-use-btns");
-                        const docBtn        = document.querySelector(".over-header-btn.doc-btn");
                         const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
+                        const keybindsBtn   = document.querySelector(".over-header-btn.keybinds-btn");
 
                         issueBtn.onclick = () => {
-                            if (reportIssue.classList.contains("open")) {
-                                issueBtn   .classList.remove("open");
-                                mailInfo   .classList.remove("open"); mailInfo   .tabIndex = "-1";
-                                shareConfig.classList.remove("open"); shareConfig.tabIndex = "-1";
-                                suggestIdea.classList.remove("open"); suggestIdea.tabIndex = "-1";
-                                reportIssue.classList.remove("open"); reportIssue.tabIndex = "-1";
+                            if (issueBtn.classList.contains("open")) {
+                                this.dismissIssuesOverHeaderBtns();
                             }
                             else {
-                                issueBtn   .classList.add("open");
-                                mailInfo   .classList.add("open"); mailInfo   .tabIndex = "0";
-                                shareConfig.classList.add("open"); shareConfig.tabIndex = "0";
-                                suggestIdea.classList.add("open"); suggestIdea.tabIndex = "0";
-                                reportIssue.classList.add("open"); reportIssue.tabIndex = "0";
+                                this.openIssuesOverHeaderBtns();
                             }
                         };
 
@@ -3202,34 +3416,34 @@
 
                         helpBtn.onclick = () => {
                             if (helpBtn.classList.contains("open")) {
-                                helpBtn .classList.remove("open");
-                                helpMenu.classList.remove("open");
-                                clearTimeout(this.timeouts?.openHelpMenu);
-                                this.timeouts.openHelpMenu = setTimeout(()=>{helpMenu.hidden = true;}, 200);
-                                docBtn  .tabIndex = "-1";
-                                tutoBtn .tabIndex = "-1";
+                                this.dismissHelpOverHeaderBtns();
                             }
                             else {
-                                helpBtn .classList.add("open");
-                                helpMenu.hidden = false;
-                                clearTimeout(this.timeouts?.openHelpMenu);
-                                this.timeouts.openHelpMenu = setTimeout(()=>{helpMenu.classList.add("open");}, 10);
-                                docBtn  .tabIndex = "0";
-                                tutoBtn .tabIndex = "0";
-                                if (this.firstLoad) {
-                                    const newUserNotif = document.querySelector(".new-user-notif");
-                                    localStorage.setItem("ECAM_DASHBOARD_FIRST_LOAD", false);
-
-                                    newUserNotif.style.animationPlayState = "paused";
-                                    newUserNotif.style.top = `${newUserNotif.getBoundingClientRect().top - newUserNotif.getBoundingClientRect().height - 10}px`;
-                                    newUserNotif.style.opacity = "0%";
-                                    setTimeout(() => {newUserNotif.remove();}, 300);
-                                }
+                                this.openHelpOverHeaderBtns();
                             }
                         }
 
                         tutoBtn.onclick = () => {
                             this.startTutorial();
+                        }
+
+                        keybindsBtn.onclick = () => {
+                            const keybindsMenu = document.createElement("div");
+                            keybindsMenu.className = "keyboard-shortcut-list-container";
+                            keybindsMenu.innerHTML = `
+                                <div class="keyboard-shortcut-list-body modal${this.settings.blurEnabled ? " blur" : ""}">
+                                    ${this.createKeyboardShortcutsList()}
+                                    <div class="modal-close-btn" style="position: relative; top: -27px; margin-right: -27px;">❌</div>
+                                </div>
+                            `;
+                            document.querySelector(".ecam-dash").appendChild(keybindsMenu);
+                            setTimeout(() => {keybindsMenu.querySelector(".keyboard-shortcut-list-body").classList.add("show");}, 5);
+                            keybindsMenu.onclick = (e) => {
+                                if (!e.target.closest(`.keyboard-shortcut-list-body`) || e.target.closest(`.modal-close-btn`)) {
+                                    keybindsMenu.querySelector(".keyboard-shortcut-list-body").classList.remove("show");
+                                    setTimeout(() => {keybindsMenu.remove()}, 300);
+                                }
+                            }
                         }
                     }
 
@@ -3556,539 +3770,644 @@
 
             //#region -Events Action
 
-                // MARK: -toggle module card folding
-                /** Call this method to switch all Module cards' state between folded and unfolded 
-                 * 
-                 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module header HTML Element or an event triggered by a module header
-                 * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
-                 * @param {Boolean} hideAdjacentModuleInsertionFields Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
-                 * @param {Boolean} bypassFoldedModuleCardsId Default: false — Destined to control whether the folded module card ID's addition to/deletion from this.foldedModuleCardsId will be bypassed (if true) or not (if false)
-                 */
-                toggleFoldAllModuleCards(hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
-                    document.querySelectorAll(".module-header").forEach(moduleHeader => {
-                        this.toggleFoldModuleCard(moduleHeader, hideOtherSubjectInsertionFields, hideAdjacentModuleInsertionFields, bypassFoldedModuleCardsId)
-                    })
-                }
-                /** Call this method to switch a module card's state between folded and unfolded 
-                 * 
-                 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module header HTML Element or an event triggered by a module header
-                 * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
-                 * @param {Boolean} hideAdjacentModuleInsertionFields Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
-                 * @param {Boolean} bypassFoldedModuleCardsId Default: false — Destined to control whether the folded module card ID's addition to/deletion from this.foldedModuleCardsId will be bypassed (if true) or not (if false)
-                 */
-                toggleFoldModuleCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
-                    if (trigger?.classList?.contains("module-header") || (trigger?.target?.classList?.contains("module-header"))) {
-                        const moduleHeader = trigger?.target || trigger;
-                        if (moduleHeader.classList.contains("fold")) {
-                            this.unfoldModuleCard(moduleHeader, hideOtherSubjectInsertionFields, hideAdjacentModuleInsertionFields, bypassFoldedModuleCardsId)
-                        }
-                        else {
-                            this.foldModuleCard(moduleHeader, hideOtherSubjectInsertionFields, hideAdjacentModuleInsertionFields, bypassFoldedModuleCardsId)
-                        }
+
+
+
+
+                //#region Over header btns
+                    dismissAllOverHeaderBtns() {
+                        this.dismissHelpOverHeaderBtns();
+                        this.dismissIssuesOverHeaderBtns();
                     }
-                }
+
+                    openIssuesOverHeaderBtns() {
+                        const issueBtn      = document.querySelector(".issue.issue-btn");
+                        const mailInfo      = document.querySelector(".issue.mail-info");
+                        const shareConfig   = document.querySelector(".issue.share-config");
+                        const suggestIdea   = document.querySelector(".issue.suggest-idea");
+                        const reportIssue   = document.querySelector(".issue.report-issue");
 
 
-                // MARK: -fold module card
-                /** Call this method to fold all module cards 
-                 * 
-                 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module header HTML Element or an event triggered by a module header
-                 * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
-                 * @param {Boolean} hideAdjacentModuleInsertionFields Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
-                 * @param {Boolean} bypassFoldedModuleCardsId Default: false — Destined to control whether the folded module card ID's addition to this.foldedModuleCardsId will be bypassed (if true) or not (if false)
-                 */
-                foldAllModuleCards(hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
-                    document.querySelectorAll(".module-header").forEach(moduleHeader => {
-                        this.foldModuleCard(moduleHeader, hideOtherSubjectInsertionFields, hideAdjacentModuleInsertionFields, bypassFoldedModuleCardsId)
-                    })
-                }
-                /** Call this method to fold a module card
-                 * 
-                 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module header HTML Element or an event triggered by a module header
-                 * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
-                 * @param {Boolean} hideAdjacentModuleInsertionFields Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
-                 * @param {Boolean} bypassFoldedModuleCardsId Default: false — Destined to control whether the folded module card ID's addition to this.foldedModuleCardsId will be bypassed (if true) or not (if false)
-                 */
-                foldModuleCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
-                    // testing if the trigger argument is an HTML of class module-card or an Event triggered by a module header or one of its elements
-                    if (trigger?.classList?.contains("module-header") || (trigger?.target?.classList?.contains("module-header"))) {
-                        // Identifying the moduleCard depending on whether the trigger argument is a module header or an event triggered by a module header
-                        const moduleCard        = trigger?.target?.parentElement || trigger.parentElement;
-                        const sem               = moduleCard.dataset.semester;
-                        const module            = moduleCard.dataset.module;
-                        const index             = moduleCard.dataset.index;
-                        const moduleCardElems   = moduleCard.querySelectorAll(".module-card, .module-header, .module-info, .module-card-content, .module-details");
-                        const toggle            = moduleCard.querySelector('.module-toggle');
-                        let subjectCards        = [];
-
-                        if (hideAdjacentModuleInsertionFields != "only") {
-                            toggle.classList.remove("open");
-                            
-                            const subjectInsertFields = document.querySelectorAll(`.drop-field.insert-field.subject[data-semester="${sem}"]${hideOtherSubjectInsertionFields ? "" : `[data-module="${module}"]`}`)
-                            const subjectInsertFieldHitboxes = Object.values(subjectInsertFields).map(elem => {return elem.querySelector(".drop-subject-card-insert-hitbox")});
-
-                            subjectCards = document.querySelectorAll(`.subject-card[data-semester="${sem}"][data-module="${module}"]`);
-
-
-                            subjectInsertFieldHitboxes.forEach(subjInsFieldHitbox => {
-                                this.detachInsertFieldHitboxEventListeners(subjInsFieldHitbox);
-                            })
-                            subjectInsertFields.forEach(subjInsField => {
-                                subjInsField.classList.remove("show");
-                            })
-                            subjectCards.forEach(subjCard => {
-                                subjCard.classList.add("fold");
-                            })
-                            moduleCardElems.forEach(elem => {elem.classList.add("fold")})
-                            moduleCard.classList.add("fold");
-                        }
-
-                        let upperInsertField = "";
-                        let lowerInsertField = "";
-
-                        if (hideAdjacentModuleInsertionFields) {
-                            upperInsertField = document.querySelector(`.drop-field.insert-field.module[data-semester="${sem}"][data-index="${index}"]`)
-                            const upperInsertFieldHitbox = upperInsertField.querySelector(".drop-module-card-insert-hitbox");
-
-                            lowerInsertField = document.querySelector(`.drop-field.insert-field.module[data-semester="${sem}"][data-index="${parseInt(index)+1}"]`)
-                            const lowerInsertFieldHitbox = lowerInsertField.querySelector(".drop-module-card-insert-hitbox");
-                            
-                            this.detachInsertFieldHitboxEventListeners(upperInsertFieldHitbox);
-                            this.detachInsertFieldHitboxEventListeners(lowerInsertFieldHitbox);
-                            upperInsertField.classList.remove("show");
-                            lowerInsertField.classList.remove("show");
-                        }
-
-
-                        clearTimeout(this.timeouts.upperInsertFieldUnfoldTimeout);
-                        clearTimeout(this.timeouts.lowerInsertFieldUnfoldTimeout);
-                        clearTimeout(this.timeouts.subjectInsertFieldUnfoldTimeout);
-                        clearTimeout(this.timeouts.subjectCardsUnfoldTimeout);
-                        clearTimeout(this.timeouts.moduleCardElemsUnfoldTimeout);
-                        clearTimeout(this.timeouts.moduleCardUnfoldTimeout);
-                        this.timeouts.foldModuleCardTimeout = setTimeout(() => {
-                            if (hideAdjacentModuleInsertionFields) {
-                                upperInsertField.style.display = "none";
-                                lowerInsertField.style.display = "none";
-                            }
-
-                            if (hideAdjacentModuleInsertionFields != "only") {
-                                subjectCards.forEach(subjCard => {
-                                    subjCard.style.display = "none";
-                                })
-                                moduleCardElems.forEach(elem => {
-                                    if (!elem.classList.contains("module-header")) {elem.style.display = "none";}
-                                })
-                            }
-                        }, 200)
-
-                        if (!bypassFoldedModuleCardsId) {
-                            this.foldedModuleCardsId.push(moduleCard.id);
-                        }
-                    }
-                    
-                }
-
-
-                // MARK: -unfold module card
-                /** Call this method to unfold all module cards
-                 * 
-                 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module header HTML Element or an event triggered by a module header
-                 * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be shown (if true) or not (if false)
-                 * @param {Boolean} hideAdjacentModuleInsertionFields Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
-                 * @param {Boolean} bypassFoldedModuleCardsId Default: false — Destined to control whether the unfolded module card ID's deletion from this.foldedModuleCardsId will be bypassed (if true) or not (if false)
-                 */
-                unfoldAllModuleCards(hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
-                    document.querySelectorAll(".module-header").forEach(moduleHeader => {
-                        this.unfoldModuleCard(moduleHeader, hideOtherSubjectInsertionFields, hideAdjacentModuleInsertionFields, bypassFoldedModuleCardsId)
-                    })
-                }
-                /** Call this method to unfold a module card
-                 * 
-                 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module header HTML Element or an event triggered by a module header
-                 * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be shown (if true) or not (if false)
-                 * @param {Boolean} hideAdjacentModuleInsertionFields Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
-                 * @param {Boolean} bypassFoldedModuleCardsId Default: false — Destined to control whether the unfolded module card ID's deletion from this.foldedModuleCardsId will be bypassed (if true) or not (if false)
-                 */
-                unfoldModuleCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
-                    // testing if the trigger argument is an HTML of class module-card or an Event triggered by a module header or one of its elements
-                    if (trigger?.classList?.contains("module-header") || (trigger?.target?.classList?.contains("module-header"))) {
-                        // Identifying the moduleCard depending on whether the trigger argument is a module header or an event triggered by a module header
-                        const moduleCard        = trigger?.target?.parentElement || trigger.parentElement;
-                        const sem               = moduleCard.dataset.semester;
-                        const module            = moduleCard.dataset.module;
-                        const index             = moduleCard.dataset.index;
-                        const moduleCardElems   = moduleCard.querySelectorAll(".module-card, .module-header, .module-info, .module-card-content, .module-details");
-                        const toggle            = moduleCard.querySelector('.module-toggle');
-                        let subjectCards        = [];
-                        let upperInsertField    = "";
-                        let lowerInsertField    = "";
-
-
-                        clearTimeout(this.foldModuleCardTimeout);
-
-
-                        if (hideAdjacentModuleInsertionFields) {
-                            upperInsertField = document.querySelector(   `.drop-field.insert-field.module[data-semester="${sem}"][data-index="${index}"]`);
-                            lowerInsertField = document.querySelector(   `.drop-field.insert-field.module[data-semester="${sem}"][data-index="${parseInt(index)+1}"]`);
-                        }
-
-                        if (upperInsertField) {
-                            upperInsertField.style.display = "";
-                            this.timeouts.upperInsertFieldUnfoldTimeout = setTimeout(() => {
-                                upperInsertField.classList.add("show");
-
-                                const upperInsertFieldHitbox = upperInsertField.querySelector(".drop-module-card-insert-hitbox");
-                                this.attachInsertFieldHitboxEventListeners(upperInsertFieldHitbox)
-                            }, 10);
-                        }
+                        issueBtn   .classList.add("open");
+                        mailInfo   .classList.add("open"); mailInfo   .tabIndex = "0";
+                        shareConfig.classList.add("open"); shareConfig.tabIndex = "0";
+                        suggestIdea.classList.add("open"); suggestIdea.tabIndex = "0";
+                        reportIssue.classList.add("open"); reportIssue.tabIndex = "0";
                         
-                        if (lowerInsertField) {
-                            lowerInsertField.style.display = "";
-                            this.timeouts.lowerInsertFieldUnfoldTimeout = setTimeout(() => {
-                                lowerInsertField.classList.add("show");
-                                
-                                const lowerInsertFieldHitbox = lowerInsertField.querySelector(".drop-module-card-insert-hitbox");
-                                this.attachInsertFieldHitboxEventListeners(lowerInsertFieldHitbox)
-                            }, 10)
-                        }
-
-
-                        if (hideAdjacentModuleInsertionFields != "only") {
-                            toggle.classList.add("open");
-                            
-                            subjectCards = document.querySelectorAll(`.subject-card[data-semester="${sem}"][data-module="${module}"]`);
-
-                            const subjectInsertFields   = document.querySelectorAll(`.drop-field.insert-field.subject[data-semester="${sem}"]${hideOtherSubjectInsertionFields ? `[data-module="${module}"]` : ""}`);
-                            if (subjectInsertFields.length > 0) {
-                                subjectInsertFields.forEach(subjInsField => {
-                                    subjInsField.classList.display = "";
-                                })
-                                this.timeouts.subjectInsertFieldUnfoldTimeout = setTimeout(() => {
-                                    subjectInsertFields.forEach(subjInsField => {
-                                        subjInsField.classList.add("show");
-                                    })
-                                
-                                    const subjectInsertFieldHitboxes = Object.values(subjectInsertFields).map(elem => {return elem.querySelector(".drop-subject-card-insert-hitbox")});
-                                    subjectInsertFieldHitboxes.forEach(subjInsFieldHitbox => {this.attachInsertFieldHitboxEventListeners(subjInsFieldHitbox)})
-                                }, 10)
-                            }
-
-                            if (subjectCards.length > 0) {
-                                subjectCards.forEach(subjCard => {
-                                    subjCard.style.display = "";
-                                })
-                                this.timeouts.subjectCardsUnfoldTimeout = setTimeout(() => {
-                                    subjectCards.forEach(subjCard => {
-                                        subjCard.classList.remove("fold");
-                                    })
-                                }, 10)
-                            }
-
-                            if (moduleCardElems.length > 0) {
-                                moduleCardElems.forEach(elem => {
-                                    if (!elem.classList.contains("module-header")) {elem.style.display = "";}
-                                })
-                                this.timeouts.moduleCardElemsUnfoldTimeout = setTimeout(() => {
-                                    moduleCardElems.forEach(elem => {elem.classList.remove("fold")})
-                                }, 10)
-                            }
-                            
-                            if (moduleCard) {
-                                moduleCard.style.display = "";
-                                this.timeouts.moduleCardUnfoldTimeout = setTimeout(() => {
-                                    moduleCard.classList.remove("fold");
-                                }, 10)
-                            }
-
-                            if (!bypassFoldedModuleCardsId) {
-                                this.foldedModuleCardsId.splice(this.foldedModuleCardsId.indexOf(moduleCard.id), 1);
-                            }
+                        const newUserNotif  = document.querySelector(".new-user-notif");
+                        if (newUserNotif) {
+                            newUserNotif.style.animationPlayState = "paused";
+                            newUserNotif.style.top = `${newUserNotif.getBoundingClientRect().top - newUserNotif.getBoundingClientRect().height - 10}px`;
+                            newUserNotif.style.opacity = "0%";
+                            setTimeout(() => {newUserNotif.hidden = true}, 300);
                         }
                     }
-                }
 
-                /** Method temporarily attaching an onmousemove and an onmouseup event listener to the document's body.
-                 * 
-                 * Meant to be invoked when the mouse down event is triggered if the target is or is contained in a module header.
-                 * 
-                 * In practice, when the onmousedown event of the document is triggered on a module header, call this method to:
-                 * - attach an onmousemove event listener to the document's body that will clear the onmousemove and onmouseup events of the document's body in order to "cancel" the action (safe guard for when the edit mode is off and the user attempts to drag the module header, it will not do anything instead of triggering an onclick event)
-                 * - attach an onmouseup event listener to the document's body that will make the action intended to happen when the user clicks on the module header (folding the module card) WITHOUT moving the mouse (so if it wasn't an attempt to drag the module header). Both the onmousemove and onmouseup event listeners of the document's body will then be cleared.
-                 */
-                moduleHeaderMouseUpNoMoveAction() {
-                    document.body.onmousemove = (e) => {
-                        e.preventDefault();
-                        document.body.onmouseup = null;
-                        document.body.onmousemove = null;
-                    };
-                    document.body.onmouseup = (e) => {
-                        const header        = e.target.closest('.module-header');
-                        const moduleDetails = header.parentElement.querySelector(".module-details");
-                        
-                        moduleDetails.querySelectorAll(".subject-card").forEach( subjCard => { if (this.selectedSubjectCardsId.includes(subjCard.id)) {this.changeDragIconToTickIcon(subjCard);} } )
+                    dismissIssuesOverHeaderBtns() {
+                        const issueBtn      = document.querySelector(".issue.issue-btn");
+                        const mailInfo      = document.querySelector(".issue.mail-info");
+                        const shareConfig   = document.querySelector(".issue.share-config");
+                        const suggestIdea   = document.querySelector(".issue.suggest-idea");
+                        const reportIssue   = document.querySelector(".issue.report-issue");
 
-                        this.toggleFoldModuleCard(header);
-                        
-                        this.attachDropFieldsEventListeners("insert", moduleDetails);
-                        document.body.onmousemove = null;
-                        document.body.onmouseup = null;
+
+                        issueBtn   .classList.remove("open");
+                        mailInfo   .classList.remove("open"); mailInfo   .tabIndex = "-1";
+                        shareConfig.classList.remove("open"); shareConfig.tabIndex = "-1";
+                        suggestIdea.classList.remove("open"); suggestIdea.tabIndex = "-1";
+                        reportIssue.classList.remove("open"); reportIssue.tabIndex = "-1";
                     }
-                }
 
-                /** Method temporarily attaching an onmousemove and an onmouseup event listener to the document's body.
-                 * 
-                 * Meant to be invoked when the mouse down event is triggered if the target is or is contained in a card header.
-                 * 
-                 * In practice, when the onmousedown event of the document is triggered on a card header, call this method to:
-                 * - attach an onmousemove event listener to the document's body that will clear the onmousemove and onmouseup events of the document's body in order to "cancel" the action (safe guard for when the edit mode is off and the user attempts to drag the card header, it will not do anything instead of triggering an onclick event)
-                 * - attach an onmouseup event listener to the document's body that will make the action intended to happen when the user clicks on the card header (switching the card card between detailed and comapct view modes) WITHOUT moving the mouse (so if it wasn't an attempt to drag the card header). Both the onmousemove and onmouseup event listeners of the document's body will then be cleared.
-                 */
-                subjHeaderMouseUpNoMoveAction() {
+                    openHelpOverHeaderBtns() {
+                        const helpBtn       = document.querySelector(".over-header-btn.how-to-use-btn");
+                        const helpMenu      = document.querySelector(".over-header-how-to-use-btns");
+                        const docBtn        = document.querySelector(".over-header-btn.doc-btn");
+                        const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
 
-                    document.body.onmousemove = (e) => {
-                        e.preventDefault();
-                        document.body.onmouseup = null;
-                        document.body.onmousemove = null;
-                    };
-                    document.body.onmouseup = (e) => {
-                        const subjCard  = e.target.closest('.subject-card');
-                        if (subjCard) {
-                            const sem           = subjCard.dataset.semester;
-                            const moduleName    = subjCard.dataset.module || "__#unclassified#__";
-                            const subjName      = subjCard.dataset.subject;
-                            const index         = subjCard.dataset.index;
-                            let newSubjCard     = "";
-                            this.viewMode       = "mixed";
 
-                            const unclassifiedSection = document.querySelector(".unclassified-section");
-                            unclassifiedSection.style.height = "";
-                            
-                            
-                            if (subjCard.classList.contains("compact")) {
-                                this.compactSubjCardsId.splice(this.compactSubjCardsId.indexOf(subjCard.id), 1);
+                        helpBtn .classList.add("open");
+                        helpMenu.hidden = false;
+                        clearTimeout(this.timeouts?.openHelpMenu);
+                        this.timeouts.openHelpMenu = setTimeout(()=>{helpMenu.classList.add("open");}, 10);
+                        docBtn  .tabIndex = "0";
+                        tutoBtn .tabIndex = "0";
+                        
+                        const newUserNotif  = document.querySelector(".new-user-notif");
+                        if (newUserNotif) {
+                            newUserNotif.style.animationPlayState = "paused";
+                            newUserNotif.style.top = `${newUserNotif.getBoundingClientRect().top - newUserNotif.getBoundingClientRect().height - 10}px`;
+                            newUserNotif.style.opacity = "0%";
+                            setTimeout(() => {newUserNotif.hidden = true}, 300);
+                        }
+                    }
+
+                    dismissHelpOverHeaderBtns() {
+                        const helpBtn       = document.querySelector(".over-header-btn.how-to-use-btn");
+                        const helpMenu      = document.querySelector(".over-header-how-to-use-btns");
+                        const docBtn        = document.querySelector(".over-header-btn.doc-btn");
+                        const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
+                        
+                        
+                        helpBtn    .classList.remove("open");
+                        helpMenu   .classList.remove("open");
+                        clearTimeout(this.timeouts?.openHelpMenu);
+                        this.timeouts.openHelpMenu = setTimeout(()=>{helpMenu.hidden = true;}, 200);
+                        docBtn     .tabIndex = "-1";
+                        tutoBtn    .tabIndex = "-1";
+                    }
+
+                //#endregion
+
+
+
+
+                //#region Module card
+
+
+
+                    // MARK: -toggle module card folding
+                    /** Call this method to switch all Module cards' state between folded and unfolded 
+                     * 
+                     * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module header HTML Element or an event triggered by a module header
+                     * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
+                     * @param {Boolean} hideAdjacentModuleInsertionFields Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
+                     * @param {Boolean} bypassFoldedModuleCardsId Default: false — Destined to control whether the folded module card ID's addition to/deletion from this.foldedModuleCardsId will be bypassed (if true) or not (if false)
+                     */
+                    toggleFoldAllModuleCards(hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
+                        document.querySelectorAll(".module-header").forEach(moduleHeader => {
+                            this.toggleFoldModuleCard(moduleHeader, hideOtherSubjectInsertionFields, hideAdjacentModuleInsertionFields, bypassFoldedModuleCardsId)
+                        })
+                    }
+                    /** Call this method to switch a module card's state between folded and unfolded 
+                     * 
+                     * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module header HTML Element or an event triggered by a module header
+                     * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
+                     * @param {Boolean} hideAdjacentModuleInsertionFields Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
+                     * @param {Boolean} bypassFoldedModuleCardsId Default: false — Destined to control whether the folded module card ID's addition to/deletion from this.foldedModuleCardsId will be bypassed (if true) or not (if false)
+                     */
+                    toggleFoldModuleCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
+                        if (trigger?.classList?.contains("module-header") || (trigger?.target?.classList?.contains("module-header"))) {
+                            const moduleHeader = trigger?.target || trigger;
+                            if (moduleHeader.classList.contains("fold")) {
+                                this.unfoldModuleCard(moduleHeader, hideOtherSubjectInsertionFields, hideAdjacentModuleInsertionFields, bypassFoldedModuleCardsId)
                             }
                             else {
-                                this.compactSubjCardsId.push(subjCard.id);
+                                this.foldModuleCard(moduleHeader, hideOtherSubjectInsertionFields, hideAdjacentModuleInsertionFields, bypassFoldedModuleCardsId)
+                            }
+                        }
+                    }
+
+
+                    // MARK: -fold module card
+                    /** Call this method to fold all module cards 
+                     * 
+                     * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module header HTML Element or an event triggered by a module header
+                     * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
+                     * @param {Boolean} hideAdjacentModuleInsertionFields Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
+                     * @param {Boolean} bypassFoldedModuleCardsId Default: false — Destined to control whether the folded module card ID's addition to this.foldedModuleCardsId will be bypassed (if true) or not (if false)
+                     */
+                    foldAllModuleCards(hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
+                        document.querySelectorAll(".module-header").forEach(moduleHeader => {
+                            this.foldModuleCard(moduleHeader, hideOtherSubjectInsertionFields, hideAdjacentModuleInsertionFields, bypassFoldedModuleCardsId)
+                        })
+                    }
+                    /** Call this method to fold a module card
+                     * 
+                     * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module header HTML Element or an event triggered by a module header
+                     * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
+                     * @param {Boolean} hideAdjacentModuleInsertionFields Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
+                     * @param {Boolean} bypassFoldedModuleCardsId Default: false — Destined to control whether the folded module card ID's addition to this.foldedModuleCardsId will be bypassed (if true) or not (if false)
+                     */
+                    foldModuleCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
+                        // testing if the trigger argument is an HTML of class module-card or an Event triggered by a module header or one of its elements
+                        if (trigger?.classList?.contains("module-header") || (trigger?.target?.classList?.contains("module-header"))) {
+                            // Identifying the moduleCard depending on whether the trigger argument is a module header or an event triggered by a module header
+                            const moduleCard        = trigger?.target?.parentElement || trigger.parentElement;
+                            const sem               = moduleCard.dataset.semester;
+                            const module            = moduleCard.dataset.module;
+                            const index             = moduleCard.dataset.index;
+                            const moduleCardElems   = moduleCard.querySelectorAll(".module-card, .module-header, .module-info, .module-card-content, .module-details");
+                            const toggle            = moduleCard.querySelector('.module-toggle');
+                            let subjectCards        = [];
+
+                            if (hideAdjacentModuleInsertionFields != "only") {
+                                toggle.classList.remove("open");
+                                
+                                const subjectInsertFields = document.querySelectorAll(`.drop-field.insert-field.subject[data-semester="${sem}"]${hideOtherSubjectInsertionFields ? "" : `[data-module="${module}"]`}`)
+                                const subjectInsertFieldHitboxes = Object.values(subjectInsertFields).map(elem => {return elem.querySelector(".drop-subject-card-insert-hitbox")});
+
+                                subjectCards = document.querySelectorAll(`.subject-card[data-semester="${sem}"][data-module="${module}"]`);
+
+
+                                subjectInsertFieldHitboxes.forEach(subjInsFieldHitbox => {
+                                    this.detachInsertFieldHitboxEventListeners(subjInsFieldHitbox);
+                                })
+                                subjectInsertFields.forEach(subjInsField => {
+                                    subjInsField.classList.remove("show");
+                                })
+                                subjectCards.forEach(subjCard => {
+                                    subjCard.classList.add("fold");
+                                })
+                                moduleCardElems.forEach(elem => {elem.classList.add("fold")})
+                                moduleCard.classList.add("fold");
+                            }
+
+                            let upperInsertField = "";
+                            let lowerInsertField = "";
+
+                            if (hideAdjacentModuleInsertionFields) {
+                                upperInsertField = document.querySelector(`.drop-field.insert-field.module[data-semester="${sem}"][data-index="${index}"]`)
+                                const upperInsertFieldHitbox = upperInsertField.querySelector(".drop-module-card-insert-hitbox");
+
+                                lowerInsertField = document.querySelector(`.drop-field.insert-field.module[data-semester="${sem}"][data-index="${parseInt(index)+1}"]`)
+                                const lowerInsertFieldHitbox = lowerInsertField.querySelector(".drop-module-card-insert-hitbox");
+                                
+                                this.detachInsertFieldHitboxEventListeners(upperInsertFieldHitbox);
+                                this.detachInsertFieldHitboxEventListeners(lowerInsertFieldHitbox);
+                                upperInsertField.classList.remove("show");
+                                lowerInsertField.classList.remove("show");
+                            }
+
+
+                            clearTimeout(this.timeouts.upperInsertFieldUnfoldTimeout);
+                            clearTimeout(this.timeouts.lowerInsertFieldUnfoldTimeout);
+                            clearTimeout(this.timeouts.subjectInsertFieldUnfoldTimeout);
+                            clearTimeout(this.timeouts.subjectCardsUnfoldTimeout);
+                            clearTimeout(this.timeouts.moduleCardElemsUnfoldTimeout);
+                            clearTimeout(this.timeouts.moduleCardUnfoldTimeout);
+                            this.timeouts.foldModuleCardTimeout = setTimeout(() => {
+                                if (hideAdjacentModuleInsertionFields) {
+                                    upperInsertField.style.display = "none";
+                                    lowerInsertField.style.display = "none";
+                                }
+
+                                if (hideAdjacentModuleInsertionFields != "only") {
+                                    subjectCards.forEach(subjCard => {
+                                        subjCard.style.display = "none";
+                                    })
+                                    moduleCardElems.forEach(elem => {
+                                        if (!elem.classList.contains("module-header")) {elem.style.display = "none";}
+                                    })
+                                }
+                            }, 200)
+
+                            if (!bypassFoldedModuleCardsId) {
+                                this.foldedModuleCardsId.push(moduleCard.id);
+                            }
+                        }
+                        
+                    }
+
+
+                    // MARK: -unfold module card
+                    /** Call this method to unfold all module cards
+                     * 
+                     * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module header HTML Element or an event triggered by a module header
+                     * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be shown (if true) or not (if false)
+                     * @param {Boolean} hideAdjacentModuleInsertionFields Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
+                     * @param {Boolean} bypassFoldedModuleCardsId Default: false — Destined to control whether the unfolded module card ID's deletion from this.foldedModuleCardsId will be bypassed (if true) or not (if false)
+                     */
+                    unfoldAllModuleCards(hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
+                        document.querySelectorAll(".module-header").forEach(moduleHeader => {
+                            this.unfoldModuleCard(moduleHeader, hideOtherSubjectInsertionFields, hideAdjacentModuleInsertionFields, bypassFoldedModuleCardsId)
+                        })
+                    }
+                    /** Call this method to unfold a module card
+                     * 
+                     * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module header HTML Element or an event triggered by a module header
+                     * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be shown (if true) or not (if false)
+                     * @param {Boolean} hideAdjacentModuleInsertionFields Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
+                     * @param {Boolean} bypassFoldedModuleCardsId Default: false — Destined to control whether the unfolded module card ID's deletion from this.foldedModuleCardsId will be bypassed (if true) or not (if false)
+                     */
+                    unfoldModuleCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
+                        // testing if the trigger argument is an HTML of class module-card or an Event triggered by a module header or one of its elements
+                        if (trigger?.classList?.contains("module-header") || (trigger?.target?.classList?.contains("module-header"))) {
+                            // Identifying the moduleCard depending on whether the trigger argument is a module header or an event triggered by a module header
+                            const moduleCard        = trigger?.target?.parentElement || trigger.parentElement;
+                            const sem               = moduleCard.dataset.semester;
+                            const module            = moduleCard.dataset.module;
+                            const index             = moduleCard.dataset.index;
+                            const moduleCardElems   = moduleCard.querySelectorAll(".module-card, .module-header, .module-info, .module-card-content, .module-details");
+                            const toggle            = moduleCard.querySelector('.module-toggle');
+                            let subjectCards        = [];
+                            let upperInsertField    = "";
+                            let lowerInsertField    = "";
+
+
+                            clearTimeout(this.foldModuleCardTimeout);
+
+
+                            if (hideAdjacentModuleInsertionFields) {
+                                upperInsertField = document.querySelector(   `.drop-field.insert-field.module[data-semester="${sem}"][data-index="${index}"]`);
+                                lowerInsertField = document.querySelector(   `.drop-field.insert-field.module[data-semester="${sem}"][data-index="${parseInt(index)+1}"]`);
+                            }
+
+                            if (upperInsertField) {
+                                upperInsertField.style.display = "";
+                                this.timeouts.upperInsertFieldUnfoldTimeout = setTimeout(() => {
+                                    upperInsertField.classList.add("show");
+
+                                    const upperInsertFieldHitbox = upperInsertField.querySelector(".drop-module-card-insert-hitbox");
+                                    this.attachInsertFieldHitboxEventListeners(upperInsertFieldHitbox)
+                                }, 10);
                             }
                             
-                            subjCard.outerHTML = this.createSubjCard(sem, moduleName, subjName, index);
+                            if (lowerInsertField) {
+                                lowerInsertField.style.display = "";
+                                this.timeouts.lowerInsertFieldUnfoldTimeout = setTimeout(() => {
+                                    lowerInsertField.classList.add("show");
+                                    
+                                    const lowerInsertFieldHitbox = lowerInsertField.querySelector(".drop-module-card-insert-hitbox");
+                                    this.attachInsertFieldHitboxEventListeners(lowerInsertFieldHitbox)
+                                }, 10)
+                            }
 
 
+                            if (hideAdjacentModuleInsertionFields != "only") {
+                                toggle.classList.add("open");
+                                
+                                subjectCards = document.querySelectorAll(`.subject-card[data-semester="${sem}"][data-module="${module}"]`);
 
-                            newSubjCard = document.getElementById(subjCard.id);
-                            this.setGradesTableTotalCoef(newSubjCard);
-                            this.attachAllSubjectCardRelatedEventListeners(newSubjCard);
+                                const subjectInsertFields   = document.querySelectorAll(`.drop-field.insert-field.subject[data-semester="${sem}"]${hideOtherSubjectInsertionFields ? `[data-module="${module}"]` : ""}`);
+                                if (subjectInsertFields.length > 0) {
+                                    subjectInsertFields.forEach(subjInsField => {
+                                        subjInsField.classList.display = "";
+                                    })
+                                    this.timeouts.subjectInsertFieldUnfoldTimeout = setTimeout(() => {
+                                        subjectInsertFields.forEach(subjInsField => {
+                                            subjInsField.classList.add("show");
+                                        })
+                                    
+                                        const subjectInsertFieldHitboxes = Object.values(subjectInsertFields).map(elem => {return elem.querySelector(".drop-subject-card-insert-hitbox")});
+                                        subjectInsertFieldHitboxes.forEach(subjInsFieldHitbox => {this.attachInsertFieldHitboxEventListeners(subjInsFieldHitbox)})
+                                    }, 10)
+                                }
 
-                            const currentUnclassifiedSectionHeight = Number(unclassifiedSection.clientHeight);
-                            unclassifiedSection.style.height = `${currentUnclassifiedSectionHeight+4}px`;
-                        }
-                        
-                        document.body.onmousemove = null;
-                        document.body.onmouseup = null;
-                    }
-                }
-                
-                moduleTitleInputChangeAction(target) {
-                    const sem               = target.dataset.semester;
-                    const newModuleName     = target.value;
-                    const oldModuleName     = target.dataset.module; 
-                    const oldModuleIndex    = this.moduleConfig[sem].__modules__.indexOf(oldModuleName);
-                    
-                    this.moduleConfig[sem][newModuleName] = this.moduleConfig[sem][oldModuleName];
-                    delete this.moduleConfig[sem][oldModuleName];
-                    this.moduleConfig[sem].__modules__[oldModuleIndex] = newModuleName;
+                                if (subjectCards.length > 0) {
+                                    subjectCards.forEach(subjCard => {
+                                        subjCard.style.display = "";
+                                    })
+                                    this.timeouts.subjectCardsUnfoldTimeout = setTimeout(() => {
+                                        subjectCards.forEach(subjCard => {
+                                            subjCard.classList.remove("fold");
+                                        })
+                                    }, 10)
+                                }
 
-                    this.saveConfig()
-                    this.getGradesDatas();
-                    this.generateContent(false);
+                                if (moduleCardElems.length > 0) {
+                                    moduleCardElems.forEach(elem => {
+                                        if (!elem.classList.contains("module-header")) {elem.style.display = "";}
+                                    })
+                                    this.timeouts.moduleCardElemsUnfoldTimeout = setTimeout(() => {
+                                        moduleCardElems.forEach(elem => {elem.classList.remove("fold")})
+                                    }, 10)
+                                }
+                                
+                                if (moduleCard) {
+                                    moduleCard.style.display = "";
+                                    this.timeouts.moduleCardUnfoldTimeout = setTimeout(() => {
+                                        moduleCard.classList.remove("fold");
+                                    }, 10)
+                                }
 
-                    this.foldedModuleCardsId.forEach(foldedModuleCardId => {
-                        if (foldedModuleCardId == `module-card-${oldModuleName}-in-semester-${sem}`) {
-                            const moduleCardToFold = document.getElementById(foldedModuleCardId);
-                            if (!moduleCardToFold) {
-                                const newModuleCardToFold = document.getElementById(`module-card-${newModuleName}-in-semester-${sem}`);
-                                this.foldModuleCard(newModuleCardToFold.querySelector(`.module-header`));
+                                if (!bypassFoldedModuleCardsId) {
+                                    this.foldedModuleCardsId.splice(this.foldedModuleCardsId.indexOf(moduleCard.id), 1);
+                                }
                             }
                         }
-                    })
-                    
-                    this.attachOnDragEventListeners();
-                    this.scrollToClientHighestElem({id: `module-card-${newModuleName}-in-semester-${sem}`, smooth: true})
-                }
-
-                moduleDeleteBtnAction(target) {
-                    const sem           = target.dataset.semester;
-                    const moduleName    = target.dataset.module;
-                    
-                    const moduleIndex = this.moduleConfig[sem].__modules__.indexOf(moduleName);
-
-                    this.moduleConfig[sem].__modules__.splice(moduleIndex, 1);
-                    delete this.moduleConfig[sem][moduleName];
-
-                    if (this.moduleConfig[sem].__modules__.length == 0) {delete this.moduleConfig[sem]}
-                    
-                    this.clearSimGrades(sem, moduleName);
-                    this.saveConfig();
-                    this.getGradesDatas();
-                    this.generateContent();
-                }
-
-                subjectNameInputAction(target) {
-                    const subjNewName   = target.value;
-                    const subjectCardId = target.id.replace(/\bsubject-name-input/, "subject-card");
-                    const subjectCard   = document.getElementById(subjectCardId);
-                    const sem           = subjectCard.dataset.semester;
-                    const module        = subjectCard.dataset.module;
-                    const subjOldName   = subjectCard.dataset.subject;
-                    const moduleDetails = subjectCard.parentElement;
-                    const moduleCard    = moduleDetails.parentElement;
-
-
-                    let diffName = true;
-                    this.moduleConfig[sem][module].subjects.forEach(_subj => {
-                        if (_subj == subjNewName && _subj != subjOldName) {
-                            alert(this.lang == "fr" 
-                                ? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
-                                : "This subject already exists! Please choose a different name"
-                            )
-                            diffName = false;
-                            this.scrollToClientHighestElem({id: subjectCardId, smooth: true, block: "center"})
-                        }
-                    });
-
-                    if (diffName) {
-                        this.moduleConfig[sem].__modules__.forEach(moduleName => {
-                            this.moduleConfig[sem][moduleName].subjects.forEach(_subj => {
-                                if (_subj == subjNewName && _subj != subjOldName) {
-                                    alert(this.lang == "fr" 
-                                        ? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
-                                        : "This subject already exists! Please choose a different name"
-                                    )
-                                    diffName = false;
-                                    this.scrollToClientHighestElem({id: subjectCardId, smooth: true, block: "center"})
-                                }
-                            })
-                        })
                     }
-                        
 
-                    if (diffName) {
-                        const oldSubjIndex = this.moduleConfig[sem][module].subjects.indexOf(subjOldName);
-                        const pct   = Number(this.moduleConfig[sem][module].coefficients    [subjOldName]);
+                    /** Method temporarily attaching an onmousemove and an onmouseup event listener to the document's body.
+                     * 
+                     * Meant to be invoked when the mouse down event is triggered if the target is or is contained in a module header.
+                     * 
+                     * In practice, when the onmousedown event of the document is triggered on a module header, call this method to:
+                     * - attach an onmousemove event listener to the document's body that will clear the onmousemove and onmouseup events of the document's body in order to "cancel" the action (safe guard for when the edit mode is off and the user attempts to drag the module header, it will not do anything instead of triggering an onclick event)
+                     * - attach an onmouseup event listener to the document's body that will make the action intended to happen when the user clicks on the module header (folding the module card) WITHOUT moving the mouse (so if it wasn't an attempt to drag the module header). Both the onmousemove and onmouseup event listeners of the document's body will then be cleared.
+                     */
+                    moduleHeaderMouseUpNoMoveAction() {
+                        document.body.onmousemove = (e) => {
+                            e.preventDefault();
+                            document.body.onmouseup = null;
+                            document.body.onmousemove = null;
+                        };
+                        document.body.onmouseup = (e) => {
+                            const header        = e.target.closest('.module-header');
+                            const moduleDetails = header.parentElement.querySelector(".module-details");
+                            
+                            moduleDetails.querySelectorAll(".subject-card").forEach( subjCard => { if (this.selectedSubjectCardsId.includes(subjCard.id)) {this.changeDragIconToTickIcon(subjCard);} } )
 
-                        this.moduleConfig[sem][module].subjects[oldSubjIndex]=subjNewName ;    // Replace the subject's old name by the subject's new name
-                        delete this.moduleConfig[sem][module].coefficients [subjOldName];
-                        this.moduleConfig[sem][module].coefficients [subjNewName] = pct;
-                                    
-                        this.getGradesDatas();
-
-                        if (this.compactSubjCardsId.includes(subjectCardId)) {
-                            moduleDetails.innerHTML = this.createAllCompactClassifiedSubjCards(sem, module);
+                            this.toggleFoldModuleCard(header);
+                            
+                            this.attachDropFieldsEventListeners("insert", moduleDetails);
+                            document.body.onmousemove = null;
+                            document.body.onmouseup = null;
                         }
-                        else {
-                            moduleDetails.innerHTML = this.createAllDetailedClassifiedSubjCards(sem, module);
-                        }
-
-                        const unclassifiedSection = document.querySelector(".unclassified-section");
-                        const unclassifiedContent = unclassifiedSection.querySelector(".unclassified-content");
-                        unclassifiedSection.style.height = "100%";
-                        unclassifiedContent.innerHTML = this.createAllDetailedUnclassifiedSubjCards(sem);
+                    }
+                
+                    moduleTitleInputChangeAction(target) {
+                        const sem               = target.dataset.semester;
+                        const newModuleName     = target.value;
+                        const oldModuleName     = target.dataset.module; 
+                        const oldModuleIndex    = this.moduleConfig[sem].__modules__.indexOf(oldModuleName);
                         
-                        this.resizeUnclassifiedSection();
-                        this.attachAllEventListeners()
-                        this.setGradesTableTotalCoef();
+                        this.moduleConfig[sem][newModuleName] = this.moduleConfig[sem][oldModuleName];
+                        delete this.moduleConfig[sem][oldModuleName];
+                        this.moduleConfig[sem].__modules__[oldModuleIndex] = newModuleName;
+
                         this.saveConfig()
                         this.getGradesDatas();
-                    }
-                    else {
-                        target.focus();
-                        target.style.background = "#ff7979";
-                    }
-                }
+                        this.generateContent(false);
 
-                subjectSimAddBtnAction(target) {
-                    const moduleName = target.dataset.module;
-                    const semX = target.dataset.semester;
-                    const subj = target.dataset.subj;
-                    this.ensureSimPath(semX, moduleName, subj);
-                    const typeInp =  document.querySelector(`.simulated-grade-input.sim-inp-type[data-semester="${semX}"][data-subj="${subj}"]`);
-                    const gradeInp = document.querySelector(`.simulated-grade-input.sim-inp-grade[data-semester="${semX}"][data-subj="${subj}"]`);
-                    const coefInp =  document.querySelector(`.simulated-grade-input.sim-inp-coef[data-semester="${semX}"][data-subj="${subj}"]`);
-                    const dateInp =  document.querySelector(`.simulated-grade-input.sim-inp-date[data-semester="${semX}"][data-subj="${subj}"]`);
-                    const type = typeInp?.value||`${this.lang=="fr"? 'Simulé' : "Simulated"}`;
-                    const grade = parseFloat(gradeInp?.value||'');
-                    const coef = parseFloat(coefInp?.value||'');
-                    const date = dateInp?.value||'';
-                    if(isNaN(grade) || isNaN(coef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
-
-                    this.ensureSimPath(semX, moduleName, subj);
-
-                    // Making sure the automatically generated name (if the user didn't input any type name) isn't the same as one that already exists 
-                    // (incrementing an index every time it's the case and add it at the end of the new sim grade's name)
-                    let newName = type, validNewName = newName != type, count = 2;
-
-                    while (!validNewName && this.sim[semX][moduleName][subj].length > 0) {
-                        validNewName = true;
-                        this.sim[semX][moduleName][subj].forEach((_grade, _index) => {
-                            if (_grade.type == newName && validNewName) {
-                                validNewName = false;
-                                newName = type + ` (${count})`;
-                                count++;
+                        this.foldedModuleCardsId.forEach(foldedModuleCardId => {
+                            if (foldedModuleCardId == `module-card-${oldModuleName}-in-semester-${sem}`) {
+                                const moduleCardToFold = document.getElementById(foldedModuleCardId);
+                                if (!moduleCardToFold) {
+                                    const newModuleCardToFold = document.getElementById(`module-card-${newModuleName}-in-semester-${sem}`);
+                                    this.foldModuleCard(newModuleCardToFold.querySelector(`.module-header`));
+                                }
                             }
                         })
+                        
+                        this.attachOnDragEventListeners();
+                        this.scrollToClientHighestElem({id: `module-card-${newModuleName}-in-semester-${sem}`, smooth: true})
                     }
 
-                    this.sim[semX][moduleName][subj].push({
-                        grade, 
-                        coef,
-                        classAvg: '—',
-                        type: newName,
-                        date: '—',
-                        prof: '—',
-                        subject: subj,
-                        semester: semX,
-                        libelle: `[SIM] ${subj} - ${type}`,
-                        __sim: true,
-                        id: new Date().getYear() + "" + new Date().getMonth() + "" + new Date().getDay() + "" + new Date().getHours() + "" + new Date().getMinutes() + "" + new Date().getSeconds() + "" + new Date().getMilliseconds()
-                    });
-                    this.saveSim();
-                    this.getGradesDatas();
-                    this.generateContent();
-                }
+                    moduleDeleteBtnAction(target) {
+                        const sem           = target.dataset.semester;
+                        const moduleName    = target.dataset.module;
+                        
+                        const moduleIndex = this.moduleConfig[sem].__modules__.indexOf(moduleName);
 
-                subjectSimDelBtnAction(target) {
-                    const semX          = target.dataset.semester;
-                    const moduleName    = target.dataset.module;
-                    const subj          = target.dataset.subj;
-                    const id            = target.dataset.simid;
-                    this.sim[semX][moduleName][subj].splice(id, 1);
+                        this.moduleConfig[sem].__modules__.splice(moduleIndex, 1);
+                        delete this.moduleConfig[sem][moduleName];
 
-                    this.deleteUnusedSimPath(false, semX, moduleName, subj);
-                    this.saveSim();
-                    this.getGradesDatas();
-                    this.generateContent(false);
-                }
+                        if (this.moduleConfig[sem].__modules__.length == 0) {delete this.moduleConfig[sem]}
+                        
+                        this.clearSimGrades(sem, moduleName);
+                        this.saveConfig();
+                        this.getGradesDatas();
+                        this.generateContent();
+                    }
+                    
+                //#endregion
 
-                subjectSimInputEditAction(target) {
-                    const moduleName    = target.dataset.module;
-                    const semX          = target.dataset.semester;
-                    const subj          = target.dataset.subj;
-                    const id            = target.dataset.simid;
-                    const gradeRow      = target.parentElement.parentElement;
-                    const gradeInp      = gradeRow.querySelector(`.simulated-grade-input-edit.sim-inp-grade`);
-                    const coefInp       = gradeRow.querySelector(`.simulated-grade-input-edit.sim-inp-coef `);
-                    const newGrade      = parseFloat(gradeInp?.value||'');
-                    const newCoef       = parseFloat(coefInp?.value||'');
 
-                    if(isNaN(newGrade) || isNaN(newCoef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
-                    this.sim[semX][moduleName][subj][id][target.dataset.modiftype] = target.value;
 
-                    this.saveSim();
-                    this.getGradesDatas();
-                    this.regenAveragesAndTotalCoefs(semX, moduleName, subj);
 
-                }
+                //#region Subject card
+
+                    /** Method temporarily attaching an onmousemove and an onmouseup event listener to the document's body.
+                     * 
+                     * Meant to be invoked when the mouse down event is triggered if the target is or is contained in a card header.
+                     * 
+                     * In practice, when the onmousedown event of the document is triggered on a card header, call this method to:
+                     * - attach an onmousemove event listener to the document's body that will clear the onmousemove and onmouseup events of the document's body in order to "cancel" the action (safe guard for when the edit mode is off and the user attempts to drag the card header, it will not do anything instead of triggering an onclick event)
+                     * - attach an onmouseup event listener to the document's body that will make the action intended to happen when the user clicks on the card header (switching the card card between detailed and comapct view modes) WITHOUT moving the mouse (so if it wasn't an attempt to drag the card header). Both the onmousemove and onmouseup event listeners of the document's body will then be cleared.
+                     */
+                    subjHeaderMouseUpNoMoveAction() {
+
+                        document.body.onmousemove = (e) => {
+                            e.preventDefault();
+                            document.body.onmouseup = null;
+                            document.body.onmousemove = null;
+                        };
+                        document.body.onmouseup = (e) => {
+                            const subjCard  = e.target.closest('.subject-card');
+                            if (subjCard) {
+                                const sem           = subjCard.dataset.semester;
+                                const moduleName    = subjCard.dataset.module || "__#unclassified#__";
+                                const subjName      = subjCard.dataset.subject;
+                                const index         = subjCard.dataset.index;
+                                let newSubjCard     = "";
+                                this.viewMode       = "mixed";
+
+                                const unclassifiedSection = document.querySelector(".unclassified-section");
+                                unclassifiedSection.style.height = "";
+                                
+                                
+                                if (subjCard.classList.contains("compact")) {
+                                    this.compactSubjCardsId.splice(this.compactSubjCardsId.indexOf(subjCard.id), 1);
+                                }
+                                else {
+                                    this.compactSubjCardsId.push(subjCard.id);
+                                }
+                                
+                                subjCard.outerHTML = this.createSubjCard(sem, moduleName, subjName, index);
+
+
+
+                                newSubjCard = document.getElementById(subjCard.id);
+                                this.setGradesTableTotalCoef(newSubjCard);
+                                this.attachAllSubjectCardRelatedEventListeners(newSubjCard);
+
+                                const currentUnclassifiedSectionHeight = Number(unclassifiedSection.clientHeight);
+                                unclassifiedSection.style.height = `${currentUnclassifiedSectionHeight+4}px`;
+                            }
+                            
+                            document.body.onmousemove = null;
+                            document.body.onmouseup = null;
+                        }
+                    }
+
+                    subjectNameInputAction(target) {
+                        const subjNewName   = target.value;
+                        const subjectCardId = target.id.replace(/\bsubject-name-input/, "subject-card");
+                        const subjectCard   = document.getElementById(subjectCardId);
+                        const sem           = subjectCard.dataset.semester;
+                        const module        = subjectCard.dataset.module;
+                        const subjOldName   = subjectCard.dataset.subject;
+                        const moduleDetails = subjectCard.parentElement;
+                        const moduleCard    = moduleDetails.parentElement;
+
+
+                        let diffName = true;
+                        this.moduleConfig[sem][module].subjects.forEach(_subj => {
+                            if (_subj == subjNewName && _subj != subjOldName) {
+                                alert(this.lang == "fr" 
+                                    ? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
+                                    : "This subject already exists! Please choose a different name"
+                                )
+                                diffName = false;
+                                this.scrollToClientHighestElem({id: subjectCardId, smooth: true, block: "center"})
+                            }
+                        });
+
+                        if (diffName) {
+                            this.moduleConfig[sem].__modules__.forEach(moduleName => {
+                                this.moduleConfig[sem][moduleName].subjects.forEach(_subj => {
+                                    if (_subj == subjNewName && _subj != subjOldName) {
+                                        alert(this.lang == "fr" 
+                                            ? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
+                                            : "This subject already exists! Please choose a different name"
+                                        )
+                                        diffName = false;
+                                        this.scrollToClientHighestElem({id: subjectCardId, smooth: true, block: "center"})
+                                    }
+                                })
+                            })
+                        }
+                            
+
+                        if (diffName) {
+                            const oldSubjIndex = this.moduleConfig[sem][module].subjects.indexOf(subjOldName);
+                            const pct   = Number(this.moduleConfig[sem][module].coefficients    [subjOldName]);
+
+                            this.moduleConfig[sem][module].subjects[oldSubjIndex]=subjNewName ;    // Replace the subject's old name by the subject's new name
+                            delete this.moduleConfig[sem][module].coefficients [subjOldName];
+                            this.moduleConfig[sem][module].coefficients [subjNewName] = pct;
+                                        
+                            this.getGradesDatas();
+
+                            if (this.compactSubjCardsId.includes(subjectCardId)) {
+                                moduleDetails.innerHTML = this.createAllCompactClassifiedSubjCards(sem, module);
+                            }
+                            else {
+                                moduleDetails.innerHTML = this.createAllDetailedClassifiedSubjCards(sem, module);
+                            }
+
+                            const unclassifiedSection = document.querySelector(".unclassified-section");
+                            const unclassifiedContent = unclassifiedSection.querySelector(".unclassified-content");
+                            unclassifiedSection.style.height = "100%";
+                            unclassifiedContent.innerHTML = this.createAllDetailedUnclassifiedSubjCards(sem);
+                            
+                            this.resizeUnclassifiedSection();
+                            this.attachAllSubjectCardRelatedEvenListenersForEverySubjectCard();
+                            this.setGradesTableTotalCoef();
+                            this.saveConfig()
+                            this.getGradesDatas();
+                        }
+                        else {
+                            target.focus();
+                            target.style.background = "#ff7979";
+                        }
+                    }
+
+                    subjectSimAddBtnAction(target) {
+                        const moduleName = target.dataset.module;
+                        const semX = target.dataset.semester;
+                        const subj = target.dataset.subj;
+                        this.ensureSimPath(semX, moduleName, subj);
+                        const typeInp =  document.querySelector(`.simulated-grade-input.sim-inp-type[data-semester="${semX}"][data-subj="${subj}"]`);
+                        const gradeInp = document.querySelector(`.simulated-grade-input.sim-inp-grade[data-semester="${semX}"][data-subj="${subj}"]`);
+                        const coefInp =  document.querySelector(`.simulated-grade-input.sim-inp-coef[data-semester="${semX}"][data-subj="${subj}"]`);
+                        const dateInp =  document.querySelector(`.simulated-grade-input.sim-inp-date[data-semester="${semX}"][data-subj="${subj}"]`);
+                        const type = typeInp?.value||`${this.lang=="fr"? 'Simulé' : "Simulated"}`;
+                        const grade = parseFloat(gradeInp?.value||'');
+                        const coef = parseFloat(coefInp?.value||'');
+                        const date = dateInp?.value||'';
+                        if(isNaN(grade) || isNaN(coef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
+
+                        this.ensureSimPath(semX, moduleName, subj);
+
+                        // Making sure the automatically generated name (if the user didn't input any type name) isn't the same as one that already exists 
+                        // (incrementing an index every time it's the case and add it at the end of the new sim grade's name)
+                        let newName = type, validNewName = newName != type, count = 2;
+
+                        while (!validNewName && this.sim[semX][moduleName][subj].length > 0) {
+                            validNewName = true;
+                            this.sim[semX][moduleName][subj].forEach((_grade, _index) => {
+                                if (_grade.type == newName && validNewName) {
+                                    validNewName = false;
+                                    newName = type + ` (${count})`;
+                                    count++;
+                                }
+                            })
+                        }
+
+                        this.sim[semX][moduleName][subj].push({
+                            grade, 
+                            coef,
+                            classAvg: '—',
+                            type: newName,
+                            date: '—',
+                            prof: '—',
+                            subject: subj,
+                            semester: semX,
+                            libelle: `[SIM] ${subj} - ${type}`,
+                            __sim: true,
+                            id: new Date().getYear() + "" + new Date().getMonth() + "" + new Date().getDay() + "" + new Date().getHours() + "" + new Date().getMinutes() + "" + new Date().getSeconds() + "" + new Date().getMilliseconds()
+                        });
+                        this.saveSim();
+                        this.getGradesDatas();
+                        this.generateContent();
+                    }
+
+                    subjectSimDelBtnAction(target) {
+                        const semX          = target.dataset.semester;
+                        const moduleName    = target.dataset.module;
+                        const subj          = target.dataset.subj;
+                        const id            = target.dataset.simid;
+                        this.sim[semX][moduleName][subj].splice(id, 1);
+
+                        this.deleteUnusedSimPath(false, semX, moduleName, subj);
+                        this.saveSim();
+                        this.getGradesDatas();
+                        this.generateContent(false);
+                    }
+
+                    subjectSimInputEditAction(target) {
+                        const moduleName    = target.dataset.module;
+                        const semX          = target.dataset.semester;
+                        const subj          = target.dataset.subj;
+                        const id            = target.dataset.simid;
+                        const gradeRow      = target.parentElement.parentElement;
+                        const gradeInp      = gradeRow.querySelector(`.simulated-grade-input-edit.sim-inp-grade`);
+                        const coefInp       = gradeRow.querySelector(`.simulated-grade-input-edit.sim-inp-coef `);
+                        const newGrade      = parseFloat(gradeInp?.value||'');
+                        const newCoef       = parseFloat(coefInp?.value||'');
+
+                        if(isNaN(newGrade) || isNaN(newCoef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
+                        this.sim[semX][moduleName][subj][id][target.dataset.modiftype] = target.value;
+
+                        this.saveSim();
+                        this.getGradesDatas();
+                        this.regenAveragesAndTotalCoefs(semX, moduleName, subj);
+
+                    }
+
+                //#endregion
+
             //#endregion
 
         //#endregion
@@ -4275,7 +4594,7 @@
                 }
 
                 e.dataTransfer.effectAllowed = "link";
-                e.dataTransfer.setDragImage(document.getElementById("emptyDiv"), 0, 0);
+                e.dataTransfer.setDragImage(document.getElementById("emptyDivToRemoveTheDragImage"), 0, 0);
                 e.dataTransfer.setData("text", this.currentlyDraggedCard.id);
             };
             async draggedElementOnDragEndEvent(e, {draggedElement, card}) {
@@ -4407,7 +4726,7 @@
                 document.querySelector(".drop-field-remove-from-module-hitbox") .classList.add("show");
 
                 e.dataTransfer.effectAllowed = "link";
-                e.dataTransfer.setDragImage(document.getElementById("emptyDiv"), 0, 0);
+                e.dataTransfer.setDragImage(document.getElementById("emptyDivToRemoveTheDragImage"), 0, 0);
                 e.dataTransfer.setData("text", card.id)
             };
             async draggedSelectedElementOnDragEndEvent(e, {draggedElement, card}) {
@@ -5307,7 +5626,7 @@
                             moduleDetails.innerHTML = this.createAllCompactClassifiedSubjCards(sem, module);
                         }
 
-                        this.attachAllEventListeners()
+                        this.attachAllSubjectCardRelatedEvenListenersForEverySubjectCard()
                         this.setGradesTableTotalCoef();
                     }
                 }
@@ -5406,7 +5725,7 @@
 
                 const pickerMenu        = document.createElement("div");
                 pickerMenu.id           = "pickerMenu";
-                pickerMenu.className    = "online-cfg-picker-menu";
+                pickerMenu.className    = `online-cfg-picker-menu modal${this.settings.blurEnabled ? " blur" : ""}`;
                 const sectionsHTML      = this.generateOnlineCfgPickerMenuDirTree("section");
                 const yearsHTML         = this.generateOnlineCfgPickerMenuDirTree("year");
                 const promsHTML         = this.generateOnlineCfgPickerMenuDirTree("prom");
@@ -5414,7 +5733,7 @@
 
                 pickerMenu.innerHTML = `
                     <div class="online-cfg-picker-menu-header">
-                        <div class="online-cfg-picker-menu-close-btn">❌</div>
+                        <div class="modal-close-btn">❌</div>
                     </div>
                     <div class="online-cfg-picker-menu-body">
                         <div class="online-cfg-picker-menu-body-container">
@@ -5437,7 +5756,7 @@
                 
                 document.onclick = (e) => {if (!e.target.closest(".online-cfg-picker-menu")) {closePickerMenuFunc()}}
                 document.onmousedown = null;
-                pickerMenu.querySelector(".online-cfg-picker-menu-close-btn").onclick = closePickerMenuFunc;
+                pickerMenu.querySelector(".modal-close-btn").onclick = closePickerMenuFunc;
                 pickerMenu.onclick = (e) => {
                     const dirCard = e.target.closest(".online-cfg-picker-menu-dir-card");
 
