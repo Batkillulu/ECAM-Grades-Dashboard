@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.2.6
+// @version      2.2.7
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/group/education/notes*
@@ -65,9 +65,9 @@
                 @keyframes hoveringElem  { 0% { transform: translateY(0px); } 50% { transform: translateY(var(--hoverAmp)); } 100% { transform: translateY(0px); } }
                 @keyframes hoveringArrow { 0% { d: path('M 0 30 c 10,50, 128,77, 147,13 m -21,5 l 23,-8 l 9,19'); } 50% { d: path('M 0 30 c 20,46, 130,71, 156,-12 m -21,5 l 23,-8 l 9,19'); } 100% { d: path('M 0 30 c 10,50, 128,77, 147,13 m -21,5 l 23,-8 l 9,19'); } }
 
-                .new-user-notif-attention-catcher   { position: absolute; border-radius: 20px; background: black; opacity: 0%; width: 800%; height: 100%; right: calc(-700% / 2); top: 0; transition: all 0.5s ease; }
-                .new-user-notif-attention-catcher.focus { width: 80px; height: 10px; top: 80px; right: 350px; opacity: 100%; }
-                .new-user-notif-attention-catcher.hide  { opacity: 0%; }
+                .new-user-notif-fullscreen-effect   { position: absolute; width: 100%; height: 100%; right: 0px; top: 0px; overflow: clip; z-index: 8; }
+                .new-user-notif-attention-catcher   { position: absolute; border-radius: 20px; opacity: 0%; background: radial-gradient(transparent 0%, #000000 8%); filter: drop-shadow(293px 47px 0px black); width: 800%; height: 100%; right: calc((100% - 800%) / 2 + -380px); top: calc(-50% + 80px); transition: all 0.5s ease; }
+                .new-user-notif-attention-catcher.focus { opacity: 80%; }
             `;
             
             
@@ -90,10 +90,10 @@
 
                     // MARK: help buttons
                     styles += `
-                        .over-header-help-btns                  { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+                        .over-header-help-btns                  { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; z-index: 12; }
 
 
-                        .over-header-btn.how-to-use-btn                 { justify-content: center;  background: #0059ad; width: 40px; padding-left: 0px;  font-size: 20px; outline: 3px solid #c022ff; border: none; color: inherit; z-index: 5; }
+                        .over-header-btn.how-to-use-btn                 { justify-content: center;  background: #0059ad; width: 40px; padding-left: 0px;  font-size: 20px; outline: 3px solid #c022ff; border: none; color: inherit; z-index: 12; }
                         .over-header-btn.how-to-use-btn:hover           { outline-color: white; background: #2888e2; }
                         .over-header-btn.how-to-use-btn.open            { outline-color: white; }
 
@@ -106,9 +106,9 @@
 
                         .over-header-btn.help.doc-btn                               {  }
                         .over-header-btn.help.doc-btn.fr                            { width: 180px; }
-                        .over-header-btn.help.doc-btn.fr::before                    { content: "Voir documentation\u2197"; }
+                        .over-header-btn.help.doc-btn.fr::before                    { content: "Voir documentation"; }
                         .over-header-btn.help.doc-btn.en                            { width: 180px; }
-                        .over-header-btn.help.doc-btn.en::before                    { content: "See documentation\u2197"; }
+                        .over-header-btn.help.doc-btn.en::before                    { content: "See documentation"; }
 
                         .over-header-btn.help.tuto-btn                              { font-weight: 700; }
                         .over-header-btn.help.tuto-btn.fr                           { width: 168px; }
@@ -153,14 +153,14 @@
                         @keyframes overHeaderBtnCopiedCue           { 0% {top: -20px; opacity: 0%;} 20% {top: 0px; opacity: 100%;} 50% {top: 0px; opacity: 100%} 100% {top: 20px; opacity: 0%;} }
                         @keyframes overHeaderBtnMailInfoText        { 0% {color: white;} 20% {color: #ffffff75;} 50% {color: #ffffff75;} 100% {color: white;} }
                         
-                        .over-header-btn.issue.mail-info.fr.open            { width: 330px; right: -685px; box-shadow: 5px 7px 6px 0px black; }
-                        .over-header-btn.issue.share-config.fr.open         { width: 550px; right: -640px; box-shadow: 5px 7px 6px 0px black; }
-                        .over-header-btn.issue.suggest-idea.fr.open         { width: 380px; right: -261px; box-shadow: 5px 7px 6px 0px black; }
-                        .over-header-btn.issue.report-issue.fr.open         { width: 220px; right: -40px;  box-shadow: 5px 7px 6px 0px black; }
+                        .over-header-btn.issue.mail-info.fr.open            { width: 337px; right: -685px; box-shadow: 5px 7px 6px 0px black; }
+                        .over-header-btn.issue.share-config.fr.open         { width: 557px; right: -640px; box-shadow: 5px 7px 6px 0px black; }
+                        .over-header-btn.issue.suggest-idea.fr.open         { width: 387px; right: -261px; box-shadow: 5px 7px 6px 0px black; }
+                        .over-header-btn.issue.report-issue.fr.open         { width: 227px; right: -40px;  box-shadow: 5px 7px 6px 0px black; }
                         .over-header-btn.issue.mail-info.en.open            { width: 330px; right: -580px; box-shadow: 5px 7px 6px 0px black; }
-                        .over-header-btn.issue.share-config.en.open         { width: 445px; right: -530px; box-shadow: 5px 7px 6px 0px black; }
-                        .over-header-btn.issue.suggest-idea.en.open         { width: 315px; right: -215px; box-shadow: 5px 7px 6px 0px black; }
-                        .over-header-btn.issue.report-issue.en.open         { width: 175px; right: -40px;  box-shadow: 5px 7px 6px 0px black; }
+                        .over-header-btn.issue.share-config.en.open         { width: 452px; right: -530px; box-shadow: 5px 7px 6px 0px black; }
+                        .over-header-btn.issue.suggest-idea.en.open         { width: 322px; right: -215px; box-shadow: 5px 7px 6px 0px black; }
+                        .over-header-btn.issue.report-issue.en.open         { width: 187px; right: -40px;  box-shadow: 5px 7px 6px 0px black; }
 
                         .over-header-btn.issue.mail-info.open:hover          { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
                         .over-header-btn.issue.share-config.open:hover       { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
@@ -217,7 +217,7 @@
                 .import-menu-btn.online {  }
                 
 
-                .online-cfg-picker-menu         { display: flex; flex-direction: column; justify-content: flex-start; position: fixed; width: 750px; height: 500px; left: calc(50% - 750px / 2); top: calc(50% - 500px / 2); z-index: 1000; }
+                .online-cfg-picker-menu         { display: flex; flex-direction: column; justify-content: flex-start; position: fixed; --picker-menu-width: 750px; --picker-menu-height: 500px; width: var(--picker-menu-width); height: var(--picker-menu-height); left: calc(50% - var(--picker-menu-width) / 2); top: calc(50% - var(--picker-menu-height) / 2); z-index: 1000; }
                 .online-cfg-picker-menu-header          { display: flex; justify-content: flex-end; height: 40px; align-items: center; z-index: 1010; }
 
                 .online-cfg-picker-menu-body            { display: flex; flex-direction: row; justify-content: center; align-items: center; height: 500px; width: 100%; position: fixed; top: -8px; gap: 5px; overflow: clip; }
@@ -765,7 +765,7 @@
 
         constructor() {
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.2.6";
+            this.scriptVersion = "2.2.7";
             this.configVersion = 3;
 
             this.settings = {
@@ -1412,6 +1412,9 @@
             }
             draggableIcon(source="subject-card", {height=25, type="unknown", targetId="none"}={height: 25, type: "unknown", targetId:"none"}) {
                 return `<div class="drag-icon for-${source}" data-targetid="${targetId}" data-type="${type}" draggable="false" style="height:${height}px; width:${height}px; font-size: ${height*0.75}px">☰</div>`
+            }
+            externalLinkSymbol(color="white", size=16, margin=0) {
+                return `<svg xmlns="http://www.w3.org/2000/svg" style="width: ${size}px; height: ${size}px; margin: ${(margin instanceof Array ? margin : [margin]).map(value => {if (value instanceof Number || !isNaN(Number(value))) {return `${value}px`}}).join(" ")};" fill="none" stroke="${color}" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><path style="d:path('M15 3h6v6m-11 5L21 3m-3 10v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6')"/></svg>`;
             }
             dateTimeSlice(dateTime=this.now(), minutesOffset=5) {
                 const minutes    = parseInt(dateTime.match(/T\d{2}:(\d{2}):\d{2}Z/)[1]);
@@ -2187,9 +2190,6 @@
                     <div class="loading-symbol" style="--offset-offset: calc(5 * 100% / 6)"></div>
                 </div>
 
-                </svg>
-
-
                 <div class="dash-header">
                     <div style="display: flex;flex-direction: row;" id="aui_3_2_0_1305">
                         <img draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/5/51/ECAM-LaSalle-bleu-seul.png" alt="ECAM Logo" style="margin: 0px 0px 0px -10px;height: 141px;width: 148px;" id="aui_3_2_0_1304">
@@ -2228,11 +2228,11 @@
                             <div class="over-header-help-btns">
                                 <div class="over-header-btn how-to-use-btn">?</div>
                                 <div class="over-header-how-to-use-btns" hidden>
-                                    <a   class="over-header-btn help doc-btn fr"  href="${this.repoReadMeHowToUse}" target="_blank" ></a>
+                                    <a   class="over-header-btn help doc-btn fr"  href="${this.repoReadMeHowToUse}" target="_blank" >${this.externalLinkSymbol("white", 16, [0,0,0,4])}</a>
                                     <div class="over-header-btn help tuto-btn fr"></div>
                                     <div class="over-header-btn help keybinds-btn fr"></div>
                                 </div>
-
+                                
                                 <div class="new-user-notif" style="width: 400px; height: 53px; top: -9px; right: 153px; --hoverAmp: 15px; animation: hoveringElem 3s infinite ease-in-out; cursor: pointer; --arrow-path: path('M 0 30 c 20,46, 130,71, 156,-12 m -21,5 l 23,-8 l 9,19'); --arrow-join: round;" hidden>
                                     <svg viewBox="0 0 100 100" style="position: absolute; bottom: -46px; right: -105px; width: 200px; height: 70px; z-index: 9; ">
                                         <path class="new-user-notif-arrow outside"></path>
@@ -2350,14 +2350,6 @@
                 container.insertBefore(notifContainer, container.querySelector("dash-header"));
                 originalTable.style.display = "none";
 
-                const newUserNotifFocusSVG = document.createElement("svg");
-                newUserNotifFocusSVG.className = `new-user-notif-attention-catcher-svg`;
-                newUserNotifFocusSVG.viewBox = `0 0 800 100`;
-                newUserNotifFocusSVG.style.position = `absolute`;
-                newUserNotifFocusSVG.style.zIndex = `8`;
-                newUserNotifFocusSVG.hidden = "true";
-                document.body.appendChild(newUserNotifFocusSVG);
-
                 this.generateContent();
             }
 
@@ -2455,9 +2447,9 @@
 
                     if (newUserNotif?.hidden?.toString() || "true" == "false") newUserNotif.title     = "Clique pour fermer";
 
-                    shareConfig     .innerHTML = "Partager une config\u2197";
-                    suggestIdea     .innerHTML = "Suggérer une idée\u2197";
-                    reportIssue     .innerHTML = "Signaler un problème\u2197";
+                    shareConfig     .innerHTML = `Partager une config ${this.externalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
+                    suggestIdea     .innerHTML = `Suggérer une idée ${this.externalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
+                    reportIssue     .innerHTML = `Signaler un problème ${this.externalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
                     mailInfoText    .innerHTML = "Par mail: baptiste.jacquin@ecam.fr 📋";
                     mailInfoCopied  .innerHTML = "Copié !";
 
@@ -2488,9 +2480,9 @@
                     
                     if (newUserNotif?.hidden?.toString() || "true" == "false") newUserNotif.title     = "Click to dismiss";
 
-                    shareConfig     .innerHTML = "Share a config\u2197";
-                    suggestIdea     .innerHTML = "Suggest an idea\u2197";
-                    reportIssue     .innerHTML = "Report an issue\u2197";
+                    shareConfig     .innerHTML = `Share a config ${this.externalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
+                    suggestIdea     .innerHTML = `Suggest an idea ${this.externalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
+                    reportIssue     .innerHTML = `Report an issue ${this.externalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
                     mailInfoText    .innerHTML = "By mail: baptiste.jacquin@ecam.fr 📋";
                     mailInfoCopied  .innerHTML = "Copied!";
 
@@ -3162,7 +3154,7 @@
                 reloadRequest.style.textEmphasisStyle = '" "';
                 reloadRequest.style.width  = "100%";
                 reloadRequest.style.height = "100%";
-                reloadRequest.style.outline = '60px solid white';
+                reloadRequest.style.outline = '6px solid white';
                 reloadRequest.title = this.lang == "fr" ? "Rafraichir" : "Reload";
                 reloadRequest.innerHTML = text;
 
@@ -3180,23 +3172,18 @@
 
             firstLoadEvent() {
                 if (this.firstLoad) {
-                    const newUserNotif          = document.querySelector(".new-user-notif");
-                    const newUserNotifFocus     = document.querySelector(".new-user-notif-attention-catcher");
-                    const newUserNotifFocusSVG  = document.querySelector(".new-user-notif-attention-catcher-svg");
-
+                    const newUserNotif  = document.querySelector(".new-user-notif");
                     newUserNotif.hidden = false;
-                    newUserNotifFocus.hidden = false;
-                    newUserNotifFocusSVG.hidden = false;
-                    setTimeout(() => {newUserNotifFocus.classList.add("focus");}, 10);
 
-                    newUserNotif.onclick = () => {
-                        // localStorage.setItem("ECAM_DASHBOARD_FIRST_LOAD", false);
+                    const newUserNotifFullScreen     = document.createElement("div");
+                    newUserNotifFullScreen.className = "new-user-notif-fullscreen-effect";
+                    newUserNotifFullScreen.innerHTML = `<div class="new-user-notif-attention-catcher"></div>`;
+                    document.body.appendChild(newUserNotifFullScreen);
 
-                        newUserNotif.style.animationPlayState = "paused";
-                        newUserNotif.style.top = `${newUserNotif.getBoundingClientRect().top - newUserNotif.getBoundingClientRect().height - 10}px`;
-                        newUserNotif.style.opacity = "0%";
-                        setTimeout(() => {newUserNotif.hidden = true;}, 300);
-                    }
+                    const newUserNotifFocus = newUserNotifFullScreen.children[0];
+                    setTimeout(() => {newUserNotifFocus?.classList?.add("focus");}, 10);
+
+                    newUserNotif.onclick = () => {this.dismissFirstTimeNotif();}
                 }
             }
 
@@ -3793,14 +3780,6 @@
                         shareConfig.classList.add("open"); shareConfig.tabIndex = "0";
                         suggestIdea.classList.add("open"); suggestIdea.tabIndex = "0";
                         reportIssue.classList.add("open"); reportIssue.tabIndex = "0";
-                        
-                        const newUserNotif  = document.querySelector(".new-user-notif");
-                        if (newUserNotif) {
-                            newUserNotif.style.animationPlayState = "paused";
-                            newUserNotif.style.top = `${newUserNotif.getBoundingClientRect().top - newUserNotif.getBoundingClientRect().height - 10}px`;
-                            newUserNotif.style.opacity = "0%";
-                            setTimeout(() => {newUserNotif.hidden = true}, 300);
-                        }
                     }
 
                     dismissIssuesOverHeaderBtns() {
@@ -3831,14 +3810,8 @@
                         this.timeouts.openHelpMenu = setTimeout(()=>{helpMenu.classList.add("open");}, 10);
                         docBtn  .tabIndex = "0";
                         tutoBtn .tabIndex = "0";
-                        
-                        const newUserNotif  = document.querySelector(".new-user-notif");
-                        if (newUserNotif) {
-                            newUserNotif.style.animationPlayState = "paused";
-                            newUserNotif.style.top = `${newUserNotif.getBoundingClientRect().top - newUserNotif.getBoundingClientRect().height - 10}px`;
-                            newUserNotif.style.opacity = "0%";
-                            setTimeout(() => {newUserNotif.hidden = true}, 300);
-                        }
+
+                        this.dismissFirstTimeNotif();
                     }
 
                     dismissHelpOverHeaderBtns() {
@@ -3854,6 +3827,24 @@
                         this.timeouts.openHelpMenu = setTimeout(()=>{helpMenu.hidden = true;}, 200);
                         docBtn     .tabIndex = "-1";
                         tutoBtn    .tabIndex = "-1";
+                    }
+
+                    dismissFirstTimeNotif() {
+                        const newUserNotif  = document.querySelector(".new-user-notif");
+                        if (newUserNotif) {
+                            const newUserNotifFocus = document.querySelector(".new-user-notif-attention-catcher");
+                            newUserNotifFocus.classList.remove("focus");
+                            newUserNotifFocus.style.animationPlayState = "paused";
+                            setTimeout(() => {newUserNotifFullScreen.hidden = true;}, 500);
+
+                            newUserNotif.style.animationPlayState = "paused";
+                            newUserNotif.style.top = `${newUserNotif.getBoundingClientRect().top - newUserNotif.getBoundingClientRect().height - 10}px`;
+                            newUserNotif.style.opacity = "0%";
+                            setTimeout(() => {newUserNotif.hidden = true}, 300);
+                            
+                            localStorage.setItem("ECAM_DASHBOARD_FIRST_LOAD", false);
+                            this.firstLoad = false;
+                        }
                     }
 
                 //#endregion
@@ -5801,10 +5792,10 @@
 
 
                 let html = type == "section" ? `
-                    <div class="online-cfg-picker-menu-dir-tree ${type} show" data-path="${sectionsData.path}">
-                        <div class="online-cfg-picker-menu-dir-tree-header ${type} ${this.lang == "fr" ? "fr" : "en"}"></div>
-                        <div class="online-cfg-picker-menu-dir-tree-nb-cfgs">${sectionsData.nbCfgs} config${sectionsData.nbCfgs>1?"s":""}</div>
-                        <div class="online-cfg-picker-menu-dir-tree-body">
+                <div class="online-cfg-picker-menu-dir-tree ${type} show" data-path="${sectionsData.path}">
+                    <div class="online-cfg-picker-menu-dir-tree-header ${type} ${this.lang == "fr" ? "fr" : "en"}"></div>
+                    <div class="online-cfg-picker-menu-dir-tree-nb-cfgs">${sectionsData.nbCfgs} config${sectionsData.nbCfgs>1?"s":""}</div>
+                    <div class="online-cfg-picker-menu-dir-tree-body">
                 ` : "";
 
                 html += sectionsArray.map(sectionDirData => {       // Dir: Section
