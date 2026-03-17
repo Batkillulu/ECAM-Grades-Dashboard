@@ -57,7 +57,7 @@
                 .loading-symbol.show    { animation: loading 1s infinite; }
                 @keyframes loading  { from {offset-distance: var(--offset-offset)} to {offset-distance: calc(var(--offset-offset) + 100%)} }
 
-                .new-user-notif     { display: flex; justify-content: center; align-items: center; position: absolute; background: #00037b; border-radius: 20px; outline: 2px solid; text-align: center; z-index: 10; transition: all 0.3s ease; } 
+                .new-user-notif     { display: flex; justify-content: center; align-items: center; position: absolute; background: #00037b; border-radius: 20px; outline: 2px solid; text-align: center; z-index: 10; width: 400px; height: 53px; top: -9px; right: 153px; --hoverAmp: 15px; animation: hoveringElem 3s infinite ease-in-out; cursor: pointer; --arrow-path: path('M 0 30 c 20,46, 130,71, 156,-12 m -21,5 l 23,-8 l 9,19'); --arrow-join: round; transition: all 0.3s ease; } 
                 .new-user-notif-text    { padding: 10px; border-radius: 20px; font-size: 18px; text-wrap-mode: wrap; }
                 .new-user-notif-arrow       { animation: hoveringArrow 3s infinite ease-in-out }
                 .new-user-notif-arrow.outside   { fill: none; stroke: #ffffff; stroke-width: 12; stroke-linejoin: var(--arrow-join); }
@@ -197,11 +197,22 @@
 
 
 
-
-            //MARK: -help and tutorial
+            //MARK: -settings
             styles += `
-                .keyboard-shortcut-list-container   { display: flex; flex-direction: column; justify-content: center; align-items: center; position: fixed; width: 100%; height: 100%; z-index: 900; }
-                .keyboard-shortcut-list-body            { padding: 30px; display: flex; }
+                .settings-modal-container   { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; position: fixed; left: 0; top: 0; z-index: 1000; }
+                .settings-modal                 { display: flex; padding: 40px 30px; }
+                .settings-modal-body                {  }
+                .settings-row-div                       { display: flex; justify-content: space-between; align-items: center; }
+                .settings-text                              { display: flex; flex-direction: column; }
+                .settings-checkbox                          { zoom: 130%; }
+            `;
+
+
+
+            //MARK: help and tutorial
+            styles += `
+                .keyboard-shortcut-list-container   { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; height: 100%; position: fixed; left: 0; top: 0; z-index: 900; }
+                .keyboard-shortcut-list-modal           { display: flex; padding: 30px; }
             `;
 
 
@@ -217,7 +228,8 @@
                 .import-menu-btn.online {  }
                 
 
-                .online-cfg-picker-menu         { display: flex; flex-direction: column; justify-content: flex-start; position: fixed; --picker-menu-width: 750px; --picker-menu-height: 500px; width: var(--picker-menu-width); height: var(--picker-menu-height); left: calc(50% - var(--picker-menu-width) / 2); top: calc(50% - var(--picker-menu-height) / 2); z-index: 1000; }
+                .online-cfg-picker-menu         { display: flex; flex-direction: column; justify-content: flex-start; --picker-menu-width: 750px; --picker-menu-height: 500px; width: var(--picker-menu-width); height: var(--picker-menu-height); z-index: 1000; }
+                .online-cfg-picker-menu-container   { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; position: fixed; left: 0; top: 0; }
                 .online-cfg-picker-menu-header          { display: flex; justify-content: flex-end; height: 40px; align-items: center; z-index: 1010; }
 
                 .online-cfg-picker-menu-body            { display: flex; flex-direction: row; justify-content: center; align-items: center; height: 500px; width: 100%; position: fixed; top: -8px; gap: 5px; overflow: clip; }
@@ -736,8 +748,10 @@
             .modal.blur { backdrop-filter: blur(var(--modal-blur-amount)); }
             .modal.show     { border-width: 8px; transform: translateZ(0) scale(100%); opacity: 100%; }
 
-            .modal-close-btn           { display: flex; justify-content: center; align-items: center; width: 30px; height: 30px; border-radius: 15px; border: 2px solid; font-size: 20px; user-select: none; cursor: pointer; margin-right: 3px; transition: all 0.2s ease; }
-            .modal-close-btn:hover     { transform: scale(101%); border-radius: 20px; font-size: 30px; gap: 5px; }
+            .modal-close-btn           { display: flex; justify-content: center; align-items: center; width: 30px; height: 30px; margin-right: -30px; border-radius: 15px; border: 2px solid; font-size: 20px; user-select: none; cursor: pointer; margin-right: 3px; transition: all 0.2s ease; }
+            .modal-close-btn:hover      { font-size: 30px; }
+            .modal-close-btn-cross      {  }
+            .modal-close-btn-circle     {  }
         `;
 
 
@@ -769,12 +783,25 @@
             this.configVersion = 3;
 
             this.settings = {
-                blurEnabled: JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SETTINGS_BLUR_ENABLED")) || "true",
+                blurEnabled: {
+                    name: this.lang == "fr" 
+                        ? "Activer le flou" 
+                        : "Enable blur"
+                    ,
+                    description: this.lang == "fr" 
+                        ? "Activer le flou qui s'opère sur le fond des fenêtres" 
+                        : "Enable the blur that operates on the background of the windows"
+                    ,
+                    value: JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SETTINGS_BLUR_ENABLED") || "true")
+                },
             };
+            this.keybinds = {
+                
+            }
 
+            this.today  = new Date().toISOString().split('T')[0];                                                       // Current date in ISO String
             this.now        = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
             this.dateHour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
-            this.today  = new Date().toISOString().split('T')[0];                                                       // Current date in ISO String
             this.dateTimeOfLastUpdateCheck          = localStorage.getItem("ECAM_DASHBOARD_DATE_TIME_OF_LAST_UPDATE_CHECK") || "2000-00-00T00:00:00Z"; // A day before the date of last update, so that the update check is ran to make sure the correct version is installed
             this.isUpdateAvailable                  = localStorage.getItem("ECAM_DASHBOARD_IS_UPDATE_AVAILABLE")            || false;
             this.firstLoad              = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_FIRST_LOAD")                     || "true");
@@ -879,13 +906,15 @@
             this.createDashboard();
 
             // Trigger the first load notifications to show some help to learn how to use the extension
-            this.firstLoadEvent();
+            if (this.firstLoad) {this.firstLoadEvent();}
         }
 
 
 
 
         //#region -REGION: Misc methods
+
+
 
 
 
@@ -1410,11 +1439,54 @@
                     `<button id="closeNewGradesNotif" style="padding-bottom: 3px;font-size: 10px;display: flex;width: 21px;height: 21px;position: fixed;right: calc(5% - -15px);border-radius: 5px;border: 3px solid #e0e6ff;justify-content: center;align-items: center;align-content: center;">❌</button>`;
                 }
             }
-            draggableIcon(source="subject-card", {height=25, type="unknown", targetId="none"}={height: 25, type: "unknown", targetId:"none"}) {
+            makeDraggableIcon(source="subject-card", {height=25, type="unknown", targetId="none"}={height: 25, type: "unknown", targetId:"none"}) {
                 return `<div class="drag-icon for-${source}" data-targetid="${targetId}" data-type="${type}" draggable="false" style="height:${height}px; width:${height}px; font-size: ${height*0.75}px">☰</div>`
             }
-            externalLinkSymbol(color="white", size=16, margin=0) {
+            makeExternalLinkSymbol(color="white", size=16, margin=0) {
                 return `<svg xmlns="http://www.w3.org/2000/svg" style="width: ${size}px; height: ${size}px; margin: ${(margin instanceof Array ? margin : [margin]).map(value => {if (value instanceof Number || !isNaN(Number(value))) {return `${value}px`}}).join(" ")};" fill="none" stroke="${color}" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><path style="d:path('M15 3h6v6m-11 5L21 3m-3 10v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6')"/></svg>`;
+            }
+            makeCloseModalIcon(
+                {
+                    size="28px",
+                    sizeHover="28px",
+
+                    borderColor="black", 
+                    borderThickness="2px", 
+                    crossColor="red", 
+                    crossThickness="2px", 
+
+                    borderColorHover="black", 
+                    borderThicknessHover="2px", 
+                    crossColorHover="red", 
+                    crossThicknessHover="2px", 
+
+                    additionalCSS=""
+                }
+                =
+                {
+                    size:"28px",
+                    sizeHover:"28px",
+
+                    borderColor:"black", 
+                    borderThickness:"2px", 
+                    crossColor:"red", 
+                    crossThickness:"2px", 
+
+                    borderColorHover:"black", 
+                    borderThicknessHover:"2px", 
+                    crossColorHover:"red", 
+                    crossThicknessHover:"2px", 
+
+                    additionalCSS:""
+                }
+            ) {
+                const borderThicknessNumber = Number(borderThickness.match(/\d+/g)[0]);
+                return `
+                <svg class="modal-close-btn" viewBox="0 0 100 100" style="--size-hover: ${sizeHover}; width: ${size}; height: ${size}; ${additionalCSS}">
+                    <path class="modal-close-btn-cross" style="--cross-thickness: ${crossThickness}; --cross-thickness-hover: ${crossThicknessHover}; --cross-color-hover: ${crossColorHover}; ${borderThickness}; fill: none; stroke: ${crossColor}; stroke-width: var(--cross-thickness); d: path('M 50,${borderThicknessNumber/2} L 50,${100 - borderThicknessNumber/2} M ${borderThicknessNumber/2},50 L ${100 - borderThicknessNumber/2},50'); transform: rotate(45deg) translate(20px, -50px);"/>
+                    <circle class="modal-close-btn-circle" style="--border-thickness: ${borderThickness}; --border-thickness-hover: ${borderThicknessHover}; --border-color-hover: ${borderColorHover}; fill: none; stroke: ${borderColor}; stroke-width: var(--border-thickness); cx: 50; cy: 50; r: calc(50px - var(--border-thickness)); transition: all 0.3s ease;"/>
+                </svg>
+                `;
             }
             dateTimeSlice(dateTime=this.now(), minutesOffset=5) {
                 const minutes    = parseInt(dateTime.match(/T\d{2}:(\d{2}):\d{2}Z/)[1]);
@@ -2081,14 +2153,14 @@
                                 this.tempGitConfigParentDirData = undefined;
                                 localStorage.setItem("ECAM_DASHBOARD_ONLINE_CONFIGS", JSON.stringify(this.onlineConfigs));
                                 this.showLoadingSymbol(false);
-                                this.openOnlineCfgPicker();
+                                this.openOnlineCfgPickerModal();
                             };
                         }})
                     }
                 }
                 else {
                     // If the validity date and time isn't passed yet, don't send a request and open the online picker menu using the online configs from memory
-                    this.openOnlineCfgPicker();
+                    this.openOnlineCfgPickerModal();
                 }
                 
                 
@@ -2228,19 +2300,9 @@
                             <div class="over-header-help-btns">
                                 <div class="over-header-btn how-to-use-btn">?</div>
                                 <div class="over-header-how-to-use-btns" hidden>
-                                    <a   class="over-header-btn help doc-btn fr"  href="${this.repoReadMeHowToUse}" target="_blank" >${this.externalLinkSymbol("white", 16, [0,0,0,4])}</a>
+                                    <a   class="over-header-btn help doc-btn fr"  href="${this.repoReadMeHowToUse}" target="_blank" >${this.makeExternalLinkSymbol("white", 16, [0,0,0,4])}</a>
                                     <div class="over-header-btn help tuto-btn fr"></div>
                                     <div class="over-header-btn help keybinds-btn fr"></div>
-                                </div>
-                                
-                                <div class="new-user-notif" style="width: 400px; height: 53px; top: -9px; right: 153px; --hoverAmp: 15px; animation: hoveringElem 3s infinite ease-in-out; cursor: pointer; --arrow-path: path('M 0 30 c 20,46, 130,71, 156,-12 m -21,5 l 23,-8 l 9,19'); --arrow-join: round;" hidden>
-                                    <svg viewBox="0 0 100 100" style="position: absolute; bottom: -46px; right: -105px; width: 200px; height: 70px; z-index: 9; ">
-                                        <path class="new-user-notif-arrow outside"></path>
-                                    </svg>
-                                    <svg viewBox="0 0 100 100" style="position: absolute; bottom: -46px; right: -105px; width: 200px; height: 70px; z-index: 11;">
-                                        <path class="new-user-notif-arrow inside"></path>
-                                    </svg>
-                                    <div class="new-user-notif-text"></div>
                                 </div>
                             </div>
 
@@ -2445,15 +2507,15 @@
 
                     settingsBtn     .title     = "Ouvrir les paramètres";
 
-                    if (newUserNotif?.hidden?.toString() || "true" == "false") newUserNotif.title     = "Clique pour fermer";
+                    if ((newUserNotif?.hidden?.toString() || "true") == "false") newUserNotif.title     = "Clique pour fermer";
 
-                    shareConfig     .innerHTML = `Partager une config ${this.externalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
-                    suggestIdea     .innerHTML = `Suggérer une idée ${this.externalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
-                    reportIssue     .innerHTML = `Signaler un problème ${this.externalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
+                    shareConfig     .innerHTML = `Partager une config ${this.makeExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
+                    suggestIdea     .innerHTML = `Suggérer une idée ${this.makeExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
+                    reportIssue     .innerHTML = `Signaler un problème ${this.makeExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
                     mailInfoText    .innerHTML = "Par mail: baptiste.jacquin@ecam.fr 📋";
                     mailInfoCopied  .innerHTML = "Copié !";
 
-                    if (newUserNotif?.hidden?.toString() || "true" == "false") newUserNotifText.innerHTML = "Bonjour! Nouveau ici? Clique ici pour apprendre à utiliser cette extension!";
+                    if ((newUserNotif?.hidden?.toString() || "true") == "false") newUserNotifText.innerHTML = "Bonjour! Nouveau ici? Clique ici pour apprendre à utiliser cette extension!";
 
                     mailInfo   .classList.replace("en", "fr");
                     shareConfig.classList.replace("en", "fr");
@@ -2478,15 +2540,15 @@
 
                     settingsBtn     .title     = "Open the settings";
                     
-                    if (newUserNotif?.hidden?.toString() || "true" == "false") newUserNotif.title     = "Click to dismiss";
+                    if ((newUserNotif?.hidden?.toString() || "true") == "false") newUserNotif.title     = "Click to dismiss";
 
-                    shareConfig     .innerHTML = `Share a config ${this.externalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
-                    suggestIdea     .innerHTML = `Suggest an idea ${this.externalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
-                    reportIssue     .innerHTML = `Report an issue ${this.externalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
+                    shareConfig     .innerHTML = `Share a config ${this.makeExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
+                    suggestIdea     .innerHTML = `Suggest an idea ${this.makeExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
+                    reportIssue     .innerHTML = `Report an issue ${this.makeExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
                     mailInfoText    .innerHTML = "By mail: baptiste.jacquin@ecam.fr 📋";
                     mailInfoCopied  .innerHTML = "Copied!";
 
-                    if (newUserNotif?.hidden?.toString() || "true" == "false") newUserNotifText.innerHTML = "Hey! New here? Click here to find a tutorial on how to use this extension!";
+                    if ((newUserNotif?.hidden?.toString() || "true") == "false") newUserNotifText.innerHTML = "Hey! New here? Click here to find a tutorial on how to use this extension!";
 
                     mailInfo   .classList.replace("fr", "en");
                     shareConfig.classList.replace("fr", "en");
@@ -2499,8 +2561,11 @@
                 }
                 
 
-                const keybindsTable = document.querySelector(".keyboard-shortcut-list-body");
-                if (keybindsTable) { keybindsTable.innerHTML = this.createKeyboardShortcutsList(); }
+                const keybindsTableModalBody = document.querySelector("#keyboardShortcutListModalBody");
+                if (keybindsTableModalBody) { this.createKeyboardShortcutsList(keybindsTableModalBody); }
+
+                const settingsModalBody = document.querySelector("#settingsModalBody");
+                if (settingsModalBody) { this.createSettingsTable(settingsModalBody); }
                 
                 const importBtn     = document.getElementById("importBtn");
                 const editModeBtn   = document.getElementById("editModeBtn");
@@ -2721,7 +2786,7 @@
                         ${this.editMode 
                             ? 
                             `<div style="display: flex; align-items: center; justify-content: flex-start; width: 42%;">
-                                <div style="margin-right: 5px; margin-bottom: 3px;">${this.draggableIcon("module-card", {height: 29, type: "module", targetId: `module-card-${moduleName}-in-semester-${sem}`})}</div>
+                                <div style="margin-right: 5px; margin-bottom: 3px;">${this.makeDraggableIcon("module-card", {height: 29, type: "module", targetId: `module-card-${moduleName}-in-semester-${sem}`})}</div>
                                 <input type="text" class="module-title input any-input" id="module-title-input-${sem}-${moduleName}" value="${moduleName}" data-semester="${sem}" data-module="${moduleName}" draggable="false"/>
                                 <div class="module-title-state">
                                 </div>
@@ -2835,7 +2900,7 @@
                                 ? `<div style="margin: 0px 5px; margin-bottom: 3px;">
                                 ${this.selectedSubjectCardsId.includes(`subject-card-semester-${sem}-subject-${subject}`) 
                                     ? `<div class="tick-icon for-${detailed ? "detailed" : "compact"}-subject-card" data-type="${detailed ? "detailed" : "compact"}" data-targetid="subject-card-semester-${sem}-subject-${subject}">✔</div>`
-                                    : this.draggableIcon(`${detailed ? "detailed" : "compact"}-subject-card`, {type:`${detailed ? "detailed" : "compact"}`, targetId:`subject-card-semester-${sem}-subject-${subject}`}) 
+                                    : this.makeDraggableIcon(`${detailed ? "detailed" : "compact"}-subject-card`, {type:`${detailed ? "detailed" : "compact"}`, targetId:`subject-card-semester-${sem}-subject-${subject}`}) 
                                 }</div>`
                                 : ""
                             }
@@ -3054,82 +3119,84 @@
             }
 
 
-            createKeyboardShortcutsList() {
-                let html = `
-                <table style="font-size: 20px; --row-height: 30px;">
-                    <thead>
-                        <tr>
-                            <td style="width: 580px;"></td>   <td style="width: 160px;"></td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                `;
-
-                html += `
-                        <tr style="height: var(--row-height); border-bottom: 1px solid black;">
-                            <td style="padding-left: 15px; border-right: 1px solid black;">
-                                ${this.lang == "fr" ? "Plier/Déplier tous les modules (basculer)" : "Fold/Unfold all modules (toggle)"}
-                            </td>
-                            <td style="padding-left: 15px">
-                                ${this.lang == "fr" ? "Maj + F" : "Shift + F"}
-                            </td>
-                        </tr>
-                `;
-                
-                html += `
-
-                        <tr style="height: var(--row-height); border-bottom: 1px solid black;">
-                            <td style="padding-left: 15px; border-right: 1px solid black;">
-                                ${this.lang == "fr" ? "Vue détaillée/compacte pour toutes les matières (basculer)" : "Detailed/Compact view all subjects (toggle)"}
-                            </td>
-                            <td style="padding-left: 15px">
-                                ${this.lang == "fr" ? "Maj + D" : "Shift + D"}
-                            </td>
-                        </tr>
-                `;
-                
-                html += `
-
-                        <tr style="height: var(--row-height); border-bottom: 1px solid black;">
-                            <td style="padding-left: 15px; border-right: 1px solid black;">
-                                ${this.lang == "fr" ? "Mode édition (basculer)" : "Edit mode (toggle)"}
-                            </td>
-                            <td style="padding-left: 15px">
-                                ${this.lang == "fr" ? "Maj + E" : "Shift + E"}
-                            </td>
-                        </tr>
-                `;
-                
-                html += `
-
-                        <tr style="height: var(--row-height); border-bottom: 1px solid black;">
-                            <td style="padding-left: 15px; border-right: 1px solid black;">
-                                ${this.lang == "fr" ? "Langue français/anglais (basculer)" : "Language French/English (toggle)"}
-                            </td>
-                            <td style="padding-left: 15px">
-                                ${this.lang == "fr" ? "Maj + L" : "Shift + L"}
-                            </td>
-                        </tr>
-                `;
-                
-                html += `
-
-                        <tr style="height: var(--row-height);">
-                            <td style="padding-left: 15px; border-right: 1px solid black;">
-                                ${this.lang == "fr" ? "Changer de semestre (cycle)" : "Change semester (cycle)"}
-                            </td>
-                            <td style="padding-left: 15px">
-                                ${this.lang == "fr" ? "Maj + ←/→" : "Shift + ←/→"}
-                            </td>
-                        </tr>
-                `;
-                
-                html += `
-                    </tbody>
-                </table>
-                `
-
-                return html;
+            createKeyboardShortcutsList(container=document.querySelector("#keyboardShortcutListModal")) {
+                if (container instanceof HTMLElement) {
+                    let html = `
+                    <table style="font-size: 20px; --row-height: 30px;">
+                        <thead>
+                            <tr>
+                                <td style="width: 580px;"></td>   <td style="width: 160px;"></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                    `;
+                    //#region
+                    html += `
+                            <tr style="height: var(--row-height); border-bottom: 1px solid black;">
+                                <td style="padding-left: 15px; border-right: 1px solid black;">
+                                    ${this.lang == "fr" ? "Plier/Déplier tous les modules (basculer)" : "Fold/Unfold all modules (toggle)"}
+                                </td>
+                                <td style="padding-left: 15px">
+                                    ${this.lang == "fr" ? "Maj + F" : "Shift + F"}
+                                </td>
+                            </tr>
+                    `;
+                    
+                    html += `
+    
+                            <tr style="height: var(--row-height); border-bottom: 1px solid black;">
+                                <td style="padding-left: 15px; border-right: 1px solid black;">
+                                    ${this.lang == "fr" ? "Vue détaillée/compacte pour toutes les matières (basculer)" : "Detailed/Compact view all subjects (toggle)"}
+                                </td>
+                                <td style="padding-left: 15px">
+                                    ${this.lang == "fr" ? "Maj + D" : "Shift + D"}
+                                </td>
+                            </tr>
+                    `;
+                    
+                    html += `
+    
+                            <tr style="height: var(--row-height); border-bottom: 1px solid black;">
+                                <td style="padding-left: 15px; border-right: 1px solid black;">
+                                    ${this.lang == "fr" ? "Mode édition (basculer)" : "Edit mode (toggle)"}
+                                </td>
+                                <td style="padding-left: 15px">
+                                    ${this.lang == "fr" ? "Maj + E" : "Shift + E"}
+                                </td>
+                            </tr>
+                    `;
+                    
+                    html += `
+    
+                            <tr style="height: var(--row-height); border-bottom: 1px solid black;">
+                                <td style="padding-left: 15px; border-right: 1px solid black;">
+                                    ${this.lang == "fr" ? "Langue français/anglais (basculer)" : "Language French/English (toggle)"}
+                                </td>
+                                <td style="padding-left: 15px">
+                                    ${this.lang == "fr" ? "Maj + L" : "Shift + L"}
+                                </td>
+                            </tr>
+                    `;
+                    
+                    html += `
+    
+                            <tr style="height: var(--row-height);">
+                                <td style="padding-left: 15px; border-right: 1px solid black;">
+                                    ${this.lang == "fr" ? "Changer de semestre (cycle)" : "Change semester (cycle)"}
+                                </td>
+                                <td style="padding-left: 15px">
+                                    ${this.lang == "fr" ? "Maj + ←/→" : "Shift + ←/→"}
+                                </td>
+                            </tr>
+                    `;
+                    //#endregion
+                    html += `
+                        </tbody>
+                    </table>
+                    `
+    
+                    container.innerHTML = html;
+                }
             }
 
             createFullScreenNotif(text) {
@@ -3169,22 +3236,71 @@
                 newFullScreenNotif.onclick = () => {window.location.reload();};
             }
 
+            createSettingsTable(container=document.querySelector("#settingsModalBody")) {
+                if (container instanceof HTMLElement) {
+                    let html = `
+                    <table class="settings-table">
+                        <thead>
+                            <td style="width: 500px"></td>
+                        </thead>
+                        <tbody>
+                    `;
+                    
+                    Object.keys(this.settings).forEach(settingId => {
+                        const settingName  = this.settings[settingId].name;
+                        const settingDesc  = this.settings[settingId].description;
+                        const settingValue = this.settings[settingId].value;
+                        html += `
+                            <tr>
+                                <td class="settings-row" id="settings-row-${settingName}" data-setting="${settingId}">
+                                    <div class="settings-row-div" id="settings-row-div-${settingName}" data-setting="${settingId}">
+                                        <div class="settings-text">
+                                            <span style="font-size: 18px; font-weight: 700; padding-left: 10px;">${settingName}</span>
+                                            <span style="font-size: 15px; font-weight: 500">${settingDesc}</span>
+                                        </div>
+                                        <input type="checkbox" class="settings-checkbox" id="settings-checkbox-bg-blur" ${settingValue ? "checked" : ""}></input>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    })
+
+                    html += `
+                        </tbody>
+                    </table>
+                    `;
+
+                    container.innerHTML = html;
+                }
+            }
+
 
             firstLoadEvent() {
-                if (this.firstLoad) {
-                    const newUserNotif  = document.querySelector(".new-user-notif");
-                    newUserNotif.hidden = false;
+                const overHeaderBtns = document.querySelector(".over-header-help-btns");
 
-                    const newUserNotifFullScreen     = document.createElement("div");
-                    newUserNotifFullScreen.className = "new-user-notif-fullscreen-effect";
-                    newUserNotifFullScreen.innerHTML = `<div class="new-user-notif-attention-catcher"></div>`;
-                    document.body.appendChild(newUserNotifFullScreen);
+                const newUserNotif  = document.createElement("div");
+                newUserNotif.className = "new-user-notif";
+                newUserNotif.innerHTML = `
+                    <svg viewBox="0 0 100 100" style="position: absolute; bottom: -46px; right: -105px; width: 200px; height: 70px; z-index: 9; ">
+                        <path class="new-user-notif-arrow outside"></path>
+                    </svg>
+                    <svg viewBox="0 0 100 100" style="position: absolute; bottom: -46px; right: -105px; width: 200px; height: 70px; z-index: 11;">
+                        <path class="new-user-notif-arrow inside"></path>
+                    </svg>
+                    <div class="new-user-notif-text"></div>
+                `;
+                overHeaderBtns.appendChild(newUserNotif);
 
-                    const newUserNotifFocus = newUserNotifFullScreen.children[0];
-                    setTimeout(() => {newUserNotifFocus?.classList?.add("focus");}, 10);
+                const newUserNotifFullScreen     = document.createElement("div");
+                newUserNotifFullScreen.className = "new-user-notif-fullscreen-effect";
+                newUserNotifFullScreen.innerHTML = `<div class="new-user-notif-attention-catcher"></div>`;
+                document.body.appendChild(newUserNotifFullScreen);
 
-                    newUserNotif.onclick = () => {this.dismissFirstTimeNotif();}
-                }
+                const newUserNotifFocus = newUserNotifFullScreen.children[0];
+                setTimeout(() => {newUserNotifFocus?.classList?.add("focus");}, 10);
+
+                newUserNotif.onclick = () => {this.dismissFirstTimeNotif();}
+                
             }
 
             startTutorial() {
@@ -3206,7 +3322,7 @@
                 this.attachAllAnyInputsListeners();
                 
                 this.attachLangBtnsListener();
-                this.attachIssuesBtnsMouseListeners();
+                this.attachOverHeaderBtnsMouseListeners();
                 this.attachEditModeListener();
                 this.attachImportBtnListener();
                 this.attachExportBtnListener();
@@ -3370,7 +3486,7 @@
                     }
 
 
-                    attachIssuesBtnsMouseListeners() {
+                    attachOverHeaderBtnsMouseListeners() {
                         const issueBtn      = document.querySelector(".issue.issue-btn");
                         const mailInfo      = document.querySelector(".issue.mail-info");
 
@@ -3378,16 +3494,10 @@
                         const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
                         const keybindsBtn   = document.querySelector(".over-header-btn.keybinds-btn");
 
-                        issueBtn.onclick = () => {
-                            if (issueBtn.classList.contains("open")) {
-                                this.dismissIssuesOverHeaderBtns();
-                            }
-                            else {
-                                this.openIssuesOverHeaderBtns();
-                            }
-                        };
+                        const settingsBtn   = document.querySelector(".over-header-btn.settings-btn");
 
-                        mailInfo.onclick = () => {
+                        issueBtn.onclick    = () => {if (issueBtn.classList.contains("open")) { this.dismissIssuesOverHeaderBtns(); } else { this.openIssuesOverHeaderBtns(); }};
+                        mailInfo.onclick    = () => {
                             navigator.clipboard.writeText("baptiste.jacquin@ecam.fr");
 
                             const mailInfoText = document.querySelector(".over-header-btn-mail-info-text");
@@ -3399,39 +3509,13 @@
                                 mailInfoText  .classList.remove("lighten");
                                 mailInfoCopied.classList.remove("show");
                             }
-                        }
+                        };
 
-                        helpBtn.onclick = () => {
-                            if (helpBtn.classList.contains("open")) {
-                                this.dismissHelpOverHeaderBtns();
-                            }
-                            else {
-                                this.openHelpOverHeaderBtns();
-                            }
-                        }
+                        helpBtn.onclick     = () => {if (helpBtn.classList.contains("open")) { this.dismissHelpOverHeaderBtns(); } else { this.openHelpOverHeaderBtns(); }};
+                        tutoBtn.onclick     = () => { this.startTutorial(); };
+                        keybindsBtn.onclick = () => { this.openKeybindsModal(); };
 
-                        tutoBtn.onclick = () => {
-                            this.startTutorial();
-                        }
-
-                        keybindsBtn.onclick = () => {
-                            const keybindsMenu = document.createElement("div");
-                            keybindsMenu.className = "keyboard-shortcut-list-container";
-                            keybindsMenu.innerHTML = `
-                                <div class="keyboard-shortcut-list-body modal${this.settings.blurEnabled ? " blur" : ""}">
-                                    ${this.createKeyboardShortcutsList()}
-                                    <div class="modal-close-btn" style="position: relative; top: -27px; margin-right: -27px;">❌</div>
-                                </div>
-                            `;
-                            document.querySelector(".ecam-dash").appendChild(keybindsMenu);
-                            setTimeout(() => {keybindsMenu.querySelector(".keyboard-shortcut-list-body").classList.add("show");}, 5);
-                            keybindsMenu.onclick = (e) => {
-                                if (!e.target.closest(`.keyboard-shortcut-list-body`) || e.target.closest(`.modal-close-btn`)) {
-                                    keybindsMenu.querySelector(".keyboard-shortcut-list-body").classList.remove("show");
-                                    setTimeout(() => {keybindsMenu.remove()}, 300);
-                                }
-                            }
-                        }
+                        settingsBtn.onclick = () => { this.openSettingsModal(); };
                     }
 
                     attachEditModeListener() {
@@ -3762,6 +3846,7 @@
 
 
                 //#region Over header btns
+
                     dismissAllOverHeaderBtns() {
                         this.dismissHelpOverHeaderBtns();
                         this.dismissIssuesOverHeaderBtns();
@@ -3844,8 +3929,88 @@
                             
                             localStorage.setItem("ECAM_DASHBOARD_FIRST_LOAD", false);
                             this.firstLoad = false;
+                            setTimeout(() => {newUserNotif.remove()}, 500);
                         }
                     }
+
+                //#endregion
+
+
+
+
+                //#region Modals
+
+
+                    closeEveryModal() {
+                        document.querySelectorAll(".modal")?.forEach(modal => modal.remove());
+                    }
+
+                    
+
+                    openKeybindsModal(closeOtherModals=true) {
+                        if (closeOtherModals) { this.closeEveryModal() }
+
+                        const keybindsMenu = document.createElement("div");
+                        keybindsMenu.className = "keyboard-shortcut-list-container";
+                        keybindsMenu.innerHTML = `
+                            <div class="keyboard-shortcut-list-modal modal${this.settings.blurEnabled ? " blur" : ""}" id="keyboardShortcutListModal">
+                                <div class="keyboard-shortcut-list-modal-body" id="keyboardShortcutListModalBody"></div>
+                                <div class="modal-close-btn" style="position: relative; top: -27px;">❌</div>
+                            </div>
+                        `;
+                        document.body.appendChild(keybindsMenu);
+                        this.createKeyboardShortcutsList(keybindsMenu.querySelector("#keyboardShortcutListModalBody"));
+                        setTimeout(() => {keybindsMenu.querySelector(".keyboard-shortcut-list-modal").classList.add("show");}, 5);
+                        
+                        keybindsMenu.onclick = (e) => {
+                            if (!e.target.closest(`.keyboard-shortcut-list-modal`) || e.target.closest(`.modal-close-btn`)) {
+                                keybindsMenu.querySelector(".keyboard-shortcut-list-modal").classList.remove("show");
+                                setTimeout(() => {keybindsMenu.remove()}, 300);
+                            }
+                        }
+                    }
+
+                    closeSettingsModal() {
+                        const settingsModal = document.querySelector("#settingsModal");
+                        settingsModal.classList.remove("show"); 
+                        setTimeout(() => {settingsModal.parentElement.remove()}, 300); 
+                    }
+
+                    openSettingsModal(closeOtherModals=true) {
+                        if (closeOtherModals) { this.closeEveryModal() }
+                        
+                        const settingsModalContainer = document.createElement("div");
+                        settingsModalContainer.className = "settings-modal-container";
+                        settingsModalContainer.innerHTML = `
+                        <div class="settings-modal modal" id="settingsModal">
+                            <div class="settings-modal-body" id="settingsModalBody"></div>
+                            <div class="modal-close-btn" style="position: relative; top: -37px;">❌</div>
+                        </div>
+                        `;
+                        document.body.appendChild(settingsModalContainer);
+                        
+                        const settingsModal = settingsModalContainer.children[0];
+                        this.createSettingsTable(settingsModal.querySelector("#settingsModalBody"));
+                        setTimeout(() => {settingsModal.classList.add("show")}, 5);
+
+                        settingsModalContainer.onmousedown = (e) => {
+                            if (e.target.closest(".modal-close-btn") || !e.target.closest(".settings-modal")) { 
+                                settingsModalContainer.onmouseup = (e) => {
+                                    if (e.target.closest(".modal-close-btn") || !e.target.closest(".settings-modal")) {
+                                        this.closeSettingsModal();
+                                    }
+                                    settingsModalContainer.onmouseup = null;
+                                }
+                            }
+                        };
+                    }
+
+                    closeSettingsModal() {
+                        const settingsModal = document.querySelector("#settingsModal");
+                        settingsModal.classList.remove("show"); 
+                        setTimeout(() => {settingsModal.parentElement.remove()}, 300); 
+                    }
+
 
                 //#endregion
 
@@ -5075,7 +5240,7 @@
                     const tickIcon = subjectCard.querySelector(".tick-icon");
                     if (tickIcon) {
                         const type = subjectCard.classList.contains("compact") ? "compact" : "detailed";
-                        tickIcon.outerHTML = this.draggableIcon(`${type}-subject-card`, {targetId: subjectCard.id, type});
+                        tickIcon.outerHTML = this.makeDraggableIcon(`${type}-subject-card`, {targetId: subjectCard.id, type});
                         const dragIcon = subjectCard.querySelector(".drag-icon");
                         dragIcon.onclick = (e) => {this.dragIconOnClickEvent(e, dragIcon)};
                     }
@@ -5710,44 +5875,55 @@
                 }
             }
 
-            openOnlineCfgPicker() {
+            openOnlineCfgPickerModal(closeOtherModals=true) {
+                if (closeOtherModals) { this.closeEveryModal() }
+                
                 document.getElementById("importMenu").classList.remove("show");
                 this.timeouts.closeImportMenu = setTimeout(() => {importMenu.style.display = "none"}, 300);
 
-                const pickerMenu        = document.createElement("div");
-                pickerMenu.id           = "pickerMenu";
-                pickerMenu.className    = `online-cfg-picker-menu modal${this.settings.blurEnabled ? " blur" : ""}`;
+                const pickerMenuContainer        = document.createElement("div");
+                pickerMenuContainer.className    = `online-cfg-picker-menu-container`;
                 const sectionsHTML      = this.generateOnlineCfgPickerMenuDirTree("section");
                 const yearsHTML         = this.generateOnlineCfgPickerMenuDirTree("year");
                 const promsHTML         = this.generateOnlineCfgPickerMenuDirTree("prom");
                 const configsHTML       = this.generateOnlineCfgPickerMenuDirTree("config");
 
-                pickerMenu.innerHTML = `
-                    <div class="online-cfg-picker-menu-header">
-                        <div class="modal-close-btn">❌</div>
-                    </div>
-                    <div class="online-cfg-picker-menu-body">
-                        <div class="online-cfg-picker-menu-body-container">
-                            ${sectionsHTML}
-                            ${yearsHTML}
-                            ${promsHTML}
-                            ${configsHTML}
+                pickerMenuContainer.innerHTML = `
+                    <div class="online-cfg-picker-menu modal${this.settings.blurEnabled ? " blur" : ""}" id="pickerMenu">
+                        <div class="online-cfg-picker-menu-header">
+                            <div class="modal-close-btn">❌</div>
+                        </div>
+                        <div class="online-cfg-picker-menu-body">
+                            <div class="online-cfg-picker-menu-body-container">
+                                ${sectionsHTML}
+                                ${yearsHTML}
+                                ${promsHTML}
+                                ${configsHTML}
+                            </div>
                         </div>
                     </div>
                 `;
 
-                document.querySelector(".ecam-dash").appendChild(pickerMenu);
+                document.body.appendChild(pickerMenuContainer);
+
+                const pickerMenu = document.querySelector("#pickerMenu");
                 clearTimeout(this.timeouts?.closePickerMenu)
                 setTimeout(() => {pickerMenu.classList.add("show");}, 10)
-
-                const closePickerMenuFunc = () => {
-                    pickerMenu.classList.remove("show"); 
-                    this.timeouts.closePickerMenu = setTimeout(() => {pickerMenu.remove(); this.attachDocumentMouseListeners()}, 300);
-                };
                 
-                document.onclick = (e) => {if (!e.target.closest(".online-cfg-picker-menu")) {closePickerMenuFunc()}}
-                document.onmousedown = null;
-                pickerMenu.querySelector(".modal-close-btn").onclick = closePickerMenuFunc;
+                pickerMenuContainer.onmousedown = (e) => {
+                    if (e.target.closest(".modal-close-btn") || !e.target.closest("#pickerMenu")) {
+                        pickerMenuContainer.onmouseup = (e) => {
+                            if (e.target.closest(".modal-close-btn") || !e.target.closest("#pickerMenu")) {
+                                const pickerMenu = document.querySelector("#pickerMenu");
+                                pickerMenu.classList.remove("show");
+                                this.timeouts.closePickerMenu = setTimeout(() => {pickerMenu.parentElement.remove(); this.attachDocumentMouseListeners()}, 300);
+                            }
+                            pickerMenuContainer.onmouseup = null;
+                        }
+                    }
+                }
+                
+                
                 pickerMenu.onclick = (e) => {
                     const dirCard = e.target.closest(".online-cfg-picker-menu-dir-card");
 
