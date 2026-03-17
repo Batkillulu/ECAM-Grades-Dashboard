@@ -3722,8 +3722,8 @@
                         if (simAddBtn)      {this.attachSubjectSimAddBtnListener(simAddBtn);}
                         if (simDelBtn)      {this.attachSubjectSimDelBtnListener(simDelBtn);}
                         
-                        this.attachDragOrTickIconsListener(subjCard);
-                        this.attachSubjectCardOnDragEventListeners(subjCard);
+                        this.attachDragOrTickIconsListener(subjCard)
+                        if (this.editMode)  {this.attachSubjectCardOnDragEventListeners(subjCard);};
                     }
 
                     /** Ensures all selected Subject Cards have a tick icon with their assigned event listeners instead of the default drag icon, and attach them the correct event listener */
