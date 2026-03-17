@@ -748,7 +748,7 @@
             .modal.blur { backdrop-filter: blur(var(--modal-blur-amount)); }
             .modal.show     { border-width: 8px; transform: translateZ(0) scale(100%); opacity: 100%; }
 
-            .modal-close-btn           { display: flex; justify-content: center; align-items: center; width: 30px; height: 30px; margin-right: -30px; border-radius: 15px; border: 2px solid; font-size: 20px; user-select: none; cursor: pointer; margin-right: 3px; transition: all 0.2s ease; }
+            .modal-close-btn           { display: flex; justify-content: center; align-items: center; width: 30px; height: 30px; margin-right: -30px; border-radius: 15px; border: 2px solid; font-size: 20px; user-select: none; cursor: pointer; transition: all 0.2s ease; }
             .modal-close-btn:hover      { font-size: 30px; }
             .modal-close-btn-cross      {  }
             .modal-close-btn-circle     {  }
@@ -5891,7 +5891,7 @@
                 pickerMenuContainer.innerHTML = `
                     <div class="online-cfg-picker-menu modal${this.settings.blurEnabled ? " blur" : ""}" id="pickerMenu">
                         <div class="online-cfg-picker-menu-header">
-                            <div class="modal-close-btn">❌</div>
+                            <div class="modal-close-btn" style="position: relative; right: 32px;">❌</div>
                         </div>
                         <div class="online-cfg-picker-menu-body">
                             <div class="online-cfg-picker-menu-body-container">
@@ -5914,9 +5914,7 @@
                     if (e.target.closest(".modal-close-btn") || !e.target.closest("#pickerMenu")) {
                         pickerMenuContainer.onmouseup = (e) => {
                             if (e.target.closest(".modal-close-btn") || !e.target.closest("#pickerMenu")) {
-                                const pickerMenu = document.querySelector("#pickerMenu");
-                                pickerMenu.classList.remove("show");
-                                this.timeouts.closePickerMenu = setTimeout(() => {pickerMenu.parentElement.remove(); this.attachDocumentMouseListeners()}, 300);
+                                this.closeOnlineCfgPickerModal()
                             }
                             pickerMenuContainer.onmouseup = null;
                         }
@@ -5959,6 +5957,12 @@
                         }
                     }
                 }
+            }
+
+            closeOnlineCfgPickerModal() {
+                const pickerMenu = document.querySelector("#pickerMenu");
+                pickerMenu.classList.remove("show");
+                this.timeouts.closePickerMenu = setTimeout(() => {pickerMenu.parentElement.remove(); this.attachDocumentMouseListeners()}, 300);
             }
 
             generateOnlineCfgPickerMenuDirTree(type="section") {
@@ -6106,10 +6110,9 @@
 
                             // Re-render dashboard to reflect imported config
                             try { 
-                                const pickerMenu = document.getElementById("pickerMenu"); 
-                                pickerMenu?.classList?.remove("show");
+                                this.closeOnlineCfgPickerModal();
+                                
                                 this.timeouts.closePickerMenu = setTimeout(() => {
-                                    pickerMenu?.remove()
                                     this.removeSubjectCardFromSubjectSelection(); 
                                     this.getGradesDatas();
                                     this.generateContent(); 
