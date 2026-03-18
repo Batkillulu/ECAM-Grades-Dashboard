@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.2.8
+// @version      2.2.9
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/group/education/notes*
@@ -201,11 +201,14 @@
             //MARK: -settings
             styles += `
                 .settings-modal-container   { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; position: fixed; left: 0; top: 0; z-index: 1000; }
-                .settings-modal                 { display: flex; padding: 40px 30px; }
-                .settings-modal-body                {  }
-                .settings-row-div                       { display: flex; justify-content: space-between; align-items: center; }
+                .settings-modal                 { display: flex; padding: 40px 30px; width: 900px; max-height: 500px; overflow-y: scroll; }
+                .settings-modal-body                { display: flex; flex-direction: column; width: 100%; }
+                .settings-row                       { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+                .settings-row.child                 { margin-left: 20px; padding-left: 5px; border-left: 1px solid #80808073; border-top: 1px solid #80808073; border-top-left-radius: 15px; background: linear-gradient(90deg, #5c5c5c5c 0%, transparent 50%); background-size: 200% 200%; background-position: 100% 100%; transition: all 0.3s ease }
+                .settings-row.disabled              { background-position: 0% 100%; opacity: 80%; }
                 .settings-text                              { display: flex; flex-direction: column; gap: 8px; padding: 8px 0px; }
                 .settings-checkbox                          { zoom: 130%; }
+            
             `;
 
 
@@ -757,6 +760,26 @@
             .modal-close-btn-cross.hover    { stroke: var(--cross-color-hover);  stroke-width: var(--cross-thickness-hover);  stroke-linecap: var(--cross-stroke-linecap-hover); d: path(var(--cross-path-hover)); }
             .modal-close-btn-circle         { stroke: var(--border-color);       stroke-width: var(--border-thickness);       r: calc(var(--border-radius) - var(--border-thickness)); fill: none; }
             .modal-close-btn-circle.hover   { stroke: var(--border-color-hover); stroke-width: var(--border-thickness-hover); r: calc(var(--border-radius-hover) - var(--border-thickness-hover)); }
+
+            /* width */
+            ::-webkit-scrollbar {
+                width: 10px;
+            }
+
+            /* Track */
+            ::-webkit-scrollbar-track {
+                background: #f1f1f1;
+            }
+
+            /* Handle */
+            ::-webkit-scrollbar-thumb {
+                background: #888;
+            }
+
+            /* Handle on hover */
+            ::-webkit-scrollbar-thumb:hover {
+                background: #555;
+            }
         `;
 
 
@@ -802,7 +825,7 @@
 
         constructor() {
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.2.8";
+            this.scriptVersion = "2.2.9";
             this.configVersion = 3;
 
 
@@ -827,7 +850,8 @@
                             document.querySelectorAll(".modal, .loading-symbol").forEach(elem => {if (this.settings.blurEnabled.value) {elem.classList.add("blur")} else {elem.classList.remove("blur")}});
                             this.saveSettings();
                         },
-                        dependency: "",
+                        parents:  [],
+                        children: [],
                     },
 
                     totalCoefValuesEnabled: {
@@ -847,10 +871,13 @@
                         action: () => {
                             document.querySelectorAll(".module-subject-total-coef-div, .subject-total-coef-div").forEach(elem => {if (this.settings.totalCoefValuesEnabled.value) {elem.hidden = false;} else {elem.hidden = true;}});
                             const dependentSettingChbx = document.querySelector("#settings-checkbox-totalCoefDebugTextsEnabled");
-                            if (this.settings.totalCoefValuesEnabled.value) {dependentSettingChbx.disabled = false;} else {dependentSettingChbx.disabled = true;}
+                            // if (this.settings.totalCoefValuesEnabled.value) {dependentSettingChbx.disabled = false;} else {dependentSettingChbx.disabled = true;}
                             this.saveSettings();
                         },
-                        dependency: "",
+                        parents:  [],
+                        children: [
+                            {childName: "totalCoefDebugTextsEnabled", controlType: "total"}
+                        ],
                     },
 
                     totalCoefDebugTextsEnabled: {
@@ -871,9 +898,13 @@
                             document.querySelectorAll(".module-subject-total-coef-debug, .subject-total-coef-debug").forEach(elem => {if (this.settings.totalCoefDebugTextsEnabled.value) {elem.hidden = false;} else {elem.hidden = true;}});
                             this.saveSettings();
                         },
-                        dependency: "totalCoefValuesEnabled",
+                        parents: [
+                            {parentName: "totalCoefValuesEnabled", controlType: "total"}
+                        ],
+                        children: [],
                     },
                 };
+                this.settingsDependency = [];
 
                 this.moduleConfig           = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_MODULE_CONFIG"))                 || {};
 
@@ -2723,8 +2754,9 @@
                     const keybindsTableModalBody = document.querySelector("#keyboardShortcutListModalBody");
                     if (keybindsTableModalBody) { this.createKeyboardShortcutsList(keybindsTableModalBody); }
 
+                    const settingsModal = document.querySelector("#settingsModal");
                     const settingsModalBody = document.querySelector("#settingsModalBody");
-                    if (settingsModalBody) { this.createSettingsTable(settingsModalBody); }
+                    if (settingsModal) { if (settingsModalBody) {settingsModalBody.remove()} this.appendAllSettingsRow(); }
                     
                     const importBtn     = document.getElementById("importBtn");
                     const editModeBtn   = document.getElementById("editModeBtn");
@@ -3273,7 +3305,7 @@
                         borderRadiusHover="45px", 
                         crossColorHover="#dd5454", 
                         crossThicknessHover="17px", 
-                        crossLengthHover="120", 
+                        crossLengthHover="110", 
                         crossStrokeLinecapHover="round",
 
                         transitionTime="0.2s",
@@ -3298,7 +3330,7 @@
                         borderRadiusHover:"45px", 
                         crossColorHover:"#dd5454", 
                         crossThicknessHover:"17px", 
-                        crossLengthHover:"120", 
+                        crossLengthHover:"110", 
                         crossStrokeLinecapHover:"round",
 
                         transitionTime: "0.2s",
@@ -3489,48 +3521,87 @@
                     newFullScreenNotif.onclick = () => {window.location.reload();};
                 }
 
-                createSettingsTable(container=document.querySelector("#settingsModalBody")) {
+                appendAllSettingsRow(container=document.querySelector("#settingsModal")) {
                     if (container instanceof HTMLElement) {
-                        let html = `
-                        <table class="settings-table">
-                            <thead>
-                                <td style="width: 650px"></td>
-                            </thead>
-                            <tbody>
-                        `;
+                        const settingsModalBody = document.createElement("div");
+                        settingsModalBody.className = "settings-modal-body";
+                        settingsModalBody.id = "settingsModalBody";
+                        container.appendChild(settingsModalBody);
                         
-                        Object.keys(this.settings).forEach((settingId, _index) => {
-                            const settingName   = this.settings[settingId].name;
-                            const settingDesc   = this.settings[settingId].description;
-                            const settingInfo   = this.settings[settingId].info;
-                            const settingValue  = this.settings[settingId].value;
-                            const settingDepend = this.settings[settingId].dependency;
-                            const settingControl= this.settings[settingDepend] || {value: true};
-                            html += `
-                                <tr ${_index > 0 ? `style="border-top: 1px solid"` : ""}>
-                                    <td class="settings-row" id="settings-row-${settingName}" data-setting="${settingId}">
-                                        <div class="settings-row-div" id="settings-row-div-${settingName}" data-setting="${settingId}">
-                                            <div class="settings-text">
-                                                <span style="font-size: 20px; font-weight: 800; padding-left: 10px;">${settingName}</span>
-                                                <div style="display: flex; flex-direction: column;">
-                                                    <span style="font-size: 15px; font-weight: 500">${settingDesc}</span>
-                                                    <span style="font-size: 13px; font-weight: 400; font-style: italic;">${settingInfo.value}</span>
-                                                </div>
-                                            </div>
-                                            <input type="checkbox" class="settings-checkbox" id="settings-checkbox-${settingId}" data-setting="${settingId}" ${settingControl.value ? "" : "disabled"} ${settingValue ? "checked" : ""}></input>
-                                        </div>
-                                    </td>
-                                </tr>
-                            `;
+                        Object.keys(this.settings).forEach((settingId, _index, settingsIdArray) => {
+                            const settingChildren = this.settings[settingId].children;
+
+                            this.appendSettingRow(settingsModalBody, settingId, _index)
+
+                            if (settingChildren.length > 0) {
+                                settingChildren.forEach((settingChildData) => {
+                                    this.appendSettingRow(settingsModalBody, settingChildData.childName, _index);
+                                    settingsIdArray.splice(settingsIdArray.indexOf(settingChildData.childName), 1);
+                                })
+                            }
+
                         })
-
-                        html += `
-                            </tbody>
-                        </table>
-                        `;
-
-                        container.innerHTML = html;
                     }
+                }
+
+                appendSettingRow(container=document.querySelector("#settingsModalBody"), settingId, index) {
+                    const settingName       = this.settings[settingId].name;
+                    const settingDesc       = this.settings[settingId].description;
+                    const settingInfo       = this.settings[settingId].info;
+                    const settingValue      = this.settings[settingId].value;
+                    const settingParents    = this.settings[settingId].parents;
+                    const settingChildren   = this.settings[settingId].children;
+
+                    let settingParentsValidValue = true;
+                    let settingTotalParentsCount = 0;
+                    let settingInvalidPartialParentsCount = 0;
+
+                    settingParents.forEach(parentData => {
+                        if (parentData.controlType == "total") {
+                            settingTotalParentsCount++;
+                        }
+
+                        if (this.settings[parentData.parentName].value !== true) {
+                            if (parentData.controlType == "total") {
+                                settingParentsValidValue = false;
+                            }
+                            else if (parentData.controlType == "partial") {
+                                settingInvalidPartialParentsCount++;
+                            }
+                        }
+                    });
+
+                    if (settingParentsValidValue == true && settingInvalidPartialParentsCount > 0 && settingInvalidPartialParentsCount == settingParents.length - settingTotalParentsCount) {
+                        settingParentsValidValue = false;
+                    }
+
+                    const settingRow = document.createElement("div");
+                    settingRow.className = `settings-row ${settingParents.length>0 ? `child ${settingParentsValidValue ? "" : "disabled"}` : ""}`;
+                    settingRow.id = `settings-row-${settingId}`;
+                    settingRow.style.cssText = index > 0 && settingParents.length==0 ? `border-top: 1px solid` : ``;
+                    settingRow.dataset.setting = settingId;
+                    settingRow.dataset.parent = settingParents.length > 0 ? settingParents[0].parentName : undefined;
+
+                    settingRow.innerHTML = `
+                        <div class="settings-text">
+                            <span style="font-size: 20px; font-weight: 800; padding-left: 10px;">${settingName}</span>
+                            <div style="display: flex; flex-direction: column;">
+                                <span style="font-size: 15px; font-weight: 500">${settingDesc}</span>
+                                <span style="font-size: 13px; font-weight: 400; font-style: italic;">${settingInfo}</span>
+                            </div>
+                        </div>
+                        <input 
+                            type="checkbox" 
+                            class="settings-checkbox" 
+                            id="settings-checkbox-${settingId}" 
+                            data-setting="${settingId}" 
+                            ${settingParents.length>0 ? `data-parent="${settingParents[0].parentName}"` : ""}
+                            ${settingParentsValidValue ? "" : "disabled"} 
+                            ${settingValue ? "checked" : ""}
+                        ></input>
+                    `;
+
+                    container.appendChild(settingRow);
                 }
 
 
@@ -3845,6 +3916,55 @@
                     attachExportBtnListener() {
                         document.getElementById('exportBtn').onclick = () => this.exportData();
                     }
+                //#endregion
+
+                
+
+                
+                //#region Modals
+
+                    attachSettingsModalContainerListeners(container=document.querySelector("#settingsModalContainer")) {
+
+                        container.onmousedown = (e) => {
+                            if (e.target.closest(".modal-close-btn") || !e.target.closest(".settings-modal")) { 
+                                container.onmouseup = (e) => {
+                                    if (e.target.closest(".modal-close-btn") || !e.target.closest(".settings-modal")) {
+                                        this.closeSettingsModal();
+                                    }
+                                    
+                                    container.onmouseup = null;
+                                }
+                            }
+                            else if (e.target.closest(".settings-checkbox")) {
+                                container.onmouseup = (e) => {
+                                    if (e.target.closest(".settings-checkbox")) {
+                                        const chbx = e.target.closest(".settings-checkbox");
+                                        const settingId = chbx.dataset.setting;
+                                        this.settings[settingId].value = !chbx.checked; // The event is fired before the checkbox is actually checked, so we reverse the value of the checkbox
+                                        this.settings[settingId].action();
+
+                                        const settingChildren = this.settings[settingId].children.map(settingChildData => {return settingChildData.childName});
+                                        settingChildren.forEach(settingChildId => {
+                                            const childSettingRow = container.querySelector(`#settings-row-${settingChildId}`);
+
+                                            if (chbx.checked) {
+                                                childSettingRow.classList.add("disabled");
+                                                childSettingRow.querySelector(".settings-checkbox").disabled = true;
+                                            }
+                                            else {
+                                                childSettingRow.classList.remove("disabled");
+                                                childSettingRow.querySelector(".settings-checkbox").disabled = false;
+                                            }
+                                        })
+
+                                        
+                                        container.onmouseup = null;
+                                    }
+                                }
+                            }
+                        };
+                    }
+
                 //#endregion
 
 
@@ -4313,41 +4433,18 @@
                         
                         const settingsModalContainer = document.createElement("div");
                         settingsModalContainer.className = "settings-modal-container";
-                        settingsModalContainer.innerHTML = `
-                        <div class="settings-modal modal${this.settings.blurEnabled.value ? " blur" : ""}" id="settingsModal">
-                            <div class="settings-modal-body" id="settingsModalBody"></div>
-                        </div>
-                        `;
+                        settingsModalContainer.id = "settingsModalContainer";
+                        settingsModalContainer.innerHTML = `<div class="settings-modal modal${this.settings.blurEnabled.value ? " blur" : ""}" id="settingsModal"></div>`;
                         
                         document.body.appendChild(settingsModalContainer);
                         const settingsModal = settingsModalContainer.querySelector("#settingsModal");
-                        this.appendCloseModalIcon(settingsModal)
 
-                        this.createSettingsTable(settingsModal.querySelector("#settingsModalBody"));
+                        this.appendCloseModalIcon(settingsModal)
+                        this.appendAllSettingsRow();
 
                         setTimeout(() => {settingsModal.classList.add("show")}, 5);
 
-                        settingsModalContainer.onmousedown = (e) => {
-                            if (e.target.closest(".modal-close-btn") || !e.target.closest(".settings-modal")) { 
-                                settingsModalContainer.onmouseup = (e) => {
-                                    if (e.target.closest(".modal-close-btn") || !e.target.closest(".settings-modal")) {
-                                        this.closeSettingsModal();
-                                    }
-                                    settingsModalContainer.onmouseup = null;
-                                }
-                            }
-                            else if (e.target.closest(".settings-checkbox")) {
-                                settingsModalContainer.onmouseup = (e) => {
-                                    if (e.target.closest(".settings-checkbox")) {
-                                        const chbx = e.target.closest(".settings-checkbox");
-                                        const settingId = chbx.dataset.setting;
-                                        this.settings[settingId].value = !chbx.checked;
-                                        this.settings[settingId].action();
-                                        settingsModalContainer.onmouseup   = null;
-                                    }
-                                }
-                            }
-                        };
+                        this.attachSettingsModalContainerListeners();
                     }
 
                     closeSettingsModal() {
