@@ -228,12 +228,12 @@
                 .import-menu-btn.online {  }
                 
 
-                .online-cfg-picker-menu         { display: flex; flex-direction: column; justify-content: flex-start; --picker-menu-width: 750px; --picker-menu-height: 500px; width: var(--picker-menu-width); height: var(--picker-menu-height); z-index: 1000; }
                 .online-cfg-picker-menu-container   { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; position: fixed; left: 0; top: 0; }
-                .online-cfg-picker-menu-header          { display: flex; justify-content: flex-end; height: 40px; align-items: center; z-index: 1010; }
+                .online-cfg-picker-menu                 { display: flex; justify-content: flex-start; padding: 20px; z-index: 1000; }
+                .online-cfg-picker-menu-header              { display: flex; justify-content: flex-end; height: 40px; align-items: center; z-index: 1010; }
 
-                .online-cfg-picker-menu-body            { display: flex; flex-direction: row; justify-content: center; align-items: center; height: 500px; width: 100%; position: fixed; top: -8px; gap: 5px; overflow: clip; }
-                .online-cfg-picker-menu-body-container  { display: flex; flex-direction: row; justify-content: center; align-items: flex-start; width: 640px; }
+                .online-cfg-picker-menu-body            { display: flex; flex-direction: row; justify-content: center; align-items: center; overflow: clip; }
+                .online-cfg-picker-menu-body-container  { display: flex; flex-direction: row; justify-content: center; align-items: flex-start; width: 640px; padding: 5px 0px; }
                 .online-cfg-picker-menu-dir-tree            { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 0px; color: black; margin: 0px 0px; border-radius: 16px; outline: 2px solid; background: white; overflow: clip; opacity: 0%; user-select: none; transition: all 0.2s ease; }
                 .online-cfg-picker-menu-dir-tree.show       { width: 150px; opacity: 100%; margin: 0px 5px; user-select: text; }
                 .online-cfg-picker-menu-dir-tree.section    { z-index: 1004; }
@@ -748,10 +748,13 @@
             .modal.blur { backdrop-filter: blur(var(--modal-blur-amount)); }
             .modal.show     { border-width: 8px; transform: translateZ(0) scale(100%); opacity: 100%; }
 
-            .modal-close-btn           { display: flex; justify-content: center; align-items: center; width: 30px; height: 30px; margin-right: -30px; border-radius: 15px; border: 2px solid; font-size: 20px; user-select: none; cursor: pointer; transition: all 0.2s ease; }
-            .modal-close-btn:hover      { font-size: 30px; }
-            .modal-close-btn-cross      {  }
-            .modal-close-btn-circle     {  }
+            .modal-close-btn-container { width: var(--size); height: var(--size); /* margin-right: calc(0px - var(--size)); */ font-size: 20px; user-select: none; cursor: pointer; transition: all 0.2s ease; }
+            .modal-close-btn           { display: flex; justify-content: center; align-items: center; transition: all 0.2s ease; }
+            .modal-close-btn.hover      { font-size: 30px; }
+            .modal-close-btn-cross          { stroke: var(--cross-color);        stroke-width: var(--cross-thickness);        stroke-linecap: var(--cross-stroke-linecap); d: path(var(--cross-path)); fill: none; }
+            .modal-close-btn-cross.hover    { stroke: var(--cross-color-hover);  stroke-width: var(--cross-thickness-hover);  stroke-linecap: var(--cross-stroke-linecap-hover); d: path(var(--cross-path-hover)); }
+            .modal-close-btn-circle         { stroke: var(--border-color);       stroke-width: var(--border-thickness);       r: calc(var(--border-radius) - var(--border-thickness)); fill: none; }
+            .modal-close-btn-circle.hover   { stroke: var(--border-color-hover); stroke-width: var(--border-thickness-hover); r: calc(var(--border-radius-hover) - var(--border-thickness-hover)); }
         `;
 
 
@@ -1445,22 +1448,31 @@
             makeExternalLinkSymbol(color="white", size=16, margin=0) {
                 return `<svg xmlns="http://www.w3.org/2000/svg" style="width: ${size}px; height: ${size}px; margin: ${(margin instanceof Array ? margin : [margin]).map(value => {if (value instanceof Number || !isNaN(Number(value))) {return `${value}px`}}).join(" ")};" fill="none" stroke="${color}" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><path style="d:path('M15 3h6v6m-11 5L21 3m-3 10v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6')"/></svg>`;
             }
-            makeCloseModalIcon(
+            makeCloseModalIcon(container,
+                //#region
                 {
                     size="28px",
                     sizeHover="28px",
 
                     borderColor="black", 
-                    borderThickness="2px", 
-                    crossColor="red", 
-                    crossThickness="2px", 
+                    borderThickness="6px", 
+                    borderRadius="50px", 
+                    crossColor="#b70000", 
+                    crossThickness="13px", 
+                    crossLength="100", 
+                    crossStrokeLinecap="round",
 
                     borderColorHover="black", 
-                    borderThicknessHover="2px", 
-                    crossColorHover="red", 
-                    crossThicknessHover="2px", 
+                    borderThicknessHover="6px", 
+                    borderRadiusHover="45px", 
+                    crossColorHover="#dd5454", 
+                    crossThicknessHover="17px", 
+                    crossLengthHover="120", 
+                    crossStrokeLinecapHover="round",
 
-                    additionalCSS=""
+                    transitionTime="0.2s",
+
+                    additionalCSS="position: absolute; right: 0px; top: 0px;"
                 }
                 =
                 {
@@ -1468,25 +1480,90 @@
                     sizeHover:"28px",
 
                     borderColor:"black", 
-                    borderThickness:"2px", 
-                    crossColor:"red", 
-                    crossThickness:"2px", 
+                    borderThickness:"6px", 
+                    borderRadius:"50px", 
+                    crossColor:"#b70000", 
+                    crossThickness:"13px", 
+                    crossLength:"100", 
+                    crossStrokeLinecap:"round",
 
                     borderColorHover:"black", 
-                    borderThicknessHover:"2px", 
-                    crossColorHover:"red", 
-                    crossThicknessHover:"2px", 
+                    borderThicknessHover:"6px", 
+                    borderRadiusHover:"45px", 
+                    crossColorHover:"#dd5454", 
+                    crossThicknessHover:"17px", 
+                    crossLengthHover:"120", 
+                    crossStrokeLinecapHover:"round",
 
-                    additionalCSS:""
+                    transitionTime: "0.2s",
+
+                    additionalCSS:"position: absolute; right: 0px; top: 0px;"
                 }
+                //#endregion
             ) {
+                //#region 
                 const borderThicknessNumber = Number(borderThickness.match(/\d+/g)[0]);
-                return `
-                <svg class="modal-close-btn" viewBox="0 0 100 100" style="--size-hover: ${sizeHover}; width: ${size}; height: ${size}; ${additionalCSS}">
-                    <path class="modal-close-btn-cross" style="--cross-thickness: ${crossThickness}; --cross-thickness-hover: ${crossThicknessHover}; --cross-color-hover: ${crossColorHover}; ${borderThickness}; fill: none; stroke: ${crossColor}; stroke-width: var(--cross-thickness); d: path('M 50,${borderThicknessNumber/2} L 50,${100 - borderThicknessNumber/2} M ${borderThicknessNumber/2},50 L ${100 - borderThicknessNumber/2},50'); transform: rotate(45deg) translate(20px, -50px);"/>
-                    <circle class="modal-close-btn-circle" style="--border-thickness: ${borderThickness}; --border-thickness-hover: ${borderThicknessHover}; --border-color-hover: ${borderColorHover}; fill: none; stroke: ${borderColor}; stroke-width: var(--border-thickness); cx: 50; cy: 50; r: calc(50px - var(--border-thickness)); transition: all 0.3s ease;"/>
+                const borderThicknessHoverNumber = Number(borderThicknessHover.match(/\d+/g)[0]);
+                const additionalCSSPropList = additionalCSS.split(";").map(elem => {
+                    if (elem.length > 0) {
+                        const styleSeparation = elem.trim().split(":");
+                        if (styleSeparation[0].trim().split("-").length > 1 && !styleSeparation[0].trim().split("-")[0]) {
+                            const formatedStyleName = styleSeparation[0].trim();
+                            return {style: "custom property", name: formatedStyleName, value: styleSeparation[1].trim()}
+                        }
+                        else if (styleSeparation[0].trim().split("-").length > 1) {
+                            const formatedStyleName = styleSeparation[0].trim().split("-").map((sub, index) => {
+                                if (index>0)    {return sub[0].toUpperCase() + sub.slice(1)} 
+                                else            {return sub}
+                            }).join("");
+                            return {style: "property", name: formatedStyleName, value: styleSeparation[1].trim()}
+                        }
+                        else {
+                            const formatedStyleName = styleSeparation[0].trim();
+                            return {style: "property", name: formatedStyleName, value: styleSeparation[1].trim()}
+                        }
+                    }
+                })
+
+                const closeModalIconId = document.querySelectorAll(".modal-close-btn").length;
+                const closeModalIconContainer = document.createElement("svg");
+                closeModalIconContainer.className = "modal-close-btn-container";
+                closeModalIconContainer.innerHTML = `
+                <svg class="modal-close-btn" viewBox="0 0 100 100" data-id="${closeModalIconId}">
+                    <circle class="modal-close-btn-circle" style="--border-color: ${borderColor}; --border-thickness: ${borderThickness}; --border-radius: ${borderRadius}; --border-color-hover: ${borderColorHover}; --border-thickness-hover: ${borderThicknessHover}; --border-radius-hover: ${borderRadiusHover}; cx: 50; cy: 50; transition: all ${transitionTime} ease;"/>
+                    <path class="modal-close-btn-cross"    style="--cross-color:  ${crossColor};  --cross-thickness:  ${crossThickness};  --cross-length:  ${crossLength};  --cross-color-hover:  ${crossColorHover};  --cross-thickness-hover:  ${crossThicknessHover};  --cross-length-hover:  ${crossLengthHover}; --cross-stroke-linecap: ${crossStrokeLinecap}; --cross-stroke-linecap-hover: ${crossStrokeLinecapHover}; --cross-path: 'M 50,50 l ${(crossLength/2)*Math.cos(1*Math.PI/4)},${(crossLength/2)*Math.sin(1*Math.PI/4)} M 50,50 l ${(crossLength/2)*Math.cos(3*Math.PI/4)},${(crossLength/2)*Math.sin(3*Math.PI/4)} M 50,50 l ${(crossLength/2)*Math.cos(5*Math.PI/4)},${(crossLength/2)*Math.sin(5*Math.PI/4)} M 50,50 l ${(crossLength/2)*Math.cos(7*Math.PI/4)},${(crossLength/2)*Math.sin(7*Math.PI/4)}'; --cross-path-hover: 'M 50,50 l ${(crossLengthHover/2)*Math.cos(1*Math.PI/4)},${(crossLengthHover/2)*Math.sin(1*Math.PI/4)} M 50,50 l ${(crossLengthHover/2)*Math.cos(3*Math.PI/4)},${(crossLengthHover/2)*Math.sin(3*Math.PI/4)} M 50,50 l ${(crossLengthHover/2)*Math.cos(5*Math.PI/4)},${(crossLengthHover/2)*Math.sin(5*Math.PI/4)} M 50,50 l ${(crossLengthHover/2)*Math.cos(7*Math.PI/4)},${(crossLengthHover/2)*Math.sin(7*Math.PI/4)}'; transition: all ${transitionTime} ease; /* transform: rotate(45deg) translate(20px, -50px); */"/>
                 </svg>
                 `;
+
+                container.appendChild(closeModalIconContainer);
+                closeModalIconContainer.style.setProperty("--size", size);
+                closeModalIconContainer.style.setProperty("--size-hover", sizeHover);
+                additionalCSSPropList.forEach(prop => {
+                    if (prop instanceof Object) {
+                        if (prop.style == "custom property") {
+                            closeModalIconContainer.style.setProperty(prop.name, prop.value);
+                        }
+                        else if (prop.style == "property") {
+                            closeModalIconContainer.style[prop.name] = prop.value;
+                        }
+                    }
+                })
+                const closeModalIcon   = closeModalIconContainer.querySelector(`.modal-close-btn`);
+                const closeModalCross  = closeModalIcon.querySelector(".modal-close-btn-cross");
+                const closeModalCircle = closeModalIcon.querySelector(".modal-close-btn-circle");
+                closeModalIcon.onmouseenter = () => {
+                    closeModalIconContainer .classList.add("hover");
+                    closeModalIcon          .classList.add("hover");
+                    closeModalCross         .classList.add("hover");
+                    closeModalCircle        .classList.add("hover");
+                };
+                closeModalIcon.onmouseleave = () => {
+                    closeModalIconContainer .classList.remove("hover");
+                    closeModalIcon          .classList.remove("hover");
+                    closeModalCross         .classList.remove("hover");
+                    closeModalCircle        .classList.remove("hover");
+                };
+                //#endregion
             }
             dateTimeSlice(dateTime=this.now(), minutesOffset=5) {
                 const minutes    = parseInt(dateTime.match(/T\d{2}:(\d{2}):\d{2}Z/)[1]);
@@ -3955,10 +4032,10 @@
                         keybindsMenu.innerHTML = `
                             <div class="keyboard-shortcut-list-modal modal${this.settings.blurEnabled ? " blur" : ""}" id="keyboardShortcutListModal">
                                 <div class="keyboard-shortcut-list-modal-body" id="keyboardShortcutListModalBody"></div>
-                                <div class="modal-close-btn" style="position: relative; top: -27px;">❌</div>
                             </div>
                         `;
                         document.body.appendChild(keybindsMenu);
+                        this.makeCloseModalIcon(document.querySelector("#keyboardShortcutListModal"))
                         this.createKeyboardShortcutsList(keybindsMenu.querySelector("#keyboardShortcutListModalBody"));
                         setTimeout(() => {keybindsMenu.querySelector(".keyboard-shortcut-list-modal").classList.add("show");}, 5);
                         
@@ -3984,13 +4061,15 @@
                         settingsModalContainer.innerHTML = `
                         <div class="settings-modal modal" id="settingsModal">
                             <div class="settings-modal-body" id="settingsModalBody"></div>
-                            <div class="modal-close-btn" style="position: relative; top: -37px;">❌</div>
                         </div>
                         `;
-                        document.body.appendChild(settingsModalContainer);
                         
-                        const settingsModal = settingsModalContainer.children[0];
+                        document.body.appendChild(settingsModalContainer);
+                        const settingsModal = settingsModalContainer.querySelector("#settingsModal");
+                        this.makeCloseModalIcon(settingsModal)
+
                         this.createSettingsTable(settingsModal.querySelector("#settingsModalBody"));
+
                         setTimeout(() => {settingsModal.classList.add("show")}, 5);
 
                         settingsModalContainer.onmousedown = (e) => {
@@ -5890,9 +5969,6 @@
 
                 pickerMenuContainer.innerHTML = `
                     <div class="online-cfg-picker-menu modal${this.settings.blurEnabled ? " blur" : ""}" id="pickerMenu">
-                        <div class="online-cfg-picker-menu-header">
-                            <div class="modal-close-btn" style="position: relative; right: 32px;">❌</div>
-                        </div>
                         <div class="online-cfg-picker-menu-body">
                             <div class="online-cfg-picker-menu-body-container">
                                 ${sectionsHTML}
@@ -5905,8 +5981,10 @@
                 `;
 
                 document.body.appendChild(pickerMenuContainer);
-
                 const pickerMenu = document.querySelector("#pickerMenu");
+                
+                this.makeCloseModalIcon(pickerMenu)
+
                 clearTimeout(this.timeouts?.closePickerMenu)
                 setTimeout(() => {pickerMenu.classList.add("show");}, 10)
                 
