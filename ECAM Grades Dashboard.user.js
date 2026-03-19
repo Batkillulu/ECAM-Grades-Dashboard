@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.2.9
+// @version      2.2.10
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/group/education/notes*
@@ -201,13 +201,16 @@
             //MARK: -settings
             styles += `
                 .settings-modal-container   { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; position: fixed; left: 0; top: 0; z-index: 1000; }
-                .settings-modal                 { display: flex; padding: 40px 30px; width: 900px; max-height: 500px; overflow-y: scroll; }
+                .settings-modal                 { display: flex; padding: 40px 30px; width: min(900px, 100%); max-height: min(500px, 100%); overflow-y: auto; }
                 .settings-modal-body                { display: flex; flex-direction: column; width: 100%; }
-                .settings-row                       { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
-                .settings-row.child                 { margin-left: 20px; padding-left: 5px; border-left: 1px solid #80808073; border-top: 1px solid #80808073; border-top-left-radius: 15px; background: linear-gradient(90deg, #5c5c5c5c 0%, transparent 50%); background-size: 200% 200%; background-position: 100% 100%; transition: all 0.3s ease }
-                .settings-row.disabled              { background-position: 0% 100%; opacity: 80%; }
-                .settings-text                              { display: flex; flex-direction: column; gap: 8px; padding: 8px 0px; }
-                .settings-checkbox                          { zoom: 130%; }
+                .settings-row-family                    { display: flex; flex-direction: column; width: 100%; background: linear-gradient(90deg, #5c5c5c38 0%, transparent 50%); background-size: 200% 200%; background-position: 100% 100%; transition: all 0.3s ease; }
+                .settings-row-family.disabled           { background-position: 0% 100%; }
+                .settings-row                               { --padding-left: 0px; display: flex; justify-content: space-between; align-items: center; gap: 20px; background: linear-gradient(90deg, #5c5c5c5c 0%, transparent 50%); background-size: 200% 200%; background-position: 100% 100%; transition: all 0.3s ease; }
+                .settings-row.parent                        { --padding-left: 0px; background: none; }
+                .settings-row.child                         { --padding-left: 5px; margin-left: 20px; padding-left: var(--padding-left); border-left: 1px solid #80808073; border-top: 1px solid #80808073; border-top-left-radius: 15px; }
+                .settings-row.disabled                      { background-position: 0% 100%; opacity: 80%; padding-left: calc(5px + var(--padding-left)); }
+                .settings-text                                  { display: flex; flex-direction: column; gap: 8px; padding: 8px 0px; }
+                .settings-checkbox                              { zoom: 130%; }
             
             `;
 
@@ -749,11 +752,12 @@
         // MARK: -Highest instance styles
         styles += `
         
-            .modal  { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 20%; transform: translateZ(0) scale(110%); border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0%; transition: all 0.3s ease; }
+            .modal  { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 20%; --scrollbar-thumb-color: #888; --scrollbar-thumb-color-hover:  #555; width: var(--modal-width, unset); height: var(--modal-height, unset); transform: translateZ(0) scale(110%); border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0%; transition: all 0.3s ease; }
             .modal.blur { backdrop-filter: blur(var(--modal-blur-amount)); }
             .modal.show     { border-width: 8px; transform: translateZ(0) scale(100%); opacity: 100%; }
 
-            .modal-close-btn-container { width: var(--size); height: var(--size); /* margin-right: calc(0px - var(--size)); */ font-size: 20px; user-select: none; cursor: pointer; transition: all 0.2s ease; }
+            .modal-close-btn-container { width: var(--modal-close-btn-container-size); height: var(--modal-close-btn-container-size); font-size: 20px; user-select: none; cursor: pointer; transition: all 0.2s ease; }
+            .modal-close-btn-container:hover { transform: scale(var(--modal-close-btn-container-transform-scale-hover)) }
             .modal-close-btn           { display: flex; justify-content: center; align-items: center; transition: all 0.2s ease; }
             .modal-close-btn.hover      { font-size: 30px; }
             .modal-close-btn-cross          { stroke: var(--cross-color);        stroke-width: var(--cross-thickness);        stroke-linecap: var(--cross-stroke-linecap); d: path(var(--cross-path)); fill: none; }
@@ -763,22 +767,23 @@
 
             /* width */
             ::-webkit-scrollbar {
-                width: 10px;
+                width: var(--scrollbar-width, 10px);
             }
 
             /* Track */
             ::-webkit-scrollbar-track {
-                background: #f1f1f1;
+                background: var(--scrollbar-track-color, #ddcdff);
             }
 
             /* Handle */
             ::-webkit-scrollbar-thumb {
-                background: #888;
+                background: var(--scrollbar-thumb-color, #616bff);
+                border-radius: 100px;
             }
 
             /* Handle on hover */
             ::-webkit-scrollbar-thumb:hover {
-                background: #555;
+                background: var(--scrollbar-thumb-color-hover, #9fa6ff);
             }
         `;
 
@@ -825,7 +830,7 @@
 
         constructor() {
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.2.9";
+            this.scriptVersion = "2.2.10";
             this.configVersion = 3;
 
 
@@ -833,15 +838,15 @@
 
                 this.settings = {
                     blurEnabled: {
-                        name: this.lang == "fr" 
+                        name: () => this.lang == "fr" 
                             ? "Activer le flou" 
                             : "Enable blur"
                         ,
-                        description: this.lang == "fr" 
+                        description: () => this.lang == "fr" 
                             ? "Activer le flou qui s'opère sur le fond des fenêtres" 
                             : "Enable the blur that operates on the background of the windows"
                         ,
-                        info: this.lang == "fr" 
+                        info: () => this.lang == "fr" 
                             ? "Non recommendé pour les appareils à basses performances" 
                             : "Not recommended for low-end devices"
                         ,
@@ -855,23 +860,21 @@
                     },
 
                     totalCoefValuesEnabled: {
-                        name: this.lang == "fr" 
+                        name: () => this.lang == "fr" 
                             ? "Afficher les coefs totaux" 
                             : "Display total coefs"
                         ,
-                        description: this.lang == "fr" 
+                        description: () => this.lang == "fr" 
                             ? "Afficher les coefficients totaux pour les cartes de matière et de module" 
                             : "Display the total coefficients for subject and module cards"
                         ,
-                        info: this.lang == "fr" 
+                        info: () => this.lang == "fr" 
                             ? "Le.s pourcentage.s apparraissant entre le nom des modules/sujets et leur moyenne" 
                             : "The percentage.s showing up between the name of modules/subjects and their average"
                         ,
                         value: JSON.parse( JSON.parse(localStorage.getItem("ECAM_DASHBOARD_SETTINGS"))?.totalCoefValuesEnabled?.value?.toString() || "true"),
                         action: () => {
                             document.querySelectorAll(".module-subject-total-coef-div, .subject-total-coef-div").forEach(elem => {if (this.settings.totalCoefValuesEnabled.value) {elem.hidden = false;} else {elem.hidden = true;}});
-                            const dependentSettingChbx = document.querySelector("#settings-checkbox-totalCoefDebugTextsEnabled");
-                            // if (this.settings.totalCoefValuesEnabled.value) {dependentSettingChbx.disabled = false;} else {dependentSettingChbx.disabled = true;}
                             this.saveSettings();
                         },
                         parents:  [],
@@ -881,15 +884,15 @@
                     },
 
                     totalCoefDebugTextsEnabled: {
-                        name: this.lang == "fr" 
+                        name: () => this.lang == "fr" 
                             ? "Afficher les textes d'aide" 
                             : "Display the helper texts"
                         ,
-                        description: this.lang == "fr" 
+                        description: () => this.lang == "fr" 
                             ? "Afficher les textes d'aide des cartes de sujet et de module" 
                             : "Display the helper texts for subject and module cards"
                         ,
-                        info: this.lang == "fr" 
+                        info: () => this.lang == "fr" 
                             ? "Il s'agit simplement des textes interprétant les nombres des \"Coef Total des Matières\" et \"Coef Total des Notes\"" 
                             : "It simply corresponds to the texts interpreting the numbers of \"Total Subjects Coef\" and \"Total Grades Coef\""
                         ,
@@ -2757,6 +2760,8 @@
                     const settingsModal = document.querySelector("#settingsModal");
                     const settingsModalBody = document.querySelector("#settingsModalBody");
                     if (settingsModal) { if (settingsModalBody) {settingsModalBody.remove()} this.appendAllSettingsRow(); }
+
+                    
                     
                     const importBtn     = document.getElementById("importBtn");
                     const editModeBtn   = document.getElementById("editModeBtn");
@@ -2992,7 +2997,7 @@
                                 : 
                                 `<div class="module-title">${moduleName}</div>`
                             }
-                            <div class="module-subject-total-coef-div" data-semester="${sem}" data-module="${moduleName}">
+                            <div class="module-subject-total-coef-div" data-semester="${sem}" data-module="${moduleName}" ${this.settings.totalCoefValuesEnabled.value ? "" : "hidden"}>
                                 <div class="module-subject-total-coef-value">${this.lang == "fr" ? `Coef Total des matières :` : `Total Subjects Coef:`}</div>
                                 <div class="module-subject-total-coef-debug" ${this.settings.totalCoefDebugTextsEnabled.value ? "" : "hidden"}></div>
                             </div>
@@ -3290,7 +3295,7 @@
                     //#region
                     {
                         size="28px",
-                        sizeHover="28px",
+                        sizeTransformScaleHover="28px",
 
                         borderColor="black", 
                         borderThickness="6px", 
@@ -3315,7 +3320,7 @@
                     =
                     {
                         size:"28px",
-                        sizeHover:"28px",
+                        sizeTransformScaleHover:"28px",
 
                         borderColor:"black", 
                         borderThickness:"6px", 
@@ -3340,8 +3345,6 @@
                     //#endregion
                 ) {
                     //#region 
-                    const borderThicknessNumber = Number(borderThickness.match(/\d+/g)[0]);
-                    const borderThicknessHoverNumber = Number(borderThicknessHover.match(/\d+/g)[0]);
                     const additionalCSSPropList = additionalCSS.split(";").map(elem => {
                         if (elem.length > 0) {
                             const styleSeparation = elem.trim().split(":");
@@ -3374,8 +3377,8 @@
                     `;
 
                     container.appendChild(closeModalIconContainer);
-                    closeModalIconContainer.style.setProperty("--size", size);
-                    closeModalIconContainer.style.setProperty("--size-hover", sizeHover);
+                    closeModalIconContainer.style.setProperty("--modal-close-btn-container-size", size);
+                    closeModalIconContainer.style.setProperty("--modal-close-btn-container-transform-scale-hover", sizeTransformScaleHover);
                     additionalCSSPropList.forEach(prop => {
                         if (prop instanceof Object) {
                             if (prop.style == "custom property") {
@@ -3531,26 +3534,37 @@
                         Object.keys(this.settings).forEach((settingId, _index, settingsIdArray) => {
                             const settingChildren = this.settings[settingId].children;
 
-                            this.appendSettingRow(settingsModalBody, settingId, _index)
 
                             if (settingChildren.length > 0) {
+                                const settingValue = this.settings[settingId].value;
+                                let html = ``;
+                                html += `<div class="settings-row-family${settingValue ? "" : " disabled"}" id="settings-row-family-${settingId}">`;
+                                html += this.createSettingRow(settingId, _index);
+
                                 settingChildren.forEach((settingChildData) => {
-                                    this.appendSettingRow(settingsModalBody, settingChildData.childName, _index);
+                                    html += this.createSettingRow(settingChildData.childName, _index);
                                     settingsIdArray.splice(settingsIdArray.indexOf(settingChildData.childName), 1);
                                 })
+
+                                settingsModalBody.innerHTML += html + `</div>`;
+                            }
+                            else {
+                                settingsModalBody.innerHTML += this.createSettingRow(settingId, _index);
                             }
 
                         })
                     }
                 }
 
-                appendSettingRow(container=document.querySelector("#settingsModalBody"), settingId, index) {
-                    const settingName       = this.settings[settingId].name;
-                    const settingDesc       = this.settings[settingId].description;
-                    const settingInfo       = this.settings[settingId].info;
+                createSettingRow(settingId, index) {
+                    const settingName       = this.settings[settingId].name();
+                    const settingDesc       = this.settings[settingId].description();
+                    const settingInfo       = this.settings[settingId].info();
                     const settingValue      = this.settings[settingId].value;
                     const settingParents    = this.settings[settingId].parents;
                     const settingChildren   = this.settings[settingId].children;
+
+                    let html = ``;
 
                     let settingParentsValidValue = true;
                     let settingTotalParentsCount = 0;
@@ -3575,14 +3589,14 @@
                         settingParentsValidValue = false;
                     }
 
-                    const settingRow = document.createElement("div");
-                    settingRow.className = `settings-row ${settingParents.length>0 ? `child ${settingParentsValidValue ? "" : "disabled"}` : ""}`;
-                    settingRow.id = `settings-row-${settingId}`;
-                    settingRow.style.cssText = index > 0 && settingParents.length==0 ? `border-top: 1px solid` : ``;
-                    settingRow.dataset.setting = settingId;
-                    settingRow.dataset.parent = settingParents.length > 0 ? settingParents[0].parentName : undefined;
-
-                    settingRow.innerHTML = `
+                    html += `
+                    <div 
+                        class="settings-row${settingParents.length > 0 ? ` child` : ""}${settingChildren.length > 0 ? " parent": ""}${settingParentsValidValue && settingValue ? "" : " disabled"}" 
+                        id="settings-row-${settingId}" 
+                        ${index > 0 && settingParents.length==0 ? `style="border-top: 1px solid"` : ``} 
+                        data-setting="${settingId}" 
+                        data-parent="${settingParents.length > 0 ? settingParents[0].parentName : ""}"
+                    >
                         <div class="settings-text">
                             <span style="font-size: 20px; font-weight: 800; padding-left: 10px;">${settingName}</span>
                             <div style="display: flex; flex-direction: column;">
@@ -3599,9 +3613,10 @@
                             ${settingParentsValidValue ? "" : "disabled"} 
                             ${settingValue ? "checked" : ""}
                         ></input>
+                    </div>
                     `;
 
-                    container.appendChild(settingRow);
+                    return html;
                 }
 
 
@@ -3940,20 +3955,32 @@
                                     if (e.target.closest(".settings-checkbox")) {
                                         const chbx = e.target.closest(".settings-checkbox");
                                         const settingId = chbx.dataset.setting;
+                                        const settingRow        = container.querySelector(`#settings-row-${settingId}`);
+                                        const settingRowFamily  = container.querySelector(`#settings-row-family-${settingId}`);
                                         this.settings[settingId].value = !chbx.checked; // The event is fired before the checkbox is actually checked, so we reverse the value of the checkbox
                                         this.settings[settingId].action();
-
                                         const settingChildren = this.settings[settingId].children.map(settingChildData => {return settingChildData.childName});
+
+                                        if (chbx.checked) {
+                                            settingRow.classList.add("disabled");
+                                            settingRowFamily?.classList?.add("disabled");
+                                        }
+                                        else {
+                                            settingRow.classList.remove("disabled");
+                                            settingRowFamily?.classList?.remove("disabled");
+                                        }
+
                                         settingChildren.forEach(settingChildId => {
                                             const childSettingRow = container.querySelector(`#settings-row-${settingChildId}`);
+                                            const childChbx = childSettingRow.querySelector(".settings-checkbox");
 
                                             if (chbx.checked) {
-                                                childSettingRow.classList.add("disabled");
                                                 childSettingRow.querySelector(".settings-checkbox").disabled = true;
+                                                childSettingRow.classList.add("disabled");
                                             }
                                             else {
-                                                childSettingRow.classList.remove("disabled");
                                                 childSettingRow.querySelector(".settings-checkbox").disabled = false;
+                                                if (childChbx.checked) childSettingRow.classList.remove("disabled");
                                             }
                                         })
 
