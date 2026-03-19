@@ -201,7 +201,7 @@
             //MARK: -settings
             styles += `
                 .settings-modal-container   { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; position: fixed; left: 0; top: 0; z-index: 1000; }
-                .settings-modal                 { display: flex; padding: 40px 30px; width: min(900px, 100%); max-height: min(500px, 100%); overflow-y: auto; }
+                .settings-modal                 { display: flex; padding: 40px 30px; --modal-max-width: 900px; --modal-max-height: 500px; min-width: 900px; overflow: auto; }
                 .settings-modal-body                { display: flex; flex-direction: column; width: 100%; }
                 .settings-row-family                    { display: flex; flex-direction: column; width: 100%; background: linear-gradient(90deg, #5c5c5c38 0%, transparent 50%); background-size: 200% 200%; background-position: 100% 100%; transition: all 0.3s ease; }
                 .settings-row-family.disabled           { background-position: 0% 100%; }
@@ -752,7 +752,7 @@
         // MARK: -Highest instance styles
         styles += `
         
-            .modal  { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 20%; --scrollbar-thumb-color: #888; --scrollbar-thumb-color-hover:  #555; width: var(--modal-width, unset); height: var(--modal-height, unset); transform: translateZ(0) scale(110%); border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0%; transition: all 0.3s ease; }
+            .modal  { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 20%; --scrollbar-thumb-color: #888; --scrollbar-thumb-color-hover:  #555; max-width: min(var(--modal-max-width, 100%), 100%); max-height: min(var(--modal-max-height, 100%), 100%); transform: translateZ(0) scale(110%); border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0%; transition: all 0.3s ease; }
             .modal.blur { backdrop-filter: blur(var(--modal-blur-amount)); }
             .modal.show     { border-width: 8px; transform: translateZ(0) scale(100%); opacity: 100%; }
 
@@ -2357,9 +2357,22 @@
                 xhttp.open("GET", this.repoScriptRaw, true); 
                 xhttp.send(); 
                 xhttp.onload = () => {
-                    const scriptGitVersion = xhttp.response.match(/\/\/ @version( +)(\d+(\.\d+|\.|)+)/)[2];
+                    const scriptGitVersion = xhttp.response.match(/\/\/ @version( +)(\d+(\.\d+|\.|)+)/)[2].trim().split(".");
+                    let newUpdate = false;
                     
-                    if (scriptGitVersion > this.scriptVersion) {
+                    if (scriptGitVersion.length > this.scriptVersion.trim().split(".").length) {
+                        newUpdate = true;
+                    }
+                    else {
+                        scriptGitVersion.forEach((versElem, versIndex) => {
+                            if (!newUpdate && Number(versElem) > Number(this.scriptVersion.trim().split(".")?.[versIndex] || -1)) {
+                                newUpdate = true;
+                            }
+                        })
+                    }
+                    
+
+                    if (newUpdate) {
                         this.updateAvailable();
                     }
     
@@ -2372,7 +2385,7 @@
                 updateAvailableNotif.id = "updateAvailableNotif";
                 updateAvailableNotif.innerHTML = `
                     <div class="update-available-notif-header">
-                        ${this.lang == "fr" ? "NOUVELLE MISE À JOUR DU DASHBOARD DISPONIBLE !" : "NEW DASHBOARD UPDATE AVAILABLE!"}
+                        ${this.lang == "fr" ? "NOUVELLE MISE À JOUR DU TABLEAU DE BORD DISPONIBLE ! → v"+this.scriptVersion : "NEW DASHBOARD UPDATE AVAILABLE! → v"+this.scriptVersion}
                     </div>
                     <div class="update-available-notif-btns">
                         <div style="display: flex; justify-content: center; width: 50%">
@@ -2831,7 +2844,7 @@
 
                     const updateNotif = document.querySelector(".update-available-notif-header");
                     if (updateNotif) {
-                        updateNotif.innerHTML = this.lang == "fr" ? "NOUVELLE MISE À JOUR DU DASHBOARD DISPONIBLE !" : "NEW DASHBOARD UPDATE AVAILABLE!";
+                        updateNotif.innerHTML = this.lang == "fr" ? "NOUVELLE MISE À JOUR DU TABLEAU DE BORD DISPONIBLE ! → v"+this.scriptVersion : "NEW DASHBOARD UPDATE AVAILABLE! → v"+this.scriptVersion;
                         updateNotif.querySelector(".update-available-notif-btns").children[0].innerHTML = this.lang == "fr" ? "INSTALLER" : "INSTALL";
                         updateNotif.querySelector(".update-available-notif-btns").children[1].innerHTML = this.lang == "fr" ? "Ignorer" : "Ignore";
                         updateNotif.querySelector(".update-available-notif-btns").children[1].title     = this.lang == "fr" ? "Ignorer pour aujourd'hui" : "Ignore for today";
