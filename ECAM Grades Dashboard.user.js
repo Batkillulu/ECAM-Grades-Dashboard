@@ -3,7 +3,7 @@
 // @version      2.2.10
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
-// @match        https://espace.ecam.fr/group/education/notes*
+// @match        https://espace.ecam.fr/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=ecam.fr
 // @grant        none
 // @run-at       document-end
@@ -804,34 +804,39 @@
 
     //#region
         // Initializing the HTML page before creating the dashboard
-        const styleSheet = document.createElement("style");
-        styleSheet.textContent = styles;
-        document.head.appendChild(styleSheet);
-        
-        const greyGridTable = document.querySelector(".greyGridTable");
-        const intranetFold = document.createElement("div");
-        intranetFold.className = "intranet-fold";
-        intranetFold.innerHTML = `
-            <div class="intranet-text">
-                <div class="intranet-toggle fold-icon">△</div>
-                <div class="semester-name"> 
-                    <div class="intranet-subtext"></div>
+        const error = document.body?.children?.[0]?.tagName == "H1";
+
+        if (!error) {
+            const styleSheet = document.createElement("style");
+            styleSheet.textContent = styles;
+            document.head.appendChild(styleSheet);
+            
+            const greyGridTable = document.querySelector(".greyGridTable");
+            const intranetFold = document.createElement("div");
+            intranetFold.className = "intranet-fold";
+            intranetFold.innerHTML = `
+                <div class="intranet-text">
+                    <div class="intranet-toggle fold-icon">△</div>
+                    <div class="semester-name"> 
+                        <div class="intranet-subtext"></div>
+                    </div>
+                    <div class="intranet-toggle fold-icon">△</div>
                 </div>
-                <div class="intranet-toggle fold-icon">△</div>
-            </div>
-        `;
-        document.querySelector("#currentNote").insertBefore(intranetFold, greyGridTable);
-        greyGridTable.style.display = "none";
+            `;
+            document.querySelector("#currentNote").insertBefore(intranetFold, greyGridTable);
+            greyGridTable.style.display = "none";
+        }
 
     //#endregion
 
     //MARK: -
     class ECAMDashboard {
 
-        constructor() {
+        constructor(error) {
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
             this.scriptVersion = "2.2.10";
             this.configVersion = 3;
+            this.error = error;
 
 
             //#region Settings
@@ -993,7 +998,6 @@
 
                 this.lang                               = localStorage.getItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE")               || "en";
                 this.editMode               = JSON.parse( localStorage.getItem('ECAM_DASHBOARD_DEFAULT_EDIT_MODE'))             || false;
-                this.pinDockbar = false;
                 this.timeouts = {};
 
                 this.mobileVer = this.clientWidth <= 935;
@@ -1702,37 +1706,43 @@
                 }
 
                 parseGrades() {
-                    const rows = document.querySelectorAll("table.greyGridTable tbody tr");
-                    rows.forEach(row => {
-                        const cells = row.querySelectorAll("td");
-                        if (cells.length >= 6 && cells[0].textContent.includes("/20")) {
-                            const grade = parseFloat(cells[0].textContent.replace("/20", "").replace(",", ".")) || 0;
-                            const classAvg = parseFloat(cells[3].textContent.replace("/20", "").replace(",", ".")) || 0;
-                            const libelle = cells[1].textContent.trim();
-                            const coef = parseFloat(cells[2].textContent.replace("%", "").replace(",", ".")) || 0;
-                            const prof = cells[4].textContent.trim();
-                            const date = cells[5].textContent.trim();
-                            const semMatch = libelle.match(/Semester\s+(\d+)/i);
-                            const semester = semMatch ? semMatch[1] : "?";
-                            const parts = libelle.split(" - ").map(p => p.trim());
-                            const subject = parts.length >= 3 ? parts.slice(1,-1).join(" - ") : libelle;
-                            const type = parts.length >= 2 ? parts.at(-1) : "";
-                            this.grades.push({ grade, classAvg, coef, semester, subject, type, prof, date, libelle });
+                    if (!this.error) {
+                        const rows = document.querySelectorAll("table.greyGridTable tbody tr");
+                        rows.forEach(row => {
+                            const cells = row.querySelectorAll("td");
+                            if (cells.length >= 6 && cells[0].textContent.includes("/20")) {
+                                const grade = parseFloat(cells[0].textContent.replace("/20", "").replace(",", ".")) || 0;
+                                const classAvg = parseFloat(cells[3].textContent.replace("/20", "").replace(",", ".")) || 0;
+                                const libelle = cells[1].textContent.trim();
+                                const coef = parseFloat(cells[2].textContent.replace("%", "").replace(",", ".")) || 0;
+                                const prof = cells[4].textContent.trim();
+                                const date = cells[5].textContent.trim();
+                                const semMatch = libelle.match(/Semester\s+(\d+)/i);
+                                const semester = semMatch ? semMatch[1] : "?";
+                                const parts = libelle.split(" - ").map(p => p.trim());
+                                const subject = parts.length >= 3 ? parts.slice(1,-1).join(" - ") : libelle;
+                                const type = parts.length >= 2 ? parts.at(-1) : "";
+                                this.grades.push({ grade, classAvg, coef, semester, subject, type, prof, date, libelle });
+                            }
+                        });
+                        this.grades.forEach(n => {
+                            if (!this.semesters[n.semester]) this.semesters[n.semester] = {};
+                            if (!this.semesters[n.semester][n.subject]) this.semesters[n.semester][n.subject] = [];
+                            this.semesters[n.semester][n.subject].push(n);
+                        });
+    
+                        if (this.savedReadGrades.length == 0) {
+                            this.newGrades = [];
+                            this.savedReadGrades = this.grades;
+                            this.saveReadGrades();
                         }
-                    });
-                    this.grades.forEach(n => {
-                        if (!this.semesters[n.semester]) this.semesters[n.semester] = {};
-                        if (!this.semesters[n.semester][n.subject]) this.semesters[n.semester][n.subject] = [];
-                        this.semesters[n.semester][n.subject].push(n);
-                    });
-
-                    if (this.savedReadGrades.length == 0) {
-                        this.newGrades = [];
-                        this.savedReadGrades = this.grades;
-                        this.saveReadGrades();
+                        else {
+                            this.newGrades = this.compareArraysOfObjects(this.grades, this.savedReadGrades).more;
+                        }
                     }
                     else {
-                        this.newGrades = this.compareArraysOfObjects(this.grades, this.savedReadGrades).more;
+                        this.newGrades = [];
+                        this.grades = this.savedReadGrades;
                     }
                 }
 
@@ -2069,7 +2079,7 @@
 
                         setTimeout(() => {
                             const scrollToThisElem = document.getElementById(this.scrollToThisElem) || document.querySelector("."+targetElemData.className.match(/(\.|)(.+)/)?.[2].replace(" ", ".")); 
-                            scrollToThisElem.style.scrollMargin = targetElemData.block == "center" ? "" : `${(targetElemData?.margin || margin) + (document.body.classList.contains("lfr-dockbar-pinned") ? 45 : 0)}px`;
+                            scrollToThisElem.style.scrollMargin = (targetElemData?.block || block) == "center" ? "" : `${(targetElemData?.margin || margin) + (document.body.classList.contains("lfr-dockbar-pinned") ? 45 : 0)}px`;
                             scrollToThisElem.scrollIntoView({behavior: (targetElemData?.smooth || smooth) ? "smooth" : "instant", block: targetElemData.block});
                             this.scrollToThisElem = "";
                         }, (targetElemData?.timeout || timeout))
@@ -2413,7 +2423,7 @@
                     this.dateTimeOfLastUpdateCheck = this.now(); 
                     this.saveDateTimeOfLastUpdateCheck();
 
-                    this.createFullScreenNotif();
+                    this.appendFullScreenNotif();
                 };
             }
             
@@ -2444,8 +2454,8 @@
                     const totalGrades = this.grades.length;
                     const moduleStats = this.getModuleStats();
 
-                    document.querySelector(".site-breadcrumbs").remove();
-                    document.querySelector(".portlet-topper").remove();
+                    document.querySelector(".site-breadcrumbs")?.remove();
+                    document.querySelector(".portlet-topper")?.remove();
 
                     // Creating the content of the dashboard that doesn't vary along with the user's actions besides the language selection.
                     // Therefore, besides the text that doesn't vary with the language, the text isn't yet created, 
@@ -2499,7 +2509,7 @@
                                 <div class="over-header-help-btns">
                                     <div class="over-header-btn how-to-use-btn">?</div>
                                     <div class="over-header-how-to-use-btns" hidden>
-                                        <a   class="over-header-btn help doc-btn fr"  href="${this.repoReadMeHowToUse}" target="_blank" >${this.makeExternalLinkSymbol("white", 16, [0,0,0,4])}</a>
+                                        <a   class="over-header-btn help doc-btn fr"  href="${this.repoReadMeHowToUse}" target="_blank" >${this.createExternalLinkSymbol("white", 16, [0,0,0,4])}</a>
                                         <div class="over-header-btn help keybinds-btn fr"></div>
                                         <div class="over-header-btn help tuto-btn fr"></div>
                                     </div>
@@ -2596,8 +2606,13 @@
                     notifContainer.className = "selected-subject-card-notif-container";
 
                     const intranetFold = document.querySelector(".intranet-fold");
-                    if (!intranetFold) return;
-                    intranetFold.parentNode.insertBefore(ecamDash, intranetFold);
+                    if (intranetFold) {
+                        intranetFold.parentNode.insertBefore(ecamDash, intranetFold);
+                    }
+                    else {
+                        Object.values(document.body.children).forEach(child => {child.remove()});
+                        document.body.appendChild(ecamDash);
+                    }
                     ecamDash.insertBefore(notifContainer, ecamDash.querySelector("dash-header"));
 
                     this.generateContent();
@@ -2715,9 +2730,9 @@
 
                         if ((newUserNotif?.hidden?.toString() || "true") == "false") newUserNotif.title     = "Clique pour fermer";
 
-                        shareConfig     .innerHTML = `Partager une config ${this.makeExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
-                        suggestIdea     .innerHTML = `Suggérer une idée ${this.makeExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
-                        reportIssue     .innerHTML = `Signaler un problème ${this.makeExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
+                        shareConfig     .innerHTML = `Partager une config ${this.createExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
+                        suggestIdea     .innerHTML = `Suggérer une idée ${this.createExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
+                        reportIssue     .innerHTML = `Signaler un problème ${this.createExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
                         mailInfoText    .innerHTML = "Par mail: baptiste.jacquin@ecam.fr 📋";
                         mailInfoCopied  .innerHTML = "Copié !";
 
@@ -2748,9 +2763,9 @@
                         
                         if ((newUserNotif?.hidden?.toString() || "true") == "false") newUserNotif.title     = "Click to dismiss";
 
-                        shareConfig     .innerHTML = `Share a config ${this.makeExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
-                        suggestIdea     .innerHTML = `Suggest an idea ${this.makeExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
-                        reportIssue     .innerHTML = `Report an issue ${this.makeExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
+                        shareConfig     .innerHTML = `Share a config ${this.createExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
+                        suggestIdea     .innerHTML = `Suggest an idea ${this.createExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
+                        reportIssue     .innerHTML = `Report an issue ${this.createExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
                         mailInfoText    .innerHTML = "By mail: baptiste.jacquin@ecam.fr 📋";
                         mailInfoCopied  .innerHTML = "Copied!";
 
@@ -2768,7 +2783,7 @@
                     
 
                     const keybindsTableModalBody = document.querySelector("#keyboardShortcutListModalBody");
-                    if (keybindsTableModalBody) { this.createKeyboardShortcutsList(keybindsTableModalBody); }
+                    if (keybindsTableModalBody) { this.appendKeyboardShortcutsList(keybindsTableModalBody); }
 
                     const settingsModal = document.querySelector("#settingsModal");
                     const settingsModalBody = document.querySelector("#settingsModalBody");
@@ -2840,7 +2855,7 @@
                     viewBtnsArray[1].title = this.lang == "fr" ? "Vue compacte" : "Compact view";
 
                     const intranetSubtext = document.querySelector(".intranet-subtext");
-                    intranetSubtext.innerHTML = this.lang == "fr" ? "Afficher le tableau des notes d'Espace ECAM" : "Show ECAM Intranet's Grades Table";
+                    if (intranetSubtext) intranetSubtext.innerHTML = this.lang == "fr" ? "Afficher le tableau des notes d'Espace ECAM" : "Show ECAM Intranet's Grades Table";
 
                     const updateNotif = document.querySelector(".update-available-notif-header");
                     if (updateNotif) {
@@ -3002,7 +3017,7 @@
                             ${this.editMode 
                                 ? 
                                 `<div style="display: flex; align-items: center; justify-content: flex-start; width: 42%;">
-                                    <div style="margin-right: 5px; margin-bottom: 3px;">${this.makeDraggableIcon("module-card", {height: 29, type: "module", targetId: `module-card-${moduleName}-in-semester-${sem}`})}</div>
+                                    <div style="margin-right: 5px; margin-bottom: 3px;">${this.createDraggableIcon("module-card", {height: 29, type: "module", targetId: `module-card-${moduleName}-in-semester-${sem}`})}</div>
                                     <input type="text" class="module-title input any-input" id="module-title-input-${sem}-${moduleName}" value="${moduleName}" data-semester="${sem}" data-module="${moduleName}" draggable="false"/>
                                     <div class="module-title-state">
                                     </div>
@@ -3116,7 +3131,7 @@
                                     ? `<div style="margin: 0px 5px; margin-bottom: 3px;">
                                     ${this.selectedSubjectCardsId.includes(`subject-card-semester-${sem}-subject-${subject}`) 
                                         ? `<div class="tick-icon for-${detailed ? "detailed" : "compact"}-subject-card" data-type="${detailed ? "detailed" : "compact"}" data-targetid="subject-card-semester-${sem}-subject-${subject}">✔</div>`
-                                        : this.makeDraggableIcon(`${detailed ? "detailed" : "compact"}-subject-card`, {type:`${detailed ? "detailed" : "compact"}`, targetId:`subject-card-semester-${sem}-subject-${subject}`}) 
+                                        : this.createDraggableIcon(`${detailed ? "detailed" : "compact"}-subject-card`, {type:`${detailed ? "detailed" : "compact"}`, targetId:`subject-card-semester-${sem}-subject-${subject}`}) 
                                     }</div>`
                                     : ""
                                 }
@@ -3298,10 +3313,10 @@
 
             //#region -Icons
 
-                makeDraggableIcon(source="subject-card", {height=25, type="unknown", targetId="none"}={height: 25, type: "unknown", targetId:"none"}) {
+                createDraggableIcon(source="subject-card", {height=25, type="unknown", targetId="none"}={height: 25, type: "unknown", targetId:"none"}) {
                     return `<div class="drag-icon for-${source}" data-targetid="${targetId}" data-type="${type}" draggable="false" style="height:${height}px; width:${height}px; font-size: ${height*0.75}px">☰</div>`
                 }
-                makeExternalLinkSymbol(color="white", size=16, margin=0) {
+                createExternalLinkSymbol(color="white", size=16, margin=0) {
                     return `<svg xmlns="http://www.w3.org/2000/svg" style="width: ${size}px; height: ${size}px; margin: ${(margin instanceof Array ? margin : [margin]).map(value => {if (value instanceof Number || !isNaN(Number(value))) {return `${value}px`}}).join(" ")};" fill="none" stroke="${color}" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><path style="d:path('M15 3h6v6m-11 5L21 3m-3 10v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6')"/></svg>`;
                 }
                 appendCloseModalIcon(container,
@@ -3428,7 +3443,7 @@
 
             //#region -Modals
 
-                createKeyboardShortcutsList(container=document.querySelector("#keyboardShortcutListModal")) {
+                appendKeyboardShortcutsList(container=document.querySelector("#keyboardShortcutListModal")) {
                     if (container instanceof HTMLElement) {
                         let html = `
                         <table style="font-size: 20px; --row-height: 30px;">
@@ -3508,7 +3523,7 @@
                     }
                 }
 
-                createFullScreenNotif(text) {
+                appendFullScreenNotif(container=document.body /* document.querySelector(".ecam-dash") */, text) {
                     if (!text) {
                         text = this.lang == "fr" 
                             ? `<div>Clique sur l'écran pour rafraichir la page et appliquer la mise à jour !</div><div>Utilisateurs de MAC, copiez le script qui s'est ouvert et collez-le dans votre extension à la place de l'ancien script</div>`
@@ -3518,19 +3533,20 @@
 
                     document.body.style.height = "290px";
                     document.body.style.overflow = "hidden";
-                    const reloadRequest = document.createElement("div");
+
                     const fullScreenNotif = document.createElement("div");
-                    document.querySelector(".ecam-dash").appendChild(fullScreenNotif);
-                    reloadRequest.className = `modal${this.settings.blurEnabled.value ? " blur" : ""}`;
-                    reloadRequest.style.cssText = `cursor: pointer; justifyContent: space-evenly; textAlign: center; fontSize: 50px; fontWeight: 100; textEmphasisStyle: " "; width: 100%; height: 100%; outline: 6px solid white;`
-                    reloadRequest.title = this.lang == "fr" ? "Rafraichir" : "Reload";
-                    reloadRequest.innerHTML = text;
+                    container.appendChild(fullScreenNotif);
 
                     fullScreenNotif.outerHTML = `
-                        <div class="modal${this.settings.blurEnabled.value ? " blur" : ""}" id="fullScreeNotif" style="display: flex; flex-direction: column; justify-content: space-evenly; position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; text-align: center; font-size: 50px; font-weight: 100; text-emphasis-style: ' '; cursor: pointer; z-index: 1000">
+                        <div 
+                            class="modal${this.settings.blurEnabled.value ? " blur" : ""}" 
+                            id="fullScreeNotif" 
+                            style="display: flex; flex-direction: column; justify-content: space-evenly; position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; text-align: center; font-size: 50px; font-weight: 100; text-emphasis-style: ' '; cursor: pointer; z-index: 1000"
+                        >
                             ${text}
                         </div>
                     `;
+
                     const newFullScreenNotif = document.querySelector("#fullScreeNotif");
                     newFullScreenNotif.title = this.lang == "fr" ? "Rafraichir" : "Reload";
                     setTimeout(() => {newFullScreenNotif.classList.add("show");}, 100)
@@ -3862,11 +3878,9 @@
                             // when clicking on the button to unpin the dockbar, this event listener is triggered before the action of unpinning the dockbar is actually done, 
                             // so the order might seem reverse logical but that's how it works
                             if (!document.body.classList.contains("lfr-dockbar-pinned")) {
-                                this.pinDockbar = true;
                                 document.querySelector(".scroll-field.up").style.transform = "translateY(45px)";
                             }
                             else {
-                                this.pinDockbar = false;
                                 document.querySelector(".scroll-field.up").style.transform = "";
                             }
                         }
@@ -4452,7 +4466,7 @@
                         `;
                         document.body.appendChild(keybindsMenu);
                         this.appendCloseModalIcon(document.querySelector("#keyboardShortcutListModal"))
-                        this.createKeyboardShortcutsList(keybindsMenu.querySelector("#keyboardShortcutListModalBody"));
+                        this.appendKeyboardShortcutsList(keybindsMenu.querySelector("#keyboardShortcutListModalBody"));
                         setTimeout(() => {keybindsMenu.querySelector(".keyboard-shortcut-list-modal").classList.add("show");}, 5);
                         
                         keybindsMenu.onclick = (e) => {
@@ -5722,7 +5736,7 @@
                     const tickIcon = subjectCard.querySelector(".tick-icon");
                     if (tickIcon) {
                         const type = subjectCard.classList.contains("compact") ? "compact" : "detailed";
-                        tickIcon.outerHTML = this.makeDraggableIcon(`${type}-subject-card`, {targetId: subjectCard.id, type});
+                        tickIcon.outerHTML = this.createDraggableIcon(`${type}-subject-card`, {targetId: subjectCard.id, type});
                         const dragIcon = subjectCard.querySelector(".drag-icon");
                         dragIcon.onclick = (e) => {this.dragIconOnClickEvent(e, dragIcon)};
                     }
@@ -6818,6 +6832,6 @@
 
     }
 
-    window.onload = () => { new ECAMDashboard(); };
+    window.onload = () => { new ECAMDashboard(error); };
     
 })();
