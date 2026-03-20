@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.2.10
+// @version      2.2.11
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/*
@@ -38,14 +38,36 @@
         //#region -DASHBOARD
 
             styles += `
-                :root {
-                    --modal-blur-amount: calc(250px / 100);
+                @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+                
+                * { 
+                    box-sizing: border-box; 
                 }
                 
+                html {
+                    font-family: sans-serif;
+                    -ms-text-size-adjust: 100%;
+                    -moz-text-size-adjust: 100%;
+                    -webkit-text-size-adjust: 100%;
+                }
 
-                @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-                * { box-sizing: border-box; }
-                .ecam-dash { display: grid; flex-direction: column; justify-content:center; width: 97%; grid-template-columns: 100%; font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; margin: 20px 1.5% 0px 1.5%; color: #1a1a1a; }
+                body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, blockquote, th, td {
+                    margin: 0;
+                    padding: 0;
+                }
+                
+                .ecam-dash { 
+                    display: grid; 
+                    flex-direction: column; 
+                    justify-content:center; 
+                    width: 97%; 
+                    grid-template-columns: 100%; 
+                    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; 
+                    margin: 20px 1.5% 0px 1.5%; 
+                    color: #1a1a1a;
+                    border-collapse: collapse;
+                    border-spacing: 0;
+                }
 
                 .dash-header { background: linear-gradient(135deg, #5b62bf 0%, #2A2F72 100%); color: white; padding: 30px 40px; border-radius: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 3px 5px 5px 0px #00000042; }
                 .dash-title { font-size: 24px; font-weight: 700; margin: 0; }
@@ -304,7 +326,8 @@
             styles += `
                 .update-available-notif     { display: flex; align-items: center; justify-content: space-evenly; border-radius: 10px; color: #dafaff; font-weight: 800; font-size: 17px; background: #6554ff; width: 95%; height: 70px; position:fixed; left:2.5%; right:0px; top:-75px; z-index:301; box-shadow: 0 0 5px rgba(0,0,0,0.5); user-select: none; transition: all 0.5s ease; }
                 .update-available-notif.on  { top: 2px }
-                .update-available-notif-header  { display: flex; justify-content: center; width: 80%; font-size: 25px; }
+                .update-available-notif-header  { display: flex; justify-content: center; width: 80%; font-size: 25px; gap: 15px; }
+                .update-available-notif-patch-notes { display: flex; justify-content: center; align-items: center; padding: 5px; border: 2px solid; border-radius: 20px; }
                 .update-available-notif-btns    { display: flex; justify-content: space-between; align-items: center; flex-direction: row; width: 20%; }
                 .update-btn                     { display: flex; justify-content: center; align-items: center; border: 2px solid; border-radius: 14px; width: 80%; height: 30px; padding: 5px 15px; cursor:pointer; background: #007cffff; transition: all 0.3s ease; text-decoration: none; outline: none; color: inherit; }
                 .update-btn:focus               { color: #b8d7ff; width: 95%; height: 40px; font-size: 20px; }
@@ -753,7 +776,7 @@
         styles += `
         
             .modal  { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 20%; --scrollbar-thumb-color: #888; --scrollbar-thumb-color-hover:  #555; max-width: min(var(--modal-max-width, 100%), 100%); max-height: min(var(--modal-max-height, 100%), 100%); transform: translateZ(0) scale(110%); border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0%; transition: all 0.3s ease; }
-            .modal.blur { backdrop-filter: blur(var(--modal-blur-amount)); }
+            .modal.blur { backdrop-filter: blur(calc(250px / 100)); }
             .modal.show     { border-width: 8px; transform: translateZ(0) scale(100%); opacity: 100%; }
 
             .modal-close-btn-container { width: var(--modal-close-btn-container-size); height: var(--modal-close-btn-container-size); font-size: 20px; user-select: none; cursor: pointer; transition: all 0.2s ease; }
@@ -773,6 +796,7 @@
             /* Track */
             ::-webkit-scrollbar-track {
                 background: var(--scrollbar-track-color, #ddcdff);
+                border-radius: 170px;
             }
 
             /* Handle */
@@ -834,9 +858,11 @@
 
         constructor(error) {
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.2.10";
+            this.scriptVersion = "2.2.11";
+            this.scriptGitVersion = "2.2.0";
             this.configVersion = 3;
             this.error = error;
+            this.patchNotes = ``;
 
 
             //#region Settings
@@ -2193,19 +2219,38 @@
                     return out;
                 }
 
-                dateTimeUpperSlice(dateTime=this.now(), minutesOffset=5) {
-                    const minutes    = parseInt(dateTime.match(/T\d{2}:(\d{2}):\d{2}Z/)[1]);
-                    const hour       = parseInt(dateTime.match(/T(\d{2}):\d{2}:\d{2}Z/)[1]);
-                    
-                    const newMinutes  = minutes + (minutesOffset-minutes%minutesOffset);
-                    const newHour     = minutes >= 60 
-                    ? ((hour + 1).toString().length > 1 ? (hour + 1).toString() : "0"+(hour + 1).toString()) 
-                    : (hour.toString().length > 1 ? hour.toString() : "0"+hour.toString())
-                    ;
+                dateTimeUpperSlice(dateTime=this.now(), offset=5, type="minute") {
+                    const dateTimeMatch     = dateTime.match(/(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(\.(\d{3})|)Z/);
+                    const dateTimeIndex     = ["year", "month", "day", "hour", "minute", "second", NaN, "millisecond"].indexOf(type.replace(/s$/, ""));
 
-                    const formatedMinutes = (newMinutes%60).toString().length > 1 ? (newMinutes%60).toString() : "0"+(newMinutes%60).toString();
+                    const seconds    = parseInt(dateTime.match(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:(\d{2})Z/)[1]);
+                    const minutes    = parseInt(dateTime.match(/\d{4}-\d{2}-\d{2}T\d{2}:(\d{2}):\d{2}Z/)[1]);
+                    const hours      = parseInt(dateTime.match(/\d{4}-\d{2}-\d{2}T(\d{2}):\d{2}:\d{2}Z/)[1]);
+                    const days       = parseInt(dateTime.match(/\d{4}-\d{2}-(\d{2})T\d{2}:\d{2}:\d{2}Z/)[1]);
+                    const months     = parseInt(dateTime.match(/\d{4}-(\d{2})-\d{2}T\d{2}:\d{2}:\d{2}Z/)[1]);
+                                        
+                    switch(type.replace(/s$/, "")) {
+                        default:
+                        case "minute":
+                            const newMinutes  = minutes + (offset-minutes%offset);
+                            const newHour     = minutes >= 60 
+                                ? ((hours + 1).toString().length > 1 ? (hours + 1).toString() : "0"+(hours + 1).toString()) 
+                                : (hours.toString().length > 1 ? hours.toString() : "0"+hours.toString())
+                            ;
+        
+                            const formatedMinutes = (newMinutes%60).toString().length > 1 ? (newMinutes%60).toString() : "0"+(newMinutes%60).toString();
+        
+                            return dateTime.replace(/T\d{2}:\d{2}:\d{2}Z/, `T${newHour}:${formatedMinutes}:00Z`);
+                        
+                        case "hours":
 
-                    return dateTime.replace(/T\d{2}:\d{2}:\d{2}Z/, `T${newHour}:${formatedMinutes}:00Z`);
+                    }
+
+                    const oldNumber     = dateTimeMatch[dateTimeIndex];
+                    const newNumber     = oldNumber + (offset-oldNumber%offset);  // round up to the upper slice
+
+                    return dateTime
+
                 }
 
             //#endregion
@@ -2233,7 +2278,7 @@
                     return document.styleSheets[styleSheetIndex].cssRules[ruleIndex]
                 }
 
-                removeFirstGradesFromSavedReadGrades(nb) {
+                removeFirstGradesFromSavedReadGrades(nb=1) {
                     localStorage.setItem("ECAM_DASHBOARD_SAVED_READ_GRADES", JSON.stringify(JSON.parse(localStorage["ECAM_DASHBOARD_SAVED_READ_GRADES"]).toSpliced(0,nb)))
                     window.location.reload();
                 }
@@ -2367,14 +2412,14 @@
                 xhttp.open("GET", this.repoScriptRaw, true); 
                 xhttp.send(); 
                 xhttp.onload = () => {
-                    const scriptGitVersion = xhttp.response.match(/\/\/ @version( +)(\d+(\.\d+|\.|)+)/)[2].trim().split(".");
+                    this.scriptGitVersion = xhttp.response.match(/\/\/ @version( +)(\d+(\.\d+|\.|)+)/)[2].trim().split(".");
                     let newUpdate = false;
                     
-                    if (scriptGitVersion.length > this.scriptVersion.trim().split(".").length) {
+                    if (this.scriptGitVersion.length > this.scriptVersion.trim().split(".").length) {
                         newUpdate = true;
                     }
                     else {
-                        scriptGitVersion.forEach((versElem, versIndex) => {
+                        this.scriptGitVersion.forEach((versElem, versIndex) => {
                             if (!newUpdate && Number(versElem) > Number(this.scriptVersion.trim().split(".")?.[versIndex] || -1)) {
                                 newUpdate = true;
                             }
@@ -2395,7 +2440,8 @@
                 updateAvailableNotif.id = "updateAvailableNotif";
                 updateAvailableNotif.innerHTML = `
                     <div class="update-available-notif-header">
-                        ${this.lang == "fr" ? "NOUVELLE MISE À JOUR DU TABLEAU DE BORD DISPONIBLE ! → v"+this.scriptVersion : "NEW DASHBOARD UPDATE AVAILABLE! → v"+this.scriptVersion}
+                        <span>${this.lang == "fr" ? "NOUVELLE MISE À JOUR DU TABLEAU DE BORD DISPONIBLE ! v" + this.scriptGitVersion + " → v"+this.scriptVersion : "NEW DASHBOARD UPDATE AVAILABLE! v" + this.scriptGitVersion + " → v"+this.scriptVersion}</span>
+                        <div class="update-available-notif-patch-notes">${this.lang == "fr" ? "Voir notes de patch" : "See patch notes"}</div>
                     </div>
                     <div class="update-available-notif-btns">
                         <div style="display: flex; justify-content: center; width: 50%">
@@ -2414,7 +2460,7 @@
                     updateAvailableNotif.classList.remove("on");
                     setTimeout(() => {updateAvailableNotif.remove()}, 300)
 
-                    this.dateTimeOfLastUpdateCheck = this.now(); 
+                    this.dateTimeOfLastUpdateCheck = this.today(); 
                     this.saveDateTimeOfLastUpdateCheck();
                 };
 
@@ -3055,10 +3101,10 @@
                             }
                         </div>
                         
-                        <div class="module-card-content ${this.editMode ? "edit-mode": ""}">
-                        <div class="module-details ${this.editMode ? "edit-mode": ""}${this.viewMode == "detailed" ? " detailed" :  " compact"}" id="module-details-${moduleName}-in-semester${sem}">
-                            ${this.createAllSubjCards(sem, moduleName)}
-                        </div>
+                        <div class="module-card-content ${this.editMode ? "edit-mode": ""}" data-module="${moduleName}">
+                            <div class="module-details ${this.editMode ? "edit-mode": ""}${this.viewMode == "detailed" ? " detailed" :  " compact"}" id="module-details-${moduleName}-in-semester${sem}" data-module="${moduleName}">
+                                ${this.createAllSubjCards(sem, moduleName)}
+                            </div>
                         </div>
                         
                         </div>
@@ -3395,7 +3441,7 @@
                     })
 
                     const closeModalIconId = document.querySelectorAll(".modal-close-btn").length;
-                    const closeModalIconContainer = document.createElement("svg");
+                    const closeModalIconContainer = document.createElement("div");
                     closeModalIconContainer.className = "modal-close-btn-container";
                     closeModalIconContainer.innerHTML = `
                     <svg class="modal-close-btn" viewBox="0 0 100 100" data-id="${closeModalIconId}">
@@ -3768,7 +3814,7 @@
                 this.attachModuleInfoClearBtns();
                 this.attachAllModuleDeleteBtnsListener();
 
-                if (this.editMode) {this.attachAllOnDragEventListeners();} else {this.detachOnDragEventListeners();}
+                if (this.editMode) { this.attachDropFieldsEventListeners(); } else { this.detachOnDragEventListeners(); }
             }
 
 
@@ -3857,13 +3903,13 @@
                         input.ondragover = (e) => {if (e.target.closest(".any-input")) {e.preventDefault(); e.dataTransfer.dropEffect = "none";}}
                         input.ondrop     = (e) => {e.preventDefault(); e.dataTransfer.dropEffect = "link";};
                         if (input.classList.contains("module-title")) {   // Change modules name
-                            input.onmouseenter  = ( ) => { if (this.editMode) {this.detachOnDragEventListeners(); document.querySelectorAll(".module-header").forEach(card => {card.draggable = false});} }
-                            input.onmouseleave  = ( ) => { if (this.editMode) {this.attachOnDragEventListeners(); document.querySelectorAll(".module-header").forEach(card => {card.draggable = true;});} }
-                            input.onchange      = (e) => { this.moduleTitleInputChangeAction(e.target) };
+                            input.onfocus   = ( ) => { if (this.editMode) {this.detachOnDragEventListeners(); this.generalKeyboardEvents("edit sim grade", input); document.querySelectorAll(".module-header").forEach(card => {card.draggable = false});} }
+                            input.onblur    = ( ) => { if (this.editMode) {this.attachOnDragEventListeners(); this.generalKeyboardEvents("general"); document.querySelectorAll(".module-header").forEach(card => {card.draggable = true;});} }
+                            input.onchange  = (e) => { this.moduleTitleInputChangeAction(e.target) };
                         }
                         else {
-                            input.onmouseenter  = ( ) => { if (this.editMode) {this.detachOnDragEventListeners();} };
-                            input.onmouseleave  = ( ) => { if (this.editMode) {this.attachOnDragEventListeners();} };
+                            input.onfocus   = ( ) => { if (this.editMode) {this.detachOnDragEventListeners(); this.generalKeyboardEvents("edit sim grade", input); } };
+                            input.onblur    = ( ) => { if (this.editMode) {this.attachOnDragEventListeners(); this.generalKeyboardEvents("general"); } };
                         }
                     }
 
@@ -4201,6 +4247,7 @@
                 //#region Subject cards listeners
 
                     attachAllSubjectCardRelatedEvenListenersForEverySubjectCard(container=document) {
+                        this.attachOnDragEventListeners()
                         this.attachAndManageAllDragOrTickIconsListener(container);
                         this.attachAllSubjectCoefInputBoxesListeners(container);
                         this.attachCheckboxesListeners(container);
@@ -5077,22 +5124,26 @@
 
             // MARK: attach ondrag events
             attachAllOnDragEventListeners() {
-                this.attachOnDragEventListeners();
-                this.attachDropFieldsEventListeners();
+                this.attachOnDragEventListeners(document, true);
             }
-            attachOnDragEventListeners(target="all") {   // Add ONDRAG cards event
+            attachOnDragEventListeners(container=document, descendants=true) {   // Add ONDRAG cards event
+                if (container instanceof HTMLElement || container == document) {
 
-                if (target == "subject" || target == "all") {
-                    const targetModule = target.match(/subject (.+)/)?.[1];
-                    document.querySelectorAll(`.subject-card${targetModule ? `[data-module:"${targetModule}"]` : ""}`).forEach(subjectCard => {
-                        this.attachSubjectCardOnDragEventListeners(subjectCard);
-                    })
-                }
-
-                if (target == "module" || target == "all") {
-                    document.querySelectorAll(".module-card").forEach(moduleCard => {
-                        this.attachModuleCardOnDragEventListeners(moduleCard);
-                    })
+                    if (container?.classList?.contains("module-card-content") || container?.classList?.contains("module-details") || container?.classList?.contains("subject-card")) {
+                        (container?.classList?.contains("subject-card") ? [container] : container.querySelectorAll(".subject-card") || []).forEach(subjectCard => {
+                            this.attachSubjectCardOnDragEventListeners(subjectCard);
+                        })
+                    }
+                    else if (container?.classList?.contains("semester-content") || container?.classList?.contains("semester-grid") || container?.classList?.contains("modules-section") || container?.classList?.contains("semester-section") || container?.classList?.contains("module-card") || container == document) {
+                        (container?.classList?.contains("module-card") ? [container] : container.querySelectorAll(".module-card") || []).forEach(moduleCard => {
+                            this.attachModuleCardOnDragEventListeners(moduleCard);
+                            if (descendants) {
+                                moduleCard.querySelectorAll(`.subject-card`).forEach(subjectCard => {
+                                    this.attachSubjectCardOnDragEventListeners(subjectCard);
+                                })
+                            }
+                        })
+                    }
                 }
 
                 this.attachNotifBtnsListener();
@@ -5823,14 +5874,12 @@
                 // MARK: tickIconOnClickEvent
                 tickIconOnClickEvent(e, tick) {
                     e.preventDefault();
-                    const type = e.target.dataset.type;
-                    let subjectCard = e.target.parentElement.parentElement.parentElement;
-                    if (type=="detailed") {subjectCard = e.target.parentElement.parentElement.parentElement.parentElement.parentElement}
-
+                    const subjectCardId = e.target.dataset.targetid;
+                    const subjectCard = document.getElementById(subjectCardId);
                     
                     const sem = subjectCard.dataset.semester;
                     const subject = subjectCard.dataset.subject;
-                    const notifDiv = document.getElementById(`selected-subject-card-notif-div-for-${type}-${subject}-from-semester-${sem}`);
+                    const notifDiv = document.getElementById(`selected-subject-card-notif-div-for-${subject}-from-semester-${sem}`);
                     
                     this.removeSubjectCardFromSubjectSelection({notifDiv});
                 }
@@ -6271,14 +6320,9 @@
                         this.saveConfig();
                         this.getGradesDatas();
                         
-                        if (this.viewMode == "detailed" || !moduleDetails.classList.contains("compact")) {
-                            moduleDetails.innerHTML = this.createAllDetailedClassifiedSubjCards(sem, module);
-                        }
-                        else {
-                            moduleDetails.innerHTML = this.createAllCompactClassifiedSubjCards(sem, module);
-                        }
+                        moduleDetails.innerHTML = this.createAllSubjCards(sem, module);
 
-                        this.attachAllSubjectCardRelatedEvenListenersForEverySubjectCard()
+                        this.attachAllSubjectCardRelatedEvenListenersForEverySubjectCard();
                         this.setGradesTableTotalCoef();
                     }
                 }
