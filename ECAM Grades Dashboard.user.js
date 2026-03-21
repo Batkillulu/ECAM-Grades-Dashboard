@@ -57,21 +57,27 @@
                 }
                 
                 .ecam-dash { 
-                    display: grid; 
+                    display: flex; 
                     flex-direction: column; 
                     justify-content:center; 
+                    align-items: center; 
                     width: 97%; 
-                    grid-template-columns: 100%; 
                     font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; 
                     margin: 20px 1.5% 0px 1.5%; 
                     color: #1a1a1a;
+                }
+
+                table {
                     border-collapse: collapse;
                     border-spacing: 0;
                 }
 
-                .dash-header { background: linear-gradient(135deg, #5b62bf 0%, #2A2F72 100%); color: white; padding: 30px 40px; border-radius: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 3px 5px 5px 0px #00000042; }
+                .offline-mode-title    { display: flex; justify-content: center; align-items: center; text-align: center; font-size: 50px; font-weight: 800; letter-spacing: 0.23em; }
+                .offline-mode-subtitle { display: flex; justify-content: center; align-items: center; text-align: center; font-size: 17px; margin-bottom: 10px; }
+
+                .dash-header { display: flex; justify-content: space-between; align-items: center; padding: 30px 40px; margin-bottom: 15px; width: 100%; background: linear-gradient(135deg, #5b62bf 0%, #2A2F72 100%); color: white; border-radius: 20px; box-shadow: 3px 5px 5px 0px #00000042; }
                 .dash-title { font-size: 24px; font-weight: 700; margin: 0; }
-                .dash-subtitle { font-size: 14px; opacity: 95%; margin-top: 5px; }
+                .dash-subtitle { font-size: 14px; opacity: 95%; margin: 5px 0px; background: transparent; color: white; }
                 
                 .currently-loading      { display: flex; justify-content: center; align-items: center; height: 100px; width: 100px; min-height: 100px; min-width: 100px; position: fixed; bottom: 30px; right: -100px; opacity: 0%; z-index: 1500; transition: opacity 0.2s ease; }
                 .currently-loading.show { right: 30px; opacity: 100%; }
@@ -106,7 +112,7 @@
                 
                     styles += `
 
-                        .over-header-btns                   { display: flex; flex-direction: row; justify-content: flex-end; align-items: center; position: absolute; top: 59px; right: 2.4%; gap: 8px; }                        
+                        .over-header-btns                   { display: flex; flex-direction: row; justify-content: flex-end; align-items: center; position: relative; height: 0px; width: 95%; top: 0px; gap: 8px; color: white; }                        
                         .over-header-btn                            { display: flex; justify-content: center; align-items: center; border-radius: 20px; position: relative; transition: all 0.2s ease; height: 40px; cursor: pointer; user-select: none; text-decoration: none; text-wrap-mode: nowrap; overflow: clip; }
                     `;
 
@@ -120,8 +126,8 @@
                         .over-header-btn.how-to-use-btn:hover           { outline-color: white; background: #2888e2; }
                         .over-header-btn.how-to-use-btn.open            { outline-color: white; }
 
-                        .over-header-how-to-use-btns                        { display: flex; justify-content: center; align-items: center; gap: 9px; position: absolute; top: 30px; right: 0px; opacity: 0%; z-index: 6; transition: all 0.2s ease; }
-                        .over-header-how-to-use-btns.open                   { top: 50px; opacity: 100%; }
+                        .over-header-how-to-use-btns                        { display: flex; justify-content: center; align-items: center; gap: 9px; width: 0; height: 0; position: relative; top: 20px; right: 190px; opacity: 0%; z-index: 6; transition: all 0.2s ease; }
+                        .over-header-how-to-use-btns.open                   { top: 35px; opacity: 100%; }
 
                         .over-header-btn.help                                   { background: #0059ad; outline: 2px solid #c022ff; box-shadow: 5px 7px 6px 0px black; padding: 0px 10px; font-size: 15px; border: none; color: inherit; }
                         .over-header-btn.help:hover                             { background: #1672c9; outline-color:     #ffffff; box-shadow: 7px 9px 6px 2px black; }
@@ -291,9 +297,9 @@
 
             // MARK: main average card
             styles += `
-                .main-average-card { display: flex; align-items: center; justify-content: space-between; height: 104px; background: linear-gradient(135deg, #ffffff 30%, #514ba2ff 75%); border-radius: 20px; padding: 30px; margin-bottom: 15px; border: 2px solid #f0f0f0; transition: box-shadow 0.3s ease, border-color 0.3s ease; }
+                .main-average-card { display: flex; align-items: center; justify-content: space-between; width: 100%; height: 104px; background: linear-gradient(135deg, #ffffff 30%, #514ba2ff 75%); border-radius: 20px; padding: 30px; margin-bottom: 15px; }
 
-                .average-display { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 7px; }
+                .average-display { display: flex; align-items: baseline; gap: 10px; }
                 .average-number     { font-size: 48px; font-weight: 800; -webkit-text-fill-color: #2A2F72; padding-top: 9px; }
                 .average-label      { font-size: 18px; color: #666; font-weight: 500; }
                 .average-stats { display: flex; gap: 30px; }
@@ -342,7 +348,7 @@
 
             // MARK: semester filter
             styles += `
-                .controls-bar       { background: white; border-radius: 16px; padding: 16px 20px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #e5e5e5; }
+                .controls-bar       { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 16px 20px; width: 100%; background: white; border-radius: 16px; border: 1px solid #e5e5e5; }
                 .filter-title       { border-radius: 20px; color: white; font-weight: 700; font-size: 14px; padding: 10px 15px; margin-right: 70%; margin-bottom: -15px; background: linear-gradient(45deg, #446dff 20%, #1222ff12 60%, #ffffff00 89%); position: relative; transition: all 0.2s ease; }
                 .filter-tabs        { display: flex; background: #f7f7f7; padding: 4px; border-radius: 12px; gap: 4px; height: 44px; }
                 .filter-tab         { display: flex; justify-content: center; padding: 10px 20px; background: transparent; border: none; border-radius: 8px; cursor: pointer; font-weight: 500; color: #666; transition: all 0.2s ease; font-size: 14px; width: 57px; }
@@ -521,7 +527,7 @@
 
         //#region -CONTENT AREA
             styles += `
-                .content-area { display: grid; gap: 24px; }
+                .content-area { display: grid; gap: 24px; width: 100%; }
             `;
 
 
@@ -540,7 +546,7 @@
 
             // MARK: semester section
             styles += `
-                .semester-section   { display: flex; flex-direction: column; align-items: center; background: white; border-radius: 24px; overflow: hidden; border: 1px solid #e5e5e5; transition: all 0.3s ease; }
+                .semester-section   { display: flex; flex-direction: column; align-items: center; width: 100%; background: white; border-radius: 24px; overflow: hidden; border: 1px solid #e5e5e5; transition: all 0.3s ease; }
                 .semester-header        { display: flex; justify-content: space-between; align-items: center; width: 100%; background: #f9fafb; padding: 20px 24px; border-bottom: 1px solid #e5e5e5; cursor: pointer; }
                 .semester-header:hover  { background: #f3f4f6; }
                 .semester-info              { display: flex; align-items: center; gap: 12px; }
@@ -827,30 +833,12 @@
 
 
     //#region
-        // Initializing the HTML page before creating the dashboard
+        // Initializing the CSS style and checking for error before creating the dashboard
         const styleSheet = document.createElement("style");
         styleSheet.textContent = styles;
         document.head.appendChild(styleSheet);
         
         const error = window.location.search.match(/redirect/) != null;
-
-        if (!error) {
-            
-            const greyGridTable = document.querySelector(".greyGridTable");
-            const intranetFold = document.createElement("div");
-            intranetFold.className = "intranet-fold";
-            intranetFold.innerHTML = `
-                <div class="intranet-text">
-                    <div class="intranet-toggle fold-icon">△</div>
-                    <div class="semester-name"> 
-                        <div class="intranet-subtext"></div>
-                    </div>
-                    <div class="intranet-toggle fold-icon">△</div>
-                </div>
-            `;
-            document.querySelector("#currentNote").insertBefore(intranetFold, greyGridTable);
-            greyGridTable.style.display = "none";
-        }
 
     //#endregion
 
@@ -875,8 +863,8 @@
                             : "Enable blur"
                         ,
                         description: () => this.lang == "fr" 
-                            ? "Activer le flou qui s'opère sur le fond des fenêtres" 
-                            : "Enable the blur that operates on the background of the windows"
+                            ? "Activer le flou qui s'opère sur le fond des fenêtres (allumé par défaut parce que je trouve ça beau :D)" 
+                            : "Enable the blur that operates on the background of the windows (turned on by default because I find it nice :D)"
                         ,
                         info: () => this.lang == "fr" 
                             ? "Non recommendé pour les appareils à basses performances" 
@@ -906,7 +894,7 @@
                         ,
                         value: JSON.parse( JSON.parse(localStorage.getItem("ECAM_DASHBOARD_SETTINGS"))?.totalCoefValuesEnabled?.value?.toString() || "true"),
                         action: () => {
-                            document.querySelectorAll(".module-subject-total-coef-div, .subject-total-coef-div").forEach(elem => {if (this.settings.totalCoefValuesEnabled.value) {elem.hidden = false;} else {elem.hidden = true;}});
+                            document.querySelectorAll(".module-subject-total-coef-div, .subject-total-coef-div").forEach(elem => {if (this.settings.totalCoefValuesEnabled.value) {elem.style.display = "";} else {elem.style.display = "none";}});
                             this.saveSettings();
                         },
                         parents:  [],
@@ -930,7 +918,7 @@
                         ,
                         value: JSON.parse( JSON.parse(localStorage.getItem("ECAM_DASHBOARD_SETTINGS"))?.totalCoefDebugTextsEnabled?.value?.toString() || "true"),
                         action: () => {
-                            document.querySelectorAll(".module-subject-total-coef-debug, .subject-total-coef-debug").forEach(elem => {if (this.settings.totalCoefDebugTextsEnabled.value) {elem.hidden = false;} else {elem.hidden = true;}});
+                            document.querySelectorAll(".module-subject-total-coef-debug, .subject-total-coef-debug").forEach(elem => {if (this.settings.totalCoefDebugTextsEnabled.value) {elem.style.display = "";} else {elem.style.display = "none";}});
                             this.saveSettings();
                         },
                         parents: [
@@ -1770,6 +1758,11 @@
                     else {
                         this.newGrades = [];
                         this.grades = this.savedReadGrades;
+                        this.grades.forEach(n => {
+                            if (!this.semesters[n.semester]) this.semesters[n.semester] = {};
+                            if (!this.semesters[n.semester][n.subject]) this.semesters[n.semester][n.subject] = [];
+                            this.semesters[n.semester][n.subject].push(n);
+                        });
                     }
                 }
 
@@ -1779,7 +1772,7 @@
 
 
 
-            //#region Sim grades methods
+            //#region Sim grade methods
             
                 /** Ensures that a path composed of `sem`, `module` and `subj` exists in this.sim */
                 ensureSimPath(sem=undefined, module=undefined, subj=undefined) {
@@ -2497,6 +2490,7 @@
                 createDashboard() {
                     const ecamDash = document.createElement("div");
                     ecamDash.className = "ecam-dash";
+                    if (this.error) {ecamDash.style.margin = "40px 1.5% 30px 1.5%";}
                     const moyenneGenerale = this.moyennePonderee(this.grades);
                     const totalGrades = this.grades.length;
                     const moduleStats = this.getModuleStats();
@@ -2508,6 +2502,8 @@
                     // Therefore, besides the text that doesn't vary with the language, the text isn't yet created, 
                     // but will be in the generateContent() method later on, to regenerate the text in case the language is changed
                     ecamDash.innerHTML = `
+                    <div class="offline-mode-title">OFFLINE MODE</div>
+                    <div class="offline-mode-subtitle"></div>
                     <div id="emptyDivToRemoveTheDragImage"></div>
                     <div class="currently-loading">
                         <div class="loading-symbol" style="--offset-offset: calc(0 * 100% / 6)"></div>
@@ -2516,6 +2512,32 @@
                         <div class="loading-symbol" style="--offset-offset: calc(3 * 100% / 6)"></div>
                         <div class="loading-symbol" style="--offset-offset: calc(4 * 100% / 6)"></div>
                         <div class="loading-symbol" style="--offset-offset: calc(5 * 100% / 6)"></div>
+                    </div>
+
+                    <div class="over-header-btns">
+
+                        <div class="over-header-report-btns">
+                            <div    class="over-header-btn issue mail-info    ${this.lang == "fr" ? "fr" : "en"}">
+                                <div class="over-header-btn-mail-info-text"></div>
+                                <div class="over-header-btn-copied-cue"></div>
+                            </div>
+                            <a      class="over-header-btn issue share-config ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserConfigShare    }" target="_blank" tabindex="-1"></a>
+                            <a      class="over-header-btn issue suggest-idea ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserSuggestionIssue}" target="_blank" tabindex="-1"></a>
+                            <a      class="over-header-btn issue report-issue ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserReportIssue    }" target="_blank" tabindex="-1"></a>
+                            <button class="over-header-btn issue issue-btn" id="reportIssueBtn" tabindex="0">🚩</button>
+                        </div>
+
+                        <div class="over-header-help-btns">
+                            <div class="over-header-btn how-to-use-btn">?</div>
+                            <div class="over-header-how-to-use-btns" style="display: none">
+                                <a   class="over-header-btn help doc-btn fr"  href="${this.repoReadMeHowToUse}" target="_blank" >${this.createExternalLinkSymbol("white", 16, [0,0,0,4])}</a>
+                                <div class="over-header-btn help keybinds-btn fr"></div>
+                                <div class="over-header-btn help tuto-btn fr"></div>
+                            </div>
+                        </div>
+
+                        <div class="over-header-btn settings-btn">⚙️</div>
+
                     </div>
 
                     <div class="dash-header">
@@ -2539,32 +2561,6 @@
                             </div>
                         </div>
                         <div class="header-actions" style="display:flex; align-items:center">
-
-                            <div class="over-header-btns">
-
-                                <div class="over-header-report-btns">
-                                    <div    class="over-header-btn issue mail-info    ${this.lang == "fr" ? "fr" : "en"}">
-                                        <div class="over-header-btn-mail-info-text"></div>
-                                        <div class="over-header-btn-copied-cue"></div>
-                                    </div>
-                                    <a      class="over-header-btn issue share-config ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserConfigShare    }" target="_blank" tabindex="-1"></a>
-                                    <a      class="over-header-btn issue suggest-idea ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserSuggestionIssue}" target="_blank" tabindex="-1"></a>
-                                    <a      class="over-header-btn issue report-issue ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserReportIssue    }" target="_blank" tabindex="-1"></a>
-                                    <button class="over-header-btn issue issue-btn" id="reportIssueBtn" tabindex="0">🚩</button>
-                                </div>
-
-                                <div class="over-header-help-btns">
-                                    <div class="over-header-btn how-to-use-btn">?</div>
-                                    <div class="over-header-how-to-use-btns" hidden>
-                                        <a   class="over-header-btn help doc-btn fr"  href="${this.repoReadMeHowToUse}" target="_blank" >${this.createExternalLinkSymbol("white", 16, [0,0,0,4])}</a>
-                                        <div class="over-header-btn help keybinds-btn fr"></div>
-                                        <div class="over-header-btn help tuto-btn fr"></div>
-                                    </div>
-                                </div>
-
-                                <div class="over-header-btn settings-btn">⚙️</div>
-
-                            </div>
 
                             <button class="btn btn-edit-mode ${this.editMode ? "on" : "off"}" id="editModeBtn"></button>
                             <div style="display: flex; flex-direction: column; gap: 8px">
@@ -2592,7 +2588,7 @@
                     
                     <div class="main-average-card" id="main-average-card">
                         <div class="average-display">
-                            <div class="average-number">${moyenneGenerale}</div>
+                            <div class="average-number" ${this.error ? "style=\"padding-top: 0px;\"" : ""}>${moyenneGenerale}</div>
                             <div class="average-label"></div>
                         </div>
                         <div class="average-stats">
@@ -2606,7 +2602,7 @@
                     <div class="new-grades-card ${this.newGrades.length == 0 ? "none" : ""}">
                         <div class="new-grades-card-header ${this.newGrades.length == 0 ? "none" : ""}">
                             <div class="new-grades-card-title ${this.newGrades.length == 0 ? "none" : ""}"></div>
-                            <div style="display:flex; font-size: 15px; font-weight: 600; color: #2A2F72" ${this.newGrades.length == 0 ? "hidden='true' disabled='true'" : ""}>
+                            <div style="display:flex; font-size: 15px; font-weight: 600; color: #2A2F72;${this.newGrades.length == 0 ? " display: none;" : ""}" >
                                 <div class="new-grades-mark-as-read-text" style="display:flex"></div>
                                 <div class="new-grades-mark-as-read" style="margin-right: 10px; cursor:pointer; font-size:25px; display:flex">✅</div>
                             </div>
@@ -2666,73 +2662,17 @@
                 }
 
 
-                //MARK: create new grades notif
-                createNewGradesNotifDiv() {
-                    let newGradesNotif = document.querySelector(".new-grades-notif");
-
-                    if (!newGradesNotif) {
-                        newGradesNotif = document.createElement("div");
-                        newGradesNotif.className = "new-grades-notif";
-                        document.body.appendChild(newGradesNotif);
-                        setTimeout(() => {if (this.newGrades.length > 0) {document.querySelector(".new-grades-notif").classList.add("on")}}, 10)
-                    }
-
-                    newGradesNotif.innerHTML = this.lang == "fr" 
-                        ? `${this.newGrades.length} NOUVELLE${ this.newGrades.length>1 ? "S !" : " !"} NOTE${this.newGrades.length>1 ? "S !" : " !"}` 
-                        : `${this.newGrades.length} NEW GRADE${this.newGrades.length>1 ? "S!"  : "!" }` 
-                    + `<button id="closeNewGradesNotif" style="padding-bottom: 3px;font-size: 10px;display: flex;width: 21px;height: 21px;position: fixed;right: calc(5% - -15px);border-radius: 5px;border: 3px solid #e0e6ff;justify-content: center;align-items: center;align-content: center;">❌</button>`;
-                }
-
-
-                // MARK: renderRecentGrades
-                renderRecentGrades() {
-                    const newGradesCard = document.querySelector(".new-grades-card");
-                    const grades = {};
-                    
-                    if (this.newGrades.length > 0) {
-
-                        // sorting the new grades by subjects
-                        this.newGrades.forEach((grade => {
-                            if (!grades[grade.subject]) {
-                                grades[grade.subject] = [grade];
-                            }
-                            else {
-                                grades[grade.subject].push(grade)
-                            }
-                                            
-                        }))
-                        
-                        let html = `<div class="new-grades-content">`;
-                        Object.keys(grades).forEach(subject => {
-                            html += `
-                            <div class="new-grades-subject-card" id="new-grades-subject-card-${subject}" data-subject="${subject}" data-module="${grades[subject][0].module}" data-semester="${grades[subject][0].semester}">
-                                <div class="new-grades-subject-card-title" data-subject="${subject}" data-module="${grades[subject][0].module}" data-semester="${grades[subject][0].semester}">
-                                    ${subject}
-                                </div>
-                            <table class="new-grades-table">`;
-                            
-                            grades[subject].forEach(grade => {
-                                html +=
-                                    `<tr class="new-grades-table-grades" id="new-grade-${subject}-${grade.type}" data-subject="${subject}" data-type="${grade.type}" data-semester="${grade.semester}">
-                                        <td style="width: 25%;padding: 5px 5px 5px 10px;" data-subject="${subject}" data-semester="${grade.semester}">${grade.type}</td>
-                                        <td style="width: 9%;"><span class="grade-value grade-${this.getGradeColor(grade.grade)}" data-subject="${subject}" data-semester="${grade.semester}">${grade.grade}/20</span></td>
-                                        <td style="width: 8%;" data-subject="${subject}" data-semester="${grade.semester}">${grade.coef}%</td>
-                                        <td style="width: 8%;" data-subject="${subject}" data-semester="${grade.semester}">${grade.classAvg}/20</td>
-                                        <td style="width: 10%;" class="grade-date" data-subject="${subject}" data-semester="${grade.semester}">${grade.date}</td>
-                                        <td style="width: 25%;font-size:12px;color: #999;" data-subject="${subject}" data-semester="${grade.semester}">${grade.prof}</td>
-                                    </tr>`;
-                            })
-                            html += `</table></div>`;
-                        })
-                        html += `</div>`;
-                        newGradesCard.innerHTML += html;
-                    }
-                }
-
-
                 //MARK: language Sensitive
                 languageSensitiveContent(fadeIn=true) {
                     // Language Sensitive text in the Dashboard Header and Semester filter tab (which don't refresh on calling the generateContent() method)
+                    const offlineTitle = document.querySelector(".offline-mode-title");
+                    const offlineSubTitle = document.querySelector(".offline-mode-subtitle");
+                    offlineSubTitle.innerHTML = this.lang == "fr" 
+                        ? `Les serveurs de l'ECAM sont actuellement inaccessibles ! Pour l'instant, tu ne peux donc pas voir si tu as des nouvelles notes ! En attendant, voici le tableau de bord en mode offline, tu as donc accès à tes notes sauvegardées dans le cache. De rien ! <3` 
+                        : `ECAM's servers are current down! For now, you can't see if you have new grades! While waiting for the servers to be back up, here are the grades I nicely saved in your cache, so you can still see them even with the server down! Your welcome! <3`
+                    ;
+                    
+
                     const dashTitle     = document.querySelector(".dash-title");
                     const dashSubtitle  = document.querySelector(".dash-subtitle");
                     dashTitle.innerHTML     = this.lang == "fr" ? 'Tableau de Bord des Notes ECAM ' + this.scriptVersion : "ECAM Grades Dashboard " + this.scriptVersion;
@@ -2775,7 +2715,7 @@
 
                         settingsBtn     .title     = "Ouvrir les paramètres";
 
-                        if ((newUserNotif?.hidden?.toString() || "true") == "false") newUserNotif.title     = "Clique pour fermer";
+                        if (((newUserNotif?.style?.display || "none" == "none")?.toString() || "true") == "false") newUserNotif.title     = "Clique pour fermer";
 
                         shareConfig     .innerHTML = `Partager une config ${this.createExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
                         suggestIdea     .innerHTML = `Suggérer une idée ${this.createExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
@@ -2783,7 +2723,7 @@
                         mailInfoText    .innerHTML = "Par mail: baptiste.jacquin@ecam.fr 📋";
                         mailInfoCopied  .innerHTML = "Copié !";
 
-                        if ((newUserNotif?.hidden?.toString() || "true") == "false") newUserNotifText.innerHTML = "Bonjour! Nouveau ici? Clique ici pour apprendre à utiliser cette extension!";
+                        if (((newUserNotif?.style?.display || "none" == "none")?.toString() || "true") == "false") newUserNotifText.innerHTML = "Bonjour! Nouveau ici? Clique ici pour apprendre à utiliser cette extension!";
 
                         mailInfo   .classList.replace("en", "fr");
                         shareConfig.classList.replace("en", "fr");
@@ -2808,7 +2748,7 @@
 
                         settingsBtn     .title     = "Open the settings";
                         
-                        if ((newUserNotif?.hidden?.toString() || "true") == "false") newUserNotif.title     = "Click to dismiss";
+                        if (((newUserNotif?.style?.display || "none" == "none")?.toString() || "true") == "false") newUserNotif.title     = "Click to dismiss";
 
                         shareConfig     .innerHTML = `Share a config ${this.createExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
                         suggestIdea     .innerHTML = `Suggest an idea ${this.createExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
@@ -2816,7 +2756,7 @@
                         mailInfoText    .innerHTML = "By mail: baptiste.jacquin@ecam.fr 📋";
                         mailInfoCopied  .innerHTML = "Copied!";
 
-                        if ((newUserNotif?.hidden?.toString() || "true") == "false") newUserNotifText.innerHTML = "Hey! New here? Click here to find a tutorial on how to use this extension!";
+                        if (((newUserNotif?.style?.display || "none" == "none")?.toString() || "true") == "false") newUserNotifText.innerHTML = "Hey! New here? Click here to find a tutorial on how to use this extension!";
 
                         mailInfo   .classList.replace("fr", "en");
                         shareConfig.classList.replace("fr", "en");
@@ -2939,10 +2879,72 @@
                         clearTimeout(this?.timeouts?.renderFadeIn);
                         this.timeouts.renderFadeIn = setTimeout(() => {document.querySelector(".ecam-dash").parentElement.classList.remove("fade-in")}, 300);
                     }
-
-                    // this.attachAllEventListeners();
                 }
 
+
+
+                //MARK: create new grades notif
+                createNewGradesNotifDiv() {
+                    let newGradesNotif = document.querySelector(".new-grades-notif");
+
+                    if (!newGradesNotif) {
+                        newGradesNotif = document.createElement("div");
+                        newGradesNotif.className = "new-grades-notif";
+                        document.body.appendChild(newGradesNotif);
+                        setTimeout(() => {if (this.newGrades.length > 0) {document.querySelector(".new-grades-notif").classList.add("on")}}, 10)
+                    }
+
+                    newGradesNotif.innerHTML = this.lang == "fr" 
+                        ? `${this.newGrades.length} NOUVELLE${ this.newGrades.length>1 ? "S !" : " !"} NOTE${this.newGrades.length>1 ? "S !" : " !"}` 
+                        : `${this.newGrades.length} NEW GRADE${this.newGrades.length>1 ? "S!"  : "!" }` 
+                    + `<button id="closeNewGradesNotif" style="padding-bottom: 3px;font-size: 10px;display: flex;width: 21px;height: 21px;position: fixed;right: calc(5% - -15px);border-radius: 5px;border: 3px solid #e0e6ff;justify-content: center;align-items: center;align-content: center;">❌</button>`;
+                }
+
+
+                // MARK: renderRecentGrades
+                renderRecentGrades() {
+                    const newGradesCard = document.querySelector(".new-grades-card");
+                    const grades = {};
+                    
+                    if (this.newGrades.length > 0) {
+
+                        // sorting the new grades by subjects
+                        this.newGrades.forEach((grade => {
+                            if (!grades[grade.subject]) {
+                                grades[grade.subject] = [grade];
+                            }
+                            else {
+                                grades[grade.subject].push(grade)
+                            }
+                                            
+                        }))
+                        
+                        let html = `<div class="new-grades-content">`;
+                        Object.keys(grades).forEach(subject => {
+                            html += `
+                            <div class="new-grades-subject-card" id="new-grades-subject-card-${subject}" data-subject="${subject}" data-module="${grades[subject][0].module}" data-semester="${grades[subject][0].semester}">
+                                <div class="new-grades-subject-card-title" data-subject="${subject}" data-module="${grades[subject][0].module}" data-semester="${grades[subject][0].semester}">
+                                    ${subject}
+                                </div>
+                            <table class="new-grades-table">`;
+                            
+                            grades[subject].forEach(grade => {
+                                html +=
+                                    `<tr class="new-grades-table-grades" id="new-grade-${subject}-${grade.type}" data-subject="${subject}" data-type="${grade.type}" data-semester="${grade.semester}">
+                                        <td style="width: 25%;padding: 5px 5px 5px 10px;" data-subject="${subject}" data-semester="${grade.semester}">${grade.type}</td>
+                                        <td style="width: 9%;"><span class="grade-value grade-${this.getGradeColor(grade.grade)}" data-subject="${subject}" data-semester="${grade.semester}">${grade.grade}/20</span></td>
+                                        <td style="width: 8%;" data-subject="${subject}" data-semester="${grade.semester}">${grade.coef}%</td>
+                                        <td style="width: 8%;" data-subject="${subject}" data-semester="${grade.semester}">${grade.classAvg}/20</td>
+                                        <td style="width: 10%;" class="grade-date" data-subject="${subject}" data-semester="${grade.semester}">${grade.date}</td>
+                                        <td style="width: 25%;font-size:12px;color: #999;" data-subject="${subject}" data-semester="${grade.semester}">${grade.prof}</td>
+                                    </tr>`;
+                            })
+                            html += `</table></div>`;
+                        })
+                        html += `</div>`;
+                        newGradesCard.innerHTML += html;
+                    }
+                }
 
                 // MARK: generateContent
                 generateContent(fadeIn=true) {
@@ -2979,6 +2981,8 @@
                         const moyenneSem    = Object.keys(this.semesters[sem]).length > 0 ? this.moyennePonderee([].concat(...Object.values(this.semesters[sem] || {}))) : " - ";
                         const avgClass      = Object.keys(this.semesters[sem]).length > 0 ? this.getAverageColor(moyenneSem) : "";
                         const unclassified  = this.getUnclassifiedSubjects(sem);
+                        const moduleConfig = this.moduleConfig?.[sem] || {};
+
                         section.innerHTML = `
                         <div class="semester-header" data-semester="${sem}">
                             <div class="semester-info">
@@ -2993,7 +2997,7 @@
                         section.innerHTML += `
                         <div class="semester-content show${this.selectedSubjectCardsId.length > 0 ? " dragging" : ""}${this.editMode ? " edit" : ""}${fadeIn ? " fade-in" : ""}" id="sem-content-${sem}">
                             <div class="semester-grid">
-                                <div class="modules-section ${this.editMode ? "edit" : ""}" id="modules-section">
+                                <div class="modules-section ${this.editMode ? "edit" : ""}" id="modules-section" ${moduleConfig?.__modules__ ? "" : "style=\"display: flex\""}>
                                     ${this.createAllModuleCards(sem)}
                                 </div>
                                 <div class="unclassified-section" id="unclassified-section" style="height: 100%${unclassified.length > 0 ? `` : `; display: none`}">
@@ -3072,14 +3076,14 @@
                                 : 
                                 `<div class="module-title">${moduleName}</div>`
                             }
-                            <div class="module-subject-total-coef-div" data-semester="${sem}" data-module="${moduleName}" ${this.settings.totalCoefValuesEnabled.value ? "" : "hidden"}>
+                            <div class="module-subject-total-coef-div" data-semester="${sem}" data-module="${moduleName}" ${this.settings.totalCoefValuesEnabled.value ? "" : "style=\"display: none\""}>
                                 <div class="module-subject-total-coef-value">${this.lang == "fr" ? `Coef Total des matières :` : `Total Subjects Coef:`}</div>
-                                <div class="module-subject-total-coef-debug" ${this.settings.totalCoefDebugTextsEnabled.value ? "" : "hidden"}></div>
+                                <div class="module-subject-total-coef-debug" ${this.settings.totalCoefDebugTextsEnabled.value ? "" : "style=\"display: none\""}></div>
                             </div>
                             <div class="module-moyenne ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'good' : 'bad'}`}" data-semester="${sem}" data-module="${moduleName}" ${this.editMode ? "" : 'style="width:151px"'}>
                                 ${moyenne}/20 
                                 <div class="module-toggle fold-icon open">△</div>
-                                <button class="module-delete-btn" ${this.editMode ? `class="display:none"` : ""} id="module-delete-btn-${moduleName}-in-semester-${sem}" title="${this.lang == "fr" ? "Supprimer ce module" : "Delete this module"}" data-semester="${sem}" data-module="${moduleName}"${this.editMode? "" : " hidden"}>🗑️</button>
+                                <button class="module-delete-btn" ${this.editMode ? `class="display:none"` : ""} id="module-delete-btn-${moduleName}-in-semester-${sem}" title="${this.lang == "fr" ? "Supprimer ce module" : "Delete this module"}" data-semester="${sem}" data-module="${moduleName}"${this.editMode? "" : " style=\"display: none\""}>🗑️</button>
                             </div>
                         </div>
                         
@@ -3108,7 +3112,7 @@
                             </div>
                         </div>
                         
-                        </div>
+                    </div>
                     `;
                         
                     return html
@@ -3118,13 +3122,14 @@
                 
                 // MARK: Create Subject Card
                 /** 
-                * Call this method to create all subject cards of a module.
+                * Call this method to create the outer HTML of all subject cards of a module.
                 * 
                 * Detects automatically from the name of the moduleName and from `this.gradesDatas` (as a safe guard, also from `this.moduleConfig`) if the card is classified or unclassified, 
                 * and detects automatically from this.compactSubjCardsId if the card is detailed or compact.
                 * 
                 * @param {number | string} sem Number of the semester of the subject
                 * @param {string} moduleName Name of the subject's module
+                * @return {string} The outer HTML of all the subject cards of a module, in a single string
                 */
                 createAllSubjCards(sem, moduleName) {
                     const moduleData = this.gradesDatas[sem][moduleName];
@@ -3145,7 +3150,7 @@
                     return html;
                 }
                 /** 
-                * Call this method to create a subject card. 
+                * Call this method to create the outer HTML of a subject card. 
                 * 
                 * Detects automatically from the name of the moduleName and from `this.gradesDatas` (to error-proof the moduleName, also from `this.moduleConfig`) if the card is classified or unclassified, 
                 * and detects automatically from this.compactSubjCardsId if the card is detailed or compact.
@@ -3154,6 +3159,7 @@
                 * @param {string} moduleName Name of the subject's module
                 * @param {string} subject Name of the subject
                 * @param {number} [index=-1] Default: -1 — Index of the subject in its module, necessary if the subject is classified, useless if the subject is unclassified
+                * @return {string} The outer HTML of the subject card
                 */
                 createSubjCard(sem, moduleName, subject, index=-1) {
                     const moduleData            = this.gradesDatas[sem][moduleName];
@@ -3225,7 +3231,7 @@
                             </div>
                             <div class="subject-total-coef-div" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}">
                                 <div class="subject-total-coef-value"></div>
-                                <div class="subject-total-coef-debug" ${this.settings.totalCoefDebugTextsEnabled.value ? "" : "hidden"}>${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}</div>
+                                <div class="subject-total-coef-debug" ${this.settings.totalCoefDebugTextsEnabled.value ? "" : "style=\"display: none\""}>${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}</div>
                             </div>
                             <div class="subj-moyenne ${subjAvg == " - " ? '' : `${subjAvg>=10 ? 'good' : 'bad'}`}" style="display: flex; justify-content: flex-end; width: 80px; padding-right: 20px; font-size: 20px">
                                 ${subjAvg}/20
@@ -4104,7 +4110,7 @@
                             document.querySelector(".new-grades-card-title").innerHTML = this.lang == "fr" ? `Pas de nouvelle note` : `No new grade`;
                             document.querySelector(".new-grades-card-title").classList.add("none");
                             document.querySelector(".new-grades-mark-as-read").parentElement.disabled = true;
-                            document.querySelector(".new-grades-mark-as-read").parentElement.hidden = true;
+                            document.querySelector(".new-grades-mark-as-read").parentElement.style.display = "none";
                             document.querySelector(".new-grades-notif").classList.remove("on");
                             setTimeout(() => {document.querySelector(".new-grades-notif").remove();}, 500)
 
@@ -4441,7 +4447,7 @@
 
 
                         helpBtn .classList.add("open");
-                        helpMenu.hidden = false;
+                        helpMenu.style.display = "";
                         clearTimeout(this.timeouts?.openHelpMenu);
                         this.timeouts.openHelpMenu = setTimeout(()=>{helpMenu.classList.add("open");}, 10);
                         docBtn  .tabIndex = "0";
@@ -4460,7 +4466,7 @@
                         helpBtn    .classList.remove("open");
                         helpMenu   .classList.remove("open");
                         clearTimeout(this.timeouts?.openHelpMenu);
-                        this.timeouts.openHelpMenu = setTimeout(()=>{helpMenu.hidden = true;}, 200);
+                        this.timeouts.openHelpMenu = setTimeout(()=>{helpMenu.style.display = "none";}, 200);
                         docBtn     .tabIndex = "-1";
                         tutoBtn    .tabIndex = "-1";
                     }
@@ -4474,12 +4480,12 @@
                             
                             newUserNotifFocus.classList.remove("focus");
                             newUserNotifFocus.style.animationPlayState = "paused";
-                            setTimeout(() => {newUserNotifFullScreen.hidden = true;}, 500);
+                            setTimeout(() => {newUserNotifFullScreen.style.display = "none";}, 500);
 
                             newUserNotif.style.animationPlayState = "paused";
                             newUserNotif.style.top = `${newUserNotif.getBoundingClientRect().top - newUserNotif.getBoundingClientRect().height - 10}px`;
                             newUserNotif.style.opacity = "0%";
-                            setTimeout(() => {newUserNotif.hidden = true}, 300);
+                            setTimeout(() => {newUserNotif.style.display = "none"}, 300);
                             
                             localStorage.setItem("ECAM_DASHBOARD_FIRST_LOAD", false);
                             this.firstLoad = false;
@@ -6877,6 +6883,31 @@
 
     }
 
-    window.onload = () => { new ECAMDashboard(error); };
+    if (error) {
+        document.body.style.background = "#a1a1a1";
+        
+        new ECAMDashboard(error);
+    }
+    else {
+        window.onload = () => { 
+            
+            const greyGridTable = document.querySelector(".greyGridTable");
+            const intranetFold = document.createElement("div");
+            intranetFold.className = "intranet-fold";
+            intranetFold.innerHTML = `
+                <div class="intranet-text">
+                    <div class="intranet-toggle fold-icon">△</div>
+                    <div class="semester-name"> 
+                        <div class="intranet-subtext"></div>
+                    </div>
+                    <div class="intranet-toggle fold-icon">△</div>
+                </div>
+            `;
+            document.querySelector("#currentNote").insertBefore(intranetFold, greyGridTable);
+            greyGridTable.style.display = "none";
+            
+            new ECAMDashboard(error); 
+        };
+    }
     
 })();
