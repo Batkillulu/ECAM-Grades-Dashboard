@@ -828,12 +828,13 @@
 
     //#region
         // Initializing the HTML page before creating the dashboard
-        const error = document.body?.children?.[0]?.tagName == "H1";
+        const styleSheet = document.createElement("style");
+        styleSheet.textContent = styles;
+        document.head.appendChild(styleSheet);
+        
+        const error = window.location.search.match(/redirect/) != null;
 
         if (!error) {
-            const styleSheet = document.createElement("style");
-            styleSheet.textContent = styles;
-            document.head.appendChild(styleSheet);
             
             const greyGridTable = document.querySelector(".greyGridTable");
             const intranetFold = document.createElement("div");
@@ -861,7 +862,7 @@
             this.scriptVersion = "2.2.11";
             this.scriptGitVersion = "2.2.0";
             this.configVersion = 3;
-            this.error = error;
+            this.error = error; // test in error mode at this link: https://espace.ecam.fr/c/portal/login?redirect=%2Fgroup%2Feducation%2Fnotes&p_l_id=0&ticket=ST-113179-sbwjXieT3GLY9T3fXdsmFp9vCro-tomcat03
             this.patchNotes = ``;
 
 
