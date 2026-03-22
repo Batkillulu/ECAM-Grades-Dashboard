@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.2.12
+// @version      2.3.0
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/*
@@ -135,7 +135,7 @@
                         .over-header-btn.how-to-use-btn:hover           { outline-color: white; background: #2888e2; }
                         .over-header-btn.how-to-use-btn.open            { outline-color: white; }
 
-                        .over-header-how-to-use-btns                        { display: flex; justify-content: center; align-items: center; gap: 9px; width: 0; height: 0; position: relative; top: 20px; right: 190px; opacity: 0%; z-index: 6; transition: all 0.2s ease; }
+                        .over-header-how-to-use-btns                        { display: flex; justify-content: flex-end; align-items: center; gap: 9px; width: 0; height: 0; position: relative; top: 20px; right: -70px; opacity: 0%; z-index: 6; transition: all 0.2s ease; }
                         .over-header-how-to-use-btns.open                   { top: 35px; opacity: 100%; }
 
                         .over-header-btn.help                                   { background: #0059ad; outline: 2px solid #c022ff; box-shadow: 5px 7px 6px 0px black; padding: 0px 10px; font-size: 15px; border: none; color: inherit; }
@@ -153,6 +153,12 @@
                         .over-header-btn.help.tuto-btn.fr::before                   { content: "Démarrer tutoriel ▶︎"; }
                         .over-header-btn.help.tuto-btn.en                           { width: 135px; }
                         .over-header-btn.help.tuto-btn.en::before                   { content: "Start tutorial ▶︎"; }
+
+                        .over-header-btn.help.patch-btn                             { font-weight: 700; }
+                        .over-header-btn.help.patch-btn.fr                          { width: 168px; }
+                        .over-header-btn.help.patch-btn.fr::before                  { content: "Voir les notes de patch"; }
+                        .over-header-btn.help.patch-btn.en                          { width: 135px; }
+                        .over-header-btn.help.patch-btn.en::before                  { content: "See patch notes"; }
 
                         .over-header-btn.help.keybinds-btn                          {  }
                         .over-header-btn.help.keybinds-btn.fr                       { width: 180px; }
@@ -239,6 +245,14 @@
             //#endregion
 
 
+            //MARK: path notes
+            styles += `
+
+                .patch-notes-modal-container    { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; position: fixed; left: 0; top: 0; z-index: 1000; }
+                .patch-notes-modal                  { display: flex; padding: 40px 30px; --modal-max-width: 1000px; --modal-max-height: 500px; min-width: 1000px; font-size: 22px; overflow: auto; }
+                .patch-notes-modal-body                 { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; width: 100%; gap: 8px; }
+            `;
+
 
             //MARK: -settings
             styles += `
@@ -251,11 +265,18 @@
                 .settings-row.parent                        { --padding-left: 0px; background: none; }
                 .settings-row.child                         { --padding-left: 5px; margin-left: 20px; padding-left: var(--padding-left); border-left: 1px solid #80808073; border-top: 1px solid #80808073; border-top-left-radius: 15px; }
                 .settings-row.disabled                      { background-position: 0% 100%; opacity: 80%; padding-left: calc(5px + var(--padding-left)); }
-                .settings-text                                  { display: flex; flex-direction: column; gap: 8px; padding: 8px 0px; }
+                .settings-text                                  { display: flex; flex-direction: column; gap: 8px; padding: 13px 0px; }
                 .settings-checkbox                              { zoom: 130%; }
             
             `;
 
+
+            //MARK: keybinds
+            styles += `
+                .keybinds-table-row     { height: var(--row-height); border-top: 1px solid black; }
+                .keybinds-table-cell        { padding: 15px 0px 15px 15px; }
+                .keybinds-table-cell.text       { border-right: 1px solid black; }
+            `;
 
 
             //MARK: help and tutorial
@@ -326,12 +347,12 @@
 
             // MARK: new grades
             styles += `
-                .new-grades-card                { display: flex; flex-direction: column; margin-top: 10px; margin-bottom: 25px; padding: 10px; gap:10px; width: 100%; border-radius: 16px; border: 4px solid #446dff; background: #e3e9ffff; box-shadow: 0px 0px 15px 5px #322bff87; scroll-margin: 105px; transition: box-shadow 0.2s ease}
+                .new-grades-card                { display: flex; flex-direction: column; margin-top: 10px; margin-bottom: 25px; padding: 10px; gap:10px; width: 100%; border-radius: 16px; border: 4px solid #446dff; background: #e3e9ffff; box-shadow: 0px 0px 15px 5px #322bff87; scroll-margin: 105px; transition: box-shadow 0.3s ease}
                 .new-grades-card.myhighlight    { box-shadow: 0px 0px 20px 20px #322bff87; }
                 .new-grades-card.none           { border: 1px solid #446dff; background: #f7f9ffff; box-shadow: none; opacity: 80%; }
                 .new-grades-card-header         { display: flex; justify-content: space-between; align-items: center; margin: 5px 0px; }
                 .new-grades-card-header.none    { justify-content: center; }
-                .new-grades-card-title          { font-size: 20px; font-weight: 800; color: #2A2F72; margin-left: 5px; display:flex; align-items:center }
+                .new-grades-card-title          { font-size: 20px; font-weight: 800; color: #2A2F72; margin-left: 25px; display:flex; align-items:center }
                 .new-grades-card-title.none     { font-size: 18px; font-weight: 700; }
                 .new-grades-content             { display: flex; flex-direction: column; gap: 20px; }
                 .new-grades-subject-card        { display: flex; flex-direction: column; border: 2px solid #c1a7ffff; border-radius: 12px; transition: border 0.3s ease; }
@@ -347,7 +368,8 @@
             styles += `
                 .update-available-notif     { display: flex; align-items: center; justify-content: space-evenly; border-radius: 10px; color: #dafaff; font-weight: 800; font-size: 17px; background: #6554ff; width: 95%; height: 70px; position:fixed; left:2.5%; right:0px; top:-75px; z-index:301; box-shadow: 0 0 5px rgba(0,0,0,0.5); user-select: none; transition: all 0.5s ease; }
                 .update-available-notif.on  { top: 2px }
-                .update-available-notif-header  { display: flex; justify-content: center; width: 80%; font-size: 25px; gap: 15px; }
+                .update-available-notif-header  { display: flex; justify-content: center; align-items: center; width: 80%; font-size: 25px; gap: 15px; }
+                .update-available-notif-text        { display: flex; justify-content: center; align-items: center; }
                 .update-available-notif-patch-notes { display: flex; justify-content: center; align-items: center; padding: 5px; border: 2px solid; border-radius: 20px; }
                 .update-available-notif-btns    { display: flex; justify-content: space-between; align-items: center; flex-direction: row; width: 20%; }
                 .update-btn                     { display: flex; justify-content: center; align-items: center; border: 2px solid; border-radius: 14px; width: 80%; height: 30px; padding: 5px 15px; cursor:pointer; background: #007cffff; transition: all 0.3s ease; text-decoration: none; outline: none; color: inherit; }
@@ -456,9 +478,9 @@
             // MARK: drop insert fields
             styles += `
 
-                .drop-field.insert-field.module                      { justify-content: flex-start; height: 0px; width: 98%; color: #9b9b9b00; border: 2px dashed #9b9b9b00; background: #bdb8ff00; font-size: 25px; font-weight: 800; user-select: none; margin: -12px 0px; transition: all 0.2s ease; }
-                .drop-field.insert-field.module.show                 { color: #9b9b9bff; border-color: #9b9b9bff; opacity: 50%; border-width: 2px 0px; border-radius: 0px;   height: 50px; background: #bdb8ff3d; margin: 0px; }
-                .drop-field.insert-field.module.show.hover           { color: #887bffff; border-color: #7fc2ffff; opacity: 100%;   border-width: 2px 2px; border-radius: 20px; }
+                .drop-field.insert-field.module                      { justify-content: flex-start; height: 0px; width: 98%; color: #9b9b9b00; border: 2px dashed #9b9b9b00; background: #bdb8ff00; font-size: 25px; font-weight: 800; user-select: none; margin: -14px 0px; transition: all 0.2s ease; }
+                .drop-field.insert-field.module.show                 { color: #9b9b9bff; border-color: #9b9b9bff; opacity: 50%;  border-width: 2px 0px; border-radius: 0px;   height: 50px; background: #bdb8ff3d; margin: 0px; }
+                .drop-field.insert-field.module.show.hover           { color: #887bffff; border-color: #7fc2ffff; opacity: 100%; border-width: 2px 2px; border-radius: 20px; }
 
                 .drop-field.insert-field.subject                 { justify-content: flex-start; height: 0px; width: 98%; color: #9b9b9b00; border: 2px dashed #9b9b9b00; background: #bdb8ff00; font-size: 25px; font-weight: 800; user-select: none; margin: -6px 0px; transition: all 0.2s ease; }
                 .drop-field.insert-field.subject.show            { color: #9b9b9bff; border-color: #9b9b9b54; opacity: 50%; border-width: 2px 0px; border-radius: 0px;  height: 30px; background: #bdb8ff1a; margin: 0px; }
@@ -600,14 +622,14 @@
             // MARK: -MODULE CARDS
             styles += `
 
-                .module-card                { display: flex; flex-direction: column; align-items: center; width: 100%; background: #fafafa; border-radius: 25px; border: 3px solid #e5e5e5; scroll-margin: 70px; overflow: clip; transition: border-radius 0.2s ease, margin 0.2s ease, height 0.2s ease; }
-                .module-card.fold           { border-radius: 25px; border-width: 0px; }
+                .module-card                { display: flex; flex-direction: column; align-items: center; width: 100%; background: #fafafa; border-radius: 25px; border: 3px solid #e5e5e5; scroll-margin: 70px; overflow: clip; transition: all 0.1s ease; }
+                .module-card.fold           { border-radius: 25px; }
                 .module-card.validated      { border-color: #10b981ff; background: radial-gradient(transparent 0%, #f0fdf4ff 75%); }
                 .module-card.failed         { border-color: #ef4444ff; background: radial-gradient(transparent 0%, #fef2f2ff 75%); }
                 .module-card.unknown        { border-color: #6d6d6dff; background: radial-gradient(transparent 0%, #d1d1d1ff 75%); }
 
-                .module-header                  { display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 18px 20px; border-bottom: 3px solid #e5e5e5; border-radius: 22px 22px 0px 0px; width: 100%; min-height: 80px; cursor: pointer; z-index: 1; transition: border-bottom-right-radius 0.3s ease, border-bottom-left-radius 0.3s ease, border-color 0.3s ease, opacity 0.3s ease, filter 0.3s ease; }
-                .module-header.fold             { border-width: 3px; border-style: solid; border-radius: 25px; }
+                .module-header                  { display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 18px 20px; border-bottom: 3px solid #e5e5e5; border-radius: 22px 22px 0px 0px; width: 100%; min-height: 80px; max-height: 80px; cursor: pointer; z-index: 1; transition: all 0.1s ease; }
+                .module-header.fold             { border-radius: 25px; }
                 .module-header.validated        { border-color: #10b981ff; background: linear-gradient(300deg, #e0ffeaff 30%, transparent); }
                 .module-header.failed           { border-color: #ef4444ff; background: linear-gradient(300deg, #ffd9d9ff 30%, transparent); }
                 .module-header.unknown          { border-color: #6d6d6dff; background: linear-gradient(300deg, #acacacff 30%, transparent); }
@@ -621,7 +643,7 @@
                 .module-subject-total-coef-debug { display: flex; text-align: left; font-size: 13px; }
 
 
-                .module-card-content            { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; gap: 0px; margin: 8px 0px 18px 0px; opacity: 100%; transition: all 0.2s ease; }
+                .module-card-content            { display: flex; flex-direction: column; width: 100%; align-items: center; gap: 0px; margin: 8px 0px 18px 0px; opacity: 100%; transition: all 0.2s ease; }
                 .module-card-content.edit-mode  { gap: 1% }
 
                 .module-info                        { display: flex; flex-direction: row; justify-content: space-around; align-items: center; width:97%; min-height: 36px; background: #eef2ff00; border:1px solid #c7d2fe00; padding: 0px 8px 3px 8px; border-radius: 0px 0px 8px 8px; margin-top: -1px; opacity: 100%; transition: all 0.2s ease; }
@@ -659,9 +681,9 @@
             //#region -SUBJECT CARDS
                 styles += `
 
-                    .subject-card               { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; border-radius: 20px; outline: 4px solid #ffffffff; opacity: 100%; overflow: clip; transition: all 0.2s ease; }
+                    .subject-card               { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; border-radius: 20px; border: 4px solid #ffffffff; opacity: 100%; overflow: clip; transition: all 0.1s ease; }
                     .subject-card.detailed      { }
-                    .subject-card.compact       { height: 60px; }
+                    .subject-card.compact       { height: 68px; }
 
                     .subject-card.good                  { box-shadow: 0px 0px 0px 0px  #39ff8f; background: linear-gradient(300deg, #f0fdf4 30%, transparent); }
                     .subject-card.good:hover            { box-shadow: 0px 0px 13px 5px #39ff8f; }
@@ -672,12 +694,13 @@
                     .subject-card.unknown               { box-shadow: 0px 0px 0px 0px  #6d6d6d; background: linear-gradient(300deg, #c5c5c5 30%, transparent); }
                     .subject-card.unknown:hover         { box-shadow: 0px 0px 13px 5px #6d6d6d; }
                     
-                    .subject-card-header        { display: flex; flex-direction: row; justify-content: space-between; align-items: center; width: 100%; min-height: 64px; border-radius: 20px 20px 0px 0px; border-bottom: 4px solid white; padding: 5px 0px; font-weight:700; font-size: 15px; vertical-align: top; cursor: pointer; }
+                    .subject-card-header        { display: flex; flex-direction: row; justify-content: space-between; align-items: center; width: 100%; min-height: 64px; border-radius: 20px 20px 0px 0px; border-bottom: 4px solid white; padding: 5px 0px; font-weight:700; font-size: 15px; vertical-align: top; cursor: pointer; transition: all 0.1s ease; }
                     .subject-card-header.compact    { border-radius: 20px; border-bottom: none; padding: 5px 0px 7px 0px; }
                     .subject-card-header.good       { background: linear-gradient(300deg, #e3ffeb 30%, transparent); }
                     .subject-card-header.meh        { background: linear-gradient(300deg, #ffe8d0 30%, transparent); }
                     .subject-card-header.bad        { background: linear-gradient(300deg, #ffe0e0 30%, transparent); }
                     .subject-card-header.unknown    { background: linear-gradient(300deg, #b8b8b8 30%, transparent); }
+                    .subject-card-header.fold       { border-radius: 20px; }
                     .subject-name                   { font-weight: 800; color: #1a1a1a; font-size: 14px }
                     .subject-name.input             { font-weight: 800; color: #1a1a1a; font-size: 14px; border: 2px solid #797979; border-radius: 15px; padding-left: 8px; width: 100%; height: 25px;}
                     .subject-coef-input-box         { padding-left: 5px; width: 48px; border-radius: 8px; }
@@ -787,9 +810,10 @@
 
             @keyframes fadeIn   { from { opacity: 0%; transform: translateY(10px); } to { opacity: 100%; transform: translateY(0); } }
             .fade-in            { animation: fadeIn 0.3s ease; }
-            @keyframes scrollTo { 15% {transform: scale(100%);} 100% {transform: scale(105%); outline-color: #5f77ff} }
+            @keyframes scrollTo { 15% {transform: scale(100%);} 100% {transform: scale(102%); outline-color: #5f77ff; border-color: #5f77ff} }
             .scroll-to          { animation: 0.3s 2 alternate scrollTo ease }
         `;
+
 
 
         //#region -Highest instance styles
@@ -892,12 +916,18 @@
     class ECAMDashboard {
 
         constructor(error) {
+            this.ecamDash = document.createElement("div");
+
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.2.12";
-            this.scriptGitVersion = "2.2.0";
+            this.scriptVersion = "2.3.0";
+            this.scriptGitVersion = "1.0.0";
             this.configVersion = 3;
             this.error = error; // test in error mode at this link: https://espace.ecam.fr/c/portal/login?redirect=%2Fgroup%2Feducation%2Fnotes&p_l_id=0&ticket=ST-113179-sbwjXieT3GLY9T3fXdsmFp9vCro-tomcat03
-            this.patchNotes = ``;
+            this.patchNotes = `
+            - Settings
+            - Keyboard shortcuts
+            - Improved animations and performances
+            `;
 
 
             //#region Settings
@@ -940,13 +970,11 @@
                         ,
                         value: JSON.parse( JSON.parse(localStorage.getItem("ECAM_DASHBOARD_SETTINGS"))?.totalCoefValuesEnabled?.value?.toString() || "true"),
                         action: () => {
-                            document.querySelectorAll(".module-subject-total-coef-div, .subject-total-coef-div").forEach(elem => {if (this.settings.totalCoefValuesEnabled.value) {elem.style.display = "";} else {elem.style.display = "none";}});
+                            document.querySelectorAll(".module-subject-total-coef-value, .subject-total-coef-value").forEach(elem => {if (this.settings.totalCoefValuesEnabled.value) {elem.style.display = "";} else {elem.style.display = "none";}});
                             this.saveSettings();
                         },
                         parents:  [],
-                        children: [
-                            {childName: "totalCoefDebugTextsEnabled", controlType: "total"}
-                        ],
+                        children: [],
                     },
 
                     totalCoefDebugTextsEnabled: {
@@ -967,12 +995,36 @@
                             document.querySelectorAll(".module-subject-total-coef-debug, .subject-total-coef-debug").forEach(elem => {if (this.settings.totalCoefDebugTextsEnabled.value) {elem.style.display = "";} else {elem.style.display = "none";}});
                             this.saveSettings();
                         },
-                        parents: [
-                            {parentName: "totalCoefValuesEnabled", controlType: "total"}
-                        ],
+                        parents: [],
                         children: [],
                     },
                 };
+                this.keybinds = [
+                    {
+                        text: () => {return this.lang == "fr" ? "Fermer la fenêtre" : "Close the window"}, 
+                        keys: () => {return this.lang == "fr" ? "Échap" : "Escape"},
+                    },
+                    {
+                        text: () => {return this.lang == "fr" ? "Plier/Déplier tous les modules (basculer)" : "Fold/Unfold all modules (toggle)"}, 
+                        keys: () => {return this.lang == "fr" ? "Maj + F" : "Shift + F"},
+                    },
+                    {
+                        text: () => {return this.lang == "fr" ? "Vue détaillée/compacte pour toutes les matières (basculer)" : "Detailed/Compact view all subjects (toggle)"}, 
+                        keys: () => {return this.lang == "fr" ? "Maj + D" : "Shift + D"},
+                    },
+                    {
+                        text: () => {return this.lang == "fr" ? "Mode édition (basculer)" : "Edit mode (toggle)"}, 
+                        keys: () => {return this.lang == "fr" ? "Maj + E" : "Shift + E"},
+                    },
+                    {
+                        text: () => {return this.lang == "fr" ? "Langue français/anglais (basculer)" : "Language French/English (toggle)"}, 
+                        keys: () => {return this.lang == "fr" ? "Maj + L" : "Shift + L"},
+                    },
+                    {
+                        text: () => {return this.lang == "fr" ? "Changer de semestre (cycle)" : "Change semester (cycle)"}, 
+                        keys: () => {return this.lang == "fr" ? "Maj + ←/→" : "Shift + ←/→"},
+                    },
+                ];
                 this.settingsDependency = [];
 
                 this.moduleConfig           = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_MODULE_CONFIG"))                 || {};
@@ -987,7 +1039,7 @@
                 this.dateHour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
                 this.dateTimeOfLastUpdateCheck          = localStorage.getItem("ECAM_DASHBOARD_DATE_TIME_OF_LAST_UPDATE_CHECK") || "2000-00-00T00:00:00Z"; // A day before the date of last update, so that the update check is ran to make sure the correct version is installed
                 this.checkForUpdate                     = localStorage.getItem("ECAM_DASHBOARD_CHECK_FOR_UPDATE")               || false;
-                this.firstLoad              = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_FIRST_LOAD")                     || "true");
+                this.firstLoad              = false /* JSON.parse( localStorage.getItem("ECAM_DASHBOARD_FIRST_LOAD")                     || "true") */;
                 
             //#endregion
 
@@ -1111,9 +1163,6 @@
             // Activate the general keyboard events
             this.generalKeyboardEvents("general");
 
-            // Create the new grades notification and its associated new grades table if at least one new grade is detected
-            this.createNewGradesNotifDiv();
-
             // Now that all the datas are acquired, create the dashboard
             this.createDashboard();
 
@@ -1133,7 +1182,11 @@
 
             //#region Save to cache
 
-                saveSettings() { localStorage.setItem("ECAM_DASHBOARD_SETTINGS", JSON.stringify(this.settings, (key, value) => {if (key!="description" && key!="name" && key != "info") {return value}})); }
+                saveSettings() { 
+                    localStorage.setItem("ECAM_DASHBOARD_SETTINGS", JSON.stringify(this.settings, (key, value) => {
+                        if (key!="description" && key!="name" && key != "info") {return value}
+                    })); 
+                }
 
                 /** Save the module configuration in the cache */
                 saveConfig() { localStorage.setItem('ECAM_DASHBOARD_MODULE_CONFIG', JSON.stringify(this.moduleConfig)); }
@@ -1249,7 +1302,7 @@
 
 
                 // MARK: Set total coefs
-                setGradesTableTotalCoef(container=document) {
+                setGradesTableTotalCoef(container=document.body) {
                     const good="#10b981", meh="#e98c00", bad="#e90000", unknown="#7a7a7a";
 
                     container.querySelectorAll(".module-subject-total-coef-div").forEach(totalCoefDiv => {
@@ -1940,10 +1993,10 @@
                 */
                 scrollToClientHighestElem(priority="first", ...{className= "subject-card", id="", margin=this.editMode ? 100 : 25, timeout=20, smooth=false, highestElemInPageHandleType="none", block="start"}) {
                     const defaultTargetElementDatas = [
-                        {className: "modules-section",         margin: 20,                        highestElemInPageHandleType:"partial"}, 
-                        {className: "module-card",             margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"above"},
-                        {className: "unclassified-section",    margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"partial"},
-                        {className: "subject-card",            margin: 10,                        highestElemInPageHandleType:"above"},
+                        {className: "modules-section",      margin: 20,                        highestElemInPageHandleType:"partial"}, 
+                        {className: "module-card",          margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"above"},
+                        {className: "unclassified-section", margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"partial"},
+                        {className: "subject-card",         margin: 10,                        highestElemInPageHandleType:"above"},
                     ];
 
                     // Error-proof for different invalid arguments inputs (no arguments given, targetElementData object give instead of priority, invalid targetElementData objects passed, priority given at the wrong spot...)
@@ -2494,9 +2547,10 @@
                 updateAvailableNotif.id = "updateAvailableNotif";
                 updateAvailableNotif.innerHTML = `
                     <div class="update-available-notif-header">
-                        <span>${this.lang == "fr" ? "NOUVELLE MISE À JOUR DU TABLEAU DE BORD DISPONIBLE ! v" + this.scriptVersion + " → v"+this.scriptGitVersion : "NEW DASHBOARD UPDATE AVAILABLE! v" + this.scriptVersion + " → v"+this.scriptGitVersion}</span>
-                        <div class="update-available-notif-patch-notes">${this.lang == "fr" ? "Voir notes de patch" : "See patch notes"}</div>
-                    </div>
+                        <div class="update-available-notif-text">${this.lang == "fr" ? "NOUVELLE MISE À JOUR DU TABLEAU DE BORD DISPONIBLE ! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".") : "NEW DASHBOARD UPDATE AVAILABLE! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".")}</div>
+                        ${/* `<div class="update-available-notif-patch-notes">${this.lang == "fr" ? "Voir notes de patch" : "See patch notes"}</div>` +  */""}
+                    </div>`;
+                updateAvailableNotif.innerHTML += `
                     <div class="update-available-notif-btns">
                         <div style="display: flex; justify-content: center; width: 50%">
                             <a class="update-btn" id="updateBtn" href="${this.repoScriptRaw}" target="_blank">${this.lang == "fr" ? "INSTALLER" : "INSTALL"}</a>
@@ -2507,8 +2561,12 @@
                     </div>
                 `;
 
-                document.querySelector(".ecam-dash").insertBefore(updateAvailableNotif, document.querySelector(".dash-header"));
+                this.ecamDash.insertBefore(updateAvailableNotif, document.querySelector(".dash-header"));
                 setTimeout(() => {updateAvailableNotif.classList.add("on")}, 300);
+
+                // updateAvailableNotif.querySelector(".update-available-notif-patch-notes").onclick = () => {
+                //     this.openPatchNotes();
+                // }
 
                 updateAvailableNotif.querySelector(".dismiss-update-btn").onclick = () => {
                     updateAvailableNotif.classList.remove("on");
@@ -2548,11 +2606,10 @@
 
                 // MARK: createDashboard
                 createDashboard() {
-                    const ecamDash = document.createElement("div");
-                    ecamDash.className = "ecam-dash";
+                    this.ecamDash.className = "ecam-dash";
                     if (this.error) {
-                        ecamDash.style.width = "94%";
-                        ecamDash.style.margin = "40px 3% 30px";
+                        this.ecamDash.style.width = "94%";
+                        this.ecamDash.style.margin = "40px 3% 30px";
                     }
                     const moyenneGenerale = this.moyennePonderee(this.grades);
                     const totalGrades = this.grades.length;
@@ -2564,7 +2621,7 @@
                     // Creating the content of the dashboard that doesn't vary along with the user's actions besides the language selection.
                     // Therefore, besides the text that doesn't vary with the language, the text isn't yet created, 
                     // but will be in the generateContent() method later on, to regenerate the text in case the language is changed
-                    ecamDash.innerHTML = `
+                    this.ecamDash.innerHTML = `
                     ${this.error ? `
                     <div class="offline-mode-title">OFFLINE</div>
                     <div class="offline-mode-subtitle jura"></div>
@@ -2597,7 +2654,7 @@
                             <div class="over-header-how-to-use-btns" style="display: none">
                                 <a   class="over-header-btn help doc-btn fr"  href="${this.repoReadMeHowToUse}" target="_blank" >${this.createExternalLinkSymbol("white", 16, [0,0,0,4])}</a>
                                 <div class="over-header-btn help keybinds-btn fr"></div>
-                                <div class="over-header-btn help tuto-btn fr"></div>
+                                ${/* `<div class="over-header-btn help tuto-btn fr"></div>` + */ ""}
                             </div>
                         </div>
 
@@ -2611,7 +2668,7 @@
                             <div style="margin: 30px 0px 0px 0px;">
                                 <div class="dash-title"></div>
                                 <div class="dash-subtitle jura"></div>
-                                <div style="display: flex; gap: 2px">
+                                <div style="display: flex; gap: 2px; user-select: none;">
                                     <div class="lang-btn active" id="fr-lang-btn">
                                         <img style="display: flex; margin: 6px 0px 0px 6px; width:20px; height:20px" alt="🇫🇷" src="${`
                                             data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAACTUExURUdwTAAkjM7Pzs7OzrMGE74QIMPEx4hTeAAkjQARewAagbIFEgAfhc3NzdDQ0M7PzrYMG8zMzbcMG8EXKcUbLQAMd7UKGLUKGMMWJ7OhrcMVJv///+oPIO4bLgAmoOwWKAAZmQArpO8iNgAfnQATlAIyqLUGFAEoksUSIwAYhgANePnCyMbO6djY2NUWJ+7u7sCep4f8c74AAAAbdFJOUwDL+z19ffsVe3qU1jy51pA+bLyNc+Vrnu+m2KjIWToAAALxSURBVFjD7djJcuIwEIDhAAMOxuwTCAnyKgxOxg7v/3SjtraWDJKTUw60K1Vc+OqX5APK09NjHvOLJxDz3a+t9Mcoeg7DgZrDcrkejUZBL2X7NuYfo4gRZ2MmNZvhYjEHz1EYrHab18tl3LaEEonFnOPT5KtWM1zMhReY27DabUG5ABQ8cyXLTnIy9pz+vcN8seFWPRxC32G7Hf+FGW/3m7fXVmkagJ5NpGXYCOjd5Or6ejGmaRpCctJw6HTqOgaEvM8GT07ynP0RXhTbSqcIzWduDWOIgHBRJqmeELkJtQB34v4QUUs7o8MSC4t7FYECkF2UKYW9Sb2KRI8FqVWB06OI4KJSQRnuyXoUiW0mHUj2iPFAJEdOoiGVE/OV+SCxqLxTpI+LT+GGcE8Cj4AypAiqcEDyrPTSFHSS25zxnMIH6W2GnsQsitVGM8sBEf36AAOOASkDHg+EcuyiWLw+TAHGCdk5EqrOKqhQjgfCJ8ahPxxCx1W0K0tdUG4qCJKrAoMXpd4i7BwFpM+rkJNmbijh7w+xIHRanPFAiXx/khuQ7mFM6i9CzFFAlQiSDHPcRQneoCM8uqhA29NOfB/Sr48MUkWF3uY0bVfmgqyF6aIKHVcqgpxFMETlGHtkrMoDdXKYVMqlqRxhUReUmBuNiro9KXVCcllcOaoiq4emlPaAOJMoaCogHdNSXgg7GEqRRL1FR709FqRzKO0PdYt0D6X+IrWqTlGnh9LzPYgk1rIQlKogqqj70NHYZgR9VN0eJ2Ttj1GkT6udygN1BhVR/vQp6m6RUYRzfl5k1lSeItfSOFBVH3KqCfw8vwPZTRddhAgx1+GE3T6GdW2CN4oYU5Y7gITy8jIIwymfMDzM54tJOy1XC86E2G0GlHKzCxjUIoNwGtmXqGA0Wi+X0uPgVd1DhFGWs/0KvjgFhSGOyyl4su9aGjPbcAWglzDqdd9k99L1ennYzMRs9tvdaqW/GkXfvAbL+/NT8PhXwmN+7/wHgdqiCaxyTNQAAAAASUVORK5CYII=
@@ -2626,7 +2683,7 @@
                             </div>
                         </div>
                         
-                        <div class="header-actions jura" style="display:flex; align-items:center">
+                        <div class="header-actions jura" style="display:flex; align-items:center; user-select: none;">
 
                             <button class="btn btn-edit-mode ${this.editMode ? "on" : "off"}" id="editModeBtn"></button>
                             <div style="display: flex; flex-direction: column;">
@@ -2722,13 +2779,16 @@
 
                     const intranetFold = document.querySelector(".intranet-fold");
                     if (intranetFold) {
-                        intranetFold.parentNode.insertBefore(ecamDash, intranetFold);
+                        intranetFold.parentNode.insertBefore(this.ecamDash, intranetFold);
                     }
                     else {
                         Object.values(document.body.children).forEach(child => {child.remove()});
-                        document.body.appendChild(ecamDash);
+                        document.body.appendChild(this.ecamDash);
                     }
-                    ecamDash.insertBefore(notifContainer, ecamDash.querySelector("dash-header"));
+                    this.ecamDash.insertBefore(notifContainer, this.ecamDash.querySelector("dash-header"));
+
+                    // Create the new grades notification and its associated new grades table if at least one new grade is detected
+                    this.createNewGradesNotifDiv();
 
                     if (this.error) {
                         setTimeout(() => {
@@ -2782,7 +2842,7 @@
 
                     const helpMenu          = document.querySelector(".over-header-btn.how-to-use-btn");
                     const docBtn            = document.querySelector(".over-header-btn.doc-btn");
-                    const tutoBtn           = document.querySelector(".over-header-btn.tuto-btn");
+                    // const tutoBtn           = document.querySelector(".over-header-btn.tuto-btn");
                     const keybindsBtn       = document.querySelector(".over-header-btn.keybinds-btn");
 
                     const settingsBtn       = document.querySelector(".over-header-btn.settings-btn");
@@ -2799,7 +2859,7 @@
 
                         helpMenu        .title     = "Comment s'en servir?";
                         docBtn          .title     = "Aller vers la documentation";
-                        tutoBtn         .title     = "Démarrer le tutoriel";
+                        // tutoBtn         .title     = "Démarrer le tutoriel";
                         keybindsBtn     .title     = "Voir les raccourcis clavier";
 
                         settingsBtn     .title     = "Ouvrir les paramètres";
@@ -2820,7 +2880,7 @@
                         reportIssue.classList.replace("en", "fr");
 
                         docBtn     .classList.replace("en", "fr");
-                        tutoBtn    .classList.replace("en", "fr");
+                        // tutoBtn    .classList.replace("en", "fr");
                         keybindsBtn.classList.replace("en", "fr");
                     }
                     else {
@@ -2832,7 +2892,7 @@
 
                         helpMenu        .title     = "How to use?";
                         docBtn          .title     = "Go to the documentation";
-                        tutoBtn         .title     = "Start the tutorial";
+                        // tutoBtn         .title     = "Start the tutorial";
                         keybindsBtn     .title     = "See the keyboard shortcuts";
 
                         settingsBtn     .title     = "Open the settings";
@@ -2853,7 +2913,7 @@
                         reportIssue.classList.replace("fr", "en");
 
                         docBtn     .classList.replace("fr", "en");
-                        tutoBtn    .classList.replace("fr", "en");
+                        // tutoBtn    .classList.replace("fr", "en");
                         keybindsBtn.classList.replace("fr", "en");
                     }
                     
@@ -2863,7 +2923,7 @@
 
                     const settingsModal = document.querySelector("#settingsModal");
                     const settingsModalBody = document.querySelector("#settingsModalBody");
-                    if (settingsModal) { if (settingsModalBody) {settingsModalBody.remove()} this.appendAllSettingsRow(); }
+                    if (settingsModal) { if (settingsModalBody) {settingsModalBody.remove()} this.appendSettingsModalBody(); }
 
                     
                     
@@ -2942,7 +3002,7 @@
 
                     const updateNotif = document.querySelector(".update-available-notif-header");
                     if (updateNotif) {
-                        updateNotif.innerHTML = this.lang == "fr" ? "NOUVELLE MISE À JOUR DU TABLEAU DE BORD DISPONIBLE ! → v"+this.scriptVersion : "NEW DASHBOARD UPDATE AVAILABLE! → v"+this.scriptVersion;
+                        updateNotif.querySelector(".update-available-notif-text").innerHTML = this.lang == "fr" ? "NOUVELLE MISE À JOUR DU TABLEAU DE BORD DISPONIBLE ! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".") : "NEW DASHBOARD UPDATE AVAILABLE! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".");
                         updateNotif.querySelector(".update-available-notif-btns").children[0].innerHTML = this.lang == "fr" ? "INSTALLER" : "INSTALL";
                         updateNotif.querySelector(".update-available-notif-btns").children[1].innerHTML = this.lang == "fr" ? "Ignorer" : "Ignore";
                         updateNotif.querySelector(".update-available-notif-btns").children[1].title     = this.lang == "fr" ? "Ignorer pour aujourd'hui" : "Ignore for today";
@@ -2970,10 +3030,10 @@
                     })
 
                     if (fadeIn) {
-                        document.querySelector(".ecam-dash").parentElement.classList.add("fade-in");
+                        this.ecamDash.parentElement.classList.add("fade-in");
 
                         clearTimeout(this?.timeouts?.renderFadeIn);
-                        this.timeouts.renderFadeIn = setTimeout(() => {document.querySelector(".ecam-dash").parentElement.classList.remove("fade-in")}, 300);
+                        this.timeouts.renderFadeIn = setTimeout(() => {this.ecamDash.parentElement.classList.remove("fade-in")}, 300);
                     }
                 }
 
@@ -2986,8 +3046,10 @@
                     if (!newGradesNotif) {
                         newGradesNotif = document.createElement("div");
                         newGradesNotif.className = "new-grades-notif";
-                        document.body.appendChild(newGradesNotif);
-                        setTimeout(() => {if (this.newGrades.length > 0) {document.querySelector(".new-grades-notif").classList.add("on")}}, 10)
+                        this.ecamDash.appendChild(newGradesNotif);
+                        setTimeout(() => {if (this.newGrades.length > 0) {
+                            document.querySelector(".new-grades-notif").classList.add("on")
+                        }}, 1)
                     }
 
                     newGradesNotif.innerHTML = this.lang == "fr" 
@@ -3275,7 +3337,7 @@
                     
                     let html = `
                     <div class="subject-card ${classified ? "classified" : "unclassified"} ${detailed ? "detailed" : "compact"} ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" id="subject-card-semester-${sem}-subject-${subject}" ${this.editMode ? `style="cursor: grab; user-select: none;"` : ""} data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
-                        <div class="subject-card-header${detailed ? "" : " compact"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`} ${classified ? "classified" : "unclassified"}" ${this.editMode ? `style="cursor: grab;" draggable="true"` : `${nbGrades > 0 ? `` : `style="border-radius: 20px; border: none"`}`} data-module="${moduleName}">
+                        <div class="subject-card-header${detailed ? "" : " compact"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`} ${classified ? "classified" : "unclassified"}" ${this.editMode ? `style="cursor: grab;" draggable="true"` : ``} data-module="${moduleName}">
                             <div style="display:flex; align-items:center; gap:8px; padding-left: ${this.editMode ? "11px" : "53px"}; width:38.8%; min-width: 275px">
                                 ${this.editMode
                                     ? `<div style="margin: 0px 5px; margin-bottom: 3px;">
@@ -3454,27 +3516,6 @@
                     return html;
                 }
 
-                foldSubjCard(subjCard) {
-                    subjCard.style.height = subjCard.clientHeight;
-                    subjCard.classList.replace("detailed", "compact");
-                    setTimeout(() => {
-                        subjCard.style.height = "";
-                        debugger;
-                    }, 1);
-                    
-                    this.compactSubjCardsId.push(subjCard.id);
-                    this.compactSubjCardsClientHeight.push(subjCard.clientHeight);
-                }
-
-                unfoldSubjCard(subjCard) {
-                    subjCard.style.height = this.compactSubjCardsClientHeight[this.compactSubjCardsId.indexOf(subjCard.id)];
-                    subjCard.classList.replace("compact", "detailed");
-
-                    this.compactSubjCardsId.splice(this.compactSubjCardsId.indexOf(subjCard.id), 1);
-                    this.compactSubjCardsClientHeight.splice(this.compactSubjCardsId.indexOf(subjCard.id), 1);
-                    debugger;
-                }
-
             //#endregion
 
 
@@ -3590,6 +3631,7 @@
                     const closeModalIcon   = closeModalIconContainer.querySelector(`.modal-close-btn`);
                     const closeModalCross  = closeModalIcon.querySelector(".modal-close-btn-cross");
                     const closeModalCircle = closeModalIcon.querySelector(".modal-close-btn-circle");
+
                     closeModalIcon.onmouseenter = () => {
                         closeModalIconContainer .classList.add("hover");
                         closeModalIcon          .classList.add("hover");
@@ -3613,7 +3655,20 @@
 
             //#region -Modals
 
-                appendKeyboardShortcutsList(container=document.querySelector("#keyboardShortcutListModal")) {
+                appendPatchNotesBody(container=document.querySelector("#patchNotesModal")) {
+                    if (container instanceof HTMLElement) {
+                        const patchNotesModalBody = document.createElement("div");
+                        patchNotesModalBody.className = "patch-notes-modal-body";
+                        patchNotesModalBody.id = "patchNotesModalBody";
+                        this.patchNotes.split(/\n\s*-\s*|-\s*/).filter(value => value != "").forEach(feature => {
+                            patchNotesModalBody.innerHTML += `<div class="patch-notes-feature">○ ${feature}</div>`;
+                        })
+
+                        container.appendChild(patchNotesModalBody);
+                    }
+                }
+
+                appendKeyboardShortcutsList(container=document.querySelector("#keyboardShortcutListModalBody")) {
                     if (container instanceof HTMLElement) {
                         let html = `
                         <table style="font-size: 20px; --row-height: 30px;">
@@ -3624,66 +3679,16 @@
                             </thead>
                             <tbody>
                         `;
-                        //#region
-                        html += `
-                                <tr style="height: var(--row-height); border-bottom: 1px solid black;">
-                                    <td style="padding-left: 15px; border-right: 1px solid black;">
-                                        ${this.lang == "fr" ? "Plier/Déplier tous les modules (basculer)" : "Fold/Unfold all modules (toggle)"}
-                                    </td>
-                                    <td style="padding-left: 15px">
-                                        ${this.lang == "fr" ? "Maj + F" : "Shift + F"}
-                                    </td>
+
+                        this.keybinds.forEach((keybind, _index) => {
+                            html += `
+                                <tr class="keybinds-table-row" ${_index == 0 ? `style="border: none;"` : ``}>
+                                    <td class="keybinds-table-cell text">${keybind.text()}</td>
+                                    <td class="keybinds-table-cell keys">${keybind.keys()}</td>
                                 </tr>
-                        `;
-                        
-                        html += `
-        
-                                <tr style="height: var(--row-height); border-bottom: 1px solid black;">
-                                    <td style="padding-left: 15px; border-right: 1px solid black;">
-                                        ${this.lang == "fr" ? "Vue détaillée/compacte pour toutes les matières (basculer)" : "Detailed/Compact view all subjects (toggle)"}
-                                    </td>
-                                    <td style="padding-left: 15px">
-                                        ${this.lang == "fr" ? "Maj + D" : "Shift + D"}
-                                    </td>
-                                </tr>
-                        `;
-                        
-                        html += `
-        
-                                <tr style="height: var(--row-height); border-bottom: 1px solid black;">
-                                    <td style="padding-left: 15px; border-right: 1px solid black;">
-                                        ${this.lang == "fr" ? "Mode édition (basculer)" : "Edit mode (toggle)"}
-                                    </td>
-                                    <td style="padding-left: 15px">
-                                        ${this.lang == "fr" ? "Maj + E" : "Shift + E"}
-                                    </td>
-                                </tr>
-                        `;
-                        
-                        html += `
-        
-                                <tr style="height: var(--row-height); border-bottom: 1px solid black;">
-                                    <td style="padding-left: 15px; border-right: 1px solid black;">
-                                        ${this.lang == "fr" ? "Langue français/anglais (basculer)" : "Language French/English (toggle)"}
-                                    </td>
-                                    <td style="padding-left: 15px">
-                                        ${this.lang == "fr" ? "Maj + L" : "Shift + L"}
-                                    </td>
-                                </tr>
-                        `;
-                        
-                        html += `
-        
-                                <tr style="height: var(--row-height);">
-                                    <td style="padding-left: 15px; border-right: 1px solid black;">
-                                        ${this.lang == "fr" ? "Changer de semestre (cycle)" : "Change semester (cycle)"}
-                                    </td>
-                                    <td style="padding-left: 15px">
-                                        ${this.lang == "fr" ? "Maj + ←/→" : "Shift + ←/→"}
-                                    </td>
-                                </tr>
-                        `;
-                        //#endregion
+                            `;
+                        })
+
                         html += `
                             </tbody>
                         </table>
@@ -3693,7 +3698,7 @@
                     }
                 }
 
-                appendFullScreenNotif(container=document.body /* document.querySelector(".ecam-dash") */, text) {
+                appendFullScreenNotif(container=document.body, text) {
                     if (!text) {
                         text = this.lang == "fr" 
                             ? `<div>Clique sur l'écran pour rafraichir la page et appliquer la mise à jour !</div><div>Utilisateurs de MAC, copiez le script qui s'est ouvert et collez-le dans votre extension à la place de l'ancien script</div>`
@@ -3723,7 +3728,7 @@
                     newFullScreenNotif.onclick = () => {window.location.reload();};
                 }
 
-                appendAllSettingsRow(container=document.querySelector("#settingsModal")) {
+                appendSettingsModalBody(container=document.querySelector("#settingsModal")) {
                     if (container instanceof HTMLElement) {
                         const settingsModalBody = document.createElement("div");
                         settingsModalBody.className = "settings-modal-body";
@@ -3845,7 +3850,7 @@
 
                     const newUserNotifFullScreen     = document.createElement("div");
                     newUserNotifFullScreen.className = "new-user-notif-fullscreen-effect";
-                    document.body.appendChild(newUserNotifFullScreen);
+                    this.ecamDash.appendChild(newUserNotifFullScreen);
                     setTimeout(() => {newUserNotifFullScreen?.classList?.add("focus");}, 10);
 
                     newUserNotif.onclick = () => {this.dismissFirstTimeNotif();}
@@ -4078,7 +4083,7 @@
                         const mailInfo      = document.querySelector(".issue.mail-info");
 
                         const helpBtn       = document.querySelector(".over-header-btn.how-to-use-btn");
-                        const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
+                        // const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
                         const keybindsBtn   = document.querySelector(".over-header-btn.keybinds-btn");
 
                         const settingsBtn   = document.querySelector(".over-header-btn.settings-btn");
@@ -4099,7 +4104,7 @@
                         };
 
                         helpBtn.onclick     = () => {if (helpBtn.classList.contains("open")) { this.dismissHelpOverHeaderBtns(); } else { this.openHelpOverHeaderBtns(); }};
-                        tutoBtn.onclick     = () => { this.startTutorial(); };
+                        // tutoBtn.onclick     = () => { this.startTutorial(); };
                         keybindsBtn.onclick = () => { this.openKeybindsModal(); };
 
                         settingsBtn.onclick = () => { this.openSettingsModal(); };
@@ -4134,7 +4139,6 @@
                                     if (e.target.closest(".modal-close-btn") || !e.target.closest(".settings-modal")) {
                                         this.closeSettingsModal();
                                     }
-                                    
                                     container.onmouseup = null;
                                 }
                             }
@@ -4186,6 +4190,7 @@
 
 
                 //#region New grades listeners
+
                     attachNewGradesNotifListener() {
                         const newGradesNotif = document.querySelector(".new-grades-notif");
                         if (newGradesNotif) {
@@ -4194,7 +4199,7 @@
                                     const newGradesCard = document.querySelector(".new-grades-card");
                                     newGradesCard.scrollIntoView({behavior: "instant"});
                                     newGradesCard.classList.add("myhighlight");
-                                    setTimeout(() => {newGradesCard.classList.remove("myhighlight")},200)
+                                    setTimeout(() => {newGradesCard.classList.remove("myhighlight")},300)
                                 }
                                 else {
                                     document.querySelector(".new-grades-notif").classList.remove("on");
@@ -4203,6 +4208,7 @@
                             };
                         }
                     }
+
                     attachNewGradesMarkAsReadBtnListener() {
                         document.querySelector(".new-grades-mark-as-read").onclick = () => {
                             this.newGrades = [];
@@ -4221,17 +4227,21 @@
                             document.querySelector(".new-grades-card-title").classList.add("none");
                             document.querySelector(".new-grades-mark-as-read").parentElement.disabled = true;
                             document.querySelector(".new-grades-mark-as-read").parentElement.style.display = "none";
-                            document.querySelector(".new-grades-notif").classList.remove("on");
-                            setTimeout(() => {document.querySelector(".new-grades-notif").remove();}, 500)
+                            document.querySelector(".new-grades-notif")?.classList?.remove("on");
+                            setTimeout(() => {
+                                document.querySelector(".new-grades-notif")?.remove();
+                            }, 500)
 
                             this.renderRecentGrades()
                         };
                     }
+
                     attachAllNewGradesSubjectCardsListener() {
                         document.querySelectorAll(".new-grades-subject-card").forEach(card => {   // Scroll to the corresponding subject/grade on which the user clicked
                             this.attachNewGradesSubjectCardsListener(card);
                         });
                     }
+
                     attachNewGradesSubjectCardsListener(card) {
                         if (card instanceof HTMLElement && card.classList.contains("new-grades-subject-card")) {
                             card.onclick = (e) => {
@@ -4242,10 +4252,11 @@
                                 this.saveSemesterFilter();
 
                                 const targetElem = document.getElementById(`subject-card-semester-${e.target.dataset.semester}-subject-${e.target.dataset.subject}`);
-                                targetElem.scrollIntoView({behavior: "instant", block: "center"});
+                                this.scrollToClientHighestElem({id:targetElem.id, smooth: true, block: "center", margin:0})
+
                                 targetElem.onscrollend = ((elem) => {
                                     elem.classList.add("scroll-to");
-                                    elem.onanimationend = () => {targetElem.classList.remove("scroll-to")}
+                                    elem.onanimationend = () => {targetElem.classList.remove("scroll-to")};
                                 })(targetElem);
                                 
                             }
@@ -4259,6 +4270,7 @@
                             }
                         }
                     }
+
                 //#endregion
 
 
@@ -4364,7 +4376,7 @@
 
                 //#region Subject cards listeners
 
-                    attachAllSubjectCardRelatedEvenListenersForEverySubjectCard(container=document) {
+                    attachAllSubjectCardRelatedEvenListenersForEverySubjectCard(container=document.body) {
                         this.attachOnDragEventListeners()
                         this.attachAndManageAllDragOrTickIconsListener(container);
                         this.attachAllSubjectCoefInputBoxesListeners(container);
@@ -4395,7 +4407,7 @@
                     }
 
                     /** Ensures all selected Subject Cards have a tick icon with their assigned event listeners instead of the default drag icon, and attach them the correct event listener */
-                    attachAndManageAllDragOrTickIconsListener(container=document) {
+                    attachAndManageAllDragOrTickIconsListener(container=document.body) {
                         // this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {
                         //     const subjectCard = container.getElementById(selectedSubjectCardId);
                         //     this.changeDragIconToTickIcon(subjectCard);
@@ -4416,7 +4428,7 @@
                         }
                     }
 
-                    attachAllSubjectCoefInputBoxesListeners(container=document) {
+                    attachAllSubjectCoefInputBoxesListeners(container=document.body) {
                         container.querySelectorAll(".subject-coef-input-box").forEach(inputBox => {
                             this.attachSubjectCoefInputBoxListeners(inputBox);
                         })
@@ -4435,7 +4447,7 @@
                         };
                     }
 
-                    attachCheckboxesListeners(container=document) {
+                    attachCheckboxesListeners(container=document.body) {
                         // Reusable method to attach listeners to grade checkboxes
                         container.querySelectorAll('.grade-checkbox').forEach(chbx => {
                             chbx.onclick = (e) => {
@@ -4462,7 +4474,7 @@
                         });
                     }
 
-                    attachAllSubjectNameInputsListener(container=document) {
+                    attachAllSubjectNameInputsListener(container=document.body) {
                         container.querySelectorAll(".subject-name.input").forEach(input => {
                             this.attachSubjectNameInputListener(input);
                         })
@@ -4471,7 +4483,7 @@
                         input.onchange = (e) => {this.subjectNameInputAction(e.target)};
                     }
 
-                    attachAllSubjectSimAddBtnsListener(container=document) {
+                    attachAllSubjectSimAddBtnsListener(container=document.body) {
                         container.querySelectorAll('.sim-add-btn').forEach(btn=>{
                             this.attachSubjectSimAddBtnListener(btn);
                         });
@@ -4480,7 +4492,7 @@
                         btn.onclick = (e) => {this.subjectSimAddBtnAction(e.target)};
                     }
 
-                    attachAllSubjectSimDelBtnsListener(container=document) {
+                    attachAllSubjectSimDelBtnsListener(container=document.body) {
                         container.querySelectorAll('.sim-del-btn').forEach(btn=>{
                             this.attachSubjectSimDelBtnListener(btn)
                         })
@@ -4489,7 +4501,7 @@
                         btn.onclick = (e) => {this.subjectSimDelBtnAction(e.target)};
                     }
 
-                    attachAllSubjectSimInputEditsListener(container=document) {
+                    attachAllSubjectSimInputEditsListener(container=document.body) {
                         container.querySelectorAll(".simulated-grade-input-edit").forEach(input => {
                             this.attachSubjectSimInputEditListener(input)
                         })
@@ -4554,7 +4566,7 @@
                         const helpBtn       = document.querySelector(".over-header-btn.how-to-use-btn");
                         const helpMenu      = document.querySelector(".over-header-how-to-use-btns");
                         const docBtn        = document.querySelector(".over-header-btn.doc-btn");
-                        const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
+                        // const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
 
 
                         helpBtn .classList.add("open");
@@ -4562,7 +4574,7 @@
                         clearTimeout(this.timeouts?.openHelpMenu);
                         this.timeouts.openHelpMenu = setTimeout(()=>{helpMenu.classList.add("open");}, 10);
                         docBtn  .tabIndex = "0";
-                        tutoBtn .tabIndex = "0";
+                        // tutoBtn .tabIndex = "0";
 
                         this.dismissFirstTimeNotif();
                     }
@@ -4571,7 +4583,7 @@
                         const helpBtn       = document.querySelector(".over-header-btn.how-to-use-btn");
                         const helpMenu      = document.querySelector(".over-header-how-to-use-btns");
                         const docBtn        = document.querySelector(".over-header-btn.doc-btn");
-                        const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
+                        // const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
                         
                         
                         helpBtn    .classList.remove("open");
@@ -4579,7 +4591,7 @@
                         clearTimeout(this.timeouts?.openHelpMenu);
                         this.timeouts.openHelpMenu = setTimeout(()=>{helpMenu.style.display = "none";}, 200);
                         docBtn     .tabIndex = "-1";
-                        tutoBtn    .tabIndex = "-1";
+                        // tutoBtn    .tabIndex = "-1";
                     }
 
                     dismissFirstTimeNotif() {
@@ -4615,11 +4627,49 @@
 
 
                     closeEveryModal() {
-                        document.querySelectorAll(".modal")?.forEach(modal => modal.remove());
+                        this.closeKeybindsModal();
+                        this.closeOnlineCfgPickerModal();
+                        this.closeSettingsModal();
                     }
 
-                    
 
+
+                    openPatchNotes(closeOtherModals=true) {
+                        if (closeOtherModals) { this.closeEveryModal() }
+
+                        const patchNotesContainer = document.createElement("div");
+                        patchNotesContainer.className = "patch-notes-modal-container";
+                        patchNotesContainer.id = "patchNotesContainer";
+                        patchNotesContainer.innerHTML = `
+                        <div class="patch-notes-modal modal blur jura" id="patchNotesModal">
+                        </div>
+                        `;
+
+                        this.ecamDash.appendChild(patchNotesContainer);
+                        this.appendCloseModalIcon(document.querySelector("#patchNotesModal"));
+                        this.appendPatchNotesBody();
+                        setTimeout(() => {patchNotesContainer.querySelector("#patchNotesModal").classList.add("show");}, 5);
+                        
+                        patchNotesContainer.onmousedown = (e) => {
+                            if (e.target.closest(".modal-close-btn") || !e.target.closest("#patchNotesModal")) {
+                                patchNotesContainer.onmouseup = (e) => {
+                                    if (e.target.closest(".modal-close-btn") || !e.target.closest("#patchNotesModal")) {
+                                        this.closePatchNotesModal()
+                                    }
+                                    patchNotesContainer.onmouseup = null;
+                                }
+                            }
+                        }
+                    }
+
+                    closePatchNotesModal() {
+                        const patchNotesContainer = document.querySelector("#patchNotesContainer");
+                        if (patchNotesContainer) {
+                            patchNotesContainer.querySelector(".patch-notes-modal").classList.remove("show");
+                            setTimeout(() => {patchNotesContainer.remove()}, 300);
+                        }
+                    }
+                    
                     openKeybindsModal(closeOtherModals=true) {
                         if (closeOtherModals) { this.closeEveryModal() }
 
@@ -4627,26 +4677,34 @@
                         keybindsMenu.className = "keyboard-shortcut-list-container";
                         keybindsMenu.id = "keyboardShortcutListContainer";
                         keybindsMenu.innerHTML = `
-                            <div class="keyboard-shortcut-list-modal modal${this.settings.blurEnabled.value ? " blur" : ""}" id="keyboardShortcutListModal">
+                            <div class="keyboard-shortcut-list-modal modal${this.settings.blurEnabled.value ? " blur" : ""} jura" id="keyboardShortcutListModal">
                                 <div class="keyboard-shortcut-list-modal-body" id="keyboardShortcutListModalBody"></div>
                             </div>
                         `;
-                        document.body.appendChild(keybindsMenu);
+
+                        this.ecamDash.appendChild(keybindsMenu);
                         this.appendCloseModalIcon(document.querySelector("#keyboardShortcutListModal"))
                         this.appendKeyboardShortcutsList(keybindsMenu.querySelector("#keyboardShortcutListModalBody"));
-                        setTimeout(() => {keybindsMenu.querySelector(".keyboard-shortcut-list-modal").classList.add("show");}, 5);
+                        setTimeout(() => {keybindsMenu.querySelector("#keyboardShortcutListModal").classList.add("show");}, 5);
                         
-                        keybindsMenu.onclick = (e) => {
-                            if (!e.target.closest(`.keyboard-shortcut-list-modal`) || e.target.closest(`.modal-close-btn`)) {
-                                this.closeKeybindsModal();
+                        keybindsMenu.onmousedown = (e) => {
+                            if (e.target.closest(".modal-close-btn") || !e.target.closest("#keyboardShortcutListModal")) {
+                                keybindsMenu.onmouseup = (e) => {
+                                    if (e.target.closest(".modal-close-btn") || !e.target.closest("#keyboardShortcutListModal")) {
+                                        this.closeKeybindsModal()
+                                    }
+                                    keybindsMenu.onmouseup = null;
+                                }
                             }
                         }
                     }
 
                     closeKeybindsModal() {
                         const keybindsMenu = document.querySelector("#keyboardShortcutListContainer");
-                        keybindsMenu.querySelector(".keyboard-shortcut-list-modal").classList.remove("show");
-                        setTimeout(() => {keybindsMenu.remove()}, 300);
+                        if (keybindsMenu) {
+                            keybindsMenu.querySelector(".keyboard-shortcut-list-modal").classList.remove("show");
+                            setTimeout(() => {keybindsMenu.remove()}, 300);
+                        }
                     }
 
                     openSettingsModal(closeOtherModals=true) {
@@ -4657,11 +4715,11 @@
                         settingsModalContainer.id = "settingsModalContainer";
                         settingsModalContainer.innerHTML = `<div class="settings-modal modal${this.settings.blurEnabled.value ? " blur" : ""}" id="settingsModal"></div>`;
                         
-                        document.body.appendChild(settingsModalContainer);
+                        this.ecamDash.appendChild(settingsModalContainer);
                         const settingsModal = settingsModalContainer.querySelector("#settingsModal");
 
                         this.appendCloseModalIcon(settingsModal)
-                        this.appendAllSettingsRow();
+                        this.appendSettingsModalBody();
 
                         setTimeout(() => {settingsModal.classList.add("show")}, 5);
 
@@ -4670,8 +4728,10 @@
 
                     closeSettingsModal() {
                         const settingsModal = document.querySelector("#settingsModal");
-                        settingsModal.classList.remove("show"); 
-                        setTimeout(() => {settingsModal.parentElement.remove()}, 300); 
+                        if (settingsModal) {
+                            settingsModal.classList.remove("show"); 
+                            setTimeout(() => {settingsModal.parentElement.remove()}, 300); 
+                        }
                     }
 
 
@@ -4703,10 +4763,10 @@
 
                             if (document.body.clientHeight > document.body.offsetHeight) {
                                 // Semester has been collapsed, and now the page is tinier than the window, and i want to avoid the slider to offset the page. Only useful in Offline mode
-                                document.querySelector(".ecam-dash").style.paddingRight = "10px";
+                                this.ecamDash.style.paddingRight = "10px";
                             }
                             else {
-                                document.querySelector(".ecam-dash").style.paddingRight = "";
+                                this.ecamDash.style.paddingRight = "";
                             }
                             
                             document.body.onmouseup = null;
@@ -4789,14 +4849,13 @@
                             const index             = moduleCard.dataset.index;
                             const moduleHeader      = moduleCard.querySelector(".module-header");
                             const toggle            = moduleCard.querySelector('.module-toggle');
-                            // let subjectCards        = [];
 
                             if (hideAdjacentModuleInsertionFields != "only") {
 
                                 if (!bypassFoldedModuleCardsId) {
                                     this.foldedModuleCardsId.push(moduleCard.id);
-                                    this.foldedModuleCardsClientHeight.push(moduleCard.clientHeight);
                                 }
+                                this.foldedModuleCardsClientHeight.push(moduleCard.clientHeight);
                                 
                                 toggle.classList.remove("open");
                                 
@@ -4807,10 +4866,12 @@
                                     this.detachInsertFieldHitboxEventListeners(subjInsFieldHitbox);
                                 })
 
-                                moduleCard.style.height = this.foldedModuleCardsClientHeight.at(-1);
+                                moduleCard.style.height = `${this.foldedModuleCardsClientHeight.at(-1)+6}px`;
                                 moduleHeader.classList.add("fold");
                                 moduleCard.classList.add("fold");
-                                setTimeout(() => {moduleCard.style.height = "80px";}, 1)
+                                setTimeout(() => {
+                                    moduleCard.style.height = "82px";
+                                }, 1)
                             }
 
                             let upperInsertField = "";
@@ -4895,7 +4956,7 @@
     
                                         const upperInsertFieldHitbox = upperInsertField.querySelector(".drop-module-card-insert-hitbox");
                                         this.attachInsertFieldHitboxEventListeners(upperInsertFieldHitbox)
-                                    }, 1);
+                                    }, 10);
                                 }
                                 
                                 if (lowerInsertField) {
@@ -4905,7 +4966,7 @@
                                         
                                         const lowerInsertFieldHitbox = lowerInsertField.querySelector(".drop-module-card-insert-hitbox");
                                         this.attachInsertFieldHitboxEventListeners(lowerInsertFieldHitbox)
-                                    }, 1)
+                                    }, 10)
                                 }
                             }
 
@@ -4916,7 +4977,7 @@
 
                                 const subjectInsertFields = document.querySelectorAll(`.drop-field.insert-field.subject[data-semester="${sem}"]${hideOtherSubjectInsertionFields ? `[data-module="${module}"]` : ""}`);
                                 if (subjectInsertFields.length > 0) {
-                                    this.timeouts.subjectInsertFieldUnfoldTimeout = setTimeout(() => {                                    
+                                    this.timeouts.subjectInsertFieldUnfoldTimeout = setTimeout(() => {
                                         const subjectInsertFieldHitboxes = Object.values(subjectInsertFields).map(elem => {return elem.querySelector(".drop-subject-card-insert-hitbox")});
                                         subjectInsertFieldHitboxes.forEach(subjInsFieldHitbox => {this.attachInsertFieldHitboxEventListeners(subjInsFieldHitbox)})
                                     }, 1)
@@ -4939,9 +5000,11 @@
                                 if (!bypassFoldedModuleCardsId) {
                                     setTimeout(() => {
                                         this.foldedModuleCardsId.splice(this.foldedModuleCardsId.indexOf(moduleCard.id), 1);
-                                        this.foldedModuleCardsClientHeight.splice(this.foldedModuleCardsId.indexOf(moduleCard.id), 1);
                                     }, 2)
                                 }
+                                setTimeout(() => {
+                                    this.foldedModuleCardsClientHeight.splice(this.foldedModuleCardsId.indexOf(moduleCard.id), 1);
+                                }, 2)
                             }
                         }
                     }
@@ -5027,6 +5090,90 @@
 
                 //#region Subject card
 
+                    toggleFoldAllSubjCards(container=document.body, smart=true) {
+                        if (container instanceof HTMLElement) {
+                            if (smart) {
+                                if (this.viewMode == "detailed") {
+                                    this.unfoldAllSubjCards(container);
+                                }
+                                else if (this.viewMode == "compact") {
+                                    this.foldAllSubjCards(container);
+                                }
+                            }
+                            else {
+                                container.querySelectorAll(".subject-card").forEach(subjCard => {
+                                    if (subjCard?.classList?.contains("detailed")) {
+                                        this.foldSubjCard(subjCard);
+                                    }
+                                    else if (subjCard?.classList?.contains("compact")) {
+                                        this.unfoldSubjCard(subjCard);
+                                    }
+                                })
+                            }
+                        }
+                    }
+
+                    foldAllSubjCards(container=document.body) {
+                        if (container instanceof HTMLElement) {
+                            container.querySelectorAll(".subject-card.detailed").forEach(detailedSubjCard => {
+                                this.foldSubjCard(detailedSubjCard);
+                            })
+                        }
+                    }
+
+                    unfoldAllSubjCards(container=document.body) {
+                        if (container instanceof HTMLElement) {
+                            container.querySelectorAll(".subject-card.compact").forEach(compactSubjCard => {
+                                this.unfoldSubjCard(compactSubjCard);
+                            })
+                        }
+                    }
+
+                    toggleFoldSubjCard(subjCard) {
+                        if (subjCard?.classList?.contains("detailed")) {
+                            this.foldSubjCard(subjCard);
+                        }
+                        else if (subjCard?.classList?.contains("compact")) {
+                            this.unfoldSubjCard(subjCard);
+                        }
+                    }
+
+                    foldSubjCard(subjCard) {
+                        const subjCardHeader = subjCard.querySelector(".subject-card-header");
+                        subjCardHeader.classList.add("fold");
+
+                        // fix the height
+                        subjCard.style.height = `${subjCard.clientHeight+8}px`;
+
+                        // prepare the aimed height below the higher instance style
+                        subjCard.classList.replace("detailed", "compact");
+
+                        // remove the higher instance style to let the transition occure
+                        setTimeout(() => {
+                            subjCard.style.height = "";
+                        }, 1);
+                        
+                        this.compactSubjCardsId.push(subjCard.id);
+                        this.compactSubjCardsClientHeight.push(subjCard.clientHeight);
+                    }
+
+                    unfoldSubjCard(subjCard) {
+                        const subjCardHeader = subjCard.querySelector(".subject-card-header");
+                        subjCardHeader.classList.remove("fold");
+
+                        // fix the height
+                        subjCard.style.height = `${this.compactSubjCardsClientHeight[this.compactSubjCardsId.indexOf(subjCard.id)]+8}px`;
+
+                        // prepare the aimed height below the higher instance style
+                        subjCard.classList.replace("compact", "detailed");
+
+                        // remove the higher instance style to let the transition occure
+                        setTimeout(() => {subjCard.style.height = ``;}, 100);
+
+                        this.compactSubjCardsId.splice(this.compactSubjCardsId.indexOf(subjCard.id), 1);
+                        this.compactSubjCardsClientHeight.splice(this.compactSubjCardsId.indexOf(subjCard.id), 1);
+                    }
+
                     /** Method temporarily attaching an onmousemove and an onmouseup event listener to the document's body.
                      * 
                      * Meant to be invoked when the mouse down event is triggered if the target is or is contained in a card header.
@@ -5045,19 +5192,10 @@
                         document.body.onmouseup = (e) => {
                             const subjCard  = e.target.closest('.subject-card');
                             if (subjCard) {
-                                this.viewMode = "mixed";
-
                                 const unclassifiedSection = document.querySelector(".unclassified-section");
                                 unclassifiedSection.style.height = "";
                                 
-                                
-                                if (subjCard.classList.contains("compact")) {
-                                    this.unfoldSubjCard(subjCard);
-                                }
-                                else {
-                                    this.foldSubjCard(subjCard);
-                                }
-
+                                this.toggleFoldSubjCard(subjCard);
 
                                 this.setGradesTableTotalCoef(subjCard);
                                 this.attachAllSubjectCardRelatedEventListeners(subjCard);
@@ -5248,7 +5386,7 @@
             attachAllOnDragEventListeners() {
                 this.attachOnDragEventListeners(document, true);
             }
-            attachOnDragEventListeners(container=document, descendants=true) {   // Add ONDRAG cards event
+            attachOnDragEventListeners(container=document.body, descendants=true) {   // Add ONDRAG cards event
                 if (container instanceof HTMLElement || container == document) {
 
                     if (container?.classList?.contains("module-card-content") || container?.classList?.contains("module-details") || container?.classList?.contains("subject-card")) {
@@ -5321,7 +5459,7 @@
 
             //#region Dragged element events
 
-            async draggedElementOnDragStartEvent(e, {draggedElement, card}) {
+            draggedElementOnDragStartEvent(e, {draggedElement, card}) {
                 if (e.target.classList.contains("any-input")) {return}
 
                 if (card.classList.contains("subject-card")) {
@@ -5408,10 +5546,10 @@
                     document.querySelector(".drop-field-remove-from-module-hitbox") .classList.add("show");
                     
                     if (!this.foldedModuleCardsId.includes(card.id)) {
-                        this.foldModuleCard(e, true, true, true);
+                        this.foldModuleCard(card, true, true, true);
                     }
                     else {
-                        this.foldModuleCard(e, true, "only", true);
+                        this.foldModuleCard(card, true, "only", true);
                     }
                     
                     document.querySelector(".semester-content").classList.add("dragging");
@@ -5422,7 +5560,7 @@
                 e.dataTransfer.setDragImage(document.getElementById("emptyDivToRemoveTheDragImage"), 0, 0);
                 e.dataTransfer.setData("text", this.currentlyDraggedCard.id);
             };
-            async draggedElementOnDragEndEvent(e, {draggedElement, card}) {
+            draggedElementOnDragEndEvent(e, {draggedElement, card}) {
                 card.style.width = "";
                 card.style.margin = "";
                 this.currentlyDraggedElement = undefined;
@@ -5510,16 +5648,16 @@
                     document.querySelector(".drop-field-remove-from-module-hitbox") .classList.remove("show");
 
                     if (!this.foldedModuleCardsId.includes(card.id)) {
-                        this.unfoldModuleCard(e, true, true, true);
+                        this.unfoldModuleCard(card, true, true, true);
                     }
                     else {
-                        this.unfoldModuleCard(e, true, "only", true);
+                        this.unfoldModuleCard(card, true, "only", true);
                     }
 
                     document.querySelector(".semester-content").classList.remove("dragging");
                 }
             }
-            async draggedSelectedElementOnDragStartEvent(e, {draggedElement, card}) {
+            draggedSelectedElementOnDragStartEvent(e, {draggedElement, card}) {
                 this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {
                     const selectedSubjectCard = document.getElementById(selectedSubjectCardId);
                     selectedSubjectCard.style.width = "50%";
@@ -5554,7 +5692,7 @@
                 e.dataTransfer.setDragImage(document.getElementById("emptyDivToRemoveTheDragImage"), 0, 0);
                 e.dataTransfer.setData("text", card.id)
             };
-            async draggedSelectedElementOnDragEndEvent(e, {draggedElement, card}) {
+            draggedSelectedElementOnDragEndEvent(e, {draggedElement, card}) {
 
                 this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {
                     const selectedSubjectCard = document.getElementById(selectedSubjectCardId);
@@ -6568,7 +6706,7 @@
                     </div>
                 `;
 
-                document.body.appendChild(pickerMenuContainer);
+                this.ecamDash.appendChild(pickerMenuContainer);
                 const pickerMenu = document.querySelector("#pickerMenu");
                 
                 this.appendCloseModalIcon(pickerMenu)
@@ -6627,8 +6765,10 @@
 
             closeOnlineCfgPickerModal() {
                 const pickerMenu = document.querySelector("#pickerMenu");
-                pickerMenu.classList.remove("show");
-                this.timeouts.closePickerMenu = setTimeout(() => {pickerMenu.parentElement.remove(); this.attachDocumentMouseListeners()}, 300);
+                if (pickerMenu) {
+                    pickerMenu.classList.remove("show");
+                    this.timeouts.closePickerMenu = setTimeout(() => {pickerMenu.parentElement.remove(); this.attachDocumentMouseListeners()}, 300);
+                }
             }
 
             generateOnlineCfgPickerMenuDirTree(type="section") {
@@ -6865,10 +7005,13 @@
         // MARK: -Keyboard Events
         generalKeyboardEvents(mode="general", target=undefined) {
             const noModifierAllowed = {alt:"forbidden", ctrl:"forbidden", shift:"forbidden", meta:"forbidden", repeat:"forbidden"};
-            const shiftRequired = {alt:"forbidden", ctrl:"forbidden", shift:"required", meta:"forbidden", repeat:"forbidden"};
+            const shiftRequired     = {alt:"forbidden", ctrl:"forbidden", shift:"required",  meta:"forbidden", repeat:"forbidden"};
             if (mode == "general") {
                 document.onkeydown = (e) => {
-                    if      (this.keyInputMatch(e, "E", shiftRequired)) {
+                    if      (this.keyInputMatch(e, "Escape")) {
+                        this.closeEveryModal();
+                    }
+                    else if (this.keyInputMatch(e, "E", shiftRequired)) {
                         
                         this.editMode = !this.editMode;
                         localStorage.setItem("ECAM_DASHBOARD_DEFAULT_EDIT_MODE", this.editMode);
@@ -6878,62 +7021,16 @@
                         this.generateContent();
                     }
                     else if (this.keyInputMatch(e, "D", shiftRequired)) {
-                        const subjectCards            = document.querySelectorAll(".subject-card");
-                        const nbSubjectCards          = subjectCards.length;
-                        const nbCompactSubjectCards   = document.querySelectorAll(".subject-card.compact").length;
-                        const detailedBtn             = document.getElementById('view-btn-detailed');
-                        const compactBtn              = document.getElementById('view-btn-compact');
-
-                        this.compactSubjCardsId = [];
-                        this.compactSubjCardsClientHeight = [];
-
-                        if (detailedBtn.classList.contains("active")) {
-                            if (nbCompactSubjectCards == nbSubjectCards) {
-                                this.viewMode = "detailed";
-
-                                subjectCards.forEach(subjCard => {
-                                    this.unfoldSubjCard(subjCard);
-                                })
-
-                                detailedBtn.classList.add("active");
-                                compactBtn.classList.remove("active");
-                            }
-                            else {
-                                this.viewMode = "compact";
-
-                                subjectCards.forEach(subjCard => {
-                                    this.foldSubjCard(subjCard);
-                                })
-
-                                detailedBtn.classList.remove("active")
-                                compactBtn.classList.add("active")
-                            }
-                        }
-                        else {
-                            if (nbCompactSubjectCards == 0) {
-                                this.viewMode = "compact";
-
-                                subjectCards.forEach(subjCard => {
-                                    this.foldSubjCard(subjCard);
-                                })
-
-                                detailedBtn.classList.remove("active")
-                                compactBtn.classList.add("active")
-                            }
-                            else {
-                                this.viewMode = "detailed";
-
-                                subjectCards.forEach(subjCard => {
-                                    this.unfoldSubjCard(subjCard);
-                                })
-
-                                detailedBtn.classList.add("active")
-                                compactBtn.classList.remove("active")
-                            }
-                        }
+                        this.viewMode = this.viewMode == "detailed" ? "compact" : "detailed";
+                        this.toggleFoldAllSubjCards();
 
                         this.saveViewMode();
-                        this.scrollToClientHighestElem();
+                        this.scrollToClientHighestElem("first",
+                            {className: "modules-section",      timeout: 110, smooth: true, margin: 20,                        highestElemInPageHandleType:"partial"}, 
+                            {className: "module-card",          timeout: 110, smooth: true, margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"above"},
+                            {className: "unclassified-section", timeout: 110, smooth: true, margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"partial"},
+                            {className: "subject-card",         timeout: 110, smooth: true, margin: 10,                        highestElemInPageHandleType:"above"},
+                        );
                     }
                     else if (this.keyInputMatch(e, "L", shiftRequired)) {
                         
@@ -6970,7 +7067,7 @@
                     else if (this.keyInputMatch(e, "R", shiftRequired)) {
                         debugger;
                     }
-                    else if (this.keyInputMatch(e, ["ArrowLeft", "ArrowRight", "/"], shiftRequired)) {
+                    else if (this.keyInputMatch(e, ["ArrowLeft", "ArrowRight"], shiftRequired)) {
                         const increment = e.key == "ArrowLeft" ? -1 : 1;
                         document.querySelectorAll('.filter-tab').forEach((t, _index) => {if (t.classList.contains("active")) {this.currentSemester = _index}; t.classList.remove('active')});
 
