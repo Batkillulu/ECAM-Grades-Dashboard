@@ -734,36 +734,56 @@
                     .grade-row.last                      { vertical-align: baseline; border-bottom: none; height: 41px; }
                     .grade-row.sim                       { background: #e9efff9a; }
                     .grade-row:hover                     { background: #eeedfd; }
+
                     .grades-table                        { background: linear-gradient(300deg, #c5c5c5 30%, transparent); width: 98%; }
                     .grades-table.compact                { margin: -12px 20px 20px 20px; }
                     .grades-table.good                   { background: linear-gradient(300deg, #f0fdf4 30%, transparent); }
                     .grades-table.meh                    { background: linear-gradient(300deg, #fff2e4 30%, transparent); }
                     .grades-table.bad                    { background: linear-gradient(300deg, #fef2f2 30%, transparent); }
+
+
                     .grades-table th                     { padding: 10px 12px; height: 39px; font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 0.5px; border: 3px solid white; border-right-width: 2px; border-left-width: 2px; border-top-width: 0px; text-align: center; text-wrap-mode: nowrap; }
                     .grades-table td                     { padding: 10px; font-size: 14px; text-wrap-mode: nowrap; }
-                    .grades-table-type                   { width: 30%; padding-left:30px; transition: all 0.2s ease; }
-                    .grades-table-type.dragging          { width: 30%; }
-                    .grades-table-grade                  { width: 13%; text-align: right; transition: all 0.2s ease; }
-                    .grades-table-grade.dragging         { width: 15%; }
-                    .grades-table-coef                   { width: 10%; text-align: right; transition: all 0.2s ease; }
-                    .grades-table-coef.dragging          { width: 15%; }
-                    .grades-table-classAvg               { width: 10%; text-align: right; transition: all 0.2s ease; }
-                    .grades-table-classAvg.dragging      { width: 15%; }
-                    .grades-table-date                   { width: 10%; text-align: right; transition: all 0.2s ease; }
-                    .grades-table-date.dragging          { width: 15%; }
-                    .grades-table-teacher                { width: 32%; text-align: end;   transition: all 0.2s ease; display: table-cell; font-size:12px;color: #999; }
-                    .grades-table-teacher.dragging       { width: 0%; color: transparent; border-right-width: 0px; }
-                    .grades-table-add-sim-cell           { width: 0%; transition: all 0.2s ease; }
-                    .grades-table-add-sim-cell.dragging  { width: 0%; }
+
+                    .grades-table-header-type               { width: 30%; }
+                    .grades-table-header-type.dragging      { width: 30%; }
+                    .grades-table-type                   { padding-left:30px; transition: all 0.2s ease; }
+
+                    .grades-table-header-grade              { width: 13%; }
+                    .grades-table-header-grade.dragging     { width: 15%; }
+                    .grades-table-grade                  { text-align: right; transition: all 0.2s ease; }
+
+                    .grades-table-header-coef               { width: 10%; }
+                    .grades-table-header-coef.dragging      { width: 15%; }
+                    .grades-table-coef                   { text-align: right; transition: all 0.2s ease; }
+
+                    .grades-table-header-classAvg           { width: 10%; }
+                    .grades-table-header-classAvg.dragging  { width: 15%; }
+                    .grades-table-classAvg               { text-align: right; transition: all 0.2s ease; }
+
+                    .grades-table-header-date               { width: 10%; }
+                    .grades-table-header-date.dragging      {  }
+                    .grades-table-date                   { text-align: right; transition: all 0.2s ease; }
+
+                    .grades-table-header-teacher            { width: 32%; }
+                    .grades-table-header-teacher.dragging   { color: transparent; border-right-width: 0px; }
+                    .grades-table-teacher                { text-align: end;   transition: all 0.2s ease; display: table-cell; font-size:12px;color: #999; }
+
+                    .grades-table-header-add-sim-cell       { width: 0%; }
+                    .grades-table-add-sim-cell           { transition: all 0.2s ease; }
+
+
                     .grade-row-unsorted-grades           { background: unset; border-bottom: 1px solid white; transition: background 0.3s ease; height: 39px; }
                     .grade-row-unsorted-grades:hover     { background: #c9d8e7ff; }
                     .grade-row-unsorted-grades.last      { border-bottom: none; height: 41px; }
+
                     .grade-type      { font-size: 12px; color: #666; margin-top: 2px; }
                     .grade-value     { font-weight: 600; font-size: 16px; }
                     .grade-good      { color: #10b981; }
                     .grade-medium    { color: #f59e0b; }
                     .grade-bad       { color: #ef4444; }
                     .grade-date      { font-size: 12px; color: #999; }
+
                     .subject-sim-del-btn        { border: 1px solid #A7CEDF; border-radius: 6px; cursor: pointer; }
                     .sim-add-btn                { display: flex; align-items: center; justify-content: center; height: 25px; width: 67px; max-width: 140px; padding: 6px 10px; border: 1px solid; border-radius: 15px; user-select: none; }
                     .simulated-grade-input         { border-radius: 10px; border-color: #667eea; padding: 2px 10px}
@@ -3346,8 +3366,8 @@
                     const detailed              = !this.compactSubjCardsId.includes(`subject-card-semester-${sem}-subject-${subject}`);
                     
                     let html = `
-                    <div class="subject-card ${classified ? "classified" : "unclassified"} ${detailed ? "detailed" : "compact"} ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" id="subject-card-semester-${sem}-subject-${subject}" ${this.editMode ? `style="cursor: grab; user-select: none;"` : ""} data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
-                        <div class="subject-card-header${detailed ? "" : " compact"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`} ${classified ? "classified" : "unclassified"}" ${this.editMode ? `style="cursor: grab;" draggable="true"` : ``} data-module="${moduleName}">
+                    <div class="subject-card ${classified ? "classified" : "unclassified"} ${detailed && this.viewMode != "compact" ? "detailed" : "compact"} ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" id="subject-card-semester-${sem}-subject-${subject}" ${this.editMode ? `style="cursor: grab; user-select: none;"` : ""} data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
+                        <div class="subject-card-header${detailed && this.viewMode != "compact" ? "" : " compact"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`} ${classified ? "classified" : "unclassified"}" ${this.editMode ? `style="cursor: grab;" draggable="true"` : ``} data-module="${moduleName}">
                             <div style="display:flex; align-items:center; gap:8px; padding-left: ${this.editMode ? "0" : "42px"}; width:38.8%; min-width: 275px">
                                 ${this.editMode
                                     ? `<div style="margin: 0px 5px; margin-bottom: 3px;">
@@ -3375,7 +3395,7 @@
                                             ` 
                                             : ""
                                         }
-                                        ${!detailed 
+                                        ${!(detailed && this.viewMode != "compact")
                                             ? ` ${classified ? "• " : ""}
                                                 ${nbGrades===0 
                                                     ? `${this.lang == "fr" ? "aucune note publiée" : "no published grade"}` 
@@ -3418,25 +3438,25 @@
 
                         <thead>
                             <tr>
-                                <th class="grades-table-type" style="padding-left: 30px; border-left-width: 0px;">
+                                <th class="grades-table-header-type" style="padding-left: 30px; border-left-width: 0px;">
                                     ${this.lang == "fr" ? "Intitulé" : "Title"}
                                 </th>
-                                <th class="grades-table-grade">
+                                <th class="grades-table-header-grade">
                                     ${this.lang == "fr" ? "Note" : "Grade"}
                                 </th>
-                                <th class="grades-table-coef">
+                                <th class="grades-table-header-coef">
                                     ${this.lang == "fr" ? "Coef" : "Coef"}
                                 </th>
-                                <th class="grades-table-classAvg">
+                                <th class="grades-table-header-classAvg">
                                     ${this.lang == "fr" ? "Moy. Classe" : "Class Avg"}
                                 </th>
-                                <th class="grades-table-date">
+                                <th class="grades-table-header-date">
                                     ${this.lang == "fr" ? "Date" : "Date"}
                                 </th>
-                                <th class="grades-table-teacher" style="border-right-width: 0px;${this.selectedSubjectCardsId.length > 0 ? " display: none;" : ""}">
+                                <th class="grades-table-header-teacher" style="border-right-width: 0px;${this.selectedSubjectCardsId.length > 0 ? " display: none;" : ""}">
                                     ${this.lang == "fr" ? "Prof(s)" : "Teacher(s)"}
                                 </th>
-                                <th class="grades-table-add-sim-cell" style="border-right-width: 0px; border-left-width: 0px;">
+                                <th class="grades-table-header-add-sim-cell" style="border-right-width: 0px; border-left-width: 0px;">
                                 </th>
                             </tr>
                         </thead>
@@ -5499,8 +5519,13 @@
                     else if (container?.classList?.contains("semester-content") || container?.classList?.contains("semester-grid") || container?.classList?.contains("modules-section") || container?.classList?.contains("semester-section") || container?.classList?.contains("module-card") || container == document.body) {
                         (container?.classList?.contains("module-card") ? [container] : container.querySelectorAll(".module-card") || []).forEach(moduleCard => {
                             this.attachModuleCardOnDragEventListeners(moduleCard);
+                            
                             if (descendants) {
                                 moduleCard.querySelectorAll(`.subject-card`).forEach(subjectCard => {
+                                    this.attachSubjectCardOnDragEventListeners(subjectCard);
+                                })
+                                
+                                container.querySelectorAll(`.subject-card.unclassified`).forEach(subjectCard => {
                                     this.attachSubjectCardOnDragEventListeners(subjectCard);
                                 })
                             }
@@ -5580,35 +5605,21 @@
                     this.currentlyDraggedElement = draggedElement;
                     this.currentlyDraggedCard = card;
                     this.currentlyDraggedCard.style.width = "50%";
-                    
-                    if (card.classList.contains("classified") && card.classList.contains("compact")) {
-                        this.currentlyDraggedCard.querySelector(".subject-total-coef-div").style.display = "none";
-                    }
-                    else if (card.classList.contains("classified") && card.classList.contains("detailed")) {
-                        this.currentlyDraggedCard.querySelector(".grades-table")        .style.display = "none";
-                        this.currentlyDraggedCard.querySelector(".subject-card-header") .style.borderBottom = "none";
-                        this.currentlyDraggedCard.querySelector(".subject-card-header") .style.borderRadius = "20px 20px 20px 20px";
+                    // detailed
+                    this.currentlyDraggedCard.querySelector(".grades-table")        .style.display = "none";
+                    this.currentlyDraggedCard.querySelector(".subject-card-header") .style.borderBottom = "none";
+                    this.currentlyDraggedCard.querySelector(".subject-card-header") .style.borderRadius = "20px 20px 20px 20px";
 
-                        this.currentlyDraggedCard.querySelector(".subject-card-header") .children[0].style.width =    "50%";
-                        this.currentlyDraggedCard.querySelector(".subject-total-coef-div").style.display = "none";
-                    }
-                    else if (card.classList.contains("unclassified") && card.classList.contains("compact")) {
-                        this.currentlyDraggedCard.querySelector(".subject-total-coef-div").style.display = "none";
-                    }
-                    else if (card.classList.contains("unclassified") && card.classList.contains("detailed")) {
-                        this.currentlyDraggedCard.querySelector(".grades-table")        .style.display = "none";
-                        this.currentlyDraggedCard.querySelector(".subject-card-header") .style.borderBottom = "none";
-                        this.currentlyDraggedCard.querySelector(".subject-card-header") .style.borderRadius = "20px 20px 20px 20px";
+                    this.currentlyDraggedCard.querySelector(".subject-card-header") .children[0].style.width =    "50%";
 
-                        this.currentlyDraggedCard.querySelector(".subject-card-header") .children[1].style.width =    "50%";
-                        this.currentlyDraggedCard.querySelector(".subject-total-coef-div").style.display = "none";
-                    }
+                    // whatever
+                    this.currentlyDraggedCard.querySelector(".subject-total-coef-div").style.display = "none";
 
                     clearTimeout(this?.timeouts?.documentOnDragEnd?.hideTeacherTable);
                     clearTimeout(this?.timeouts?.draggedElementOnDragEndEvent?.showTeacherTable);
                     if (!this.timeouts?.draggedElementOnDragStartEvent) {this.timeouts.draggedElementOnDragStartEvent = {};}
 
-                    this.timeouts.draggedElementOnDragStartEvent.hideTeacherTable = setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher => {teacher.style.display = "none";})}, 50);
+                    this.timeouts.draggedElementOnDragStartEvent.hideTeacherTable = setTimeout(() => {document.querySelectorAll(".grades-table-header-teacher").forEach(teacher => {teacher.style.display = "none";})}, 50);
                     document.querySelector(".semester-content")                     .classList.add("dragging");
                     document.querySelector(".drop-field.create-module")             .classList.add("show");
                     document.querySelector(".drop-field-create-module-hitbox")      .classList.add("show");
@@ -5661,7 +5672,10 @@
                     document.querySelector(".semester-content").classList.add("dragging");
                 }
 
-                document.querySelectorAll(`.drop-field.insert-field:not(.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${index}"]).show`)
+                document.querySelectorAll(`
+                    .drop-field.insert-field.subject:not([data-semester="${sem}"][data-module="${moduleName}"][data-index="${index}"]).show,
+                    .drop-field.insert-field:not(.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${index}"]).show
+                `)
                 .forEach(insertField  => { if (insertField.classList.contains("module") && insertField.dataset.index != index+1) {
                     insertField.querySelector(`.drop-${insertField.classList.contains("subject") ? "subject" : "module"}-card-insert-plus`).classList.remove("show");
                     insertField.querySelector(`.drop-${insertField.classList.contains("subject") ? "subject" : "module"}-card-insert-arrow`).classList.add("show");
@@ -5715,7 +5729,7 @@
                         clearTimeout(this?.timeouts?.draggedElementOnDragStartEvent?.hideTeacherTable);
                         if (!this?.timeouts?.draggedElementOnDragEndEvent) {this.timeouts.draggedElementOnDragEndEvent = {};}
 
-                        this.timeouts.draggedElementOnDragEndEvent.showTeacherTable = setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher => {teacher.style.display = "table-cell"})}, 50);
+                        this.timeouts.draggedElementOnDragEndEvent.showTeacherTable = setTimeout(() => {document.querySelectorAll(".grades-table-header-teacher").forEach(teacher => {teacher.style.display = "table-cell"})}, 50);
                         document.querySelector(".semester-content")                 .classList.remove("dragging");
                         document.querySelector(".drop-field.create-module")             .classList.remove("show");
                         document.querySelector(".drop-field-create-module-hitbox")      .classList.remove("show");
@@ -5818,7 +5832,7 @@
                     })
     
                     clearTimeout(this?.timeouts?.documentOnDragEnd?.hideTeacherTable);
-                    document.querySelectorAll(".grades-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
+                    document.querySelectorAll(".grades-table-header-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
                     document.querySelector(".semester-content")                 .classList.add("dragging");
                     document.querySelector(".drop-field.create-module")             .classList.add("show");
                     document.querySelector(".drop-field-create-module-hitbox")      .classList.add("show");
@@ -6097,7 +6111,7 @@
                         })
 
                         clearTimeout(this?.timeouts?.documentOnDragEnd?.hideTeacherTable);
-                        setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
+                        setTimeout(() => {document.querySelectorAll(".grades-table-header-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
                         
                         document.querySelector(".semester-content")                 .classList.remove("dragging");
                         document.querySelector(".drop-field.create-module")             .classList.remove("show");
@@ -6147,7 +6161,7 @@
                     
                         if (this.selectedSubjectCardsId.length == 0) {
                             clearTimeout(this?.timeouts?.documentOnDragEnd?.hideTeacherTable);
-                            setTimeout(() => {document.querySelectorAll(".grades-table-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
+                            setTimeout(() => {document.querySelectorAll(".grades-table-header-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
                             
                             document.querySelector(".semester-content")                 .classList.remove("dragging");
                             document.querySelector(".drop-field.create-module")             .classList.remove("show");
@@ -6270,7 +6284,7 @@
                         });
                     }
 
-                    document.querySelectorAll(".grades-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
+                    document.querySelectorAll(".grades-table-header-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
                     document.querySelectorAll(".module-title.input").forEach(input => {
                         input.parentElement.style.transition = "width 0.3s ease";
                         input.parentElement.style.width = "30%";
@@ -6350,7 +6364,7 @@
                         });
                     }
 
-                    document.querySelectorAll(".grades-table-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
+                    document.querySelectorAll(".grades-table-header-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
                     document.querySelectorAll(".module-title.input").forEach(input => {
                         input.parentElement.style.transition = "width 0.3s ease";
                         input.parentElement.style.width = "30%";
