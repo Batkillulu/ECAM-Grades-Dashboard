@@ -22,6 +22,8 @@
 // Don't hesitate to contact us, at either:
 //  - baptiste.jacquin@ecam.fr
 //  - maxence.leroux@ecam.fr
+// 
+// Link for offline test: https://espace.ecam.fr/c/portal/login?redirect=%2Fgroup%2Feducation%2Fnotes&p_l_id=0&ticket=ST-113179-sbwjXieT3GLY9T3fXdsmFp9vCro-tomcat03
 
 
 (function() {
@@ -622,7 +624,7 @@
             // MARK: -MODULE CARDS
             styles += `
 
-                .module-card                { display: flex; flex-direction: column; align-items: center; width: 100%; background: #fafafa; border-radius: 25px; border: 3px solid #e5e5e5; scroll-margin: 70px; overflow: clip; transition: all 0.2s ease; }
+                .module-card                { display: flex; flex-direction: column; align-items: center; width: 100%; position: relative; background: #fafafa; border-radius: 25px; border: 3px solid #e5e5e5; scroll-margin: 70px; overflow: clip; transition: all 0.2s ease; }
                 .module-card.fold           { border-radius: 25px; }
                 .module-card.validated      { border-color: #10b981ff; background: radial-gradient(transparent 0%, #f0fdf4ff 75%); }
                 .module-card.failed         { border-color: #ef4444ff; background: radial-gradient(transparent 0%, #fef2f2ff 75%); }
@@ -681,7 +683,7 @@
             //#region -SUBJECT CARDS
                 styles += `
 
-                    .subject-card               { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; border-radius: 20px; border: 4px solid #ffffffff; opacity: 100%; overflow: clip; transition: all 0.1s ease; }
+                    .subject-card               { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; position: relative; border-radius: 20px; border: 4px solid #ffffffff; opacity: 100%; overflow: clip; transition: all 0.1s ease; }
                     .subject-card.detailed      { }
                     .subject-card.compact       { height: 68px; }
 
@@ -2269,8 +2271,8 @@
                     return match;
                 }
 
-                resizeUnclassifiedSection() {
-                    this.timeouts.resizeUnclassifiedSection = setTimeout(() => {
+                resetFixedUnclassifiedSectionHeight() {
+                    this.timeouts.resetFixedUnclassifiedSectionHeight = setTimeout(() => {
                         const unclassifiedSection = document.querySelector(".unclassified-section");
                         unclassifiedSection.style.height = "";
                         setTimeout(() => {
@@ -2278,20 +2280,80 @@
                             const currentUnclassifiedSectionHeight = Number(unclassifiedSection.clientHeight);
                             unclassifiedSection.style.height = `${currentUnclassifiedSectionHeight+4}px`;
                         }, 10)
+                        delete this.timeouts.resetFixedUnclassifiedSectionHeight
                     }, 1)
                 }
 
-                holdElementHeight(elem) {
-                    setTimeout(() => {
-                        const currentHeight = Number(elem.clientHeight);
-                        elem.style.height = `${currentHeight+4}px`;
-                    }, 1)
+
+                holdElementHeight(elem, timeout=0, {offset=0, height=null}={offset: 0, height: null}) {
+                    if (timeout > 0) {
+                        clearTimeout(this?.timeouts?.holdElementHeight?.[elem.id]);
+    
+                        if (!this.timeouts.holdElementHeight) {this.timeouts.holdElementHeight = {}}
+                        this.timeouts.holdElementHeight[elem.id] = setTimeout(() => {
+                            clearTimeout(this?.timeouts?.releaseElementHeight);
+    
+                            const currentHeight = height ? height : Number(elem.clientHeight);
+                            elem.style.height = `${currentHeight+offset}px`;
+                            delete this.timeouts.holdElementHeight[elem.id];
+                        }, timeout);
+                    }
+                    else {
+                        const currentHeight = height ? height : Number(elem.clientHeight);
+                        elem.style.height = `${currentHeight+offset}px`;
+                    }
                 }
 
-                releaseElementHeight(elem) {
-                    setTimeout(() => {
+                releaseElementHeight(elem, timeout=0) {
+                    if (timeout > 0) {
+                        clearTimeout(this?.timeouts?.releaseElementHeight?.[elem.id]);
+                        
+                        if (!this.timeouts.releaseElementHeight) {this.timeouts.releaseElementHeight = {}}
+                        this.timeouts.releaseElementHeight[elem.id] = setTimeout(() => {
+                            clearTimeout(this?.timeouts?.holdElementHeight);
+    
+                            elem.style.height = ``;
+                            delete this.timeouts.releaseElementHeight[elem.id];
+                        }, timeout);
+                    }
+                    else {
                         elem.style.height = ``;
-                    }, 1)
+                    }
+                }
+
+
+                holdElementWidth(elem, timeout=0, {offset=0, width=null}={offset: 0, width: null}) {
+                    if (timeout > 0) {
+                        clearTimeout(this?.timeouts?.holdElementWidth);
+    
+                        if (!this.timeouts.holdElementWidth) {this.timeouts.holdElementWidth = {}}
+                        this.timeouts.holdElementWidth[elem.id] = setTimeout(() => {
+                            clearTimeout(this?.timeouts?.releaseElementWidth);
+    
+                            const currentWidth = width ? width : Number(elem.clientWidth);
+                            elem.style.width = `${currentWidth+offset}px`;
+                        }, timeout);
+                    }
+                    else {
+                        const currentWidth = width ? width : Number(elem.clientWidth);
+                        elem.style.width = `${currentWidth+offset}px`;
+                    }
+                }
+
+                releaseElementWidth(elem, timeout=0) {
+                    if (timeout > 0) {
+                        clearTimeout(this?.timeouts?.releaseElementWidth);
+                        
+                        if (!this.timeouts.releaseElementWidth) {this.timeouts.releaseElementWidth = {}}
+                        this.timeouts.releaseElementWidth[elem.id] = setTimeout(() => {
+                            clearTimeout(this?.timeouts?.holdElementWidth);
+    
+                            elem.style.width = ``;
+                        }, timeout);
+                    }
+                    else {
+                        elem.style.width = ``;
+                    }
                 }
 
             //#endregion
@@ -3089,6 +3151,7 @@
                 }
 
 
+
                 // MARK: renderRecentGrades
                 renderRecentGrades() {
                     const newGradesCard = document.querySelector(".new-grades-card");
@@ -3134,7 +3197,9 @@
                     }
                 }
 
-                // MARK: generateContent
+
+
+                // MARK: GenerateContent
                 generateContent(fadeIn=true) {
 
                     if (fadeIn == "big") {this.languageSensitiveContent(true);}
@@ -3204,18 +3269,24 @@
                         `;
                         contentArea.appendChild(section);
 
-                        this.resizeUnclassifiedSection();
-
                         this.foldedModuleCardsId.forEach(foldedModuleCardId => {
                             const moduleCardToFold = document.getElementById(foldedModuleCardId);
                             if (moduleCardToFold) {
-                                this.foldModuleCard(moduleCardToFold.querySelector(`.module-header`));
+                                this.foldModuleCard(moduleCardToFold);
                             }
                         })
 
                         this.setGradesTableTotalCoef();
                         this.attachAllEventListeners();
                     });
+
+                    if (this.viewMode == "compact") {
+                        const unclassifiedSection = document.querySelector(".unclassified-section");
+                        this.releaseElementHeight(unclassifiedSection);
+                        this.foldAllSubjCards();
+                        this.holdElementHeight(unclassifiedSection, 300, {offset: 4});
+                    }
+
                 }
 
 
@@ -3366,8 +3437,8 @@
                     const detailed              = !this.compactSubjCardsId.includes(`subject-card-semester-${sem}-subject-${subject}`);
                     
                     let html = `
-                    <div class="subject-card ${classified ? "classified" : "unclassified"} ${detailed && this.viewMode != "compact" ? "detailed" : "compact"} ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" id="subject-card-semester-${sem}-subject-${subject}" ${this.editMode ? `style="cursor: grab; user-select: none;"` : ""} data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
-                        <div class="subject-card-header${detailed && this.viewMode != "compact" ? "" : " compact"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`} ${classified ? "classified" : "unclassified"}" ${this.editMode ? `style="cursor: grab;" draggable="true"` : ``} data-module="${moduleName}">
+                    <div class="subject-card ${classified ? "classified" : "unclassified"} ${detailed ? "detailed" : "compact"} ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" id="subject-card-semester-${sem}-subject-${subject}" ${this.editMode ? `style="cursor: grab; user-select: none;"` : ""} data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
+                        <div class="subject-card-header${detailed ? "" : " compact"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`} ${classified ? "classified" : "unclassified"}" ${this.editMode ? `style="cursor: grab;" draggable="true"` : ``} data-module="${moduleName}">
                             <div style="display:flex; align-items:center; gap:8px; padding-left: ${this.editMode ? "0" : "42px"}; width:38.8%; min-width: 275px">
                                 ${this.editMode
                                     ? `<div style="margin: 0px 5px; margin-bottom: 3px;">
@@ -3389,32 +3460,30 @@
                                                     : "Weight in module: "
                                                 }
                                                 ${this.editMode 
-                                                    ? `<input class="subject-coef-input-box any-input" id="subject-coef-input-box-semester-${sem}-subject-${subject}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" type="number" placeholder="%" step="5" min="0" max="100" value="${pct}"/>%`
+                                                    ? `<span><input class="subject-coef-input-box any-input" id="subject-coef-input-box-semester-${sem}-subject-${subject}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" type="number" placeholder="%" step="5" min="0" max="100" value="${pct}"/>%</span>`
                                                     : `<span style="font-weight: 800">${pct}%</span>`
                                                 }
                                             ` 
                                             : ""
                                         }
-                                        ${!(detailed && this.viewMode != "compact")
-                                            ? ` ${classified ? "• " : ""}
-                                                ${nbGrades===0 
-                                                    ? `${this.lang == "fr" ? "aucune note publiée" : "no published grade"}` 
-                                                    : `${nbGrades} ${this.lang == "fr" ? `note${nbGrades>1?"s":""} au total` : `grade${nbGrades>1?"s":""} total`}`
-                                                }
-                                                ${nbGrades>0 
-                                                    ? ` • <span ${includedGradesLength<nbGrades ? `style="color: #df0000"` : ``}>
-                                                        <span style="font-weight: 700; ">${includedGradesLength}/${nbGrades}</span> 
-                                                        ${this.lang == "fr" ? `note${includedGradesLength>1?"s":""} activée${includedGradesLength>1?"s":""}` : `grade${includedGradesLength>1?"s":""} enabled`}${includedGradesLength<nbGrades ? `!` : ``}
-                                                    </span>` 
-                                                    : ``
-                                                }
-                                                ${nbSimGrades>0 
-                                                    ? ` • ${nbSimGrades} ${this.lang == "fr" ? `note${nbSimGrades>1?"s":""} simulée${nbSimGrades>1?"s":""}` : `simulated grade${nbSimGrades>1?"s":""}`}`
-                                                    : ``
-                                                }
-                                            `
-                                            : ""
-                                        }
+                                        <span class="subject-card-header-grades-details" ${!(detailed) ? "style=\"display: none;\"" : ""} >
+                                            ${classified ? "• " : ""}
+                                            ${nbGrades===0 
+                                                ? `<span>${this.lang == "fr" ? "aucune note publiée" : "no published grade"}</span>` 
+                                                : `<span>${nbGrades} ${this.lang == "fr" ? `note${nbGrades>1?"s":""} au total` : `grade${nbGrades>1?"s":""} total</span>`}`
+                                            }
+                                            ${nbGrades>0 
+                                                ? ` • <span ${includedGradesLength<nbGrades ? `style="color: #df0000"` : ``}>
+                                                    <span style="font-weight: 700; ">${includedGradesLength}/${nbGrades}</span> 
+                                                    ${this.lang == "fr" ? `note${includedGradesLength>1?"s":""} activée${includedGradesLength>1?"s":""}` : `grade${includedGradesLength>1?"s":""} enabled`}${includedGradesLength<nbGrades ? `!` : ``}
+                                                </span>` 
+                                                : ``
+                                            }
+                                            ${nbSimGrades>0 
+                                                ? `<span> • ${nbSimGrades} ${this.lang == "fr" ? `note${nbSimGrades>1?"s":""} simulée${nbSimGrades>1?"s":""}` : `simulated grade${nbSimGrades>1?"s":""}</span>`}`
+                                                : ``
+                                            }
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -3431,6 +3500,7 @@
                         </div>
 
                     `;
+
                     
                     html += `
 
@@ -3901,7 +3971,7 @@
 
 
             // MARK: Regenerate subject and module averages and total coef debug texts
-            regenAveragesAndTotalCoefs(sem, moduleName, subject) {
+            regenAveragesAndTotalCoefs(sem, moduleName="__#unclassified#__", subject) {
 
                 // subject average modification
                 if (subject) {
@@ -3919,22 +3989,27 @@
                 
                 // module average modification
                 if (moduleName != "__#unclassified#__") {
-                    const moduleAvg     = this.gradesDatas[sem][moduleName].average;
-                    const moduleCard    = document.querySelector(`.module-card[data-module="${moduleName}"]`);
-                    const moduleAvgDiv  = moduleCard.querySelector(`.module-moyenne[data-module="${moduleName}"]`);
+                    const moduleAvg         = this.gradesDatas[sem][moduleName].average;
+                    const moduleCard        = document.querySelector(`.module-card[data-module="${moduleName}"]`);
+                    const moduleCardHeader  = moduleCard.querySelector(`.module-header`);
+                    const moduleAvgDiv      = moduleCard.querySelector(`.module-moyenne[data-module="${moduleName}"]`);
                     moduleAvgDiv.childNodes[0].data = moduleAvg + "/20";
-                    moduleCard.classList.remove("good"); moduleCard.classList.remove("bad"); moduleCard.classList.remove("unknown");
+                    moduleCard.classList.remove("validated"); moduleCard.classList.remove("failed"); moduleCard.classList.remove("unknown");
+                    moduleCardHeader.classList.remove("validated"); moduleCardHeader.classList.remove("failed"); moduleCardHeader.classList.remove("unknown");
                     moduleAvgDiv.classList.remove("good"); moduleAvgDiv.classList.remove("bad"); moduleAvgDiv.classList.remove("unknown");
+
                     if (moduleAvg == " - ") {
                         moduleCard.classList.add("unknown");
                         moduleAvgDiv.classList.add("unknown");
                     }
                     else if (moduleAvg >= 10) {
-                        moduleCard.classList.add("good");
+                        moduleCard.classList.add("validated");
+                        moduleCardHeader.classList.add("validated");
                         moduleAvgDiv.classList.add("good");
                     }
                     else {
-                        moduleCard.classList.add("bad");
+                        moduleCard.classList.add("failed");
+                        moduleCardHeader.classList.add("failed");
                         moduleAvgDiv.classList.add("bad");
                     }
 
@@ -4040,7 +4115,7 @@
                                     this.moduleHeaderMouseUpNoMoveAction(e)
                                 }
                                 else if (e.target.closest('.subject-card-header, .subject-card.compact') && !e.target.closest('.any-input, .drag-icon, .tick-icon, .subject-delete-btn')) {
-                                    this.subjHeaderMouseUpNoMoveAction(e)
+                                    this.subjectHeaderMouseUpNoMoveAction(e)
                                 }
                             };
                         }
@@ -4052,13 +4127,22 @@
                         })
                     }
                     attachAnyInputListeners(input) {
-                        input.onfocus    = () =>  {this.generalKeyboardEvents("edit sim grade", input)}
-                        input.onblur     = () =>  {this.generalKeyboardEvents("general")};
-                        input.ondragover = (e) => {if (e.target.closest(".any-input")) {e.preventDefault(); e.dataTransfer.dropEffect = "none";}}
+                        input.onfocus    = ()  => {this.generalKeyboardEvents("edit sim grade", input)}
+                        input.onblur     = ()  => {this.generalKeyboardEvents("general")};
+                        input.ondragover = (e) => {e.preventDefault(); e.dataTransfer.dropEffect = "none";}
                         input.ondrop     = (e) => {e.preventDefault(); e.dataTransfer.dropEffect = "link";};
+
                         if (input.classList.contains("module-title")) {   // Change modules name
-                            input.onfocus   = ( ) => { if (this.editMode) {this.detachOnDragEventListeners(); this.generalKeyboardEvents("edit sim grade", input); document.querySelectorAll(".module-header").forEach(card => {card.draggable = false});} }
-                            input.onblur    = ( ) => { if (this.editMode) {this.attachOnDragEventListeners(); this.generalKeyboardEvents("general"); document.querySelectorAll(".module-header").forEach(card => {card.draggable = true;});} }
+                            input.onfocus   = ()  => { if (this.editMode) {
+                                this.detachOnDragEventListeners(); 
+                                this.generalKeyboardEvents("edit sim grade", input); 
+                                document.querySelectorAll(".module-header").forEach(card => {card.draggable = false});
+                            } }
+                            input.onblur    = ()  => { if (this.editMode) {
+                                this.attachOnDragEventListeners(); 
+                                this.generalKeyboardEvents("general"); 
+                                document.querySelectorAll(".module-header").forEach(card => {card.draggable = true;});
+                            } }
                             input.onchange  = (e) => { this.moduleTitleInputChangeAction(e.target) };
                         }
                         else {
@@ -4420,14 +4504,18 @@
 
                     attachAllSubjectCardRelatedEvenListenersForEverySubjectCard(container=document.body) {
                         this.attachOnDragEventListeners(container);
+
                         this.attachAndManageAllDragOrTickIconsListener(container);
-                        this.attachAllSubjectCoefInputBoxesListeners(container);
-                        this.attachCheckboxesListeners(container);
+
                         this.attachAllSubjectNameInputsListener(container);
+                        this.attachAllSubjectCoefInputBoxesListeners(container);
+                        this.attachAllSubjectDeleteBtnsListener(container);
+
+                        this.attachCheckboxesListeners(container);
+
                         this.attachAllSubjectSimAddBtnsListener(container);
                         this.attachAllSubjectSimDelBtnsListener(container);
                         this.attachAllSubjectSimInputEditsListener(container);
-                        this.attachAllSubjectDeleteBtnsListener(container);
                     }
 
                     attachAllSubjectCardRelatedEventListeners(subjCard) {
@@ -4451,17 +4539,12 @@
 
                     /** Ensures all selected Subject Cards have a tick icon with their assigned event listeners instead of the default drag icon, and attach them the correct event listener */
                     attachAndManageAllDragOrTickIconsListener(container=document.body) {
-                        // this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {
-                        //     const subjectCard = container.getElementById(selectedSubjectCardId);
-                        //     this.changeDragIconToTickIcon(subjectCard);
-                        // })
-
                         container.querySelectorAll(".subject-card").forEach(subjCard => {
                             this.attachDragOrTickIconsListener(subjCard);
                         })
                     }
                     attachDragOrTickIconsListener(card) {
-                        if (card.classList.contains(".subject-card")) {
+                        if (card.classList.contains("subject-card")) {
                             if (card.querySelector(".drag-icon")) {
                                 const dragIcon = card.querySelector(".drag-icon");
                                 dragIcon.onclick = (e) => { this.dragIconOnClickEvent(e, dragIcon) };
@@ -4510,7 +4593,7 @@
                     }
 
                     attachSubjectDeleteBtnListener(btn) {
-                        btn.onclick = (e) => {this.subjectDeleteBtnAction(e.target)};
+                        btn.onclick = (e) => {this.subjectCardDeleteBtnAction(e.target)};
                     }
 
                     attachCheckboxesListeners(container=document.body) {
@@ -4546,7 +4629,7 @@
                         })
                     }
                     attachSubjectNameInputListener(input) {
-                        input.onchange = (e) => {this.subjectNameInputAction(e.target)};
+                        input.onchange = (e) => {this.subjectCardNameInputAction(e.target)};
                     }
 
                     attachAllSubjectSimAddBtnsListener(container=document.body) {
@@ -4555,7 +4638,7 @@
                         });
                     }
                     attachSubjectSimAddBtnListener(btn) {
-                        btn.onclick = (e) => {this.subjectSimAddBtnAction(e.target)};
+                        btn.onclick = (e) => {this.subjectCardSimAddBtnAction(e.target)};
                     }
 
                     attachAllSubjectSimDelBtnsListener(container=document.body) {
@@ -4564,7 +4647,7 @@
                         })
                     }
                     attachSubjectSimDelBtnListener(btn) {
-                        btn.onclick = (e) => {this.subjectSimDelBtnAction(e.target)};
+                        btn.onclick = (e) => {this.subjectCardSimDelBtnAction(e.target)};
                     }
 
                     attachAllSubjectSimInputEditsListener(container=document.body) {
@@ -4573,7 +4656,7 @@
                         })
                     }
                     attachSubjectSimInputEditListener(input) {
-                        input.onchange = (e) => {this.subjectSimInputEditAction(e.target)};
+                        input.onchange = (e) => {this.subjectCardSimInputEditAction(e.target)};
                     }
                     
                 //#endregion
@@ -4851,12 +4934,51 @@
 
 
 
-                //#region Module card
+                //#region Module
 
 
 
 
 
+
+
+                    
+                    // MARK: - module header mouse action
+                    /** Method temporarily attaching an onmousemove and an onmouseup event listener to the document's body.
+                     * 
+                     * Meant to be invoked when the mouse down event is triggered if the target is or is contained in a module header.
+                     * 
+                     * In practice, when the onmousedown event of the document is triggered on a module card, call this method to:
+                     * - attach an onmousemove event listener to the document's body that will clear the onmousemove and onmouseup events of the document's body in order to "cancel" the action (safe guard for when the edit mode is off and the user attempts to drag the module header, it will not do anything instead of triggering an onclick event)
+                     * - attach an onmouseup event listener to the document's body that will make the action intended to happen when the user clicks on the module header (folding the module card) WITHOUT moving the mouse (so if it wasn't an attempt to drag the module header). Both the onmousemove and onmouseup event listeners of the document's body will then be cleared.
+                     */
+                    moduleHeaderMouseUpNoMoveAction() {
+                        document.body.onmousemove = (e) => {
+                            e.preventDefault();
+                            document.body.onmouseup     = null;
+                            document.body.onmousemove   = null;
+                        };
+                        document.body.onmouseup = (e) => {
+                            const moduleCard    = e.target.closest('.module-card');
+                            const moduleDetails = moduleCard.querySelector(".module-details");
+                            
+                            moduleDetails.querySelectorAll(".subject-card").forEach(subjCard => { 
+                                if (this.selectedSubjectCardsId.includes(subjCard.id)) {
+                                    this.changeDragIconToTickIcon(subjCard);
+                                } 
+                            })
+
+                            this.toggleFoldModuleCard(moduleCard);
+                            
+                            this.attachDropFieldsEventListeners("insert", moduleDetails);
+                            document.body.onmousemove   = null;
+                            document.body.onmouseup     = null;
+                        }
+                    }
+
+
+
+                
                     // MARK: -toggle module card folding
                     /** Call this method to switch all Module cards' state between folded and unfolded 
                      * 
@@ -4888,7 +5010,6 @@
                             }
                         }
                     }
-
 
                     // MARK: -fold module card
                     /** Call this method to fold all module cards 
@@ -4973,7 +5094,6 @@
                         }
                         
                     }
-
 
                     // MARK: -unfold module card
                     /** Call this method to unfold all module cards
@@ -5067,39 +5187,27 @@
                         }
                     }
 
-                    // MARK: - module header mouse action
-                    /** Method temporarily attaching an onmousemove and an onmouseup event listener to the document's body.
-                     * 
-                     * Meant to be invoked when the mouse down event is triggered if the target is or is contained in a module header.
-                     * 
-                     * In practice, when the onmousedown event of the document is triggered on a module card, call this method to:
-                     * - attach an onmousemove event listener to the document's body that will clear the onmousemove and onmouseup events of the document's body in order to "cancel" the action (safe guard for when the edit mode is off and the user attempts to drag the module header, it will not do anything instead of triggering an onclick event)
-                     * - attach an onmouseup event listener to the document's body that will make the action intended to happen when the user clicks on the module header (folding the module card) WITHOUT moving the mouse (so if it wasn't an attempt to drag the module header). Both the onmousemove and onmouseup event listeners of the document's body will then be cleared.
-                     */
-                    moduleHeaderMouseUpNoMoveAction() {
-                        document.body.onmousemove = (e) => {
-                            e.preventDefault();
-                            document.body.onmouseup     = null;
-                            document.body.onmousemove   = null;
-                        };
-                        document.body.onmouseup = (e) => {
-                            const moduleCard    = e.target.closest('.module-card');
-                            const moduleDetails = moduleCard.querySelector(".module-details");
-                            
-                            moduleDetails.querySelectorAll(".subject-card").forEach(subjCard => { 
-                                if (this.selectedSubjectCardsId.includes(subjCard.id)) {
-                                    this.changeDragIconToTickIcon(subjCard);
-                                } 
-                            })
 
-                            this.toggleFoldModuleCard(moduleCard);
-                            
-                            this.attachDropFieldsEventListeners("insert", moduleDetails);
-                            document.body.onmousemove   = null;
-                            document.body.onmouseup     = null;
+                    ensureAllModuleCardsFoldingState(container=document.body) {
+                        if (container instanceof HTMLElement || container instanceof HTMLDocument) {
+                            container.querySelectorAll(".module-card").forEach(moduleCard => {
+                                this.ensureModuleCardFoldingState(moduleCard);
+                            })
                         }
                     }
-                
+                    ensureModuleCardFoldingState(moduleCard) {
+                        if (moduleCard?.classList?.contains(".module-card")) {
+                            if (this.foldedModuleCardsId.contains(moduleCard)) {
+                                this.foldModuleCard(moduleCard);
+                            }
+                            else {
+                                this.unfoldModuleCard(moduleCard);
+                            }
+                        }
+                    }
+
+
+
                     moduleTitleInputChangeAction(target) {
                         const sem               = target.dataset.semester;
                         const newModuleName     = target.value;
@@ -5130,11 +5238,12 @@
 
                     moduleDeleteBtnAction(target) {
                         const moduleCard   = target.parentElement.parentElement;
+                        let sem, moduleName;
 
                         if (this.selectedModuleCardsId.includes(moduleCard.id)) {
                             this.selectedModuleCardsId.forEach(selectedModuleCard => {
-                                const sem           = selectedModuleCard.dataset.semester;
-                                const moduleName    = selectedModuleCard.dataset.module;
+                                sem         = selectedModuleCard.dataset.semester;
+                                moduleName  = selectedModuleCard.dataset.module;
                                 
                                 const moduleIndex = this.moduleConfig[sem].__modules__.indexOf(moduleName);
                                 this.moduleConfig[sem].__modules__.splice(moduleIndex, 1);
@@ -5144,8 +5253,8 @@
                             })
                         }
                         else {
-                            const sem           = target.dataset.semester;
-                            const moduleName    = target.dataset.module;
+                            sem         = target.dataset.semester;
+                            moduleName  = target.dataset.module;
 
                             const moduleIndex = this.moduleConfig[sem].__modules__.indexOf(moduleName);
     
@@ -5167,8 +5276,54 @@
 
 
 
-                //#region Subject card
+                //#region Subject
 
+                    /** Method temporarily attaching an onmousemove and an onmouseup event listener to the document's body.
+                     * 
+                     * Meant to be invoked when the mouse down event is triggered if the target is or is contained in a card header.
+                     * 
+                     * In practice, when the onmousedown event of the document is triggered on a card header, call this method to:
+                     * - attach an onmousemove event listener to the document's body that will clear the onmousemove and onmouseup events of the document's body in order to "cancel" the action (safe guard for when the edit mode is off and the user attempts to drag the card header, it will not do anything instead of triggering an onclick event)
+                     * - attach an onmouseup event listener to the document's body that will make the action intended to happen when the user clicks on the card header (switching the card card between detailed and comapct view modes) WITHOUT moving the mouse (so if it wasn't an attempt to drag the card header). Both the onmousemove and onmouseup event listeners of the document's body will then be cleared.
+                     */
+                    subjectHeaderMouseUpNoMoveAction() {
+
+                        document.body.onmousemove = (e) => {
+                            e.preventDefault();
+                            document.body.onmouseup = null;
+                            document.body.onmousemove = null;
+                        };
+                        document.body.onmouseup = (e) => {
+                            const subjCard  = e.target.closest('.subject-card');
+                            const unclassifiedSection = document.querySelector(".unclassified-section");
+
+                            if (subjCard) {
+                                if (subjCard.classList.contains("unclassified")) {
+                                    this.releaseElementHeight(unclassifiedSection);
+                                }
+
+                                this.toggleFoldSubjCard(subjCard);
+                            
+                                this.setGradesTableTotalCoef(subjCard);
+                                this.attachAllSubjectCardRelatedEventListeners(subjCard);
+
+                                if (subjCard.classList.contains("unclassified")) {
+                                    this.holdElementHeight(unclassifiedSection, 100, {offset: 4});
+                                }
+                            }
+                            
+                            document.body.onmousemove = null;
+                            document.body.onmouseup = null;
+                        }
+                        
+                    }
+
+
+
+                    /** Toggle the folding of all the subject cards inside the given container
+                     * @param {HTMLElement} [container=document.body] The HTML element containing the subject cards whose fold mode will be toggled
+                     * @param {boolean} [smart=true] If true, takes into consideration the current view mode to know if the subject card should be folded of unfolded. If false, simply toggle the folding mode.
+                     */
                     toggleFoldAllSubjCards(container=document.body, smart=true) {
                         if (container instanceof HTMLElement) {
                             if (smart) {
@@ -5191,23 +5346,9 @@
                             }
                         }
                     }
-
-                    foldAllSubjCards(container=document.body) {
-                        if (container instanceof HTMLElement) {
-                            container.querySelectorAll(".subject-card.detailed").forEach(detailedSubjCard => {
-                                this.foldSubjCard(detailedSubjCard);
-                            })
-                        }
-                    }
-
-                    unfoldAllSubjCards(container=document.body) {
-                        if (container instanceof HTMLElement) {
-                            container.querySelectorAll(".subject-card.compact").forEach(compactSubjCard => {
-                                this.unfoldSubjCard(compactSubjCard);
-                            })
-                        }
-                    }
-
+                    /** Toggle the folding of the given subject card
+                     * @param {HTMLElement} subjCard The subject cards whose fold mode will be toggled
+                     */
                     toggleFoldSubjCard(subjCard) {
                         if (subjCard?.classList?.contains("detailed")) {
                             this.foldSubjCard(subjCard);
@@ -5217,43 +5358,73 @@
                         }
                     }
 
+                    /** Fold all the subject cards inside the given container
+                     * @param {HTMLElement} [container=document.body] The HTML element containing the subject cards to fold
+                     */
+                    foldAllSubjCards(container=document.body) {
+                        if (container instanceof HTMLElement) {
+                            container.querySelectorAll(".subject-card.detailed").forEach(detailedSubjCard => {
+                                this.foldSubjCard(detailedSubjCard);
+                            })
+                        }
+                    }
+                    /** Fold the given subject card
+                     * @param {HTMLElement} [subjCard] The subject card to fold
+                     */
                     foldSubjCard(subjCard) {
-                        const subjCardHeader = subjCard.querySelector(".subject-card-header");
-                        subjCardHeader.classList.add("fold");
-
-                        // fix the height
-                        subjCard.style.height = `${subjCard.clientHeight+8}px`;
-
-                        // prepare the aimed height below the higher instance style
-                        subjCard.classList.replace("detailed", "compact");
-
-                        // remove the higher instance style to let the transition occure
-                        setTimeout(() => {
-                            subjCard.style.height = "";
-                        }, 1);
-                        
-                        this.compactSubjCardsId.push(subjCard.id);
-                        this.compactSubjCardsClientHeight.push(subjCard.clientHeight);
+                        if (subjCard?.classList?.contains("subject-card")) {
+                            const subjCardHeader = subjCard.querySelector(".subject-card-header");
+                            subjCardHeader.classList.add("fold");
+    
+                            // hold the height
+                            this.holdElementHeight(subjCard, 0, {offset: 8});
+    
+                            // prepare the aimed height below the higher instance height style
+                            subjCard.classList.replace("detailed", "compact");
+    
+                            // remove the held higher instance height style to let the transition occure
+                            this.releaseElementHeight(subjCard,1)
+                            
+                            this.compactSubjCardsId.push(subjCard.id);
+                            this.compactSubjCardsClientHeight.push(subjCard.clientHeight);
+                        }
                     }
 
+                    /** Unfold all the subject cards inside the given container
+                     * @param {HTMLElement} [container=document.body] The HTML element containing the subject cards to unfold
+                     */
+                    unfoldAllSubjCards(container=document.body) {
+                        if (container instanceof HTMLElement) {
+                            container.querySelectorAll(".subject-card.compact").forEach(compactSubjCard => {
+                                this.unfoldSubjCard(compactSubjCard);
+                            })
+                        }
+                    }
+                    /** Unfold the given subject card
+                     * @param {HTMLElement} [subjCard] The subject card to unfold
+                     */
                     unfoldSubjCard(subjCard) {
-                        const subjCardHeader = subjCard.querySelector(".subject-card-header");
-                        subjCardHeader.classList.remove("fold");
+                        if (subjCard?.classList?.contains("subject-card")) {
+                            const subjCardHeader = subjCard.querySelector(".subject-card-header");
+                            subjCardHeader.classList.remove("fold");
 
-                        // fix the height
-                        subjCard.style.height = `${this.compactSubjCardsClientHeight[this.compactSubjCardsId.indexOf(subjCard.id)]+8}px`;
+                            // set the height to the desired value
+                            this.holdElementHeight(subjCard, 0, {offset: 8, height: this.compactSubjCardsClientHeight[this.compactSubjCardsId.indexOf(subjCard.id)]})
 
-                        // prepare the aimed height below the higher instance style
-                        subjCard.classList.replace("compact", "detailed");
+                            // makes the height go automatic -> correspond to the desired height
+                            subjCard.classList.replace("compact", "detailed");
 
-                        // remove the higher instance style to let the transition occure
-                        setTimeout(() => {subjCard.style.height = ``;}, 100);
+                            // remove the higher instance height style at the end of the transition to keep the height unset (automatic)
+                            this.releaseElementHeight(subjCard,100)
 
-                        this.compactSubjCardsId.splice(this.compactSubjCardsId.indexOf(subjCard.id), 1);
-                        this.compactSubjCardsClientHeight.splice(this.compactSubjCardsId.indexOf(subjCard.id), 1);
+                            this.compactSubjCardsId.splice(this.compactSubjCardsId.indexOf(subjCard.id), 1);
+                            this.compactSubjCardsClientHeight.splice(this.compactSubjCardsId.indexOf(subjCard.id), 1);
+                        }
                     }
 
-                    subjectDeleteBtnAction(target) {
+
+
+                    subjectCardDeleteBtnAction(target) {
                         const subjectCard    = target.parentElement.parentElement;
 
                         if (this.selectedSubjectCardsId.includes(subjectCard.id)) {
@@ -5300,41 +5471,7 @@
                         this.generateContent();
                     }
 
-                    /** Method temporarily attaching an onmousemove and an onmouseup event listener to the document's body.
-                     * 
-                     * Meant to be invoked when the mouse down event is triggered if the target is or is contained in a card header.
-                     * 
-                     * In practice, when the onmousedown event of the document is triggered on a card header, call this method to:
-                     * - attach an onmousemove event listener to the document's body that will clear the onmousemove and onmouseup events of the document's body in order to "cancel" the action (safe guard for when the edit mode is off and the user attempts to drag the card header, it will not do anything instead of triggering an onclick event)
-                     * - attach an onmouseup event listener to the document's body that will make the action intended to happen when the user clicks on the card header (switching the card card between detailed and comapct view modes) WITHOUT moving the mouse (so if it wasn't an attempt to drag the card header). Both the onmousemove and onmouseup event listeners of the document's body will then be cleared.
-                     */
-                    subjHeaderMouseUpNoMoveAction() {
-
-                        document.body.onmousemove = (e) => {
-                            e.preventDefault();
-                            document.body.onmouseup = null;
-                            document.body.onmousemove = null;
-                        };
-                        document.body.onmouseup = (e) => {
-                            const subjCard  = e.target.closest('.subject-card');
-                            if (subjCard) {
-                                const unclassifiedSection = document.querySelector(".unclassified-section");
-                                this.holdElementHeight(unclassifiedSection);
-                                
-                                this.toggleFoldSubjCard(subjCard);
-                                
-                                this.setGradesTableTotalCoef(subjCard);
-                                this.attachAllSubjectCardRelatedEventListeners(subjCard);
-                                
-                                this.releaseElementHeight(unclassifiedSection);
-                            }
-                            
-                            document.body.onmousemove = null;
-                            document.body.onmouseup = null;
-                        }
-                    }
-
-                    subjectNameInputAction(target) {
+                    subjectCardNameInputAction(target) {
                         const subjNewName   = target.value;
                         const subjectCardId = target.id.replace(/\bsubject-name-input/, "subject-card");
                         const subjectCard   = document.getElementById(subjectCardId);
@@ -5395,7 +5532,7 @@
                             unclassifiedSection.style.height = "";
                             unclassifiedContent.innerHTML = this.createAllDetailedUnclassifiedSubjCards(sem);
                             
-                            this.resizeUnclassifiedSection();
+                            this.resetFixedUnclassifiedSectionHeight();
                             this.attachAllSubjectCardRelatedEvenListenersForEverySubjectCard();
                             this.setGradesTableTotalCoef();
                             this.saveConfig()
@@ -5407,7 +5544,8 @@
                         }
                     }
 
-                    subjectSimAddBtnAction(target) {
+
+                    subjectCardSimAddBtnAction(target) {
                         const moduleName = target.dataset.module;
                         const semX = target.dataset.semester;
                         const subj = target.dataset.subj;
@@ -5457,7 +5595,7 @@
                         this.generateContent();
                     }
 
-                    subjectSimDelBtnAction(target) {
+                    subjectCardSimDelBtnAction(target) {
                         const semX          = target.dataset.semester;
                         const moduleName    = target.dataset.module;
                         const subj          = target.dataset.subj;
@@ -5470,7 +5608,7 @@
                         this.generateContent(false);
                     }
 
-                    subjectSimInputEditAction(target) {
+                    subjectCardSimInputEditAction(target) {
                         const moduleName    = target.dataset.module;
                         const semX          = target.dataset.semester;
                         const subj          = target.dataset.subj;
@@ -5531,26 +5669,26 @@
                             }
                         })
                     }
+
                 }
 
                 this.attachNotifBtnsListener();
             }
             attachSubjectCardOnDragEventListeners(subjectCard) {
-                let draggableElement = "";
-                const isCompact = subjectCard.classList.contains("compact");
-                if (isCompact) {draggableElement = subjectCard;}
-                else {draggableElement = subjectCard.querySelector(".subject-card-header");}
+
+                let draggableElement = subjectCard.querySelector(".subject-card-header");
                 
                 draggableElement.draggable = true;
 
                 if (!this.selectedSubjectCardsId.includes(subjectCard.id)) {
-                    draggableElement.ondragstart = (e) => {this.draggedElementOnDragStartEvent( e, {draggableElement, card: subjectCard})};
-                    draggableElement.ondragend   = (e) => {this.draggedElementOnDragEndEvent(   e, {draggableElement, card: subjectCard})};
+                    draggableElement.ondragstart = (e) => {this.draggedElementOnDragStartEvent( e, {draggedElement: draggableElement, card: subjectCard})};
+                    draggableElement.ondragend   = (e) => {this.draggedElementOnDragEndEvent(   e, {draggedElement: draggableElement, card: subjectCard})};
                 }
                 else {
                     draggableElement.ondragstart = (e) => {this.draggedSelectedElementOnDragStartEvent( e, {draggedElement: draggableElement, card: subjectCard})};
                     draggableElement.ondragend   = (e) => {this.draggedSelectedElementOnDragEndEvent(   e, {draggedElement: draggableElement, card: subjectCard})};
                 }
+
             }
             attachModuleCardOnDragEventListeners(moduleCard) {
                 const moduleHeader = moduleCard.querySelector(".module-header");
@@ -5592,6 +5730,7 @@
 
             // MARK: ON DRAG START
             async draggedElementOnDragStartEvent(e, {draggedElement, card}) {
+
                 if (e.target.classList.contains("any-input")) {return}
 
                 let sem           = "";
@@ -5609,8 +5748,7 @@
                     this.currentlyDraggedCard.querySelector(".grades-table")        .style.display = "none";
                     this.currentlyDraggedCard.querySelector(".subject-card-header") .style.borderBottom = "none";
                     this.currentlyDraggedCard.querySelector(".subject-card-header") .style.borderRadius = "20px 20px 20px 20px";
-
-                    this.currentlyDraggedCard.querySelector(".subject-card-header") .children[0].style.width =    "50%";
+                    this.currentlyDraggedCard.querySelector(".subject-card-header") .children[0].style.width = "50%";
 
                     // whatever
                     this.currentlyDraggedCard.querySelector(".subject-total-coef-div").style.display = "none";
@@ -5646,11 +5784,19 @@
                         if (!this?.timeouts?.draggedElementOnDragStartEvent) {this.timeouts.draggedElementOnDragStartEvent = {};}
                     }
 
-                    const insertFieldTexts = document.querySelectorAll(".drop-module-card-insert-text,  .drop-subject-card-insert-text");
-                    insertFieldTexts.forEach(insertFieldText => {
-                        insertFieldText.classList.replace("add", "insert");
-                        insertFieldText.parentElement.classList.replace("add", "insert");
-                    })
+                    if (this.selectedSubjectCardsId.length == 0) {
+                        // Getting all the shown drop fields, but the 2 fields around the dragged card
+                        const insertionDropFields = document.querySelectorAll(`
+                            .drop-field.insert-field.subject:not([data-semester="${sem}"][data-module="${moduleName}"][data-index="${index}"]).show,
+                            .drop-field.insert-field:not(.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${index}"]).show
+                        `);
+                        insertionDropFields.forEach(insertField  => { if (insertField.dataset.index != index+1) {
+                            insertField.querySelector(`.drop-${insertField.classList.contains("subject") ? "subject" : "module"}-card-insert-plus`) .classList.remove("show");
+                            insertField.querySelector(`.drop-${insertField.classList.contains("subject") ? "subject" : "module"}-card-insert-arrow`).classList.add("show");
+                            insertField.querySelector(`.drop-${insertField.classList.contains("subject") ? "subject" : "module"}-card-insert-text`) .classList.replace("add", "insert");
+                            insertField.querySelector(`.drop-${insertField.classList.contains("subject") ? "subject" : "module"}-card-insert-text`) .parentElement.classList.replace("add", "insert");
+                        }})
+                    }
                 }
                 else if (card.classList.contains("module-card")) {
                     type = "module";
@@ -5662,28 +5808,30 @@
                     document.querySelector(".drop-field.remove-from-module")        .classList.add("show");
                     document.querySelector(".drop-field-remove-from-module-hitbox") .classList.add("show");
                     
-                    if (this.foldedModuleCardsId.includes(card.id)) {
-                        this.foldModuleCard(card, true, "only", true);
-                    }
-                    else {
-                        this.foldModuleCard(card, true, true, true);
-                    }
+                    this.foldModuleCard(card, false, this.foldedModuleCardsId.includes(card.id) ? "only" : true, true);
                     
                     document.querySelector(".semester-content").classList.add("dragging");
                 }
 
-                document.querySelectorAll(`
-                    .drop-field.insert-field.subject:not([data-semester="${sem}"][data-module="${moduleName}"][data-index="${index}"]).show,
-                    .drop-field.insert-field:not(.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${index}"]).show
-                `)
-                .forEach(insertField  => { if (insertField.classList.contains("module") && insertField.dataset.index != index+1) {
-                    insertField.querySelector(`.drop-${insertField.classList.contains("subject") ? "subject" : "module"}-card-insert-plus`).classList.remove("show");
-                    insertField.querySelector(`.drop-${insertField.classList.contains("subject") ? "subject" : "module"}-card-insert-arrow`).classList.add("show");
-                }})
+
+                // If at least one card of same type as the card draggeed is selected, then we leave everything as they currently are: we don't do anything
+                // If there are not selection for the type of card dragged, we don't want to change the text inside the insertion fields adjacent to the dragged card for cleaner animations:
+                if ((card.classList.contains("module-card") && this.selectedModuleCardsId.length == 0) || (card.classList.contains("subject-card") && this.selectedSubjectCardsId.length == 0)) {
+                    // Select all the shown drop fields except the 2 fields around the dragged card
+
+                    document.querySelectorAll(".drop-field.insert-field.show").forEach(insertField  => {
+                        insertField.querySelector(`.drop-${insertField.classList.contains("subject") ? "subject" : "module"}-card-insert-plus`) .classList.remove("show");
+                        insertField.querySelector(`.drop-${insertField.classList.contains("subject") ? "subject" : "module"}-card-insert-arrow`).classList.add("show");
+                        insertField.querySelector(`.drop-${insertField.classList.contains("subject") ? "subject" : "module"}-card-insert-text`) .classList.replace("add", "insert");
+                        insertField.querySelector(`.drop-${insertField.classList.contains("subject") ? "subject" : "module"}-card-insert-text`) .parentElement.classList.replace("add", "insert");
+                    })
+                }
+
 
                 e.dataTransfer.effectAllowed = "link";
                 e.dataTransfer.setDragImage(document.getElementById("emptyDivToRemoveTheDragImage"), 0, 0);
                 e.dataTransfer.setData("text", this.currentlyDraggedCard.id);
+
             }
 
 
@@ -5701,28 +5849,15 @@
                 if (card.classList.contains("subject-card")) {
                     type = "subject"; 
                     
-                    if (card.classList.contains("classified") && card.classList.contains("compact")) {
-                        card.querySelector(".subject-total-coef-div").style.display = "";
-                    }
-                    else if (card.classList.contains("classified") && card.classList.contains("detailed")) {
-                        card.querySelector(".grades-table").style.display = "table";
-                        card.querySelector(".subject-card-header").style.borderBottom = "4px solid white";
-                        card.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
+                    // detailed
+                    card.querySelector(".grades-table")        .style.display = "table";
+                    card.querySelector(".subject-card-header") .style.borderBottom = "4px solid white";
+                    card.querySelector(".subject-card-header") .style.borderRadius = "20px 20px 0px 0px";
+                    card.querySelector(".subject-card-header") .children[0].style.width = "38.8%";
 
-                        card.querySelector(".subject-card-header").children[0].style.width =     "42%";
-                        card.querySelector(".subject-total-coef-div").style.display = "";
-                    }
-                    else if (card.classList.contains("unclassified") && card.classList.contains("compact")) {
-                        card.querySelector(".subject-total-coef-div").style.display = "";
-                    }
-                    else if (card.classList.contains("unclassified") && card.classList.contains("detailed")) {
-                        card.querySelector(".grades-table").style.display = "table";
-                        card.querySelector(".subject-card-header").style.border = "none";
-                        card.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
+                    // whatever
+                    card.querySelector(".subject-total-coef-div").style.display = "";
 
-                        card.querySelector(".subject-card-header").children[1].style.width =     "40%";
-                        card.querySelector(".subject-total-coef-div").style.display = "";
-                    }
                     
                     if (this.selectedSubjectCardsId.length == 0) {
                         clearTimeout(this?.timeouts?.documentOnDragEnd?.hideTeacherTable);
@@ -5730,7 +5865,7 @@
                         if (!this?.timeouts?.draggedElementOnDragEndEvent) {this.timeouts.draggedElementOnDragEndEvent = {};}
 
                         this.timeouts.draggedElementOnDragEndEvent.showTeacherTable = setTimeout(() => {document.querySelectorAll(".grades-table-header-teacher").forEach(teacher => {teacher.style.display = "table-cell"})}, 50);
-                        document.querySelector(".semester-content")                 .classList.remove("dragging");
+                        document.querySelector(".semester-content")                     .classList.remove("dragging");
                         document.querySelector(".drop-field.create-module")             .classList.remove("show");
                         document.querySelector(".drop-field-create-module-hitbox")      .classList.remove("show");
                         document.querySelector(".drop-field.remove-from-module")        .classList.remove("show");
@@ -5745,12 +5880,19 @@
                             insertFieldText.parentElement.classList.replace("insert", "add");
                         })
                     }
+                    else {
+                        const insertFieldTexts = document.querySelectorAll(".drop-module-card-insert-text,  .drop-subject-card-insert-text");
+                        insertFieldTexts.forEach(insertFieldText => {
+                            insertFieldText.classList.replace("insert", "add");
+                            insertFieldText.parentElement.classList.replace("insert", "add");
+                        })
+                    }
 
-                    this.resizeUnclassifiedSection();
+                    this.resetFixedUnclassifiedSectionHeight();
 
-                    sem       = card.dataset.semester;
-                    moduleName    = card.dataset.module;
-                    index     = card.dataset.index;
+                    sem         = card.dataset.semester;
+                    moduleName  = card.dataset.module;
+                    index       = card.dataset.index;
 
                     if (!card.classList.contains("unclassified")) {
                         const upperInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${index}"]`)
@@ -5812,28 +5954,19 @@
                     this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {
                         const selectedSubjectCard = document.getElementById(selectedSubjectCardId);
                         selectedSubjectCard.style.width = "50%";
-    
-                        if (selectedSubjectCard.classList.contains("unclassified")) {
-                            setTimeout(() => {selectedSubjectCard.querySelector(".grades-table").style.display = "none";}, 10)
-                            selectedSubjectCard.querySelector(".subject-card-header").style.border = "none";
-                            selectedSubjectCard.querySelector(".subject-card-header").style.borderRadius = "20px";
-                        
-                        } 
-                        else if (selectedSubjectCard.classList.contains("compact")) {
-                            selectedSubjectCard.querySelector(".subject-total-coef-div").style.display = "none";
-                        }
-                        else {
-                            selectedSubjectCard.querySelector(".subject-card-header").children[0].style.width =     "50%";
-                            selectedSubjectCard.querySelector(".subject-total-coef-div").style.width = "50%";
-                            setTimeout(() => {selectedSubjectCard.querySelector(".grades-table").style.display = "none";}, 10)
-                            selectedSubjectCard.querySelector(".subject-card-header").style.borderBottom = "none";
-                            selectedSubjectCard.querySelector(".subject-card-header").style.borderRadius = "20px";
-                        }
+                        // detailed
+                        selectedSubjectCard.querySelector(".grades-table")        .style.display = "none";
+                        selectedSubjectCard.querySelector(".subject-card-header") .style.borderBottom = "none";
+                        selectedSubjectCard.querySelector(".subject-card-header") .style.borderRadius = "20px 20px 20px 20px";
+                        selectedSubjectCard.querySelector(".subject-card-header") .children[0].style.width = "50%";
+
+                        // whatever
+                        selectedSubjectCard.querySelector(".subject-total-coef-div").style.display = "none";
                     })
     
                     clearTimeout(this?.timeouts?.documentOnDragEnd?.hideTeacherTable);
                     document.querySelectorAll(".grades-table-header-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
-                    document.querySelector(".semester-content")                 .classList.add("dragging");
+                    document.querySelector(".semester-content")                     .classList.add("dragging");
                     document.querySelector(".drop-field.create-module")             .classList.add("show");
                     document.querySelector(".drop-field-create-module-hitbox")      .classList.add("show");
                     document.querySelector(".drop-field.remove-from-module")        .classList.add("show");
@@ -5873,23 +6006,15 @@
                     this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {
                         const selectedSubjectCard = document.getElementById(selectedSubjectCardId);
                         selectedSubjectCard.style.width = "";
-    
-                        if (selectedSubjectCard.classList.contains("unclassified")) {
-                            selectedSubjectCard.querySelector(".grades-table").style.display = "table";
-                            selectedSubjectCard.querySelector(".subject-card-header").style.border = "none";
-                            selectedSubjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
-                        
-                        } 
-                        else if (selectedSubjectCard.classList.contains("compact")) {
-                            selectedSubjectCard.querySelector(".subject-total-coef-div").style.display = "flex";
-                        }
-                        else {
-                            selectedSubjectCard.querySelector(".subject-card-header").children[0].style.width =     "42%";
-                            selectedSubjectCard.querySelector(".subject-total-coef-div").style.width = "58%";
-                            selectedSubjectCard.querySelector(".grades-table").style.display = "table";
-                            selectedSubjectCard.querySelector(".subject-card-header").style.borderBottom = "4px solid white";
-                            selectedSubjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
-                        }
+
+                        // detailed
+                        selectedSubjectCard.querySelector(".grades-table")        .style.display = "table";
+                        selectedSubjectCard.querySelector(".subject-card-header") .style.borderBottom = "4px solid white";
+                        selectedSubjectCard.querySelector(".subject-card-header") .style.borderRadius = "20px 20px 0px 0px";
+                        selectedSubjectCard.querySelector(".subject-card-header") .children[0].style.width = "38.8%";
+
+                        // whatever
+                        selectedSubjectCard.querySelector(".subject-total-coef-div").style.display = "";
                     })
                 }
             }
@@ -5900,29 +6025,30 @@
 
 
 
-            //#region Subject insertion events
+            //#region Insertion events listeners and actions
 
             insertFieldHitboxOnDragOverEvent(e) {
-                const type               = e.target.dataset.type;
-                const insertField        = e.target.closest(        `.drop-field.insert-field.${type}`);
-                const insertFieldArrow   = insertField.querySelector(`.drop-${type}-card-insert-arrow`);
-                const insertFieldPlus    = insertField.querySelector(`.drop-${type}-card-insert-plus`);
-                const insertFieldText    = insertField.querySelector(`.drop-${type}-card-insert-text`);
-                const insertFieldHitbox  = insertField.querySelector(`.drop-${type}-card-insert-hitbox`);
+                const type              = e.target.dataset.type;
+                const insertField       = e.target.closest(`.drop-field.insert-field.${type}`);
+                const insertFieldArrow  = insertField.querySelector(`.drop-${type}-card-insert-arrow`);
+                const insertFieldPlus   = insertField.querySelector(`.drop-${type}-card-insert-plus`);
+                const insertFieldText   = insertField.querySelector(`.drop-${type}-card-insert-text`);
+                const insertFieldHitbox = insertField.querySelector(`.drop-${type}-card-insert-hitbox`);
 
                 e.preventDefault(); 
+                e.dataTransfer.dropEffect = "link";
                 insertField.classList.add("hover");
                 insertFieldArrow?.classList?.add("hover"); 
                 insertFieldPlus?.classList?.add("hover");
                 insertFieldText.classList.add("hover");
             }
             insertFieldHitboxOnDragLeaveEvent(e) {
-                const type = e.target.dataset.type;
-                const insertField        = e.target.closest(        `.drop-field.insert-field.${type}`);
-                const insertFieldArrow   = insertField.querySelector(`.drop-${type}-card-insert-arrow`);
-                const insertFieldPlus    = insertField.querySelector(`.drop-${type}-card-insert-plus`);
-                const insertFieldText    = insertField.querySelector(`.drop-${type}-card-insert-text`);
-                const insertFieldHitbox  = insertField.querySelector(`.drop-${type}-card-insert-hitbox`);
+                const type              = e.target.dataset.type;
+                const insertField       = e.target.closest(`.drop-field.insert-field.${type}`);
+                const insertFieldArrow  = insertField.querySelector(`.drop-${type}-card-insert-arrow`);
+                const insertFieldPlus   = insertField.querySelector(`.drop-${type}-card-insert-plus`);
+                const insertFieldText   = insertField.querySelector(`.drop-${type}-card-insert-text`);
+                const insertFieldHitbox = insertField.querySelector(`.drop-${type}-card-insert-hitbox`);
 
                 e.preventDefault(); 
                 insertField.classList.remove("hover");
@@ -5931,24 +6057,27 @@
                 insertFieldText?.classList?.remove("hover");
             }
             insertFieldHitboxOnDropEvent(e) {
-                const data               = e.target.dataset;
-                const type               = data.type;
-                const insertField        = e.target.closest(        `.drop-field.insert-field.${type}`);
-                const insertFieldHitbox  = insertField.querySelector(`.drop-${type}-card-insert-hitbox`);
-                const dataTransfer       = e.dataTransfer.getData("text");
-                const dataTransferMatch  = dataTransfer.match(/module-card|subject-card/);
-                const eventCallerMatch   = e.target.className.match(/drop-(module|subject)-card/);
+                const type              = e.target.dataset.type;
+                const index             = e.target.dataset.index;
+                const insertField       = e.target.closest(`.drop-field.insert-field.${type}`);
+                const insertFieldHitbox = insertField.querySelector(`.drop-${type}-card-insert-hitbox`);
+                const dataTransfer      = e.dataTransfer.getData("text");
+                const dataTransferMatch = dataTransfer.match(/module-card|subject-card/);
+                const sourceType        = dataTransferMatch?.[0] ? dataTransferMatch[0] : "errr... something wrong, probably?";
 
                 e.preventDefault(); 
 
                 insertFieldHitbox.ondragover = (e) => {this.insertFieldHitboxOnDragOverEvent(e)};
 
-                switch (`${dataTransferMatch?.[0] ? dataTransferMatch?.[0] : "errr... somthing"} dropped in ${eventCallerMatch?.[1] ? "a " + eventCallerMatch?.[1] + " insertion field" : "errr... somthing?"}`) {
+                switch (`${sourceType} dropped in a ${type} insertion field`) {
                     case "module-card dropped in a module insertion field":
                         this.dropFieldModuleInsertAction(dataTransfer, insertField);
                     break;
+                    case "module-card dropped in a subject insertion field":
+                        this.dropFieldSubjectInsertAction(dataTransfer, insertField);
+                    break;
                     case "subject-card dropped in a module insertion field":
-                        this.dropFieldToNewModuleAction(dataTransfer, e.target.dataset.index);
+                        this.dropFieldToNewModuleAction(dataTransfer, index);
                     break;
                     case "subject-card dropped in a subject insertion field":
                         this.dropFieldSubjectInsertAction(dataTransfer, insertField);
@@ -5957,10 +6086,10 @@
             }
             insertFieldHitboxOnMouseEnterEvent(e) {
                 const type              = e.target.dataset.type;
-                const insertField        = e.target.closest(        `.drop-field.insert-field.${type}`);
-                const insertFieldArrow   = insertField.querySelector(`.drop-${type}-card-insert-arrow`);
-                const insertFieldPlus    = insertField.querySelector(`.drop-${type}-card-insert-plus`);
-                const insertFieldText    = insertField.querySelector(`.drop-${type}-card-insert-text`);
+                const insertField       = e.target.closest(        `.drop-field.insert-field.${type}`);
+                const insertFieldArrow  = insertField.querySelector(`.drop-${type}-card-insert-arrow`);
+                const insertFieldPlus   = insertField.querySelector(`.drop-${type}-card-insert-plus`);
+                const insertFieldText   = insertField.querySelector(`.drop-${type}-card-insert-text`);
 
                 insertField.classList.add("hover");
                 insertFieldArrow?.classList?.add("hover"); 
@@ -5968,11 +6097,11 @@
                 insertFieldText?.classList?.add("hover");
             }
             insertFieldHitboxOnMouseLeaveEvent(e) {
-                const type = e.target.dataset.type;
-                const insertField        = e.target.closest(        `.drop-field.insert-field.${type}`);
-                const insertFieldArrow   = insertField.querySelector(`.drop-${type}-card-insert-arrow`);
-                const insertFieldPlus    = insertField.querySelector(`.drop-${type}-card-insert-plus`);
-                const insertFieldText    = insertField.querySelector(`.drop-${type}-card-insert-text`);
+                const type              = e.target.dataset.type;
+                const insertField       = e.target.closest(        `.drop-field.insert-field.${type}`);
+                const insertFieldArrow  = insertField.querySelector(`.drop-${type}-card-insert-arrow`);
+                const insertFieldPlus   = insertField.querySelector(`.drop-${type}-card-insert-plus`);
+                const insertFieldText   = insertField.querySelector(`.drop-${type}-card-insert-text`);
                 
                 insertField.classList.remove("hover");
                 insertFieldArrow?.classList?.remove("hover");
@@ -5981,11 +6110,11 @@
 
             }
             insertFieldHitboxOnClickEvent(e) {
-                const type = e.target.dataset.type;
-                const insertField        = e.target.closest(        `.drop-field.insert-field.${type}`);
-                const insertFieldArrow   = insertField.querySelector(`.drop-${type}-card-insert-arrow`);
-                const insertFieldPlus    = insertField.querySelector(`.drop-${type}-card-insert-plus`);
-                const insertFieldText    = insertField.querySelector(`.drop-${type}-card-insert-text`);
+                const type              = e.target.dataset.type;
+                const insertField       = e.target.closest(        `.drop-field.insert-field.${type}`);
+                const insertFieldArrow  = insertField.querySelector(`.drop-${type}-card-insert-arrow`);
+                const insertFieldPlus   = insertField.querySelector(`.drop-${type}-card-insert-plus`);
+                const insertFieldText   = insertField.querySelector(`.drop-${type}-card-insert-text`);
                 
                 e.preventDefault(); 
 
@@ -6003,6 +6132,7 @@
                 insertFieldHitbox.ondrop         = (e) => {
                     e.preventDefault();
                     e.dataTransfer.dropEffect = "link";
+                    
                     const data = e.target.dataset;
                     if (data.type.match(/subject|module/)) {
                         this.insertFieldHitboxOnDropEvent(e);
@@ -6016,10 +6146,10 @@
                 insertFieldHitbox.onmouseleave   = (e) => {this.insertFieldHitboxOnMouseLeaveEvent(e)};
                 insertFieldHitbox.onclick        = (e) => {
                     const data = e.target.dataset;
-                    if (data.type == "subject") {
+                    if      (data.type == "subject") {
                         this.insertFieldHitboxOnClickEvent(e);
                     }
-                    else {
+                    else if (data.type == "module") {
                         if (this.selectedSubjectCardsId.length > 0) {
                             this.dropFieldToNewModuleAction(this.selectedSubjectCardsId[0], data.index);
                         }
@@ -6030,9 +6160,9 @@
                 };
             }
             detachInsertFieldHitboxEventListeners(insertFieldHitbox) {
-                insertFieldHitbox.ondragover     = (e) => {e.preventDefault()};
+                insertFieldHitbox.ondragover     = (e) => {e.preventDefault(); e.dataTransfer.dropEffect = "none";};
                 insertFieldHitbox.ondragleave    = (e) => {e.preventDefault()};
-                insertFieldHitbox.ondrop         = (e) => {e.preventDefault(); e.dataTransfer.dropEffect = "link";};
+                insertFieldHitbox.ondrop         = (e) => {e.preventDefault(); e.dataTransfer.dropEffect = "none";};
 
                 insertFieldHitbox.onmouseenter   = (e) => {e.preventDefault()};
                 insertFieldHitbox.onmouseleave   = (e) => {e.preventDefault()};
@@ -6324,20 +6454,22 @@
                 // MARK: dragIconOnClickEvent
                 dragIconOnClickEvent(e, dragIcon, dontAddToSelection=false) {
                     const card                  = e?.target ? document.getElementById(e.target.dataset.targetid) : dragIcon.parentElement.parentElement;
-                    const draggableElement      = card;
                     const dropFieldAdd          = document.querySelector(".drop-field.create-module");
                     const dropFieldAddHitbox    = document.querySelector(".drop-field-create-module-hitbox");
                     const dropFieldRemove       = document.querySelector(".drop-field.remove-from-module");
                     const dropFieldRemoveHitbox = document.querySelector(".drop-field-remove-from-module-hitbox");
+                    const sem                   = card.dataset.semester;
+                    const moduleName            = card.dataset.module;
+                    const subject = card.dataset.subject;
                     
-                    draggableElement.draggable = true;
-                    draggableElement.ondragstart = (e) =>   {this.draggedSelectedElementOnDragStartEvent(e, {draggedElement: draggableElement, card: card})};
-                    draggableElement.ondragend   = (e) =>   {this.draggedSelectedElementOnDragEndEvent(  e, {draggedElement: draggableElement, card: card})};
+                    card.draggable = true;
+                    card.ondragstart = (e) =>   {this.draggedSelectedElementOnDragStartEvent(e, {draggedElement: card, card})};
+                    card.ondragend   = (e) =>   {this.draggedSelectedElementOnDragEndEvent(  e, {draggedElement: card, card})};
 
                     if (!dontAddToSelection) {
-                        this.selectedcardsId.push(card.id);
-                        if (!this.selectedcardsSortedByModule[card.dataset.module]) { this.selectedcardsSortedByModule[card.dataset.module] = []; };
-                        this.selectedcardsSortedByModule[card.dataset.module].push({cardId: card.id, selectionIndex: this.selectedcardsId.length-1});
+                        this.selectedSubjectCardsId.push(card.id);
+                        if (!this.selectedSubjectCardsSortedByModule[card.dataset.module]) { this.selectedSubjectCardsSortedByModule[card.dataset.module] = []; };
+                        this.selectedSubjectCardsSortedByModule[card.dataset.module].push({cardId: card.id, selectionIndex: this.selectedSubjectCardsId.length-1});
 
                         const selectionNotifDiv = this.createSelectedCardNotifDiv(card);
 
@@ -6346,21 +6478,12 @@
 
                         setTimeout(()=>{selectionNotifDiv.classList.add("on")}, 10)
 
-                        // Ensure the subject insertion drop fields are showing the right text
+                        // Ensure the subject insertion drop fields are showing the right display
                         document.querySelectorAll(".drop-field.insert-field").forEach(subjInsertField => {
-                            if (this.selectedcardsId.length == 0) {
-                                // shouldn't be reached, normally
-                                subjInsertField.querySelector(".drop-module-card-insert-plus , .drop-subject-card-insert-plus ").classList.add("show");
-                                subjInsertField.querySelector(".drop-module-card-insert-arrow, .drop-subject-card-insert-arrow").classList.remove("show");
-                                subjInsertField.querySelector(".drop-module-card-insert-text, .drop-subject-card-insert-text").classList.replace("insert", "add");
-                                subjInsertField.querySelector(".drop-module-card-insert-text, .drop-subject-card-insert-text").parentElement.classList.replace("insert", "add");
-                            }
-                            else {
-                                subjInsertField.querySelector(".drop-module-card-insert-plus , .drop-subject-card-insert-plus ").classList.remove("show");
-                                subjInsertField.querySelector(".drop-module-card-insert-arrow, .drop-subject-card-insert-arrow").classList.add("show");
-                                subjInsertField.querySelector(".drop-module-card-insert-text, .drop-subject-card-insert-text").classList.replace("add", "insert");
-                                subjInsertField.querySelector(".drop-module-card-insert-text, .drop-subject-card-insert-text").parentElement.classList.replace("add", "insert");
-                            }
+                            subjInsertField.querySelector(".drop-module-card-insert-plus , .drop-subject-card-insert-plus ").classList.remove("show");
+                            subjInsertField.querySelector(".drop-module-card-insert-arrow, .drop-subject-card-insert-arrow").classList.add("show");
+                            subjInsertField.querySelector(".drop-module-card-insert-text,  .drop-subject-card-insert-text") .classList.replace("add", "insert");
+                            subjInsertField.querySelector(".drop-module-card-insert-text,  .drop-subject-card-insert-text") .parentElement.classList.replace("add", "insert");
                         });
                     }
 
@@ -6624,7 +6747,7 @@
 
 
                                     _moduleSelection.forEach((selectedSubjectCard, _subjIndex) => {
-                                        const subjectCard = document.getElementById(selectedSubjectCard.subjectCardId);
+                                        const subjectCard = document.getElementById(selectedSubjectCard.cardId);
                                         const selectionIndex = selectedSubjectCard.selectionIndex;
                                         subject = subjectCard.dataset.subject;
 
@@ -6773,23 +6896,23 @@
                             (cardIsSelected ? this.selectedSubjectCardsId : [card.id]).forEach(subjectCardId => {
                                 const subjectCard = document.getElementById(subjectCardId);
 
-                                const subject = subjectCard.dataset.subject;
-                                const oldModuleName = subjectCard.dataset.module;
-                                const oldModuleIndex = this.moduleConfig[sem].__modules__.indexOf(oldModuleName);
-                                const subjectOldIndex = this.moduleConfig?.[sem]?.[oldModuleName]?.subjects?.indexOf(subject);
+                                const subject           = subjectCard.dataset.subject;
+                                const oldModuleName     = subjectCard.dataset.module;
+                                const oldModuleIndex    = this.moduleConfig[sem].__modules__.indexOf(oldModuleName);
+                                const subjectOldIndex   = this.moduleConfig?.[sem]?.[oldModuleName]?.subjects?.indexOf(subject);
                             
-                                // CASE 1: subject card comes from unclassified section to a module             -> (default/easy case)
+                                // CASE 1: subject card comes from unclassified section to a module                 -> (default/easy case)
                                 // CASE 2: subject card comes from a module to another module                       -> (moving case)
                                 // CASE 3: subject card comes from a module to the same module at a different index -> (reordering case)
-                                // CASE 4: subject card comes from a module to the same module at the same index    -> (a no-use case, so nothing happens)
+                                // CASE 4: subject card comes from a module to the same module at the same index    -> (it's no-use, so nothing happens. It shouldn't be reached though, since the adjacent insertion fields disappear when dragging a card)
 
                                 switch (`
                                     subject card comes from ${oldModuleName 
                                         ? `a module and is ${targetModuleName==oldModuleName 
                                             ? `reorganized to ${subjectOldIndex == insertionIndex || subjectOldIndex+1 == insertionIndex 
                                                 ? "the same index" 
-                                                : "a different index"}` 
-                                            : "moved to a different module"}` 
+                                                : "a different index"}`
+                                            : "moved to a different module"}`
                                         : "the unclassified section"}
                                 `.trim()) {
                                     case "subject card comes from the unclassified section":
@@ -6830,6 +6953,47 @@
                                     }
                                 }
                                 
+                            })
+
+                            this.removeCardFromSubjectSelection();
+                            this.saveConfig();
+                            this.getGradesDatas();
+                            this.generateContent();
+                            this.setGradesTableTotalCoef();
+                        }
+                        else if (card?.classList?.contains('module-card')) {
+                            let cardIsSelected = false;
+                            this.selectedModuleCardsId.forEach(selectedModuleCardId => {if (selectedModuleCardId == card.id) cardIsSelected = true;});
+
+                            const targetModuleName = methodCaller.dataset.module;
+                            const insertionIndex   = methodCaller.dataset.index;
+
+                            // reversing the list of selected module cards so that the insertion index can remain constant
+                            (cardIsSelected ? this.selectedModuleCardsId.reverse() : [card.id]).forEach(moduleCardId => {
+                                const moduleCard     = document.getElementById(moduleCardId);
+                                const oldModuleName  = moduleCard.dataset.module;
+                                const oldModuleIndex = this.moduleConfig[sem].__modules__.indexOf(oldModuleName);
+
+                                const subjectCards = Array.from(moduleCard.querySelectorAll(".subject-card"));
+
+                                // reversing the list of subject cards so that the insertion index can remain constant
+                                subjectCards.reverse().forEach((subjectCard, _index) => {
+                                    const subject = subjectCard.dataset.subject;
+
+                                    this.moduleConfig[sem][targetModuleName].subjects.splice(insertionIndex, 0, subject);
+                                    this.moduleConfig[sem][targetModuleName].coefficients[subject] = Number(this.moduleConfig[sem][oldModuleName].coefficients[subject]);
+
+                                    this.moduleConfig[sem][oldModuleName].subjects.splice(this.moduleConfig[sem][oldModuleName].subjects.length-1,1);
+                                    delete this.moduleConfig[sem][oldModuleName].coefficients[subject];
+                                    
+                                })
+
+                                this.moduleConfig[sem].__modules__.splice(oldModuleIndex, 1)
+                                delete this.moduleConfig[sem][oldModuleName];
+
+                                if (this.moduleConfig?.[sem]?.__modules__?.length == 0) {
+                                    delete this.moduleConfig[sem]
+                                }
                             })
 
                             this.removeCardFromSubjectSelection();
@@ -7301,7 +7465,7 @@
                     }
                     else if (this.keyInputMatch(e, "D", shiftRequired)) {
                         const unclassifiedSection = document.querySelector(".unclassified-section");
-                        this.holdElementHeight(unclassifiedSection);
+                        this.releaseElementHeight(unclassifiedSection);
 
                         this.viewMode = this.viewMode == "detailed" ? "compact" : "detailed";
                         if (this.viewMode == "detailed") {
@@ -7318,13 +7482,13 @@
 
                         this.saveViewMode();
                         this.scrollToClientHighestElem("first",
-                            {className: "modules-section",      timeout: 110, smooth: true, margin: 20,                        highestElemInPageHandleType:"partial"}, 
-                            {className: "module-card",          timeout: 110, smooth: true, margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"above"},
-                            {className: "unclassified-section", timeout: 110, smooth: true, margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"partial"},
-                            {className: "subject-card",         timeout: 110, smooth: true, margin: 10,                        highestElemInPageHandleType:"above"},
+                            {className: "modules-section",      timeout: 101, smooth: false, margin: 20,                        highestElemInPageHandleType:"partial"}, 
+                            {className: "module-card",          timeout: 101, smooth: false, margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"above"},
+                            {className: "unclassified-section", timeout: 101, smooth: false, margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"partial"},
+                            {className: "subject-card",         timeout: 101, smooth: false, margin: 10,                        highestElemInPageHandleType:"above"},
                         );
 
-                        this.releaseElementHeight(unclassifiedSection);
+                        this.holdElementHeight(unclassifiedSection, 1000);
                     }
                     else if (this.keyInputMatch(e, "L", shiftRequired)) {
                         
@@ -7405,7 +7569,7 @@
                             }
                             else if (target.classList.contains("sim-inp-coef")) {
                                 const simAddBtn = document.querySelector(`.sim-add-btn[data-subj="${target.dataset.subj}"][data-semester="${target.dataset.semester}"]`);
-                                this.subjectSimAddBtnAction(simAddBtn);
+                                this.subjectCardSimAddBtnAction(simAddBtn);
                             }
 
                         }
