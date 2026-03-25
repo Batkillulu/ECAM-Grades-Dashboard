@@ -7,7 +7,9 @@
 ## Improvements
 - "Notes" in the dockbar now always appears on the right of the search bar (wasn't consistently inserted)
 
-- Better animation for the insertion fields when starting to drag an element
+- Better animations for the insertion fields when starting to drag an element
+- Better animations for the subject and module cards when dragging one of them
+- Better subject header display (left/right sides and total coef div)
 
 ## Fixes
 - fixed the total coef value of the subject cards not disappearing after reloading when its setting is disabled

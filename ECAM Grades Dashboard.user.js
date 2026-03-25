@@ -9,7 +9,36 @@
 // @run-at       document-end
 // @license      AGPL-3.0; Commercial license available
 // ==/UserScript==
+// 
+// 
+// 
+// 
+// 
+// ========================================================================= HI, FELLOW CODER! =========================================================================
+// 
+// If you're trying to get a look at this script and are on VSCode, I suggest you:
+// - enable your minimap                                        (Settings > Text Editor > Minimap: Enabled => checked)                      
+// - keep your minimap displayed at all time                    (Settings > Text Editor > Minimap: Autohide => none)                        
+// - set its max width to 200                                   (Settings > Text Editor > Minimap: Max Column => 200)                       
+// - set its font size to 10                                    (Settings > Text Editor > Minimap: Section Header Font Size => 10)          
+// - set its letter spacing to 0.5                              (Settings > Text Editor > Minimap: Section Header Letter Spacing => 0.5)    
+// - make sure you enabled the mark section headers             (Settings > Text Editor > Minimap: Show Mark Section Headers => checked)    
+// - make sure you enabled the region section headers as well   (Settings > Text Editor > Minimap: Show Region Section Headers => checked)  
+// - and finally make sure to keep its size proportional        (Settings > Text Editor > Minimap: Size => proportional)                    (Right click on minimap > Vertical Size > Proportional)
+// - [OPTIONALLY] enabled "render characters"                   (Settings > Text Editor > Minimap: Render Characters => checked)            (Right click on minimap > Render Characters)
+//      (rendering the characters shortens the height of rows in the minimap, I prefer it like that since this script is quite long)
+// 
+// I've done a bit of styling intended for the minimap with the parameters I gave above, and it should make your reverse-engineering experience much easier!
+// 
+// 
+// Link for offline test: https://espace.ecam.fr/c/portal/login?redirect=%2Fgroup%2Feducation%2Fnotes&p_l_id=0&ticket=ST-113179-sbwjXieT3GLY9T3fXdsmFp9vCro-tomcat03
+// (trying to access espace.ecam.fr wields a link of this sort. It doesn't seem to have a "unique" token or a time limited access, so this link should work for anyone)
+// 
+// =====================================================================================================================================================================
 //
+// 
+// 
+// 
 // Copyright (C) 2026 Baptiste Jaquin & Maxence Leroux
 //
 // This program is free software: you can redistribute it and/or modify
@@ -20,16 +49,20 @@
 // Institutional or official use requires a commercial license.
 // 
 // Don't hesitate to contact us, at either:
-//  - baptiste.jacquin@ecam.fr
-//  - maxence.leroux@ecam.fr
+//  - baptiste.jacquin@ecam.fr  [more for the coding part]
+//  - maxence.leroux@ecam.fr    [more for the financial and responsibility part]
 // 
-// Link for offline test: https://espace.ecam.fr/c/portal/login?redirect=%2Fgroup%2Feducation%2Fnotes&p_l_id=0&ticket=ST-113179-sbwjXieT3GLY9T3fXdsmFp9vCro-tomcat03
 
 
 (function() {
     'use strict';
+    //#region =========================
 
-    //#region -======= STYLES  CSS ========
+
+
+
+
+    //#region =======  STYLES  CSS  ========
 
         let styles = ``;
 
@@ -37,7 +70,7 @@
 
 
 
-        //#region -DASHBOARD
+        //#region -DASHBOARD __________________________
 
             styles += `
                 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
@@ -413,10 +446,11 @@
 
 
 
-        //#region -DROP FIELDS REGION
+        //#region -DROP FIELDS REGION _________________
             styles += `
                 .drop-field     { display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 20px; overflow: clip; user-select: none; }
                 `;
+
 
             // MARK: scroll fields
             styles += `
@@ -459,7 +493,7 @@
                 .drop-field.remove-from-module.show                 { width: 15%; border-width: 2px 2px 2px 0px; border-color: #ff7f7f; color: #ff7f7f; background: #ffb8b83d; cursor: pointer; }
                 .drop-field.remove-from-module.hover                     { background: #ffb8b8ce; }
                 .drop-field-remove-from-module-minus                     { position: relative; font-size: 50px; transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
-                .drop-field-remove-from-module-minus.hover               { font-size: 90px; animation: 0.3s slightHorizShake ease; }
+                .drop-field-remove-from-module-minus.hover               { font-size: 90px; }
                 .drop-field-remove-from-module-text                      { font-size: 25px; position: relative; overflow-x: clip; text-wrap-mode: nowrap; transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); }
                 .drop-field-remove-from-module-text.top                  { bottom:  10px; left: 0px; }
                 .drop-field-remove-from-module-text.bottom               { top:     10px; right:0px; }
@@ -470,7 +504,6 @@
                 .drop-field-remove-from-module-text.bottom.fr::after     { content: "du module"; }
                 .drop-field-remove-from-module-text.top.en::before       { content: "Remove"; }
                 .drop-field-remove-from-module-text.bottom.en::after     { content: "from module"; }
-                @keyframes slightHorizShake { 0% {left: 0px} 25% {left: 3px} 50% {left: -3px} 75% {left: 3px} 100% {left: 0px} }
 
                 .drop-field-remove-from-module-hitbox                    { position: fixed; top: 50px; left:0px; height: calc(100% - 100px); width: 0%; border-radius: 0px 20px 20px 0px; transition: all 0.2s ease; }
                 .drop-field-remove-from-module-hitbox.show               { width: 15%; border-width: 2px 2px 2px 0px; cursor: pointer; z-index: 298; }
@@ -564,7 +597,7 @@
 
 
 
-        //#region -CONTENT AREA
+        //#region -CONTENT AREA _______________________
             styles += `
                 .content-area { display: grid; gap: 24px; width: 100%; }
             `;
@@ -640,7 +673,7 @@
                 .module-title                    { font-size: 16px; font-weight: 800; color: #1a1a1a; width:42%; margin-bottom: 2px; }
                 .module-title.input              { font-size: 16px; font-weight: 800; color: #1a1a1a; width:90%; border-radius: 12px; padding-left: 10px; }
 
-                .module-subject-total-coef-div   { display: flex; flex-direction: column; text-align: left; width:47%; gap:4px; padding: 0px 10px; font-size: 14px; }
+                .module-subject-total-coef-div   { display: flex; flex-direction: column; text-align: left; width:47%; gap:4px; padding: 0px 10px; font-size: 14px; opacity: 100%; transition: all 0.1s ease; }
                 .module-subject-total-coef-value { display: flex; text-align: left; font-size: 13px; font-weight: 600; gap: 8px; }
                 .module-subject-total-coef-debug { display: flex; text-align: left; font-size: 13px; }
 
@@ -669,7 +702,7 @@
 
 
 
-            // MARK: -UNCLASSIFIED SECTION
+            // MARK: -UNCLASSIFIED SECTION ______________
             styles += `
 
                 .unclassified-section   { display: flex; flex-direction: column; align-items: center; width: 100%; background: #fff8f0; border-radius: 20px; padding: 20px; border: 2px dashed #fbbf24; transition: height 0.2s ease; }
@@ -680,7 +713,7 @@
 
 
 
-            //#region -SUBJECT CARDS
+            //#region -SUBJECT CARDS _______________________
                 styles += `
 
                     .subject-card               { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; position: relative; border-radius: 20px; border: 4px solid #ffffffff; opacity: 100%; overflow: clip; transition: all 0.1s ease; }
@@ -703,17 +736,21 @@
                     .subject-card-header.bad        { background: linear-gradient(300deg, #ffe0e0 30%, transparent); }
                     .subject-card-header.unknown    { background: linear-gradient(300deg, #b8b8b8 30%, transparent); }
                     .subject-card-header.fold       { border-radius: 20px; }
+
+                    .subject-card-header-left-side          { display: flex; justify-content: flex-start; align-items: center; gap: 8px; padding-left: 42px; width: 0; height: 100%; text-wrap-mode: nowrap; }
+                    .subject-card-header-left-side.edit     { padding-left: 0; }
+
                     .subject-name                   { font-weight: 800; color: #1a1a1a; font-size: 14px }
                     .subject-name.input             { font-weight: 800; color: #1a1a1a; font-size: 14px; border: 2px solid #797979; border-radius: 15px; padding-left: 8px; width: 100%; height: 25px;}
                     .subject-coef-input-box         { padding-left: 5px; width: 48px; border-radius: 8px; }
                     .subject-delete-btn             { border-radius: 14px; background: transparent; margin: 0; text-transform: none; -webkit-appearance: button; font: 1em Arial,Helvetica,Verdana,sans-serif; width: auto; padding: 5px; overflow: visible; cursor: pointer; color: #34404F; text-shadow: none; font-weight: normal; border: 3px solid; border-color: white; transition: all 0.2s ease; } 
                     
-                    .subj-right-side    { display: flex; justify-content: flex-end; align-items: center; width: 0; }
+                    .subject-card-header-right-side    { display: flex; justify-content: flex-end; align-items: center; width: 0; height: 100%; text-wrap-mode: nowrap; }
                     .subj-moyenne           { display: flex; justify-content: flex-end; width: 0; font-size: 16px; font-weight: 800; text-wrap-mode: nowrap; }
                     .subj-moyenne.good      { color: #10b981; }
                     .subj-moyenne.bad       { color: #ef4444; }
 
-                    .subject-total-coef-div        { display: flex; flex-direction: column; gap: 4px; text-align: left; width:58%; padding: 0px 110px 0px 0px; font-size: 13px}
+                    .subject-total-coef-div        { display: flex; flex-direction: column; gap: 4px; text-align: left; width: 0; font-size: 13px; text-wrap-mode: nowrap; opacity: 100%; transition: all 0.1s ease; }
                     .subject-total-coef-value      { display: flex; gap: 15px; text-align: left; font-weight: 600; gap: 8px; }
                     .subject-total-coef-debug      { display: flex; gap: 15px; text-align: left; font-weight: 400; }
                     .subject-insert-field                           { display: flex: flex-direction: column; align-items: center; height: 0px; width: 100%; margin: 0px 0px; transition: height 0.2s ease, margin 0.2s ease; }
@@ -818,29 +855,35 @@
 
 
 
-        // MARK: Animations
-        styles += `
 
-            /* @media (max-width: 768px)   {
-                .dash-header { flex-direction:column; align-items:start; gap:16px; } 
-                .average-display { flex-direction:column; gap:4px; } .average-number { font-size:36px; } 
-            } */
-            .loading            { text-align: center; padding: 40px; color: #999; }
-            @keyframes dots     { 0%,20%{content:'.';} 40%{content:'..';} 60%,100%{content:'...';} }
-            .loading::after     { content: '...'; animation: dots 1.5s steps(4, end) infinite; }
-
-            @keyframes fadeIn   { from { opacity: 0%; transform: translateY(10px); } to { opacity: 100%; transform: translateY(0); } }
-            .fade-in            { animation: fadeIn 0.3s ease; }
-            @keyframes scrollTo { 15% {transform: scale(100%);} 100% {transform: scale(102%); outline-color: #5f77ff; border-color: #5f77ff} }
-            .scroll-to          { animation: 0.3s 2 alternate scrollTo ease }
-        `;
+        //#region -_____ HIGHEST INSTANCE STYLES _____
 
 
 
-        //#region -Highest instance styles
 
+        
+            // MARK: Animations
+            styles += `
 
+                /* @media (max-width: 768px)   {
+                    .dash-header { flex-direction:column; align-items:start; gap:16px; } 
+                    .average-display { flex-direction:column; gap:4px; } .average-number { font-size:36px; } 
+                } */
 
+                .loading            { text-align: center; padding: 40px; color: #999; }
+                @keyframes dots     { 0%,20%{content:'.';} 40%{content:'..';} 60%,100%{content:'...';} }
+                .loading::after     { content: '...'; animation: dots 1.5s steps(4, end) infinite; }
+
+                @keyframes fadeIn   { from { opacity: 0%; transform: translateY(10px); } to { opacity: 100%; transform: translateY(0); } }
+                .fade-in            { animation: fadeIn 0.3s ease; }
+
+                @keyframes scrollTo { 15% {transform: scale(100%);} 100% {transform: scale(102%); outline-color: #5f77ff; border-color: #5f77ff} }
+                .scroll-to          { animation: 0.3s 2 alternate scrollTo ease }
+
+                @keyframes slightHorizShake { 0% {left: 0px} 25% {left: 3px} 50% {left: -3px} 75% {left: 3px} 100% {left: 0px} }
+                .slight-horiz-shake { animation: var(--slight-horiz-shake-duration, 0.3)s slightHorizShake ease; }
+                .
+            `;
 
 
             // MARK: Modal
@@ -909,7 +952,8 @@
     
     
     
-    // MARK: -========================
+    // MARK:  =========================
+    //#endregion
 
 
 
@@ -1156,7 +1200,7 @@
 
 
 
-        // MARK: -INIT
+        // MARK: ________________  INIT  _________________
         init() {
             if (!error) {
                 const notes = document.createElement("li");
@@ -1192,7 +1236,7 @@
 
 
 
-        //#region -REGION: General methods
+        //#region __________ General methods ___________
 
 
 
@@ -2491,7 +2535,7 @@
 
 
 
-        //#region -REGION: Online methods
+        //#region __________ Online  methods ____________
 
             /** Shows/Hides/Toggles the loading symbol when called depending on the argument `show`.
              * Default call: `this.showLoadingSymbol()`
@@ -2684,7 +2728,7 @@
 
 
 
-        //#region -REGION: Render
+        //#region _______________ Render _________________
 
 
 
@@ -3439,7 +3483,7 @@
                     let html = `
                     <div class="subject-card ${classified ? "classified" : "unclassified"} ${detailed ? "detailed" : "compact"} ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" id="subject-card-semester-${sem}-subject-${subject}" ${this.editMode ? `style="cursor: grab; user-select: none;"` : ""} data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
                         <div class="subject-card-header${detailed ? "" : " compact"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`} ${classified ? "classified" : "unclassified"}" ${this.editMode ? `style="cursor: grab;" draggable="true"` : ``} data-module="${moduleName}">
-                            <div style="display:flex; align-items:center; gap:8px; padding-left: ${this.editMode ? "0" : "42px"}; width:38.8%; min-width: 275px">
+                            <div class="subject-card-header-left-side ${this.editMode ? "edit" : ""}">
                                 ${this.editMode
                                     ? `<div style="margin: 0px 5px; margin-bottom: 3px;">
                                     ${this.selectedSubjectCardsId.includes(`subject-card-semester-${sem}-subject-${subject}`) 
@@ -3453,7 +3497,7 @@
                                         ? `<input type="text" class="subject-name input any-input" id="subject-name-input-semester-${sem}-subject-${subject}" value="${subject}"/>`
                                         : `<div class="subject-name">${subject}</div>`
                                     }
-                                    <div style="font-size: 13px; color: #666;">
+                                    <div style="font-size: 13px; color: #666; text-wrap-mode: nowrap;">
                                         ${classified 
                                             ? ` ${this.lang == "fr" 
                                                     ? "Poids dans module: " 
@@ -3491,7 +3535,7 @@
                                 <div class="subject-total-coef-value" ${this.settings.totalCoefValuesEnabled.value     ? "" : "style=\"display: none\""}></div>
                                 <div class="subject-total-coef-debug" ${this.settings.totalCoefDebugTextsEnabled.value ? "" : "style=\"display: none\""}>${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}</div>
                             </div>
-                            <div class="subj-right-side">
+                            <div class="subject-card-header-right-side">
                                 <div class="subj-moyenne ${subjAvg == " - " ? '' : `${subjAvg>=10 ? 'good' : 'bad'}`}" style="display: flex; justify-content: flex-end; width: 80px; padding-right: 20px; font-size: 20px">
                                     ${subjAvg}/20
                                 </div>
@@ -4029,7 +4073,7 @@
 
 
 
-        //#region -REGION: General Events
+        //#region ___________ General  Events ____________
 
             attachAllEventListeners() {
                 this.attachDocumentMouseListeners();
@@ -4505,7 +4549,7 @@
                     attachAllSubjectCardRelatedEvenListenersForEverySubjectCard(container=document.body) {
                         this.attachOnDragEventListeners(container);
 
-                        this.attachAndManageAllDragOrTickIconsListener(container);
+                        this.attachAllDragOrTickIconsListener(container);
 
                         this.attachAllSubjectNameInputsListener(container);
                         this.attachAllSubjectCoefInputBoxesListeners(container);
@@ -4533,36 +4577,23 @@
                         if (simAddBtn)      {this.attachSubjectSimAddBtnListener(simAddBtn);}
                         if (simDelBtn)      {this.attachSubjectSimDelBtnListener(simDelBtn);}
                         
-                        this.attachDragOrTickIconsListener(subjCard)
+                        this.attachDragOrTickIconListener(subjCard)
                         if (this.editMode)  {this.attachSubjectCardOnDragEventListeners(subjCard);};
                     }
 
                     /** Ensures all selected Subject Cards have a tick icon with their assigned event listeners instead of the default drag icon, and attach them the correct event listener */
-                    attachAndManageAllDragOrTickIconsListener(container=document.body) {
-                        container.querySelectorAll(".subject-card").forEach(subjCard => {
-                            this.attachDragOrTickIconsListener(subjCard);
+                    attachAllDragOrTickIconsListener(container=document.body) {
+                        container.querySelectorAll(".subject-card, .module-card").forEach(card => {
+                            this.attachDragOrTickIconListener(card);
                         })
                     }
-                    attachDragOrTickIconsListener(card) {
-                        if (card.classList.contains("subject-card")) {
-                            if (card.querySelector(".drag-icon")) {
-                                const dragIcon = card.querySelector(".drag-icon");
-                                dragIcon.onclick = (e) => { this.dragIconOnClickEvent(e, dragIcon) };
-                            }
-                            else if (card.querySelector(".tick-icon")) {
-                                const tick = card.querySelector(".tick-icon");
-                                tick.onclick = (e) => { this.tickIconOnClickEvent(e, tick) };
-                            }
+                    attachDragOrTickIconListener(card) {
+                        if (card.querySelector(".drag-icon")) {
+                            card.querySelector(".drag-icon").onclick = (e) => { this.dragIconOnClickEvent(e, dragIcon) };
                         }
-                        else if (card.classList.contains(".module-card")) {
-                            if (card.querySelector(".drag-icon")) {
-                                const dragIcon = card.querySelector(".drag-icon");
-                                dragIcon.onclick = (e) => { this.moduleDragIconOnClickEvent(e, dragIcon) };
-                            }
-                            else if (card.querySelector(".tick-icon")) {
-                                const tick = card.querySelector(".tick-icon");
-                                tick.onclick = (e) => { this.moduleTickIconOnClickEvent(e, tick) };
-                            }
+                        else 
+                        if (card.querySelector(".tick-icon")) {
+                            card.querySelector(".tick-icon").onclick = (e) => { this.tickIconOnClickEvent(e, tick) };
                         }
                     }
 
@@ -4983,9 +5014,9 @@
                     /** Call this method to switch all Module cards' state between folded and unfolded 
                      * 
                      * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module card HTML Element or an event triggered by a module card
-                     * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
-                     * @param {Boolean} hideAdjacentModuleInsertionFields Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
-                     * @param {Boolean} bypassFoldedModuleCardsId Default: false — Destined to control whether the folded module card ID's addition to/deletion from this.foldedModuleCardsId will be bypassed (if true) or not (if false)
+                     * @param {Boolean} [hideOtherSubjectInsertionFields = false] Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
+                     * @param {Boolean} [hideAdjacentModuleInsertionFields = false] Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
+                     * @param {Boolean} [bypassFoldedModuleCardsId = false] Default: false — Destined to control whether the folded module card ID's addition to/deletion from this.foldedModuleCardsId will be bypassed (if true) or not (if false)
                      */
                     toggleFoldAllModuleCards(hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
                         document.querySelectorAll(".module-card").forEach(moduleCard => {
@@ -4995,9 +5026,9 @@
                     /** Call this method to switch a module card's state between folded and unfolded 
                      * 
                      * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module card HTML Element or an event triggered by a module card
-                     * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
-                     * @param {Boolean} hideAdjacentModuleInsertionFields Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
-                     * @param {Boolean} bypassFoldedModuleCardsId Default: false — Destined to control whether the folded module card ID's addition to/deletion from this.foldedModuleCardsId will be bypassed (if true) or not (if false)
+                     * @param {Boolean} [hideOtherSubjectInsertionFields = false] Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
+                     * @param {Boolean} [hideAdjacentModuleInsertionFields = false] Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
+                     * @param {Boolean} [bypassFoldedModuleCardsId = false] Default: false — Destined to control whether the folded module card ID's addition to/deletion from this.foldedModuleCardsId will be bypassed (if true) or not (if false)
                      */
                     toggleFoldModuleCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
                         if (trigger?.classList?.contains("module-card") || (trigger?.target?.classList?.contains("module-card"))) {
@@ -5015,9 +5046,9 @@
                     /** Call this method to fold all module cards 
                      * 
                      * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module card HTML Element or an event triggered by a module card
-                     * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
-                     * @param {Boolean} hideAdjacentModuleInsertionFields Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
-                     * @param {Boolean} bypassFoldedModuleCardsId Default: false — Destined to control whether the folded module card ID's addition to this.foldedModuleCardsId will be bypassed (if true) or not (if false)
+                     * @param {Boolean} [hideOtherSubjectInsertionFields = false] Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
+                     * @param {Boolean} [hideAdjacentModuleInsertionFields = false] Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
+                     * @param {Boolean} [bypassFoldedModuleCardsId = false] Default: false — Destined to control whether the folded module card ID's addition to this.foldedModuleCardsId will be bypassed (if true) or not (if false)
                      */
                     foldAllModuleCards(hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
                         document.querySelectorAll(".module-card").forEach(moduleCard => {
@@ -5027,11 +5058,11 @@
                     /** Call this method to fold a module card
                      * 
                      * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module card HTML Element or an event triggered by a module card
-                     * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
-                     * @param {Boolean} hideAdjacentModuleInsertionFields Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
-                     * @param {Boolean} bypassFoldedModuleCardsId Default: false — Destined to control whether the folded module card ID's addition to this.foldedModuleCardsId will be bypassed (if true) or not (if false)
+                     * @param {Boolean} [hideOtherSubjectInsertionFields = false] Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
+                     * @param {Boolean} [hideAdjacentModuleInsertionFields = false] Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
+                     * @param {Boolean} [bypassFoldedModuleCardsId = false] Default: false — Destined to control whether the folded module card ID's addition to this.foldedModuleCardsId will be bypassed (if true) or not (if false)
                      */
-                    foldModuleCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
+                    async foldModuleCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
                         // testing if the trigger argument is an HTML of class module-card or an Event triggered by a module card or one of its elements
 
                         if (trigger?.classList?.contains("module-card") || (trigger?.target?.classList?.contains("module-card"))) {
@@ -5071,7 +5102,7 @@
                             let lowerInsertField = "";
 
                             if (hideAdjacentModuleInsertionFields) {
-                                upperInsertField = document.querySelector(`.drop-field.insert-field.module[data-semester="${sem}"][data-index="${index}"]`)
+                                upperInsertField = document.querySelector(`.drop-field.insert-field.module[data-semester="${sem}"][data-index="${parseInt(index)+0}"]`)
                                 const upperInsertFieldHitbox = upperInsertField.querySelector(".drop-module-card-insert-hitbox");
 
                                 lowerInsertField = document.querySelector(`.drop-field.insert-field.module[data-semester="${sem}"][data-index="${parseInt(index)+1}"]`)
@@ -5099,9 +5130,9 @@
                     /** Call this method to unfold all module cards
                      * 
                      * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module card HTML Element or an event triggered by a module card
-                     * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be shown (if true) or not (if false)
-                     * @param {Boolean} hideAdjacentModuleInsertionFields Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
-                     * @param {Boolean} bypassFoldedModuleCardsId Default: false — Destined to control whether the unfolded module card ID's deletion from this.foldedModuleCardsId will be bypassed (if true) or not (if false)
+                     * @param {Boolean} [hideOtherSubjectInsertionFields = false] Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be shown (if true) or not (if false)
+                     * @param {Boolean} [hideAdjacentModuleInsertionFields = false] Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
+                     * @param {Boolean} [bypassFoldedModuleCardsId = false] Default: false — Destined to control whether the unfolded module card ID's deletion from this.foldedModuleCardsId will be bypassed (if true) or not (if false)
                      */
                     unfoldAllModuleCards(hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
                         document.querySelectorAll(".module-card").forEach(moduleCard => {
@@ -5111,11 +5142,11 @@
                     /** Call this method to unfold a module card
                      * 
                      * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module card HTML Element or an event triggered by a module card
-                     * @param {Boolean} hideOtherSubjectInsertionFields Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be shown (if true) or not (if false)
-                     * @param {Boolean} hideAdjacentModuleInsertionFields Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
-                     * @param {Boolean} bypassFoldedModuleCardsId Default: false — Destined to control whether the unfolded module card ID's deletion from this.foldedModuleCardsId will be bypassed (if true) or not (if false)
+                     * @param {Boolean} [hideOtherSubjectInsertionFields = false] Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be shown (if true) or not (if false)
+                     * @param {Boolean} [hideAdjacentModuleInsertionFields = false] Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
+                     * @param {Boolean} [bypassFoldedModuleCardsId = false] Default: false — Destined to control whether the unfolded module card ID's deletion from this.foldedModuleCardsId will be bypassed (if true) or not (if false)
                      */
-                    unfoldModuleCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
+                    async unfoldModuleCard(trigger, hideOtherSubjectInsertionFields=false, hideAdjacentModuleInsertionFields=false, bypassFoldedModuleCardsId=false) {
                         // testing if the trigger argument is an HTML of class module-card or an Event triggered by a module card or one of its elements
 
                         if (trigger?.classList?.contains("module-card") || (trigger?.target?.classList?.contains("module-card"))) {
@@ -5132,7 +5163,7 @@
 
 
                             if (hideAdjacentModuleInsertionFields) {
-                                const upperInsertField = document.querySelector(   `.drop-field.insert-field.module[data-semester="${sem}"][data-index="${index}"]`);
+                                const upperInsertField = document.querySelector(   `.drop-field.insert-field.module[data-semester="${sem}"][data-index="${parseInt(index)+0}"]`);
                                 const lowerInsertField = document.querySelector(   `.drop-field.insert-field.module[data-semester="${sem}"][data-index="${parseInt(index)+1}"]`);
 
                                 if (upperInsertField) {
@@ -5358,6 +5389,7 @@
                         }
                     }
 
+                    // MARK: fold subject card
                     /** Fold all the subject cards inside the given container
                      * @param {HTMLElement} [container=document.body] The HTML element containing the subject cards to fold
                      */
@@ -5371,7 +5403,7 @@
                     /** Fold the given subject card
                      * @param {HTMLElement} [subjCard] The subject card to fold
                      */
-                    foldSubjCard(subjCard) {
+                    async foldSubjCard(subjCard) {
                         if (subjCard?.classList?.contains("subject-card")) {
                             const subjCardHeader = subjCard.querySelector(".subject-card-header");
                             subjCardHeader.classList.add("fold");
@@ -5390,6 +5422,7 @@
                         }
                     }
 
+                    // MARK: unfold subject card
                     /** Unfold all the subject cards inside the given container
                      * @param {HTMLElement} [container=document.body] The HTML element containing the subject cards to unfold
                      */
@@ -5403,7 +5436,7 @@
                     /** Unfold the given subject card
                      * @param {HTMLElement} [subjCard] The subject card to unfold
                      */
-                    unfoldSubjCard(subjCard) {
+                    async unfoldSubjCard(subjCard) {
                         if (subjCard?.classList?.contains("subject-card")) {
                             const subjCardHeader = subjCard.querySelector(".subject-card-header");
                             subjCardHeader.classList.remove("fold");
@@ -5639,385 +5672,451 @@
 
 
 
-        //#region -REGION: Drag Events
+        //#region _____________ Drag Events ______________
 
 
 
 
 
-            // MARK: attach ondrag events
-            attachOnDragEventListeners(container=document.body, descendants=true) {   // Add ONDRAG cards event
-                if (container instanceof HTMLElement || container == document) {
 
-                    if (container?.classList?.contains("module-card-content") || container?.classList?.contains("module-details") || container?.classList?.contains("subject-card")) {
-                        (container?.classList?.contains("subject-card") ? [container] : container.querySelectorAll(".subject-card") || []).forEach(subjectCard => {
-                            this.attachSubjectCardOnDragEventListeners(subjectCard);
-                        })
-                    }
-                    else if (container?.classList?.contains("semester-content") || container?.classList?.contains("semester-grid") || container?.classList?.contains("modules-section") || container?.classList?.contains("semester-section") || container?.classList?.contains("module-card") || container == document.body) {
-                        (container?.classList?.contains("module-card") ? [container] : container.querySelectorAll(".module-card") || []).forEach(moduleCard => {
-                            this.attachModuleCardOnDragEventListeners(moduleCard);
-                            
-                            if (descendants) {
-                                moduleCard.querySelectorAll(`.subject-card`).forEach(subjectCard => {
-                                    this.attachSubjectCardOnDragEventListeners(subjectCard);
-                                })
+
+
+            //#region -_ event listeners _______________________
+
+
+
+
+
+                // MARK: attach ondrag events
+                attachOnDragEventListeners(container=document.body, descendants=true) {   // Add ONDRAG cards event
+                    if (container instanceof HTMLElement || container == document) {
+
+                        if (container?.classList?.contains("module-card-content") || container?.classList?.contains("module-details") || container?.classList?.contains("subject-card")) {
+                            (container?.classList?.contains("subject-card") ? [container] : container.querySelectorAll(".subject-card") || []).forEach(subjectCard => {
+                                this.attachSubjectCardOnDragEventListeners(subjectCard);
+                            })
+                        }
+                        else if (container?.classList?.contains("semester-content") || container?.classList?.contains("semester-grid") || container?.classList?.contains("modules-section") || container?.classList?.contains("semester-section") || container?.classList?.contains("module-card") || container == document.body) {
+                            (container?.classList?.contains("module-card") ? [container] : container.querySelectorAll(".module-card") || []).forEach(moduleCard => {
+                                this.attachModuleCardOnDragEventListeners(moduleCard);
                                 
-                                container.querySelectorAll(`.subject-card.unclassified`).forEach(subjectCard => {
-                                    this.attachSubjectCardOnDragEventListeners(subjectCard);
-                                })
-                            }
-                        })
+                                if (descendants) {
+                                    moduleCard.querySelectorAll(`.subject-card`).forEach(subjectCard => {
+                                        this.attachSubjectCardOnDragEventListeners(subjectCard);
+                                    })
+                                    
+                                    container.querySelectorAll(`.subject-card.unclassified`).forEach(subjectCard => {
+                                        this.attachSubjectCardOnDragEventListeners(subjectCard);
+                                    })
+                                }
+                            })
+                        }
+
                     }
 
+                    this.attachNotifBtnsListener();
                 }
+                attachSubjectCardOnDragEventListeners(subjectCard) {
 
-                this.attachNotifBtnsListener();
-            }
-            attachSubjectCardOnDragEventListeners(subjectCard) {
+                    let draggableElement = subjectCard.querySelector(".subject-card-header");
+                    
+                    draggableElement.draggable = true;
 
-                let draggableElement = subjectCard.querySelector(".subject-card-header");
-                
-                draggableElement.draggable = true;
-
-                if (!this.selectedSubjectCardsId.includes(subjectCard.id)) {
                     draggableElement.ondragstart = (e) => {this.draggedElementOnDragStartEvent( e, {draggedElement: draggableElement, card: subjectCard})};
                     draggableElement.ondragend   = (e) => {this.draggedElementOnDragEndEvent(   e, {draggedElement: draggableElement, card: subjectCard})};
+
                 }
-                else {
-                    draggableElement.ondragstart = (e) => {this.draggedSelectedElementOnDragStartEvent( e, {draggedElement: draggableElement, card: subjectCard})};
-                    draggableElement.ondragend   = (e) => {this.draggedSelectedElementOnDragEndEvent(   e, {draggedElement: draggableElement, card: subjectCard})};
-                }
-
-            }
-            attachModuleCardOnDragEventListeners(moduleCard) {
-                const moduleHeader = moduleCard.querySelector(".module-header");
-                moduleHeader.draggable = true;
-                moduleHeader.ondragstart = (e) => {this.draggedElementOnDragStartEvent(e, {moduleHeader, card: moduleCard})}
-                moduleHeader.ondragend   = (e) => {this.draggedElementOnDragEndEvent(  e, {moduleHeader, card: moduleCard})}
-            }
-
-
-            // MARK: detach ondrag events
-            detachOnDragEventListeners() {   // Remove ONDRAG cards event
-                document.querySelectorAll(".subject-card").forEach(subjectCard => {
-                    let draggableElement = "";
-                    const isCompact = subjectCard.classList.contains("compact");
-                    if (isCompact) {draggableElement = subjectCard;}
-                    else {draggableElement = subjectCard.querySelector(".subject-card-header");}
-                    
-                    draggableElement.draggable   = false;
-                    draggableElement.ondragstart = null;
-                    draggableElement.ondragend   = null;
-                })
-
-                document.querySelectorAll(".module-header").forEach(moduleHeader => {
-                    moduleHeader.draggable   = false;
-                    moduleHeader.ondragstart = null;
-                    moduleHeader.ondragend   = null;
-                })
-            }
-
-
-
-
-
-            //#region Dragged element events
-
-
-
-
-
-            // MARK: ON DRAG START
-            async draggedElementOnDragStartEvent(e, {draggedElement, card}) {
-
-                if (e.target.classList.contains("any-input")) {return}
-
-                let sem           = "";
-                let moduleName    = "";
-                let index         = "";
-                let type = "";
-
-                if (card.classList.contains("subject-card")) {
-                    type = "subject";
-
-                    this.currentlyDraggedElement = draggedElement;
-                    this.currentlyDraggedCard = card;
-                    this.currentlyDraggedCard.style.width = "50%";
-                    // detailed
-                    this.currentlyDraggedCard.querySelector(".grades-table")        .style.display = "none";
-                    this.currentlyDraggedCard.querySelector(".subject-card-header") .style.borderBottom = "none";
-                    this.currentlyDraggedCard.querySelector(".subject-card-header") .style.borderRadius = "20px 20px 20px 20px";
-                    this.currentlyDraggedCard.querySelector(".subject-card-header") .children[0].style.width = "50%";
-
-                    // whatever
-                    this.currentlyDraggedCard.querySelector(".subject-total-coef-div").style.display = "none";
-
-                    clearTimeout(this?.timeouts?.documentOnDragEnd?.hideTeacherTable);
-                    clearTimeout(this?.timeouts?.draggedElementOnDragEndEvent?.showTeacherTable);
-                    if (!this.timeouts?.draggedElementOnDragStartEvent) {this.timeouts.draggedElementOnDragStartEvent = {};}
-
-                    this.timeouts.draggedElementOnDragStartEvent.hideTeacherTable = setTimeout(() => {document.querySelectorAll(".grades-table-header-teacher").forEach(teacher => {teacher.style.display = "none";})}, 50);
-                    document.querySelector(".semester-content")                     .classList.add("dragging");
-                    document.querySelector(".drop-field.create-module")             .classList.add("show");
-                    document.querySelector(".drop-field-create-module-hitbox")      .classList.add("show");
-                    document.querySelector(".drop-field.remove-from-module")        .classList.add("show");
-                    document.querySelector(".drop-field-remove-from-module-hitbox") .classList.add("show");
-
-                    sem           = this.currentlyDraggedCard.dataset.semester;
-                    moduleName    = this.currentlyDraggedCard.dataset.module;
-                    index         = this.currentlyDraggedCard.dataset.index;
-
-                    if (!this.currentlyDraggedCard.classList.contains("unclassified")) {
-
-                        const upperInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${index}"]`)
-                        const upperInsertFieldHitbox = upperInsertField.querySelector(".drop-subject-card-insert-hitbox");
-
-                        const lowerInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${parseInt(index)+1}"]`)
-                        const lowerInsertFieldHitbox = lowerInsertField.querySelector(".drop-subject-card-insert-hitbox");
-
-                        this.detachInsertFieldHitboxEventListeners(upperInsertFieldHitbox);
-                        this.detachInsertFieldHitboxEventListeners(lowerInsertFieldHitbox);
-                        upperInsertField.classList.remove("show");
-                        lowerInsertField.classList.remove("show");
-
-                        if (!this?.timeouts?.draggedElementOnDragStartEvent) {this.timeouts.draggedElementOnDragStartEvent = {};}
-                    }
-
-                    if (this.selectedSubjectCardsId.length == 0) {
-                        // Getting all the shown drop fields, but the 2 fields around the dragged card
-                        const insertionDropFields = document.querySelectorAll(`
-                            .drop-field.insert-field.subject:not([data-semester="${sem}"][data-module="${moduleName}"][data-index="${index}"]).show,
-                            .drop-field.insert-field:not(.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${index}"]).show
-                        `);
-                        insertionDropFields.forEach(insertField  => { if (insertField.dataset.index != index+1) {
-                            insertField.querySelector(`.drop-${insertField.classList.contains("subject") ? "subject" : "module"}-card-insert-plus`) .classList.remove("show");
-                            insertField.querySelector(`.drop-${insertField.classList.contains("subject") ? "subject" : "module"}-card-insert-arrow`).classList.add("show");
-                            insertField.querySelector(`.drop-${insertField.classList.contains("subject") ? "subject" : "module"}-card-insert-text`) .classList.replace("add", "insert");
-                            insertField.querySelector(`.drop-${insertField.classList.contains("subject") ? "subject" : "module"}-card-insert-text`) .parentElement.classList.replace("add", "insert");
-                        }})
-                    }
-                }
-                else if (card.classList.contains("module-card")) {
-                    type = "module";
-
-                    this.currentlyDraggedElement = draggedElement;
-                    this.currentlyDraggedCard = card;
-                    document.querySelector(".drop-field.create-module")             .classList.add("show");
-                    document.querySelector(".drop-field-create-module-hitbox")      .classList.add("show");
-                    document.querySelector(".drop-field.remove-from-module")        .classList.add("show");
-                    document.querySelector(".drop-field-remove-from-module-hitbox") .classList.add("show");
-                    
-                    this.foldModuleCard(card, false, this.foldedModuleCardsId.includes(card.id) ? "only" : true, true);
-                    
-                    document.querySelector(".semester-content").classList.add("dragging");
+                attachModuleCardOnDragEventListeners(moduleCard) {
+                    const moduleHeader = moduleCard.querySelector(".module-header");
+                    moduleHeader.draggable = true;
+                    moduleHeader.ondragstart = (e) => {this.draggedElementOnDragStartEvent(e, {moduleHeader, card: moduleCard})}
+                    moduleHeader.ondragend   = (e) => {this.draggedElementOnDragEndEvent(  e, {moduleHeader, card: moduleCard})}
                 }
 
 
-                // If at least one card of same type as the card draggeed is selected, then we leave everything as they currently are: we don't do anything
-                // If there are not selection for the type of card dragged, we don't want to change the text inside the insertion fields adjacent to the dragged card for cleaner animations:
-                if ((card.classList.contains("module-card") && this.selectedModuleCardsId.length == 0) || (card.classList.contains("subject-card") && this.selectedSubjectCardsId.length == 0)) {
-                    // Select all the shown drop fields except the 2 fields around the dragged card
+                // MARK: detach ondrag events
+                detachOnDragEventListeners() {   // Remove ONDRAG cards event
+                    document.querySelectorAll(".subject-card").forEach(subjectCard => {
+                        let draggableElement = "";
+                        const isCompact = subjectCard.classList.contains("compact");
+                        if (isCompact) {draggableElement = subjectCard;}
+                        else {draggableElement = subjectCard.querySelector(".subject-card-header");}
+                        
+                        draggableElement.draggable   = false;
+                        draggableElement.ondragstart = null;
+                        draggableElement.ondragend   = null;
+                    })
 
-                    document.querySelectorAll(".drop-field.insert-field.show").forEach(insertField  => {
-                        insertField.querySelector(`.drop-${insertField.classList.contains("subject") ? "subject" : "module"}-card-insert-plus`) .classList.remove("show");
-                        insertField.querySelector(`.drop-${insertField.classList.contains("subject") ? "subject" : "module"}-card-insert-arrow`).classList.add("show");
-                        insertField.querySelector(`.drop-${insertField.classList.contains("subject") ? "subject" : "module"}-card-insert-text`) .classList.replace("add", "insert");
-                        insertField.querySelector(`.drop-${insertField.classList.contains("subject") ? "subject" : "module"}-card-insert-text`) .parentElement.classList.replace("add", "insert");
+                    document.querySelectorAll(".module-header").forEach(moduleHeader => {
+                        moduleHeader.draggable   = false;
+                        moduleHeader.ondragstart = null;
+                        moduleHeader.ondragend   = null;
                     })
                 }
 
 
-                e.dataTransfer.effectAllowed = "link";
-                e.dataTransfer.setDragImage(document.getElementById("emptyDivToRemoveTheDragImage"), 0, 0);
-                e.dataTransfer.setData("text", this.currentlyDraggedCard.id);
+                //#region insertion fields ________________________
 
-            }
+                    insertFieldHitboxOnDragOverEvent(e) {
+                        const type              = e.target.dataset.type;
+                        const insertField       = e.target.closest(`.drop-field.insert-field.${type}`);
+                        const insertFieldArrow  = insertField.querySelector(`.drop-${type}-card-insert-arrow`);
+                        const insertFieldPlus   = insertField.querySelector(`.drop-${type}-card-insert-plus`);
+                        const insertFieldText   = insertField.querySelector(`.drop-${type}-card-insert-text`);
+                        const insertFieldHitbox = insertField.querySelector(`.drop-${type}-card-insert-hitbox`);
+
+                        e.preventDefault(); 
+                        e.dataTransfer.dropEffect = "link";
+                        insertField.classList.add("hover");
+                        insertFieldArrow?.classList?.add("hover"); 
+                        insertFieldPlus?.classList?.add("hover");
+                        insertFieldText.classList.add("hover");
+                    }
+                    insertFieldHitboxOnDragLeaveEvent(e) {
+                        const type              = e.target.dataset.type;
+                        const insertField       = e.target.closest(`.drop-field.insert-field.${type}`);
+                        const insertFieldArrow  = insertField.querySelector(`.drop-${type}-card-insert-arrow`);
+                        const insertFieldPlus   = insertField.querySelector(`.drop-${type}-card-insert-plus`);
+                        const insertFieldText   = insertField.querySelector(`.drop-${type}-card-insert-text`);
+                        const insertFieldHitbox = insertField.querySelector(`.drop-${type}-card-insert-hitbox`);
+
+                        e.preventDefault(); 
+                        insertField.classList.remove("hover");
+                        insertFieldArrow?.classList?.remove("hover"); 
+                        insertFieldPlus?.classList?.remove("hover");
+                        insertFieldText?.classList?.remove("hover");
+                    }
+                    insertFieldHitboxOnDropEvent(e) {
+                        const type              = e.target.dataset.type;
+                        const index             = e.target.dataset.index;
+                        const insertField       = e.target.closest(`.drop-field.insert-field.${type}`);
+                        const insertFieldHitbox = insertField.querySelector(`.drop-${type}-card-insert-hitbox`);
+                        const dataTransfer      = e.dataTransfer.getData("text");
+                        const dataTransferMatch = dataTransfer.match(/module-card|subject-card/);
+                        const sourceType        = dataTransferMatch?.[0] ? dataTransferMatch[0] : "errr... something wrong, probably?";
+
+                        e.preventDefault(); 
+
+                        insertFieldHitbox.ondragover = (e) => {this.insertFieldHitboxOnDragOverEvent(e)};
+
+                        switch (`${sourceType} dropped in a ${type} insertion field`) {
+                            case "module-card dropped in a module insertion field":
+                                this.dropFieldModuleInsertAction(dataTransfer, insertField);
+                            break;
+                            case "module-card dropped in a subject insertion field":
+                                this.dropFieldSubjectInsertAction(dataTransfer, insertField);
+                            break;
+                            case "subject-card dropped in a module insertion field":
+                                this.dropFieldToNewModuleAction(dataTransfer, index);
+                            break;
+                            case "subject-card dropped in a subject insertion field":
+                                this.dropFieldSubjectInsertAction(dataTransfer, insertField);
+                            break;
+                        }
+                    }
+                    insertFieldHitboxOnMouseEnterEvent(e) {
+                        const type              = e.target.dataset.type;
+                        const insertField       = e.target.closest(        `.drop-field.insert-field.${type}`);
+                        const insertFieldArrow  = insertField.querySelector(`.drop-${type}-card-insert-arrow`);
+                        const insertFieldPlus   = insertField.querySelector(`.drop-${type}-card-insert-plus`);
+                        const insertFieldText   = insertField.querySelector(`.drop-${type}-card-insert-text`);
+
+                        insertField.classList.add("hover");
+                        insertFieldArrow?.classList?.add("hover"); 
+                        insertFieldPlus?.classList?.add("hover");
+                        insertFieldText?.classList?.add("hover");
+                    }
+                    insertFieldHitboxOnMouseLeaveEvent(e) {
+                        const type              = e.target.dataset.type;
+                        const insertField       = e.target.closest(        `.drop-field.insert-field.${type}`);
+                        const insertFieldArrow  = insertField.querySelector(`.drop-${type}-card-insert-arrow`);
+                        const insertFieldPlus   = insertField.querySelector(`.drop-${type}-card-insert-plus`);
+                        const insertFieldText   = insertField.querySelector(`.drop-${type}-card-insert-text`);
+                        
+                        insertField.classList.remove("hover");
+                        insertFieldArrow?.classList?.remove("hover");
+                        insertFieldPlus?.classList?.remove("hover");
+                        insertFieldText?.classList?.remove("hover");
+
+                    }
+                    insertFieldHitboxOnClickEvent(e) {
+                        const type              = e.target.dataset.type;
+                        const insertField       = e.target.closest(        `.drop-field.insert-field.${type}`);
+                        const insertFieldArrow  = insertField.querySelector(`.drop-${type}-card-insert-arrow`);
+                        const insertFieldPlus   = insertField.querySelector(`.drop-${type}-card-insert-plus`);
+                        const insertFieldText   = insertField.querySelector(`.drop-${type}-card-insert-text`);
+                        
+                        e.preventDefault(); 
+
+                        if (this.selectedSubjectCardsId.length == 0) {
+                            this.dropFieldSubjectInsertAction(null, insertField)
+                        }
+                        else {
+                            this.dropFieldSubjectInsertAction(this.selectedSubjectCardsId[0], insertField);
+                        }
+                    }
+
+                    async attachInsertFieldHitboxEventListeners(insertFieldHitbox) {
+                        insertFieldHitbox.ondragover     = (e) => {this.insertFieldHitboxOnDragOverEvent(e)};
+                        insertFieldHitbox.ondragleave    = (e) => {this.insertFieldHitboxOnDragLeaveEvent(e)};
+                        insertFieldHitbox.ondrop         = (e) => {
+                            e.preventDefault();
+                            e.dataTransfer.dropEffect = "link";
+                            
+                            const data = e.target.dataset;
+                            if (data.type.match(/subject|module/)) {
+                                this.insertFieldHitboxOnDropEvent(e);
+                            }
+                            else {
+                                this.dropFieldToNewModuleAction(e.dataTransfer.getData("text"), data.index);
+                            }
+                        };
+
+                        insertFieldHitbox.onmouseenter   = (e) => {this.insertFieldHitboxOnMouseEnterEvent(e)};
+                        insertFieldHitbox.onmouseleave   = (e) => {this.insertFieldHitboxOnMouseLeaveEvent(e)};
+                        insertFieldHitbox.onclick        = (e) => {
+                            const data = e.target.dataset;
+                            if      (data.type == "subject") {
+                                this.insertFieldHitboxOnClickEvent(e);
+                            }
+                            else if (data.type == "module") {
+                                if (this.selectedSubjectCardsId.length > 0) {
+                                    this.dropFieldToNewModuleAction(this.selectedSubjectCardsId[0], data.index);
+                                }
+                                else {
+                                    this.dropFieldToNewModuleAction(null, data.index);
+                                }
+                            }
+                        };
+                    }
+                    detachInsertFieldHitboxEventListeners(insertFieldHitbox) {
+                        insertFieldHitbox.ondragover     = (e) => {e.preventDefault(); e.dataTransfer.dropEffect = "none";};
+                        insertFieldHitbox.ondragleave    = (e) => {e.preventDefault()};
+                        insertFieldHitbox.ondrop         = (e) => {e.preventDefault(); e.dataTransfer.dropEffect = "none";};
+
+                        insertFieldHitbox.onmouseenter   = (e) => {e.preventDefault()};
+                        insertFieldHitbox.onmouseleave   = (e) => {e.preventDefault()};
+                        insertFieldHitbox.onclick        = (e) => {e.preventDefault()};
+                    }
+
+                //#endregion
+
+            //#endregion
 
 
-            // MARK: ON DRAG END
-            async draggedElementOnDragEndEvent(e, {draggedElement, card}) {
-                card.style.width = "";
-                this.currentlyDraggedElement = undefined;
-                this.currentlyDraggedCard    = undefined;
 
-                let sem           = "";
-                let moduleName    = "";
-                let index         = "";
-                let type = "";
 
-                if (card.classList.contains("subject-card")) {
-                    type = "subject"; 
-                    
-                    // detailed
-                    card.querySelector(".grades-table")        .style.display = "table";
-                    card.querySelector(".subject-card-header") .style.borderBottom = "4px solid white";
-                    card.querySelector(".subject-card-header") .style.borderRadius = "20px 20px 0px 0px";
-                    card.querySelector(".subject-card-header") .children[0].style.width = "38.8%";
 
-                    // whatever
-                    card.querySelector(".subject-total-coef-div").style.display = "";
+            //#region -_ Dragged element events ____________
 
-                    
-                    if (this.selectedSubjectCardsId.length == 0) {
+
+
+
+
+
+                // MARK: ON DRAG START
+                async draggedElementOnDragStartEvent(e, {draggedElement, card}) {
+
+                    if (e.target.classList.contains("any-input")) {return}
+
+                    e.dataTransfer.effectAllowed = "link";
+                    e.dataTransfer.setDragImage(document.getElementById("emptyDivToRemoveTheDragImage"), 0, 0);
+                    e.dataTransfer.setData("text", card.id);
+
+
+                    let selectionGoingOn = false, draggedCardIsSelected = false;
+                    if (this.selectedModuleCardsId.length > 0 || this.selectedSubjectCardsId.length > 0) {
+                        selectionGoingOn = true;
+                    }
+                    if (this.selectedSubjectCardsId.includes(card.id) || this.selectedModuleCardsId.includes(card.id)) {
+                        draggedCardIsSelected = true;
+                    }
+
+                    document.querySelector(".semester-content").classList.add("dragging");
+
+                    if (card.classList.contains("subject-card")) {
+
+                        (draggedCardIsSelected ? this.selectedSubjectCardsId : [card.id]).forEach(subjectCardId => {
+                            const subjectCard = document.getElementById(subjectCardId);
+                            subjectCard.style.width = "50%";
+                        
+                            subjectCard.querySelector(".subject-total-coef-div").style.opacity = "0"; 
+                            
+
+                            if (!this.compactSubjCardsId.includes(subjectCardId)) {
+                                this.foldSubjCard(subjectCard);
+                            }
+
+                        })
+
+                        clearTimeout(this?.timeouts?.documentOnDragEnd?.hideTeacherTable);
+                        clearTimeout(this?.timeouts?.draggedElementOnDragEndEvent?.showTeacherTable);
+                        if (!this.timeouts?.draggedElementOnDragStartEvent) {this.timeouts.draggedElementOnDragStartEvent = {};}
+
+                        this.timeouts.draggedElementOnDragStartEvent.hideTeacherTable = setTimeout(() => {
+                            document.querySelectorAll(".grades-table-header-teacher").forEach(teacher => {teacher.style.display = "none";})
+                        }, 50);
+
+                        
+                        if (!card.classList.contains("unclassified")) {
+
+                            if (!draggedCardIsSelected) {
+                                const sem           = card.dataset.semester;
+                                const moduleName    = card.dataset.module;
+                                const index         = card.dataset.index;
+                            
+                                const upperInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${parseInt(index)+0}"]`)
+                                const upperInsertFieldHitbox = upperInsertField.querySelector(".drop-subject-card-insert-hitbox");
+        
+                                const lowerInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${parseInt(index)+1}"]`)
+                                const lowerInsertFieldHitbox = lowerInsertField.querySelector(".drop-subject-card-insert-hitbox");
+        
+                                this.detachInsertFieldHitboxEventListeners(upperInsertFieldHitbox);
+                                this.detachInsertFieldHitboxEventListeners(lowerInsertFieldHitbox);
+                                upperInsertField.classList.remove("show");
+                                lowerInsertField.classList.remove("show");
+                            }
+        
+                        }
+                    }
+                    else if (card.classList.contains("module-card")) {
+
+                        (draggedCardIsSelected ? this.selectedModuleCardsId : [card.id]).forEach(moduleCardId => {
+                            const moduleCard = document.getElementById(moduleCardId);
+                            moduleCard.style.width = "50%";
+
+                            if (!draggedCardIsSelected) {
+                                // A non-selected module card has been dragged: if it was already folded, we only remove its adjacent module insertion fields, but fold it as well otherwise
+                                this.foldModuleCard(moduleCard, false, this.foldedModuleCardsId.includes(moduleCardId) ? "only" : true, true);
+                            }
+                            else if (!this.foldedModuleCardsId.includes(moduleCardId)) {
+                                // A selected unfolded module card has been dragged: we fold it while leaving its adjacent module insertion fields displayed
+                                this.foldModuleCard(moduleCard, false, false, true);
+                            }
+                            // A selected folded module card doesn't need to do anything other then changing its width
+                        })
+                        
+                    }
+
+                    if (!selectionGoingOn) {
+                        document.querySelector(".drop-field.create-module")             .classList.add("show");
+                        document.querySelector(".drop-field-create-module-hitbox")      .classList.add("show");
+                        document.querySelector(".drop-field.remove-from-module")        .classList.add("show");
+                        document.querySelector(".drop-field-remove-from-module-hitbox") .classList.add("show");
+
+                        // Select all the shown drop fields. 
+                        // Since it occurs after folding the subject card is being dragged, it won't select the 2 subject insertion fields adjacent to this subject card.
+                        document.querySelectorAll(".drop-field.insert-field.show").forEach(insertField  => {
+                            const type = insertField.classList.contains("subject") ? "subject" : "module";
+
+                            insertField.querySelector(`.drop-${type}-card-insert-plus`) .classList.remove("show");
+                            insertField.querySelector(`.drop-${type}-card-insert-arrow`).classList.add("show");
+                            insertField.querySelector(`.drop-${type}-card-insert-text`) .classList.replace("add", "insert");
+                            insertField.querySelector(`.drop-${type}-card-insert-text`) .parentElement.classList.replace("add", "insert");
+                        })
+                    }
+
+                }
+
+
+
+                // MARK: ON DRAG END
+                async draggedElementOnDragEndEvent(e, {draggedElement, card}) {
+                    if (e.target.classList.contains("any-input")) {return}
+
+                    let selectionGoingOn = false, draggedCardIsSelected = false;
+                    if (this.selectedModuleCardsId.length > 0 || this.selectedSubjectCardsId.length > 0) {
+                        selectionGoingOn = true;
+                    }
+                    if (this.selectedSubjectCardsId.includes(card.id) || this.selectedModuleCardsId.includes(card.id)) {
+                        draggedCardIsSelected = true;
+                    }
+
+
+                    if (card.classList.contains("subject-card")) {
+
+                        (draggedCardIsSelected ? this.selectedSubjectCardsId : [card.id]).forEach(subjectCardId => {
+                            const subjectCard = document.getElementById(subjectCardId);
+                            subjectCard.style.width = "";
+                        
+                            subjectCard.querySelector(".subject-total-coef-div").style.opacity = ""; 
+                            
+
+                            if (!this.compactSubjCardsId.includes(subjectCardId)) {
+                                this.unfoldSubjCard(subjectCard);
+                            }
+
+                        })
+
                         clearTimeout(this?.timeouts?.documentOnDragEnd?.hideTeacherTable);
                         clearTimeout(this?.timeouts?.draggedElementOnDragStartEvent?.hideTeacherTable);
                         if (!this?.timeouts?.draggedElementOnDragEndEvent) {this.timeouts.draggedElementOnDragEndEvent = {};}
 
-                        this.timeouts.draggedElementOnDragEndEvent.showTeacherTable = setTimeout(() => {document.querySelectorAll(".grades-table-header-teacher").forEach(teacher => {teacher.style.display = "table-cell"})}, 50);
-                        document.querySelector(".semester-content")                     .classList.remove("dragging");
+                        this.timeouts.draggedElementOnDragEndEvent.showTeacherTable = setTimeout(() => {
+                            document.querySelectorAll(".grades-table-header-teacher").forEach(teacher => {teacher.style.display = "table-cell"})
+                        }, 50);
+
+                        
+                        if (!card.classList.contains("unclassified")) {
+
+                            if (!draggedCardIsSelected) {
+                                const sem           = card.dataset.semester;
+                                const moduleName    = card.dataset.module;
+                                const index         = card.dataset.index;
+                            
+                                const upperInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${parseInt(index)+0}"]`)
+                                const upperInsertFieldHitbox = upperInsertField.querySelector(".drop-subject-card-insert-hitbox");
+        
+                                const lowerInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${parseInt(index)+1}"]`)
+                                const lowerInsertFieldHitbox = lowerInsertField.querySelector(".drop-subject-card-insert-hitbox");
+        
+                                this.detachInsertFieldHitboxEventListeners(upperInsertFieldHitbox);
+                                this.detachInsertFieldHitboxEventListeners(lowerInsertFieldHitbox);
+                                upperInsertField.classList.remove("show");
+                                lowerInsertField.classList.remove("show");
+                            }
+        
+                        }
+                    }
+                    else if (card.classList.contains("module-card")) {
+
+                        (draggedCardIsSelected ? this.selectedModuleCardsId : [card.id]).forEach(moduleCardId => {
+                            const moduleCard = document.getElementById(moduleCardId);
+                            moduleCard.style.width = "";
+
+                            if (!draggedCardIsSelected) {
+                                // A non-selected module card has been dropped: if it was already folded before being dragged, we only show its adjacent module insertion fields, but unfold it as well otherwise
+                                this.unfoldModuleCard(moduleCard, false, this.foldedModuleCardsId.includes(moduleCardId) ? "only" : true, true);
+                            }
+                            else if (!this.foldedModuleCardsId.includes(moduleCardId)) {
+                                // A selected unfolded module card has been dropped: we unfold it while leaving its adjacent module insertion fields displayed, since it wasn't folded before being dragged
+                                this.unfoldModuleCard(moduleCard, false, false, true);
+                            }
+                        })
+                        
+                    }
+
+                    if (!selectionGoingOn) {
+                        document.querySelector(".semester-content")                 .classList.remove("dragging");
                         document.querySelector(".drop-field.create-module")             .classList.remove("show");
                         document.querySelector(".drop-field-create-module-hitbox")      .classList.remove("show");
                         document.querySelector(".drop-field.remove-from-module")        .classList.remove("show");
                         document.querySelector(".drop-field-remove-from-module-hitbox") .classList.remove("show");
 
-                        document.querySelectorAll(".drop-module-card-insert-plus,  .drop-subject-card-insert-plus ").forEach(plus  => {plus.classList.add("show");})
-                        document.querySelectorAll(".drop-module-card-insert-arrow, .drop-subject-card-insert-arrow").forEach(arrow => {arrow.classList.remove("show");})
+                        // Select all the shown drop fields. 
+                        // Since it occurs after unfolding the subject card is being dragged, it WILL also select the 2 subject insertion fields adjacent to this subject card.
+                        // Though in this case, nothing will change for the 2 adjacent subject insertion fields.
+                        document.querySelectorAll(".drop-field.insert-field.show").forEach(insertField  => {
+                            const type = insertField.classList.contains("subject") ? "subject" : "module";
 
-                        const insertFieldTexts = document.querySelectorAll(".drop-module-card-insert-text,  .drop-subject-card-insert-text");
-                        insertFieldTexts.forEach(insertFieldText => {
-                            insertFieldText.classList.replace("insert", "add");
-                            insertFieldText.parentElement.classList.replace("insert", "add");
-                        })
-                    }
-                    else {
-                        const insertFieldTexts = document.querySelectorAll(".drop-module-card-insert-text,  .drop-subject-card-insert-text");
-                        insertFieldTexts.forEach(insertFieldText => {
-                            insertFieldText.classList.replace("insert", "add");
-                            insertFieldText.parentElement.classList.replace("insert", "add");
+                            insertField.querySelector(`.drop-${type}-card-insert-plus`) .classList.add("show");
+                            insertField.querySelector(`.drop-${type}-card-insert-arrow`).classList.remove("show");
+                            insertField.querySelector(`.drop-${type}-card-insert-text`) .classList.replace("insert", "add");
+                            insertField.querySelector(`.drop-${type}-card-insert-text`) .parentElement.classList.replace("insert", "add");
                         })
                     }
 
-                    this.resetFixedUnclassifiedSectionHeight();
-
-                    sem         = card.dataset.semester;
-                    moduleName  = card.dataset.module;
-                    index       = card.dataset.index;
-
-                    if (!card.classList.contains("unclassified")) {
-                        const upperInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${index}"]`)
-                        const lowerInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${parseInt(index)+1}"]`)
-
-                        clearTimeout(this?.timeouts?.draggedElementOnDragStartEvent?.collapseSubjectCardAdjacentInsertFields);
-                        setTimeout(() => {
-                            if (upperInsertField) {
-                                upperInsertField.classList.add("show");
-
-                                const upperInsertFieldHitbox = upperInsertField.querySelector(".drop-subject-card-insert-hitbox");
-                                this.attachInsertFieldHitboxEventListeners(upperInsertFieldHitbox)
-                            }
-                                
-                            if (lowerInsertField) {
-                                lowerInsertField.classList.add("show");
-                                
-                                const lowerInsertFieldHitbox = lowerInsertField.querySelector(".drop-subject-card-insert-hitbox");
-                                this.attachInsertFieldHitboxEventListeners(lowerInsertFieldHitbox)
-                            }
-                        }, 10);
-                    }
                 }
-                else if (card.classList.contains("module-card")) {
-                    sem         = card.dataset.semester;
-                    moduleName  = card.dataset.module;
-                    index       = card.dataset.index;
-                    type = "module";
-
-                    document.querySelector(".drop-field.create-module")             .classList.remove("show");
-                    document.querySelector(".drop-field-create-module-hitbox")      .classList.remove("show");
-                    document.querySelector(".drop-field.remove-from-module")        .classList.remove("show");
-                    document.querySelector(".drop-field-remove-from-module-hitbox") .classList.remove("show");
-
-                    if (!this.foldedModuleCardsId.includes(card.id)) {
-                        this.unfoldModuleCard(card, true, true, true);
-                    }
-                    else {
-                        this.unfoldModuleCard(card, true, "only", true);
-                    }
-
-                    document.querySelector(".semester-content").classList.remove("dragging");
-                }
-
-                document.querySelectorAll(`.drop-field.insert-field.show`)
-                .forEach(insertField  => {
-                    insertField.querySelector(`.drop-${insertField.classList.contains("subject") ? "subject" : "module"}-card-insert-plus` ).classList.add("show");
-                    insertField.querySelector(`.drop-${insertField.classList.contains("subject") ? "subject" : "module"}-card-insert-arrow`).classList.remove("show");
-                })
-
-            }
-
-
-            // MARK: SELECTION ON DRAG START
-            async draggedSelectedElementOnDragStartEvent(e, {draggedElement, card}) {
-                if (e.target.classList.contains("any-input")) {return}
-
-                if (card.classList.contains("subject-card")) {
-                    this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {
-                        const selectedSubjectCard = document.getElementById(selectedSubjectCardId);
-                        selectedSubjectCard.style.width = "50%";
-                        // detailed
-                        selectedSubjectCard.querySelector(".grades-table")        .style.display = "none";
-                        selectedSubjectCard.querySelector(".subject-card-header") .style.borderBottom = "none";
-                        selectedSubjectCard.querySelector(".subject-card-header") .style.borderRadius = "20px 20px 20px 20px";
-                        selectedSubjectCard.querySelector(".subject-card-header") .children[0].style.width = "50%";
-
-                        // whatever
-                        selectedSubjectCard.querySelector(".subject-total-coef-div").style.display = "none";
-                    })
-    
-                    clearTimeout(this?.timeouts?.documentOnDragEnd?.hideTeacherTable);
-                    document.querySelectorAll(".grades-table-header-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
-                    document.querySelector(".semester-content")                     .classList.add("dragging");
-                    document.querySelector(".drop-field.create-module")             .classList.add("show");
-                    document.querySelector(".drop-field-create-module-hitbox")      .classList.add("show");
-                    document.querySelector(".drop-field.remove-from-module")        .classList.add("show");
-                    document.querySelector(".drop-field-remove-from-module-hitbox") .classList.add("show");
-                }
-                else if (card.classList.contains("module-card")) {
-                    this.selectedModuleCardsId.forEach(selectedModuleCardId => {
-                        const selectedModuleCard = document.getElementById(selectedModuleCardId);
-                        selectedModuleCard.style.width = "50%";
-
-                        
-                        if (this.foldedModuleCardsId.includes(selectedModuleCardId)) {
-                            this.foldModuleCard(selectedModuleCard, true, "only", true);
-                        }
-                        else {
-                            this.foldModuleCard(selectedModuleCard, true, true, true);
-                        }
-
-                    })
-
-                    clearTimeout(this?.timeouts?.documentOnDragEnd?.hideTeacherTable);
-                    document.querySelector(".drop-field.create-module")             .classList.add("show");
-                    document.querySelector(".drop-field-create-module-hitbox")      .classList.add("show");
-                    document.querySelector(".drop-field.remove-from-module")        .classList.add("show");
-                    document.querySelector(".drop-field-remove-from-module-hitbox") .classList.add("show");
-                }
-
-                e.dataTransfer.effectAllowed = "link";
-                e.dataTransfer.setDragImage(document.getElementById("emptyDivToRemoveTheDragImage"), 0, 0);
-                e.dataTransfer.setData("text", card.id)
-            }
-
-
-            // MARK: SELECTION ON DRAG END
-            async draggedSelectedElementOnDragEndEvent(e, {draggedElement, card}) {
-                if (card.classList.contains("subject-card")) {
-                    this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {
-                        const selectedSubjectCard = document.getElementById(selectedSubjectCardId);
-                        selectedSubjectCard.style.width = "";
-
-                        // detailed
-                        selectedSubjectCard.querySelector(".grades-table")        .style.display = "table";
-                        selectedSubjectCard.querySelector(".subject-card-header") .style.borderBottom = "4px solid white";
-                        selectedSubjectCard.querySelector(".subject-card-header") .style.borderRadius = "20px 20px 0px 0px";
-                        selectedSubjectCard.querySelector(".subject-card-header") .children[0].style.width = "38.8%";
-
-                        // whatever
-                        selectedSubjectCard.querySelector(".subject-total-coef-div").style.display = "";
-                    })
-                }
-            }
 
             // #endregion
             
@@ -6025,149 +6124,7 @@
 
 
 
-            //#region Insertion events listeners and actions
-
-            insertFieldHitboxOnDragOverEvent(e) {
-                const type              = e.target.dataset.type;
-                const insertField       = e.target.closest(`.drop-field.insert-field.${type}`);
-                const insertFieldArrow  = insertField.querySelector(`.drop-${type}-card-insert-arrow`);
-                const insertFieldPlus   = insertField.querySelector(`.drop-${type}-card-insert-plus`);
-                const insertFieldText   = insertField.querySelector(`.drop-${type}-card-insert-text`);
-                const insertFieldHitbox = insertField.querySelector(`.drop-${type}-card-insert-hitbox`);
-
-                e.preventDefault(); 
-                e.dataTransfer.dropEffect = "link";
-                insertField.classList.add("hover");
-                insertFieldArrow?.classList?.add("hover"); 
-                insertFieldPlus?.classList?.add("hover");
-                insertFieldText.classList.add("hover");
-            }
-            insertFieldHitboxOnDragLeaveEvent(e) {
-                const type              = e.target.dataset.type;
-                const insertField       = e.target.closest(`.drop-field.insert-field.${type}`);
-                const insertFieldArrow  = insertField.querySelector(`.drop-${type}-card-insert-arrow`);
-                const insertFieldPlus   = insertField.querySelector(`.drop-${type}-card-insert-plus`);
-                const insertFieldText   = insertField.querySelector(`.drop-${type}-card-insert-text`);
-                const insertFieldHitbox = insertField.querySelector(`.drop-${type}-card-insert-hitbox`);
-
-                e.preventDefault(); 
-                insertField.classList.remove("hover");
-                insertFieldArrow?.classList?.remove("hover"); 
-                insertFieldPlus?.classList?.remove("hover");
-                insertFieldText?.classList?.remove("hover");
-            }
-            insertFieldHitboxOnDropEvent(e) {
-                const type              = e.target.dataset.type;
-                const index             = e.target.dataset.index;
-                const insertField       = e.target.closest(`.drop-field.insert-field.${type}`);
-                const insertFieldHitbox = insertField.querySelector(`.drop-${type}-card-insert-hitbox`);
-                const dataTransfer      = e.dataTransfer.getData("text");
-                const dataTransferMatch = dataTransfer.match(/module-card|subject-card/);
-                const sourceType        = dataTransferMatch?.[0] ? dataTransferMatch[0] : "errr... something wrong, probably?";
-
-                e.preventDefault(); 
-
-                insertFieldHitbox.ondragover = (e) => {this.insertFieldHitboxOnDragOverEvent(e)};
-
-                switch (`${sourceType} dropped in a ${type} insertion field`) {
-                    case "module-card dropped in a module insertion field":
-                        this.dropFieldModuleInsertAction(dataTransfer, insertField);
-                    break;
-                    case "module-card dropped in a subject insertion field":
-                        this.dropFieldSubjectInsertAction(dataTransfer, insertField);
-                    break;
-                    case "subject-card dropped in a module insertion field":
-                        this.dropFieldToNewModuleAction(dataTransfer, index);
-                    break;
-                    case "subject-card dropped in a subject insertion field":
-                        this.dropFieldSubjectInsertAction(dataTransfer, insertField);
-                    break;
-                }
-            }
-            insertFieldHitboxOnMouseEnterEvent(e) {
-                const type              = e.target.dataset.type;
-                const insertField       = e.target.closest(        `.drop-field.insert-field.${type}`);
-                const insertFieldArrow  = insertField.querySelector(`.drop-${type}-card-insert-arrow`);
-                const insertFieldPlus   = insertField.querySelector(`.drop-${type}-card-insert-plus`);
-                const insertFieldText   = insertField.querySelector(`.drop-${type}-card-insert-text`);
-
-                insertField.classList.add("hover");
-                insertFieldArrow?.classList?.add("hover"); 
-                insertFieldPlus?.classList?.add("hover");
-                insertFieldText?.classList?.add("hover");
-            }
-            insertFieldHitboxOnMouseLeaveEvent(e) {
-                const type              = e.target.dataset.type;
-                const insertField       = e.target.closest(        `.drop-field.insert-field.${type}`);
-                const insertFieldArrow  = insertField.querySelector(`.drop-${type}-card-insert-arrow`);
-                const insertFieldPlus   = insertField.querySelector(`.drop-${type}-card-insert-plus`);
-                const insertFieldText   = insertField.querySelector(`.drop-${type}-card-insert-text`);
-                
-                insertField.classList.remove("hover");
-                insertFieldArrow?.classList?.remove("hover");
-                insertFieldPlus?.classList?.remove("hover");
-                insertFieldText?.classList?.remove("hover");
-
-            }
-            insertFieldHitboxOnClickEvent(e) {
-                const type              = e.target.dataset.type;
-                const insertField       = e.target.closest(        `.drop-field.insert-field.${type}`);
-                const insertFieldArrow  = insertField.querySelector(`.drop-${type}-card-insert-arrow`);
-                const insertFieldPlus   = insertField.querySelector(`.drop-${type}-card-insert-plus`);
-                const insertFieldText   = insertField.querySelector(`.drop-${type}-card-insert-text`);
-                
-                e.preventDefault(); 
-
-                if (this.selectedSubjectCardsId.length == 0) {
-                    this.dropFieldSubjectInsertAction(null, insertField)
-                }
-                else {
-                    this.dropFieldSubjectInsertAction(this.selectedSubjectCardsId[0], insertField);
-                }
-            }
-
-            async attachInsertFieldHitboxEventListeners(insertFieldHitbox) {
-                insertFieldHitbox.ondragover     = (e) => {this.insertFieldHitboxOnDragOverEvent(e)};
-                insertFieldHitbox.ondragleave    = (e) => {this.insertFieldHitboxOnDragLeaveEvent(e)};
-                insertFieldHitbox.ondrop         = (e) => {
-                    e.preventDefault();
-                    e.dataTransfer.dropEffect = "link";
-                    
-                    const data = e.target.dataset;
-                    if (data.type.match(/subject|module/)) {
-                        this.insertFieldHitboxOnDropEvent(e);
-                    }
-                    else {
-                        this.dropFieldToNewModuleAction(e.dataTransfer.getData("text"), data.index);
-                    }
-                };
-
-                insertFieldHitbox.onmouseenter   = (e) => {this.insertFieldHitboxOnMouseEnterEvent(e)};
-                insertFieldHitbox.onmouseleave   = (e) => {this.insertFieldHitboxOnMouseLeaveEvent(e)};
-                insertFieldHitbox.onclick        = (e) => {
-                    const data = e.target.dataset;
-                    if      (data.type == "subject") {
-                        this.insertFieldHitboxOnClickEvent(e);
-                    }
-                    else if (data.type == "module") {
-                        if (this.selectedSubjectCardsId.length > 0) {
-                            this.dropFieldToNewModuleAction(this.selectedSubjectCardsId[0], data.index);
-                        }
-                        else {
-                            this.dropFieldToNewModuleAction(null, data.index);
-                        }
-                    }
-                };
-            }
-            detachInsertFieldHitboxEventListeners(insertFieldHitbox) {
-                insertFieldHitbox.ondragover     = (e) => {e.preventDefault(); e.dataTransfer.dropEffect = "none";};
-                insertFieldHitbox.ondragleave    = (e) => {e.preventDefault()};
-                insertFieldHitbox.ondrop         = (e) => {e.preventDefault(); e.dataTransfer.dropEffect = "none";};
-
-                insertFieldHitbox.onmouseenter   = (e) => {e.preventDefault()};
-                insertFieldHitbox.onmouseleave   = (e) => {e.preventDefault()};
-                insertFieldHitbox.onclick        = (e) => {e.preventDefault()};
-            }
+            //#region -_ Insertion events listeners and actions
 
             // #endregion
 
@@ -6175,7 +6132,7 @@
 
 
 
-            //#region -card selection
+            //#region -_ card selection _______________________
             
                 // MARK: createSelectedCardNotifDiv
                 createSelectedCardNotifDiv(subjectCard) {
@@ -6338,7 +6295,7 @@
 
 
 
-            //#region -drag/tick icon
+            //#region -_ Drag/Tick icon _______________________
 
                 changeDragIconToTickIcon(subjectCard) {
                     const dragIcon = subjectCard.querySelector(".drag-icon");
@@ -6371,25 +6328,46 @@
 
 
 
-                // MARK: moduleDragIconOnClickEvent
-                moduleDragIconOnClickEvent(e, dragIcon, dontAddToSelection=false) {
-                    let subjectCard = e?.target ? document.getElementById(e.target.dataset.targetid) : e;
-                    let draggableElement = subjectCard;
+                // MARK: dragIconOnClickEvent
+                dragIconOnClickEvent(e, dragIcon, dontAddToSelection=false) {
+                    const card                  = e?.target instanceof HTMLElement ? document.getElementById(e.target.dataset.targetid) : (e instanceof HTMLElement ? e : undefined);
+                    const type                  = card.classList.contains("subject-card") ? "subject" : "module";
                     const dropFieldAdd          = document.querySelector(".drop-field.create-module");
                     const dropFieldAddHitbox    = document.querySelector(".drop-field-create-module-hitbox");
                     const dropFieldRemove       = document.querySelector(".drop-field.remove-from-module");
                     const dropFieldRemoveHitbox = document.querySelector(".drop-field-remove-from-module-hitbox");
+                    const sem                   = card.dataset.semester;
+                    const moduleName            = card.dataset.module;
+                    const subject               = card.dataset.subject;
                     
-                    draggableElement.draggable = true;
-                    draggableElement.ondragstart = (e) =>   {this.draggedSelectedElementOnDragStartEvent(e, {draggedElement: draggableElement, card:subjectCard})};
-                    draggableElement.ondragend   = (e) =>   {this.draggedSelectedElementOnDragEndEvent(  e, {draggedElement: draggableElement, card:subjectCard})};
+                    card.draggable = true;
 
                     if (!dontAddToSelection) {
-                        this.selectedSubjectCardsId.push(subjectCard.id);
-                        if (!this.selectedSubjectCardsSortedByModule[subjectCard.dataset.module]) { this.selectedSubjectCardsSortedByModule[subjectCard.dataset.module] = []; };
-                        this.selectedSubjectCardsSortedByModule[subjectCard.dataset.module].push({subjectCardId: subjectCard.id, selectionIndex: this.selectedSubjectCardsId.length-1});
+                        if (type == "subject") {
+                            if (this.selectedModuleCardsId.length > 0) {
+                                card.style.animation = "0.3s slightHorizShake ease";
+                                card.onanimationend = (e) => {e.target.style.animation = "";};
+                                return
+                            }
+                            else {
+                                this.selectedSubjectCardsId.push(card.id);
+                                
+                                if (!this.selectedSubjectCardsSortedByModule[card.dataset.module]) { this.selectedSubjectCardsSortedByModule[card.dataset.module] = []; };
+                                this.selectedSubjectCardsSortedByModule[card.dataset.module].push({cardId: card.id, selectionIndex: this.selectedSubjectCardsId.length-1});
+                            }
+                        }
+                        else if (type == "module") {
+                            if (this.selectedSubjectCardsId.length > 0) {
+                                card.style.animation = "0.3s slightHorizShake ease";
+                                card.onanimationend = (e) => {e.target.style.animation = "";};
+                                return
+                            }
+                            else {
+                                this.selectedModuleCardsId.push(card.id);
+                            }
+                        }
 
-                        const selectionNotifDiv = this.createSelectedCardNotifDiv(subjectCard);
+                        const selectionNotifDiv = this.createSelectedCardNotifDiv(card);
 
                         document.querySelector(".selected-subject-card-notif-container").appendChild(selectionNotifDiv);
                         this.attachNotifBtnsListener(selectionNotifDiv);
@@ -6398,14 +6376,7 @@
 
                         // Ensure the subject insertion drop fields are showing the right text
                         document.querySelectorAll(".drop-field.insert-field").forEach(subjInsertField => {
-                            if (this.selectedSubjectCardsId.length == 0) {
-                                // shouldn't be reached, normally
-                                subjInsertField.querySelector(".drop-module-card-insert-plus , .drop-subject-card-insert-plus ").classList.add("show");
-                                subjInsertField.querySelector(".drop-module-card-insert-arrow, .drop-subject-card-insert-arrow").classList.remove("show");
-                                subjInsertField.querySelector(".drop-module-card-insert-text, .drop-subject-card-insert-text").classList.replace("insert", "add");
-                                subjInsertField.querySelector(".drop-module-card-insert-text, .drop-subject-card-insert-text").parentElement.classList.replace("insert", "add");
-                            }
-                            else {
+                            if (this.selectedSubjectCardsId.length > 0)  {
                                 subjInsertField.querySelector(".drop-module-card-insert-plus , .drop-subject-card-insert-plus ").classList.remove("show");
                                 subjInsertField.querySelector(".drop-module-card-insert-arrow, .drop-subject-card-insert-arrow").classList.add("show");
                                 subjInsertField.querySelector(".drop-module-card-insert-text, .drop-subject-card-insert-text").classList.replace("add", "insert");
@@ -6429,14 +6400,14 @@
                     dropFieldRemoveHitbox.classList.add("show");
                     document.querySelector(".semester-content").classList.add("dragging");
 
-                    dragIcon.outerHTML = `<div class="tick-icon for-subject-card" data-targetid="${subjectCard.id}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}">✔</div>`;
-                    const tick = subjectCard.querySelector(".tick-icon");
+                    dragIcon.outerHTML = `<div class="tick-icon for-subject-card" data-targetid="${card.id}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}">✔</div>`;
+                    const tick = card.querySelector(".tick-icon");
                     tick.onclick = (e) => {this.tickIconOnClickEvent(e, tick)};
                 }
 
 
-                // MARK: moduleTickIconOnClickEvent
-                moduleTickIconOnClickEvent(e, tick) {
+                // MARK: tickIconOnClickEvent
+                tickIconOnClickEvent(e, tick) {
                     if (this.selectedSubjectCardsId.length == 0) {
                         e.preventDefault();
                         const moduleCardId = e.target.dataset.targetid;
@@ -6452,7 +6423,7 @@
                 }
 
                 // MARK: dragIconOnClickEvent
-                dragIconOnClickEvent(e, dragIcon, dontAddToSelection=false) {
+                subjectDragIconOnClickEvent(e, dragIcon, dontAddToSelection=false) {
                     const card                  = e?.target ? document.getElementById(e.target.dataset.targetid) : dragIcon.parentElement.parentElement;
                     const dropFieldAdd          = document.querySelector(".drop-field.create-module");
                     const dropFieldAddHitbox    = document.querySelector(".drop-field-create-module-hitbox");
@@ -6460,11 +6431,9 @@
                     const dropFieldRemoveHitbox = document.querySelector(".drop-field-remove-from-module-hitbox");
                     const sem                   = card.dataset.semester;
                     const moduleName            = card.dataset.module;
-                    const subject = card.dataset.subject;
+                    const subject               = card.dataset.subject;
                     
                     card.draggable = true;
-                    card.ondragstart = (e) =>   {this.draggedSelectedElementOnDragStartEvent(e, {draggedElement: card, card})};
-                    card.ondragend   = (e) =>   {this.draggedSelectedElementOnDragEndEvent(  e, {draggedElement: card, card})};
 
                     if (!dontAddToSelection) {
                         this.selectedSubjectCardsId.push(card.id);
@@ -6509,7 +6478,7 @@
 
 
                 // MARK: tickIconOnClickEvent
-                tickIconOnClickEvent(e, tick) {
+                subjectTickIconOnClickEvent(e, tick) {
                     e.preventDefault();
 
                     if (e.target.closest(".subject-card")) {
@@ -6552,7 +6521,7 @@
 
 
 
-            //#region -Drop fields actions
+            //#region -_ Drop fields actions __________________
 
 
 
@@ -6612,35 +6581,41 @@
                         dropFieldRemoveHitbox.ondragover =    (e) => {if (e.target.classList.contains("show")) {
                             e.preventDefault(); 
                             dropFieldRemove.classList.add("hover");
-                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-text, .drop-field-remove-from-module-minus").forEach(text => {text.classList.add("hover");})
+                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-text").forEach(text => {text.classList.add("hover");})
+                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-minus").forEach(text => {text.classList.add("hover", "slight-horiz-shake"); text.onanimationend = () => {text.classList.remove("slight-horiz-shake"); text.onanimationend = null;}})
                         }};
                         dropFieldRemoveHitbox.ondragleave =   (e) => {if (e.target.classList.contains("show")) {
                             e.preventDefault(); 
                             dropFieldRemove.classList.remove("hover");
-                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-text, .drop-field-remove-from-module-minus").forEach(text => {text.classList.remove("hover");})
+                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-text").forEach(text => {text.classList.remove("hover");})
+                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-minus").forEach(text => {text.classList.remove("hover", "slight-horiz-shake"); text.onanimationend = null;})
                         }};
                         dropFieldRemoveHitbox.ondrop =        (e) => {if (e.target.classList.contains("show")){
                             e.preventDefault(); 
                             e.dataTransfer.dropEffect = "link";
                             dropFieldRemove.classList.remove("hover");
-                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-text, .drop-field-remove-from-module-minus").forEach(text => {text.classList.remove("hover");})
+                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-text").forEach(text => {text.classList.remove("hover");})
+                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-minus").forEach(text => {text.classList.remove("hover", "slight-horiz-shake"); text.onanimationend = null;})
                             this.dropFieldRemoveAction(e.dataTransfer.getData("text"));
                         }};
                         // Custom :hover event, cuz otherwise it would trigger when the fields are not shown
                         dropFieldRemoveHitbox.onmouseenter =  (e) => {if (e.target.classList.contains("show")) {
                             e.preventDefault(); 
                             dropFieldRemove.classList.add("hover");
-                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-text, .drop-field-remove-from-module-minus").forEach(text => {text.classList.add("hover");})
+                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-text").forEach(text => {text.classList.add("hover");})
+                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-minus").forEach(text => {text.classList.add("hover", "slight-horiz-shake"); text.onanimationend = () => {text.classList.remove("slight-horiz-shake"); text.onanimationend = null;}})
                         }};
                         dropFieldRemoveHitbox.onmouseleave =  (e) => {if (e.target.classList.contains("show")) {
                             e.preventDefault(); 
                             dropFieldRemove.classList.remove("hover");
-                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-text, .drop-field-remove-from-module-minus").forEach(text => {text.classList.remove("hover");})
+                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-text").forEach(text => {text.classList.remove("hover");})
+                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-minus").forEach(text => {text.classList.remove("hover", "slight-horiz-shake"); text.onanimationend = null;})
                         }};
                         dropFieldRemoveHitbox.onclick =       (e) => {if (e.target.classList.contains("show")) {
                             e.preventDefault(); 
                             dropFieldRemove.classList.remove("hover");
-                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-text, .drop-field-remove-from-module-minus").forEach(text => {text.classList.remove("hover");})
+                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-text").forEach(text => {text.classList.remove("hover");})
+                            dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-minus").forEach(text => {text.classList.remove("hover", "slight-horiz-shake"); text.onanimationend = null;})
                             if (this.selectedSubjectCardsId.length > 0) {
                                 this.dropFieldRemoveAction(this.selectedSubjectCardsId[0]);
                             }
@@ -7086,7 +7061,7 @@
 
 
 
-        //#region -REGION: Config ↓Imp/Exp↑
+        //#region __________ Config  ↓Imp/Exp↑ __________
 
             toggleImportMenu(open=undefined) {
                 const importMenu    = document.querySelector("#importMenu");
@@ -7445,7 +7420,7 @@
 
 
 
-        // MARK: -Keyboard Events
+        // MARK: ___________ Keyboard Events ___________
         generalKeyboardEvents(mode="general", target=undefined) {
             const noModifierAllowed = {alt:"forbidden", ctrl:"forbidden", shift:"forbidden", meta:"forbidden", repeat:"forbidden"};
             const shiftRequired     = {alt:"forbidden", ctrl:"forbidden", shift:"required",  meta:"forbidden", repeat:"forbidden"};
@@ -7580,43 +7555,55 @@
 
     }
 
-    if (!error) {
-        window.onload = () => { 
-            
-            const greyGridTable = document.querySelector(".greyGridTable");
-            const intranetFold = document.createElement("div");
-            intranetFold.className = "intranet-fold";
-            intranetFold.innerHTML = `
-                <div class="intranet-text">
-                    <div class="intranet-toggle fold-icon">△</div>
-                    <div class="semester-name jura"> 
-                        <div class="intranet-subtext"></div>
-                    </div>
-                    <div class="intranet-toggle fold-icon">△</div>
-                </div>
-            `;
-            document.querySelector("#currentNote").insertBefore(intranetFold, greyGridTable);
-            greyGridTable.style.display = "none";
-            
-            new ECAMDashboard(error); 
-        };
-    }
-    else if (error == "servers are down") {
-        document.body.style.background = "#a1a1a1";
-        
-        new ECAMDashboard(error);
-    }
-    else {
-        console.log("Not checking for grades");
-        window.onload = () => {
-            const notes = document.createElement("li");
-            notes.className = "private-community";
-            notes.title     = "Notes";
-            notes.innerHTML = `<a href="/group/education/notes"><span class="site-name">Notes</span></a>`;
 
-            const shortcutsBar = document.querySelector("#ecam-place-menu");
-            shortcutsBar.querySelector(".taglib-my-places").appendChild(notes);
+
+    // MARK: _________________________________________
+
+
+
+
+
+    //#region Dashboard launch
+
+        if (!error) {
+            window.onload = () => { 
+                
+                const greyGridTable = document.querySelector(".greyGridTable");
+                const intranetFold = document.createElement("div");
+                intranetFold.className = "intranet-fold";
+                intranetFold.innerHTML = `
+                    <div class="intranet-text">
+                        <div class="intranet-toggle fold-icon">△</div>
+                        <div class="semester-name jura"> 
+                            <div class="intranet-subtext"></div>
+                        </div>
+                        <div class="intranet-toggle fold-icon">△</div>
+                    </div>
+                `;
+                document.querySelector("#currentNote").insertBefore(intranetFold, greyGridTable);
+                greyGridTable.style.display = "none";
+                
+                new ECAMDashboard(error); 
+            };
         }
-    }
+        else if (error == "servers are down") {
+            document.body.style.background = "#a1a1a1";
+            
+            new ECAMDashboard(error);
+        }
+        else {
+            console.log("Looking somewhere else than in the grades: only showing the \"Notes\" button in the dockbar");
+            window.onload = () => {
+                const notes = document.createElement("li");
+                notes.className = "private-community";
+                notes.title     = "Notes";
+                notes.innerHTML = `<a href="/group/education/notes"><span class="site-name">Notes</span></a>`;
+
+                const shortcutsBar = document.querySelector("#ecam-place-menu");
+                shortcutsBar.querySelector(".taglib-my-places").appendChild(notes);
+            }
+        }
+
+    //#endregion
     
 })();
