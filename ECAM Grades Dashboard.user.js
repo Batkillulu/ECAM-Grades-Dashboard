@@ -741,7 +741,7 @@
                     .subject-card-header-left-side.edit     { padding-left: 0; }
 
                     .subject-name                   { font-weight: 800; color: #1a1a1a; font-size: 14px }
-                    .subject-name.input             { font-weight: 800; color: #1a1a1a; font-size: 14px; border: 2px solid #797979; border-radius: 15px; padding-left: 8px; width: 100%; height: 25px;}
+                    .subject-name.input             { font-weight: 800; color: #1a1a1a; font-size: 14px; border: 2px solid #797979; border-radius: 15px; padding-left: 8px; width: calc(100% + 10px); height: 25px;}
                     .subject-coef-input-box         { padding-left: 5px; width: 48px; border-radius: 8px; }
                     .subject-delete-btn             { border-radius: 14px; background: transparent; margin: 0; text-transform: none; -webkit-appearance: button; font: 1em Arial,Helvetica,Verdana,sans-serif; width: auto; padding: 5px; overflow: visible; cursor: pointer; color: #34404F; text-shadow: none; font-weight: normal; border: 3px solid; border-color: white; transition: all 0.2s ease; } 
                     
@@ -756,13 +756,13 @@
                     .subject-insert-field                           { display: flex: flex-direction: column; align-items: center; height: 0px; width: 100%; margin: 0px 0px; transition: height 0.2s ease, margin 0.2s ease; }
                     .subject-insert-field.show                      { height: 50px; margin: 10px 0px; }
 
-                    .selected-subject-card-notif-container              { display: grid; justify-items: end; gap: 10px; position: fixed; top: 50px; right: 10px; z-index: 301; transition: width 0.3s ease; }
-                    .selected-subject-card-notif-div                    { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; position: relative; left: 500px; height: 60px; width: max-content; background: #9696ff; border-radius: 18px; border: 5px solid #d4daff; font-size: 13px; font-weight: 500; color: black; padding: 10px; gap: 5px; transition: left 0.3s ease, box-shadow 0.3s ease; }
-                    .selected-subject-card-notif-div.on                 { left: 0px; box-shadow: 4px 5px 11px 0px #00000061; }
-                    .selected-subject-card-notif-div-scroll-btn         { font-size: 20px; height: 20px; user-select: none; cursor: alias; transition: color 0.2s ease; }
-                    .selected-subject-card-notif-div-scroll-btn:hover   { color: white; }
-                    .selected-subject-card-notif-div-del-btn            { color: #640000; font-size: 20px; height: 20px; cursor: pointer; user-select: none; transition: color 0.2s ease; }
-                    .selected-subject-card-notif-div-del-btn:hover      { color: #ffffff; }
+                    .selected-card-notif-container              { display: grid; justify-items: end; gap: 10px; position: fixed; top: 50px; right: 10px; z-index: 301; transition: width 0.3s ease; }
+                    .selected-card-notif-div                    { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; position: relative; left: 500px; height: 60px; width: max-content; background: #9696ff; border-radius: 18px; border: 5px solid #d4daff; font-size: 13px; font-weight: 500; color: black; padding: 10px; gap: 5px; transition: left 0.3s ease, box-shadow 0.3s ease; }
+                    .selected-card-notif-div.on                 { left: 0px; box-shadow: 4px 5px 11px 0px #00000061; }
+                    .selected-card-notif-div-scroll-btn         { display: flex; align-items: center; font-size: 20px; height: 20px; user-select: none; cursor: alias; transition: color 0.2s ease; }
+                    .selected-card-notif-div-scroll-btn:hover   { color: white; }
+                    .selected-card-notif-div-del-btn            { display: flex; align-items: center; color: #640000; font-size: 20px; height: 20px; cursor: pointer; user-select: none; transition: color 0.2s ease; }
+                    .selected-card-notif-div-del-btn:hover      { color: #ffffff; }
                 `;
                     
 
@@ -881,7 +881,7 @@
                 .scroll-to          { animation: 0.3s 2 alternate scrollTo ease }
 
                 @keyframes slightHorizShake { 0% {left: 0px} 25% {left: 3px} 50% {left: -3px} 75% {left: 3px} 100% {left: 0px} }
-                .slight-horiz-shake { animation: var(--slight-horiz-shake-duration, 0.3)s slightHorizShake ease; }
+                .slight-horiz-shake { animation: var(--slight-horiz-shake-duration, 0.3s) slightHorizShake ease; }
                 .
             `;
 
@@ -2911,7 +2911,7 @@
                     `;
 
                     const notifContainer = document.createElement("div");
-                    notifContainer.className = "selected-subject-card-notif-container";
+                    notifContainer.className = "selected-card-notif-container";
 
                     const intranetFold = document.querySelector(".intranet-fold");
                     if (intranetFold) {
@@ -2940,7 +2940,7 @@
 
 
                 //MARK: language Sensitive
-                languageSensitiveContent(fadeIn=true) {
+                async languageSensitiveContent(fadeIn=true) {
                     // Language Sensitive text in the Dashboard Header and Semester filter tab (which don't refresh on calling the generateContent() method)
                     if (this.error) {
                         const offlineTitle = document.querySelector(".offline-mode-title");
@@ -3161,8 +3161,8 @@
                     document.querySelector(".new-grades-mark-as-read").title = this.lang == "fr" ? "Marquer comme lu" : "Mark as read";
                     
 
-                    document.querySelectorAll(".selected-subject-card-notif-div").forEach(notifDiv => {
-                        notifDiv.childNodes[4].data = this.lang == "fr" ? `est sélectionné!` : `is selected!`;
+                    document.querySelectorAll(".selected-card-notif-div").forEach(notifDiv => {
+                        notifDiv.children[2].innerHTML = this.lang == "fr" ? `est sélectionné!` : `is selected!`;
                     })
 
                     if (fadeIn) {
@@ -3492,7 +3492,7 @@
                                     }</div>`
                                     : ""
                                 }
-                                <div style="width: 87%">
+                                <div>
                                     ${isCustom 
                                         ? `<input type="text" class="subject-name input any-input" id="subject-name-input-semester-${sem}-subject-${subject}" value="${subject}"/>`
                                         : `<div class="subject-name">${subject}</div>`
@@ -4488,31 +4488,36 @@
 
 
                 //#region Selection Notifs listeners
-                    attachNotifBtnsListener(notifDiv) {
-                        if (notifDiv instanceof HTMLElement) {
-                            this.attachNotifDelBtnListener(notifDiv.querySelector(".selected-subject-card-notif-div-del-btn"));
-                            this.attachNotifScrollBtnListener(notifDiv.querySelector(".selected-subject-card-notif-div-scroll-btn"));
+
+                    attachNotifBtnsListener(notifDiv=document) {
+                        if (notifDiv?.classList?.contains("selected-card-notif-div")) {
+                            this.attachNotifDelBtnListener(notifDiv.querySelector(".selected-card-notif-div-del-btn"));
+                            this.attachNotifScrollBtnListener(notifDiv.querySelector(".selected-card-notif-div-scroll-btn"));
                         }
                         else {
-                            document.querySelectorAll(".selected-subject-card-notif-div-del-btn").forEach(delBtn => {
+                            const validContainer = notifDiv instanceof HTMLElement || notifDiv instanceof HTMLDocument ? notifDiv : document;
+                            validContainer.querySelectorAll(".selected-card-notif-div-del-btn").forEach(delBtn => {
                                 this.attachNotifDelBtnListener(delBtn);
                             })
-                            document.querySelectorAll(".selected-subject-card-notif-div-scroll-btn").forEach(scrollBtn => {
+                            validContainer.querySelectorAll(".selected-card-notif-div-scroll-btn").forEach(scrollBtn => {
                                 this.attachNotifScrollBtnListener(scrollBtn);
                             })
                         }
                     }
+
                     attachNotifDelBtnListener(delBtn) {
                         delBtn.onclick = (e) => {
-                            const notifDiv = e.target.parentElement;
-                            this.removeCardFromSubjectSelection({notifDiv});
+                            const notifDiv = e.target.closest(".selected-card-notif-div");
+                            this.removeCardFromSubjectSelection(notifDiv);
                         };
                     }
+
                     attachNotifScrollBtnListener(scrollBtn) {
                         scrollBtn.onclick = (e) => {
                             this.scrollToClientHighestElem({id: e.target.dataset.targetid, smooth: true, block: "center"})
                         }
                     }
+
                 //#endregion
 
 
@@ -4589,11 +4594,13 @@
                     }
                     attachDragOrTickIconListener(card) {
                         if (card.querySelector(".drag-icon")) {
-                            card.querySelector(".drag-icon").onclick = (e) => { this.dragIconOnClickEvent(e, dragIcon) };
+                            const dragIcon = card.querySelector(".drag-icon");
+                            dragIcon.onclick = (e) => { this.dragIconOnClickEvent(e, dragIcon) };
                         }
                         else 
                         if (card.querySelector(".tick-icon")) {
-                            card.querySelector(".tick-icon").onclick = (e) => { this.tickIconOnClickEvent(e, tick) };
+                            const tick = card.querySelector(".tick-icon");
+                            tick.onclick = (e) => { this.tickIconOnClickEvent(e, tick) };
                         }
                     }
 
@@ -5722,15 +5729,15 @@
                     
                     draggableElement.draggable = true;
 
-                    draggableElement.ondragstart = (e) => {this.draggedElementOnDragStartEvent( e, {draggedElement: draggableElement, card: subjectCard})};
-                    draggableElement.ondragend   = (e) => {this.draggedElementOnDragEndEvent(   e, {draggedElement: draggableElement, card: subjectCard})};
+                    draggableElement.ondragstart = (e) => {this.draggedElementOnDragStartEvent( e, subjectCard)};
+                    draggableElement.ondragend   = (e) => {this.draggedElementOnDragEndEvent(   e, subjectCard)};
 
                 }
                 attachModuleCardOnDragEventListeners(moduleCard) {
                     const moduleHeader = moduleCard.querySelector(".module-header");
                     moduleHeader.draggable = true;
-                    moduleHeader.ondragstart = (e) => {this.draggedElementOnDragStartEvent(e, {moduleHeader, card: moduleCard})}
-                    moduleHeader.ondragend   = (e) => {this.draggedElementOnDragEndEvent(  e, {moduleHeader, card: moduleCard})}
+                    moduleHeader.ondragstart = (e) => {this.draggedElementOnDragStartEvent(e, moduleCard)}
+                    moduleHeader.ondragend   = (e) => {this.draggedElementOnDragEndEvent(  e, moduleCard)}
                 }
 
 
@@ -5915,13 +5922,16 @@
 
 
                 // MARK: ON DRAG START
-                async draggedElementOnDragStartEvent(e, {draggedElement, card}) {
+                async draggedElementOnDragStartEvent(e, card) {
 
-                    if (e.target.classList.contains("any-input")) {return}
+                    
+                    if (e instanceof Event) {
+                        if (e?.target?.classList?.contains("any-input")) {return}
 
-                    e.dataTransfer.effectAllowed = "link";
-                    e.dataTransfer.setDragImage(document.getElementById("emptyDivToRemoveTheDragImage"), 0, 0);
-                    e.dataTransfer.setData("text", card.id);
+                        e.dataTransfer.effectAllowed = "link";
+                        e.dataTransfer.setDragImage(document.getElementById("emptyDivToRemoveTheDragImage"), 0, 0);
+                        e.dataTransfer.setData("text", card.id);
+                    }
 
 
                     let selectionGoingOn = false, draggedCardIsSelected = false;
@@ -6021,8 +6031,8 @@
 
 
                 // MARK: ON DRAG END
-                async draggedElementOnDragEndEvent(e, {draggedElement, card}) {
-                    if (e.target.classList.contains("any-input")) {return}
+                async draggedElementOnDragEndEvent(e, card) {
+                    if (e?.target?.classList?.contains("any-input")) {return}
 
                     let selectionGoingOn = false, draggedCardIsSelected = false;
                     if (this.selectedModuleCardsId.length > 0 || this.selectedSubjectCardsId.length > 0) {
@@ -6135,21 +6145,23 @@
             //#region -_ card selection _______________________
             
                 // MARK: createSelectedCardNotifDiv
-                createSelectedCardNotifDiv(subjectCard) {
-                    const semester = subjectCard.dataset.semester;
-                    const subject  = subjectCard.dataset.subject;
-                    const targetId = subjectCard.id;
+                createSelectedCardNotifDiv(card) {
+                    const semester  = card.dataset.semester;
+                    const isSubject = card.classList.contains("subject-card");
+                    const target    = isSubject ? card.dataset.subject : card.dataset.module;
+                    const targetId  = card.id;
                     const selectionNotifDiv = document.createElement("div");
-                    selectionNotifDiv.className = `selected-subject-card-notif-div`;
-                    selectionNotifDiv.id = `selected-subject-card-notif-div-for-${subject}-from-semester-${semester}`;
-                    selectionNotifDiv.dataset.subject = subject;
+                    selectionNotifDiv.className = `selected-card-notif-div ${target}`;
+                    selectionNotifDiv.id = `selected-card-notif-div-for-${target}-from-semester-${semester}`;
+                    selectionNotifDiv.dataset.type = isSubject ? "subject" : "module";
+                    selectionNotifDiv.dataset.target = target;
                     selectionNotifDiv.dataset.semester = semester;
                     selectionNotifDiv.dataset.targetid = targetId;
                     selectionNotifDiv.innerHTML = `
-                        <div class="selected-subject-card-notif-div-scroll-btn" id="selected-subject-card-notif-div-del-btn-for-${subject}-from-semester-${semester}" data-targetId="${targetId}">${">"}</div>
-                        <span style="font-weight: 600; font-size: 14px; color: white">${subject}</span>
-                        ${this.lang == "fr" ? `est sélectionné!` : `is selected!`}
-                        <div class="selected-subject-card-notif-div-del-btn" id="selected-subject-card-notif-div-del-btn-for-${subject}-from-semester-${semester}" data-targetId="${targetId}">x</div>
+                        <div class="selected-card-notif-div-scroll-btn" id="selected-card-notif-div-del-btn-for-${target}-from-semester-${semester}" data-targetId="${targetId}">\></div>
+                        <span style="font-weight: 600; font-size: 14px; color: white">${target}${!isSubject ? ` Module` : ""}</span>
+                        <span>${this.lang == "fr" ? `est sélectionné!` : `is selected!`}</span>
+                        <div class="selected-card-notif-div-del-btn" id="selected-card-notif-div-del-btn-for-${target}-from-semester-${semester}" data-targetId="${targetId}">x</div>
                     `;
 
                     return selectionNotifDiv;
@@ -6163,38 +6175,35 @@
                 * @param {String} notifDiv the div of the notif linked to the selected subject card
                 * @param {HTMLElement} elementDroppedInField if this method is called from triggering an ondrop event of a drop field, pass the dropped element in this argument
                 */
-                removeCardFromSubjectSelection({notifDiv="all", elementDroppedInField=undefined}={notifDiv:"all", elementDroppedInField:undefined}) {
+                removeCardFromSubjectSelection(notifDiv="all") {
                     if (notifDiv=="all") {      // clear all subject card selection as well as their respective notif
+                        const selectedSubjectCard = document.getElementById(this.selectedSubjectCardsId[0]);
+                        this.draggedElementOnDragEndEvent(null, selectedSubjectCard);
                         
-                        this.selectedSubjectCardsId.forEach((selectedSubjectCardId, index) => {
-                            const selectedSubjectCard = document.getElementById(selectedSubjectCardId);
+                        this.selectedSubjectCardsId.forEach((selectedCardId, index) => {
+                            const selectedCard = document.getElementById(selectedCardId);
 
-                            selectedSubjectCard.style.width = "";
+                            // selectedSubjectCard.style.width = "";
+                            // if (selectedSubjectCard.classList.contains("unclassified")) {
+                            //     selectedSubjectCard.querySelector(".grades-table").style.display = "table";
+                            //     selectedSubjectCard.querySelector(".subject-card-header").style.border = "none";
+                            //     selectedSubjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
+                            // }
+                            // else if (selectedSubjectCard.classList.contains("compact")) {
+                            //     selectedSubjectCard.querySelector(".subject-total-coef-div").style.display = "flex";
+                            // }
+                            // else {
+                            //     selectedSubjectCard.querySelector(".subject-card-header").children[0].style.width = "42%";
+                            //     selectedSubjectCard.querySelector(".subject-total-coef-div").style.width = "58%";
+                            //     selectedSubjectCard.querySelector(".grades-table").style.display = "table";
+                            //     selectedSubjectCard.querySelector(".subject-card-header").style.borderBottom = "4px solid white";
+                            //     selectedSubjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
+                            // }
+                            // this.changeTickIconToDragIcon(selectedSubjectCard);
 
-                            if (selectedSubjectCard.classList.contains("unclassified")) {
-                                selectedSubjectCard.querySelector(".grades-table").style.display = "table";
-                                selectedSubjectCard.querySelector(".subject-card-header").style.border = "none";
-                                selectedSubjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
-                            }
-                            else if (selectedSubjectCard.classList.contains("compact")) {
-                                selectedSubjectCard.querySelector(".subject-total-coef-div").style.display = "flex";
-                            }
-                            else {
-                                selectedSubjectCard.querySelector(".subject-card-header").children[0].style.width = "42%";
-                                selectedSubjectCard.querySelector(".subject-total-coef-div").style.width = "58%";
-                                selectedSubjectCard.querySelector(".grades-table").style.display = "table";
-                                selectedSubjectCard.querySelector(".subject-card-header").style.borderBottom = "4px solid white";
-                                selectedSubjectCard.querySelector(".subject-card-header").style.borderRadius = "20px 20px 0px 0px";
-                            }
-                            
-                            this.changeTickIconToDragIcon(selectedSubjectCard);
-
-                            const correspNotifDiv = document.querySelector(`.selected-subject-card-notif-div[data-targetid="${selectedSubjectCard.id}"]`);
+                            const correspNotifDiv = document.querySelector(`.selected-card-notif-div[data-targetid="${selectedCard.id}"]`);
                             correspNotifDiv.classList.remove("on");
                             setTimeout(() => {correspNotifDiv.remove();}, 300)
-
-                            selectedSubjectCard.ondragstart = (e) => {this.draggedElementOnDragStartEvent(e, {card: selectedSubjectCard})};
-                            selectedSubjectCard.ondragend   = (e) => {this.draggedElementOnDragEndEvent  (e, {card: selectedSubjectCard})};
                         })
 
                         clearTimeout(this?.timeouts?.documentOnDragEnd?.hideTeacherTable);
@@ -6218,11 +6227,9 @@
                         this.selectedSubjectCardsId = [];
                         this.selectedSubjectCardsSortedByModule = {};
                     } 
-                    else {      // clear the specifically given notifDiv from the selection
-                        let subjectCard = "";
-                        if (!elementDroppedInField) {
-                            subjectCard = document.getElementById(notifDiv.dataset.targetid);
-                        }
+                    else if (notifDiv?.classList?.contains("selected-card-notif-div")) {      // clear the specifically given notifDiv from the selection
+                        const card = document.getElementById(notifDiv.dataset.targetid);
+                        const type = notifDiv.dataset.type;
                         
 
                         notifDiv.classList.remove("on");
@@ -6230,45 +6237,57 @@
                             notifDiv.remove();
                         }, 300)
 
-                        this.selectedSubjectCardsId.forEach((selectedSubjectCardId, index) => {
-                            const selectedSubjectCard = document.getElementById(selectedSubjectCardId);
+                        debugger;
 
-                            if (selectedSubjectCard == subjectCard) 
-                                this.selectedSubjectCardsId.splice(index, 1)
+                        if (type == "subject") {
+
+                            if (this.selectedSubjectCardsId.includes(card.id)) {
+                                const index = this.selectedSubjectCardsId.indexOf(card.id);
+                                this.selectedSubjectCardsId.splice(index, 1);
                             }
-                        )
-                        Object.keys(this.selectedSubjectCardsSortedByModule).forEach((moduleName, moduleIndex) => {
-                            this.selectedSubjectCardsSortedByModule[moduleName].forEach((selectedSubjectCard, subjIndex) => {
-                                this.selectedSubjectCardsSortedByModule[moduleName].splice(subjIndex, 1);
+                            Object.keys(this.selectedSubjectCardsSortedByModule).forEach(moduleName => {
+                                this.selectedSubjectCardsSortedByModule[moduleName].forEach((selectedSubjectCard, subjIndex) => {
+                                    this.selectedSubjectCardsSortedByModule[moduleName].splice(subjIndex, 1);
+                                })
+                                if (this.selectedSubjectCardsSortedByModule[moduleName].length == 0) {
+                                    delete this.selectedSubjectCardsSortedByModule[moduleName];
+                                }
                             })
-                            if (this.selectedSubjectCardsSortedByModule[moduleName].length == 0) {
-                                delete this.selectedSubjectCardsSortedByModule[moduleName];
+                        
+                            if (this.selectedSubjectCardsId.length == 0) {
+                                // clearTimeout(this?.timeouts?.documentOnDragEnd?.hideTeacherTable);
+                                // setTimeout(() => {document.querySelectorAll(".grades-table-header-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
+                                
+                                // document.querySelector(".semester-content")                 .classList.remove("dragging");
+                                // document.querySelector(".drop-field.create-module")             .classList.remove("show");
+                                // document.querySelector(".drop-field-create-module-hitbox")      .classList.remove("show");
+                                // document.querySelector(".drop-field.remove-from-module")        .classList.remove("show");
+                                // document.querySelector(".drop-field-remove-from-module-hitbox") .classList.remove("show");
+                                // document.querySelectorAll(".module-title.input").forEach(input => {
+                                //     input.parentElement.style.transition = "";
+                                //     input.parentElement.style.width = "42%";
+                                // })
+                                // document.querySelectorAll(".subject-total-coef-div").forEach(totalCoefDiv => {
+                                //     totalCoefDiv.style.transition = "";
+                                //     totalCoefDiv.style.width = "47%";
+                                // })
+                                this.draggedElementOnDragEndEvent(null, card);
                             }
-                        })
-                    
-                        if (this.selectedSubjectCardsId.length == 0) {
-                            clearTimeout(this?.timeouts?.documentOnDragEnd?.hideTeacherTable);
-                            setTimeout(() => {document.querySelectorAll(".grades-table-header-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100)
-                            
-                            document.querySelector(".semester-content")                 .classList.remove("dragging");
-                            document.querySelector(".drop-field.create-module")             .classList.remove("show");
-                            document.querySelector(".drop-field-create-module-hitbox")      .classList.remove("show");
-                            document.querySelector(".drop-field.remove-from-module")        .classList.remove("show");
-                            document.querySelector(".drop-field-remove-from-module-hitbox") .classList.remove("show");
-                            document.querySelectorAll(".module-title.input").forEach(input => {
-                                input.parentElement.style.transition = "";
-                                input.parentElement.style.width = "42%";
-                            })
-                            document.querySelectorAll(".subject-total-coef-div").forEach(totalCoefDiv => {
-                                totalCoefDiv.style.transition = "";
-                                totalCoefDiv.style.width = "47%";
-                            })
+                        }
+                        else if (type == "module") {
+
+                            if (this.selectedModuleCardsId.includes(card.id)) {
+                                const index = this.selectedModuleCardsId.indexOf(card.id);
+                                this.selectedModuleCardsId.splice(index, 1);
+                            }
+
+                            debugger;
+                            if (this.selectedModuleCardsId.length == 0) {
+                                this.draggedElementOnDragEndEvent(null, card);
+                            }
                         }
 
-                        this.changeTickIconToDragIcon(subjectCard)
-
-                        subjectCard.ondragstart = (e) => {this.draggedElementOnDragStartEvent(e, {card:subjectCard})};
-                        subjectCard.ondragend   = (e) => {this.draggedElementOnDragEndEvent  (e, {card:subjectCard})};
+                        this.changeTickIconToDragIcon(card)
                     }
                     
                     
@@ -6345,8 +6364,8 @@
                     if (!dontAddToSelection) {
                         if (type == "subject") {
                             if (this.selectedModuleCardsId.length > 0) {
-                                card.style.animation = "0.3s slightHorizShake ease";
-                                card.onanimationend = (e) => {e.target.style.animation = "";};
+                                card.classList.add("slight-horiz-shake");
+                                card.onanimationend = (e) => {e.target.classList.remove("slight-horiz-shake");};
                                 return
                             }
                             else {
@@ -6358,8 +6377,8 @@
                         }
                         else if (type == "module") {
                             if (this.selectedSubjectCardsId.length > 0) {
-                                card.style.animation = "0.3s slightHorizShake ease";
-                                card.onanimationend = (e) => {e.target.style.animation = "";};
+                                card.classList.add("slight-horiz-shake");
+                                card.onanimationend = (e) => {e.target.classList.remove("slight-horiz-shake");};
                                 return
                             }
                             else {
@@ -6369,7 +6388,7 @@
 
                         const selectionNotifDiv = this.createSelectedCardNotifDiv(card);
 
-                        document.querySelector(".selected-subject-card-notif-container").appendChild(selectionNotifDiv);
+                        document.querySelector(".selected-card-notif-container").appendChild(selectionNotifDiv);
                         this.attachNotifBtnsListener(selectionNotifDiv);
 
                         setTimeout(()=>{selectionNotifDiv.classList.add("on")}, 10)
@@ -6417,103 +6436,103 @@
                         const moduleName = moduleCard.dataset.module;
                         const notifDiv = document.getElementById(`selected-module-card-notif-div-for-${moduleName}-from-semester-${sem}`);
                         
-                        this.removeCardFromSubjectSelection({notifDiv});
+                        this.removeCardFromSubjectSelection(notifDiv);
                     }
 
                 }
 
                 // MARK: dragIconOnClickEvent
-                subjectDragIconOnClickEvent(e, dragIcon, dontAddToSelection=false) {
-                    const card                  = e?.target ? document.getElementById(e.target.dataset.targetid) : dragIcon.parentElement.parentElement;
-                    const dropFieldAdd          = document.querySelector(".drop-field.create-module");
-                    const dropFieldAddHitbox    = document.querySelector(".drop-field-create-module-hitbox");
-                    const dropFieldRemove       = document.querySelector(".drop-field.remove-from-module");
-                    const dropFieldRemoveHitbox = document.querySelector(".drop-field-remove-from-module-hitbox");
-                    const sem                   = card.dataset.semester;
-                    const moduleName            = card.dataset.module;
-                    const subject               = card.dataset.subject;
+                // subjectDragIconOnClickEvent(e, dragIcon, dontAddToSelection=false) {
+                //     const card                  = e?.target ? document.getElementById(e.target.dataset.targetid) : dragIcon.parentElement.parentElement;
+                //     const dropFieldAdd          = document.querySelector(".drop-field.create-module");
+                //     const dropFieldAddHitbox    = document.querySelector(".drop-field-create-module-hitbox");
+                //     const dropFieldRemove       = document.querySelector(".drop-field.remove-from-module");
+                //     const dropFieldRemoveHitbox = document.querySelector(".drop-field-remove-from-module-hitbox");
+                //     const sem                   = card.dataset.semester;
+                //     const moduleName            = card.dataset.module;
+                //     const subject               = card.dataset.subject;
                     
-                    card.draggable = true;
+                //     card.draggable = true;
 
-                    if (!dontAddToSelection) {
-                        this.selectedSubjectCardsId.push(card.id);
-                        if (!this.selectedSubjectCardsSortedByModule[card.dataset.module]) { this.selectedSubjectCardsSortedByModule[card.dataset.module] = []; };
-                        this.selectedSubjectCardsSortedByModule[card.dataset.module].push({cardId: card.id, selectionIndex: this.selectedSubjectCardsId.length-1});
+                //     if (!dontAddToSelection) {
+                //         this.selectedSubjectCardsId.push(card.id);
+                //         if (!this.selectedSubjectCardsSortedByModule[card.dataset.module]) { this.selectedSubjectCardsSortedByModule[card.dataset.module] = []; };
+                //         this.selectedSubjectCardsSortedByModule[card.dataset.module].push({cardId: card.id, selectionIndex: this.selectedSubjectCardsId.length-1});
 
-                        const selectionNotifDiv = this.createSelectedCardNotifDiv(card);
+                //         const selectionNotifDiv = this.createSelectedCardNotifDiv(card);
 
-                        document.querySelector(".selected-subject-card-notif-container").appendChild(selectionNotifDiv);
-                        this.attachNotifBtnsListener(selectionNotifDiv);
+                //         document.querySelector(".selected-card-notif-container").appendChild(selectionNotifDiv);
+                //         this.attachNotifBtnsListener(selectionNotifDiv);
 
-                        setTimeout(()=>{selectionNotifDiv.classList.add("on")}, 10)
+                //         setTimeout(()=>{selectionNotifDiv.classList.add("on")}, 10)
 
-                        // Ensure the subject insertion drop fields are showing the right display
-                        document.querySelectorAll(".drop-field.insert-field").forEach(subjInsertField => {
-                            subjInsertField.querySelector(".drop-module-card-insert-plus , .drop-subject-card-insert-plus ").classList.remove("show");
-                            subjInsertField.querySelector(".drop-module-card-insert-arrow, .drop-subject-card-insert-arrow").classList.add("show");
-                            subjInsertField.querySelector(".drop-module-card-insert-text,  .drop-subject-card-insert-text") .classList.replace("add", "insert");
-                            subjInsertField.querySelector(".drop-module-card-insert-text,  .drop-subject-card-insert-text") .parentElement.classList.replace("add", "insert");
-                        });
-                    }
+                //         // Ensure the subject insertion drop fields are showing the right display
+                //         document.querySelectorAll(".drop-field.insert-field").forEach(subjInsertField => {
+                //             subjInsertField.querySelector(".drop-module-card-insert-plus , .drop-subject-card-insert-plus ").classList.remove("show");
+                //             subjInsertField.querySelector(".drop-module-card-insert-arrow, .drop-subject-card-insert-arrow").classList.add("show");
+                //             subjInsertField.querySelector(".drop-module-card-insert-text,  .drop-subject-card-insert-text") .classList.replace("add", "insert");
+                //             subjInsertField.querySelector(".drop-module-card-insert-text,  .drop-subject-card-insert-text") .parentElement.classList.replace("add", "insert");
+                //         });
+                //     }
 
-                    document.querySelectorAll(".grades-table-header-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
-                    document.querySelectorAll(".module-title.input").forEach(input => {
-                        input.parentElement.style.transition = "width 0.3s ease";
-                        input.parentElement.style.width = "30%";
-                    })
-                    document.querySelectorAll(".subject-total-coef-div").forEach(totalCoefDiv => {
-                        totalCoefDiv.style.transition = "width 0.3s ease";
-                        totalCoefDiv.style.width = "56%";
-                    })
-                    dropFieldAdd.classList.add("show");
-                    dropFieldAddHitbox.classList.add("show");
-                    dropFieldRemove.classList.add("show");
-                    dropFieldRemoveHitbox.classList.add("show");
-                    document.querySelector(".semester-content").classList.add("dragging");
+                //     document.querySelectorAll(".grades-table-header-teacher").forEach(teacher =>   {teacher.style.display =  "none"})
+                //     document.querySelectorAll(".module-title.input").forEach(input => {
+                //         input.parentElement.style.transition = "width 0.3s ease";
+                //         input.parentElement.style.width = "30%";
+                //     })
+                //     document.querySelectorAll(".subject-total-coef-div").forEach(totalCoefDiv => {
+                //         totalCoefDiv.style.transition = "width 0.3s ease";
+                //         totalCoefDiv.style.width = "56%";
+                //     })
+                //     dropFieldAdd.classList.add("show");
+                //     dropFieldAddHitbox.classList.add("show");
+                //     dropFieldRemove.classList.add("show");
+                //     dropFieldRemoveHitbox.classList.add("show");
+                //     document.querySelector(".semester-content").classList.add("dragging");
 
-                    dragIcon.outerHTML = `<div class="tick-icon for-subject-card" data-targetid="${card.id}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}">✔</div>`;
-                    const tick = card.querySelector(".tick-icon");
-                    tick.onclick = (e) => {this.tickIconOnClickEvent(e, tick)};
-                }
+                //     dragIcon.outerHTML = `<div class="tick-icon for-subject-card" data-targetid="${card.id}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}">✔</div>`;
+                //     const tick = card.querySelector(".tick-icon");
+                //     tick.onclick = (e) => {this.tickIconOnClickEvent(e, tick)};
+                // }
 
 
                 // MARK: tickIconOnClickEvent
-                subjectTickIconOnClickEvent(e, tick) {
-                    e.preventDefault();
+                // subjectTickIconOnClickEvent(e, tick) {
+                //     e.preventDefault();
 
-                    if (e.target.closest(".subject-card")) {
-                        const subjectCardId = e.target.dataset.targetid;
-                        const subjectCard = document.getElementById(subjectCardId);
+                //     if (e.target.closest(".subject-card")) {
+                //         const subjectCardId = e.target.dataset.targetid;
+                //         const subjectCard = document.getElementById(subjectCardId);
                         
-                        if (this.selectedModuleCardsId.length == 0) {
-                            const sem = subjectCard.dataset.semester;
-                            const subject = subjectCard.dataset.subject;
-                            const notifDiv = document.getElementById(`selected-subject-card-notif-div-for-${subject}-from-semester-${sem}`);
+                //         if (this.selectedModuleCardsId.length == 0) {
+                //             const sem = subjectCard.dataset.semester;
+                //             const subject = subjectCard.dataset.subject;
+                //             const notifDiv = document.getElementById(`selected-card-notif-div-for-${subject}-from-semester-${sem}`);
                             
-                            this.removeCardFromSubjectSelection({notifDiv});
-                        }
-                        else {
-                            subjectCard.style.animation = "0.3s slightHorizShake ease";
-                            subjectCard.onanimationend = () => {subjectCard.style.animation = ""; subjectCard.onanimationend = null;}
-                        }
-                    }
-                    else if (e.target.closest(".module-card")) {
-                        const moduleCardId = e.target.dataset.targetid;
-                        const moduleCard = document.getElementById(moduleCardId);
+                //             this.removeCardFromSubjectSelection({notifDiv});
+                //         }
+                //         else {
+                //             subjectCard.style.animation = "0.3s slightHorizShake ease";
+                //             subjectCard.onanimationend = () => {subjectCard.style.animation = ""; subjectCard.onanimationend = null;}
+                //         }
+                //     }
+                //     else if (e.target.closest(".module-card")) {
+                //         const moduleCardId = e.target.dataset.targetid;
+                //         const moduleCard = document.getElementById(moduleCardId);
                         
-                        if (this.selectedSubjectCardsId.length == 0) {
-                            const sem = moduleCard.dataset.semester;
-                            const moduleName = moduleCard.dataset.module;
-                            const notifDiv = document.getElementById(`selected-module-card-notif-div-for-${moduleName}-from-semester-${sem}`);
+                //         if (this.selectedSubjectCardsId.length == 0) {
+                //             const sem = moduleCard.dataset.semester;
+                //             const moduleName = moduleCard.dataset.module;
+                //             const notifDiv = document.getElementById(`selected-module-card-notif-div-for-${moduleName}-from-semester-${sem}`);
                             
-                            this.removeCardFromSubjectSelection({notifDiv});
-                        }
-                        else {
-                            moduleCard.style.animation = "0.3s slightHorizShake ease";
-                            moduleCard.onanimationend = () => {moduleCard.style.animation = ""; moduleCard.onanimationend = null;}
-                        }
-                    }
-                }
+                //             this.removeCardFromSubjectSelection({notifDiv});
+                //         }
+                //         else {
+                //             moduleCard.style.animation = "0.3s slightHorizShake ease";
+                //             moduleCard.onanimationend = () => {moduleCard.style.animation = ""; moduleCard.onanimationend = null;}
+                //         }
+                //     }
+                // }
 
             //#endregion
 
@@ -6839,13 +6858,13 @@
 
                         if (this.moduleConfig[sem].__modules__.length == 0) {delete this.moduleConfig[sem]}
 
-                        this.removeCardFromSubjectSelection({elementDroppedInField:card});
+                        this.removeCardFromSubjectSelection();
                         this.saveConfig();
                         this.getGradesDatas();
                         this.generateContent();
                     }
                     else if (card?.classList?.contains("subject-card") && card?.classList?.contains("unclassified") && cardIsSelected) {
-                        this.removeCardFromSubjectSelection({elementDroppedInField:card});
+                        this.removeCardFromSubjectSelection();
                     }
                     else if (card?.classList?.contains("module-card")) {}
 
