@@ -716,9 +716,10 @@
             //#region -SUBJECT CARDS _______________________
                 styles += `
 
-                    .subject-card               { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; position: relative; border-radius: 20px; border: 4px solid #ffffffff; opacity: 100%; overflow: clip; transition: all 0.1s ease; }
+                    .subject-card               { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; height: 70px; position: relative; border-radius: 20px; border: 4px solid #ffffffff; opacity: 100%; overflow: clip; transition: border-color 0.3s ease, transform 0.3s ease, all 0.1s ease; }
                     .subject-card.detailed      { }
-                    .subject-card.compact       { height: 68px; }
+                    .subject-card.compact       { }
+                    .subject-card.scroll-to     { transform: scale(102%); outline-color: #5f77ff; border-color: #5f77ff; }
 
                     .subject-card.good                  { box-shadow: 0px 0px 0px 0px  #39ff8f; background: linear-gradient(300deg, #f0fdf4 30%, transparent); }
                     .subject-card.good:hover            { box-shadow: 0px 0px 13px 5px #39ff8f; }
@@ -883,20 +884,18 @@
                 .fade-in            { animation: fadeIn 0.3s ease; }
 
                 @keyframes scrollTo { 15% {transform: scale(100%);} 100% {transform: scale(102%); outline-color: #5f77ff; border-color: #5f77ff} }
-                .scroll-to          { animation: 0.3s 2 alternate scrollTo ease }
 
                 @keyframes slightHorizShake { 0% {left: 0px} 25% {left: 3px} 50% {left: -3px} 75% {left: 3px} 100% {left: 0px} }
                 .slight-horiz-shake { animation: var(--slight-horiz-shake-duration, 0.3s) slightHorizShake ease; }
-                .
             `;
 
 
             // MARK: Modal
             styles += `
             
-                .modal  { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 20%; --scrollbar-thumb-color: #888; --scrollbar-thumb-color-hover:  #555; max-width: min(var(--modal-max-width, 100%), 100%); max-height: min(var(--modal-max-height, 100%), 100%); transform: translateZ(0) scale(110%); border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0%; transition: all 0.3s ease; }
+                .modal  { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 20%; --scrollbar-thumb-color: #888; --scrollbar-thumb-color-hover: #555; max-width: min(var(--modal-max-width, 100%), 100%); max-height: min(var(--modal-max-height, 100%), 100%); transform: translateZ(0) scale(110%); border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0%; transition: all 0.3s ease; }
                 .modal.blur { backdrop-filter: blur(calc(250px / 100)); }
-                .modal.show     { border-width: 8px; transform: translateZ(0) scale(100%); opacity: 100%; }
+                .modal.show { border-width: 8px; transform: translateZ(0) scale(100%); opacity: 100%; }
 
                 .modal-close-btn-container { width: var(--modal-close-btn-container-size); height: var(--modal-close-btn-container-size); font-size: 20px; user-select: none; cursor: pointer; transition: all 0.2s ease; }
                 .modal-close-btn-container:hover { transform: scale(var(--modal-close-btn-container-transform-scale-hover)) }
@@ -969,6 +968,7 @@
         // Initializing the CSS style and checking for error before creating the dashboard
         const styleSheet = document.createElement("style");
         styleSheet.textContent = styles;
+        
         document.head.appendChild(styleSheet);
         
         const error = 
@@ -985,6 +985,10 @@
     //MARK: -
     class ECAMDashboard {
 
+
+
+
+        // MARK: ______________ contructor ______________
         constructor(error) {
             this.ecamDash = document.createElement("div");
 
@@ -1096,8 +1100,10 @@
                 this.moduleConfig           = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_MODULE_CONFIG"))                 || {};
 
             //#endregion
-            
-            
+
+
+
+
             //#region Time
 
                 this.today  = new Date().toISOString().split('T')[0];                                                       // Current date in ISO String
@@ -1109,7 +1115,9 @@
                 
             //#endregion
 
-            
+
+
+
             //#region Grades
 
                 this.grades     = [];
@@ -1122,7 +1130,9 @@
                 this.gradesDatas = {};
             
             //#endregion
-            
+
+
+
 
             //#region Repo
                 
@@ -1169,6 +1179,8 @@
             //#endregion
 
 
+
+
             //#region Display
 
                 this.currentSemester                    = localStorage.getItem("ECAM_DASHBOARD_SEMESTER_FILTER")                || "all";
@@ -1185,16 +1197,18 @@
             //#endregion
 
 
+
+
             //#region temp/internal data assessment
 
                 this.selectedSubjectCardsId = [];
                 this.selectedSubjectCardsSortedByModule = {};
                 this.selectedModuleCardsId = [];
+
                 this.compactSubjCardsId = [];
-                this.compactSubjCardsClientHeight = [];
                 this.foldedModuleCardsId = [];
                 this.foldedModuleCardsClientHeight = [];
-                this.foldedModuleCardsData = []
+                
                 this.scrollToThisElem = "";
 
             //#endregion
@@ -3300,7 +3314,7 @@
                         <div class="semester-content show${this.selectedSubjectCardsId.length > 0 ? " dragging" : ""}${this.editMode ? " edit" : ""}${fadeIn ? " fade-in" : ""}" id="sem-content-${sem}">
                             <div class="semester-grid">
                                 <div class="modules-section ${this.editMode ? "edit" : ""}" id="modules-section" ${moduleConfig?.__modules__ ? "" : "style=\"display: none\""}>
-                                    ${this.createAllModuleCards(sem)}
+                                    ${this.createAllModuleCards(sem, true)}
                                 </div>
                                 <div class="unclassified-section" id="unclassified-section" style="height: 100%${unclassified.length > 0 ? `` : `; display: none`}">
                                     <div class="unclassified-title jura">
@@ -3342,14 +3356,14 @@
 
 
                 // MARK: createModuleCard
-                createAllModuleCards(sem) {
+                createAllModuleCards(sem, manageFolding=false) {
                     const moduleConfig = this.moduleConfig?.[sem] || {};
                     const unclassified  = this.getUnclassifiedSubjects(sem);
 
                     let html =  this.editMode ? this.createDropFieldInsertionField("module", {sem, index:0}) : "";
 
                     moduleConfig?.__modules__?.forEach((moduleName, moduleIndex) => {
-                        html += this.createModuleCard(sem, moduleName, moduleIndex);
+                        html += this.createModuleCard(sem, moduleName, moduleIndex, manageFolding);
                         html += this.editMode ? this.createDropFieldInsertionField("module", {sem, index:moduleIndex+1}) : "";
                     });
 
@@ -3361,7 +3375,7 @@
 
                     return html;
                 }
-                createModuleCard(sem, moduleName, moduleIndex=-1) {
+                createModuleCard(sem, moduleName, moduleIndex=-1, manageFolding=false) {
                     const moduleGrades = this.calculateModuleGrades(sem, moduleName);
                     const includedGrades = (moduleGrades || []).filter(n => !this.gradeIsDisabled(n));
                     let weight = 0; includedGrades.forEach(grade => {weight += grade.coef/100})
@@ -3417,7 +3431,7 @@
                             </div>
 
                             <div class="module-details ${this.editMode ? "edit-mode": ""}${this.viewMode == "detailed" ? " detailed" :  " compact"}" id="module-details-${moduleName}-in-semester${sem}" data-module="${moduleName}">
-                                ${this.createAllSubjCards(sem, moduleName)}
+                                ${this.createAllSubjCards(sem, moduleName, manageFolding)}
                             </div>
                         </div>
                         
@@ -3440,7 +3454,7 @@
                 * @param {string} moduleName Name of the subject's module
                 * @return {string} The outer HTML of all the subject cards of a module, in a single string
                 */
-                createAllSubjCards(sem, moduleName) {
+                createAllSubjCards(sem, moduleName, manageFolding=false) {
                     const moduleData = this.gradesDatas[sem][moduleName];
                     
                     let html  = this.editMode && moduleName != "__#unclassified#__" && this.moduleConfig[sem]?.[moduleName] != undefined 
@@ -3449,7 +3463,7 @@
                     ;
 
                     Object.values(moduleData.subjects).forEach((_value, _index) => {
-                        html += this.createSubjCard(sem, moduleName, _value.subjName, _index);
+                        html += this.createSubjCard(sem, moduleName, _value.subjName, _index, manageFolding);
                         html += this.editMode && moduleName != "__#unclassified#__" && this.moduleConfig[sem]?.[moduleName] != undefined 
                             ? this.createDropFieldInsertionField("subject", {sem, moduleName, index:_index+1}) 
                             : ""
@@ -3470,7 +3484,7 @@
                 * @param {number} [index=-1] Default: -1 — Index of the subject in its module, necessary if the subject is classified, useless if the subject is unclassified
                 * @return {string} The outer HTML of the subject card
                 */
-                createSubjCard(sem, moduleName, subject, index=-1) {
+                createSubjCard(sem, moduleName, subject, index=-1, manageFolding=false) {
                     const moduleData            = this.gradesDatas[sem][moduleName];
                     const subjectData           = moduleData.subjects[subject];
                     const subjectGrades         = subjectData.grades;
@@ -3486,10 +3500,11 @@
                     const subjectCardId         = `subject-card-semester-${sem}-subject-${subject}`;
                     const detailed              = !this.compactSubjCardsId.includes(subjectCardId);
                     const cardIsSelected        = this.selectedSubjectCardsId.includes(`subject-card-semester-${sem}-subject-${subject}`);
+                    const cardClientHeight      = 165.5 + 39.5*nbGrades;
                     
                     let html = `
-                    <div class="subject-card ${classified ? "classified" : "unclassified"} ${detailed ? "detailed" : "compact"} ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" id="${subjectCardId}" ${this.editMode ? `style="cursor: grab; user-select: none;"` : ""} data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
-                        <div class="subject-card-header${detailed ? "" : " compact"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`} ${classified ? "classified" : "unclassified"}" ${this.editMode ? `style="cursor: grab;" draggable="true"` : ``} data-module="${moduleName}">
+                    <div class="subject-card ${classified ? "classified" : "unclassified"} ${detailed && manageFolding ? "detailed" : "compact"} ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" id="${subjectCardId}" ${this.editMode ? `style="cursor: grab; user-select: none;"` : ""} data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}" data-height="${cardClientHeight}">
+                        <div class="subject-card-header ${detailed && manageFolding ? "detailed" : "compact"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`} ${classified ? "classified" : "unclassified"}" ${this.editMode ? `style="cursor: grab;" draggable="true"` : ``} data-module="${moduleName}">
                             <div class="subject-card-header-left-side ${this.editMode ? "edit" : ""}">
                                 ${this.editMode
                                     ? `<div style="margin: 0px 5px; margin-bottom: 3px;">
@@ -3517,7 +3532,7 @@
                                             ` 
                                             : ""
                                         }
-                                        <span class="subject-card-header-grades-details" ${!(detailed) ? "style=\"display: none;\"" : ""} >
+                                        <span class="subject-card-header-grades-details" ${!(detailed && manageFolding) ? "style=\"display: none;\"" : ""} >
                                             ${classified ? "• " : ""}
                                             ${nbGrades===0 
                                                 ? `<span>${this.lang == "fr" ? "aucune note publiée" : "no published grade"}</span>` 
@@ -4405,28 +4420,31 @@
                         };
                     }
 
-                    attachAllNewGradesSubjectCardsListener() {
-                        document.querySelectorAll(".new-grades-subject-card").forEach(card => {   // Scroll to the corresponding subject/grade on which the user clicked
-                            this.attachNewGradesSubjectCardsListener(card);
-                        });
+                    attachAllNewGradesSubjectCardsListener(container=document) {
+                        if (container instanceof HTMLElement || container instanceof HTMLDocument) {
+                            container.querySelectorAll(".new-grades-subject-card").forEach(card => {   // Scroll to the corresponding subject/grade on which the user clicked
+                                this.attachNewGradesSubjectCardsListener(card);
+                            })
+                        }
                     }
 
                     attachNewGradesSubjectCardsListener(card) {
                         if (card instanceof HTMLElement && card.classList.contains("new-grades-subject-card")) {
                             card.onclick = (e) => {
-                                this.currentSemester = e.target.dataset.semester;
-                                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-                                document.getElementById('filter-tab-semester-'+this.currentSemester).classList.add('active');
-                                this.generateContent(false);
-                                this.saveSemesterFilter();
+                                if (e.target.dataset.semester) {
+                                    this.currentSemester = e.target.dataset.semester;
+                                    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                                    document.getElementById('filter-tab-semester-'+this.currentSemester).classList.add('active');
+                                    this.generateContent(false);
+                                    this.saveSemesterFilter();
+                                }
 
+                                
                                 const targetElem = document.getElementById(`subject-card-semester-${e.target.dataset.semester}-subject-${e.target.dataset.subject}`);
+                                this.unfoldSubjCard(targetElem);
                                 this.scrollToClientHighestElem({id:targetElem.id, smooth: true, block: "center", margin:0})
-
-                                targetElem.onscrollend = ((elem) => {
-                                    elem.classList.add("scroll-to");
-                                    elem.onanimationend = () => {targetElem.classList.remove("scroll-to")};
-                                })(targetElem);
+                                targetElem.classList.add("scroll-to");
+                                targetElem.onmouseenter = () => {targetElem.classList.remove("scroll-to")};
                                 
                             }
                             card.onmouseenter = (e) => {
@@ -5373,7 +5391,7 @@
                      * @param {HTMLElement} [container=document.body] The HTML element containing the subject cards whose fold mode will be toggled
                      * @param {boolean} [smart=true] If true, takes into consideration the current view mode to know if the subject card should be folded of unfolded. If false, simply toggle the folding mode.
                      */
-                    toggleFoldAllSubjCards(container=document.body, smart=true) {
+                    async toggleFoldAllSubjCards(container=document.body, smart=true) {
                         if (container instanceof HTMLElement) {
                             if (smart) {
                                 if (this.viewMode == "detailed") {
@@ -5398,7 +5416,7 @@
                     /** Toggle the folding of the given subject card
                      * @param {HTMLElement} subjCard The subject cards whose fold mode will be toggled
                      */
-                    toggleFoldSubjCard(subjCard) {
+                    async toggleFoldSubjCard(subjCard) {
                         if (subjCard?.classList?.contains("detailed")) {
                             this.foldSubjCard(subjCard);
                         }
@@ -5411,7 +5429,7 @@
                     /** Fold all the subject cards inside the given container
                      * @param {HTMLElement} [container=document.body] The HTML element containing the subject cards to fold
                      */
-                    foldAllSubjCards(container=document.body) {
+                    async foldAllSubjCards(container=document.body) {
                         if (container instanceof HTMLElement) {
                             container.querySelectorAll(".subject-card.detailed").forEach(detailedSubjCard => {
                                 this.foldSubjCard(detailedSubjCard);
@@ -5425,18 +5443,19 @@
                         if (subjCard?.classList?.contains("subject-card")) {
                             const subjCardHeader = subjCard.querySelector(".subject-card-header");
                             subjCardHeader.classList.add("fold");
+                            subjCardHeader.classList.replace("detailed", "compact");
+                            subjCard.style.height = "";
     
                             // hold the height
-                            this.holdElementHeight(subjCard, 0, {offset: 8});
+                            // this.holdElementHeight(subjCard, 0, {offset: 8});
     
                             // prepare the aimed height below the higher instance height style
                             subjCard.classList.replace("detailed", "compact");
     
                             // remove the held higher instance height style to let the transition occure
-                            this.releaseElementHeight(subjCard,1)
+                            // this.releaseElementHeight(subjCard,1)
                             
                             this.compactSubjCardsId.push(subjCard.id);
-                            this.compactSubjCardsClientHeight.push(subjCard.clientHeight);
                         }
                     }
 
@@ -5444,7 +5463,7 @@
                     /** Unfold all the subject cards inside the given container
                      * @param {HTMLElement} [container=document.body] The HTML element containing the subject cards to unfold
                      */
-                    unfoldAllSubjCards(container=document.body) {
+                    async unfoldAllSubjCards(container=document.body) {
                         if (container instanceof HTMLElement) {
                             container.querySelectorAll(".subject-card.compact").forEach(compactSubjCard => {
                                 this.unfoldSubjCard(compactSubjCard);
@@ -5458,18 +5477,19 @@
                         if (subjCard?.classList?.contains("subject-card")) {
                             const subjCardHeader = subjCard.querySelector(".subject-card-header");
                             subjCardHeader.classList.remove("fold");
+                            subjCardHeader.classList.replace("compact", "detailed");
+                            subjCard.style.height = subjCard.dataset.height+"px";
 
                             // set the height to the desired value
-                            this.holdElementHeight(subjCard, 0, {offset: 8, height: this.compactSubjCardsClientHeight[this.compactSubjCardsId.indexOf(subjCard.id)]})
+                            // this.holdElementHeight(subjCard, 0, {height: subjCard.dataset.height})
 
                             // makes the height go automatic -> correspond to the desired height
                             subjCard.classList.replace("compact", "detailed");
 
                             // remove the higher instance height style at the end of the transition to keep the height unset (automatic)
-                            this.releaseElementHeight(subjCard,100)
+                            // this.releaseElementHeight(subjCard,100)
 
                             this.compactSubjCardsId.splice(this.compactSubjCardsId.indexOf(subjCard.id), 1);
-                            this.compactSubjCardsClientHeight.splice(this.compactSubjCardsId.indexOf(subjCard.id), 1);
                         }
                     }
 
@@ -5478,7 +5498,6 @@
                     subjectCardDeleteBtnAction(target) {
                         const subjectCard    = document.getElementById(target.dataset.targetid);
 
-                        debugger;
                         if (this.selectedSubjectCardsId.includes(subjectCard.id)) {
                             this.selectedSubjectCardsId.forEach(selectedSubjCardId => {
                                 const selectedSubjectCard = document.getElementById(selectedSubjCardId);
@@ -5532,23 +5551,32 @@
                         const subjectCardId = target.id.replace(/\bsubject-name-input/, "subject-card");
                         const subjectCard   = document.getElementById(subjectCardId);
                         const sem           = subjectCard.dataset.semester;
-                        const module        = subjectCard.dataset.module;
+                        const moduleName    = subjectCard.dataset.module;
                         const subjOldName   = subjectCard.dataset.subject;
                         const moduleDetails = subjectCard.parentElement;
                         const moduleCard    = moduleDetails.parentElement;
 
 
                         let diffName = true;
-                        this.moduleConfig[sem][module].subjects.forEach(_subj => {
-                            if (_subj == subjNewName && _subj != subjOldName) {
-                                alert(this.lang == "fr" 
-                                    ? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
-                                    : "This subject already exists! Please choose a different name"
-                                )
-                                diffName = false;
-                                this.scrollToClientHighestElem({id: subjectCardId, smooth: true, block: "center"})
-                            }
-                        });
+                        if (subjNewName == "__#unclassified#__") {
+                            alert(this.lang == "fr" 
+                                ? "Ce nom n'est pas autorisé ! C'est le nom utilisé en interne pour les matières non-classifiées... Choisis-en un autre!" 
+                                : "This name isn't allowed! That's the name used internally for unclassified subjects... Choose another one!"
+                            )
+                        }
+                        else {
+                            this.moduleConfig[sem][moduleName].subjects.forEach(_subj => {
+                                if (_subj == subjNewName && _subj != subjOldName) {
+                                    alert(this.lang == "fr" 
+                                        ? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
+                                        : "This subject already exists! Please choose a different name"
+                                    )
+                                    diffName = false;
+                                    this.scrollToClientHighestElem({id: subjectCardId, smooth: true, block: "center"})
+                                }
+                            });
+                        }
+
 
                         if (diffName) {
                             this.moduleConfig[sem].__modules__.forEach(moduleName => {
@@ -5563,30 +5591,23 @@
                                     }
                                 })
                             })
-                        }
-                            
 
-                        if (diffName) {
-                            const oldSubjIndex = this.moduleConfig[sem][module].subjects.indexOf(subjOldName);
-                            const pct   = Number(this.moduleConfig[sem][module].coefficients    [subjOldName]);
 
-                            this.moduleConfig[sem][module].subjects[oldSubjIndex]=subjNewName ;    // Replace the subject's old name by the subject's new name
-                            delete this.moduleConfig[sem][module].coefficients [subjOldName];
-                            this.moduleConfig[sem][module].coefficients [subjNewName] = pct;
+                            const oldSubjIndex = this.moduleConfig[sem][moduleName].subjects.indexOf(subjOldName);
+                            const pct   = Number(this.moduleConfig[sem][moduleName].coefficients    [subjOldName]);
+
+                            this.moduleConfig[sem][moduleName].subjects[oldSubjIndex]=subjNewName ;    // Replace the subject's old name by the subject's new name
+                            delete this.moduleConfig[sem][moduleName].coefficients [subjOldName];
+                            this.moduleConfig[sem][moduleName].coefficients [subjNewName] = pct;
                                         
                             this.getGradesDatas();
 
-                            if (this.compactSubjCardsId.includes(subjectCardId)) {
-                                moduleDetails.innerHTML = this.createAllCompactClassifiedSubjCards(sem, module);
-                            }
-                            else {
-                                moduleDetails.innerHTML = this.createAllDetailedClassifiedSubjCards(sem, module);
-                            }
+                            moduleDetails.innerHTML = this.createSubjCard(sem, moduleName, subjNewName);
 
                             const unclassifiedSection = document.querySelector(".unclassified-section");
                             const unclassifiedContent = unclassifiedSection.querySelector(".unclassified-content");
                             unclassifiedSection.style.height = "";
-                            unclassifiedContent.innerHTML = this.createAllDetailedUnclassifiedSubjCards(sem);
+                            unclassifiedContent.innerHTML = this.createAllSubjCards(sem, "__#unclassified#__");
                             
                             this.resetFixedUnclassifiedSectionHeight();
                             this.attachAllSubjectCardRelatedEvenListenersForEverySubjectCard();
@@ -5940,7 +5961,6 @@
                 // MARK: ON DRAG START
                 async draggedElementOnDragStartEvent(e, card) {
 
-                    
                     if (e instanceof Event) {
                         if (e?.target?.classList?.contains("any-input")) {return}
 
@@ -5949,6 +5969,7 @@
                         e.dataTransfer.setData("text", card.id);
                     }
 
+                    const type = card.classList.contains("subject-card") ? "subject" : "module";
 
                     let selectionGoingOn = false, draggedCardIsSelected = false;
                     if (this.selectedModuleCardsId.length > 0 || this.selectedSubjectCardsId.length > 0) {
@@ -5958,9 +5979,7 @@
                         draggedCardIsSelected = true;
                     }
 
-                    document.querySelector(".semester-content").classList.add("dragging");
-
-                    if (card.classList.contains("subject-card")) {
+                    if (type == "subject") {
 
                         (draggedCardIsSelected ? this.selectedSubjectCardsId : [card.id]).forEach(subjectCardId => {
                             const subjectCard = document.getElementById(subjectCardId);
@@ -5984,28 +6003,26 @@
                         }, 50);
 
                         
-                        if (!card.classList.contains("unclassified")) {
+                        if (!card.classList.contains("unclassified") && !draggedCardIsSelected) {
 
-                            if (!draggedCardIsSelected) {
-                                const sem           = card.dataset.semester;
-                                const moduleName    = card.dataset.module;
-                                const index         = card.dataset.index;
-                            
-                                const upperInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${parseInt(index)+0}"]`)
-                                const upperInsertFieldHitbox = upperInsertField.querySelector(".drop-subject-card-insert-hitbox");
-        
-                                const lowerInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${parseInt(index)+1}"]`)
-                                const lowerInsertFieldHitbox = lowerInsertField.querySelector(".drop-subject-card-insert-hitbox");
-        
-                                this.detachInsertFieldHitboxEventListeners(upperInsertFieldHitbox);
-                                this.detachInsertFieldHitboxEventListeners(lowerInsertFieldHitbox);
-                                upperInsertField.classList.remove("show");
-                                lowerInsertField.classList.remove("show");
-                            }
+                            const sem           = card.dataset.semester;
+                            const moduleName    = card.dataset.module;
+                            const index         = card.dataset.index;
+                        
+                            const upperInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${parseInt(index)+0}"]`)
+                            const upperInsertFieldHitbox = upperInsertField.querySelector(".drop-subject-card-insert-hitbox");
+    
+                            const lowerInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${parseInt(index)+1}"]`)
+                            const lowerInsertFieldHitbox = lowerInsertField.querySelector(".drop-subject-card-insert-hitbox");
+    
+                            this.detachInsertFieldHitboxEventListeners(upperInsertFieldHitbox);
+                            this.detachInsertFieldHitboxEventListeners(lowerInsertFieldHitbox);
+                            upperInsertField.classList.remove("show");
+                            lowerInsertField.classList.remove("show");
         
                         }
                     }
-                    else if (card.classList.contains("module-card")) {
+                    else if (type == "module") {
 
                         (draggedCardIsSelected ? this.selectedModuleCardsId : [card.id]).forEach(moduleCardId => {
                             const moduleCard = document.getElementById(moduleCardId);
@@ -6025,6 +6042,7 @@
                     }
 
                     if (!selectionGoingOn) {
+                        document.querySelector(".semester-content")                     .classList.add("dragging");
                         document.querySelector(".drop-field.create-module")             .classList.add("show");
                         document.querySelector(".drop-field-create-module-hitbox")      .classList.add("show");
                         document.querySelector(".drop-field.remove-from-module")        .classList.add("show");
@@ -6083,24 +6101,22 @@
                         }, 50);
 
                         
-                        if (!card.classList.contains("unclassified")) {
+                        if (!card.classList.contains("unclassified") && !draggedCardIsSelected) {
 
-                            if (!draggedCardIsSelected) {
-                                const sem           = card.dataset.semester;
-                                const moduleName    = card.dataset.module;
-                                const index         = card.dataset.index;
-                            
-                                const upperInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${parseInt(index)+0}"]`)
-                                const upperInsertFieldHitbox = upperInsertField.querySelector(".drop-subject-card-insert-hitbox");
-        
-                                const lowerInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${parseInt(index)+1}"]`)
-                                const lowerInsertFieldHitbox = lowerInsertField.querySelector(".drop-subject-card-insert-hitbox");
-        
-                                this.detachInsertFieldHitboxEventListeners(upperInsertFieldHitbox);
-                                this.detachInsertFieldHitboxEventListeners(lowerInsertFieldHitbox);
-                                upperInsertField.classList.remove("show");
-                                lowerInsertField.classList.remove("show");
-                            }
+                            const sem           = card.dataset.semester;
+                            const moduleName    = card.dataset.module;
+                            const index         = card.dataset.index;
+                        
+                            const upperInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${parseInt(index)+0}"]`)
+                            const upperInsertFieldHitbox = upperInsertField.querySelector(".drop-subject-card-insert-hitbox");
+    
+                            const lowerInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${parseInt(index)+1}"]`)
+                            const lowerInsertFieldHitbox = lowerInsertField.querySelector(".drop-subject-card-insert-hitbox");
+    
+                            this.attachInsertFieldHitboxEventListeners(upperInsertFieldHitbox);
+                            this.attachInsertFieldHitboxEventListeners(lowerInsertFieldHitbox);
+                            upperInsertField.classList.add("show");
+                            lowerInsertField.classList.add("show");
         
                         }
                     }
@@ -6123,7 +6139,7 @@
                     }
 
                     if (!selectionGoingOn) {
-                        document.querySelector(".semester-content")                 .classList.remove("dragging");
+                        document.querySelector(".semester-content")                     .classList.remove("dragging");
                         document.querySelector(".drop-field.create-module")             .classList.remove("show");
                         document.querySelector(".drop-field-create-module-hitbox")      .classList.remove("show");
                         document.querySelector(".drop-field.remove-from-module")        .classList.remove("show");
@@ -6383,7 +6399,6 @@
                     const targetId      = tick.dataset.targetid;
                     const notifDiv      = document.querySelector(`.selected-card-notif-div.on[data-targetid="${targetId}"]`);
                     
-                    debugger;
                     this.removeCardFromSelection(notifDiv);
                 }
 
@@ -6951,7 +6966,7 @@
                     importMenu.style.display = "";
                     setTimeout(() => {importMenu.classList.add("show")}, 10)
                     importFile.onclick   = () => this.importData();
-                    importClear.onclick  = () => {this.moduleConfig = {}; this.compactSubjCardsId = []; this.compactSubjCardsClientHeight = []; this.foldedModuleCardsId = []; this.foldedModuleCardsClientHeight = []; this.getGradesDatas(); this.saveConfig(); this.generateContent(true)};
+                    importClear.onclick  = () => {this.moduleConfig = {}; this.compactSubjCardsId = []; this.foldedModuleCardsId = []; this.foldedModuleCardsClientHeight = []; this.getGradesDatas(); this.saveConfig(); this.generateContent(true)};
                     importOnline.onclick = () => {
                         if (this.onlineConfigs)
                         this.getConfigsFromRepoAPI(this.repoContentsAPI)
