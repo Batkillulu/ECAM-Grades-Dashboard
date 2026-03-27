@@ -7,9 +7,10 @@
 ## Improvements
 - "Notes" in the dockbar now always appears on the right of the search bar (wasn't consistently inserted)
 
-- Better animations for the insertion fields when starting to drag an element
-- Better animations for the subject and module cards when dragging one of them
-- Better subject header display (left/right sides and total coef div)
+- better animations for the insertion fields when starting to drag an element
+- better animations for the subject and module cards when dragging one of them
+- better subject header display (left/right sides and total coef div)
+- improved selected card notifs' texts alignment
 
 ## Fixes
 - fixed the total coef value of the subject cards not disappearing after reloading when its setting is disabled
@@ -17,3 +18,5 @@
 - fixed a few timing problems in async methods
 - fixed a problem where the subjects' coef input box would sometimes not work at all
 - fixed the module delete button not working
+- fixed the onclick event of the view mode buttons so that they do the same action as pressing Shift+D does
+- fixed the drag icon onclick event so that the insertion fields display the right text cues when a selection is initiated/stopped
