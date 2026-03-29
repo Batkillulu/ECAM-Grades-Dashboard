@@ -16,8 +16,8 @@ All trademarks and logos belong to their respective owners.
 
 # Installation guide
 ## Available platforms:
-### [○ Windows and Androids ⤦](#--windows-and-androids--)
-### [○ IOS ⤦](#--ios--)
+### [○ Windows and Androids ⤦](#-windows-and-androids--1)
+### [○ IOS ⤦](#-ios--1)
 
 
 
