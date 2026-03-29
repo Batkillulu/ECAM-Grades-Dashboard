@@ -53,7 +53,7 @@
 //  - maxence.leroux@ecam.fr    [more for the financial and responsibility part]
 // 
 
-
+ecamDash = undefined;
 (function() {
     'use strict';
     //#region =========================
@@ -70,7 +70,7 @@
 
 
 
-        //#region -DASHBOARD __________________________
+        //#region -DASHBOARD   _________________________
 
             styles += `
                 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
@@ -280,6 +280,7 @@
             //#endregion
 
 
+
             //MARK: path notes
             styles += `
 
@@ -291,8 +292,9 @@
 
             //MARK: -settings
             styles += `
+
                 .settings-modal-container   { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; position: fixed; left: 0; top: 0; z-index: 1000; }
-                .settings-modal                 { display: flex; padding: 40px 30px; --modal-max-width: 1000px; --modal-max-height: 500px; min-width: 1000px; overflow: auto; }
+                .settings-modal                 { display: flex; padding: 40px 30px; --modal-max-width: 1000px; --modal-max-height: 500px; overflow: auto; }
                 .settings-modal-body                { display: flex; flex-direction: column; width: 100%; }
                 .settings-row-family                    { display: flex; flex-direction: column; width: 100%; background: linear-gradient(90deg, #5c5c5c38 0%, transparent 50%); background-size: 200% 200%; background-position: 100% 100%; transition: all 0.3s ease; }
                 .settings-row-family.disabled           { background-position: 0% 100%; }
@@ -308,16 +310,20 @@
 
             //MARK: keybinds
             styles += `
+
+                .keyboard-shortcut-list-container   { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; height: 100%; position: fixed; left: 0; top: 0; z-index: 900; }
+                .keyboard-shortcut-list-modal           { display: flex; padding: 30px; overflow: auto; }
+
                 .keybinds-table-row     { height: var(--row-height); border-top: 1px solid black; }
                 .keybinds-table-cell        { padding: 15px 0px 15px 15px; }
                 .keybinds-table-cell.text       { border-right: 1px solid black; }
+
             `;
 
 
             //MARK: help and tutorial
             styles += `
-                .keyboard-shortcut-list-container   { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; height: 100%; position: fixed; left: 0; top: 0; z-index: 900; }
-                .keyboard-shortcut-list-modal           { display: flex; padding: 30px; }
+
             `;
 
 
@@ -335,11 +341,11 @@
                 
 
                 .online-cfg-picker-menu-container   { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; position: fixed; left: 0; top: 0; z-index: 999; }
-                .online-cfg-picker-menu                 { display: flex; flex-direction: column; justify-content: flex-start; padding: 20px; z-index: 1000; }
-                .online-cfg-picker-menu-header              { display: flex; justify-content: center; height: 40px; align-items: center; font-size: 15px; z-index: 1010; }
+                .online-cfg-picker-menu                 { display: flex; flex-direction: column; justify-content: flex-start; padding: 20px 35px; z-index: 1000; }
+                .online-cfg-picker-menu-header              { display: flex; justify-content: center; align-items: center; padding: 6px 0px; font-size: 15px; z-index: 1010; }
 
-                .online-cfg-picker-menu-body            { display: flex; flex-direction: row; justify-content: center; align-items: center; overflow: clip; }
-                .online-cfg-picker-menu-body-container  { display: flex; flex-direction: row; justify-content: center; align-items: flex-start; width: 640px; padding: 5px 0px; }
+                .online-cfg-picker-menu-body            { display: flex; flex-direction: row; overflow: auto; }
+                .online-cfg-picker-menu-body-content  { display: flex; flex-direction: row; justify-content: center; align-items: flex-start; width: 100%; height: 100%; min-width: 640px; min-height: 263px; padding: 5px 0px; }
                 .online-cfg-picker-menu-dir-tree            { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 0px; color: black; margin: 0px 0px; border-radius: 16px; outline: 2px solid; background: white; overflow: clip; opacity: 0%; user-select: none; transition: all 0.2s ease; }
                 .online-cfg-picker-menu-dir-tree.show       { width: 150px; opacity: 100%; margin: 0px 5px; user-select: text; }
                 .online-cfg-picker-menu-dir-tree.section    { z-index: 1004; }
@@ -627,7 +633,7 @@
                 .average-good                   { color: #10b981; border: 1px solid #10b98130; }
                 .average-medium                 { color: #f59e0b; border: 1px solid #f59e0b30; }
                 .average-bad                    { color: #ef4444; border: 1px solid #ef444430; }
-                .semester-toggle                { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; }
+                .semester-toggle                { display: flex; justify-content: center; align-items: center; width: 24px; height: 24px; font-size: 18px; transition: transform 0.3s ease; }
                 .semester-toggle.open           { transform: rotate(180deg); }
 
                 .semester-content               { padding: 50px 24px; display: none; }
@@ -657,13 +663,12 @@
             // MARK: -MODULE CARDS
             styles += `
 
-                .module-card                { display: flex; flex-direction: column; align-items: center; width: 100%; position: relative; background: #fafafa; border-radius: 25px; border: 3px solid #e5e5e5; scroll-margin: 70px; overflow: clip; transition: all 0.2s ease; }
-                .module-card.fold           { border-radius: 25px; }
-                .module-card.validated      { border-color: #10b981ff; background: radial-gradient(transparent 0%, #f0fdf4ff 75%); }
-                .module-card.failed         { border-color: #ef4444ff; background: radial-gradient(transparent 0%, #fef2f2ff 75%); }
-                .module-card.unknown        { border-color: #6d6d6dff; background: radial-gradient(transparent 0%, #d1d1d1ff 75%); }
+                .module-card                { display: flex; flex-direction: column; align-items: center; width: 100%; position: relative; background: #fafafa; border-radius: 25px; outline: 3px solid #e5e5e5; scroll-margin: 70px; overflow: clip; transition: all 0.2s ease; }
+                .module-card.validated      { outline-color: #10b981ff; background: radial-gradient(transparent 0%, #f0fdf4ff 75%); }
+                .module-card.failed         { outline-color: #ef4444ff; background: radial-gradient(transparent 0%, #fef2f2ff 75%); }
+                .module-card.unknown        { outline-color: #6d6d6dff; background: radial-gradient(transparent 0%, #d1d1d1ff 75%); }
 
-                .module-header                  { display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 18px 20px; border-bottom: 3px solid #e5e5e5; border-radius: 22px 22px 0px 0px; width: 100%; min-height: 80px; max-height: 80px; cursor: pointer; z-index: 1; transition: all 0.1s ease; }
+                .module-header                  { display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 18px 20px; border-bottom: 3px solid #e5e5e5; border-radius: 22px 22px 0px 0px; width: 100%; min-height: 80px; max-height: 80px; cursor: pointer; z-index: 2; transition: all 0.1s ease; }
                 .module-header.fold             { border-radius: 25px; }
                 .module-header.validated        { border-color: #10b981ff; background: linear-gradient(300deg, #e0ffeaff 30%, transparent); }
                 .module-header.failed           { border-color: #ef4444ff; background: linear-gradient(300deg, #ffd9d9ff 30%, transparent); }
@@ -678,10 +683,10 @@
                 .module-subject-total-coef-debug { display: flex; text-align: left; font-size: 13px; }
 
 
-                .module-card-content            { display: flex; flex-direction: column; width: 100%; align-items: center; gap: 0px; margin: 8px 0px 18px 0px; opacity: 100%; transition: all 0.2s ease; }
-                .module-card-content.edit-mode  { gap: 1% }
+                .module-card-content            { display: flex; flex-direction: column; width: 100%; align-items: center; gap: 0px; padding: 8px 0px 18px 0px; opacity: 100%; transition: all 0.2s ease; }
+                .module-card-content.edit-mode  { gap: 5px; }
 
-                .module-info                        { display: flex; flex-direction: row; justify-content: space-around; align-items: center; width:97%; min-height: 36px; background: #eef2ff00; border:1px solid #c7d2fe00; padding: 0px 8px 3px 8px; border-radius: 0px 0px 8px 8px; margin-top: -1px; opacity: 100%; transition: all 0.2s ease; }
+                .module-info                        { display: flex; flex-direction: row; justify-content: space-around; align-items: center; position: relative; top: -10px; width:97%; min-height: 36px; background: #eef2ff00; border:1px solid #c7d2fe00; padding: 0px 8px 3px 8px; border-radius: 0px 0px 8px 8px; margin-top: -1px; opacity: 100%; transition: all 0.2s ease; }
                 .module-info-bar                    { display: flex; flex-direction: row; justify-content: space-between; align-items: center; width:48%; background: #eef2ff; border:1px solid #c7d2fe; padding: 3px 15px; border-radius: 0px 0px 8px 8px; }
                 .module-info-clear                  { display: flex; flex-direction: row; justify-content: center; align-items: center; font-size: 12px; background: #d7e0ff; border: 2px solid; border-radius: 10px; padding: 2px 7px; user-select: none; width: 220px; margin-right: 8px; cursor: pointer; transition: all 0.2s ease; }
                 .module-info-clear:hover            { width: 240px; font-size: 11.5px; margin-right: 0px; background: #eef2ff; }
@@ -689,7 +694,7 @@
                 .module-info-clear.sim              {  }
 
                 .module-details                     { display: flex; flex-direction: column; align-items: center; width: 97%; gap: 30px; opacity: 100%; transition: all 0.2s ease; }
-                .module-details.edit-mode           { gap: 4px; }
+                .module-details.edit-mode           { gap: 0px; }
                 .module-moyenne                     { display: flex; align-items: center; justify-content: flex-end; font-size: 24px; font-weight: 800; gap:10px; width: 193px; }
                 .module-moyenne.good                { color: #10b981; }
                 .module-moyenne.bad                 { color: #ef4444; }
@@ -702,7 +707,7 @@
 
 
 
-            // MARK: -UNCLASSIFIED SECTION ______________
+            // MARK: -UNCLASSIFIED SECTION
             styles += `
 
                 .unclassified-section   { display: flex; flex-direction: column; align-items: center; width: 100%; background: #fff8f0; border-radius: 20px; padding: 20px; border: 2px dashed #fbbf24; transition: height 0.2s ease; }
@@ -716,7 +721,7 @@
             //#region -SUBJECT CARDS _______________________
                 styles += `
 
-                    .subject-card               { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; height: 70px; position: relative; border-radius: 20px; border: 4px solid #ffffffff; opacity: 100%; overflow: clip; transition: border-color 0.3s ease, transform 0.3s ease, all 0.1s ease; }
+                    .subject-card               { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; height: 70px; position: relative; border-radius: 20px; outline: 4px solid #ffffffff; opacity: 100%; overflow: clip; transition: outline-color 0.3s ease, transform 0.3s ease, all 0.1s ease; }
                     .subject-card.detailed      { }
                     .subject-card.compact       { }
                     .subject-card.scroll-to     { transform: scale(102%); outline-color: #5f77ff; border-color: #5f77ff; }
@@ -730,16 +735,17 @@
                     .subject-card.unknown               { box-shadow: 0px 0px 0px 0px  #6d6d6d; background: linear-gradient(300deg, #c5c5c5 30%, transparent); }
                     .subject-card.unknown:hover         { box-shadow: 0px 0px 13px 5px #6d6d6d; }
                     
-                    .subject-card-header        { display: flex; flex-direction: row; justify-content: space-between; align-items: center; width: 100%; min-height: 64px; border-radius: 20px 20px 0px 0px; border-bottom: 4px solid white; padding: 5px 11px; font-weight:700; font-size: 15px; vertical-align: top; cursor: pointer; transition: all 0.1s ease; }
-                    .subject-card-header.compact    { border-radius: 20px; border-bottom: none; }
+                    .subject-card-header        { display: flex; flex-direction: row; justify-content: space-between; align-items: center; width: 100%; min-height: 70px; border-radius: 20px 20px 0px 0px; outline: 4px solid white; padding: 5px 11px; font-weight:700; font-size: 15px; vertical-align: top; cursor: pointer; z-index: 1; transition: all 0.1s ease; }
+                    .subject-card-header.compact    { border-radius: 20px; }
                     .subject-card-header.good       { background: linear-gradient(300deg, #e3ffeb 30%, transparent); }
                     .subject-card-header.meh        { background: linear-gradient(300deg, #ffe8d0 30%, transparent); }
                     .subject-card-header.bad        { background: linear-gradient(300deg, #ffe0e0 30%, transparent); }
                     .subject-card-header.unknown    { background: linear-gradient(300deg, #b8b8b8 30%, transparent); }
-                    .subject-card-header.fold       { border-radius: 20px; }
 
-                    .subject-card-header-left-side          { display: flex; justify-content: flex-start; align-items: center; gap: 8px; padding-left: 42px; width: 0; height: 100%; text-wrap-mode: nowrap; }
-                    .subject-card-header-left-side.edit     { padding-left: 0; }
+                    .subject-card-header-left-side          { display: flex; justify-content: flex-start; align-items: center; gap: 8px; width: 50%; height: 100%; text-wrap-mode: nowrap; }
+                    .subject-card-header-left-side-text     { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 8px; padding-left: 42px; width: 95%; height: 100%; text-wrap-mode: nowrap; }
+                    .subject-card-header-left-side-text.edit     { padding-left: 0; }
+                    
 
                     .subject-name                   { font-weight: 800; color: #1a1a1a; font-size: 14px }
                     .subject-name.input             { font-weight: 800; color: #1a1a1a; font-size: 14px; border: 2px solid #797979; border-radius: 15px; padding-left: 8px; width: calc(100% + 10px); height: 25px;}
@@ -767,19 +773,19 @@
                 `;
                     
 
+
                 // MARK: grades table
                 styles += `
 
-                    .grade-row                           { border-bottom: 1px solid white /* #e4e4e4 */; height: 39px; transition: background 0.3s ease; }
-                    .grade-row.last                      { vertical-align: baseline; border-bottom: none; height: 41px; }
-                    .grade-row.sim                       { background: #e9efff9a; }
-                    .grade-row:hover                     { background: #eeedfd; }
-
-                    .grades-table                        { background: linear-gradient(300deg, #c5c5c5 30%, transparent); width: 98%; }
-                    .grades-table.compact                { margin: -12px 20px 20px 20px; }
+                    .grades-table                        { background: linear-gradient(300deg, #c5c5c5 30%, transparent); width: 98%; margin-top: 4px; }
                     .grades-table.good                   { background: linear-gradient(300deg, #f0fdf4 30%, transparent); }
                     .grades-table.meh                    { background: linear-gradient(300deg, #fff2e4 30%, transparent); }
                     .grades-table.bad                    { background: linear-gradient(300deg, #fef2f2 30%, transparent); }
+
+                    .grade-row                           { border-bottom: 1px solid white /* #e4e4e4 */; height: 40px; transition: background 0.3s ease; }
+                    .grade-row.last                      { vertical-align: baseline; border-bottom: none; }
+                    .grade-row.sim                       { background: #e9efff9a; }
+                    .grade-row:hover                     { background: #eeedfd; }
 
 
                     .grades-table th                     { padding: 10px 12px; height: 39px; font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 0.5px; border: 3px solid white; border-right-width: 2px; border-left-width: 2px; border-top-width: 0px; text-align: center; text-wrap-mode: nowrap; }
@@ -842,10 +848,10 @@
 
                     .fold-icon  { cursor: pointer; user-select: none; }
 
-                    .drag-icon                  { display: flex; justify-content: center; align-items: center; border: 2px solid; color: black; border-radius: 8px; cursor: pointer; user-select: none; transition: all 0.2s ease; }
-                    .drag-icon.subject {  }
-                    .drag-icon.module  { font-weight: 600; }
+                    .drag-icon                  { display: flex; justify-content: center; align-items: center; border: 2px solid; color: black; border-radius: 8px; line-height: 0px; cursor: pointer; user-select: none; transition: all 0.2s ease; }
                     .drag-icon:hover            { color: #a1a1a1; }
+                    .drag-icon.subject              { width: 27px; height: 27px; font-size: 20px; }
+                    .drag-icon.module               { width: 30px; height: 30px; font-size: 26px; font-weight: 600; }
 
                     .tick-icon          { height: 23px; width: 23px; font-size: 35px; line-height: 20px; color: #004cff; cursor:pointer; user-select:none; transition: all 0.2s ease; }
                     .tick-icon.subject  {  }
@@ -964,6 +970,9 @@
 
 
 
+
+
+
     //#region
         // Initializing the CSS style and checking for error before creating the dashboard
         const styleSheet = document.createElement("style");
@@ -982,7 +991,7 @@
     //#endregion
 
 
-    //MARK: -
+    //MARK: -ECAMDashboard  =============
     class ECAMDashboard {
 
 
@@ -1106,7 +1115,7 @@
 
             //#region Time
 
-                this.today  = new Date().toISOString().split('T')[0];                                                       // Current date in ISO String
+                this.today      = new Date().toISOString().split('T')[0];                                                   // Current date in ISO String
                 this.now        = () => {return new Date().toISOString().replace(/\.(\d{3})/, "")};                         // Current date and time in ISO String, removing the milliseconds
                 this.dateHour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
                 this.dateTimeOfLastUpdateCheck          = localStorage.getItem("ECAM_DASHBOARD_DATE_TIME_OF_LAST_UPDATE_CHECK") || "2000-00-00T00:00:00Z"; // A day before the date of last update, so that the update check is ran to make sure the correct version is installed
@@ -1206,8 +1215,8 @@
                 this.selectedModuleCardsId = [];
 
                 this.compactSubjCardsId = [];
+                this.detailedSubjCardsId = [];
                 this.foldedModuleCardsId = [];
-                this.foldedModuleCardsClientHeight = [];
                 
                 this.scrollToThisElem = "";
 
@@ -2727,7 +2736,7 @@
                     updateAvailableNotif.classList.remove("on");
                     setTimeout(() => {updateAvailableNotif.remove()}, 300)
 
-                    this.dateTimeOfLastUpdateCheck = this.today(); 
+                    this.dateTimeOfLastUpdateCheck = this.today; 
                     this.saveDateTimeOfLastUpdateCheck();
                 };
 
@@ -2807,7 +2816,7 @@
                         <div class="over-header-help-btns">
                             <div class="over-header-btn how-to-use-btn">?</div>
                             <div class="over-header-how-to-use-btns" style="display: none">
-                                <a   class="over-header-btn help doc-btn fr"  href="${this.repoReadMeHowToUse}" target="_blank" >${this.createExternalLinkSymbol("white", 16, [0,0,0,4])}</a>
+                                <a   class="over-header-btn help doc-btn fr"  href="${this.repoReadMeHowToUse}" target="_blank" >${this.createExternalLinkSymbol({margin: [0,0,0,4]})}</a>
                                 <div class="over-header-btn help keybinds-btn fr"></div>
                                 ${/* `<div class="over-header-btn help tuto-btn fr"></div>` + */ ""}
                             </div>
@@ -2954,7 +2963,7 @@
                         }, 1)
                     }
 
-                    this.generateContent();
+                    this.generateContent({manageIndividualSubjectCardFolding: false, fadeIn:false});
                 }
 
 
@@ -3021,9 +3030,9 @@
 
                         if (((newUserNotif?.style?.display || "none" == "none")?.toString() || "true") == "false") newUserNotif.title     = "Clique pour fermer";
 
-                        shareConfig     .innerHTML = `Partager une config ${this.createExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
-                        suggestIdea     .innerHTML = `Suggérer une idée ${this.createExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
-                        reportIssue     .innerHTML = `Signaler un problème ${this.createExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
+                        shareConfig     .innerHTML = `Partager une config  ${this.createExternalLinkSymbol({margin: [0,0,0,4]})}`;
+                        suggestIdea     .innerHTML = `Suggérer une idée    ${this.createExternalLinkSymbol({margin: [0,0,0,4]})}`;
+                        reportIssue     .innerHTML = `Signaler un problème ${this.createExternalLinkSymbol({margin: [0,0,0,4]})}`;
                         mailInfoText    .innerHTML = "Par mail: baptiste.jacquin@ecam.fr 📋";
                         mailInfoCopied  .innerHTML = "Copié !";
 
@@ -3054,9 +3063,9 @@
                         
                         if (((newUserNotif?.style?.display || "none" == "none")?.toString() || "true") == "false") newUserNotif.title     = "Click to dismiss";
 
-                        shareConfig     .innerHTML = `Share a config ${this.createExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
-                        suggestIdea     .innerHTML = `Suggest an idea ${this.createExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
-                        reportIssue     .innerHTML = `Report an issue ${this.createExternalLinkSymbol("white", 16, [0, 0, 0, 4])}`;
+                        shareConfig     .innerHTML = `Share a config  ${this.createExternalLinkSymbol({margin: [0,0,0,4]})}`;
+                        suggestIdea     .innerHTML = `Suggest an idea ${this.createExternalLinkSymbol({margin: [0,0,0,4]})}`;
+                        reportIssue     .innerHTML = `Report an issue ${this.createExternalLinkSymbol({margin: [0,0,0,4]})}`;
                         mailInfoText    .innerHTML = "By mail: baptiste.jacquin@ecam.fr 📋";
                         mailInfoCopied  .innerHTML = "Copied!";
 
@@ -3263,13 +3272,13 @@
 
 
                 // MARK: GenerateContent
-                generateContent(fadeIn=true) {
+                generateContent({manageIndividualSubjectCardFolding=true, fadeIn=true}={manageIndividualSubjectCardFolding: true, fadeIn: true}) {
 
                     if (fadeIn == "big") {this.languageSensitiveContent(true);}
                     else {this.languageSensitiveContent(false);}
                     
                     
-                    // Call renderRecentGrades to... well... render the recent grades' card
+                    // Call renderRecentGrades to... well... render the recent grades' section
                     this.renderRecentGrades()
 
 
@@ -3289,11 +3298,24 @@
                         semesterKeys = [this.currentSemester];
                     }
                     
+                    // if (!manageIndividualSubjectCardFolding && this.viewMode == "compact") {
+                    //     Object.entries(this.semesters).forEach((semesterData) => {
+                    //         if (semesterKeys.includes(semesterData[0])) {
+                    //             Object.keys(semesterData[1]).map(subject => {
+                    //                 return document.querySelector(`.subject-card[data="${subject}"]`).id
+                    //             })
+                    //         }
+                    //         else {
+                    //             return false
+                    //         }
+                    //     })
+                    // }
+                    
                     const contentArea = document.getElementById("contentArea");
                     contentArea.innerHTML = "";
                     semesterKeys.forEach(sem => {
                         const section = document.createElement("div");
-                        section.className = `semester-section`;
+                        section.className   = `semester-section`;
                         const moyenneSem    = Object.keys(this.semesters[sem]).length > 0 ? this.moyennePonderee([].concat(...Object.values(this.semesters[sem] || {}))) : " - ";
                         const avgClass      = Object.keys(this.semesters[sem]).length > 0 ? this.getAverageColor(moyenneSem) : "";
                         const unclassified  = this.getUnclassifiedSubjects(sem);
@@ -3314,7 +3336,7 @@
                         <div class="semester-content show${this.selectedSubjectCardsId.length > 0 ? " dragging" : ""}${this.editMode ? " edit" : ""}${fadeIn ? " fade-in" : ""}" id="sem-content-${sem}">
                             <div class="semester-grid">
                                 <div class="modules-section ${this.editMode ? "edit" : ""}" id="modules-section" ${moduleConfig?.__modules__ ? "" : "style=\"display: none\""}>
-                                    ${this.createAllModuleCards(sem, true)}
+                                    ${this.createAllModuleCards(sem, manageIndividualSubjectCardFolding)}
                                 </div>
                                 <div class="unclassified-section" id="unclassified-section" style="height: 100%${unclassified.length > 0 ? `` : `; display: none`}">
                                     <div class="unclassified-title jura">
@@ -3328,8 +3350,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        `;
+                        </div>`;
                         contentArea.appendChild(section);
 
                         this.foldedModuleCardsId.forEach(foldedModuleCardId => {
@@ -3343,12 +3364,12 @@
                         this.attachAllEventListeners();
                     });
 
-                    if (this.viewMode == "compact") {
-                        const unclassifiedSection = document.querySelector(".unclassified-section");
-                        this.releaseElementHeight(unclassifiedSection);
-                        this.foldAllSubjCards();
-                        this.holdElementHeight(unclassifiedSection, 300, {offset: 4});
-                    }
+                    // if (this.viewMode == "compact") {
+                    //     const unclassifiedSection = document.querySelector(".unclassified-section");
+                    //     this.releaseElementHeight(unclassifiedSection);
+                    //     this.foldAllSubjCards();
+                    //     this.holdElementHeight(unclassifiedSection, 300, {offset: 4});
+                    // }
 
                 }
 
@@ -3356,14 +3377,14 @@
 
 
                 // MARK: createModuleCard
-                createAllModuleCards(sem, manageFolding=false) {
+                createAllModuleCards(sem, manageIndividualSubjectCardFolding=true) {
                     const moduleConfig = this.moduleConfig?.[sem] || {};
                     const unclassified  = this.getUnclassifiedSubjects(sem);
 
                     let html =  this.editMode ? this.createDropFieldInsertionField("module", {sem, index:0}) : "";
 
                     moduleConfig?.__modules__?.forEach((moduleName, moduleIndex) => {
-                        html += this.createModuleCard(sem, moduleName, moduleIndex, manageFolding);
+                        html += this.createModuleCard(sem, moduleName, moduleIndex, manageIndividualSubjectCardFolding);
                         html += this.editMode ? this.createDropFieldInsertionField("module", {sem, index:moduleIndex+1}) : "";
                     });
 
@@ -3375,7 +3396,7 @@
 
                     return html;
                 }
-                createModuleCard(sem, moduleName, moduleIndex=-1, manageFolding=false) {
+                createModuleCard(sem, moduleName, moduleIndex=-1, manageIndividualSubjectCardFolding=true) {
                     const moduleGrades = this.calculateModuleGrades(sem, moduleName);
                     const includedGrades = (moduleGrades || []).filter(n => !this.gradeIsDisabled(n));
                     let weight = 0; includedGrades.forEach(grade => {weight += grade.coef/100})
@@ -3390,7 +3411,7 @@
                             ${this.editMode 
                                 ? 
                                 `<div style="display: flex; align-items: center; justify-content: flex-start; width: 42%;">
-                                    <div style="margin-right: 5px; margin-bottom: 3px;">${this.createDraggableIcon("module", {height: 29, targetId: `module-card-${moduleName}-in-semester-${sem}`})}</div>
+                                    <div style="margin-right: 5px; margin-bottom: 3px;">${this.createDraggableIcon("module", {targetId: `module-card-${moduleName}-in-semester-${sem}`})}</div>
                                     <input type="text" class="module-title input any-input" id="module-title-input-${sem}-${moduleName}" value="${moduleName}" data-semester="${sem}" data-module="${moduleName}" draggable="false"/>
                                     <div class="module-title-state">
                                     </div>
@@ -3409,7 +3430,7 @@
                             </div>
                         </div>
                         
-                        <div class="module-card-content ${this.editMode ? "edit-mode": ""}" data-module="${moduleName}">
+                        <div class="module-card-content" data-module="${moduleName}">
                         
                             <div class="module-info">
                                 ${hasDisabled 
@@ -3431,7 +3452,7 @@
                             </div>
 
                             <div class="module-details ${this.editMode ? "edit-mode": ""}${this.viewMode == "detailed" ? " detailed" :  " compact"}" id="module-details-${moduleName}-in-semester${sem}" data-module="${moduleName}">
-                                ${this.createAllSubjCards(sem, moduleName, manageFolding)}
+                                ${this.createAllSubjCards(sem, moduleName, manageIndividualSubjectCardFolding)}
                             </div>
                         </div>
                         
@@ -3454,7 +3475,7 @@
                 * @param {string} moduleName Name of the subject's module
                 * @return {string} The outer HTML of all the subject cards of a module, in a single string
                 */
-                createAllSubjCards(sem, moduleName, manageFolding=false) {
+                createAllSubjCards(sem, moduleName, manageIndividualSubjectCardFolding=true) {
                     const moduleData = this.gradesDatas[sem][moduleName];
                     
                     let html  = this.editMode && moduleName != "__#unclassified#__" && this.moduleConfig[sem]?.[moduleName] != undefined 
@@ -3463,7 +3484,7 @@
                     ;
 
                     Object.values(moduleData.subjects).forEach((_value, _index) => {
-                        html += this.createSubjCard(sem, moduleName, _value.subjName, _index, manageFolding);
+                        html += this.createSubjCard(sem, moduleName, _value.subjName, _index, manageIndividualSubjectCardFolding);
                         html += this.editMode && moduleName != "__#unclassified#__" && this.moduleConfig[sem]?.[moduleName] != undefined 
                             ? this.createDropFieldInsertionField("subject", {sem, moduleName, index:_index+1}) 
                             : ""
@@ -3484,7 +3505,7 @@
                 * @param {number} [index=-1] Default: -1 — Index of the subject in its module, necessary if the subject is classified, useless if the subject is unclassified
                 * @return {string} The outer HTML of the subject card
                 */
-                createSubjCard(sem, moduleName, subject, index=-1, manageFolding=false) {
+                createSubjCard(sem, moduleName, subject, index=-1, manageIndividualSubjectCardFolding=true) {
                     const moduleData            = this.gradesDatas[sem][moduleName];
                     const subjectData           = moduleData.subjects[subject];
                     const subjectGrades         = subjectData.grades;
@@ -3498,14 +3519,14 @@
                     const nbRealGrades          = nbGrades - nbSimGrades;
                     const classified            = moduleName != "__#unclassified#__" && this.moduleConfig[sem]?.[moduleName] != undefined;
                     const subjectCardId         = `subject-card-semester-${sem}-subject-${subject}`;
-                    const detailed              = !this.compactSubjCardsId.includes(subjectCardId);
+                    const detailed              = (this.detailedSubjCardsId.includes(subjectCardId) && manageIndividualSubjectCardFolding) || (this.viewMode == "detailed" && !manageIndividualSubjectCardFolding);
                     const cardIsSelected        = this.selectedSubjectCardsId.includes(`subject-card-semester-${sem}-subject-${subject}`);
-                    const cardClientHeight      = 165.5 + 39.5*nbGrades;
+                    const cardClientHeight      = 166 + 40*nbGrades;
                     
                     let html = `
-                    <div class="subject-card ${classified ? "classified" : "unclassified"} ${detailed && manageFolding ? "detailed" : "compact"} ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" id="${subjectCardId}" ${this.editMode ? `style="cursor: grab; user-select: none;"` : ""} data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}" data-height="${cardClientHeight}">
-                        <div class="subject-card-header ${detailed && manageFolding ? "detailed" : "compact"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`} ${classified ? "classified" : "unclassified"}" ${this.editMode ? `style="cursor: grab;" draggable="true"` : ``} data-module="${moduleName}">
-                            <div class="subject-card-header-left-side ${this.editMode ? "edit" : ""}">
+                    <div class="subject-card ${classified ? "classified" : "unclassified"} ${detailed ? "detailed" : "compact"} ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" id="${subjectCardId}" ${this.editMode ? `style="cursor: grab; user-select: none;${detailed ? ` height: ${cardClientHeight}` : ""}"` : ""} data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}" data-height="${cardClientHeight}">
+                        <div class="subject-card-header ${detailed ? "detailed" : "compact"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`} ${classified ? "classified" : "unclassified"}" ${this.editMode ? `style="cursor: grab;" draggable="true"` : ``} data-module="${moduleName}">
+                            <div class="subject-card-header-left-side">
                                 ${this.editMode
                                     ? `<div style="margin: 0px 5px; margin-bottom: 3px;">
                                     ${cardIsSelected
@@ -3514,48 +3535,50 @@
                                     }</div>`
                                     : ""
                                 }
-                                <div>
-                                    ${isCustom 
-                                        ? `<input type="text" class="subject-name input any-input" id="subject-name-input-semester-${sem}-subject-${subject}" value="${subject}"/>`
-                                        : `<div class="subject-name">${subject}</div>`
-                                    }
-                                    <div style="font-size: 13px; color: #666; text-wrap-mode: nowrap;">
-                                        ${classified 
-                                            ? ` ${this.lang == "fr" 
-                                                    ? "Poids dans module: " 
-                                                    : "Weight in module: "
-                                                }
-                                                ${this.editMode 
-                                                    ? `<span><input class="subject-coef-input-box any-input" id="subject-coef-input-box-semester-${sem}-subject-${subject}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" type="number" placeholder="%" step="5" min="0" max="100" value="${pct}"/>%</span>`
-                                                    : `<span style="font-weight: 800">${pct}%</span>`
-                                                }
-                                            ` 
-                                            : ""
+                                <div  style="display: flex; justify-content: space-between; align-items: center; width: 80%;">
+                                    <div class="subject-card-header-left-side-text ${this.editMode ? "edit" : ""}">
+                                        ${isCustom 
+                                            ? `<input type="text" class="subject-name input any-input" id="subject-name-input-semester-${sem}-subject-${subject}" value="${subject}"/>`
+                                            : `<div class="subject-name">${subject}</div>`
                                         }
-                                        <span class="subject-card-header-grades-details" ${!(detailed && manageFolding) ? "style=\"display: none;\"" : ""} >
-                                            ${classified ? "• " : ""}
-                                            ${nbGrades===0 
-                                                ? `<span>${this.lang == "fr" ? "aucune note publiée" : "no published grade"}</span>` 
-                                                : `<span>${nbGrades} ${this.lang == "fr" ? `note${nbGrades>1?"s":""} au total` : `grade${nbGrades>1?"s":""} total</span>`}`
+                                        <div style="font-size: 13px; color: #666; text-wrap-mode: nowrap;">
+                                            ${classified 
+                                                ? ` ${this.lang == "fr" 
+                                                        ? "Poids dans module: " 
+                                                        : "Weight in module: "
+                                                    }
+                                                    ${this.editMode 
+                                                        ? `<span><input class="subject-coef-input-box any-input" id="subject-coef-input-box-semester-${sem}-subject-${subject}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" type="number" placeholder="%" step="5" min="0" max="100" value="${pct}"/>%</span>`
+                                                        : `<span style="font-weight: 800">${pct}%</span>`
+                                                    }
+                                                ` 
+                                                : ""
                                             }
-                                            ${nbGrades>0 
-                                                ? ` • <span ${includedGradesLength<nbGrades ? `style="color: #df0000"` : ``}>
-                                                    <span style="font-weight: 700; ">${includedGradesLength}/${nbGrades}</span> 
-                                                    ${this.lang == "fr" ? `note${includedGradesLength>1?"s":""} activée${includedGradesLength>1?"s":""}` : `grade${includedGradesLength>1?"s":""} enabled`}${includedGradesLength<nbGrades ? `!` : ``}
-                                                </span>` 
-                                                : ``
-                                            }
-                                            ${nbSimGrades>0 
-                                                ? `<span> • ${nbSimGrades} ${this.lang == "fr" ? `note${nbSimGrades>1?"s":""} simulée${nbSimGrades>1?"s":""}` : `simulated grade${nbSimGrades>1?"s":""}</span>`}`
-                                                : ``
-                                            }
-                                        </span>
+                                            <span class="subject-card-header-grades-details" ${!detailed ? "style=\"display: none;\"" : ""} >
+                                                ${classified ? "• " : ""}
+                                                ${nbGrades===0 
+                                                    ? `<span>${this.lang == "fr" ? "aucune note publiée" : "no published grade"}</span>` 
+                                                    : `<span>${nbGrades} ${this.lang == "fr" ? `note${nbGrades>1?"s":""} au total` : `grade${nbGrades>1?"s":""} total</span>`}`
+                                                }
+                                                ${nbGrades>0 
+                                                    ? ` • <span ${includedGradesLength<nbGrades ? `style="color: #df0000"` : ``}>
+                                                        <span style="font-weight: 700; ">${includedGradesLength}/${nbGrades}</span> 
+                                                        ${this.lang == "fr" ? `note${includedGradesLength>1?"s":""} activée${includedGradesLength>1?"s":""}` : `grade${includedGradesLength>1?"s":""} enabled`}${includedGradesLength<nbGrades ? `!` : ``}
+                                                    </span>` 
+                                                    : ``
+                                                }
+                                                ${nbSimGrades>0 
+                                                    ? `<span> • ${nbSimGrades} ${this.lang == "fr" ? `note${nbSimGrades>1?"s":""} simulée${nbSimGrades>1?"s":""}` : `simulated grade${nbSimGrades>1?"s":""}</span>`}`
+                                                    : ``
+                                                }
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="subject-total-coef-div" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}">
+                                        <div class="subject-total-coef-value" ${this.settings.totalCoefValuesEnabled.value     ? "" : "style=\"display: none\""}></div>
+                                        <div class="subject-total-coef-debug" ${this.settings.totalCoefDebugTextsEnabled.value ? "" : "style=\"display: none\""}>${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}</div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="subject-total-coef-div" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}">
-                                <div class="subject-total-coef-value" ${this.settings.totalCoefValuesEnabled.value     ? "" : "style=\"display: none\""}></div>
-                                <div class="subject-total-coef-debug" ${this.settings.totalCoefDebugTextsEnabled.value ? "" : "style=\"display: none\""}>${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}</div>
                             </div>
                             <div class="subject-card-header-right-side">
                                 <div class="subj-moyenne ${subjAvg == " - " ? '' : `${subjAvg>=10 ? 'good' : 'bad'}`}" style="display: flex; justify-content: flex-end; width: 80px; padding-right: 20px; font-size: 20px">
@@ -3605,7 +3628,7 @@
 
                         html += `
                             <tr class="grade-row ${index == nbGrades-1 ? `last` : ``} ${gradeIsSim ? `sim` : ``}" data-sim="${gradeIsSim}">
-                                <td class="grades-table-type" style="display: flex; align-items: center; gap: 6px; width: auto">
+                                <td class="grades-table-type" style="display: flex; align-items: stretch; gap: 6px">
                                     <input type="checkbox" class="grade-checkbox any-input" id="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}" data-semester="${sem}" data-subj="${subject}" data-module="${moduleName||''}" data-prof="${grade.prof}" data-gradeid="${grade.type + " " + grade.date + " " + grade.prof}" ${gradeIsSim ? `data-simtimestamp="${grade.id}"` : ""} ${!this.gradeIsDisabled(grade) ? "checked" : ""}></input>
                                     ${gradeIsSim
                                         ? `<input class="grade-type simulated-grade-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="simulated-grade-input-type-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" data-modifType="type" data-simid="${nbSimGrades-1}" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" value="${grade.type}"/>` 
@@ -3693,11 +3716,35 @@
 
             //#region -Icons
 
-                createDraggableIcon(source="subject", {height=25, targetId="none"}={height: 25, targetId:"none"}) {
-                    return `<div class="drag-icon ${source}" data-targetid="${targetId}" style="height:${height}px; width:${height}px; font-size: ${Math.floor(height*0.75)}px" draggable="false">☰</div>`
+                createDraggableIcon(source="subject", {size=undefined, width=undefined, height=undefined, fontSize=undefined, targetId="none"}={targetId:"none"}) {
+                    return `
+                        <div 
+                            class="drag-icon ${source}" 
+                            data-targetid="${targetId}" 
+                            style="${height || size ? `height:${height || size}px;` : ""} ${width || size ? `width:${width || size}px;` : ""} ${fontSize ? `font-size: ${fontSize || Math.floor((width || size)*0.75)}px` : ""}" 
+                            draggable="false"
+                        >☰</div>
+                    `;
                 }
-                createExternalLinkSymbol(color="white", size=16, margin=0) {
-                    return `<svg xmlns="http://www.w3.org/2000/svg" style="width: ${size}px; height: ${size}px; margin: ${(margin instanceof Array ? margin : [margin]).map(value => {if (value instanceof Number || !isNaN(Number(value))) {return `${value}px`}}).join(" ")};" fill="none" stroke="${color}" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><path style="d:path('M15 3h6v6m-11 5L21 3m-3 10v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6')"/></svg>`;
+                createExternalLinkSymbol({fillColor="white", strokeColor="none", size=15, margin=0}) {
+                    return `
+                    <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        style="
+                            width: ${size}px; 
+                            height: ${size}px; 
+                            margin: ${(margin instanceof Array ? margin : [margin]).map(value => {if (value instanceof Number || !isNaN(Number(value))) {return `${value}px`}}).join(" ")};
+                            fill: ${fillColor};
+                            stroke: ${strokeColor};
+                            stroke-linecap: round;
+                            stroke-linejoin: round; 
+                            stroke-width: 2;
+                        " 
+                        viewBox="0 0 513 513"
+                    >
+                        <path style="d:path('M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z')""/>
+                    </svg>`;
+                    // viewBox="0 0 24 24" <path style="d:path('M15 3h6v6m-11 5L21 3m-3 10v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6')"/>
                 }
                 appendCloseModalIcon(container,
                     //#region
@@ -4245,7 +4292,7 @@
                                 localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
                                 document.getElementById('fr-lang-btn').classList.remove('active')
                                 document.getElementById('en-lang-btn').classList.add('active')
-                                this.generateContent(false);
+                                this.generateContent({fadeIn: false});
                             }
                         };
 
@@ -4256,7 +4303,7 @@
                                 localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
                                 document.getElementById('fr-lang-btn').classList.add('active')
                                 document.getElementById('en-lang-btn').classList.remove('active')
-                                this.generateContent(false);
+                                this.generateContent({fadeIn: false});
                             }
                         };
                     }
@@ -4298,7 +4345,7 @@
                         document.getElementById('editModeBtn').onclick = () => {
                             this.editMode = !this.editMode;
                             localStorage.setItem("ECAM_DASHBOARD_DEFAULT_EDIT_MODE", this.editMode);
-                            this.generateContent();
+                            this.generateContent({fadeIn: true});
                         };
                     }
 
@@ -4435,7 +4482,7 @@
                                     this.currentSemester = e.target.dataset.semester;
                                     document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
                                     document.getElementById('filter-tab-semester-'+this.currentSemester).classList.add('active');
-                                    this.generateContent(false);
+                                    this.generateContent({fadeIn: false});
                                     this.saveSemesterFilter();
                                 }
 
@@ -4476,7 +4523,7 @@
                                     this.saveSemesterFilter();
 
                                     this.removeCardFromSelection();
-                                    this.generateContent();
+                                    this.generateContent({fadeIn: true});
                                 }
                             };
                         });
@@ -4554,10 +4601,16 @@
 
                     attachModuleInfoClearBtns() {
                         document.querySelectorAll(".module-info-clear.sim").     forEach(simClear => {
-                            simClear.onclick = () => {this.clearSimGrades(    simClear.dataset.semester, simClear.dataset.module);this.generateContent();}
+                            simClear.onclick = () => {
+                                this.clearSimGrades(simClear.dataset.semester, simClear.dataset.module);
+                                this.generateContent({fadeIn: true});
+                            }
                         });
                         document.querySelectorAll(".module-info-clear.disabled").forEach(disClear => {
-                            disClear.onclick = () => {this.clearIgnoredGradesForModule(disClear.dataset.semester, disClear.dataset.module);this.generateContent();}
+                            disClear.onclick = () => {
+                                this.clearIgnoredGradesForModule(disClear.dataset.semester, disClear.dataset.module);
+                                this.generateContent({fadeIn: true});
+                            }
                         });
                     }
 
@@ -4579,7 +4632,7 @@
                 //#region Subject cards listeners
 
                     attachAllSubjectCardRelatedEvenListenersForEverySubjectCard(container=document.body) {
-                        this.attachOnDragEventListeners(container);
+                        if (this.editMode) {this.attachOnDragEventListeners(container);}
 
                         this.attachAllDragOrTickIconsListener(container);
 
@@ -4620,14 +4673,17 @@
                         })
                     }
                     attachDragOrTickIconListener(card) {
-                        if (card.querySelector(".drag-icon")) {
-                            const dragIcon = card.querySelector(".drag-icon");
-                            dragIcon.onclick = (e) => { this.dragIconOnClickEvent(e, dragIcon) };
-                        }
-                        else 
-                        if (card.querySelector(".tick-icon")) {
-                            const tick = card.querySelector(".tick-icon");
-                            tick.onclick = (e) => { this.tickIconOnClickEvent(e, tick) };
+                        const type = card?.classList?.contains("subject-card") ? "subject" : (card?.classList?.contains("module-card") ?  "module" : undefined) ;
+                        if (type) {
+                            if (card.querySelector(`.drag-icon.${type}`)) {
+                                const dragIcon = card.querySelector(`.drag-icon.${type}`);
+                                dragIcon.onclick = (e) => { this.dragIconOnClickEvent(e, dragIcon) };
+                            }
+                            else 
+                            if (card.querySelector(`.tick-icon.${type}`)) {
+                                const tick = card.querySelector(`.tick-icon.${type}`);
+                                tick.onclick = (e) => { this.tickIconOnClickEvent(e, tick) };
+                            }
                         }
                     }
 
@@ -4682,7 +4738,6 @@
                                 this.getGradesDatas();
                                 document.querySelector(".average-number").innerHTML = this.moyennePonderee(this.grades);
                                 // this.getGradesDatas({semX, module:undefined, subj});
-                                // this.generateContent(false);
                                 this.regenAveragesAndTotalCoefs(semX, module, subj)
                             }
                         });
@@ -5027,11 +5082,11 @@
                             const moduleCard    = e.target.closest('.module-card');
                             const moduleDetails = moduleCard.querySelector(".module-details");
                             
-                            moduleDetails.querySelectorAll(".subject-card").forEach(subjCard => { 
-                                if (this.selectedSubjectCardsId.includes(subjCard.id)) {
-                                    this.changeDragIconToTickIcon(subjCard);
-                                } 
-                            })
+                            // moduleDetails.querySelectorAll(".subject-card").forEach(subjCard => { 
+                            //     if (this.selectedSubjectCardsId.includes(subjCard.id)) {
+                            //         this.changeDragIconToTickIcon(subjCard);
+                            //     } 
+                            // })
 
                             this.toggleFoldModuleCard(moduleCard);
                             
@@ -5113,7 +5168,6 @@
                                 if (!bypassFoldedModuleCardsId) {
                                     this.foldedModuleCardsId.push(moduleCard.id);
                                 }
-                                this.foldedModuleCardsClientHeight.push(moduleCard.clientHeight);
                                 
                                 toggle.classList.remove("open");
                                 
@@ -5124,11 +5178,11 @@
                                     this.detachInsertFieldHitboxEventListeners(subjInsFieldHitbox);
                                 })
 
-                                moduleCard.style.height = `${this.foldedModuleCardsClientHeight.at(-1)+6}px`;
+                                moduleCard.style.height = Array.from(moduleCard.children).reduce((total, child) => {return parseInt(total?.offsetHeight || total) + parseInt(child.offsetHeight)}) + "px";
                                 moduleHeader.classList.add("fold");
                                 moduleCard.classList.add("fold");
                                 setTimeout(() => {
-                                    moduleCard.style.height = "82px";
+                                    moduleCard.style.height = "78px";
                                 }, 1)
                             }
 
@@ -5234,7 +5288,7 @@
                                 
                                 if (moduleCard) {
                                     setTimeout(() => {
-                                        moduleCard.style.height = `${this.foldedModuleCardsClientHeight.at(this.foldedModuleCardsId.indexOf(moduleCard.id))+6}px`;
+                                        moduleCard.style.height = Array.from(moduleCard.children).reduce((total, child) => {return parseInt(total?.offsetHeight || total) + parseInt(child.offsetHeight)}) + "px";
                                         moduleCard.classList.remove("fold");
                                         this.timeouts.moduleCardUnfoldTimeout = setTimeout(() => {moduleCard.style.height = ""}, 300)
                                     }, 1)
@@ -5245,9 +5299,6 @@
                                         this.foldedModuleCardsId.splice(this.foldedModuleCardsId.indexOf(moduleCard.id), 1);
                                     }, 2)
                                 }
-                                setTimeout(() => {
-                                    this.foldedModuleCardsClientHeight.splice(this.foldedModuleCardsId.indexOf(moduleCard.id), 1);
-                                }, 2)
                             }
                         }
                     }
@@ -5285,7 +5336,7 @@
 
                         this.saveConfig()
                         this.getGradesDatas();
-                        this.generateContent(false);
+                        this.generateContent({fadeIn: false});
 
                         this.foldedModuleCardsId.forEach(foldedModuleCardId => {
                             if (foldedModuleCardId == `module-card-${oldModuleName}-in-semester-${sem}`) {
@@ -5335,7 +5386,7 @@
                         this.clearSimGrades(sem, moduleName);
                         this.saveConfig();
                         this.getGradesDatas();
-                        this.generateContent();
+                        this.generateContent({fadeIn: true});
                     }
                     
                 //#endregion
@@ -5456,6 +5507,7 @@
                             // this.releaseElementHeight(subjCard,1)
                             
                             this.compactSubjCardsId.push(subjCard.id);
+                            this.detailedSubjCardsId.splice(this.detailedSubjCardsId.indexOf(subjCard.id), 1);
                         }
                     }
 
@@ -5490,6 +5542,7 @@
                             // this.releaseElementHeight(subjCard,100)
 
                             this.compactSubjCardsId.splice(this.compactSubjCardsId.indexOf(subjCard.id), 1);
+                            this.detailedSubjCardsId.push(subjCard.id);
                         }
                     }
 
@@ -5528,7 +5581,7 @@
                             const semData       = this.moduleConfig[sem];
                             const moduleData    = semData[moduleName];
                             
-                            const moduleIndex   = moduleData.__modules__.indexOf(moduleName);
+                            const moduleIndex   = semData.__modules__.indexOf(moduleName);
                             const subjectIndex  = moduleData.subjects.indexOf(subject);
     
                             moduleData.subjects.splice(subjectIndex, 1);
@@ -5543,7 +5596,7 @@
                         
                         this.saveConfig();
                         this.getGradesDatas();
-                        this.generateContent();
+                        this.generateContent({fadeIn: true});
                     }
 
                     subjectCardNameInputAction(target) {
@@ -5669,7 +5722,7 @@
                         });
                         this.saveSim();
                         this.getGradesDatas();
-                        this.generateContent();
+                        this.generateContent({fadeIn: true});
                     }
 
                     subjectCardSimDelBtnAction(target) {
@@ -5682,7 +5735,7 @@
                         this.deleteUnusedSimPath(false, semX, moduleName, subj);
                         this.saveSim();
                         this.getGradesDatas();
-                        this.generateContent(false);
+                        this.generateContent({fadeIn: false});
                     }
 
                     subjectCardSimInputEditAction(target) {
@@ -5979,6 +6032,7 @@
                         draggedCardIsSelected = true;
                     }
 
+
                     if (type == "subject") {
 
                         (draggedCardIsSelected ? this.selectedSubjectCardsId : [card.id]).forEach(subjectCardId => {
@@ -5988,7 +6042,7 @@
                             subjectCard.querySelector(".subject-total-coef-div").style.opacity = "0"; 
                             
 
-                            if (!this.compactSubjCardsId.includes(subjectCardId)) {
+                            if (!this.compactSubjCardsId.includes(subjectCardId) || this.detailedSubjCardsId.includes(subjectCardId)) {
                                 this.foldSubjCard(subjectCard);
                             }
 
@@ -6081,13 +6135,15 @@
 
                         (draggedCardIsSelected ? this.selectedSubjectCardsId : [card.id]).forEach(subjectCardId => {
                             const subjectCard = document.getElementById(subjectCardId);
-                            subjectCard.style.width = "";
-                        
-                            subjectCard.querySelector(".subject-total-coef-div").style.opacity = ""; 
+                            if (subjectCard) {
+                                subjectCard.style.width = "";
                             
-
-                            if (!this.compactSubjCardsId.includes(subjectCardId)) {
-                                this.unfoldSubjCard(subjectCard);
+                                subjectCard.querySelector(".subject-total-coef-div").style.opacity = ""; 
+                                
+    
+                                if (!this.compactSubjCardsId.includes(subjectCardId) || this.detailedSubjCardsId.includes(subjectCardId)) {
+                                    this.unfoldSubjCard(subjectCard);
+                                }
                             }
 
                         })
@@ -6218,6 +6274,8 @@
                             const correspNotifDiv = document.querySelector(`.selected-card-notif-div[data-targetid="${selectedCardId}"]`);
                             correspNotifDiv.classList.remove("on");
                             setTimeout(() => {correspNotifDiv.remove();}, 300);
+
+                            this.changeTickIconToDragIcon(document.getElementById(selectedCardId));
                         })
 
                         
@@ -6266,7 +6324,7 @@
                             if (this.selectedModuleCardsId.length == 0)  this.draggedElementOnDragEndEvent(null, card); 
                         }
 
-                        this.changeTickIconToDragIcon(card)
+                        this.changeTickIconToDragIcon(card);
                     }
                     
                     
@@ -6295,31 +6353,33 @@
 
             //#region -_ Drag/Tick icon _______________________
 
-                changeDragIconToTickIcon(subjectCard) {
-                    const dragIcon = subjectCard.querySelector(".drag-icon");
+                changeDragIconToTickIcon(card) {
+                    const dragIcon = card.querySelector(".drag-icon");
                     if (dragIcon) {
-                        dragIcon.outerHTML = `<div class="tick-icon subject" data-targetid="${subjectCard.id}" data-semester="${subjectCard.dataset.sem}" data-module="${subjectCard.dataset.moduleName}" data-subject="${subjectCard.dataset.subject}">✔</div>`;
-                        const tickIcon = subjectCard.querySelector(".tick-icon");
-                        tickIcon.onclick = (e) => {this.tickIconOnClickEvent(e, tickIcon)};
+                        const type = dragIcon.classList.contains("subject") ? "subject" : "module";
+                        dragIcon.outerHTML = `<div class="tick-icon ${type}" data-targetid="${card.id}" data-semester="${card.dataset.sem}" data-module="${card.dataset.moduleName}" data-subject="${card.dataset.subject}">✔</div>`;
+                        
+                        this.attachDragOrTickIconListener(card);
                     }
                 }
 
-                changeTickIconToDragIcon(subjectCard) {
-                    const tickIcon = subjectCard.querySelector(".tick-icon");
+                changeTickIconToDragIcon(card) {
+                    const tickIcon = card.querySelector(".tick-icon");
                     if (tickIcon) {
-                        tickIcon.outerHTML = this.createDraggableIcon(`subject`, {targetId: subjectCard.id});
-                        const dragIcon = subjectCard.querySelector(".drag-icon");
-                        dragIcon.onclick = (e) => {this.dragIconOnClickEvent(e, dragIcon)};
+                        const type = tickIcon.classList.contains("subject") ? "subject" : "module";
+                        tickIcon.outerHTML = this.createDraggableIcon(type, {targetId: card.id});
+
+                        this.attachDragOrTickIconListener(card);
                     }
                 }
 
-                switchBetweenDragAndTickIcon(subjectCard) {
-                    const dragIcon = subjectCard.querySelector(".drag-icon");
+                switchBetweenDragAndTickIcon(card) {
+                    const dragIcon = card.querySelector(".drag-icon");
                     if (dragIcon) {
-                        this.changeDragIconToTickIcon(subjectCard);
+                        this.changeDragIconToTickIcon(card);
                     }
                     else {
-                        this.changeTickIconToDragIcon(subjectCard);
+                        this.changeTickIconToDragIcon(card);
                     }
                 }
 
@@ -6387,9 +6447,7 @@
                     dropFieldRemoveHitbox.classList.add("show");
                     document.querySelector(".semester-content").classList.add("dragging");
 
-                    dragIcon.outerHTML = `<div class="tick-icon subject" data-targetid="${card.id}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}">✔</div>`;
-                    const tick = card.querySelector(".tick-icon");
-                    tick.onclick = (e) => {this.tickIconOnClickEvent(e, tick)};
+                    this.changeDragIconToTickIcon(card);
                 }
 
 
@@ -6966,7 +7024,15 @@
                     importMenu.style.display = "";
                     setTimeout(() => {importMenu.classList.add("show")}, 10)
                     importFile.onclick   = () => this.importData();
-                    importClear.onclick  = () => {this.moduleConfig = {}; this.compactSubjCardsId = []; this.foldedModuleCardsId = []; this.foldedModuleCardsClientHeight = []; this.getGradesDatas(); this.saveConfig(); this.generateContent(true)};
+                    importClear.onclick  = () => {
+                        this.moduleConfig = {}; 
+                        this.compactSubjCardsId = []; 
+                        this.detailedSubjCardsId = [];
+                        this.foldedModuleCardsId = []; 
+                        this.getGradesDatas(); 
+                        this.saveConfig(); 
+                        this.generateContent({fadeIn: false});
+                    };
                     importOnline.onclick = () => {
                         if (this.onlineConfigs)
                         this.getConfigsFromRepoAPI(this.repoContentsAPI)
@@ -7001,7 +7067,7 @@
                             : "Tip: Choosing a configuration will erase all traces of pre-existing configuration of the corresponding year, but not of the other years"
                         }</div>
                         <div class="online-cfg-picker-menu-body">
-                            <div class="online-cfg-picker-menu-body-container">
+                            <div class="online-cfg-picker-menu-body-content">
                                 ${sectionsHTML}
                                 ${yearsHTML}
                                 ${promsHTML}
@@ -7225,7 +7291,7 @@
                                 this.timeouts.closePickerMenu = setTimeout(() => {
                                     this.removeCardFromSelection(); 
                                     this.getGradesDatas();
-                                    this.generateContent(); 
+                                    this.generateContent({fadeIn: false}); 
                                     this.scrollToClientHighestElem("", {id: "dash-header", margin: 10, smooth: true});
                                 }, 300); 
                             } catch (e) {}
@@ -7367,7 +7433,7 @@
                         }
                         
                         this.scrollToClientHighestElem();
-                        this.generateContent(false);
+                        this.generateContent({fadeIn: false});
                     }
                     else if (this.keyInputMatch(e, "F", shiftRequired)) {
                         const className = "module-header", timeout = 210, highestElemInPageHandleType = "last above", smooth = true;
@@ -7402,7 +7468,7 @@
 
                         this.saveSemesterFilter();
                         this.removeCardFromSelection();
-                        this.generateContent();
+                        this.generateContent({fadeIn: false});
                     }
                 };
             }
@@ -7444,7 +7510,7 @@
 
 
 
-    // MARK: _________________________________________
+    // MARK: =========================
 
 
 
@@ -7476,7 +7542,7 @@
         else if (error == "servers are down") {
             document.body.style.background = "#a1a1a1";
             
-            new ECAMDashboard(error);
+            ecamDash = new ECAMDashboard(error);
         }
         else {
             console.log("Looking somewhere else than in the grades: only showing the \"Notes\" button in the dockbar");
