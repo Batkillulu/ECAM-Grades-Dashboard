@@ -100,23 +100,23 @@ You can bring subjects together in a module! Start by checking if a module confi
 If the config you're searching for doesn't exist in this menu, you can easily create your own: in the yellow "Subjects not classified in a module", you will find all the ***subject cards*** that aren't in a module. Press `Shift+E` to turn on the edit mode.
 
 From here, multiple things can be done:
+***
 ### Drag & Drop method
 Start ***dragging*** the ***header*** of a ***subject/module card***, and ***fields*** will appear on both sides of the screen: one to remove a ***card*** from its module, one to add a ***card*** to a new module.
 
 #### ***Subject cards***
-***
 - Drop the ***subject card*** into either of these ***fields*** to apply their respective actions on the said ***subject card***.
 - Dropping a ***subject card*** in a ***module insertion field*** will insert the ***subject card*** in a new module that will be positioned at the place of the ***module insertion field***. These fields appear around every ***module card***.
 - Dropping a ***subject card*** in a ***subject insertion field*** will reorder the ***subject card*** at the place of the ***subject insertion field***. These fields appear around every ***subject card***. Use this to re-order your subjects in their module to your liking!
 
 #### ***Module cards***
-***
 - Drop the ***module card*** into either of these ***fields*** to apply their respective actions on the said ***module card***.
 - Dropping a ***module card*** in a ***module insertion field*** will insert the ***module card*** at the place of the ***module insertion field***. These fields appear around every ***module card***.
 - Dropping a ***module card*** in a ***subject insertion field*** will insert the ***module cards***'s subjects contained in the dropped ***module card*** at the place of the ***subject insertion field***, in the same order previously displayed. These fields appear around every ***subject card***.
 
 I like how smooth and organic this feels, that's why I made it :D though drag & drop sadly doesn't work on mobile... But don't worry, the next method does!
 
+***
 ### Selection method
 You can select a ***subject/module card*** by clicking on the `☰` icon. A `✔` will be shown instead. Clicking on `✔` will remove the ***card*** from the selection. 
 Upon selecting a ***card***, a notification will appear in the top left corner of you screen. The notification displays an arrow (clicking on the arrow will have for effect to scroll to the ***subject/module card*** corresponding to this notification), the name of the selected ***subject/module card***, and a button to close the notification (this has for effect to unselect its corresponding ***subject/module card***). Note that you CAN'T select ***module*** **AND** ***subject cards*** at the same time.
