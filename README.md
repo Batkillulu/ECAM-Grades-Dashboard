@@ -9,8 +9,8 @@ All trademarks and logos belong to their respective owners.
 
 
 # Table of content
-#### [○ Installation guide ⤦](#installation-guide)
-#### [○ HOW TO USE: Quick start ⤦](#how-to-use-quick-start)
+### [○ Installation guide ⤦](#installation-guide)
+### [○ HOW TO USE: Quick start ⤦](#how-to-use-quick-start)
 
 
 
