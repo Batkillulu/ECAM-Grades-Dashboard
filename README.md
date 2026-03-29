@@ -38,6 +38,10 @@ This will redirect you to a Tampermonkey page that will ask you to install the s
 Your ECAM Grades Dashboard is fully operational! If you're lucky enough, you may already have configurations prepared, you can go and check on `Import Config`, `Get a configuration online` and browse through the menu. If you don't find it and you're feeling generous, please share with me the details of your modules (specifically what subjects are in what modules, as well as their coefficients in their respective modules, you should have received a mail from ECAM with all the details somewhere, you can just provide me with this) at the following mail address baptiste.jacquin@ecam.fr, or in the message box on which will be redirected when clicking on the flag button, `Share a config`. You can also do the 2nd option if you already configured a semester, and want to share it, after pressing `Export config`. Thank you!
 
 
+### Step 5?
+If you want to take the time to have a look at all the features of this dashboard, [click here to read the following-up How-to-use section](#how-to-use-quick-start)
+
+
 
 ## ———— IOS ————
 
@@ -59,6 +63,8 @@ Open the script's page by clicking on the header of this step, select the whole 
 ### — Step6: Enjoy! [Go to ECAM Grades! ↗](https://espace.ecam.fr/group/education/notes)
 Your ECAM Grades Dashboard is fully operational! If you're lucky enough, you may already have configurations prepared, you can go and check on `Import Config`, `Get a configuration online` and browse through the menu. If you don't find it and you're feeling generous, please share with me the details of your modules (specifically what subjects are in what modules, as well as their coefficients in their respective modules, you should have received a mail from ECAM with all the details somewhere, you can just provide me with this) at the following mail address baptiste.jacquin@ecam.fr, or in the message box on which will be redirected when clicking on the flag button, `Share a config`. You can also do the 2nd option if you already configured a semester, and want to share it, after pressing `Export config`. Thank you!
 
+### Step 5?
+If you want to take the time to have a look at all the features of this dashboard, check the section just below to quickly learn about what the dashboard does.
 
 
 
