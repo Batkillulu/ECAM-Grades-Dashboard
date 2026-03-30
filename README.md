@@ -1,4 +1,4 @@
-# ECAM Grades Dashboard ( [*quick install userscript*](https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/ECAM%20Grades%20Dashboard.user.js) )
+# ECAM Grades Dashboard ( [*quick update userscript*](https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/ECAM%20Grades%20Dashboard.user.js) )
 Browser userscript that enhances the ECAM intranet with a clean, real-time grades dashboard.
 
 Free for individual student use.  
