@@ -5,7 +5,7 @@
 
 
 
-## v2.4.1
+## What's new in v2.4.1 ?
 ### Features
 - New setting: Scroll Helpers (enabled by default): some actions change the vertical size of the page (switching detailed/compact view mode, switching edit mode...). A scroll occurs to make sure the important elements (module/subject card, for instance) remain on screen, to follow this change of vertical size. You may not like being forced to scroll, I can understand, so I leave you the choice to turn it off. Though a few scroll helpers bypass this setting, but those are purely esthetic scrolls
 
@@ -25,7 +25,7 @@
 
 
 
-## v2.4.0
+## What's new in v2.4.0 ?
 ### Features
 - Added subject card deletion buttons (you don't HAVE to drag and drop them in the "Remove from module" drop field anymore). All selected subject cards are deleted along with the subject card whose deletion button was pressed, if the said subject card is selected
 
@@ -77,7 +77,7 @@
 
 
 # PATCH NOTES v2.3
-## v2.3.0
+## What's new in v2.3.0 ?
 ### Features
 - Offline/Backup Mode! You can now access to the dashboard even if the servers are down! No magic behind it, you need to have launched the dashboard once before being in offline mode for your grades to appear, since the dashboard saves them to your browser's cache.
 
