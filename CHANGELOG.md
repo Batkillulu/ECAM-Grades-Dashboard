@@ -1,4 +1,30 @@
 # PATCH NOTES v2.4
+
+
+
+
+
+
+## v2.4.1
+### Features
+- New setting: Scroll Helpers (enabled by default): some actions change the vertical size of the page (switching detailed/compact view mode, switching edit mode...). A scroll occurs to make sure the important elements (module/subject card, for instance) remain on screen, to follow this change of vertical size. You may not like being forced to scroll, I can understand, so I leave you the choice to turn it off. Though a few scroll helpers bypass this setting, but those are purely esthetic scrolls
+
+### Improvements
+- Slight improvement for folded module cards
+
+- Hiding total coefficients for BOTH module and subject cards when they are being dragged
+
+### Fixes
+- Fixed problem with alone subjects when dragged in the addition drop field getting unclassified unintendedly
+
+- Fixed the automatic scroll to the dash header when importing a config (it wasn't selecting the dash header and was using a fallback instead)
+- Fixed the side drop fields not removing their hover attribute when dropping a card inside (the next time a card was dragged, the said fields kept having their hover attribute)
+
+
+
+
+
+
 ## v2.4.0
 ### Features
 - Added subject card deletion buttons (you don't HAVE to drag and drop them in the "Remove from module" drop field anymore). All selected subject cards are deleted along with the subject card whose deletion button was pressed, if the said subject card is selected
@@ -31,6 +57,24 @@
 - fixed the drag icon onclick event so that the insertion fields display the right text cues when a selection is initiated/stopped
 - fixed the online config validity timeout that wasn't working
 - fixed the semester content not retrieving its "dragging" display state after a content refresh
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # PATCH NOTES v2.3
 ## v2.3.0

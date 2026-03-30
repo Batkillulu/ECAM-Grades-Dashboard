@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.4.0
+// @version      2.4.1
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/*
@@ -120,7 +120,7 @@ ecamDash = undefined;
                 .offline-mode-subtitle { display: flex; justify-content: center; align-items: center; text-align: center; font-size: 17px; margin-bottom: 30px; opacity: 0; transition: all 1s ease; }
                 .offline-mode-subtitle.show { opacity: 1; }
 
-                .dash-header { display: flex; justify-content: space-between; align-items: center; padding: 30px 40px; margin-bottom: 15px; width: 100%; background: linear-gradient(135deg, #5b62bf 0%, #2A2F72 100%); color: white; border-radius: 20px; box-shadow: 3px 5px 5px 0px #00000042; }
+                #dash-header { display: flex; justify-content: space-between; align-items: center; padding: 30px 40px; margin-bottom: 15px; width: 100%; background: linear-gradient(135deg, #5b62bf 0%, #2A2F72 100%); color: white; border-radius: 20px; box-shadow: 3px 5px 5px 0px #00000042; }
                 .dash-title { display: flex; justify-content: center; align-items: center; gap: 5px; font-size: 28px; font-weight: 700; margin: 0; }
                 .dash-title-text  {  }
                 .patch-notes-link { display: flex; justify-content: center; align-items: center; gap: 5px; cursor: pointer; color: inherit; }
@@ -681,8 +681,11 @@ ecamDash = undefined;
                 .module-header.unknown          { border-color: #6d6d6dff; background: linear-gradient(300deg, #acacacff 30%, transparent); }
                 .module-header:hover            { filter: brightness(calc(0.01 * 105)); opacity: 90%; }
                 .module-delete-btn                  { border-radius: 14px; background: transparent; margin: 0; text-transform: none; -webkit-appearance: button; font: 1em Arial,Helvetica,Verdana,sans-serif; width: auto; padding: 5px; overflow: visible; cursor: pointer; color: #34404F; text-shadow: none; font-weight: normal; border: 3px solid; border-color: white; transition: all 0.2s ease; } 
+
+                .module-header-left-side        { display: flex; align-items: center; justify-content: flex-start; width: 70%; }
                 .module-title                    { font-size: 20px; font-weight: 800; color: #1a1a1a; width:42%; margin-bottom: 2px; }
                 .module-title.input              { font-size: 20px; font-weight: 800; color: #1a1a1a; width:90%; border-radius: 12px; padding-left: 10px; }
+
 
                 .module-subject-total-coef-div   { display: flex; flex-direction: column; text-align: left; width:47%; gap:4px; padding: 0px 10px; font-size: 14px; opacity: 100%; transition: all 0.1s ease; }
                 .module-subject-total-coef-value { display: flex; text-align: left; font-size: 13px; font-weight: 600; gap: 8px; }
@@ -701,7 +704,7 @@ ecamDash = undefined;
 
                 .module-details                     { display: flex; flex-direction: column; align-items: center; width: 97%; gap: 30px; opacity: 100%; transition: all 0.2s ease; }
                 .module-details.edit-mode           { gap: 0px; }
-                .module-moyenne                     { display: flex; align-items: center; justify-content: flex-end; font-size: 26px; font-weight: 800; gap:10px; width: 193px; }
+                .module-moyenne                     { display: flex; align-items: center; justify-content: flex-end; font-size: 26px; font-weight: 800; gap:10px; width: 220px; }
                 .module-moyenne.good                { color: #10b981; }
                 .module-moyenne.bad                 { color: #ef4444; }
                 .module-moyenne.unknown             { color: #6d6d6dff; }
@@ -885,7 +888,7 @@ ecamDash = undefined;
             styles += `
 
                 /* @media (max-width: 768px)   {
-                    .dash-header { flex-direction:column; align-items:start; gap:16px; } 
+                    #dash-header { flex-direction:column; align-items:start; gap:16px; } 
                     .average-display { flex-direction:column; gap:4px; } .average-number { font-size:36px; } 
                 } */
 
@@ -980,7 +983,7 @@ ecamDash = undefined;
 
 
 
-    //#region
+    //#region init css
         // Initializing the CSS style and checking for error before creating the dashboard
         const styleSheet = document.createElement("style");
         styleSheet.textContent = styles;
@@ -997,12 +1000,12 @@ ecamDash = undefined;
 
     //#endregion
 
-    //MARK: ——————————————————
+    //MARK: —————————————————
 
 
 
 
-    //MARK: ECAMDashboard ——————————
+    //MARK: ECAMDashboard —————————
     class ECAMDashboard {
 
 
@@ -1013,7 +1016,7 @@ ecamDash = undefined;
             this.ecamDash = document.createElement("div");
 
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.4.0";
+            this.scriptVersion = "2.4.1";
             this.scriptGitVersion = "1.0.0";
             this.configVersion = 3;
             this.error = error; // test in error mode at this link: https://espace.ecam.fr/c/portal/login?redirect=%2Fgroup%2Feducation%2Fnotes&p_l_id=0&ticket=ST-113179-sbwjXieT3GLY9T3fXdsmFp9vCro-tomcat03
@@ -1084,6 +1087,25 @@ ecamDash = undefined;
                             document.querySelectorAll(".module-subject-total-coef-debug, .subject-total-coef-debug").forEach(elem => {if (this.settings.totalCoefDebugTextsEnabled.value) {elem.style.display = "";} else {elem.style.display = "none";}});
                             this.saveSettings();
                         },
+                        parents: [],
+                        children: [],
+                    },
+
+                    scrollHelpersEnabled: {
+                        name: () => this.lang == "fr" 
+                            ? "Aides au défilement" 
+                            : "Scroll helpers"
+                        ,
+                        description: () => this.lang == "fr" 
+                            ? "Activer l'aide au défilement pour suivre les éléments importants à l'écran lors de changements de verticalité. Désactive-la si tu n'aimes pas avoir ces défilements forcés" 
+                            : "Enable the scroll helpers to follow the important elements on screen upon verticality changes. Disabled it if you don't like these forced scrolls"
+                        ,
+                        info: () => this.lang == "fr" 
+                            ? "Certaines actions (changement de mode d'édition, changement entre vue détaillée/compacte...) font changer la position verical de certains éléments (cartes de module/matière, entre autres), donc un défilement est prévu pour maintenir certains éléments dans l'affichage" 
+                            : "Some actions (edit mode change, detailed/compact view mode change...) change the vertical position of some elements (i.e. module/subject cards), so this setting allows to scroll to keep the most important elements on screen"
+                        ,
+                        value: JSON.parse( JSON.parse(localStorage.getItem("ECAM_DASHBOARD_SETTINGS"))?.scrollHelpersEnabled?.value?.toString() || "true"),
+                        action: () => { this.saveSettings(); },
                         parents: [],
                         children: [],
                     },
@@ -1281,6 +1303,433 @@ ecamDash = undefined;
         //#region _______ — General methods — ________
 
 
+
+
+
+
+            //#region General HTML methods
+
+
+
+
+
+                // MARK: scrollToClientHighestElem
+                /**
+                * Scroll to an element depending on the target element datas passed as argument under the form of an object. If using the className method and not the id method, please make sure the elements of class className are in column.
+                * 
+                * Priority order defined by parameter `priority`. Scan through all the given classNames. If no match is found on a className: 
+                * - **"first"**:  
+                * **moves onto the next one**. The method will scroll to the **first** data matching the conditions, and skip the rest.
+                * - **"last"**:  
+                * **skip the rest**. The method will scroll to the **last** data matching the conditions, and skip the rest. If no match is found at all, doesn't scroll.
+                * 
+                * Behavior changes along with **`highestElemInPageHandleType`**'s value. Scan through all target element datas given, and (with X being an int between 0 and 100):
+                * - **"none"**:                   
+                * scroll to the first      element -                        *out of all the others* - (who's class name matches the `targetElementDatas`'s property `className`) **SUCH THAT** it's the highest        element in the current window view whose center doesn't go out of the screen from the top.
+                * - **"first/last above" / "first/last above X%"** (first is default if first/last isn't given):       
+                * scroll to the first/last element -                        *out of all the others* - (who's class name matches the `targetElementDatas`'s property `className`) **SUCH THAT** it's the highest/lowest element in the current window view whose center doesn't go out of the screen from the top **AND** its center   is above X% (default 50%) of the screen **IF** the top edge of the **first** element - *and only the first, independantly of the first/last parameter* - of same class is above X% (default 50%) of the screen. *Typically useful to scroll to the first/last element of class className that is in-between the top of the window and the given percentage of the height of the window when there are multiple small elements that could satisfy these conditions*
+                * - **"partial" / "partial X%"**:   
+                * scroll to the first      element - *and ONLY the first*                           - (who's class name matches the `targetElementDatas`'s property `className`) **SUCH THAT** it's the highest        element in the current window view whose center doesn't go out of the screen from the top **AND** its top edge is above X% (default 50%) of the screen. *Typically useful if you want to scroll to the highest element of class className if its center is in-between the top of the screen and the given percentage of the height of the window*
+                * - **"absolute" / "absolute X%"**:   
+                * scroll to the first      element - *and ONLY the first*                           - (who's class name matches the `targetElementDatas`'s property `className`) **IFF** its top edge is above X% (default 50%) of the screen. *Typically useful if you want to scroll to the highest element of class className if its top edge is above the given percentage of the height of the window, without any regard whether it's above the top of screen or not*
+                * - **"force"**:                       
+                * scroll to the first      element - *and ONLY the first*                           - (who's class name matches the `targetElementDatas`'s property `className`). *No condition, just forces the scroll to the top of this element*
+                * 
+                * In any case, the scroll is executed (after the `timeout` property of the same `targetElementDatas`) with respects to the `margin` property of the same `targetElementDatas` (it will be attributed as `scrollMargin` style property of the element to scroll to)
+                * 
+                * @returns The element that was scrolled to, or null if no element was scrolled to
+                * @param {String} priority             {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard String},  default: "first" — Defines how multiple `targetElementDatas` input are managed. Can be "first" or "last"
+                * @param targetElementDatas Any amount of objects. If ommited, uses a default object. Objects should all have the following properties (if any is omitted, they are given their default value):
+                * 
+                * **`className?`**                     {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard String},  default: ".subject-card" —  
+                *  Name of the class to target, if you want to target a category of elements
+                * 
+                * **`id?`**                            {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard String},  default: "" —              
+                *  ID of the element to target, if you want to target a specific element (ensure your element has an ID tho)
+                * 
+                * **`margin?`**                        {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard Number},  default: 23 (in px) —      
+                *  Used to define the scrollMargin CSS styles property of the element targeted
+                * 
+                * **`timeout?`**                       {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard Number},  default: 50 (in ms) —      
+                *  Timer before the scroll action is triggered
+                * 
+                * **`smooth?`**                        {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard Boolean}, default: false —           
+                *  If true, the page will smoothly scroll to the element targeted
+                * 
+                * **`highestElemInPageHandleType?`**   {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard String},  default: "none" —          
+                *  Can be "force", "absolute", "absolute X%", "partial", "partial X%", "above", "above X%" or "none" (with X being an int between 0 and 100). Any other value will be considered as "none"
+                * 
+                * **`block?`**                         {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard String},  default: "start" —         
+                *  Can be "start", "center", "end" or "nearest". Any other value will be considered as "start". Defines what part of the element will be taken as reference to scroll to, taking the margin into account
+                */
+                scrollToClientHighestElem(priority="first/setting-compliant", ...{className= "subject-card", id="", margin=this.editMode ? 100 : 25, timeout=20, smooth=false, highestElemInPageHandleType="none", block="start"}) {
+                    const defaultTargetElementDatas = [
+                        {className: "modules-section",      margin: 20,                        highestElemInPageHandleType:"partial"}, 
+                        {className: "module-card",          margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"above"},
+                        {className: "unclassified-section", margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"partial"},
+                        {className: "subject-card",         margin: 10,                        highestElemInPageHandleType:"above"},
+                    ];
+
+                    // Error-proof for different invalid arguments inputs (no arguments given, targetElementData object given instead of priority, invalid targetElementData objects passed, priority given at the wrong spot...)
+                    let argumentsArray = []; 
+                    let effectivePriority, settingCompliance;
+                    (arguments?.length > 1 
+                        ? Object.values(arguments).splice(1,Object.values(arguments).length) 
+                        : Object.values(arguments)
+                    ).forEach((_obj, _index) => {
+                        // In case the first argument is the intendend priority argument:
+                        if (_obj instanceof String && _index == 0) { 
+                            effectivePriority = _obj;
+                            settingCompliance = (_obj.match(/setting-compliant|ignore-setting/)?.[0] || "setting-compliant") == "setting-compliant";
+                        }
+                        // In case the priority argument isn't given, but the rest of the objects are provided:
+                        else if (_obj instanceof Object && (_obj?.className || _obj?.id)) { 
+                            argumentsArray.push(_obj)
+                        }
+                    })
+
+                    if (argumentsArray.length == 0) {
+                        argumentsArray = defaultTargetElementDatas;
+                    }
+
+
+                    if (!effectivePriority) {
+                        effectivePriority = "first"; // in case priority wasn't given as argument
+                    }
+                    else {
+                        effectivePriority = priority?.split("/")?.[0]?.toLowerCase()?.trim(); // formatting priority correctly if it was given
+                        settingCompliance = priority?.split("/")?.[1]?.toLowerCase()?.trim() == "setting-compliant";
+                    }
+                    
+                    if (!effectivePriority?.match(/first|last/i)) {
+                        effectivePriority = "first";
+                    }
+
+
+                    if (settingCompliance !== true && settingCompliance !== false && !priority?.split("/")?.[1]?.toLowerCase()?.trim()) {
+                        settingCompliance = true;
+                    }
+                    else {
+                        settingCompliance = priority?.split("/")?.[1]?.toLowerCase()?.trim() == "setting-compliant";
+                    }
+
+                    if (settingCompliance !== true && settingCompliance !== false) {
+                        settingCompliance = true;
+                    }
+
+
+                    // Protecting the execution of the method behind the setting compliance check's state (if the setting is turned on, then it executes the if loop, and doesn't otherwise)
+                    if (this.settings?.scrollHelpersEnabled?.value || !settingCompliance) {
+                        const abovePattern    = /(first |last |)above( (\d{1,2}|100)%|)/i;
+                        const partialPattern  =              /partial( (\d{1,2}|100)%|)/i;
+                        const absolutePattern =             /absolute( (\d{1,2}|100)%|)/i;
+                        const highestElemInPageHandleTypePattern = RegExp("none|" + abovePattern.source + "|" + partialPattern.source + "|" + absolutePattern.source, "i");
+                        
+                        this.scrollToThisElem = ""; let targetDataIndex = -1;
+                        
+                        argumentsArray.forEach((targetElemData, targetIndex) => {
+    
+                            if (    /* ensuring the priority order of the element of the first class className found */
+                                (//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                                    (
+                                        targetDataIndex < 0 
+                                        && (effectivePriority.toLowerCase()||"first") == "first"
+                                    ) 
+                                    || 
+                                    (
+                                        targetDataIndex == targetIndex-1 
+                                        && (effectivePriority.toLowerCase()||"first") == "last"
+                                    )
+                                )//////////////////////////////////////////////////////////////////////////////////////////////////////
+                            ) { 
+                                // ensuring that highestElemInPageHandleType has an expected value. Take it as "none" if that's not the case
+                                targetElemData.highestElemInPageHandleType = targetElemData?.highestElemInPageHandleType?.toLowerCase()?.trim() || highestElemInPageHandleType;
+                                if (targetElemData?.highestElemInPageHandleType?.match(highestElemInPageHandleTypePattern)?.[0] != targetElemData?.highestElemInPageHandleType) {
+                                    targetElemData.highestElemInPageHandleType = "none";
+                                    console.log(`The highestElemInPageHandleType given in the scrollToClientHighestElem method isn't of an expected value. Treating it as "none" instead.`)
+                                }
+    
+    
+                                if (targetElemData?.id=="" || !document.getElementById(targetElemData?.id || id)) { // If no id is given, or if the given id doesn't correspond to any item in the document:
+    
+                                    // getting the highest element of class className, as well as its top coordinate in the screen
+                                    const highestElem                   = document.querySelector("." + (targetElemData?.className?.match(/(\.|)(.+)/)?.[2].replace(" ", ".") || className));
+                                    const highestElemCoords             = highestElem?.getBoundingClientRect();
+                                    const highestElemTopCoord           = highestElemCoords?.top;
+                                    const highestElemTopCoordPercent    = 100 * highestElemTopCoord/window.innerHeight;
+                                    const highestElemCenterCoord        = (highestElemCoords?.top + highestElemCoords?.bottom)/2;
+                                    const highestElemCenterCoordPercent = 100 * highestElemCenterCoord/window.innerHeight;
+    
+                                    // if highestElemTopCoord < margin, then it means that the top of the highest element of class className has passed the top of the screen
+                                    
+                                    if ( // The highest AND ONLY THE HIGHEST elem case
+                                        (//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                                            /* Force case */
+                                            targetElemData?.highestElemInPageHandleType?.toLowerCase() == "force"
+                                            || 
+                                            ( /* First Absolute case */
+                                                targetElemData?.highestElemInPageHandleType?.match(absolutePattern)
+                                                && /* Checking if highestElemInPageHandleType starts with "last", because if it does, we just pass the highest elem case to scan through all the elem of class className to get the last elem satisfying the condition.s */
+                                                targetElemData?.highestElemInPageHandleType?.match(absolutePattern)?.[1]?.trim() != "last"
+    
+                                                && /* Is the top coordinate of the highest element of class className: */
+                                                /* Above the required height (percentage of the total height)? */
+                                                highestElemTopCoordPercent < (targetElemData?.highestElemInPageHandleType?.match(absolutePattern)?.[3] || 50)
+                                            )
+                                            || 
+                                            ( /* First Partial case */
+                                                targetElemData?.highestElemInPageHandleType?.match(partialPattern)
+                                                &&  /* Checking if highestElemInPageHandleType starts with "last", because if it does, we just pass the highest elem case to scan through all the elem of class className to get the last elem satisfying the condition.s */
+                                                targetElemData?.highestElemInPageHandleType?.match(partialPattern)?.[1]?.trim() != "last"
+    
+                                                &&  /* Is the top coordinate of the highest element of class className: */
+                                                /* Above the required height (percentage of the total height)? */
+                                                highestElemTopCoordPercent < (targetElemData?.highestElemInPageHandleType?.match(partialPattern)?.[3] || 50)
+                                                && 
+                                                /* Below the top of the screen? */
+                                                highestElemTopCoordPercent >= 0
+                                            )
+                                            ||
+                                            ( /* First Above case */
+                                                targetElemData?.highestElemInPageHandleType?.match(abovePattern)
+                                                && /* Checking if highestElemInPageHandleType starts with "last", because if it does, we just pass the highest elem case to scan through all the elem of class className to get the last elem satisfying the condition.s */
+                                                targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[1]?.trim() != "last"
+    
+                                                && /* Is the top coordinate of the highest element of class className: */
+                                                /* Above the required height (percentage of the total height)? */
+                                                highestElemTopCoordPercent < (targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[3] || 50)
+    
+                                                && /* Is the center coordinate of the highest element of class className: */
+                                                /* Below the top of the screen? */
+                                                highestElemCenterCoordPercent >= 0
+                                            )
+                                        )//////////////////////////////////////////////////////////////////////////////////////////////////////
+                                    ) { 
+    
+                                        this.scrollToThisElem = highestElem.id;
+                                        targetDataIndex = targetIndex;
+    
+                                    }
+                                    else if (   // Get the first elem among all the other elements of class className satisfying the condition.s corresponding to the className's highestElemInPageHandleType prop
+                                        (//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                                            /* None case */
+                                            targetElemData?.highestElemInPageHandleType?.toLowerCase() == "none"
+                                            || 
+                                            ( /* Last Above case or Above case if the highest elem isn't in the view */
+                                                targetElemData?.highestElemInPageHandleType?.match(abovePattern)
+                                                
+                                                && /* Is the top coordinate of the highest element of class className: */
+                                                /* Above the required height (percentage of the total height)? */
+                                                highestElemTopCoordPercent < (targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[3] || 50)
+                                            )
+                                        )//////////////////////////////////////////////////////////////////////////////////////////////////////
+                                    ) {
+    
+                                        let targetElemIndex = -1;
+                                        document.querySelectorAll("." + (targetElemData?.className?.match(/(\.|)(.+)/)?.[2].replace(" ", ".") || className)).forEach((elem, _index) => {
+    
+                                            if (    /* ensuring the priority order of the element of the first class className found, but also priority of the first/last element in the above case */
+                                                (//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                                                    (
+                                                        targetDataIndex < 0 
+                                                        && (effectivePriority.toLowerCase()||"first") == "first"
+                                                    ) 
+                                                    || 
+                                                    (
+                                                        targetDataIndex == targetIndex-1 
+                                                        && (effectivePriority.toLowerCase()||"first") == "last"
+                                                    )
+                                                    ||
+                                                    (   
+                                                        targetElemIndex == _index-1
+                                                        &&
+                                                        targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[1]?.trim() == "last"
+                                                    )
+                                                )//////////////////////////////////////////////////////////////////////////////////////////////////////
+                                            ) {
+    
+                                                const elemCoordsClient          = elem.getBoundingClientRect();
+                                                const elemCenterClient          = (elemCoordsClient.top + elemCoordsClient.bottom)/2;
+                                                const elemCenterClientPercent   = 100 * elemCenterClient/window.innerHeight;
+                                                const elemTopClientPercent      = 100 * elemCoordsClient.top/window.innerHeight;
+            
+                                                if (
+                                                    (//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                                                        ( /* Checking if the element satisfies the conditions corresponding to its highestElemInPageHandleType */
+                                                            ( /* None case */
+                                                                targetElemData?.highestElemInPageHandleType?.toLowerCase() == "none" 
+                                                                && /* Is the center of the currently observed element of class className: */
+                                                                /* Below the top of the screen? */
+                                                                elemCenterClientPercent >= 0 
+                                                            )
+                                                            || 
+                                                            ( /* Above case */
+                                                                targetElemData?.highestElemInPageHandleType?.match(abovePattern)
+                                                                && /* Is the top of the currently observed element of class className: */
+                                                                /* Below the top of the screen or in the "last" case? */
+                                                                (
+                                                                    elemCenterClientPercent >= 0 
+                                                                    ||
+                                                                    targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[1]?.trim() == "last"
+                                                                )
+                                                                &&
+                                                                /* Above the required height (percentage of the total height) of the screen? */
+                                                                elemTopClientPercent < (targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[3] || 50)
+                                                            )
+                                                        )
+                                                    )//////////////////////////////////////////////////////////////////////////////////////////////////////
+                                                ) {
+            
+                                                    this.scrollToThisElem = elem.id;
+                                                    targetDataIndex = targetIndex;
+                                                    targetElemIndex = _index;
+                                                                
+                                                }
+    
+                                            }
+                                        })
+                                    }
+                                }
+                                else {
+                                    this.scrollToThisElem = targetElemData?.id || id;
+                                    targetDataIndex = targetIndex;
+                                }
+                            }
+                        })
+    
+                        if (targetDataIndex >= 0) {
+                            const targetElemData = argumentsArray[targetDataIndex];
+    
+                            setTimeout(() => {
+                                const scrollToThisElem = document.getElementById(this.scrollToThisElem) || document.querySelector("."+targetElemData.className.match(/(\.|)(.+)/)?.[2].replace(" ", ".")); 
+                                scrollToThisElem.style.scrollMargin = (targetElemData?.block || block) == "center" ? "" : `${(targetElemData?.margin || margin) + (document.body.classList.contains("lfr-dockbar-pinned") ? 45 : 0)}px`;
+                                scrollToThisElem.scrollIntoView({behavior: (targetElemData?.smooth || smooth) ? "smooth" : "instant", block: targetElemData.block});
+                                this.scrollToThisElem = "";
+                            }, (targetElemData?.timeout || timeout))
+    
+                            return this.scrollToThisElem || String("."+targetElemData.className);
+                        }
+                    }
+
+
+                    return;
+                }
+
+                /** Call inside a onkeydown or onkeyup event listener
+                *  
+                * @param {KeyboardEvent} keyboardEvent Pass the keyboard event trigger onkey event from which this method is called
+                * @param {String | Array} keyPressed The key expected to be pressed, an array of keys expected to be pressed or a regular expression to match the key pressed
+                * @param {Object} param3 All the modifiers. Each element of this object `alt`, `ctrl`, `shift`, `meta`, and `repeat` take as value on of the following Strings: "required", "allowed", "dont care", 
+                * @returns {RegExpMatchArray} A formated RegExpMatchArray result following the key and the modifiers given as parameters
+                */
+                keyInputMatch(keyboardEvent, keyPressed="([a-zA-Z])", {alt="whatever", ctrl="whatever", shift="whatever", meta="whatever", repeat="whatever"}={alt:"whatever", ctrl:"whatever", shift:"whatever", meta:"whatever", repeat:"whatever"}) {
+                    const e = keyboardEvent;
+
+                    let keyExpected = keyPressed;
+                    if      (keyPressed instanceof Array)   { keyExpected = keyPressed.map((s) => {if (s.match(/[^a-z]+/i)) {return "\\"+s} else {return s}}).join("|"); }
+                    else if (keyPressed instanceof String)  { keyExpected = "\\"+ keyPressed; }
+                    else if (keyPressed instanceof RegExp)  { keyExpected = keyPressed.source; }
+
+                    const key = `${e.altKey ? "alt" : "no-alt"} ${e.ctrlKey ? "+ ctrl" : "+ no-ctrl"} ${e.shiftKey ? "+ shift" : "+ no-shift"} ${e.metaKey ? "+ meta" : "+ no-meta"} + ${e.key} (${e.repeat ? "repeat" : "no-repeat"})`;
+
+                    let altPattern, ctrlPattern, shiftPattern, metaPattern, repeatPattern;
+                    if (alt    === "required") {altPattern    = "(alt)"}    else if (alt    === "whatever") {altPattern    = "(alt|no-alt)"}        else if (alt    === "forbidden") {altPattern    = "(no-alt)"}              
+                    if (ctrl   === "required") {ctrlPattern   = "(ctrl)"}   else if (ctrl   === "whatever") {ctrlPattern   = "(ctrl|no-ctrl)"}      else if (ctrl   === "forbidden") {ctrlPattern   = "(no-ctrl)"}          
+                    if (shift  === "required") {shiftPattern  = "(shift)"}  else if (shift  === "whatever") {shiftPattern  = "(shift|no-shift)"}    else if (shift  === "forbidden") {shiftPattern  = "(no-shift)"}         
+                    if (meta   === "required") {metaPattern   = "(meta)"}   else if (meta   === "whatever") {metaPattern   = "(meta|no-meta)"}      else if (meta   === "forbidden") {metaPattern   = "(no-meta)"}          
+                    if (repeat === "required") {repeatPattern = "(repeat)"} else if (repeat === "whatever") {repeatPattern = "(repeat|no-repeat)"}  else if (repeat === "forbidden") {repeatPattern = "(no-repeat)"}       
+
+                    const keyPattern = RegExp(`${altPattern} \\+ ${ctrlPattern} \\+ ${shiftPattern} \\+ ${metaPattern} \\+ ${keyExpected} \\(${repeatPattern}\\)`);
+                    const match = key.match(keyPattern);
+                    return match;
+                }
+
+                resetFixedUnclassifiedSectionHeight() {
+                    this.timeouts.resetFixedUnclassifiedSectionHeight = setTimeout(() => {
+                        const unclassifiedSection = document.querySelector(".unclassified-section");
+                        unclassifiedSection.style.height = "";
+                        setTimeout(() => {
+                            const unclassifiedSection = document.querySelector(".unclassified-section");
+                            const currentUnclassifiedSectionHeight = Number(unclassifiedSection.clientHeight);
+                            unclassifiedSection.style.height = `${currentUnclassifiedSectionHeight+4}px`;
+                        }, 10)
+                        delete this.timeouts.resetFixedUnclassifiedSectionHeight
+                    }, 1)
+                }
+
+
+                holdElementHeight(elem, timeout=0, {offset=0, height=null}={offset: 0, height: null}) {
+                    if (timeout > 0) {
+                        clearTimeout(this?.timeouts?.holdElementHeight?.[elem.id]);
+    
+                        if (!this.timeouts.holdElementHeight) {this.timeouts.holdElementHeight = {}}
+                        this.timeouts.holdElementHeight[elem.id] = setTimeout(() => {
+                            clearTimeout(this?.timeouts?.releaseElementHeight);
+    
+                            const currentHeight = height ? height : Number(elem.clientHeight);
+                            elem.style.height = `${currentHeight+offset}px`;
+                            delete this.timeouts.holdElementHeight[elem.id];
+                        }, timeout);
+                    }
+                    else {
+                        const currentHeight = height ? height : Number(elem.clientHeight);
+                        elem.style.height = `${currentHeight+offset}px`;
+                    }
+                }
+
+                releaseElementHeight(elem, timeout=0) {
+                    if (timeout > 0) {
+                        clearTimeout(this?.timeouts?.releaseElementHeight?.[elem.id]);
+                        
+                        if (!this.timeouts.releaseElementHeight) {this.timeouts.releaseElementHeight = {}}
+                        this.timeouts.releaseElementHeight[elem.id] = setTimeout(() => {
+                            clearTimeout(this?.timeouts?.holdElementHeight);
+    
+                            elem.style.height = ``;
+                            delete this.timeouts.releaseElementHeight[elem.id];
+                        }, timeout);
+                    }
+                    else {
+                        elem.style.height = ``;
+                    }
+                }
+
+
+                holdElementWidth(elem, timeout=0, {offset=0, width=null}={offset: 0, width: null}) {
+                    if (timeout > 0) {
+                        clearTimeout(this?.timeouts?.holdElementWidth);
+    
+                        if (!this.timeouts.holdElementWidth) {this.timeouts.holdElementWidth = {}}
+                        this.timeouts.holdElementWidth[elem.id] = setTimeout(() => {
+                            clearTimeout(this?.timeouts?.releaseElementWidth);
+    
+                            const currentWidth = width ? width : Number(elem.clientWidth);
+                            elem.style.width = `${currentWidth+offset}px`;
+                        }, timeout);
+                    }
+                    else {
+                        const currentWidth = width ? width : Number(elem.clientWidth);
+                        elem.style.width = `${currentWidth+offset}px`;
+                    }
+                }
+
+                releaseElementWidth(elem, timeout=0) {
+                    if (timeout > 0) {
+                        clearTimeout(this?.timeouts?.releaseElementWidth);
+                        
+                        if (!this.timeouts.releaseElementWidth) {this.timeouts.releaseElementWidth = {}}
+                        this.timeouts.releaseElementWidth[elem.id] = setTimeout(() => {
+                            clearTimeout(this?.timeouts?.holdElementWidth);
+    
+                            elem.style.width = ``;
+                        }, timeout);
+                    }
+                    else {
+                        elem.style.width = ``;
+                    }
+                }
+
+            //#endregion
 
 
 
@@ -2044,412 +2493,6 @@ ecamDash = undefined;
 
 
 
-            //#region General HTML methods
-
-
-
-
-
-                // MARK: scrollToClientHighestElem
-                /**
-                * Scroll to an element depending on the target element datas passed as argument under the form of an object. If using the className method and not the id method, please make sure the elements of class className are in column.
-                * 
-                * Priority order defined by parameter `priority`. Scan through all the given classNames. If no match is found on a className: 
-                * - **"first"**:  
-                * **moves onto the next one**. The method will scroll to the **first** data matching the conditions, and skip the rest.
-                * - **"last"**:  
-                * **skip the rest**. The method will scroll to the **last** data matching the conditions, and skip the rest. If no match is found at all, doesn't scroll.
-                * 
-                * Behavior changes along with **`highestElemInPageHandleType`**'s value. Scan through all target element datas given, and (with X being an int between 0 and 100):
-                * - **"none"**:                   
-                * scroll to the first      element -                        *out of all the others* - (who's class name matches the `targetElementDatas`'s property `className`) **SUCH THAT** it's the highest        element in the current window view whose center doesn't go out of the screen from the top.
-                * - **"first/last above" / "first/last above X%"** (first is default if first/last isn't given):       
-                * scroll to the first/last element -                        *out of all the others* - (who's class name matches the `targetElementDatas`'s property `className`) **SUCH THAT** it's the highest/lowest element in the current window view whose center doesn't go out of the screen from the top **AND** its center   is above X% (default 50%) of the screen **IF** the top edge of the **first** element - *and only the first, independantly of the first/last parameter* - of same class is above X% (default 50%) of the screen. *Typically useful to scroll to the first/last element of class className that is in-between the top of the window and the given percentage of the height of the window when there are multiple small elements that could satisfy these conditions*
-                * - **"partial" / "partial X%"**:   
-                * scroll to the first      element - *and ONLY the first*                           - (who's class name matches the `targetElementDatas`'s property `className`) **SUCH THAT** it's the highest        element in the current window view whose center doesn't go out of the screen from the top **AND** its top edge is above X% (default 50%) of the screen. *Typically useful if you want to scroll to the highest element of class className if its center is in-between the top of the screen and the given percentage of the height of the window*
-                * - **"absolute" / "absolute X%"**:   
-                * scroll to the first      element - *and ONLY the first*                           - (who's class name matches the `targetElementDatas`'s property `className`) **IFF** its top edge is above X% (default 50%) of the screen. *Typically useful if you want to scroll to the highest element of class className if its top edge is above the given percentage of the height of the window, without any regard whether it's above the top of screen or not*
-                * - **"force"**:                       
-                * scroll to the first      element - *and ONLY the first*                           - (who's class name matches the `targetElementDatas`'s property `className`). *No condition, just forces the scroll to the top of this element*
-                * 
-                * In any case, the scroll is executed (after the `timeout` property of the same `targetElementDatas`) with respects to the `margin` property of the same `targetElementDatas` (it will be attributed as `scrollMargin` style property of the element to scroll to)
-                * 
-                * @returns The element that was scrolled to, or null if no element was scrolled to
-                * @param {String} priority             {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard String},  default: "first" — Defines how multiple `targetElementDatas` input are managed. Can be "first" or "last"
-                * @param targetElementDatas Any amount of objects. If ommited, uses a default object. Objects should all have the following properties (if any is omitted, they are given their default value):
-                * 
-                * **`className?`**                     {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard String},  default: ".subject-card" —  
-                *  Name of the class to target, if you want to target a category of elements
-                * 
-                * **`id?`**                            {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard String},  default: "" —              
-                *  ID of the element to target, if you want to target a specific element (ensure your element has an ID tho)
-                * 
-                * **`margin?`**                        {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard Number},  default: 23 (in px) —      
-                *  Used to define the scrollMargin CSS styles property of the element targeted
-                * 
-                * **`timeout?`**                       {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard Number},  default: 50 (in ms) —      
-                *  Timer before the scroll action is triggered
-                * 
-                * **`smooth?`**                        {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard Boolean}, default: false —           
-                *  If true, the page will smoothly scroll to the element targeted
-                * 
-                * **`highestElemInPageHandleType?`**   {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard String},  default: "none" —          
-                *  Can be "force", "absolute", "absolute X%", "partial", "partial X%", "above", "above X%" or "none" (with X being an int between 0 and 100). Any other value will be considered as "none"
-                * 
-                * **`block?`**                         {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard String},  default: "start" —         
-                *  Can be "start", "center", "end" or "nearest". Any other value will be considered as "start". Defines what part of the element will be taken as reference to scroll to, taking the margin into account
-                */
-                scrollToClientHighestElem(priority="first", ...{className= "subject-card", id="", margin=this.editMode ? 100 : 25, timeout=20, smooth=false, highestElemInPageHandleType="none", block="start"}) {
-                    const defaultTargetElementDatas = [
-                        {className: "modules-section",      margin: 20,                        highestElemInPageHandleType:"partial"}, 
-                        {className: "module-card",          margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"above"},
-                        {className: "unclassified-section", margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"partial"},
-                        {className: "subject-card",         margin: 10,                        highestElemInPageHandleType:"above"},
-                    ];
-
-                    // Error-proof for different invalid arguments inputs (no arguments given, targetElementData object give instead of priority, invalid targetElementData objects passed, priority given at the wrong spot...)
-                    let argumentsArray = []; 
-                    let effectivePriority;
-                    (arguments?.length > 1 
-                        ? Object.values(arguments).splice(1,Object.values(arguments).length) 
-                        : Object.values(arguments)
-                    ).forEach((_obj, _index) => {
-                        if (_obj instanceof String && _index == 0) {
-                            effectivePriority = _obj;
-                        }
-                        else if (_obj instanceof Object && (_obj?.className || _obj?.id)) {
-                            argumentsArray.push(_obj)
-                        }
-                    })
-
-                    if (argumentsArray.length == 0) {
-                        argumentsArray = defaultTargetElementDatas;
-                    }
-
-
-                    if (!effectivePriority) {
-                        effectivePriority = "first"; // in case priority wasn't given as argument
-                    }
-                    else {
-                        effectivePriority = priority?.toLowerCase()?.trim(); // formatting priority correctly if it was given
-                    }
-                    
-                    if (!effectivePriority?.match(/first|last/i)) {
-                        effectivePriority = "first";
-                    }
-
-                    const abovePattern    = /(first |last |)above( (\d{1,2}|100)%|)/i;
-                    const partialPattern  =              /partial( (\d{1,2}|100)%|)/i;
-                    const absolutePattern =             /absolute( (\d{1,2}|100)%|)/i;
-                    const highestElemInPageHandleTypePattern = RegExp("none|" + abovePattern.source + "|" + partialPattern.source + "|" + absolutePattern.source, "i");
-                    
-                    this.scrollToThisElem = ""; let targetDataIndex = -1;
-                    
-                    argumentsArray.forEach((targetElemData, targetIndex) => {
-
-                        if (    /* ensuring the priority order of the element of the first class className found */
-                            (//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-                                (
-                                    targetDataIndex < 0 
-                                    && (effectivePriority.toLowerCase()||"first") == "first"
-                                ) 
-                                || 
-                                (
-                                    targetDataIndex == targetIndex-1 
-                                    && (effectivePriority.toLowerCase()||"first") == "last"
-                                )
-                            )//////////////////////////////////////////////////////////////////////////////////////////////////////
-                        ) { 
-                            // ensuring that highestElemInPageHandleType has an expected value. Take it as "none" if that's not the case
-                            targetElemData.highestElemInPageHandleType = targetElemData?.highestElemInPageHandleType?.toLowerCase()?.trim() || highestElemInPageHandleType;
-                            if (targetElemData?.highestElemInPageHandleType?.match(highestElemInPageHandleTypePattern)?.[0] != targetElemData?.highestElemInPageHandleType) {
-                                targetElemData.highestElemInPageHandleType = "none";
-                                console.log(`The highestElemInPageHandleType given in the scrollToClientHighestElem method isn't of an expected value. Treating it as "none" instead.`)
-                            }
-
-
-                            if (targetElemData?.id=="" || !document.getElementById(targetElemData?.id || id)) { // If no id is given, or if the given id doesn't correspond to any item in the document:
-
-                                // getting the highest element of class className, as well as its top coordinate in the screen
-                                const highestElem                   = document.querySelector("." + (targetElemData?.className?.match(/(\.|)(.+)/)?.[2].replace(" ", ".") || className));
-                                const highestElemCoords             = highestElem?.getBoundingClientRect();
-                                const highestElemTopCoord           = highestElemCoords?.top;
-                                const highestElemTopCoordPercent    = 100 * highestElemTopCoord/window.innerHeight;
-                                const highestElemCenterCoord        = (highestElemCoords?.top + highestElemCoords?.bottom)/2;
-                                const highestElemCenterCoordPercent = 100 * highestElemCenterCoord/window.innerHeight;
-
-                                // if highestElemTopCoord < margin, then it means that the top of the highest element of class className has passed the top of the screen
-                                
-                                if ( // The highest AND ONLY THE HIGHEST elem case
-                                    (//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-                                        /* Force case */
-                                        targetElemData?.highestElemInPageHandleType?.toLowerCase() == "force"
-                                        || 
-                                        ( /* First Absolute case */
-                                            targetElemData?.highestElemInPageHandleType?.match(absolutePattern)
-                                            && /* Checking if highestElemInPageHandleType starts with "last", because if it does, we just pass the highest elem case to scan through all the elem of class className to get the last elem satisfying the condition.s */
-                                            targetElemData?.highestElemInPageHandleType?.match(absolutePattern)?.[1]?.trim() != "last"
-
-                                            && /* Is the top coordinate of the highest element of class className: */
-                                            /* Above the required height (percentage of the total height)? */
-                                            highestElemTopCoordPercent < (targetElemData?.highestElemInPageHandleType?.match(absolutePattern)?.[3] || 50)
-                                        )
-                                        || 
-                                        ( /* First Partial case */
-                                            targetElemData?.highestElemInPageHandleType?.match(partialPattern)
-                                            &&  /* Checking if highestElemInPageHandleType starts with "last", because if it does, we just pass the highest elem case to scan through all the elem of class className to get the last elem satisfying the condition.s */
-                                            targetElemData?.highestElemInPageHandleType?.match(partialPattern)?.[1]?.trim() != "last"
-
-                                            &&  /* Is the top coordinate of the highest element of class className: */
-                                            /* Above the required height (percentage of the total height)? */
-                                            highestElemTopCoordPercent < (targetElemData?.highestElemInPageHandleType?.match(partialPattern)?.[3] || 50)
-                                            && 
-                                            /* Below the top of the screen? */
-                                            highestElemTopCoordPercent >= 0
-                                        )
-                                        ||
-                                        ( /* First Above case */
-                                            targetElemData?.highestElemInPageHandleType?.match(abovePattern)
-                                            && /* Checking if highestElemInPageHandleType starts with "last", because if it does, we just pass the highest elem case to scan through all the elem of class className to get the last elem satisfying the condition.s */
-                                            targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[1]?.trim() != "last"
-
-                                            && /* Is the top coordinate of the highest element of class className: */
-                                            /* Above the required height (percentage of the total height)? */
-                                            highestElemTopCoordPercent < (targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[3] || 50)
-
-                                            && /* Is the center coordinate of the highest element of class className: */
-                                            /* Below the top of the screen? */
-                                            highestElemCenterCoordPercent >= 0
-                                        )
-                                    )//////////////////////////////////////////////////////////////////////////////////////////////////////
-                                ) { 
-
-                                    this.scrollToThisElem = highestElem.id;
-                                    targetDataIndex = targetIndex;
-
-                                }
-                                else if (   // Get the first elem among all the other elements of class className satisfying the condition.s corresponding to the className's highestElemInPageHandleType prop
-                                    (//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-                                        /* None case */
-                                        targetElemData?.highestElemInPageHandleType?.toLowerCase() == "none"
-                                        || 
-                                        ( /* Last Above case or Above case if the highest elem isn't in the view */
-                                            targetElemData?.highestElemInPageHandleType?.match(abovePattern)
-                                            
-                                            && /* Is the top coordinate of the highest element of class className: */
-                                            /* Above the required height (percentage of the total height)? */
-                                            highestElemTopCoordPercent < (targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[3] || 50)
-                                        )
-                                    )//////////////////////////////////////////////////////////////////////////////////////////////////////
-                                ) {
-
-                                    let targetElemIndex = -1;
-                                    document.querySelectorAll("." + (targetElemData?.className?.match(/(\.|)(.+)/)?.[2].replace(" ", ".") || className)).forEach((elem, _index) => {
-
-                                        if (    /* ensuring the priority order of the element of the first class className found, but also priority of the first/last element in the above case */
-                                            (//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-                                                (
-                                                    targetDataIndex < 0 
-                                                    && (effectivePriority.toLowerCase()||"first") == "first"
-                                                ) 
-                                                || 
-                                                (
-                                                    targetDataIndex == targetIndex-1 
-                                                    && (effectivePriority.toLowerCase()||"first") == "last"
-                                                )
-                                                ||
-                                                (   
-                                                    targetElemIndex == _index-1
-                                                    &&
-                                                    targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[1]?.trim() == "last"
-                                                )
-                                            )//////////////////////////////////////////////////////////////////////////////////////////////////////
-                                        ) {
-
-                                            const elemCoordsClient          = elem.getBoundingClientRect();
-                                            const elemCenterClient          = (elemCoordsClient.top + elemCoordsClient.bottom)/2;
-                                            const elemCenterClientPercent   = 100 * elemCenterClient/window.innerHeight;
-                                            const elemTopClientPercent      = 100 * elemCoordsClient.top/window.innerHeight;
-        
-                                            if (
-                                                (//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-                                                    ( /* Checking if the element satisfies the conditions corresponding to its highestElemInPageHandleType */
-                                                        ( /* None case */
-                                                            targetElemData?.highestElemInPageHandleType?.toLowerCase() == "none" 
-                                                            && /* Is the center of the currently observed element of class className: */
-                                                            /* Below the top of the screen? */
-                                                            elemCenterClientPercent >= 0 
-                                                        )
-                                                        || 
-                                                        ( /* Above case */
-                                                            targetElemData?.highestElemInPageHandleType?.match(abovePattern)
-                                                            && /* Is the top of the currently observed element of class className: */
-                                                            /* Below the top of the screen or in the "last" case? */
-                                                            (
-                                                                elemCenterClientPercent >= 0 
-                                                                ||
-                                                                targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[1]?.trim() == "last"
-                                                            )
-                                                            &&
-                                                            /* Above the required height (percentage of the total height) of the screen? */
-                                                            elemTopClientPercent < (targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[3] || 50)
-                                                        )
-                                                    )
-                                                )//////////////////////////////////////////////////////////////////////////////////////////////////////
-                                            ) {
-        
-                                                this.scrollToThisElem = elem.id;
-                                                targetDataIndex = targetIndex;
-                                                targetElemIndex = _index;
-                                                            
-                                            }
-
-                                        }
-                                    })
-                                }
-                            }
-                            else {
-                                this.scrollToThisElem = targetElemData?.id || id;
-                                targetDataIndex = targetIndex;
-                            }
-                        }
-                    })
-
-                    if (targetDataIndex >= 0) {
-                        const targetElemData = argumentsArray[targetDataIndex];
-
-                        setTimeout(() => {
-                            const scrollToThisElem = document.getElementById(this.scrollToThisElem) || document.querySelector("."+targetElemData.className.match(/(\.|)(.+)/)?.[2].replace(" ", ".")); 
-                            scrollToThisElem.style.scrollMargin = (targetElemData?.block || block) == "center" ? "" : `${(targetElemData?.margin || margin) + (document.body.classList.contains("lfr-dockbar-pinned") ? 45 : 0)}px`;
-                            scrollToThisElem.scrollIntoView({behavior: (targetElemData?.smooth || smooth) ? "smooth" : "instant", block: targetElemData.block});
-                            this.scrollToThisElem = "";
-                        }, (targetElemData?.timeout || timeout))
-
-                        return this.scrollToThisElem || String("."+targetElemData.className);
-                    }
-
-                    return;
-                }
-
-                /** Call inside a onkeydown or onkeyup event listener
-                *  
-                * @param {KeyboardEvent} keyboardEvent Pass the keyboard event trigger onkey event from which this method is called
-                * @param {String | Array} keyPressed The key expected to be pressed, an array of keys expected to be pressed or a regular expression to match the key pressed
-                * @param {Object} param3 All the modifiers. Each element of this object `alt`, `ctrl`, `shift`, `meta`, and `repeat` take as value on of the following Strings: "required", "allowed", "dont care", 
-                * @returns {RegExpMatchArray} A formated RegExpMatchArray result following the key and the modifiers given as parameters
-                */
-                keyInputMatch(keyboardEvent, keyPressed="([a-zA-Z])", {alt="whatever", ctrl="whatever", shift="whatever", meta="whatever", repeat="whatever"}={alt:"whatever", ctrl:"whatever", shift:"whatever", meta:"whatever", repeat:"whatever"}) {
-                    const e = keyboardEvent;
-
-                    let keyExpected = keyPressed;
-                    if      (keyPressed instanceof Array)   { keyExpected = keyPressed.map((s) => {if (s.match(/[^a-z]+/i)) {return "\\"+s} else {return s}}).join("|"); }
-                    else if (keyPressed instanceof String)  { keyExpected = "\\"+ keyPressed; }
-                    else if (keyPressed instanceof RegExp)  { keyExpected = keyPressed.source; }
-
-                    const key = `${e.altKey ? "alt" : "no-alt"} ${e.ctrlKey ? "+ ctrl" : "+ no-ctrl"} ${e.shiftKey ? "+ shift" : "+ no-shift"} ${e.metaKey ? "+ meta" : "+ no-meta"} + ${e.key} (${e.repeat ? "repeat" : "no-repeat"})`;
-
-                    let altPattern, ctrlPattern, shiftPattern, metaPattern, repeatPattern;
-                    if (alt    === "required") {altPattern    = "(alt)"}    else if (alt    === "whatever") {altPattern    = "(alt|no-alt)"}        else if (alt    === "forbidden") {altPattern    = "(no-alt)"}              
-                    if (ctrl   === "required") {ctrlPattern   = "(ctrl)"}   else if (ctrl   === "whatever") {ctrlPattern   = "(ctrl|no-ctrl)"}      else if (ctrl   === "forbidden") {ctrlPattern   = "(no-ctrl)"}          
-                    if (shift  === "required") {shiftPattern  = "(shift)"}  else if (shift  === "whatever") {shiftPattern  = "(shift|no-shift)"}    else if (shift  === "forbidden") {shiftPattern  = "(no-shift)"}         
-                    if (meta   === "required") {metaPattern   = "(meta)"}   else if (meta   === "whatever") {metaPattern   = "(meta|no-meta)"}      else if (meta   === "forbidden") {metaPattern   = "(no-meta)"}          
-                    if (repeat === "required") {repeatPattern = "(repeat)"} else if (repeat === "whatever") {repeatPattern = "(repeat|no-repeat)"}  else if (repeat === "forbidden") {repeatPattern = "(no-repeat)"}       
-
-                    const keyPattern = RegExp(`${altPattern} \\+ ${ctrlPattern} \\+ ${shiftPattern} \\+ ${metaPattern} \\+ ${keyExpected} \\(${repeatPattern}\\)`);
-                    const match = key.match(keyPattern);
-                    return match;
-                }
-
-                resetFixedUnclassifiedSectionHeight() {
-                    this.timeouts.resetFixedUnclassifiedSectionHeight = setTimeout(() => {
-                        const unclassifiedSection = document.querySelector(".unclassified-section");
-                        unclassifiedSection.style.height = "";
-                        setTimeout(() => {
-                            const unclassifiedSection = document.querySelector(".unclassified-section");
-                            const currentUnclassifiedSectionHeight = Number(unclassifiedSection.clientHeight);
-                            unclassifiedSection.style.height = `${currentUnclassifiedSectionHeight+4}px`;
-                        }, 10)
-                        delete this.timeouts.resetFixedUnclassifiedSectionHeight
-                    }, 1)
-                }
-
-
-                holdElementHeight(elem, timeout=0, {offset=0, height=null}={offset: 0, height: null}) {
-                    if (timeout > 0) {
-                        clearTimeout(this?.timeouts?.holdElementHeight?.[elem.id]);
-    
-                        if (!this.timeouts.holdElementHeight) {this.timeouts.holdElementHeight = {}}
-                        this.timeouts.holdElementHeight[elem.id] = setTimeout(() => {
-                            clearTimeout(this?.timeouts?.releaseElementHeight);
-    
-                            const currentHeight = height ? height : Number(elem.clientHeight);
-                            elem.style.height = `${currentHeight+offset}px`;
-                            delete this.timeouts.holdElementHeight[elem.id];
-                        }, timeout);
-                    }
-                    else {
-                        const currentHeight = height ? height : Number(elem.clientHeight);
-                        elem.style.height = `${currentHeight+offset}px`;
-                    }
-                }
-
-                releaseElementHeight(elem, timeout=0) {
-                    if (timeout > 0) {
-                        clearTimeout(this?.timeouts?.releaseElementHeight?.[elem.id]);
-                        
-                        if (!this.timeouts.releaseElementHeight) {this.timeouts.releaseElementHeight = {}}
-                        this.timeouts.releaseElementHeight[elem.id] = setTimeout(() => {
-                            clearTimeout(this?.timeouts?.holdElementHeight);
-    
-                            elem.style.height = ``;
-                            delete this.timeouts.releaseElementHeight[elem.id];
-                        }, timeout);
-                    }
-                    else {
-                        elem.style.height = ``;
-                    }
-                }
-
-
-                holdElementWidth(elem, timeout=0, {offset=0, width=null}={offset: 0, width: null}) {
-                    if (timeout > 0) {
-                        clearTimeout(this?.timeouts?.holdElementWidth);
-    
-                        if (!this.timeouts.holdElementWidth) {this.timeouts.holdElementWidth = {}}
-                        this.timeouts.holdElementWidth[elem.id] = setTimeout(() => {
-                            clearTimeout(this?.timeouts?.releaseElementWidth);
-    
-                            const currentWidth = width ? width : Number(elem.clientWidth);
-                            elem.style.width = `${currentWidth+offset}px`;
-                        }, timeout);
-                    }
-                    else {
-                        const currentWidth = width ? width : Number(elem.clientWidth);
-                        elem.style.width = `${currentWidth+offset}px`;
-                    }
-                }
-
-                releaseElementWidth(elem, timeout=0) {
-                    if (timeout > 0) {
-                        clearTimeout(this?.timeouts?.releaseElementWidth);
-                        
-                        if (!this.timeouts.releaseElementWidth) {this.timeouts.releaseElementWidth = {}}
-                        this.timeouts.releaseElementWidth[elem.id] = setTimeout(() => {
-                            clearTimeout(this?.timeouts?.holdElementWidth);
-    
-                            elem.style.width = ``;
-                        }, timeout);
-                    }
-                    else {
-                        elem.style.width = ``;
-                    }
-                }
-
-            //#endregion
-
-
-
-
             //#region Misc methods
 
                 compareArraysOfObjects(a, b) {
@@ -2741,7 +2784,7 @@ ecamDash = undefined;
                     </div>
                 `;
 
-                this.ecamDash.insertBefore(updateAvailableNotif, document.querySelector(".dash-header"));
+                this.ecamDash.insertBefore(updateAvailableNotif, document.querySelector("#dash-header"));
                 setTimeout(() => {updateAvailableNotif.classList.add("on")}, 300);
 
                 updateAvailableNotif.querySelector(".dismiss-update-btn").onclick = () => {
@@ -2838,7 +2881,7 @@ ecamDash = undefined;
 
                     </div>
 
-                    <div class="dash-header">
+                    <div id="dash-header">
                         <div style="display: flex;flex-direction: row;" id="aui_3_2_0_1305">
                             <img draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/5/51/ECAM-LaSalle-bleu-seul.png" alt="ECAM Logo" style="margin: 0px 0px 0px -10px;height: 141px;width: 148px;" id="aui_3_2_0_1304">
                             <div style="margin: 30px 0px 0px 0px;">
@@ -2964,7 +3007,7 @@ ecamDash = undefined;
                         Object.values(document.body.children).forEach(child => {child.remove()});
                         document.body.appendChild(this.ecamDash);
                     }
-                    this.ecamDash.insertBefore(notifContainer, this.ecamDash.querySelector("dash-header"));
+                    this.ecamDash.insertBefore(notifContainer, this.ecamDash.querySelector("#dash-header"));
 
                     // Create the new grades notification and its associated new grades table if at least one new grade is detected
                     this.createNewGradesNotifDiv();
@@ -3404,12 +3447,12 @@ ecamDash = undefined;
                     const cardIsSelected    = this.selectedModuleCardsId.includes(`module-card-${moduleName}-in-semester-${sem}`);
 
                     let html = `
-                    <div class="module-card ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'validated' : 'failed'}`} ${folded ? "fold" : ""}" id="module-card-${moduleName}-in-semester-${sem}" data-semester="${sem}" data-module="${moduleName}" data-index="${moduleIndex}" ${folded ? `style="height: 78px"` : ""}>
+                    <div class="module-card ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'validated' : 'failed'}`} ${folded ? "fold" : ""}" id="module-card-${moduleName}-in-semester-${sem}" data-semester="${sem}" data-module="${moduleName}" data-index="${moduleIndex}" ${folded ? `style="height: 77px"` : ""}>
                     
                         <div class="module-header ${this.editMode ? "edit-mode" : ""} ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'validated' : 'failed'}`}" id="module-header-${moduleName}-in-semester${sem}" data-semester="${sem}" data-module="${moduleName}" ${this.editMode ? `draggable="true"` : ""}>
                             ${this.editMode 
                                 ? 
-                                `<div style="display: flex; align-items: center; justify-content: flex-start; width: 42%;">
+                                `<div class="module-header-left-side">
                                     <div style="margin-right: 5px; margin-bottom: 3px;">
                                     ${cardIsSelected 
                                         ? `<div class="tick-icon module" data-targetid="module-card-${moduleName}-in-semester-${sem}" data-semester="${sem}" data-module="${moduleName}" data-subject="">✔</div>`
@@ -5129,11 +5172,11 @@ ecamDash = undefined;
                         if (trigger?.classList?.contains("module-card") || (trigger?.target?.classList?.contains("module-card"))) {
                             // Identifying the moduleCard depending on whether the trigger argument is a module card or an event triggered by a module card
                             const moduleCard        = trigger?.target || trigger;
+                            const moduleHeader      = moduleCard.querySelector(".module-header");
+                            const toggle            = moduleCard.querySelector('.module-toggle');
                             const sem               = moduleCard.dataset.semester;
                             const module            = moduleCard.dataset.module;
                             const index             = moduleCard.dataset.index;
-                            const moduleHeader      = moduleCard.querySelector(".module-header");
-                            const toggle            = moduleCard.querySelector('.module-toggle');
 
                             if (hideAdjacentModuleInsertionFields != "only") {
 
@@ -5154,7 +5197,7 @@ ecamDash = undefined;
                                 moduleHeader.classList.add("fold");
                                 moduleCard.classList.add("fold");
                                 setTimeout(() => {
-                                    moduleCard.style.height = "78px";
+                                    moduleCard.style.height = "77px";
                                 }, 1)
                             }
 
@@ -5212,11 +5255,11 @@ ecamDash = undefined;
                         if (trigger?.classList?.contains("module-card") || (trigger?.target?.classList?.contains("module-card"))) {
                             // Identifying the moduleCard depending on whether the trigger argument is a module card or an event triggered by a module card
                             const moduleCard        = trigger?.target || trigger;
+                            const moduleHeader      = moduleCard.querySelector(".module-header");
+                            const toggle            = moduleCard.querySelector('.module-toggle');
                             const sem               = moduleCard.dataset.semester;
                             const module            = moduleCard.dataset.module;
                             const index             = moduleCard.dataset.index;
-                            const moduleHeader      = moduleCard.querySelector(".module-header");
-                            const toggle            = moduleCard.querySelector('.module-toggle');
 
 
                             clearTimeout(this.timeouts.foldModuleCardTimeout);
@@ -6145,10 +6188,11 @@ ecamDash = undefined;
                     if (type == "subject") {
 
                         (draggedCardIsSelected ? this.selectedSubjectCardsId : [card.id]).forEach(subjectCardId => {
-                            const subjectCard = document.getElementById(subjectCardId);
+                            const subjectCard       = document.getElementById(subjectCardId);
+                            const subjectTotalCoef  = subjectCard.querySelector(".subject-total-coef-div");
+                            
                             subjectCard.style.width = "50%";
-                        
-                            subjectCard.querySelector(".subject-total-coef-div").style.opacity = "0"; 
+                            subjectTotalCoef.style.opacity = "0"; 
                             
 
                             if (!this.compactSubjCardsId.includes(subjectCardId) || this.detailedSubjCardsId.includes(subjectCardId)) {
@@ -6188,8 +6232,12 @@ ecamDash = undefined;
                     else if (type == "module") {
 
                         (draggedCardIsSelected ? this.selectedModuleCardsId : [card.id]).forEach(moduleCardId => {
-                            const moduleCard = document.getElementById(moduleCardId);
+                            const moduleCard            = document.getElementById(moduleCardId);
+                            const moduleTotalCoef       = moduleCard.querySelector(".module-subject-total-coef-div");
+                            const moduleHeaderLeftSize  = moduleCard.querySelector(".module-header-left-side");
+
                             moduleCard.style.width = "50%";
+                            moduleTotalCoef.style.display = "none"; 
 
                             if (!draggedCardIsSelected) {
                                 // A non-selected module card has been dragged: if it was already folded, we only remove its adjacent module insertion fields, but fold it as well otherwise
@@ -6207,9 +6255,18 @@ ecamDash = undefined;
                     if (!selectionGoingOn) {
                         document.querySelector(".semester-content")                     .classList.add("dragging");
                         document.querySelector(".drop-field.create-module")             .classList.add("show");
-                        document.querySelector(".drop-field-create-module-hitbox")      .classList.add("show");
                         document.querySelector(".drop-field.remove-from-module")        .classList.add("show");
+                        document.querySelector(".drop-field-create-module-hitbox")      .classList.add("show");
                         document.querySelector(".drop-field-remove-from-module-hitbox") .classList.add("show");
+                        // Making sure there's no remaining hover class
+                        document.querySelector(".drop-field.create-module")             .classList.remove("hover");
+                        document.querySelector(".drop-field-create-module-text.top")    .classList.remove("hover");
+                        document.querySelector(".drop-field-create-module-text.bottom") .classList.remove("hover");
+                        document.querySelector(".drop-field-create-module-plus")        .classList.remove("hover");
+                        document.querySelector(".drop-field.remove-from-module")             .classList.remove("hover");
+                        document.querySelector(".drop-field-remove-from-module-text.top")    .classList.remove("hover");
+                        document.querySelector(".drop-field-remove-from-module-text.bottom") .classList.remove("hover");
+                        document.querySelector(".drop-field-remove-from-module-minus")       .classList.remove("hover");
 
                         // Select all the shown drop fields. 
                         // Since it occurs after folding the subject card is being dragged, it won't select the 2 subject insertion fields adjacent to this subject card.
@@ -6244,10 +6301,11 @@ ecamDash = undefined;
 
                         (draggedCardIsSelected ? this.selectedSubjectCardsId : [card.id]).forEach(subjectCardId => {
                             const subjectCard = document.getElementById(subjectCardId);
+                            const subjectTotalCoef  = subjectCard.querySelector(".subject-total-coef-div");
+
                             if (subjectCard) {
                                 subjectCard.style.width = "";
-                            
-                                subjectCard.querySelector(".subject-total-coef-div").style.opacity = ""; 
+                                subjectTotalCoef.style.opacity = ""; 
                                 
     
                                 if (!this.compactSubjCardsId.includes(subjectCardId) || this.detailedSubjCardsId.includes(subjectCardId)) {
@@ -6288,9 +6346,13 @@ ecamDash = undefined;
                     else if (card.classList.contains("module-card")) {
 
                         (draggedCardIsSelected ? this.selectedModuleCardsId : [card.id]).forEach(moduleCardId => {
-                            const moduleCard = document.getElementById(moduleCardId);
+                            const moduleCard            = document.getElementById(moduleCardId);
+                            const moduleTotalCoef       = moduleCard.querySelector(".module-subject-total-coef-div");
+                            const moduleHeaderLeftSize  = moduleCard.querySelector(".module-header-left-side");
+
                             if (moduleCard) {
                                 moduleCard.style.width = "";
+                                moduleTotalCoef.style.display = "";
     
                                 if (!draggedCardIsSelected) {
                                     // A non-selected module card has been dropped: if it was already folded before being dragged, we only show its adjacent module insertion fields, but unfold it as well otherwise
@@ -6569,6 +6631,7 @@ ecamDash = undefined;
                 // MARK: dropFieldToNewModuleAction
                 dropFieldToNewModuleAction(cardId, index=0) {
                     const sem = this.currentSemester;
+                    let bypasseReplacement = false;
                     let newModuleConfig = {subjects: [], coefficients: {}};
                     let newModuleName = "Module 1"; let count = 1;
                     if (!this.moduleConfig[sem]) this.moduleConfig[sem] = {__modules__: []};
@@ -6576,6 +6639,7 @@ ecamDash = undefined;
 
                     if (cardId) {
                         const card = document.getElementById(cardId);
+
                         if (card.classList.contains('subject-card')) {
                             let cardIsSelected = false;
                             this.selectedSubjectCardsId.forEach(selectedSubjectCardId => {if (selectedSubjectCardId == card.id) cardIsSelected = true;});
@@ -6597,8 +6661,9 @@ ecamDash = undefined;
                                         // the subj card was the only subj card of its previous module card, therefore we don't need to create nor make a new one, we just set the subject's coef to 100%.
                                         // This case is only to avoid taking a subj card from a module named "Module [X]", putting it in a new module named "Module [X+1]", deleting "Module [X]",
                                         // and realizing that it was pointless lol
-                                        newModuleName = oldModuleName;
-                                        newModuleConfig.coefficients[subject] = 100;
+                                        // newModuleName = oldModuleName;
+                                        // newModuleConfig.coefficients[subject] = 100;
+                                        bypasseReplacement = true;
                                     } 
                                     else {
                                         newModuleConfig = {subjects: [subject], coefficients: {[subject]: 100}};
@@ -6780,7 +6845,8 @@ ecamDash = undefined;
                         newModuleConfig.coefficients[newSubjName] = 100;
                     }
 
-                    if (!document.getElementById(cardId)?.classList?.contains('module-card')) {
+                    if (!document.getElementById(cardId)?.classList?.contains('module-card') && !bypasseReplacement) {
+                        // Editing the module config
                         this.moduleConfig[sem][newModuleName] = newModuleConfig;
                         const newModuleIndexInSem = this.moduleConfig[sem].__modules__.indexOf(newModuleName);
                         if (newModuleIndexInSem > -1) {
@@ -6795,7 +6861,7 @@ ecamDash = undefined;
                     this.saveConfig();
                     this.getGradesDatas();
                     this.generateContent();
-                    this.scrollToClientHighestElem({id: `module-card-${newModuleName}-in-semester-${sem}`, smooth: true})
+                    this.scrollToClientHighestElem("first/ignore-setting", {id: `module-card-${newModuleName}-in-semester-${sem}`, smooth: true})
                 }
 
 
@@ -6967,7 +7033,7 @@ ecamDash = undefined;
                             this.selectedModuleCardsId.forEach(selectedModuleCardId => {if (selectedModuleCardId == card.id) cardIsSelected = true;});
 
                             const targetModuleName = methodCaller.dataset.module;
-                            const insertionIndex   = methodCaller.dataset.index;
+                            const insertionIndex   = parseInt(methodCaller.dataset.index);
 
                             if (targetModuleName) {
                                 // reversing the list of selected module cards so that the insertion index can remain constant
@@ -6975,7 +7041,6 @@ ecamDash = undefined;
                                     const moduleCard     = document.getElementById(moduleCardId);
                                     const oldModuleName  = moduleCard.dataset.module;
                                     const oldModuleIndex = this.moduleConfig[sem].__modules__.indexOf(oldModuleName);
-    
                                     const subjectCards = Array.from(moduleCard.querySelectorAll(".subject-card"));
     
                                     // reversing the list of subject cards so that the insertion index can remain constant
@@ -6992,20 +7057,23 @@ ecamDash = undefined;
     
                                     this.moduleConfig[sem].__modules__.splice(oldModuleIndex, 1)
                                     delete this.moduleConfig[sem][oldModuleName];
-    
+
                                     if (this.moduleConfig?.[sem]?.__modules__?.length == 0) {
                                         delete this.moduleConfig[sem]
                                     }
                                 })
-                            }
+                            } 
                             else {
-                                (cardIsSelected ? this.selectedModuleCardsId.reverse() : [card.id]).forEach(moduleCardId => {
+                                (cardIsSelected ? this.selectedModuleCardsId : [card.id]).forEach((moduleCardId, _index) => {
                                     const moduleCard     = document.getElementById(moduleCardId);
                                     const oldModuleName  = moduleCard.dataset.module;
                                     const oldModuleIndex = this.moduleConfig[sem].__modules__.indexOf(oldModuleName);
+                                    const correctedInsertionIndex = insertionIndex < oldModuleIndex ? insertionIndex + _index : insertionIndex;
+                                    const correctedOldModuleIndex = correctedInsertionIndex < oldModuleIndex ? oldModuleIndex + 1 : oldModuleIndex;
 
-                                    this.moduleConfig[sem].__modules__.splice(insertionIndex,0, oldModuleName)
-                                    this.moduleConfig[sem].__modules__.splice(oldModuleIndex,1)
+                                    // Insert the module at the right place, 
+                                    this.moduleConfig[sem].__modules__.splice(correctedInsertionIndex, 0, oldModuleName)
+                                    this.moduleConfig[sem].__modules__.splice(correctedOldModuleIndex, 1)
                                 })
                             }
 
@@ -7603,7 +7671,7 @@ ecamDash = undefined;
     }
 
 
-    //MARK: ——————————————————
+    //MARK: —————————————————
 
 
 
