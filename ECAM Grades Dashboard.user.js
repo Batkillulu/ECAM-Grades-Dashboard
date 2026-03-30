@@ -6301,9 +6301,9 @@ ecamDash = undefined;
 
                         (draggedCardIsSelected ? this.selectedSubjectCardsId : [card.id]).forEach(subjectCardId => {
                             const subjectCard = document.getElementById(subjectCardId);
-                            const subjectTotalCoef  = subjectCard.querySelector(".subject-total-coef-div");
-
+                            
                             if (subjectCard) {
+                                const subjectTotalCoef  = subjectCard.querySelector(".subject-total-coef-div");
                                 subjectCard.style.width = "";
                                 subjectTotalCoef.style.opacity = ""; 
                                 
@@ -6347,10 +6347,11 @@ ecamDash = undefined;
 
                         (draggedCardIsSelected ? this.selectedModuleCardsId : [card.id]).forEach(moduleCardId => {
                             const moduleCard            = document.getElementById(moduleCardId);
-                            const moduleTotalCoef       = moduleCard.querySelector(".module-subject-total-coef-div");
-                            const moduleHeaderLeftSize  = moduleCard.querySelector(".module-header-left-side");
-
+                            
                             if (moduleCard) {
+                                const moduleTotalCoef       = moduleCard.querySelector(".module-subject-total-coef-div");
+                                const moduleHeaderLeftSize  = moduleCard.querySelector(".module-header-left-side");
+                                
                                 moduleCard.style.width = "";
                                 moduleTotalCoef.style.display = "";
     
