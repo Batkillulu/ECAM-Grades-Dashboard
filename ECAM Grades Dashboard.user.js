@@ -6007,7 +6007,7 @@ ecamDash = undefined;
 
                         switch (`${sourceType} dropped in a ${type} insertion field`) {
                             case "module-card dropped in a module insertion field":
-                                this.dropFieldModuleInsertAction(dataTransfer, insertField);
+                                this.dropFieldSubjectInsertAction(dataTransfer, insertField);
                             break;
                             case "module-card dropped in a subject insertion field":
                                 this.dropFieldSubjectInsertAction(dataTransfer, insertField);
@@ -6962,40 +6962,53 @@ ecamDash = undefined;
                             this.generateContent();
                             this.setGradesTableTotalCoef();
                         }
-                        else if (card?.classList?.contains('module-card')) {
+                        else if (card?.classList?.contains('module-card')) {    // Inserting all selected module cards at the place of the insertion field, in order of selection
                             let cardIsSelected = false;
                             this.selectedModuleCardsId.forEach(selectedModuleCardId => {if (selectedModuleCardId == card.id) cardIsSelected = true;});
 
                             const targetModuleName = methodCaller.dataset.module;
                             const insertionIndex   = methodCaller.dataset.index;
 
-                            // reversing the list of selected module cards so that the insertion index can remain constant
-                            (cardIsSelected ? this.selectedModuleCardsId.reverse() : [card.id]).forEach(moduleCardId => {
-                                const moduleCard     = document.getElementById(moduleCardId);
-                                const oldModuleName  = moduleCard.dataset.module;
-                                const oldModuleIndex = this.moduleConfig[sem].__modules__.indexOf(oldModuleName);
-
-                                const subjectCards = Array.from(moduleCard.querySelectorAll(".subject-card"));
-
-                                // reversing the list of subject cards so that the insertion index can remain constant
-                                subjectCards.reverse().forEach((subjectCard, _index) => {
-                                    const subject = subjectCard.dataset.subject;
-
-                                    this.moduleConfig[sem][targetModuleName].subjects.splice(insertionIndex, 0, subject);
-                                    this.moduleConfig[sem][targetModuleName].coefficients[subject] = Number(this.moduleConfig[sem][oldModuleName].coefficients[subject]);
-
-                                    this.moduleConfig[sem][oldModuleName].subjects.splice(this.moduleConfig[sem][oldModuleName].subjects.length-1,1);
-                                    delete this.moduleConfig[sem][oldModuleName].coefficients[subject];
-                                    
+                            if (targetModuleName) {
+                                // reversing the list of selected module cards so that the insertion index can remain constant
+                                (cardIsSelected ? this.selectedModuleCardsId.reverse() : [card.id]).forEach(moduleCardId => {
+                                    const moduleCard     = document.getElementById(moduleCardId);
+                                    const oldModuleName  = moduleCard.dataset.module;
+                                    const oldModuleIndex = this.moduleConfig[sem].__modules__.indexOf(oldModuleName);
+    
+                                    const subjectCards = Array.from(moduleCard.querySelectorAll(".subject-card"));
+    
+                                    // reversing the list of subject cards so that the insertion index can remain constant
+                                    subjectCards.reverse().forEach((subjectCard, _index) => {
+                                        const subject = subjectCard.dataset.subject;
+    
+                                        this.moduleConfig[sem][targetModuleName].subjects.splice(insertionIndex, 0, subject);
+                                        this.moduleConfig[sem][targetModuleName].coefficients[subject] = Number(this.moduleConfig[sem][oldModuleName].coefficients[subject]);
+    
+                                        this.moduleConfig[sem][oldModuleName].subjects.splice(this.moduleConfig[sem][oldModuleName].subjects.length-1,1);
+                                        delete this.moduleConfig[sem][oldModuleName].coefficients[subject];
+                                        
+                                    })
+    
+                                    this.moduleConfig[sem].__modules__.splice(oldModuleIndex, 1)
+                                    delete this.moduleConfig[sem][oldModuleName];
+    
+                                    if (this.moduleConfig?.[sem]?.__modules__?.length == 0) {
+                                        delete this.moduleConfig[sem]
+                                    }
                                 })
+                            }
+                            else {
+                                (cardIsSelected ? this.selectedModuleCardsId.reverse() : [card.id]).forEach(moduleCardId => {
+                                    const moduleCard     = document.getElementById(moduleCardId);
+                                    const oldModuleName  = moduleCard.dataset.module;
+                                    const oldModuleIndex = this.moduleConfig[sem].__modules__.indexOf(oldModuleName);
 
-                                this.moduleConfig[sem].__modules__.splice(oldModuleIndex, 1)
-                                delete this.moduleConfig[sem][oldModuleName];
+                                    this.moduleConfig[sem].__modules__.splice(insertionIndex,0, oldModuleName)
+                                    this.moduleConfig[sem].__modules__.splice(oldModuleIndex,1)
+                                })
+                            }
 
-                                if (this.moduleConfig?.[sem]?.__modules__?.length == 0) {
-                                    delete this.moduleConfig[sem]
-                                }
-                            })
 
                             this.removeCardFromSelection();
                             this.saveConfig();
@@ -7036,7 +7049,7 @@ ecamDash = undefined;
                 // MARK: dropFieldModuleInsertAction
                 dropFieldModuleInsertAction(cardId=null, methodCaller=null) {
                     const sem = this.currentSemester;
-
+                    debugger;
                     if (cardId) {
                         const card = document.getElementById(cardId);
 
