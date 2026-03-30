@@ -104,14 +104,20 @@ From here, multiple things can be done:
 ### Drag & Drop method
 Start ***dragging*** the ***header*** of a ***subject/module card***, and ***fields*** will appear on both sides of the screen: one to remove a ***card*** from its module, one to add a ***card*** to a new module.
 
-#### ***Subject cards***
+At this point, you will notice fields around every ***card***, displaying at first a plus `+`, but they turn into the top half of an arrow `→`. They are called ***insertion fields***.
+
+#### ***○ Subject cards***
 - Drop the ***subject card*** into either of these ***fields*** to apply their respective actions on the said ***subject card***.
+
 - Dropping a ***subject card*** in a ***module insertion field*** will insert the ***subject card*** in a new module that will be positioned at the place of the ***module insertion field***. These fields appear around every ***module card***.
+
 - Dropping a ***subject card*** in a ***subject insertion field*** will reorder the ***subject card*** at the place of the ***subject insertion field***. These fields appear around every ***subject card***. Use this to re-order your subjects in their module to your liking!
 
-#### ***Module cards***
+#### ***○ Module cards***
 - Drop the ***module card*** into either of these ***fields*** to apply their respective actions on the said ***module card***.
+
 - Dropping a ***module card*** in a ***module insertion field*** will insert the ***module card*** at the place of the ***module insertion field***. These fields appear around every ***module card***.
+
 - Dropping a ***module card*** in a ***subject insertion field*** will insert the ***module cards***'s subjects contained in the dropped ***module card*** at the place of the ***subject insertion field***, in the same order previously displayed. These fields appear around every ***subject card***.
 
 I like how smooth and organic this feels, that's why I made it :D though drag & drop sadly doesn't work on mobile... But don't worry, the next method does!
@@ -119,11 +125,24 @@ I like how smooth and organic this feels, that's why I made it :D though drag & 
 ***
 ### Selection method
 You can select a ***subject/module card*** by clicking on the `☰` icon. A `✔` will be shown instead. Clicking on `✔` will remove the ***card*** from the selection. 
+
 Upon selecting a ***card***, a notification will appear in the top left corner of you screen. The notification displays an arrow (clicking on the arrow will have for effect to scroll to the ***subject/module card*** corresponding to this notification), the name of the selected ***subject/module card***, and a button to close the notification (this has for effect to unselect its corresponding ***subject/module card***). Note that you CAN'T select ***module*** **AND** ***subject cards*** at the same time.
 
-- While you selected at least one ***subject/module card***, the ***add/remove fields*** on both sides of the screen appear. Clicking on them will apply the action they describe on ALL selected ***cards***.
+At this point, you will notice fields around every ***card***, displaying at first a plus `+`, but they turn into the top half of an arrow `→`. They are called ***insertion fields***.
+
+#### ***○ Subject cards selection***
+- While you have at least one ***subject card*** selected, the ***add/remove fields*** on both sides of the screen appear. Clicking on them will apply the action they describe on ALL selected ***subject cards***.
+
 - Clicking on a ***module insertion field*** will insert the selection to a new module which will be positionned at the place of the ***module insertion field*** and will contain all the selected ***subject cards*** in order of selection. 
-- Clicking on a ***subject innsertion field*** will insert the selection in the module and the selection will be positioned in order of selection at the place of the ***subject insertion field***
+
+- Clicking on a ***subject innsertion field*** will insert the selection in the module and the selection will be positioned in order of selection at the place of the ***subject insertion field***.
+
+#### ***○ Module cards selection***
+- While you have at least one ***module card*** selected, the ***add/remove fields*** on both sides of the screen appear. Clicking on them will apply the action they describe on ALL selected ***cards***: they will either delete all selected ***module cards***, either create a new ***module card*** containing the ***subject cards*** of all the selected ***module cards***.
+
+- Clicking on a ***module insertion field*** will insert the selection at the place of the ***module insertion field***, in order of selection. 
+
+- Clicking on a ***subject innsertion field*** will insert all the ***subject cards*** in the selected ***module cards*** in order of selection at the place of the ***subject insertion field***.
 
 Optimal for mobile use! Also a good alternative to the drag & drop method in general, as you can't drag AND scroll at the same time, so you have to drag and move your mouse close to the top/bottom of the screen to scroll up/down, which can be a bit annoying for extensive use...
 
