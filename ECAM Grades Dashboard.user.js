@@ -133,15 +133,15 @@ ecamDash = undefined;
                 .loading-symbol.show    { animation: loading 1s infinite; }
                 @keyframes loading  { from {offset-distance: var(--offset-offset)} to {offset-distance: calc(var(--offset-offset) + 100%)} }
 
-                .new-user-notif     { display: flex; justify-content: center; align-items: center; width: 0; height: 0; position: relative; right: 303px; top: -22px; border-radius: 20px; text-align: center; cursor: pointer; user-select: none; z-index: 10; transition: all 0.3s ease; --hoverAmp: 15px; animation: hoveringElem 3s infinite ease-in-out; --arrow-path: path('M 0 30 c 20,46, 130,71, 156,-12 m -21,5 l 23,-8 l 9,19'); --arrow-join: round; } 
-                .new-user-notif-text    { min-width: 400px; min-height: 53px; padding: 10px; background: #00037b; outline: 2px solid; border-radius: 20px; font-size: 18px; text-wrap-mode: wrap; }
+                .new-user-notif     { display: flex; justify-content: center; align-items: center; width: 0; height: 0; position: relative; right: 296px; top: -22px; border-radius: 20px; text-align: center; cursor: pointer; user-select: none; z-index: 10; transition: all 0.3s ease; --hoverAmp: 5px; animation: hoveringElem 2s infinite alternate ease-in-out; --arrow-join: round; } 
+                .new-user-notif-text    { min-width: 450px; min-height: 53px; padding: 10px; background: #00037b; outline: 3px solid; border-radius: 20px; font-size: 23px; text-wrap-mode: wrap; line-height: 24px; z-index: 10; }
                 .new-user-notif-arrow       { width: 0px; height: 0px; position: relative; transition: all 0.5s ease }
-                .new-user-notif-arrow-svg        { width: 0; height: 0; min-width: 200px; min-height: 70px; }
-                .new-user-notif-arrow-path       { animation: hoveringArrow 3s infinite ease-in-out; }
+                .new-user-notif-arrow-svg        { width: 0; height: 0; min-width: 210px; min-height: 70px; }
+                .new-user-notif-arrow-path       { animation: hoveringArrow 2s infinite alternate ease-in-out; }
                 .new-user-notif-arrow-path.outside   { fill: none; stroke: #ffffff; stroke-width: 15px; stroke-linejoin: var(--arrow-join); }
                 .new-user-notif-arrow-path.inside    { fill: none; stroke: #00037b; stroke-width: 8px;  stroke-linejoin: var(--arrow-join); }
-                @keyframes hoveringElem  { 0% { transform: translateY(0px); } 50% { transform: translateY(var(--hoverAmp)); } 100% { transform: translateY(0px); } }
-                @keyframes hoveringArrow { 0% { d: path('M 0 30 c 10,50, 128,77, 147,13 m -21,5 l 23,-8 l 9,19'); } 50% { d: path('M 0 30 c 20,46, 130,71, 156,-12 m -21,5 l 23,-8 l 9,19'); } 100% { d: path('M 0 30 c 10,50, 128,77, 147,13 m -21,5 l 23,-8 l 9,19'); } }
+                @keyframes hoveringElem  { from { transform: translateY(0px); } to { transform: translateY(var(--hoverAmp)); } }
+                @keyframes hoveringArrow { from { d: path('M 0 30 c 10,59, 134,90, 165,16 m -19,3 l 21,-6 l 8,18'); } to { d: path('M 0 30 c 23,67, 156,87, 178,0 m -23,8 l 25,-15 l 13,22'); } }
 
                 .new-user-notif-fullscreen-effect   { position: fixed; width: 100%; height: 100%; right: 0px; top: 0px; background: black; overflow: clip; opacity: 0%; z-index: 8; transition: all 0.5s ease; }
                 .new-user-notif-fullscreen-effect.focus { opacity: 80%; }
@@ -153,7 +153,7 @@ ecamDash = undefined;
                     .lang-btn           { border: 2px solid #000000ff; background: #6f79ff; border-radius: 18px; width: 36px; height: 36px; }
                     .lang-btn.active    { border: 2px solid #ceefffff; }
                     .lang-btn:hover     { border: 2px solid #afe4ffff; background: #a6acff; }
-                    `;
+                `;
             
             
                 //#region -over header buttons
@@ -167,7 +167,7 @@ ecamDash = undefined;
 
                     // MARK: help buttons
                     styles += `
-                        .over-header-help-btns                  { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; z-index: 12; }
+                        .over-header-help-btns                  { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; z-index: 301; }
 
 
                         .over-header-btn.how-to-use-btn                 { justify-content: center;  background: #0059ad; width: 40px; padding-left: 0px;  font-size: 20px; outline: 3px solid #c022ff; border: none; color: inherit; z-index: 12; }
@@ -1031,7 +1031,7 @@ ecamDash = undefined;
                             : "Enable blur"
                         ,
                         description: () => this.lang == "fr" 
-                            ? "Activer le flou qui s'opère sur le fond des fenêtres (allumé par défaut parce que je trouve ça beau :D)" 
+                            ? "Activer le flou qui s'opère sur le fond des fenêtres (activé par défaut parce que je trouve ça joli :D)" 
                             : "Enable the blur that operates on the background of the windows (turned on by default because I find it nice :D)"
                         ,
                         info: () => this.lang == "fr" 
@@ -1151,7 +1151,7 @@ ecamDash = undefined;
                 this.dateHour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
                 this.dateTimeOfLastUpdateCheck          = localStorage.getItem("ECAM_DASHBOARD_DATE_TIME_OF_LAST_UPDATE_CHECK") || "2000-00-00T00:00:00Z"; // A day before the date of last update, so that the update check is ran to make sure the correct version is installed
                 this.checkForUpdate                     = localStorage.getItem("ECAM_DASHBOARD_CHECK_FOR_UPDATE")               || false;
-                this.firstLoad              = false /* JSON.parse( localStorage.getItem("ECAM_DASHBOARD_FIRST_LOAD")                     || "true") */;
+                this.firstLoad              = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_FIRST_LOAD")                     || "true");
                 this.updateFirstLoad        = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_UPDATE_FIRST_LOAD") || JSON.stringify({state: true, v: this.scriptVersion}));
                 
             //#endregion
@@ -1291,7 +1291,7 @@ ecamDash = undefined;
             this.createDashboard();
 
             // Trigger the first load notifications to show some help to learn how to use the extension
-            if (this.firstLoad) {this.firstLoadEvent();}
+            this.firstLoadEvent();
 
             // Trigget the update's first load events
             if (this.updateFirstLoad.state && this.updateFirstLoad.v == this.scriptVersion) {this.updateFirstLoadEvent();}
@@ -3030,15 +3030,14 @@ ecamDash = undefined;
                 async languageSensitiveContent(fadeIn=true) {
                     // Language Sensitive text in the Dashboard Header and Semester filter tab (which don't refresh on calling the generateContent() method)
                     if (this.error) {
-                        const offlineTitle = document.querySelector(".offline-mode-title");
                         const offlineSubTitle = document.querySelector(".offline-mode-subtitle");
                         offlineSubTitle.innerHTML = this.lang == "fr" 
-                            ? `Les serveurs de l'ECAM sont actuellement inaccessibles ! ${!this.firstLoad 
-                                ? `Pour l'instant, tu ne peux pas voir si tu as des nouvelles notes... En attendant, voici le tableau de bord en mode offline, tu as donc accès aux notes que j'ai gentiment sauvegardées dans le cache la dernière fois ! De rien ! <3` 
-                                : "Pour l'instant, tu ne peux pas voir tes notes... Tu peux quand même commencer à configurer tes modules, et reviens quand les serveurs sont de nouveau opérationnels pour voir tes notes !"
+                            ? `Les serveurs de l'ECAM sont actuellement inaccessibles ! ${this.grades.length == 0
+                                ? "Pour l'instant, tu ne peux pas voir si tu as des nouvelles notes... En attendant, voici le tableau de bord en mode offline, tu as donc accès aux notes que j'ai gentiment sauvegardées dans le cache la dernière fois ! De rien ! <3" 
+                                : "Pour l'instant, tu ne peux pas voir tes notes... Tu peux quand même commencer à configurer tes modules, reviens quand les serveurs sont opérationnels pour voir tes notes !"
                             }` 
-                            : `ECAM's servers are currently down! ${!this.firstLoad 
-                                ? `For now, you can't see if you have new grades... While waiting for the servers to be back up, here are the grades I nicely saved in your cache last time, so you can still see them even with the server down! You're welcome! <3` 
+                            : `ECAM's servers are currently down! ${this.grades.length == 0 
+                                ? "For now, you can't see if you have new grades... While waiting for the servers to be back up, here are the grades I nicely saved in your cache last time, so you can still see them even with the server down! You're welcome! <3" 
                                 : "For now, you can't see your grades... You can still start by configuring your modules, and come back once the servers are up again to see your grades!"
                             }`
                         ;
@@ -3095,7 +3094,7 @@ ecamDash = undefined;
 
                         settingsBtn     .title     = "Ouvrir les paramètres";
 
-                        if (((newUserNotif?.style?.display || "none" == "none")?.toString() || "true") == "false") newUserNotif.title     = "Clique pour fermer";
+                        if (newUserNotif) newUserNotif.title     = "Clique pour fermer";
 
                         shareConfig     .innerHTML = `Partager une config  ${this.createExternalLinkSymbol({margin: [0,0,0,4]})}`;
                         suggestIdea     .innerHTML = `Suggérer une idée    ${this.createExternalLinkSymbol({margin: [0,0,0,4]})}`;
@@ -3103,7 +3102,7 @@ ecamDash = undefined;
                         mailInfoText    .innerHTML = "Par mail: baptiste.jacquin@ecam.fr 📋";
                         mailInfoCopied  .innerHTML = "Copié !";
 
-                        if (((newUserNotif?.style?.display || "none" == "none")?.toString() || "true") == "false") newUserNotifText.innerHTML = "Bonjour! Nouveau ici? Clique ici pour apprendre à utiliser cette extension!";
+                        if (newUserNotif) newUserNotifText.innerHTML = "Bonjour! Première fois? Clique ici pour apprendre à utiliser cette extension! (Clique ici pour fermer)";
 
                         mailInfo   .classList.replace("en", "fr");
                         shareConfig.classList.replace("en", "fr");
@@ -3128,7 +3127,7 @@ ecamDash = undefined;
 
                         settingsBtn     .title     = "Open the settings";
                         
-                        if (((newUserNotif?.style?.display || "none" == "none")?.toString() || "true") == "false") newUserNotif.title     = "Click to dismiss";
+                        if (newUserNotif) newUserNotif.title     = "Click to dismiss";
 
                         shareConfig     .innerHTML = `Share a config  ${this.createExternalLinkSymbol({margin: [0,0,0,4]})}`;
                         suggestIdea     .innerHTML = `Suggest an idea ${this.createExternalLinkSymbol({margin: [0,0,0,4]})}`;
@@ -3136,7 +3135,7 @@ ecamDash = undefined;
                         mailInfoText    .innerHTML = "By mail: baptiste.jacquin@ecam.fr 📋";
                         mailInfoCopied  .innerHTML = "Copied!";
 
-                        if (((newUserNotif?.style?.display || "none" == "none")?.toString() || "true") == "false") newUserNotifText.innerHTML = "Hey! New here? Click here to find a tutorial on how to use this extension!";
+                        if (newUserNotif) newUserNotifText.innerHTML = "Hey! New here? Click here to find a tutorial on how to use this extension! (Click here to dismiss)";
 
                         mailInfo   .classList.replace("fr", "en");
                         shareConfig.classList.replace("fr", "en");
@@ -4090,35 +4089,38 @@ ecamDash = undefined;
 
 
                 firstLoadEvent() {
-                    const overHeaderBtns = document.querySelector(".over-header-help-btns");
 
-                    const newUserNotif  = document.createElement("div");
-                    newUserNotif.className = "new-user-notif";
-                    newUserNotif.title = this.lang == "fr" ? "Clique pour fermer" : "Click to dismiss";
-                    newUserNotif.innerHTML = `
-                        <div class="new-user-notif-arrow" style="right: -322px; bottom: ${this.error ? "-8px" : "-4px"};">
-                            <svg class="new-user-notif-arrow-svg" viewBox="0 0 100 100" style="z-index: 9;">
-                                <path class="new-user-notif-arrow-path outside"></path>
-                            </svg>
-                            <svg class="new-user-notif-arrow-svg" viewBox="0 0 100 100" style="position: relative; bottom: ${this.error ? "70px" : "75px"}; z-index: 11;">
-                                <path class="new-user-notif-arrow-path inside"></path>
-                            </svg>
-                        </div>
-                        <div class="new-user-notif-text">${
-                            this.lang == "fr" 
-                                ? "Bonjour! Nouveau ici? Clique ici pour apprendre à utiliser cette extension!" 
-                                : "Hey! New here? Click here to find a tutorial on how to use this extension!"
-                            }
-                        </div>
-                    `;
-                    overHeaderBtns.appendChild(newUserNotif);
-
-                    const newUserNotifFullScreen     = document.createElement("div");
-                    newUserNotifFullScreen.className = "new-user-notif-fullscreen-effect";
-                    this.ecamDash.appendChild(newUserNotifFullScreen);
-                    setTimeout(() => {newUserNotifFullScreen?.classList?.add("focus");}, 10);
-
-                    newUserNotif.onclick = () => {this.dismissFirstTimeNotif();}
+                    if (this.firstLoad) {
+                        const overHeaderBtns = document.querySelector(".over-header-help-btns");
+    
+                        const newUserNotif  = document.createElement("div");
+                        newUserNotif.className = "new-user-notif";
+                        newUserNotif.title = this.lang == "fr" ? "Clique pour fermer" : "Click to dismiss";
+                        newUserNotif.innerHTML = `
+                            <div class="new-user-notif-arrow" style="right: -322px; bottom: ${this.error ? "-8px" : "-4px"};">
+                                <svg class="new-user-notif-arrow-svg" viewBox="0 0 100 100" style="z-index: 9;">
+                                    <path class="new-user-notif-arrow-path outside"></path>
+                                </svg>
+                                <svg class="new-user-notif-arrow-svg" viewBox="0 0 100 100" style="position: relative; bottom: ${this.error ? "70px" : "75px"}; z-index: 11;">
+                                    <path class="new-user-notif-arrow-path inside"></path>
+                                </svg>
+                            </div>
+                            <div class="new-user-notif-text">${
+                                this.lang == "fr" 
+                                    ? "Bonjour! Première fois? Clique ici pour apprendre à utiliser cette extension! (Clique ici pour fermer)" 
+                                    : "Hey! New here? Click here to find a tutorial on how to use this extension! (Click here to dismiss)"
+                                }
+                            </div>
+                        `;
+                        overHeaderBtns.appendChild(newUserNotif);
+    
+                        const newUserNotifFullScreen     = document.createElement("div");
+                        newUserNotifFullScreen.className = "new-user-notif-fullscreen-effect";
+                        this.ecamDash.appendChild(newUserNotifFullScreen);
+                        setTimeout(() => {newUserNotifFullScreen?.classList?.add("focus");}, 10);
+    
+                        newUserNotif.onclick = () => {this.dismissFirstTimeNotif();}
+                    }
                     
                 }
 
@@ -4932,7 +4934,7 @@ ecamDash = undefined;
                             newUserNotif.onclick = null;
                             setTimeout(() => {newUserNotif.style.display = "none"}, 300);
                             
-                            localStorage.setItem("ECAM_DASHBOARD_FIRST_LOAD", false);
+                            // localStorage.setItem("ECAM_DASHBOARD_FIRST_LOAD", false);
                             this.firstLoad = false;
                             setTimeout(() => {newUserNotifFullScreen.remove(); newUserNotif.remove()}, 500);
                         }
@@ -7681,7 +7683,7 @@ ecamDash = undefined;
 
         if (!error) {
             window.onload = () => { 
-                
+
                 const greyGridTable = document.querySelector(".greyGridTable");
                 const intranetFold = document.createElement("div");
                 intranetFold.className = "intranet-fold";
