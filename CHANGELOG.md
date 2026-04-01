@@ -1,3 +1,25 @@
+# PATCH NOTES v2.5
+
+
+## v2.5.0
+
+### Features
+- Tuto
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # PATCH NOTES v2.4
 
 

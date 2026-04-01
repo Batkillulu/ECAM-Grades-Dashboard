@@ -29,6 +29,7 @@
 //      (rendering the characters shortens the height of rows in the minimap, I prefer it like that since this script is quite long)
 // 
 // I've done a bit of styling intended for the minimap with the parameters I gave above, and it should make your reverse-engineering experience much easier!
+// Optimal display when the side bar is closed
 // 
 // 
 // Link for offline test: https://espace.ecam.fr/c/portal/login?redirect=%2Fgroup%2Feducation%2Fnotes&p_l_id=0&ticket=ST-113179-sbwjXieT3GLY9T3fXdsmFp9vCro-tomcat03
@@ -133,7 +134,7 @@ ecamDash = undefined;
                 .loading-symbol.show    { animation: loading 1s infinite; }
                 @keyframes loading  { from {offset-distance: var(--offset-offset)} to {offset-distance: calc(var(--offset-offset) + 100%)} }
 
-                .new-user-notif     { display: flex; justify-content: center; align-items: center; width: 0; height: 0; position: relative; right: 296px; top: -22px; border-radius: 20px; text-align: center; cursor: pointer; user-select: none; z-index: 10; transition: all 0.3s ease; --hoverAmp: 5px; animation: hoveringElem 2s infinite alternate ease-in-out; --arrow-join: round; } 
+                .new-user-notif     { display: flex; justify-content: center; align-items: center; width: 0; height: 0; position: relative; right: 296px; top: -22px; border-radius: 20px; text-align: center; cursor: pointer; user-select: none; z-index: 301; transition: all 0.3s ease; --hoverAmp: 5px; animation: hoveringElem 2s infinite alternate ease-in-out; --arrow-join: round; } 
                 .new-user-notif-text    { min-width: 450px; min-height: 53px; padding: 10px; background: #00037b; outline: 3px solid; border-radius: 20px; font-size: 23px; text-wrap-mode: wrap; line-height: 24px; z-index: 10; }
                 .new-user-notif-arrow       { width: 0px; height: 0px; position: relative; transition: all 0.5s ease }
                 .new-user-notif-arrow-svg        { width: 0; height: 0; min-width: 210px; min-height: 70px; }
@@ -144,7 +145,7 @@ ecamDash = undefined;
                 @keyframes hoveringArrow { from { d: path('M 0 30 c 10,59, 134,90, 165,16 m -19,3 l 21,-6 l 8,18'); } to { d: path('M 0 30 c 23,67, 156,87, 178,0 m -23,8 l 25,-15 l 13,22'); } }
 
                 .new-user-notif-fullscreen-effect   { position: fixed; width: 100%; height: 100%; right: 0px; top: 0px; background: black; overflow: clip; opacity: 0%; z-index: 8; transition: all 0.5s ease; }
-                .new-user-notif-fullscreen-effect.focus { opacity: 80%; }
+                .new-user-notif-fullscreen-effect.focus { opacity: 60%; }
             `;
             
             
@@ -167,10 +168,10 @@ ecamDash = undefined;
 
                     // MARK: help buttons
                     styles += `
-                        .over-header-help-btns                  { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; z-index: 301; }
+                        .over-header-help-btns                  { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; /* z-index: 301; */ }
 
 
-                        .over-header-btn.how-to-use-btn                 { justify-content: center;  background: #0059ad; width: 40px; padding-left: 0px;  font-size: 20px; outline: 3px solid #c022ff; border: none; color: inherit; z-index: 12; }
+                        .over-header-btn.how-to-use-btn                 { justify-content: center;  background: #0059ad; width: 40px; padding-left: 0px;  font-size: 20px; outline: 3px solid #c022ff; border: none; color: inherit; }
                         .over-header-btn.how-to-use-btn:hover           { outline-color: white; background: #2888e2; }
                         .over-header-btn.how-to-use-btn.open            { outline-color: white; }
 
@@ -186,6 +187,12 @@ ecamDash = undefined;
                         .over-header-btn.help.doc-btn.fr::before                    { content: "Voir documentation"; }
                         .over-header-btn.help.doc-btn.en                            { width: 180px; }
                         .over-header-btn.help.doc-btn.en::before                    { content: "See documentation"; }
+                        
+                        .over-header-btn.help.keybinds-btn                          {  }
+                        .over-header-btn.help.keybinds-btn.fr                       { width: 180px; }
+                        .over-header-btn.help.keybinds-btn.fr::before               { content: "Raccourcis clavier ⌨️"; }
+                        .over-header-btn.help.keybinds-btn.en                       { width: 190px; }
+                        .over-header-btn.help.keybinds-btn.en::before               { content: "Keyboard shortcuts ⌨️"; }
 
                         .over-header-btn.help.tuto-btn                              { font-weight: 700; }
                         .over-header-btn.help.tuto-btn.fr                           { width: 168px; }
@@ -193,17 +200,11 @@ ecamDash = undefined;
                         .over-header-btn.help.tuto-btn.en                           { width: 135px; }
                         .over-header-btn.help.tuto-btn.en::before                   { content: "Start tutorial ▶︎"; }
 
-                        .over-header-btn.help.patch-btn                             { font-weight: 700; }
-                        .over-header-btn.help.patch-btn.fr                          { width: 168px; }
-                        .over-header-btn.help.patch-btn.fr::before                  { content: "Voir les notes de patch"; }
-                        .over-header-btn.help.patch-btn.en                          { width: 135px; }
-                        .over-header-btn.help.patch-btn.en::before                  { content: "See patch notes"; }
-
-                        .over-header-btn.help.keybinds-btn                          {  }
-                        .over-header-btn.help.keybinds-btn.fr                       { width: 180px; }
-                        .over-header-btn.help.keybinds-btn.fr::before               { content: "Raccourcis clavier ⌨️"; }
-                        .over-header-btn.help.keybinds-btn.en                       { width: 190px; }
-                        .over-header-btn.help.keybinds-btn.en::before               { content: "Keyboard shortcuts ⌨️"; }
+                        .over-header-btn.help.first-steps-btn                       { font-weight: 700; }
+                        .over-header-btn.help.first-steps-btn.fr                    { width: 168px; }
+                        .over-header-btn.help.first-steps-btn.fr::before            { content: "► Premiers pas ◄"; }
+                        .over-header-btn.help.first-steps-btn.en                    { width: 135px; }
+                        .over-header-btn.help.first-steps-btn.en::before            { content: "► First steps ◄"; }
                     `;
 
 
@@ -262,6 +263,17 @@ ecamDash = undefined;
 
                 //#endregion
 
+
+
+                //MARK: Tuto
+                styles += `
+                    .tuto-tip-notif-container   { display: flex; justify-content: center; align-items: center; position: relative; width: 0; height: 0; z-index: 10; opacity: 0; transform: scale(110%); transition: all 0.3s ease;}
+                    .tuto-tip-notif         { display: flex; justify-content: center; align-items: center; padding: 20px; background: linear-gradient( #5334ff 0%, #7a62ff 100%); border-radius: 7px; color: white; font-size: 20px; line-height: 20px; text-align: center; animation: focusBlinkAnimation 2s infinite alternate ease-in-out; transition: all 0.3s ease; }
+                    @keyframes focusBlinkAnimation  { from { filter: brightness(1); } to { filter: brightness(1.5) } }
+
+                    .skip-tuto-btn          { display: flex; justify-content: center; align-items: center; padding: 10px; position: fixed; top: 20px; right: 20px; background: #4c84fde8; border-radius: 10px; color: white; font-size: 20px; text-decoration: underline; cursor: pointer; opacity: 0; z-index: 5000; transition: all 0.5s ease; }
+                    .skip-tuto-btn::before      { content: "Skip tutorial"; }
+                `;
                 
 
 
@@ -269,6 +281,7 @@ ecamDash = undefined;
                 styles += `
                 
                     .header-actions                 { display: flex; gap: 12px; }
+                    .config-btns-container          { display: flex; flex-direction: column; }
                     .btn                                { display: flex; justify-content: center; align-items: center; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-size: 14px; }
                     .btn-edit-mode:hover:not(:disabled) { transform: scale(0.95); background: linear-gradient(135deg, #7d92eeff 0%, #8e5ebeff 100%); }
                     .btn-edit-mode                      { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: grid; width: 126px; height: 108px; transition: all 0.2s ease }
@@ -328,7 +341,7 @@ ecamDash = undefined;
                 .import-menu        { display: flex; justify-content: space-around; position: relative; right: 375px; top: 0; color: black; font-size: 15px; border-radius: 13px; height: 0; width: 0; opacity: 0%; z-index: 0; transition: all 0.2s ease; }
                 .import-menu.show   { top: 16px; opacity: 100%; }
                 .import-menu-body   { display: flex; justify-content: space-around; align-items: center; border-radius: 13px; background: white; box-shadow: 5px 4px 20px 0px #00000066; min-height: 60px; min-width: 540px; transition: all 0.2s ease; }
-                .import-menu-btn        { display: flex; justify-content: center; align-items: center; text-align: center; user-select: none; cursor: pointer; border-radius: 12px; border: 2px solid; height: 40px; width: 40%; padding: 5px; transition: all 0.2s ease; }
+                .import-menu-btn        { display: flex; justify-content: center; align-items: center; text-align: center; user-select: none; cursor: pointer; background: white; border-radius: 12px; border: 2px solid; height: 40px; width: 40%; padding: 5px; transition: all 0.2s ease; }
                 .import-menu-btn:hover  { background: #dddddd; }
                 .import-menu-btn.file   {  }
                 .import-menu-btn.clear  { width: 15%; }
@@ -461,16 +474,6 @@ ecamDash = undefined;
         //#region -DROP FIELDS REGION _________________
             styles += `
                 .drop-field     { display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 20px; overflow: clip; user-select: none; }
-                `;
-
-
-            // MARK: scroll fields
-            styles += `
-                .scroll-field           { --scroll-field-height: 100px; display: flex; flex-direction: column; mix-blend-mode: multiply; position: fixed; left: 0px; user-select: none; width: 100%; height: var(--scroll-field-height); z-index: 299; transition: all 0.3s ease; }
-                .scroll-field.up        { top:    calc(-1*var(--scroll-field-height) - 45px); background: linear-gradient(  0deg, #b6d0ff00 0%, #5c95ff 100%); }
-                .scroll-field.down      { bottom: calc(-1*var(--scroll-field-height) - 45px); background: linear-gradient(180deg, #b6d0ff00 0%, #5c95ff 100%); }
-                .scroll-field.up.show   { top:    0px; opacity: 50%; }
-                .scroll-field.down.show { bottom: 0px; opacity: 50%; }
             `;
                 
 
@@ -793,13 +796,13 @@ ecamDash = undefined;
                     .grades-table.bad                    { background: linear-gradient(300deg, #fef2f2 30%, transparent); }
 
                     .grade-row                           { border-bottom: 1px solid white /* #e4e4e4 */; height: 40px; transition: background 0.3s ease; }
-                    .grade-row.last                      { vertical-align: baseline; border-bottom: none; }
+                    .grade-row.last                      { border-bottom: none; }
                     .grade-row.sim                       { background: #e9efff9a; }
                     .grade-row:hover                     { background: #eeedfd; }
 
 
                     .grades-table th                     { padding: 10px 12px; height: 39px; font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 0.5px; border: 3px solid white; border-right-width: 2px; border-left-width: 2px; border-top-width: 0px; text-align: center; text-wrap-mode: nowrap; }
-                    .grades-table td                     { padding: 10px; font-size: 14px; text-wrap-mode: nowrap; }
+                    .grades-table td                     { padding: 10px; font-size: 14px; max-height: 45px; min-height: 40px; text-wrap-mode: nowrap; }
 
                     .grades-table-header-type               { width: 30%; }
                     .grades-table-header-type.dragging      { width: 30%; }
@@ -1000,12 +1003,12 @@ ecamDash = undefined;
 
     //#endregion
 
-    //MARK: —————————————————
+    //MARK: ——————————————————
+    ;
 
 
 
-
-    //MARK: ECAMDashboard —————————
+    //MARK: ECAMDashboard ——————————
     class ECAMDashboard {
 
 
@@ -2630,7 +2633,7 @@ ecamDash = undefined;
              * 
              * @param {Boolean} show Optional, accepts true, false or nothing, to respectively show, hide or toggle the loading symbol
              */
-            async showLoadingSymbol(show=undefined) {
+            showLoadingSymbol(show=undefined) {
                 if (show === undefined) {
                     document.querySelector(".currently-loading").classList.toggle("show");
                     document.querySelectorAll(".loading-symbol").forEach(symbol => {symbol.classList.toggle("show")});
@@ -2845,6 +2848,7 @@ ecamDash = undefined;
                     <div class="offline-mode-title">OFFLINE</div>
                     <div class="offline-mode-subtitle jura"></div>
                     ` : ""}
+
                     <div id="emptyDivToRemoveTheDragImage"></div>
                     <div class="currently-loading">
                         <div class="loading-symbol" style="--offset-offset: calc(0 * 100% / 6)"></div>
@@ -2853,9 +2857,9 @@ ecamDash = undefined;
                         <div class="loading-symbol" style="--offset-offset: calc(3 * 100% / 6)"></div>
                         <div class="loading-symbol" style="--offset-offset: calc(4 * 100% / 6)"></div>
                         <div class="loading-symbol" style="--offset-offset: calc(5 * 100% / 6)"></div>
-                    </div>
-
-                    <div class="over-header-btns jura">
+                    </div>`
+                    +
+                    `<div class="over-header-btns jura">
 
                         <div class="over-header-report-btns">
                             <div    class="over-header-btn issue mail-info    ${this.lang == "fr" ? "fr" : "en"}">
@@ -2873,15 +2877,16 @@ ecamDash = undefined;
                             <div class="over-header-how-to-use-btns" style="display: none">
                                 <a   class="over-header-btn help doc-btn fr"  href="${this.repoReadMeHowToUse}" target="_blank" >${this.createExternalLinkSymbol({margin: [0,0,0,4]})}</a>
                                 <div class="over-header-btn help keybinds-btn fr"></div>
-                                ${/* `<div class="over-header-btn help tuto-btn fr"></div>` + */ ""}
+                                ${`<div class="over-header-btn help tuto-btn fr"></div>` + ""}
+                                ${`<div class="over-header-btn help first-steps-btn fr"></div>` + ""}
                             </div>
                         </div>
 
                         <div class="over-header-btn settings-btn">⚙️</div>
 
-                    </div>
-
-                    <div id="dash-header">
+                    </div>`
+                    +
+                    `<div id="dash-header">
                         <div style="display: flex;flex-direction: row;" id="aui_3_2_0_1305">
                             <img draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/5/51/ECAM-LaSalle-bleu-seul.png" alt="ECAM Logo" style="margin: 0px 0px 0px -10px;height: 141px;width: 148px;" id="aui_3_2_0_1304">
                             <div style="margin: 30px 0px 0px 0px;">
@@ -2908,7 +2913,7 @@ ecamDash = undefined;
                         <div class="header-actions jura" style="display:flex; align-items:center; user-select: none;">
 
                             <button class="btn btn-edit-mode ${this.editMode ? "on" : "off"}" id="editModeBtn"></button>
-                            <div style="display: flex; flex-direction: column;">
+                            <div class="config-btns-container">
                                 <div class="btn btn-export" id="exportBtn"></div>
                                 <div class="btn btn-import" id="importBtn"></div>
                                 <div class="import-menu" id="importMenu" style="display: none">
@@ -2935,9 +2940,9 @@ ecamDash = undefined;
 
                         </div>
 
-                    </div>
-                    
-                    <div class="main-average-card" id="main-average-card">
+                    </div>`
+                    +
+                    `<div class="main-average-card" id="main-average-card">
                         <div class="average-display">
                             <div class="average-number" ${this.error ? "style=\"padding-top: 0px;\"" : ""}>${moyenneGenerale}</div>
                             <div class="average-label"></div>
@@ -2973,11 +2978,9 @@ ecamDash = undefined;
                             </div>
                             <div class="fold-toggle jura"></div>
                         </div>
-                    </div>
-
-                    <div class="scroll-field up${this.selectedSubjectCardsId.length > 0 ? " show" : ""}"${document.body.classList.contains("lfr-dockbar-pinned") ? ` style="transform: translateY(45px)"` : ""}></div>
-
-                    <div class="drop-field remove-from-module${this.selectedSubjectCardsId.length > 0 ? " show" : ""}">
+                    </div>`
+                    +
+                    `<div class="drop-field remove-from-module${this.selectedSubjectCardsId.length > 0 ? " show" : ""}">
                         <div class="drop-field-remove-from-module-text top${this.lang == "fr" ? " fr" : " en"}"></div>
                         <div class="drop-field-remove-from-module-minus">-</div>
                         <div class="drop-field-remove-from-module-text bottom${this.lang == "fr" ? " fr" : " en"}"></div>
@@ -2993,7 +2996,6 @@ ecamDash = undefined;
                         <div class="drop-field-create-module-hitbox"></div>
                     </div>
 
-                    <div class="scroll-field down${this.selectedSubjectCardsId.length > 0 ? " show" : ""}"></div>
                     `;
 
                     const notifContainer = document.createElement("div");
@@ -3072,8 +3074,9 @@ ecamDash = undefined;
 
                     const helpMenu          = document.querySelector(".over-header-btn.how-to-use-btn");
                     const docBtn            = document.querySelector(".over-header-btn.doc-btn");
-                    // const tutoBtn           = document.querySelector(".over-header-btn.tuto-btn");
                     const keybindsBtn       = document.querySelector(".over-header-btn.keybinds-btn");
+                    const tutoBtn           = document.querySelector(".over-header-btn.tuto-btn");
+                    const firstStepsBtn     = document.querySelector(".over-header-btn.first-steps-btn");
 
                     const settingsBtn       = document.querySelector(".over-header-btn.settings-btn");
 
@@ -3089,12 +3092,14 @@ ecamDash = undefined;
 
                         helpMenu        .title     = "Comment s'en servir?";
                         docBtn          .title     = "Aller vers la documentation";
-                        // tutoBtn         .title     = "Démarrer le tutoriel";
                         keybindsBtn     .title     = "Voir les raccourcis clavier";
+                        tutoBtn         .title     = "Démarrer le tutoriel";
+                        firstStepsBtn   .title     = "Démarrer le tutoriel pour vos premiers pas";
 
                         settingsBtn     .title     = "Ouvrir les paramètres";
 
-                        if (newUserNotif) newUserNotif.title     = "Clique pour fermer";
+                        if (newUserNotif) 
+                            newUserNotif.title     = "Clique pour fermer";
 
                         shareConfig     .innerHTML = `Partager une config  ${this.createExternalLinkSymbol({margin: [0,0,0,4]})}`;
                         suggestIdea     .innerHTML = `Suggérer une idée    ${this.createExternalLinkSymbol({margin: [0,0,0,4]})}`;
@@ -3102,16 +3107,18 @@ ecamDash = undefined;
                         mailInfoText    .innerHTML = "Par mail: baptiste.jacquin@ecam.fr 📋";
                         mailInfoCopied  .innerHTML = "Copié !";
 
-                        if (newUserNotif) newUserNotifText.innerHTML = "Bonjour! Première fois? Clique ici pour apprendre à utiliser cette extension! (Clique ici pour fermer)";
+                        if (newUserNotif) 
+                            newUserNotifText.innerHTML = "Bonjour! Première fois? Clique ici pour apprendre à utiliser cette extension! (Clique ici pour fermer)";
 
                         mailInfo   .classList.replace("en", "fr");
                         shareConfig.classList.replace("en", "fr");
                         suggestIdea.classList.replace("en", "fr");
                         reportIssue.classList.replace("en", "fr");
 
-                        docBtn     .classList.replace("en", "fr");
-                        // tutoBtn    .classList.replace("en", "fr");
-                        keybindsBtn.classList.replace("en", "fr");
+                        docBtn       .classList.replace("en", "fr");
+                        keybindsBtn  .classList.replace("en", "fr");
+                        tutoBtn      .classList.replace("en", "fr");
+                        firstStepsBtn.classList.replace("en", "fr");
                     }
                     else {
                         reportIssueBtn  .title     = "Report...";
@@ -3122,12 +3129,14 @@ ecamDash = undefined;
 
                         helpMenu        .title     = "How to use?";
                         docBtn          .title     = "Go to the documentation";
-                        // tutoBtn         .title     = "Start the tutorial";
                         keybindsBtn     .title     = "See the keyboard shortcuts";
+                        tutoBtn         .title     = "Start the tutorial";
+                        firstStepsBtn   .title     = "Start the tutorial for your first steps";
 
                         settingsBtn     .title     = "Open the settings";
                         
-                        if (newUserNotif) newUserNotif.title     = "Click to dismiss";
+                        if (newUserNotif) 
+                            newUserNotif.title     = "Click to dismiss";
 
                         shareConfig     .innerHTML = `Share a config  ${this.createExternalLinkSymbol({margin: [0,0,0,4]})}`;
                         suggestIdea     .innerHTML = `Suggest an idea ${this.createExternalLinkSymbol({margin: [0,0,0,4]})}`;
@@ -3135,16 +3144,18 @@ ecamDash = undefined;
                         mailInfoText    .innerHTML = "By mail: baptiste.jacquin@ecam.fr 📋";
                         mailInfoCopied  .innerHTML = "Copied!";
 
-                        if (newUserNotif) newUserNotifText.innerHTML = "Hey! New here? Click here to find a tutorial on how to use this extension! (Click here to dismiss)";
+                        if (newUserNotif) 
+                            newUserNotifText.innerHTML = "Hey! New here? Click here to find a tutorial on how to use this extension! (Click here to dismiss)";
 
                         mailInfo   .classList.replace("fr", "en");
                         shareConfig.classList.replace("fr", "en");
                         suggestIdea.classList.replace("fr", "en");
                         reportIssue.classList.replace("fr", "en");
 
-                        docBtn     .classList.replace("fr", "en");
-                        // tutoBtn    .classList.replace("fr", "en");
-                        keybindsBtn.classList.replace("fr", "en");
+                        docBtn       .classList.replace("fr", "en");
+                        keybindsBtn  .classList.replace("fr", "en");
+                        tutoBtn      .classList.replace("fr", "en");
+                        firstStepsBtn.classList.replace("fr", "en");
                     }
                     
 
@@ -3566,10 +3577,10 @@ ecamDash = undefined;
                     const subjectCardId         = `subject-card-semester-${sem}-subject-${subject}`;
                     const detailed              = (this.detailedSubjCardsId.includes(subjectCardId) && manageIndividualSubjectCardFolding) || (this.viewMode == "detailed" && !manageIndividualSubjectCardFolding);
                     const cardIsSelected        = this.selectedSubjectCardsId.includes(`subject-card-semester-${sem}-subject-${subject}`);
-                    const cardClientHeight      = 166 + 40*nbGrades;
+                    const cardClientHeight      = 173 + 46*nbGrades;
                     
                     let html = `
-                    <div class="subject-card ${classified ? "classified" : "unclassified"} ${detailed ? "detailed" : "compact"} ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" id="${subjectCardId}" style="${this.editMode ? `cursor: grab; user-select: none;` : ""}${detailed ? ` height: ${cardClientHeight};` : ""}"" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}" data-height="${cardClientHeight}">
+                    <div class="subject-card ${classified ? "classified" : "unclassified"} ${detailed ? "detailed" : "compact"} ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" id="${subjectCardId}" style="${this.editMode ? `cursor: grab; user-select: none;` : ""}${detailed ? ` height: ${cardClientHeight}px;` : ""}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}" data-height="${cardClientHeight}">
                         <div class="subject-card-header ${detailed ? "detailed" : "compact"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`} ${classified ? "classified" : "unclassified"}" ${this.editMode ? `style="cursor: grab;" draggable="true"` : ``} data-module="${moduleName}">
                             <div class="subject-card-header-left-side">
                                 ${this.editMode
@@ -3910,16 +3921,20 @@ ecamDash = undefined;
                     const closeModalCircle = closeModalIcon.querySelector(".modal-close-btn-circle");
 
                     closeModalIcon.onmouseenter = () => {
-                        closeModalIconContainer .classList.add("hover");
-                        closeModalIcon          .classList.add("hover");
-                        closeModalCross         .classList.add("hover");
-                        closeModalCircle        .classList.add("hover");
+                        if (!document.querySelector(".new-user-notif-fullscreen-effect.focus")) {
+                            closeModalIconContainer .classList.add("hover");
+                            closeModalIcon          .classList.add("hover");
+                            closeModalCross         .classList.add("hover");
+                            closeModalCircle        .classList.add("hover");
+                        }
                     };
                     closeModalIcon.onmouseleave = () => {
-                        closeModalIconContainer .classList.remove("hover");
-                        closeModalIcon          .classList.remove("hover");
-                        closeModalCross         .classList.remove("hover");
-                        closeModalCircle        .classList.remove("hover");
+                        if (!document.querySelector(".new-user-notif-fullscreen-effect.focus")) {
+                            closeModalIconContainer .classList.remove("hover");
+                            closeModalIcon          .classList.remove("hover");
+                            closeModalCross         .classList.remove("hover");
+                            closeModalCircle        .classList.remove("hover");
+                        }
                     };
                     //#endregion
                 }
@@ -4114,8 +4129,11 @@ ecamDash = undefined;
                         `;
                         overHeaderBtns.appendChild(newUserNotif);
     
-                        const newUserNotifFullScreen     = document.createElement("div");
-                        newUserNotifFullScreen.className = "new-user-notif-fullscreen-effect";
+                        const newUserNotifFullScreen        = document.createElement("div");
+                        const helpMenuBtn                   = document.querySelector(".over-header-btn.how-to-use-btn");
+                        helpMenuBtn.style.zIndex = 302;
+
+                        newUserNotifFullScreen.className    = "new-user-notif-fullscreen-effect";
                         this.ecamDash.appendChild(newUserNotifFullScreen);
                         setTimeout(() => {newUserNotifFullScreen?.classList?.add("focus");}, 10);
     
@@ -4124,8 +4142,192 @@ ecamDash = undefined;
                     
                 }
 
-                startTutorial() {
+                // MARK: start first steps tuto
+                startFirstStepsTutorial() {
+                    
+                    const newUserNotifFullScreen     = document.createElement("div");
+                    newUserNotifFullScreen.className = "new-user-notif-fullscreen-effect";
+                    this.ecamDash.appendChild(newUserNotifFullScreen);
+                    setTimeout(() => {newUserNotifFullScreen?.classList?.add("focus");}, 10);
 
+                    const skipTuto = document.createElement("div");
+                    skipTuto.className = "skip-tuto-btn jura";
+                    this.ecamDash.appendChild(skipTuto);
+                    setTimeout(() => {skipTuto.style.opacity = "1";}, 1)
+                    skipTuto.onclick = () => {
+                        this.stopFirstStepsTutorial();
+                    }
+
+                    const firstStepTipForImportBtn = (callback=()=>{}) => {
+                        this.createTipForThisElem(
+                            document.querySelector("#importBtn"), 
+                            document.querySelector(".config-btns-container"),
+                            this.lang == "fr" ? "Clique ici pour importer une configuration de modules" : "Click here to import a module configuration", 
+                            callback,
+                            undefined,
+                            {top: "-25px", right: "180px"},
+                            {minWidth: "330px"},
+                            {zIndex: "12"}, 
+                            {}
+                        );
+                    };
+
+                    const firstStepTipForOnlineImportBtn = (callback=()=>{}) => {
+                        this.createTipForThisElem(
+                            document.querySelector(".import-menu-btn.online"), 
+                            document.querySelector("#importMenu"),
+                            this.lang == "fr" ? "Clique ici pour obtenir une configuration déjà disponible en ligne" : "Click here to obtain a configuration already available online", 
+                            callback,
+                            undefined,
+                            {top: "-55px", right: "110px"},
+                            {minWidth: "260px"},
+                            {zIndex: "12"}, 
+                            {zIndex: "unset"}
+                        );
+                        this.firstStepsTutoPickerMenu = true;
+                    };
+
+                    firstStepTipForImportBtn(firstStepTipForOnlineImportBtn)
+
+                }
+
+                stopFirstStepsTutorial() {
+                    document.querySelectorAll(".tuto-tip-notif-container").forEach(tutoTipNotifContainer => {
+                        tutoTipNotifContainer.style.opacity = "0";
+                        tutoTipNotifContainer.style.transform = "scale(100%)";
+                        setTimeout(() => {tutoTipNotifContainer.remove()}, 300);
+                    })
+
+                    document.querySelector(".new-user-notif-fullscreen-effect").classList.remove("focus");
+                    setTimeout(() => {document.querySelector(".new-user-notif-fullscreen-effect").remove()}, 500)
+
+                    document.querySelector(".skip-tuto-btn").style.opacity = "0";
+                    setTimeout(() => {document.querySelector(".skip-tuto-btn").remove()}, 500)
+
+                    this.firstStepsTutoPickerMenu = false;
+                    document.body.onclick = null;
+                }
+
+                /** Method allowing to attach a tip notif to an element `targetElem` inside of a container `containerElem`, handling specific styling for the different elements involved and a callback action `nextAction` to execute after clicking on the `nextActionTriggerElem`
+                 * 
+                 * Structure of the tip notif attached:
+                 * 
+                 * \<div`containerElem`\>
+                 * 
+                 * ............\<div`targetElem`\>\</div\>
+                 * 
+                 * ............\<div`tipNotifContainer`\> // used for the placement of the tip notif, as its position is set to relative and both its width and height are 0, so it doesn't displace the display of containerElem)
+                 * 
+                 * ........................\<div`tipNotif`\> **`tipNotifText`** \</div\>
+                 * 
+                 * ............\</div\>
+                 * 
+                 * \</div\>
+                 * 
+                 * @example this.createTipForThisElem(document.querySelector("#targetId"), document.querySelector("#containerId"), "Test tip notif")
+                 * @example this.createTipForThisElem(".target(s)Class", "#containerId", "Test tip notif")
+                 * @example this.createTipForThisElem(".target(s)Class", "#containerId", "Test tip notif", {right: "9px", top: "9px";}, {zIndex: "0"}, {zIndex:"9", background: white})
+                 * 
+                 * @param {HTMLElement | String} targetElem The element or the CSS Selector of the element.s that the tip notif is highlighting
+                 * @param {HTMLElement | String} containerElem The container or its CSS Selector to place the tip notif in (if CSS Selector is a class, take the first element matching the selector)
+                 * @param {String} tipNotifText The text displayed by the tip notif
+                 * @param {Function} nextAction The callback function executed after clicking on the trigger element `nextActionTriggerElem`
+                 * @param {HTMLElement | String} [nextActionTriggerElem=targetElem] The element or the CSS Selector of the element.s on which clicking triggers the `nextAction` callback function. Same as targetElem if not given.
+                 * @param {Object} containerStyle An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container of the tip notif `tipNotifContainer`
+                 * @param {Object} notifStyle An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the tip notif `tipNotif`
+                 * @param {Object} targetElemStyle An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the target element `targetElem` 
+                 * @param {Object} containerElemStyle An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container `containerElem`
+                 */
+                async createTipForThisElem(targetElem, containerElem, tipNotifText, nextAction=() => {}, nextActionTriggerElem=targetElem, containerStyle={}, notifStyle={}, targetElemStyle={zIndex: "12"}, containerElemStyle={}) {
+                    if (targetElem instanceof HTMLElement || typeof targetElem == "string") {
+
+                        const tutoTipNotifContainer = document.createElement("div");
+                        (containerElem instanceof String ? containerElem : document.querySelector(containerElem)).appendChild(tutoTipNotifContainer);
+                        tutoTipNotifContainer.className = "tuto-tip-notif-container";
+                        tutoTipNotifContainer.id        = "tutoTipNotifContainer-for-" + targetElem instanceof String ? `${targetElem}` : (targetElem.id ? "#"+targetElem.id : "."+targetElem.className);
+                        tutoTipNotifContainer.innerHTML = `
+                            <div class="tuto-tip-notif jura" id="tutoTipNotif-for-${targetElem instanceof String ? `${targetElem}` : (targetElem.id ? "#"+targetElem.id : "."+targetElem.className)}">${tipNotifText}</div>
+                        `;
+                        const tutoTipNotif = tutoTipNotifContainer.querySelector(`.tuto-tip-notif`);
+
+
+                        (typeof targetElem == "string" ? document.querySelectorAll(`${targetElem}`) : [targetElem]).forEach(elem => {
+                            Object.assign(elem.style, {...targetElemStyle});
+                        })
+                        Object.assign((containerElem instanceof String ? containerElem : document.querySelector(containerElem)).style, {...containerElemStyle});
+                        Object.assign(tutoTipNotifContainer.style, {...containerStyle});
+                        Object.assign(tutoTipNotif.style, {...notifStyle});
+
+
+                        setTimeout(() => {
+                            tutoTipNotifContainer.style.opacity = "1";
+                            tutoTipNotifContainer.style.transform = "scale(100%)";
+                        }, 1)
+
+                        if (nextActionTriggerElem instanceof HTMLElement || typeof nextActionTriggerElem == "string") {
+                            document.body.onclick = (e) => {
+                                if (e.target.closest(`${nextActionTriggerElem instanceof String ? `${nextActionTriggerElem}` : (nextActionTriggerElem.id ? "#"+nextActionTriggerElem.id : "."+nextActionTriggerElem.className)}`)) {
+                                    this.dismissTipForThisElem(targetElem, containerElem, targetElemStyle, containerElemStyle); 
+                                    document.body.onclick = null;
+                                    setTimeout(nextAction, 320);
+                                }
+                            };
+                        }
+                    }
+                }
+
+                /** Method allowing to detach a tip notif for an element `targetElem` and delete it from of a container `containerElem`, handling specific styling for the different elements involved
+                 * 
+                 * Structure of the tip notif attached:
+                 * 
+                 * \<div`containerElem`\>
+                 * 
+                 * ............\<div`targetElem`\>\</div\>
+                 * 
+                 * ............\<div`tipNotifContainer`\> // used for the placement of the tip notif, as its position is set to relative and both its width and height are 0, so it doesn't displace the display of containerElem)
+                 * 
+                 * ........................\<div`tipNotif`\> **`tipNotifText`** \</div\>
+                 * 
+                 * ............\</div\>
+                 * 
+                 * \</div\>
+                 * 
+                 * @example this.dismissTipForThisElem(document.querySelector("#targetId"), document.querySelector("#containerId"))
+                 * @example this.dismissTipForThisElem(".target(s)Class", "#containerId")
+                 * @example this.dismissTipForThisElem(".target(s)Class", "#containerId", {right: "0px", top: "0px";}, {zIndex: "2"}, {zIndex:"1", background: transparent})
+                 * 
+                 * @param {HTMLElement | String} targetElem The element or the CSS Selector of the element.s that the tip notif is highlighting
+                 * @param {HTMLElement | String} containerElem The container or its CSS Selector to place the tip notif in (if CSS Selector is a class, take the first element matching the selector)
+                 * @param {Object} containerStyle An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container of the tip notif `tipNotifContainer`
+                 * @param {Object} notifStyle An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the tip notif `tipNotif`
+                 * @param {Object} targetElemStyle An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the target element `targetElem` 
+                 * @param {Object} containerElemStyle An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container `containerElem`
+                 */
+                async dismissTipForThisElem(targetElem, containerElem=document.body, targetElemStyle={zIndex: ""}, containerElemStyle={}) {
+                    if (targetElem instanceof HTMLElement || typeof targetElem == "string") {
+                        const tutoTipNotifContainer = (containerElem instanceof String ? containerElem : document.querySelector(containerElem)).querySelector(`.tuto-tip-notif-container`);
+                        const tutoTipNotif = tutoTipNotifContainer.querySelector(`.tuto-tip-notif`);
+
+                        // undoing the style changes that occured when the tip text appeared, by taking the same style properties and removing its value by passing it an empty string
+                        const undoStyleChanges = (styleObj) => {
+                            return Object.fromEntries(Object.entries(styleObj).map(entry => {return [entry[0], ""]}))
+                        }
+                        
+                        (typeof targetElem == "string" ? document.querySelectorAll(`${targetElem}`) : [targetElem]).forEach(elem => {
+                            Object.assign(elem.style, {...undoStyleChanges(targetElemStyle)});
+                        })
+                        Object.assign((containerElem instanceof String ? containerElem : document.querySelector(containerElem)).style, {...undoStyleChanges(containerElemStyle)});
+
+                        // hiding the tip notif
+                        tutoTipNotifContainer.style.opacity = "";
+                        tutoTipNotifContainer.style.transform = "";
+                        
+                        // removing the tip notif after its hide effect occured
+                        setTimeout(() => {
+                            tutoTipNotifContainer.remove();
+                        }, 300);
+
+                    }
                 }
 
             //#endregion
@@ -4257,7 +4459,7 @@ ecamDash = undefined;
                                     }
                                 }
 
-                                if (!e.target.closest(".import-menu") && document.getElementById("importMenu").classList.contains("show")) {
+                                if (!e.target.closest(".import-menu") && document.getElementById("importMenu").classList.contains("show") && !document.querySelector(".new-user-notif-fullscreen-effect.focus")) {
                                     document.getElementById("importMenu").classList.remove("show");
 
                                     clearTimeout(this?.timeouts?.closeImportMenu);
@@ -4323,18 +4525,6 @@ ecamDash = undefined;
 
 
                 //#region Dashboard listeners
-                    attachPinDockbarListener() {
-                        document.querySelector(".pin-dockbar").children[0].children[0].onclick = () => {
-                            // when clicking on the button to unpin the dockbar, this event listener is triggered before the action of unpinning the dockbar is actually done, 
-                            // so the order might seem reverse logical but that's how it works
-                            if (!document.body.classList.contains("lfr-dockbar-pinned")) {
-                                document.querySelector(".scroll-field.up").style.transform = "translateY(45px)";
-                            }
-                            else {
-                                document.querySelector(".scroll-field.up").style.transform = "";
-                            }
-                        }
-                    }
                     
 
                     attachLangBtnsListener() {
@@ -4367,8 +4557,9 @@ ecamDash = undefined;
                         const mailInfo      = document.querySelector(".issue.mail-info");
 
                         const helpBtn       = document.querySelector(".over-header-btn.how-to-use-btn");
-                        // const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
                         const keybindsBtn   = document.querySelector(".over-header-btn.keybinds-btn");
+                        const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
+                        const firstStepsBtn = document.querySelector(".over-header-btn.first-steps-btn");
 
                         const settingsBtn   = document.querySelector(".over-header-btn.settings-btn");
 
@@ -4387,9 +4578,10 @@ ecamDash = undefined;
                             }
                         };
 
-                        helpBtn.onclick     = () => {if (helpBtn.classList.contains("open")) { this.dismissHelpOverHeaderBtns(); } else { this.openHelpOverHeaderBtns(); }};
-                        // tutoBtn.onclick     = () => { this.startTutorial(); };
-                        keybindsBtn.onclick = () => { this.openKeybindsModal(); };
+                        helpBtn.onclick         = () => {if (helpBtn.classList.contains("open")) { this.dismissHelpOverHeaderBtns(); } else { this.openHelpOverHeaderBtns(); }};
+                        keybindsBtn.onclick     = () => { this.openKeybindsModal(); };
+                        tutoBtn.onclick         = () => { this.startTutorial(); };
+                        firstStepsBtn.onclick   = () => { this.startFirstStepsTutorial(); };
 
                         settingsBtn.onclick = () => { this.openSettingsModal(); };
                     }
@@ -4418,9 +4610,9 @@ ecamDash = undefined;
                     attachSettingsModalContainerListeners(container=document.querySelector("#settingsModalContainer")) {
 
                         container.onmousedown = (e) => {
-                            if (e.target.closest(".modal-close-btn") || !e.target.closest(".settings-modal")) { 
+                            if ((e.target.closest(".modal-close-btn") || !e.target.closest(".settings-modal")) && !document.querySelector(".new-user-notif-fullscreen-effect.focus")) { 
                                 container.onmouseup = (e) => {
-                                    if (e.target.closest(".modal-close-btn") || !e.target.closest(".settings-modal")) {
+                                    if ((e.target.closest(".modal-close-btn") || !e.target.closest(".settings-modal")) && !document.querySelector(".new-user-notif-fullscreen-effect.focus")) {
                                         this.closeSettingsModal();
                                     }
                                     container.onmouseup = null;
@@ -4888,7 +5080,7 @@ ecamDash = undefined;
                         const helpBtn       = document.querySelector(".over-header-btn.how-to-use-btn");
                         const helpMenu      = document.querySelector(".over-header-how-to-use-btns");
                         const docBtn        = document.querySelector(".over-header-btn.doc-btn");
-                        // const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
+                        const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
 
 
                         helpBtn .classList.add("open");
@@ -4896,7 +5088,7 @@ ecamDash = undefined;
                         clearTimeout(this.timeouts?.openHelpMenu);
                         this.timeouts.openHelpMenu = setTimeout(()=>{helpMenu.classList.add("open");}, 10);
                         docBtn  .tabIndex = "0";
-                        // tutoBtn .tabIndex = "0";
+                        tutoBtn .tabIndex = "0";
 
                         this.dismissFirstTimeNotif();
                     }
@@ -4905,7 +5097,7 @@ ecamDash = undefined;
                         const helpBtn       = document.querySelector(".over-header-btn.how-to-use-btn");
                         const helpMenu      = document.querySelector(".over-header-how-to-use-btns");
                         const docBtn        = document.querySelector(".over-header-btn.doc-btn");
-                        // const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
+                        const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
                         
                         
                         helpBtn    .classList.remove("open");
@@ -4913,18 +5105,19 @@ ecamDash = undefined;
                         clearTimeout(this.timeouts?.openHelpMenu);
                         this.timeouts.openHelpMenu = setTimeout(()=>{helpMenu.style.display = "none";}, 200);
                         docBtn     .tabIndex = "-1";
-                        // tutoBtn    .tabIndex = "-1";
+                        tutoBtn    .tabIndex = "-1";
                     }
 
                     dismissFirstTimeNotif() {
                         const newUserNotif  = document.querySelector(".new-user-notif");
 
                         if (newUserNotif) {
+                            const helpOverHeaderBtn = document.querySelector(".over-header-btn.how-to-use-btn");
                             const newUserNotifFullScreen = document.querySelector(".new-user-notif-fullscreen-effect");
                             const newUserNotifArrows = document.querySelectorAll(".new-user-notif-arrow-path");
                             
                             newUserNotifFullScreen.classList.remove("focus");
-                            setTimeout(() => {newUserNotifFullScreen.style.display = "none";}, 500);
+                            setTimeout(() => {helpOverHeaderBtn.style.zIndex = ""; newUserNotifFullScreen.style.display = "none";}, 500);
 
                             newUserNotif.style.animationPlayState = "paused";
                             newUserNotifArrows.forEach(arrow => {arrow.style.animationPlayState = "paused";})
@@ -4974,9 +5167,9 @@ ecamDash = undefined;
                         setTimeout(() => {keybindsMenu.querySelector("#keyboardShortcutListModal").classList.add("show");}, 5);
                         
                         keybindsMenu.onmousedown = (e) => {
-                            if (e.target.closest(".modal-close-btn") || !e.target.closest("#keyboardShortcutListModal")) {
+                            if ((e.target.closest(".modal-close-btn") || !e.target.closest("#keyboardShortcutListModal")) && !document.querySelector(".new-user-notif-fullscreen-effect.focus")) {
                                 keybindsMenu.onmouseup = (e) => {
-                                    if (e.target.closest(".modal-close-btn") || !e.target.closest("#keyboardShortcutListModal")) {
+                                    if ((e.target.closest(".modal-close-btn") || !e.target.closest("#keyboardShortcutListModal") && !document.querySelector(".new-user-notif-fullscreen-effect.focus"))) {
                                         this.closeKeybindsModal()
                                     }
                                     keybindsMenu.onmouseup = null;
@@ -7218,6 +7411,7 @@ ecamDash = undefined;
                 this.timeouts.closeImportMenu = setTimeout(() => {importMenu.style.display = "none"}, 300);
 
                 const pickerMenuContainer        = document.createElement("div");
+                this.ecamDash.appendChild(pickerMenuContainer);
                 pickerMenuContainer.className    = `online-cfg-picker-menu-container`;
                 const sectionsHTML      = this.generateOnlineCfgPickerMenuDirTree("section");
                 const yearsHTML         = this.generateOnlineCfgPickerMenuDirTree("year");
@@ -7241,7 +7435,40 @@ ecamDash = undefined;
                     </div>
                 `;
 
-                this.ecamDash.appendChild(pickerMenuContainer);
+                const firstStepTipForOnlineCfgPickerMenu = (callback=()=>{}) => {
+                    this.createTipForThisElem(
+                        ".online-cfg-picker-menu-dir-card.config",
+                        document.querySelector("#pickerMenu"),
+                        this.lang == "fr" ? "Navigue dans le menu pour trouver la configuration qui correspond à ton année actuelle" : "Navigate through the menu to find the configuration that corresponds to your current year", 
+                        callback,
+                        null,
+                        {top: "-360px", right: "-50%"},
+                        {minWidth: "350px"},
+                        {}, 
+                        {}
+                    )
+                };
+
+                const finalFirstStepTip = (callback=()=>{}) => {
+                    this.createTipForThisElem(
+                        ".online-cfg-picker-menu-dir-card.config",
+                        document.querySelector("#pickerMenu"),
+                        this.lang == "fr" ? "Navigue dans le menu pour trouver la configuration qui correspond à ton année actuelle" : "Navigate through the menu to find the configuration that corresponds to your current year", 
+                        callback,
+                        null,
+                        {top: "-360px", right: "-50%"},
+                        {minWidth: "350px"},
+                        {}, 
+                        {}
+                    )
+                };
+
+                if (this.firstStepsTutoPickerMenu) {
+                    setTimeout(() => {
+                        firstStepTipForOnlineCfgPickerMenu();
+                    }, 10)
+                }
+
                 const pickerMenu = document.querySelector("#pickerMenu");
                 
                 this.appendCloseModalIcon(pickerMenu)
@@ -7250,9 +7477,9 @@ ecamDash = undefined;
                 setTimeout(() => {pickerMenu.classList.add("show");}, 10)
                 
                 pickerMenuContainer.onmousedown = (e) => {
-                    if (e.target.closest(".modal-close-btn") || !e.target.closest("#pickerMenu")) {
+                    if ((e.target.closest(".modal-close-btn") || !e.target.closest("#pickerMenu")) && !document.querySelector(".new-user-notif-fullscreen-effect.focus")) {
                         pickerMenuContainer.onmouseup = (e) => {
-                            if (e.target.closest(".modal-close-btn") || !e.target.closest("#pickerMenu")) {
+                            if ((e.target.closest(".modal-close-btn") || !e.target.closest("#pickerMenu")) && !document.querySelector(".new-user-notif-fullscreen-effect.focus")) {
                                 this.closeOnlineCfgPickerModal()
                             }
                             pickerMenuContainer.onmouseup = null;
@@ -7296,6 +7523,19 @@ ecamDash = undefined;
                         }
                     }
                 }
+
+                const modalCloseBtnContainer = pickerMenu.querySelector(".modal-close-btn-container");
+
+                modalCloseBtnContainer.onmouseenter = (e) => {
+                    if (document.querySelector(".new-user-notif-fullscreen-effect.focus")) {
+                        modalCloseBtnContainer.style.cursor = "not-allowed";
+                    }
+                };
+                modalCloseBtnContainer.onmouseleave = (e) => {
+                    if (document.querySelector(".new-user-notif-fullscreen-effect.focus")) {
+                        modalCloseBtnContainer.style.cursor = "";
+                    }
+                };
             }
 
             closeOnlineCfgPickerModal() {
@@ -7673,7 +7913,7 @@ ecamDash = undefined;
     }
 
 
-    //MARK: —————————————————
+    //MARK: ——————————————————
 
 
 
