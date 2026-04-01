@@ -58,6 +58,7 @@ ecamDash = undefined;
 
 (function() {
     'use strict';
+
     //#region — CSS Style —
     //MARK: ——————————————————
 
@@ -134,14 +135,13 @@ ecamDash = undefined;
                 .loading-symbol.show    { animation: loading 1s infinite; }
                 @keyframes loading  { from {offset-distance: var(--offset-offset)} to {offset-distance: calc(var(--offset-offset) + 100%)} }
 
-                .new-user-notif     { display: flex; justify-content: center; align-items: center; width: 0; height: 0; position: relative; right: 296px; top: -22px; border-radius: 20px; text-align: center; cursor: pointer; user-select: none; z-index: 301; transition: all 0.3s ease; --hoverAmp: 5px; animation: hoveringElem 2s infinite alternate ease-in-out; --arrow-join: round; } 
+                .new-user-notif     { display: flex; justify-content: center; align-items: center; width: 0; height: 0; position: relative; right: 296px; top: -22px; border-radius: 20px; text-align: center; cursor: pointer; user-select: none; z-index: 301; transition: all 0.3s ease; --hoveringElem-amp: 5px; animation: hoveringElem 2s infinite alternate ease-in-out; --arrow-join: round; } 
                 .new-user-notif-text    { min-width: 450px; min-height: 53px; padding: 10px; background: #00037b; outline: 3px solid; border-radius: 20px; font-size: 23px; text-wrap-mode: wrap; line-height: 24px; z-index: 10; }
                 .new-user-notif-arrow       { width: 0px; height: 0px; position: relative; transition: all 0.5s ease }
                 .new-user-notif-arrow-svg        { width: 0; height: 0; min-width: 210px; min-height: 70px; }
                 .new-user-notif-arrow-path       { animation: hoveringArrow 2s infinite alternate ease-in-out; }
                 .new-user-notif-arrow-path.outside   { fill: none; stroke: #ffffff; stroke-width: 15px; stroke-linejoin: var(--arrow-join); }
                 .new-user-notif-arrow-path.inside    { fill: none; stroke: #00037b; stroke-width: 8px;  stroke-linejoin: var(--arrow-join); }
-                @keyframes hoveringElem  { from { transform: translateY(0px); } to { transform: translateY(var(--hoverAmp)); } }
                 @keyframes hoveringArrow { from { d: path('M 0 30 c 10,59, 134,90, 165,16 m -19,3 l 21,-6 l 8,18'); } to { d: path('M 0 30 c 23,67, 156,87, 178,0 m -23,8 l 25,-15 l 13,22'); } }
 
                 .new-user-notif-fullscreen-effect   { position: fixed; width: 100%; height: 100%; right: 0px; top: 0px; background: black; overflow: clip; opacity: 0%; z-index: 8; transition: all 0.5s ease; }
@@ -263,17 +263,6 @@ ecamDash = undefined;
 
                 //#endregion
 
-
-
-                //MARK: Tuto
-                styles += `
-                    .tuto-tip-notif-container   { display: flex; justify-content: center; align-items: center; position: relative; width: 0; height: 0; z-index: 10; opacity: 0; transform: scale(110%); transition: all 0.3s ease;}
-                    .tuto-tip-notif         { display: flex; justify-content: center; align-items: center; padding: 20px; background: linear-gradient( #5334ff 0%, #7a62ff 100%); border-radius: 7px; color: white; font-size: 20px; line-height: 20px; text-align: center; animation: focusBlinkAnimation 2s infinite alternate ease-in-out; transition: all 0.3s ease; }
-                    @keyframes focusBlinkAnimation  { from { filter: brightness(1); } to { filter: brightness(1.5) } }
-
-                    .skip-tuto-btn          { display: flex; justify-content: center; align-items: center; padding: 10px; position: fixed; top: 20px; right: 20px; background: #4c84fde8; border-radius: 10px; color: white; font-size: 20px; text-decoration: underline; cursor: pointer; opacity: 0; z-index: 5000; transition: all 0.5s ease; }
-                    .skip-tuto-btn::before      { content: "Skip tutorial"; }
-                `;
                 
 
 
@@ -331,7 +320,12 @@ ecamDash = undefined;
 
             //MARK: help and tutorial
             styles += `
+                .tuto-tip-notif-container   { display: flex; justify-content: center; align-items: center; position: relative; width: 0; height: 0; z-index: 10; opacity: 0; transform: scale(110%); --infinite-alternate-scale-up-scale: 100%; transition: all 0.3s ease;}
+                .tuto-tip-notif         { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 15px; padding: 20px; background: linear-gradient( #5334ff 0%, #7a62ff 100%); border-radius: 7px; outline: 5px solid; color: white; font-size: 31px; line-height: 31px; text-align: center; --hoveringElem-amp: 10px; animation: focusBlinkAnimation 2s infinite alternate ease-in-out, hoveringElem 2s infinite alternate ease-in-out; transition: all 0.3s ease; }
+                @keyframes focusBlinkAnimation  { from { filter: brightness(1); } to { filter: brightness(1.5) } }
 
+                .skip-tuto-btn          { display: flex; justify-content: center; align-items: center; padding: 10px; position: fixed; top: 20px; right: 20px; background: #4c84fde8; border-radius: 10px; color: white; font-size: 20px; text-decoration: underline; cursor: pointer; opacity: 0; z-index: 5000; transition: all 0.5s ease; }
+                .skip-tuto-btn::before      { content: "Skip tutorial"; }
             `;
 
 
@@ -906,6 +900,11 @@ ecamDash = undefined;
 
                 @keyframes slightHorizShake { 0% {left: 0px} 25% {left: 3px} 50% {left: -3px} 75% {left: 3px} 100% {left: 0px} }
                 .slight-horiz-shake { animation: var(--slight-horiz-shake-duration, 0.3s) slightHorizShake ease; }
+
+                @keyframes infiniteAlternateScaleUp     { from {transform: scale(100%)} to {transform: scale(var(--infinite-alternate-scale-up-scale, 110%))} }
+                .infinite-alternate-scale-up    { animation: infiniteAlternateScaleUp var(--infinite-alternate-scale-up-duration, 1s) alternate infinite ease-in-out; }
+
+                @keyframes hoveringElem  { from { transform: translateY(0px); } to { transform: translateY(var(--hoveringElem-amp, 20px)); } }
             `;
 
 
@@ -1381,7 +1380,7 @@ ecamDash = undefined;
                         : Object.values(arguments)
                     ).forEach((_obj, _index) => {
                         // In case the first argument is the intendend priority argument:
-                        if (_obj instanceof String && _index == 0) { 
+                        if (typeof _obj == "string" && _index == 0) { 
                             effectivePriority = _obj;
                             settingCompliance = (_obj.match(/setting-compliant|ignore-setting/)?.[0] || "setting-compliant") == "setting-compliant";
                         }
@@ -1630,7 +1629,7 @@ ecamDash = undefined;
 
                     let keyExpected = keyPressed;
                     if      (keyPressed instanceof Array)   { keyExpected = keyPressed.map((s) => {if (s.match(/[^a-z]+/i)) {return "\\"+s} else {return s}}).join("|"); }
-                    else if (keyPressed instanceof String)  { keyExpected = "\\"+ keyPressed; }
+                    else if (typeof keyPressed == "string") { keyExpected = "\\"+ keyPressed; }
                     else if (keyPressed instanceof RegExp)  { keyExpected = keyPressed.source; }
 
                     const key = `${e.altKey ? "alt" : "no-alt"} ${e.ctrlKey ? "+ ctrl" : "+ no-ctrl"} ${e.shiftKey ? "+ shift" : "+ no-shift"} ${e.metaKey ? "+ meta" : "+ no-meta"} + ${e.key} (${e.repeat ? "repeat" : "no-repeat"})`;
@@ -2878,7 +2877,7 @@ ecamDash = undefined;
                                 <a   class="over-header-btn help doc-btn fr"  href="${this.repoReadMeHowToUse}" target="_blank" >${this.createExternalLinkSymbol({margin: [0,0,0,4]})}</a>
                                 <div class="over-header-btn help keybinds-btn fr"></div>
                                 ${`<div class="over-header-btn help tuto-btn fr"></div>` + ""}
-                                ${`<div class="over-header-btn help first-steps-btn fr"></div>` + ""}
+                                <div class="over-header-btn help first-steps-btn fr"></div>
                             </div>
                         </div>
 
@@ -2888,7 +2887,7 @@ ecamDash = undefined;
                     +
                     `<div id="dash-header">
                         <div style="display: flex;flex-direction: row;" id="aui_3_2_0_1305">
-                            <img draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/5/51/ECAM-LaSalle-bleu-seul.png" alt="ECAM Logo" style="margin: 0px 0px 0px -10px;height: 141px;width: 148px;" id="aui_3_2_0_1304">
+                            <img draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/5/51/ECAM-LaSalle-bleu-seul.png" alt="ECAM Logo" style="margin: 0px 0px 0px -10px;height: 141px;width: 148px; user-select: none;" id="aui_3_2_0_1304">
                             <div style="margin: 30px 0px 0px 0px;">
                                 <div class="dash-title">
                                     <div class="dash-title-text"></div>
@@ -4131,6 +4130,8 @@ ecamDash = undefined;
     
                         const newUserNotifFullScreen        = document.createElement("div");
                         const helpMenuBtn                   = document.querySelector(".over-header-btn.how-to-use-btn");
+                        const firstStepsBtn                 = document.querySelector(".first-steps-btn");
+                        firstStepsBtn.classList.add("infinite-alternate-scale-up");
                         helpMenuBtn.style.zIndex = 302;
 
                         newUserNotifFullScreen.className    = "new-user-notif-fullscreen-effect";
@@ -4145,6 +4146,10 @@ ecamDash = undefined;
                 // MARK: start first steps tuto
                 startFirstStepsTutorial() {
                     
+                    const firstStepsBtn = document.querySelector(".first-steps-btn");
+                    firstStepsBtn.classList.remove("infinite-alternate-scale-up");
+                    this.firstLoad = false;
+
                     const newUserNotifFullScreen     = document.createElement("div");
                     newUserNotifFullScreen.className = "new-user-notif-fullscreen-effect";
                     this.ecamDash.appendChild(newUserNotifFullScreen);
@@ -4159,30 +4164,32 @@ ecamDash = undefined;
                     }
 
                     const firstStepTipForImportBtn = (callback=()=>{}) => {
-                        this.createTipForThisElem(
-                            document.querySelector("#importBtn"), 
+                        this.createTipNotif(
                             document.querySelector(".config-btns-container"),
+                            document.querySelector("#importBtn"), 
                             this.lang == "fr" ? "Clique ici pour importer une configuration de modules" : "Click here to import a module configuration", 
-                            callback,
-                            undefined,
-                            {top: "-25px", right: "180px"},
-                            {minWidth: "330px"},
-                            {zIndex: "12"}, 
-                            {}
+                            {
+                                nextAction: () => {callback()}, 
+                                nextActionDelay: 400,
+                                containerStyle: {top: "-25px", right: "200px"}, 
+                                notifStyle: {minWidth: "330px"}, 
+                                containerElemStyle: {}
+                            }
                         );
                     };
 
                     const firstStepTipForOnlineImportBtn = (callback=()=>{}) => {
-                        this.createTipForThisElem(
-                            document.querySelector(".import-menu-btn.online"), 
+                        this.createTipNotif(
                             document.querySelector("#importMenu"),
+                            document.querySelector(".import-menu-btn.online"), 
                             this.lang == "fr" ? "Clique ici pour obtenir une configuration déjà disponible en ligne" : "Click here to obtain a configuration already available online", 
-                            callback,
-                            undefined,
-                            {top: "-55px", right: "110px"},
-                            {minWidth: "260px"},
-                            {zIndex: "12"}, 
-                            {zIndex: "unset"}
+                            {
+                                nextAction: () => {callback()}, 
+                                nextActionDelay: 400,
+                                containerStyle: {top: "-125px", right: "110px"}, 
+                                notifStyle: {minWidth: "260px"}, 
+                                containerElemStyle: {zIndex: "unset"}
+                            }
                         );
                         this.firstStepsTutoPickerMenu = true;
                     };
@@ -4198,10 +4205,15 @@ ecamDash = undefined;
                         setTimeout(() => {tutoTipNotifContainer.remove()}, 300);
                     })
 
+                    document.querySelectorAll(".infinite-alternate-scale-up.tuto-animation-effect").forEach(elem => {
+                        elem.classList.remove("infinite-alternate-scale-up", "tuto-animation-effect")
+                    })
+
                     document.querySelector(".new-user-notif-fullscreen-effect").classList.remove("focus");
                     setTimeout(() => {document.querySelector(".new-user-notif-fullscreen-effect").remove()}, 500)
 
                     document.querySelector(".skip-tuto-btn").style.opacity = "0";
+                    document.querySelector(".skip-tuto-btn").style.animationPlayState = "paused";
                     setTimeout(() => {document.querySelector(".skip-tuto-btn").remove()}, 500)
 
                     this.firstStepsTutoPickerMenu = false;
@@ -4224,39 +4236,51 @@ ecamDash = undefined;
                  * 
                  * \</div\>
                  * 
-                 * @example this.createTipForThisElem(document.querySelector("#targetId"), document.querySelector("#containerId"), "Test tip notif")
-                 * @example this.createTipForThisElem(".target(s)Class", "#containerId", "Test tip notif")
-                 * @example this.createTipForThisElem(".target(s)Class", "#containerId", "Test tip notif", {right: "9px", top: "9px";}, {zIndex: "0"}, {zIndex:"9", background: white})
+                 * @example this.createTipNotif(document.querySelector("#containerId"), document.querySelector("#targetId"), "Test tip notif")
+                 * @example this.createTipNotif("#containerId", ".target(s)Class", "Test tip notif")
+                 * @example this.createTipNotif("#containerId", ".target(s)Class", "Test tip notif", {right: "9px", top: "9px";}, {zIndex: "0"}, {zIndex:"9", background: white})
                  * 
-                 * @param {HTMLElement | String} targetElem The element or the CSS Selector of the element.s that the tip notif is highlighting
                  * @param {HTMLElement | String} containerElem The container or its CSS Selector to place the tip notif in (if CSS Selector is a class, take the first element matching the selector)
+                 * @param {HTMLElement | String} targetElem The element or the CSS Selector of the element.s that the tip notif is highlighting
                  * @param {String} tipNotifText The text displayed by the tip notif
-                 * @param {Function} nextAction The callback function executed after clicking on the trigger element `nextActionTriggerElem`
+                 * @param {{ nextAction: () => void; nextActionTriggerElem: string | HTMLElement; nextActionDelay: number; containerStyle: {}; notifStyle: {}; targetElemStyle: { zIndex: string; animation: string; }; containerElemStyle: {}; }} [optionalData={nextAction: () => {}, nextActionTriggerElem: targetElem, nextActionDelay: 320, containerStyle: {}, notifStyle: {}, targetElemStyle: {zIndex: "12"}, containerElemStyle: {}}] 
+                 * @param {Function} optionalData.nextAction The callback function executed after clicking on the trigger element `nextActionTriggerElem`
                  * @param {HTMLElement | String} [nextActionTriggerElem=targetElem] The element or the CSS Selector of the element.s on which clicking triggers the `nextAction` callback function. Same as targetElem if not given.
                  * @param {Object} containerStyle An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container of the tip notif `tipNotifContainer`
                  * @param {Object} notifStyle An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the tip notif `tipNotif`
                  * @param {Object} targetElemStyle An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the target element `targetElem` 
                  * @param {Object} containerElemStyle An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container `containerElem`
                  */
-                async createTipForThisElem(targetElem, containerElem, tipNotifText, nextAction=() => {}, nextActionTriggerElem=targetElem, containerStyle={}, notifStyle={}, targetElemStyle={zIndex: "12"}, containerElemStyle={}) {
+                async createTipNotif(containerElem, targetElem, tipNotifText, optionalData=
+                    {
+                        nextAction: () => {}, 
+                        nextActionTriggerElem: targetElem, 
+                        nextActionDelay: 320, 
+                        containerStyle: {}, 
+                        notifStyle: {}, 
+                        targetElemStyle: {zIndex: "12"}, 
+                        containerElemStyle: {}
+                    }
+                ) {
                     if (targetElem instanceof HTMLElement || typeof targetElem == "string") {
 
                         const tutoTipNotifContainer = document.createElement("div");
-                        (containerElem instanceof String ? containerElem : document.querySelector(containerElem)).appendChild(tutoTipNotifContainer);
+                        (typeof containerElem == "string" ? document.querySelector(containerElem) : containerElem).appendChild(tutoTipNotifContainer);
                         tutoTipNotifContainer.className = "tuto-tip-notif-container";
-                        tutoTipNotifContainer.id        = "tutoTipNotifContainer-for-" + targetElem instanceof String ? `${targetElem}` : (targetElem.id ? "#"+targetElem.id : "."+targetElem.className);
+                        tutoTipNotifContainer.id        = `tutoTipNotifContainer-for-${typeof targetElem == "string" ? `${targetElem}` : (targetElem.id ? "#"+targetElem.id : "."+targetElem.className)}`;
                         tutoTipNotifContainer.innerHTML = `
-                            <div class="tuto-tip-notif jura" id="tutoTipNotif-for-${targetElem instanceof String ? `${targetElem}` : (targetElem.id ? "#"+targetElem.id : "."+targetElem.className)}">${tipNotifText}</div>
+                            <div class="tuto-tip-notif jura" id="tutoTipNotif-for-${typeof targetElem == "string" ? `${targetElem}` : (targetElem.id ? "#"+targetElem.id : "."+targetElem.className)}">${tipNotifText}</div>
                         `;
                         const tutoTipNotif = tutoTipNotifContainer.querySelector(`.tuto-tip-notif`);
 
 
+                        Object.assign(tutoTipNotifContainer.style, {...(optionalData.containerStyle || {})});
+                        Object.assign(tutoTipNotif.style, {...(optionalData.notifStyle || {})});
                         (typeof targetElem == "string" ? document.querySelectorAll(`${targetElem}`) : [targetElem]).forEach(elem => {
-                            Object.assign(elem.style, {...targetElemStyle});
+                            Object.assign(elem.style, {...(optionalData.targetElemStyle || {zIndex: "12"})});
+                            elem.classList.add("infinite-alternate-scale-up", "tuto-animation-effect");
                         })
-                        Object.assign((containerElem instanceof String ? containerElem : document.querySelector(containerElem)).style, {...containerElemStyle});
-                        Object.assign(tutoTipNotifContainer.style, {...containerStyle});
-                        Object.assign(tutoTipNotif.style, {...notifStyle});
+                        Object.assign((typeof containerElem == "string" ? document.querySelector(containerElem) : containerElem).style, {...(optionalData.containerElemStyle || {})});
 
 
                         setTimeout(() => {
@@ -4264,12 +4288,12 @@ ecamDash = undefined;
                             tutoTipNotifContainer.style.transform = "scale(100%)";
                         }, 1)
 
-                        if (nextActionTriggerElem instanceof HTMLElement || typeof nextActionTriggerElem == "string") {
+                        if ((optionalData.nextActionTriggerElem || targetElem) instanceof HTMLElement || typeof (optionalData.nextActionTriggerElem || targetElem) == "string") {
                             document.body.onclick = (e) => {
-                                if (e.target.closest(`${nextActionTriggerElem instanceof String ? `${nextActionTriggerElem}` : (nextActionTriggerElem.id ? "#"+nextActionTriggerElem.id : "."+nextActionTriggerElem.className)}`)) {
-                                    this.dismissTipForThisElem(targetElem, containerElem, targetElemStyle, containerElemStyle); 
+                                if (e.target.closest(`${typeof (optionalData.nextActionTriggerElem || targetElem) == "string" ? `${optionalData.nextActionTriggerElem || targetElem}` : ((optionalData.nextActionTriggerElem || targetElem).id ? "#"+(optionalData.nextActionTriggerElem || targetElem).id : "."+(optionalData.nextActionTriggerElem || targetElem).className)}`)) {
+                                    this.dismissTipNotif(containerElem, targetElem, optionalData); 
                                     document.body.onclick = null;
-                                    setTimeout(nextAction, 320);
+                                    setTimeout(optionalData.nextAction || (() => {}), optionalData.nextActionDelay || 320);
                                 }
                             };
                         }
@@ -4292,20 +4316,20 @@ ecamDash = undefined;
                  * 
                  * \</div\>
                  * 
-                 * @example this.dismissTipForThisElem(document.querySelector("#targetId"), document.querySelector("#containerId"))
-                 * @example this.dismissTipForThisElem(".target(s)Class", "#containerId")
-                 * @example this.dismissTipForThisElem(".target(s)Class", "#containerId", {right: "0px", top: "0px";}, {zIndex: "2"}, {zIndex:"1", background: transparent})
+                 * @example this.dismissTipNotif(document.querySelector("#targetId"), document.querySelector("#containerId"))
+                 * @example this.dismissTipNotif(".target(s)Class", "#containerId")
+                 * @example this.dismissTipNotif(".target(s)Class", "#containerId", {right: "0px", top: "0px";}, {zIndex: "2"}, {zIndex:"1", background: transparent})
                  * 
-                 * @param {HTMLElement | String} targetElem The element or the CSS Selector of the element.s that the tip notif is highlighting
                  * @param {HTMLElement | String} containerElem The container or its CSS Selector to place the tip notif in (if CSS Selector is a class, take the first element matching the selector)
+                 * @param {HTMLElement | String} targetElem The element or the CSS Selector of the element.s that the tip notif is highlighting
                  * @param {Object} containerStyle An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container of the tip notif `tipNotifContainer`
                  * @param {Object} notifStyle An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the tip notif `tipNotif`
                  * @param {Object} targetElemStyle An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the target element `targetElem` 
                  * @param {Object} containerElemStyle An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container `containerElem`
                  */
-                async dismissTipForThisElem(targetElem, containerElem=document.body, targetElemStyle={zIndex: ""}, containerElemStyle={}) {
+                async dismissTipNotif(containerElem, targetElem, optionalData = {targetElemStyle: {}, containerElemStyle: {}}) {
                     if (targetElem instanceof HTMLElement || typeof targetElem == "string") {
-                        const tutoTipNotifContainer = (containerElem instanceof String ? containerElem : document.querySelector(containerElem)).querySelector(`.tuto-tip-notif-container`);
+                        const tutoTipNotifContainer = (typeof containerElem == "string" ? document.querySelector(containerElem) : containerElem).querySelector(`.tuto-tip-notif-container`);
                         const tutoTipNotif = tutoTipNotifContainer.querySelector(`.tuto-tip-notif`);
 
                         // undoing the style changes that occured when the tip text appeared, by taking the same style properties and removing its value by passing it an empty string
@@ -4314,9 +4338,10 @@ ecamDash = undefined;
                         }
                         
                         (typeof targetElem == "string" ? document.querySelectorAll(`${targetElem}`) : [targetElem]).forEach(elem => {
-                            Object.assign(elem.style, {...undoStyleChanges(targetElemStyle)});
+                            Object.assign(elem.style, {...undoStyleChanges(optionalData.targetElemStyle || {zIndex: ""})});
+                            elem.classList.remove("infinite-alternate-scale-up", "tuto-animation-effect");
                         })
-                        Object.assign((containerElem instanceof String ? containerElem : document.querySelector(containerElem)).style, {...undoStyleChanges(containerElemStyle)});
+                        Object.assign((typeof containerElem == "string" ? document.querySelector(containerElem) : containerElem).style, {...undoStyleChanges(optionalData.containerElemStyle || {})});
 
                         // hiding the tip notif
                         tutoTipNotifContainer.style.opacity = "";
@@ -7435,37 +7460,50 @@ ecamDash = undefined;
                     </div>
                 `;
 
-                const firstStepTipForOnlineCfgPickerMenu = (callback=()=>{}) => {
-                    this.createTipForThisElem(
-                        ".online-cfg-picker-menu-dir-card.config",
-                        document.querySelector("#pickerMenu"),
-                        this.lang == "fr" ? "Navigue dans le menu pour trouver la configuration qui correspond à ton année actuelle" : "Navigate through the menu to find the configuration that corresponds to your current year", 
-                        callback,
-                        null,
-                        {top: "-360px", right: "-50%"},
-                        {minWidth: "350px"},
-                        {}, 
-                        {}
-                    )
-                };
-
-                const finalFirstStepTip = (callback=()=>{}) => {
-                    this.createTipForThisElem(
-                        ".online-cfg-picker-menu-dir-card.config",
-                        document.querySelector("#pickerMenu"),
-                        this.lang == "fr" ? "Navigue dans le menu pour trouver la configuration qui correspond à ton année actuelle" : "Navigate through the menu to find the configuration that corresponds to your current year", 
-                        callback,
-                        null,
-                        {top: "-360px", right: "-50%"},
-                        {minWidth: "350px"},
-                        {}, 
-                        {}
-                    )
-                };
 
                 if (this.firstStepsTutoPickerMenu) {
+
+                    const firstStepTipForOnlineCfgPickerMenu = (callback=()=>{}) => {
+                        this.createTipNotif(
+                            document.querySelector("#pickerMenu"),
+                            ".online-cfg-picker-menu-dir-card.config",
+                            this.lang == "fr" ? "Navigue dans le menu pour trouver la configuration qui correspond à ta section → année → promo [→ fillière, si besoin] actuelle" : "Navigate through the menu to find the configuration that corresponds to your current section → year → prom [→ pathway, if needed]", 
+                            {
+                                nextAction: callback, 
+                                nextActionDelay: 550, 
+                                containerStyle: {position: "absolute", width: "100%", top: "-76px", right: "0"}, 
+                                notifStyle: {minWidth: "1040px"}, 
+                                targetElemStyle: {}, 
+                                containerElemStyle: {}
+                            }
+                        )
+                    };
+
+                    const finalFirstStepTip = (callback=()=>{}) => {
+                        this.createTipNotif(
+                            document.body,
+                            ".tuto-tip-notif-container",
+                            this.lang == "fr" 
+                                ? `Ta configuration est chargée ! Tu peux filtrer l'affichage des notes par semestres en sélectionnant le semestre désiré dans la barre de filtre.
+                                Tu peux également refaire la manipulation pour obtenir la configuration des années précédentes si elles sont disponibles.
+                                <div>[ Clique pour fermer le tuto ]</div>`
+                                : `Your configuration is loaded! You can filter the grades' display by semester, by selecting the desired semester in the filter bar.
+                                You can also do the manipulation again to obtain the configuration of previous years if they are available.
+                                <div>[ Click to close the tuto ]</div>`
+                            ,
+                            {
+                                nextAction: callback, 
+                                nextActionDelay: 1, 
+                                containerStyle: {position: "fixed", width: "100%", height: "100%", top: "0"}, 
+                                notifStyle: {maxWidth: "60%"}, 
+                                targetElemStyle: {}, 
+                                containerElemStyle: {}
+                            }
+                        )
+                    };
+
                     setTimeout(() => {
-                        firstStepTipForOnlineCfgPickerMenu();
+                        firstStepTipForOnlineCfgPickerMenu(() => (finalFirstStepTip(this.stopFirstStepsTutorial)));
                     }, 10)
                 }
 
