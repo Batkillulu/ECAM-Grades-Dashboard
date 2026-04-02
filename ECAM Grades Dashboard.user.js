@@ -727,7 +727,7 @@ ecamDash = undefined;
             //#region -SUBJECT CARDS _______________________
                 styles += `
 
-                    .subject-card               { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; height: 70px; position: relative; border-radius: 20px; outline: 4px solid #ffffffff; opacity: 100%; overflow: clip; transition: outline-color 0.3s ease, transform 0.3s ease, all 0.1s ease; }
+                    .subject-card               { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; height: 100%; position: relative; border-radius: 20px; outline: 4px solid #ffffffff; opacity: 100%; overflow: clip; transition: outline-color 0.3s ease, transform 0.3s ease, all 0.1s ease; }
                     .subject-card.detailed      { }
                     .subject-card.compact       { }
                     .subject-card.scroll-to     { transform: scale(102%); outline-color: #5f77ff; border-color: #5f77ff; }
@@ -844,7 +844,7 @@ ecamDash = undefined;
                     .simulated-grade-input.sim-inp-grade    { width: 100%; max-width:75px;  height:25px }
                     .simulated-grade-input.sim-inp-coef    { width: 100%; max-width:60px;  height:25px }
                     .simulated-grade-input.sim-inp-date    { width: 100%; max-width:140px; height:25px }
-                    .simulated-grade-input-edit    { border-radius: 10px; border-color: #667eea; padding: 2px 10px}
+                    .simulated-grade-input-edit    { border-radius: 10px; border-color: #667eea; padding: 2px 10px; color: inherit; }
                     .grade-sim-del-btn           { border: none; border-radius: 6px; cursor: pointer; }
                     .grade-checkbox  { cursor: pointer; }
                 `;
@@ -2076,7 +2076,7 @@ ecamDash = undefined;
                 // MARK: getGradesDatas
                 getGradesDatas({sem=undefined, module=undefined, subj=undefined}={sem: undefined, module: undefined, subj: undefined}) {
                     // FOR EACH SEMESTER
-                    (sem && this.moduleConfig[sem] ? [sem] : Object.keys(this.semesters)).forEach((semX) => {
+                    (sem && this.moduleConfig?.[sem] ? [sem] : Object.keys(this.semesters)).forEach((semX) => {
                         this.gradesDatas[semX] = {
                             "__#unclassified#__": {subjects: {}}
                         };
@@ -2096,11 +2096,11 @@ ecamDash = undefined;
                                 
                                 unclassifiedSubjectData.subjName                    = unclassifiedSubjectName;
                                 unclassifiedSubjectData.grades                      = (realGrades).concat(simGrades);
+                                unclassifiedSubjectData.average                     = 0;
+                                unclassifiedSubjectData.classAvg                    = 0;
                                 unclassifiedSubjectData.disabledRealGrades          = [];
                                 unclassifiedSubjectData.simGrades                   = simGrades;
                                 unclassifiedSubjectData.disabledSimGrades           = [];
-                                unclassifiedSubjectData.average                     = 0;
-                                unclassifiedSubjectData.classAvg                    = 0;
                                 unclassifiedSubjectData.totalCoefGrades             = 0;
                                 unclassifiedSubjectData.totalCoefRealGrades         = 0;
                                 unclassifiedSubjectData.totalCoefSimGrades          = 0;
@@ -2177,6 +2177,8 @@ ecamDash = undefined;
                                 
                                 moduleData.moduleName                   = moduleName;
                                 moduleData.subjects                     = {};
+                                moduleData.average                      = 0;
+                                moduleData.classAvg                     = 0;
                                 moduleData.nbGrades                     = 0;
                                 moduleData.simGrades                    = [];
                                 moduleData.disabledRealGrades           = [];
@@ -2187,8 +2189,6 @@ ecamDash = undefined;
                                 moduleData.subjectsReallyOver100        = [];
                                 moduleData.subjectsNoGrade              = [];
                                 moduleData.coefSubjectsNoGrade          = 0;
-                                moduleData.average                      = 0;
-                                moduleData.classAvg                     = 0;
                                 moduleData.totalCoefSubjects            = 0;
                                 moduleData.totalCoefGrades              = 0;
                                 moduleData.totalCoefRealGrades          = 0;
@@ -2221,12 +2221,12 @@ ecamDash = undefined;
 
                                     subjectData.subjName                    = subjectName;
                                     subjectData.coef                        = this.moduleConfig[semX][moduleName].coefficients[subjectName];
-                                    subjectData.isCustom                    = true;
+                                    subjectData.average                     = 0;
+                                    subjectData.classAvg                    = 0;
                                     subjectData.disabledRealGrades          = [];
                                     subjectData.simGrades                   = [];
                                     subjectData.disabledSimGrades           = [];
-                                    subjectData.average                     = 0;
-                                    subjectData.classAvg                    = 0;
+                                    subjectData.isCustom                    = true;
                                     subjectData.totalCoefGrades             = 0;
                                     subjectData.totalCoefRealGrades         = 0;
                                     subjectData.totalCoefSimGrades          = 0;
@@ -2240,10 +2240,10 @@ ecamDash = undefined;
                                     
                                     // FOR EACH GRADE IN SUBJECT
                                     subjectData.grades.forEach(grade => {
-                                        const gradeValue = parseFloat(grade.grade),
-                                            classAvg = parseFloat(grade.classAvg),
-                                            coef = parseInt(grade.coef),
-                                            subjCoef = parseInt(subjectData.coef)
+                                        const gradeValue    = parseFloat(grade.grade),
+                                              classAvg      = parseFloat(grade.classAvg),
+                                              coef          = parseInt(grade.coef),
+                                              subjCoef      = parseInt(subjectData.coef)
                                         ;
                                         
                                         subjectData.totalCoefGrades += grade.coef;
@@ -2318,7 +2318,7 @@ ecamDash = undefined;
                                     }
                                     else {
                                         subjectData.average     =  Math.round(100*subjectData.average /(subjectData.totalCoefEnabledGrades/100))/100;
-                                        subjectData.classAvg    =  Math.round(100*subjectData.classAvg/(subjectData.totalCoefEnabledGrades/100))/100;
+                                        subjectData.classAvg    =  Math.round(100*subjectData.classAvg/(subjectData.totalCoefEnabledRealGrades/100))/100;
 
                                         moduleData.average          += subjectData.average *subjectData.coef/100;
                                         moduleData.classAvg         += subjectData.classAvg*subjectData.coef/100;
@@ -2368,6 +2368,8 @@ ecamDash = undefined;
                         }
                         
                     })
+
+                    return this.gradesDatas
                 }
 
 
@@ -2819,7 +2821,7 @@ ecamDash = undefined;
 
 
 
-            //#region -Main Dashboard generation
+            //#region Main Dashboard generation
 
 
 
@@ -3407,7 +3409,7 @@ ecamDash = undefined;
                                     </div>
                                     <div class="unclassified-content">
                                         ${unclassified.length > 0 
-                                            ? `<div style="margin: -10px 0px"></div>${this.createAllSubjCards(sem, "__#unclassified#__")}<div style="margin: -10px 0px"></div>` 
+                                            ? `<div style="margin: -10px 0px"></div>${this.createAllSubjCards(sem, "__#unclassified#__", manageIndividualSubjectCardFolding)}<div style="margin: -10px 0px"></div>` 
                                             : ``
                                         }
                                     </div>
@@ -3574,12 +3576,13 @@ ecamDash = undefined;
                     const nbRealGrades          = nbGrades - nbSimGrades;
                     const classified            = moduleName != "__#unclassified#__" && this.moduleConfig[sem]?.[moduleName] != undefined;
                     const subjectCardId         = `subject-card-semester-${sem}-subject-${subject}`;
-                    const detailed              = (this.detailedSubjCardsId.includes(subjectCardId) && manageIndividualSubjectCardFolding) || (this.viewMode == "detailed" && !manageIndividualSubjectCardFolding);
+                    const detailed              = (this.detailedSubjCardsId.includes(subjectCardId) && !this.compactSubjCardsId.includes(subjectCardId) && manageIndividualSubjectCardFolding) || (this.viewMode == "detailed" && !manageIndividualSubjectCardFolding);
                     const cardIsSelected        = this.selectedSubjectCardsId.includes(`subject-card-semester-${sem}-subject-${subject}`);
-                    const cardClientHeight      = 173 + 46*nbGrades;
                     
+                    if (detailed) {this.detailedSubjCardsId.push(subjectCardId)} else {this.compactSubjCardsId.push(subjectCardId)}
+
                     let html = `
-                    <div class="subject-card ${classified ? "classified" : "unclassified"} ${detailed ? "detailed" : "compact"} ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" id="${subjectCardId}" style="${this.editMode ? `cursor: grab; user-select: none;` : ""}${detailed ? ` height: ${cardClientHeight}px;` : ""}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}" data-height="${cardClientHeight}">
+                    <div class="subject-card ${classified ? "classified" : "unclassified"} ${detailed ? "detailed" : "compact"} ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" id="${subjectCardId}" style="${this.editMode ? `cursor: grab; user-select: none;` : ""}${detailed ? ` height: 70px;` : ""}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
                         <div class="subject-card-header ${detailed ? "detailed" : "compact"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`} ${classified ? "classified" : "unclassified"}" ${this.editMode ? `style="cursor: grab;" draggable="true"` : ``} data-module="${moduleName}">
                             <div class="subject-card-header-left-side">
                                 ${this.editMode
@@ -3686,19 +3689,19 @@ ecamDash = undefined;
                                 <td class="grades-table-type" style="display: flex; align-items: stretch; gap: 6px">
                                     <input type="checkbox" class="grade-checkbox any-input" id="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}" data-semester="${sem}" data-subj="${subject}" data-module="${moduleName||''}" data-prof="${grade.prof}" data-gradeid="${grade.type + " " + grade.date + " " + grade.prof}" ${gradeIsSim ? `data-simtimestamp="${grade.id}"` : ""} ${!this.gradeIsDisabled(grade) ? "checked" : ""}></input>
                                     ${gradeIsSim
-                                        ? `<input class="grade-type simulated-grade-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="simulated-grade-input-type-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" data-modifType="type" data-simid="${nbSimGrades-1}" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" value="${grade.type}"/>` 
+                                        ? `<input class="grade-type simulated-grade-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="simulated-grade-input-type-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" data-modifType="type" data-simid="${index-nbRealGrades}" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" value="${grade.type}"/>` 
                                         : `<label class="grade-type" style="width: auto"  id="grade-type-${grade.type}-${grade.date}" for="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}">${grade.type || ''}${gradeIsSim ? ` • ${this.lang == "fr" ? "Simulée" : "Simulated"}` : ''}</label>`
                                     }
                                 </td>
                                 <td class="grade-value grade-${gradeClass} grades-table-grade" data-sim="${gradeIsSim}">
                                     ${gradeIsSim
-                                        ? `<input class="simulated-grade-input-edit sim-inp-grade any-input" style="width: 100%; max-width: 75px;" id="simulated-grade-input-grade-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" type="number" step="0.5" min="0" max="20" data-simid="${nbSimGrades-1}" data-modifType="grade" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" style="width:75px; height:25px" value="${grade.grade}"> /20`
+                                        ? `<input class="simulated-grade-input-edit sim-inp-grade any-input" style="width: 100%; max-width: 75px;" id="simulated-grade-input-grade-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" type="number" step="0.5" min="0" max="20" data-simid="${index-nbRealGrades}" data-modifType="grade" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" style="width:75px; height:25px" value="${grade.grade}"> /20`
                                         : `${grade.grade}/20`
                                     }
                                 </td>
                                 <td class="grades-table-coef" data-sim="${gradeIsSim}">
                                     ${gradeIsSim
-                                        ? `<input class="simulated-grade-input-edit sim-inp-coef any-input" style="width: 100%; max-width: 60px;" id="simulated-grade-input-coef-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" type="number" step="5" min="0" max="100" data-simid="${nbSimGrades-1}" data-modifType="coef" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" style="width:60px; height:25px"value="${grade.coef}"> %`
+                                        ? `<input class="simulated-grade-input-edit sim-inp-coef any-input" style="width: 100%; max-width: 60px;" id="simulated-grade-input-coef-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" type="number" step="5" min="0" max="100" data-simid="${index-nbRealGrades}" data-modifType="coef" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" style="width:60px; height:25px"value="${grade.coef}"> %`
                                         : `${grade.coef} %`
                                     }
                                 </td>
@@ -4145,10 +4148,12 @@ ecamDash = undefined;
 
                 // MARK: start first steps tuto
                 startFirstStepsTutorial() {
+                    localStorage.setItem("ECAM_DASHBOARD_FIRST_LOAD", false);
+                    this.firstLoad = false;
                     
                     const firstStepsBtn = document.querySelector(".first-steps-btn");
                     firstStepsBtn.classList.remove("infinite-alternate-scale-up");
-                    this.firstLoad = false;
+                    
 
                     const newUserNotifFullScreen     = document.createElement("div");
                     newUserNotifFullScreen.className = "new-user-notif-fullscreen-effect";
@@ -4228,7 +4233,7 @@ ecamDash = undefined;
                  * 
                  * ............\<div`targetElem`\>\</div\>
                  * 
-                 * ............\<div`tipNotifContainer`\> // used for the placement of the tip notif, as its position is set to relative and both its width and height are 0, so it doesn't displace the display of containerElem)
+                 * ............\<div`tipNotifContainer`\> // used for the placement of the tip notif, as its position is set to relative and both its width and height are 0 by default, so it doesn't displace the display of containerElem)
                  * 
                  * ........................\<div`tipNotif`\> **`tipNotifText`** \</div\>
                  * 
@@ -4238,18 +4243,19 @@ ecamDash = undefined;
                  * 
                  * @example this.createTipNotif(document.querySelector("#containerId"), document.querySelector("#targetId"), "Test tip notif")
                  * @example this.createTipNotif("#containerId", ".target(s)Class", "Test tip notif")
-                 * @example this.createTipNotif("#containerId", ".target(s)Class", "Test tip notif", {right: "9px", top: "9px";}, {zIndex: "0"}, {zIndex:"9", background: white})
+                 * @example this.createTipNotif("#containerId", ".target(s)Class", "Test tip notif", {nextAction: () => {`Something to happen next`}, containerStyle: {right: "10px", top: "10px"}, targetElementStyle: {zIndex: "9"}, containerElemStyle: {zIndex:"0", background: white}})
                  * 
                  * @param {HTMLElement | String} containerElem The container or its CSS Selector to place the tip notif in (if CSS Selector is a class, take the first element matching the selector)
                  * @param {HTMLElement | String} targetElem The element or the CSS Selector of the element.s that the tip notif is highlighting
                  * @param {String} tipNotifText The text displayed by the tip notif
-                 * @param {{ nextAction: () => void; nextActionTriggerElem: string | HTMLElement; nextActionDelay: number; containerStyle: {}; notifStyle: {}; targetElemStyle: { zIndex: string; animation: string; }; containerElemStyle: {}; }} [optionalData={nextAction: () => {}, nextActionTriggerElem: targetElem, nextActionDelay: 320, containerStyle: {}, notifStyle: {}, targetElemStyle: {zIndex: "12"}, containerElemStyle: {}}] 
-                 * @param {Function} optionalData.nextAction The callback function executed after clicking on the trigger element `nextActionTriggerElem`
-                 * @param {HTMLElement | String} [nextActionTriggerElem=targetElem] The element or the CSS Selector of the element.s on which clicking triggers the `nextAction` callback function. Same as targetElem if not given.
-                 * @param {Object} containerStyle An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container of the tip notif `tipNotifContainer`
-                 * @param {Object} notifStyle An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the tip notif `tipNotif`
-                 * @param {Object} targetElemStyle An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the target element `targetElem` 
-                 * @param {Object} containerElemStyle An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container `containerElem`
+                 * @param {{ nextAction: () => void; nextActionTriggerElem: string | HTMLElement; nextActionDelay: number; containerStyle: {}; notifStyle: {}; targetElemStyle: { zIndex: string; }; containerElemStyle: {}; }} [optionalData={nextAction: () => {}, nextActionTriggerElem: targetElem, nextActionDelay: 320, containerStyle: {}, notifStyle: {}, targetElemStyle: {zIndex: "12"}, containerElemStyle: {}}]
+                 * Optional data containing:
+                 * - nextAction — The callback function executed after clicking on the trigger element `nextActionTriggerElem`
+                 * - nextActionTriggerElem — The element or the CSS Selector of the element.s on which clicking triggers the `nextAction` callback function. Same as targetElem if not given.
+                 * - containerStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container of the tip notif `tipNotifContainer`
+                 * - notifStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the tip notif `tipNotif`
+                 * - targetElemStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the target element `targetElem` 
+                 * - containerElemStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container `containerElem`
                  */
                 async createTipNotif(containerElem, targetElem, tipNotifText, optionalData=
                     {
@@ -4300,7 +4306,8 @@ ecamDash = undefined;
                     }
                 }
 
-                /** Method allowing to detach a tip notif for an element `targetElem` and delete it from of a container `containerElem`, handling specific styling for the different elements involved
+                /** Method allowing to detach a tip notif for an element `targetElem` and delete it from of a container `containerElem`, handling specific styling for the different elements involved.
+                 * Typically called from inside of the createTipNotif method, getting its argument from the corresponding arguments of createTipNotif
                  * 
                  * Structure of the tip notif attached:
                  * 
@@ -4308,7 +4315,7 @@ ecamDash = undefined;
                  * 
                  * ............\<div`targetElem`\>\</div\>
                  * 
-                 * ............\<div`tipNotifContainer`\> // used for the placement of the tip notif, as its position is set to relative and both its width and height are 0, so it doesn't displace the display of containerElem)
+                 * ............\<div`tipNotifContainer`\> // used for the placement of the tip notif, as its position is set to relative and both its width and height are 0 by default, so it doesn't displace the display of containerElem)
                  * 
                  * ........................\<div`tipNotif`\> **`tipNotifText`** \</div\>
                  * 
@@ -4318,14 +4325,14 @@ ecamDash = undefined;
                  * 
                  * @example this.dismissTipNotif(document.querySelector("#targetId"), document.querySelector("#containerId"))
                  * @example this.dismissTipNotif(".target(s)Class", "#containerId")
-                 * @example this.dismissTipNotif(".target(s)Class", "#containerId", {right: "0px", top: "0px";}, {zIndex: "2"}, {zIndex:"1", background: transparent})
+                 * @example this.dismissTipNotif(".target(s)Class", "#containerId", {targetElemStyle: {zIndex: "2"}, containerElemStyle: {zIndex:"1", background: transparent}})
                  * 
                  * @param {HTMLElement | String} containerElem The container or its CSS Selector to place the tip notif in (if CSS Selector is a class, take the first element matching the selector)
                  * @param {HTMLElement | String} targetElem The element or the CSS Selector of the element.s that the tip notif is highlighting
-                 * @param {Object} containerStyle An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container of the tip notif `tipNotifContainer`
-                 * @param {Object} notifStyle An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the tip notif `tipNotif`
-                 * @param {Object} targetElemStyle An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the target element `targetElem` 
-                 * @param {Object} containerElemStyle An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container `containerElem`
+                 * @param {{ targetElemStyle: { zIndex: string; }; containerElemStyle: {}; }} [optionalData={nextAction: () => {}, nextActionTriggerElem: targetElem, nextActionDelay: 320, containerStyle: {}, notifStyle: {}, targetElemStyle: {zIndex: "12"}, containerElemStyle: {}}]
+                 * Optional data containing:
+                 * - targetElemStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the target element `targetElem` 
+                 * - containerElemStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container `containerElem`
                  */
                 async dismissTipNotif(containerElem, targetElem, optionalData = {targetElemStyle: {}, containerElemStyle: {}}) {
                     if (targetElem instanceof HTMLElement || typeof targetElem == "string") {
@@ -4364,10 +4371,21 @@ ecamDash = undefined;
             // MARK: Regenerate subject and module averages and total coef debug texts
             regenAveragesAndTotalCoefs(sem, moduleName="__#unclassified#__", subject) {
 
+                if (sem?.classList?.contains("module-card")) {
+                    subject = undefined;
+                    moduleName = sem.dataset.module;
+                    sem = sem.dataset.semester;
+                }
+                else if (sem?.classList?.contains("subject-card")) {
+                    subject = sem.dataset.subject;
+                    moduleName = sem.dataset.module;
+                    sem = sem.dataset.semester;
+                }
+
                 // subject average modification
                 if (subject) {
-                    const subjAvg = this.gradesDatas[sem][moduleName||"__#unclassified#__"].subjects[subject].average;
-                    const subjAvgDiv = document.querySelector(`.subject-card[data-subject="${subject}"]`).querySelector(".subj-moyenne");
+                    const subjAvg       = this.gradesDatas[sem][moduleName||"__#unclassified#__"].subjects[subject].average;
+                    const subjAvgDiv    = document.querySelector(`.subject-card[data-subject="${subject}"]`).querySelector(".subj-moyenne");
                     subjAvgDiv.innerHTML = subjAvg + "/20";
                     subjAvgDiv.classList.remove("good"); subjAvgDiv.classList.remove("bad");
                     if (subjAvg >= 10) {
@@ -4385,23 +4403,23 @@ ecamDash = undefined;
                     const moduleCardHeader  = moduleCard.querySelector(`.module-header`);
                     const moduleAvgDiv      = moduleCard.querySelector(`.module-moyenne[data-module="${moduleName}"]`);
                     moduleAvgDiv.childNodes[0].data = moduleAvg + "/20";
-                    moduleCard.classList.remove("validated"); moduleCard.classList.remove("failed"); moduleCard.classList.remove("unknown");
-                    moduleCardHeader.classList.remove("validated"); moduleCardHeader.classList.remove("failed"); moduleCardHeader.classList.remove("unknown");
-                    moduleAvgDiv.classList.remove("good"); moduleAvgDiv.classList.remove("bad"); moduleAvgDiv.classList.remove("unknown");
+                    moduleCard      .classList.remove("validated");     moduleCard      .classList.remove("failed");    moduleCard      .classList.remove("unknown");
+                    moduleCardHeader.classList.remove("validated");     moduleCardHeader.classList.remove("failed");    moduleCardHeader.classList.remove("unknown");
+                    moduleAvgDiv    .classList.remove("good");          moduleAvgDiv    .classList.remove("bad");       moduleAvgDiv    .classList.remove("unknown");
 
                     if (moduleAvg == " - ") {
-                        moduleCard.classList.add("unknown");
+                        moduleCard  .classList.add("unknown");
                         moduleAvgDiv.classList.add("unknown");
                     }
                     else if (moduleAvg >= 10) {
-                        moduleCard.classList.add("validated");
+                        moduleCard      .classList.add("validated");
                         moduleCardHeader.classList.add("validated");
-                        moduleAvgDiv.classList.add("good");
+                        moduleAvgDiv    .classList.add("good");
                     }
                     else {
-                        moduleCard.classList.add("failed");
+                        moduleCard      .classList.add("failed");
                         moduleCardHeader.classList.add("failed");
-                        moduleAvgDiv.classList.add("bad");
+                        moduleAvgDiv    .classList.add("bad");
                     }
 
                     this.setGradesTableTotalCoef(moduleCard);
@@ -4440,7 +4458,7 @@ ecamDash = undefined;
                 this.attachViewModeBtnsListener();
                 this.attachFoldToggleBtnListener();
                 
-                this.attachAllSubjectCardRelatedEvenListenersForEverySubjectCard();
+                this.attachAllSubjectCardRelatedEventListenersForEverySubjectCard();
 
                 this.attachModuleInfoClearBtns();
                 this.attachAllModuleDeleteBtnsListener();
@@ -4901,7 +4919,7 @@ ecamDash = undefined;
 
                 //#region Subject cards listeners
 
-                    attachAllSubjectCardRelatedEvenListenersForEverySubjectCard(container=document.body) {
+                    attachAllSubjectCardRelatedEventListenersForEverySubjectCard(container=document.body) {
                         if (this.editMode) {this.attachOnDragEventListeners(container);}
 
                         this.attachAllDragOrTickIconsListener(container);
@@ -4910,7 +4928,7 @@ ecamDash = undefined;
                         this.attachAllSubjectCoefInputBoxesListeners(container);
                         this.attachAllSubjectsDeleteBtnListener(container);
 
-                        this.attachCheckboxesListeners(container);
+                        this.attachAllGradesCheckboxListeners(container);
 
                         this.attachAllSubjectSimAddBtnsListener(container);
                         this.attachAllSubjectSimDelBtnsListener(container);
@@ -4925,12 +4943,12 @@ ecamDash = undefined;
                         const simAddBtn     = subjCard.querySelector(".sim-add-btn");
                         const simDelBtn     = subjCard.querySelector(".sim-del-btn");
 
-                        if (isClassified)   {this.attachCheckboxesListeners(subjCard);}
+                        if (isClassified)   {this.attachAllGradesCheckboxListeners(subjCard);}
                         if (isDetailed)     {this.attachAllSubjectSimInputEditsListener(subjCard);}
                         if (coefInputBox)   {this.attachSubjectCoefInputBoxListeners(coefInputBox);}
                         if (nameInputBox)   {this.attachSubjectNameInputListener(nameInputBox);}
-                        if (simAddBtn)      {this.attachSubjectSimAddBtnListener(simAddBtn);}
-                        if (simDelBtn)      {this.attachSubjectSimDelBtnListener(simDelBtn);}
+                        if (simAddBtn)      {this.attachSimGradeAddBtnListener(simAddBtn);}
+                        if (simDelBtn)      {this.attachSimGradeDelBtnListener(simDelBtn);}
                         
                         this.attachDragOrTickIconListener(subjCard)
                         if (this.editMode)  {this.attachSubjectCardOnDragEventListeners(subjCard);};
@@ -4963,7 +4981,7 @@ ecamDash = undefined;
                         })
                     }
                     attachSubjectCoefInputBoxListeners(inputBox) {
-                        inputBox.onchange = e => {
+                        inputBox.onchange = (e) => {
                             const semX          = e.target.dataset.semester;
                             const moduleName    = e.target.dataset.module;
                             const subject       = e.target.dataset.subject;
@@ -4982,35 +5000,8 @@ ecamDash = undefined;
                             this.attachSubjectCardDeleteBtnListener(btn);
                         })
                     }
-
                     attachSubjectCardDeleteBtnListener(btn) {
                         btn.onclick = (e) => {this.subjectCardDeleteBtnAction(e.target)};
-                    }
-
-                    attachCheckboxesListeners(container=document.body) {
-                        // Reusable method to attach listeners to grade checkboxes
-                        container.querySelectorAll('.grade-checkbox').forEach(chbx => {
-                            chbx.onclick = (e) => {
-                                const semX = e.target.dataset.semester;
-                                const module = e.target.dataset.module;
-                                const subj = e.target.dataset.subj;
-                                const simTimeStamp = e.target.dataset.simtimestamp;
-                                const gradeId = e.target.dataset.gradeid;
-                                const ignoredKey = [semX, subj, simTimeStamp || gradeId].join("\\");
-                                if (e.target.checked) {
-                                    // remove this specific ignored key if present
-                                    this.disabledGrades = this.disabledGrades?.filter(id => id !== ignoredKey);
-                                } else {
-                                    // add ignored key if not already present
-                                    if (!this.disabledGrades?.includes(ignoredKey)) this.disabledGrades.push(ignoredKey);
-                                }
-                                this.saveIgnoredGrades();
-                                this.getGradesDatas();
-                                document.querySelector(".average-number").innerHTML = this.moyennePonderee(this.grades);
-                                // this.getGradesDatas({semX, module:undefined, subj});
-                                this.regenAveragesAndTotalCoefs(semX, module, subj)
-                            }
-                        });
                     }
 
                     attachAllSubjectNameInputsListener(container=document.body) {
@@ -5021,34 +5012,53 @@ ecamDash = undefined;
                     attachSubjectNameInputListener(input) {
                         input.onchange = (e) => {this.subjectCardNameInputAction(e.target)};
                     }
+                    
+                //#endregion
+
+
+
+
+                //#region grades listeners
+
+                    attachAllGradesCheckboxListeners(container=document.body) {
+                        container.querySelectorAll('.grade-checkbox').forEach(chbx => {
+                            this.attachGradeCheckboxListener(chbx)
+                        });
+                    }
+
+                    attachGradeCheckboxListener(chbx) {
+                        chbx.onclick = (e) => {
+                            this.gradeCheckboxAction(e.target)
+                        }
+                    }
 
                     attachAllSubjectSimAddBtnsListener(container=document.body) {
                         container.querySelectorAll('.sim-add-btn').forEach(btn=>{
-                            this.attachSubjectSimAddBtnListener(btn);
+                            this.attachSimGradeAddBtnListener(btn);
                         });
                     }
-                    attachSubjectSimAddBtnListener(btn) {
-                        btn.onclick = (e) => {this.subjectCardSimAddBtnAction(e.target)};
+                    attachSimGradeAddBtnListener(btn) {
+                        btn.onclick = (e) => {this.simGradeAddBtnAction(e.target)};
                     }
 
                     attachAllSubjectSimDelBtnsListener(container=document.body) {
                         container.querySelectorAll('.sim-del-btn').forEach(btn=>{
-                            this.attachSubjectSimDelBtnListener(btn)
+                            this.attachSimGradeDelBtnListener(btn)
                         })
                     }
-                    attachSubjectSimDelBtnListener(btn) {
-                        btn.onclick = (e) => {this.subjectCardSimDelBtnAction(e.target)};
+                    attachSimGradeDelBtnListener(btn) {
+                        btn.onclick = (e) => {this.simGradeDelBtnAction(e.target)};
                     }
 
                     attachAllSubjectSimInputEditsListener(container=document.body) {
                         container.querySelectorAll(".simulated-grade-input-edit").forEach(input => {
-                            this.attachSubjectSimInputEditListener(input)
+                            this.attachSimGradeInputEditListener(input)
                         })
                     }
-                    attachSubjectSimInputEditListener(input) {
-                        input.onchange = (e) => {this.subjectCardSimInputEditAction(e.target)};
+                    attachSimGradeInputEditListener(input) {
+                        input.onchange = (e) => {this.simGradeInputEditAction(e.target)};
                     }
-                    
+
                 //#endregion
 
 
@@ -5152,7 +5162,7 @@ ecamDash = undefined;
                             newUserNotif.onclick = null;
                             setTimeout(() => {newUserNotif.style.display = "none"}, 300);
                             
-                            // localStorage.setItem("ECAM_DASHBOARD_FIRST_LOAD", false);
+                            localStorage.setItem("ECAM_DASHBOARD_FIRST_LOAD", false);
                             this.firstLoad = false;
                             setTimeout(() => {newUserNotifFullScreen.remove(); newUserNotif.remove()}, 500);
                         }
@@ -5701,23 +5711,23 @@ ecamDash = undefined;
                      * @param {HTMLElement} [container=document.body] The HTML element containing the subject cards whose fold mode will be toggled
                      * @param {boolean} [smart=true] If true, takes into consideration the current view mode to know if the subject card should be folded of unfolded. If false, simply toggle the folding mode.
                      */
-                    async toggleFoldAllSubjCards(container=document.body, smart=true) {
+                    async toggleFoldAllSubjCards(container=document.body, smart=true, bypassFoldedSubjectCardId=false) {
                         if (container instanceof HTMLElement) {
                             if (smart) {
                                 if (this.viewMode == "detailed") {
-                                    this.unfoldAllSubjCards(container);
+                                    this.unfoldAllSubjCards(container, bypassFoldedSubjectCardId);
                                 }
                                 else if (this.viewMode == "compact") {
-                                    this.foldAllSubjCards(container);
+                                    this.foldAllSubjCards(container, bypassFoldedSubjectCardId);
                                 }
                             }
                             else {
                                 container.querySelectorAll(".subject-card").forEach(subjCard => {
                                     if (subjCard?.classList?.contains("detailed")) {
-                                        this.foldSubjCard(subjCard);
+                                        this.foldSubjCard(subjCard, bypassFoldedSubjectCardId);
                                     }
                                     else if (subjCard?.classList?.contains("compact")) {
-                                        this.unfoldSubjCard(subjCard);
+                                        this.unfoldSubjCard(subjCard, bypassFoldedSubjectCardId);
                                     }
                                 })
                             }
@@ -5726,12 +5736,12 @@ ecamDash = undefined;
                     /** Toggle the folding of the given subject card
                      * @param {HTMLElement} subjCard The subject cards whose fold mode will be toggled
                      */
-                    async toggleFoldSubjCard(subjCard) {
+                    async toggleFoldSubjCard(subjCard, bypassFoldedSubjectCardId=false) {
                         if (subjCard?.classList?.contains("detailed")) {
-                            this.foldSubjCard(subjCard);
+                            this.foldSubjCard(subjCard, bypassFoldedSubjectCardId);
                         }
                         else if (subjCard?.classList?.contains("compact")) {
-                            this.unfoldSubjCard(subjCard);
+                            this.unfoldSubjCard(subjCard, bypassFoldedSubjectCardId);
                         }
                     }
 
@@ -5739,28 +5749,28 @@ ecamDash = undefined;
                     /** Fold all the subject cards inside the given container
                      * @param {HTMLElement} [container=document.body] The HTML element containing the subject cards to fold
                      */
-                    async foldAllSubjCards(container=document.body) {
+                    async foldAllSubjCards(container=document.body, bypassFoldedSubjectCardId=false) {
                         if (container instanceof HTMLElement) {
                             container.querySelectorAll(".subject-card.detailed").forEach(detailedSubjCard => {
-                                this.foldSubjCard(detailedSubjCard);
+                                this.foldSubjCard(detailedSubjCard, bypassFoldedSubjectCardId);
                             })
                         }
                     }
                     /** Fold the given subject card
                      * @param {HTMLElement} [subjCard] The subject card to fold
                      */
-                    async foldSubjCard(subjCard) {
+                    async foldSubjCard(subjCard, bypassFoldedSubjectCardId=false) {
                         if (subjCard?.classList?.contains("subject-card")) {
                             const subjCardHeader = subjCard.querySelector(".subject-card-header");
                             subjCardHeader.classList.add("fold");
                             subjCardHeader.classList.replace("detailed", "compact");
-                            subjCard.style.height = "";
+                            subjCard.style.height = "70px";
     
                             // prepare the aimed height below the higher instance height style
                             subjCard.classList.replace("detailed", "compact");
                             subjCard.querySelector(".subject-card-header-grades-details").classList.add("show");
                             
-                            this.compactSubjCardsId.push(subjCard.id);
+                            if (!bypassFoldedSubjectCardId) this.compactSubjCardsId.push(subjCard.id);
                             this.detailedSubjCardsId.splice(this.detailedSubjCardsId.indexOf(subjCard.id), 1);
                         }
                     }
@@ -5769,28 +5779,28 @@ ecamDash = undefined;
                     /** Unfold all the subject cards inside the given container
                      * @param {HTMLElement} [container=document.body] The HTML element containing the subject cards to unfold
                      */
-                    async unfoldAllSubjCards(container=document.body) {
+                    async unfoldAllSubjCards(container=document.body, bypassFoldedSubjectCardId=false) {
                         if (container instanceof HTMLElement) {
                             container.querySelectorAll(".subject-card.compact").forEach(compactSubjCard => {
-                                this.unfoldSubjCard(compactSubjCard);
+                                this.unfoldSubjCard(compactSubjCard, bypassFoldedSubjectCardId);
                             })
                         }
                     }
                     /** Unfold the given subject card
                      * @param {HTMLElement} [subjCard] The subject card to unfold
                      */
-                    async unfoldSubjCard(subjCard) {
+                    async unfoldSubjCard(subjCard, bypassFoldedSubjectCardId=false) {
                         if (subjCard?.classList?.contains("subject-card")) {
                             const subjCardHeader = subjCard.querySelector(".subject-card-header");
                             subjCardHeader.classList.remove("fold");
                             subjCardHeader.classList.replace("compact", "detailed");
-                            subjCard.style.height = subjCard.dataset.height+"px";
+                            subjCard.style.height = "";
 
                             // makes the height go automatic -> correspond to the desired height
                             subjCard.classList.replace("compact", "detailed");
                             subjCard.querySelector(".subject-card-header-grades-details").classList.remove("show");
 
-                            this.compactSubjCardsId.splice(this.compactSubjCardsId.indexOf(subjCard.id), 1);
+                            if (!bypassFoldedSubjectCardId) this.compactSubjCardsId.splice(this.compactSubjCardsId.indexOf(subjCard.id), 1);
                             this.detailedSubjCardsId.push(subjCard.id);
                         }
                     }
@@ -5916,28 +5926,59 @@ ecamDash = undefined;
                             unclassifiedContent.innerHTML = this.createAllSubjCards(sem, "__#unclassified#__");
                             
                             this.resetFixedUnclassifiedSectionHeight();
-                            this.attachAllSubjectCardRelatedEvenListenersForEverySubjectCard();
+                            this.attachAllSubjectCardRelatedEventListenersForEverySubjectCard();
                             this.setGradesTableTotalCoef();
                             this.saveConfig()
                             this.getGradesDatas();
                         }
                     }
 
+                //#endregion
 
-                    subjectCardSimAddBtnAction(target) {
-                        const moduleName = target.dataset.module;
-                        const semX = target.dataset.semester;
-                        const subj = target.dataset.subj;
+
+
+
+                //#region Grades
+
+                    gradeCheckboxAction(target) {
+                        if (target instanceof HTMLElement || target instanceof Event) {
+                            const realTarget    = target instanceof Event ? target.target : target;
+                            const semX          = realTarget.dataset.semester;
+                            const moduleName    = realTarget.dataset.module;
+                            const subj          = realTarget.dataset.subj;
+                            const simTimeStamp  = realTarget.dataset.simtimestamp;
+                            const gradeId       = realTarget.dataset.gradeid;
+                            const ignoredKey    = [semX, subj, simTimeStamp || gradeId].join("\\");
+                            if (e.target.checked) {
+                                // remove this specific ignored key if present
+                                this.disabledGrades = this.disabledGrades?.filter(id => id !== ignoredKey);
+                            } else {
+                                // add ignored key if not already present
+                                if (!this.disabledGrades?.includes(ignoredKey)) this.disabledGrades.push(ignoredKey);
+                            }
+                            this.saveIgnoredGrades();
+                            this.getGradesDatas();
+                            // this.getGradesDatas({sem: semX, module: moduleName, subj});
+                            document.querySelector(".average-number").innerHTML = this.moyennePonderee(this.grades);
+                            this.regenAveragesAndTotalCoefs(semX, moduleName, subj)
+                        }
+                    }
+                    
+                    simGradeAddBtnAction(target) {
+                        const moduleName    = target.dataset.module;
+                        const semX          = target.dataset.semester;
+                        const subj          = target.dataset.subj;
                         this.ensureSimPath(semX, moduleName, subj);
-                        const typeInp =  document.querySelector(`.simulated-grade-input.sim-inp-type[data-semester="${semX}"][data-subj="${subj}"]`);
-                        const gradeInp = document.querySelector(`.simulated-grade-input.sim-inp-grade[data-semester="${semX}"][data-subj="${subj}"]`);
-                        const coefInp =  document.querySelector(`.simulated-grade-input.sim-inp-coef[data-semester="${semX}"][data-subj="${subj}"]`);
-                        const dateInp =  document.querySelector(`.simulated-grade-input.sim-inp-date[data-semester="${semX}"][data-subj="${subj}"]`);
-                        const type = typeInp?.value||`${this.lang=="fr"? 'Simulé' : "Simulated"}`;
-                        const grade = parseFloat(gradeInp?.value||'');
-                        const coef = parseFloat(coefInp?.value||'');
-                        const date = dateInp?.value||'';
-                        if(isNaN(grade) || isNaN(coef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
+
+                        const typeInp   = document.querySelector(`.simulated-grade-input.sim-inp-type[data-semester="${ semX}"][data-subj="${subj}"]`);
+                        const gradeInp  = document.querySelector(`.simulated-grade-input.sim-inp-grade[data-semester="${semX}"][data-subj="${subj}"]`);
+                        const coefInp   = document.querySelector(`.simulated-grade-input.sim-inp-coef[data-semester="${ semX}"][data-subj="${subj}"]`);
+                        const dateInp   = document.querySelector(`.simulated-grade-input.sim-inp-date[data-semester="${ semX}"][data-subj="${subj}"]`);
+                        const type      = typeInp?.value||`${this.lang=="fr"? 'Simulé' : "Simulated"}`;
+                        const grade     = parseFloat(gradeInp?.value||'');
+                        const coef      = parseFloat(coefInp?.value||'');
+                        const date      = dateInp?.value||'';
+                        if(isNaN(grade) || isNaN(coef)){ alert(this.lang == "fr" ? "Note et coef requis" : "Grade and coef required"); return; }
 
                         this.ensureSimPath(semX, moduleName, subj);
 
@@ -5974,7 +6015,30 @@ ecamDash = undefined;
                         this.generateContent({fadeIn: true});
                     }
 
-                    subjectCardSimDelBtnAction(target) {
+                    simGradeInputEditAction(target) {
+                        const moduleName    = target.dataset.module;
+                        const semX          = target.dataset.semester;
+                        const subj          = target.dataset.subj;
+                        const id            = target.dataset.simid;
+                        const gradeRow      = target.parentElement.parentElement;
+                        const modifType     = target.dataset.modiftype;
+                        const value         = target.value;
+
+                        const gradeInp      = gradeRow.querySelector(`.simulated-grade-input-edit.sim-inp-grade`);
+                        const coefInp       = gradeRow.querySelector(`.simulated-grade-input-edit.sim-inp-coef `);
+                        const newGrade      = parseFloat(gradeInp?.value||'');
+                        const newCoef       = parseFloat(coefInp?.value||'');
+
+                        if(isNaN(newGrade) || isNaN(newCoef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
+                        this.sim[semX][moduleName][subj][id][modifType] = value;
+
+                        this.saveSim();
+                        this.getGradesDatas();
+                        this.regenAveragesAndTotalCoefs(semX, moduleName, subj);
+
+                    }
+
+                    simGradeDelBtnAction(target) {
                         const semX          = target.dataset.semester;
                         const moduleName    = target.dataset.module;
                         const subj          = target.dataset.subj;
@@ -5984,28 +6048,15 @@ ecamDash = undefined;
                         this.deleteUnusedSimPath(false, semX, moduleName, subj);
                         this.saveSim();
                         this.getGradesDatas();
-                        this.generateContent({fadeIn: false});
+                        // this.generateContent({fadeIn: false});
+
+                        const moduleCard = document.querySelector(`.module-card[data-module="${moduleName}"]`);
+                        const moduleIndex = moduleCard.dataset.index;
+                        moduleCard.outerHTML = this.createModuleCard(semX, moduleName, moduleIndex, true);
+                        this.attachAllSubjectCardRelatedEventListenersForEverySubjectCard(moduleCard);
+                        this.regenAveragesAndTotalCoefs(moduleCard);
                     }
 
-                    subjectCardSimInputEditAction(target) {
-                        const moduleName    = target.dataset.module;
-                        const semX          = target.dataset.semester;
-                        const subj          = target.dataset.subj;
-                        const id            = target.dataset.simid;
-                        const gradeRow      = target.parentElement.parentElement;
-                        const gradeInp      = gradeRow.querySelector(`.simulated-grade-input-edit.sim-inp-grade`);
-                        const coefInp       = gradeRow.querySelector(`.simulated-grade-input-edit.sim-inp-coef `);
-                        const newGrade      = parseFloat(gradeInp?.value||'');
-                        const newCoef       = parseFloat(coefInp?.value||'');
-
-                        if(isNaN(newGrade) || isNaN(newCoef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
-                        this.sim[semX][moduleName][subj][id][target.dataset.modiftype] = target.value;
-
-                        this.saveSim();
-                        this.getGradesDatas();
-                        this.regenAveragesAndTotalCoefs(semX, moduleName, subj);
-
-                    }
 
                 //#endregion
 
@@ -6416,7 +6467,7 @@ ecamDash = undefined;
                             
 
                             if (!this.compactSubjCardsId.includes(subjectCardId) || this.detailedSubjCardsId.includes(subjectCardId)) {
-                                this.foldSubjCard(subjectCard);
+                                this.foldSubjCard(subjectCard, true);
                             }
 
                         })
@@ -6528,7 +6579,7 @@ ecamDash = undefined;
                                 subjectTotalCoef.style.opacity = ""; 
                                 
     
-                                if (!this.compactSubjCardsId.includes(subjectCardId) || this.detailedSubjCardsId.includes(subjectCardId)) {
+                                if (card.classList.contains("compact") && !this.compactSubjCardsId.includes(subjectCardId) && !this.detailedSubjCardsId.includes(subjectCardId)) {
                                     this.unfoldSubjCard(subjectCard);
                                 }
                             }
@@ -7209,12 +7260,12 @@ ecamDash = undefined;
                                     break;
 
                                     case "subject card comes from a module and is moved to a different module":
-                                        // We move the datas from the old module to the new module
+                                        // We move the datas from the old module to the new module // may be coming from the unclassified section, so it's taken into account
                                         this.moduleConfig[sem][targetModuleName].subjects.splice(insertionIndex, 0, subject);
-                                        this.moduleConfig[sem][targetModuleName].coefficients[subject]  = Number (this.moduleConfig[sem][oldModuleName].coefficients[subject]);
+                                        this.moduleConfig[sem][targetModuleName].coefficients[subject]  = Number (this.moduleConfig[sem]?.[oldModuleName]?.coefficients?.[subject] || 0);
 
-                                        this.moduleConfig[sem][oldModuleName].subjects.splice(subjectOldIndex, 1);
-                                        delete this.moduleConfig[sem][oldModuleName].coefficients[subject];
+                                        this.moduleConfig[sem]?.[oldModuleName]?.subjects?.splice(subjectOldIndex, 1);
+                                        delete this.moduleConfig[sem]?.[oldModuleName]?.coefficients?.[subject];
                                     break;
 
                                     case "subject card comes from a module and is reorganized to a different index":
@@ -7327,7 +7378,7 @@ ecamDash = undefined;
                         
                         moduleDetails.innerHTML = this.createAllSubjCards(sem, module);
 
-                        this.attachAllSubjectCardRelatedEvenListenersForEverySubjectCard();
+                        this.attachAllSubjectCardRelatedEventListenersForEverySubjectCard();
                         this.setGradesTableTotalCoef();
                     }
                 }
@@ -7337,7 +7388,6 @@ ecamDash = undefined;
                 // MARK: dropFieldModuleInsertAction
                 dropFieldModuleInsertAction(cardId=null, methodCaller=null) {
                     const sem = this.currentSemester;
-                    debugger;
                     if (cardId) {
                         const card = document.getElementById(cardId);
 
@@ -7939,7 +7989,7 @@ ecamDash = undefined;
                             }
                             else if (target.classList.contains("sim-inp-coef")) {
                                 const simAddBtn = document.querySelector(`.sim-add-btn[data-subj="${target.dataset.subj}"][data-semester="${target.dataset.semester}"]`);
-                                this.subjectCardSimAddBtnAction(simAddBtn);
+                                this.simGradeAddBtnAction(simAddBtn);
                             }
 
                         }
