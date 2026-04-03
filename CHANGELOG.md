@@ -1,17 +1,26 @@
 # PATCH NOTES v2.5
 
 
-## v2.5.0
+## What's new in v2.5.0 ?
 
 ### Features
-- Tuto
+- First steps tutorial: when you launch the extension for the first time since this update, you will be notified to click on the help menu button to access to the first steps tutorial. It will guide you through the dashboard for your first time, filing you in with the most basic informations. Honestly, following this SUPER LONG (4 steps) tutorial will give you the strict minimum amount of info on how to use the extension.
+<br>If you want more info... well wait for update v2.5.1 lol, I'll make a more complete tutorial to cover all the features of the dashboard, I'm procrastinating a bit on that one, it's been planned for a while, but yeah I'll get to it
+</br>
+
+
+### Improvements
+- Yet again more improvements for subject cards and module cards animations lol
+
+### Fixes
+- Fixed inconsistency with the switch between detailed and compact (and the other way around) on certain actions, and fixed the view mode not being saved for the next time you visit the dashboard
+- Fixed the issue with some actions not working after deleting a simulated grade
 
 
 
 
-
-
-
+<br></br>
+<br></br>
 
 
 
@@ -27,7 +36,7 @@
 
 
 
-## v2.4.1
+## What's new in v2.4.1 ?
 ### Features
 - New setting: Scroll Helpers (enabled by default): some actions change the vertical size of the page (switching detailed/compact view mode, switching edit mode...). A scroll occurs to make sure the important elements (module/subject card, for instance) remain on screen, to follow this change of vertical size. You may not like being forced to scroll, I can understand, so I leave you the choice to turn it off. Though a few scroll helpers bypass this setting, but those are purely esthetic scrolls
 
@@ -45,9 +54,10 @@
 
 
 
+<br></br>
 
 
-## v2.4.0
+## What's new in v2.4.0 ?
 ### Features
 - Added subject card deletion buttons (you don't HAVE to drag and drop them in the "Remove from module" drop field anymore). All selected subject cards are deleted along with the subject card whose deletion button was pressed, if the said subject card is selected
 
@@ -88,6 +98,8 @@
 
 
 
+<br></br>
+<br></br>
 
 
 
@@ -99,7 +111,7 @@
 
 
 # PATCH NOTES v2.3
-## v2.3.0
+## What's new in v2.3.0 ?
 ### Features
 - Offline/Backup Mode! You can now access to the dashboard even if the servers are down! No magic behind it, you need to have launched the dashboard once before being in offline mode for your grades to appear, since the dashboard saves them to your browser's cache.
 

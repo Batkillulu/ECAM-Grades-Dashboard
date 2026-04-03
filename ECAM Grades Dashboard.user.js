@@ -453,7 +453,9 @@ ecamDash = undefined;
                 .view-toggle        { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 4px; background: #f7f7f7; border-radius: 8px; }
                 .fold-toggle        { display: flex; align-items: center; justify-content: center; gap: 8px; height: 40px; width: 180px; background: #f7f7f7; outline: 1px solid; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; user-select: none; transition: all 0.3s ease; }
                 .fold-toggle:hover  { background: white; box-shadow: 3px 5px 5px 0px #00000042; transform: scale(0.95); }
-                .fold-toggle.active { background: white; box-shadow: 3px 5px 5px 0px #00000042; }
+                .fold-toggle.active { background: white; box-shadow: 3px 5px 5px 0px #00000042, inset 0px 0px 5px 2px #00000042; }
+                .fold-toggle.fr::after  { content: "Plier tous les modules" }
+                .fold-toggle.en::after  { content: "Fold all modules" }
                 .view-btn           { background: transparent; padding: 8px 12px; border: none; outline: 1px solid #adadad; border-radius: 6px; cursor: pointer; font-size: 18px; transition: all 0.2s ease; width: 48px; height: 40px; }
                 .view-btn:hover     { background: white; box-shadow: 3px 5px 5px 0px #00000042; transform: scale(0.95); }
                 .view-btn.active    { background: white; box-shadow: 3px 5px 5px 0px #00000042; outline-color: black; }
@@ -465,7 +467,7 @@ ecamDash = undefined;
 
 
 
-        //#region -DROP FIELDS REGION _________________
+        //#region -DROP FIELDS __________________________
             styles += `
                 .drop-field     { display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 20px; overflow: clip; user-select: none; }
             `;
@@ -671,15 +673,15 @@ ecamDash = undefined;
                 .module-card.failed         { outline-color: #ef4444ff; background: radial-gradient(transparent 0%, #fef2f2ff 75%); }
                 .module-card.unknown        { outline-color: #6d6d6dff; background: radial-gradient(transparent 0%, #d1d1d1ff 75%); }
 
-                .module-header                  { display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 18px 20px; border-bottom: 3px solid #e5e5e5; border-radius: 22px 22px 0px 0px; width: 100%; min-height: 80px; max-height: 80px; cursor: pointer; z-index: 2; transition: all 0.1s ease; }
-                .module-header.fold             { border-radius: 25px; }
-                .module-header.validated        { border-color: #10b981ff; background: linear-gradient(300deg, #e0ffeaff 30%, transparent); }
-                .module-header.failed           { border-color: #ef4444ff; background: linear-gradient(300deg, #ffd9d9ff 30%, transparent); }
-                .module-header.unknown          { border-color: #6d6d6dff; background: linear-gradient(300deg, #acacacff 30%, transparent); }
-                .module-header:hover            { filter: brightness(calc(0.01 * 105)); opacity: 90%; }
+                .module-card-header                  { display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 18px 20px; border-bottom: 3px solid #e5e5e5; border-radius: 22px 22px 0px 0px; width: 100%; min-height: 80px; max-height: 80px; cursor: pointer; z-index: 2; transition: all 0.1s ease; }
+                .module-card-header.fold             { border-radius: 25px; }
+                .module-card-header.validated        { border-color: #10b981ff; background: linear-gradient(300deg, #e0ffeaff 30%, transparent); }
+                .module-card-header.failed           { border-color: #ef4444ff; background: linear-gradient(300deg, #ffd9d9ff 30%, transparent); }
+                .module-card-header.unknown          { border-color: #6d6d6dff; background: linear-gradient(300deg, #acacacff 30%, transparent); }
+                .module-card-header:hover            { filter: brightness(calc(0.01 * 105)); opacity: 90%; }
                 .module-delete-btn                  { border-radius: 14px; background: transparent; margin: 0; text-transform: none; -webkit-appearance: button; font: 1em Arial,Helvetica,Verdana,sans-serif; width: auto; padding: 5px; overflow: visible; cursor: pointer; color: #34404F; text-shadow: none; font-weight: normal; border: 3px solid; border-color: white; transition: all 0.2s ease; } 
 
-                .module-header-left-side        { display: flex; align-items: center; justify-content: flex-start; width: 70%; }
+                .module-card-header-left-side        { display: flex; align-items: center; justify-content: flex-start; width: 70%; }
                 .module-title                    { font-size: 20px; font-weight: 800; color: #1a1a1a; width:42%; margin-bottom: 2px; }
                 .module-title.input              { font-size: 20px; font-weight: 800; color: #1a1a1a; width:90%; border-radius: 12px; padding-left: 10px; }
 
@@ -724,10 +726,10 @@ ecamDash = undefined;
 
 
 
-            //#region -SUBJECT CARDS _______________________
+            //#region -SUBJECT CARDS .....................................
                 styles += `
 
-                    .subject-card               { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; height: 100%; position: relative; border-radius: 20px; outline: 4px solid #ffffffff; opacity: 100%; overflow: clip; transition: outline-color 0.3s ease, transform 0.3s ease, all 0.1s ease; }
+                    .subject-card               { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; height: 100%; position: relative; border-radius: 20px; outline: 4px solid #ffffffff; opacity: 100%; overflow: clip; transition: outline-color 0.3s ease, transform 0.3s ease, all 0.2s ease; }
                     .subject-card.detailed      { }
                     .subject-card.compact       { }
                     .subject-card.scroll-to     { transform: scale(102%); outline-color: #5f77ff; border-color: #5f77ff; }
@@ -741,7 +743,7 @@ ecamDash = undefined;
                     .subject-card.unknown               { box-shadow: 0px 0px 0px 0px  #6d6d6d; background: linear-gradient(300deg, #c5c5c5 30%, transparent); }
                     .subject-card.unknown:hover         { box-shadow: 0px 0px 13px 5px #6d6d6d; }
                     
-                    .subject-card-header        { display: flex; flex-direction: row; justify-content: space-between; align-items: center; width: 100%; min-height: 70px; border-radius: 20px 20px 0px 0px; outline: 4px solid white; padding: 5px 11px; font-weight:700; font-size: 15px; vertical-align: top; cursor: pointer; z-index: 1; transition: all 0.1s ease; }
+                    .subject-card-header        { display: flex; flex-direction: row; justify-content: space-between; align-items: center; width: 100%; min-height: 70px; border-radius: 20px 20px 0px 0px; outline: 4px solid white; padding: 5px 11px; font-weight:700; font-size: 15px; vertical-align: top; cursor: pointer; z-index: 1; transition: all 0.2s ease; }
                     .subject-card-header.compact    { border-radius: 20px; }
                     .subject-card-header.good       { background: linear-gradient(300deg, #e3ffeb 30%, transparent); }
                     .subject-card-header.meh        { background: linear-gradient(300deg, #ffe8d0 30%, transparent); }
@@ -751,7 +753,7 @@ ecamDash = undefined;
                     .subject-card-header-left-side          { display: flex; justify-content: flex-start; align-items: center; gap: 8px; width: 50%; height: 100%; text-wrap-mode: nowrap; }
                     .subject-card-header-left-side-text     { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 8px; padding-left: 42px; width: 95%; height: 100%; text-wrap-mode: nowrap; }
                     .subject-card-header-left-side-text.edit    { padding-left: 0; }
-                    .subject-card-header-grades-details         { opacity: 0%; }
+                    .subject-card-header-grades-details         { opacity: 0%; transition: all 0.2s ease; }
                     .subject-card-header-grades-details.show    { opacity: 100%; }
                     .subject-name                   { font-weight: 800; color: #1a1a1a; font-size: 16px }
                     .subject-name.input             { font-weight: 800; color: #1a1a1a; font-size: 16px; border: 2px solid #797979; border-radius: 15px; padding-left: 8px; width: calc(100% + 10px); height: 25px;}
@@ -764,7 +766,7 @@ ecamDash = undefined;
                     .subject-insert-field.show                      { height: 50px; margin: 10px 0px; }
                     
                     .subject-card-header-right-side    { display: flex; justify-content: flex-end; align-items: center; width: 0; height: 100%; text-wrap-mode: nowrap; }
-                    .subj-moyenne           { display: flex; justify-content: flex-end; width: 0; padding-right: 20px; font-size: 24px; font-weight: 800; text-wrap-mode: nowrap; }
+                    .subj-moyenne           { display: flex; justify-content: flex-end; width: 0; padding-right: 20px; font-size: 24px; font-weight: 800; text-wrap-mode: nowrap; transition: all 0.2s ease; }
                     .subj-moyenne.good      { color: #10b981; }
                     .subj-moyenne.bad       { color: #ef4444; }
                     .subject-delete-btn     { border-radius: 14px; background: transparent; margin: 0; text-transform: none; -webkit-appearance: button; font: 1em Arial,Helvetica,Verdana,sans-serif; width: auto; padding: 5px; overflow: visible; cursor: pointer; color: #34404F; text-shadow: none; font-weight: normal; border: 3px solid; border-color: white; transition: all 0.2s ease; } 
@@ -781,10 +783,11 @@ ecamDash = undefined;
                     
 
 
+
                 // MARK: grades table
                 styles += `
 
-                    .grades-table                        { background: linear-gradient(300deg, #c5c5c5 30%, transparent); width: 98%; margin-top: 4px; }
+                    .grades-table                        { background: linear-gradient(300deg, #c5c5c5 30%, transparent); width: 98%; margin-top: 4px; transition: all 0.2s ease; }
                     .grades-table.good                   { background: linear-gradient(300deg, #f0fdf4 30%, transparent); }
                     .grades-table.meh                    { background: linear-gradient(300deg, #fff2e4 30%, transparent); }
                     .grades-table.bad                    { background: linear-gradient(300deg, #fef2f2 30%, transparent); }
@@ -850,6 +853,7 @@ ecamDash = undefined;
                 `;
                 
 
+
                 // MARK: icons
                 styles += `
 
@@ -857,7 +861,7 @@ ecamDash = undefined;
 
                     .drag-icon                  { display: flex; justify-content: center; align-items: center; border: 2px solid; color: black; border-radius: 8px; line-height: 0px; cursor: pointer; user-select: none; transition: all 0.2s ease; }
                     .drag-icon:hover            { color: #a1a1a1; }
-                    .drag-icon.subject              { width: 27px; height: 27px; font-size: 20px; }
+                    .drag-icon.subject              { width: 25px; height: 25px; font-size: 17px; }
                     .drag-icon.module               { width: 30px; height: 30px; font-size: 26px; font-weight: 600; }
 
                     .tick-icon          { height: 30px; width: 30px; font-size: 35px; line-height: 28px; color: #004cff; cursor:pointer; user-select:none; transition: all 0.2s ease; }
@@ -868,7 +872,16 @@ ecamDash = undefined;
             
             //#endregion
             
+            // MARK: .................................................................
+
+
+
+
+            
         //#endregion
+        // MARK: _________________________________________
+            
+
             
 
 
@@ -1028,15 +1041,15 @@ ecamDash = undefined;
 
                 this.settings = {
                     blurEnabled: {
-                        name: () => this.lang == "fr" 
+                        name: () => !this.langIsEn 
                             ? "Activer le flou" 
                             : "Enable blur"
                         ,
-                        description: () => this.lang == "fr" 
+                        description: () => !this.langIsEn 
                             ? "Activer le flou qui s'opère sur le fond des fenêtres (activé par défaut parce que je trouve ça joli :D)" 
                             : "Enable the blur that operates on the background of the windows (turned on by default because I find it nice :D)"
                         ,
-                        info: () => this.lang == "fr" 
+                        info: () => !this.langIsEn 
                             ? "Non recommendé pour les appareils à basses performances" 
                             : "Not recommended for low-end devices"
                         ,
@@ -1050,15 +1063,15 @@ ecamDash = undefined;
                     },
 
                     totalCoefValuesEnabled: {
-                        name: () => this.lang == "fr" 
+                        name: () => !this.langIsEn 
                             ? "Afficher les coefs totaux" 
                             : "Display total coefs"
                         ,
-                        description: () => this.lang == "fr" 
+                        description: () => !this.langIsEn 
                             ? "Afficher les coefficients totaux pour les cartes de matière et de module" 
                             : "Display the total coefficients for subject and module cards"
                         ,
-                        info: () => this.lang == "fr" 
+                        info: () => !this.langIsEn 
                             ? "Le.s pourcentage.s apparraissant entre le nom des modules/sujets et leur moyenne" 
                             : "The percentage.s showing up between the name of modules/subjects and their average"
                         ,
@@ -1072,15 +1085,15 @@ ecamDash = undefined;
                     },
 
                     totalCoefDebugTextsEnabled: {
-                        name: () => this.lang == "fr" 
+                        name: () => !this.langIsEn 
                             ? "Afficher les textes d'aide" 
                             : "Display the helper texts"
                         ,
-                        description: () => this.lang == "fr" 
+                        description: () => !this.langIsEn 
                             ? "Afficher les textes d'aide des cartes de sujet et de module" 
                             : "Display the helper texts for subject and module cards"
                         ,
-                        info: () => this.lang == "fr" 
+                        info: () => !this.langIsEn 
                             ? "Il s'agit simplement des textes interprétant les nombres des \"Coef Total des Matières\" et \"Coef Total des Notes\"" 
                             : "It simply corresponds to the texts interpreting the numbers of \"Total Subjects Coef\" and \"Total Grades Coef\""
                         ,
@@ -1094,15 +1107,15 @@ ecamDash = undefined;
                     },
 
                     scrollHelpersEnabled: {
-                        name: () => this.lang == "fr" 
+                        name: () => !this.langIsEn 
                             ? "Aides au défilement" 
                             : "Scroll helpers"
                         ,
-                        description: () => this.lang == "fr" 
+                        description: () => !this.langIsEn 
                             ? "Activer l'aide au défilement pour suivre les éléments importants à l'écran lors de changements de verticalité. Désactive-la si tu n'aimes pas avoir ces défilements forcés" 
                             : "Enable the scroll helpers to follow the important elements on screen upon verticality changes. Disabled it if you don't like these forced scrolls"
                         ,
-                        info: () => this.lang == "fr" 
+                        info: () => !this.langIsEn 
                             ? "Certaines actions (changement de mode d'édition, changement entre vue détaillée/compacte...) font changer la position verical de certains éléments (cartes de module/matière, entre autres), donc un défilement est prévu pour maintenir certains éléments dans l'affichage" 
                             : "Some actions (edit mode change, detailed/compact view mode change...) change the vertical position of some elements (i.e. module/subject cards), so this setting allows to scroll to keep the most important elements on screen"
                         ,
@@ -1114,28 +1127,28 @@ ecamDash = undefined;
                 };
                 this.keybinds = [
                     {
-                        text: () => {return this.lang == "fr" ? "Fermer la fenêtre" : "Close the window"}, 
-                        keys: () => {return this.lang == "fr" ? "Échap" : "Escape"},
+                        text: () => {return !this.langIsEn ? "Fermer la fenêtre" : "Close the window"}, 
+                        keys: () => {return !this.langIsEn ? "Échap" : "Escape"},
                     },
                     {
-                        text: () => {return this.lang == "fr" ? "Plier/Déplier tous les modules (basculer)" : "Fold/Unfold all modules (toggle)"}, 
-                        keys: () => {return this.lang == "fr" ? "Maj + F" : "Shift + F"},
+                        text: () => {return !this.langIsEn ? "Plier/Déplier tous les modules (basculer)" : "Fold/Unfold all modules (toggle)"}, 
+                        keys: () => {return !this.langIsEn ? "Maj + F" : "Shift + F"},
                     },
                     {
-                        text: () => {return this.lang == "fr" ? "Vue détaillée/compacte pour toutes les matières (basculer)" : "Detailed/Compact view all subjects (toggle)"}, 
-                        keys: () => {return this.lang == "fr" ? "Maj + D" : "Shift + D"},
+                        text: () => {return !this.langIsEn ? "Vue détaillée/compacte pour toutes les matières (basculer)" : "Detailed/Compact view all subjects (toggle)"}, 
+                        keys: () => {return !this.langIsEn ? "Maj + D" : "Shift + D"},
                     },
                     {
-                        text: () => {return this.lang == "fr" ? "Mode édition (basculer)" : "Edit mode (toggle)"}, 
-                        keys: () => {return this.lang == "fr" ? "Maj + E" : "Shift + E"},
+                        text: () => {return !this.langIsEn ? "Mode édition (basculer)" : "Edit mode (toggle)"}, 
+                        keys: () => {return !this.langIsEn ? "Maj + E" : "Shift + E"},
                     },
                     {
-                        text: () => {return this.lang == "fr" ? "Langue français/anglais (basculer)" : "Language French/English (toggle)"}, 
-                        keys: () => {return this.lang == "fr" ? "Maj + L" : "Shift + L"},
+                        text: () => {return !this.langIsEn ? "Langue français/anglais (basculer)" : "Language French/English (toggle)"}, 
+                        keys: () => {return !this.langIsEn ? "Maj + L" : "Shift + L"},
                     },
                     {
-                        text: () => {return this.lang == "fr" ? "Changer de semestre (cycle)" : "Change semester (cycle)"}, 
-                        keys: () => {return this.lang == "fr" ? "Maj + ←/→" : "Shift + ←/→"},
+                        text: () => {return !this.langIsEn ? "Changer de semestre (cycle)" : "Change semester (cycle)"}, 
+                        keys: () => {return !this.langIsEn ? "Maj + ←/→" : "Shift + ←/→"},
                     },
                 ];
 
@@ -1231,8 +1244,9 @@ ecamDash = undefined;
 
                 this.viewMode                           = localStorage.getItem("ECAM_DASHBOARD_VIEW_MODE")                      || "detailed";
 
-                this.lang                               = localStorage.getItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE")               || "en";
-                this.editMode               = JSON.parse( localStorage.getItem('ECAM_DASHBOARD_DEFAULT_EDIT_MODE'))             || false;
+                this.lang                   =             localStorage.getItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE")               || "en";
+                this.langIsEn               = this.lang == "en";
+                this.editMode               = JSON.parse( localStorage.getItem('ECAM_DASHBOARD_DEFAULT_EDIT_MODE')              || "false");
                 this.timeouts = {};
 
                 this.mobileVer = this.clientWidth <= 935;
@@ -1251,6 +1265,7 @@ ecamDash = undefined;
 
                 this.compactSubjCardsId = [];
                 this.detailedSubjCardsId = [];
+
                 this.foldedModuleCardsId = [];
                 
                 this.scrollToThisElem = "";
@@ -1624,13 +1639,12 @@ ecamDash = undefined;
                 * @param {Object} param3 All the modifiers. Each element of this object `alt`, `ctrl`, `shift`, `meta`, and `repeat` take as value on of the following Strings: "required", "allowed", "dont care", 
                 * @returns {RegExpMatchArray} A formated RegExpMatchArray result following the key and the modifiers given as parameters
                 */
-                keyInputMatch(keyboardEvent, keyPressed="([a-zA-Z])", {alt="whatever", ctrl="whatever", shift="whatever", meta="whatever", repeat="whatever"}={alt:"whatever", ctrl:"whatever", shift:"whatever", meta:"whatever", repeat:"whatever"}) {
+                keyInputMatch(keyboardEvent, keyExpected="([a-zA-Z])", {alt="whatever", ctrl="whatever", shift="whatever", meta="whatever", repeat="whatever"}={alt:"whatever", ctrl:"whatever", shift:"whatever", meta:"whatever", repeat:"whatever"}) {
                     const e = keyboardEvent;
 
-                    let keyExpected = keyPressed;
-                    if      (keyPressed instanceof Array)   { keyExpected = keyPressed.map((s) => {if (s.match(/[^a-z]+/i)) {return "\\"+s} else {return s}}).join("|"); }
-                    else if (typeof keyPressed == "string") { keyExpected = "\\"+ keyPressed; }
-                    else if (keyPressed instanceof RegExp)  { keyExpected = keyPressed.source; }
+                    if      (typeof keyExpected == "string") { keyExpected = (keyExpected.match(/[^a-z]+/i) ? "\\" : "") + keyExpected; } // If the keyExpected is a string, proofing the case where the expected key is not an alphabetical character, making sure that the character doesn't have a special effect in the RegExp by adding a literal backslash in front of it in its string form so that it's turned into a backslash when forming the RegExp ("\\|", "\\_", "\\+", "\\/"...)
+                    else if (keyExpected instanceof Array)   { keyExpected = keyExpected.map((s) => {if (s.match(/[^a-z]+/i)) {return "\\"+s} else {return s}}).join("|"); } // If the keyExpected is an array, joining them with "|" in-between after applying the same process as above to each of them
+                    else if (keyExpected instanceof RegExp)  { keyExpected = keyExpected.source; }
 
                     const key = `${e.altKey ? "alt" : "no-alt"} ${e.ctrlKey ? "+ ctrl" : "+ no-ctrl"} ${e.shiftKey ? "+ shift" : "+ no-shift"} ${e.metaKey ? "+ meta" : "+ no-meta"} + ${e.key} (${e.repeat ? "repeat" : "no-repeat"})`;
 
@@ -1643,6 +1657,7 @@ ecamDash = undefined;
 
                     const keyPattern = RegExp(`${altPattern} \\+ ${ctrlPattern} \\+ ${shiftPattern} \\+ ${metaPattern} \\+ ${keyExpected} \\(${repeatPattern}\\)`);
                     const match = key.match(keyPattern);
+
                     return match;
                 }
 
@@ -1728,6 +1743,12 @@ ecamDash = undefined;
                     }
                     else {
                         elem.style.width = ``;
+                    }
+                }
+
+                getElementHeightConsideringChildrenHeight(elem) {
+                    if (elem instanceof HTMLElement) {
+                        return Array.from(elem.children).reduce((total, child) => {return parseInt(total?.offsetHeight || total) + parseInt(child.offsetHeight)})
                     }
                 }
 
@@ -1904,46 +1925,46 @@ ecamDash = undefined;
                         ;
 
 
-                        let advice = this.lang == `fr` ? `Toutes tes notes sont là !` : `All your grades are out!`;
+                        let advice = !this.langIsEn ? `Toutes tes notes sont là !` : `All your grades are out!`;
                         let color = good;
 
                         
                         if (totalCoefSubjects != 100) {
-                            advice = this.lang == "fr" ? `Réajuste le coef de tes matières, leur somme n'est pas égale à 100% !` : `Readjust your subjects' coef, their sum isn't equal to 100%!`;
+                            advice = !this.langIsEn ? `Réajuste le coef de tes matières, leur somme n'est pas égale à 100% !` : `Readjust your subjects' coef, their sum isn't equal to 100%!`;
                             color = bad;
                         }
                         else if (totalCoefRealGrades == 0) {
                             if (totalCoefEnabledSimGrades > 0) {
-                                advice = this.lang == "fr" 
+                                advice = !this.langIsEn 
                                     ? `Toutes tes notes sont simulées, tu n'as pas encore de notes !` 
                                     : `All your grades are simulated, you don't have any grades yet!`
                                 ;
                                 color = meh;
                             }
                             else {
-                                advice = this.lang == "fr" ? `Pas encore de notes` : `No grades yet`;
+                                advice = !this.langIsEn ? `Pas encore de notes` : `No grades yet`;
                                 color = unknown;
                             }
                         }
                         else if (totalCoefRealGrades < 100) {
                             if (totalCoefEnabledSimGrades > 0) {
-                                advice = this.lang == "fr" 
+                                advice = !this.langIsEn 
                                     ? `${Math.round(10000*totalCoefEnabledSimGrades/totalCoefEnabledGrades)/100}% de tes notes est simulé, toutes tes notes ne sont encore pas là !` 
                                     : `${Math.round(10000*totalCoefEnabledSimGrades/totalCoefEnabledGrades)/100}% of your grades is simulated, all your grades aren't out yet!`
                                 ;
                                 color = meh;
                             }
                             else if (totalCoefEnabledSimGrades == 0) {
-                                advice = this.lang == "fr" ? `Toutes tes notes ne sont encore pas là !` : `All your grades aren't out yet!`;
+                                advice = !this.langIsEn ? `Toutes tes notes ne sont encore pas là !` : `All your grades aren't out yet!`;
                                 color = meh;
                             }
                         }
                         else if (totalCoefEnabledRealGrades > 100) {
-                            advice = this.lang == "fr" ? `Trop de notes (erreur du côté de l'ECAM), désactive les notes en trop !` : `Too many grades (error on ECAM's side), turn off all irrelevant grades!`;
+                            advice = !this.langIsEn ? `Trop de notes (erreur du côté de l'ECAM), désactive les notes en trop !` : `Too many grades (error on ECAM's side), turn off all irrelevant grades!`;
                             color = bad;
                         }
                         else if ((nbSubjectsBelow100 > 0 || nbSubjectsOver100 > 0) && nbEnabledSimGrades > 0) {
-                            advice = this.lang == "fr" 
+                            advice = !this.langIsEn 
                                 ? `Tes notes simulées faussent ta moyenne. Désactive/enlève-les !` 
                                 : `Your simulated grades falsify your average. Disable/remove them!`
                             ;
@@ -1951,28 +1972,28 @@ ecamDash = undefined;
                         }
                         else if (totalCoefRealGrades == 100) {
                             if (nbSubjectsBelow100 > 0 && nbSubjectsOver100 > 0) {
-                                advice = this.lang == "fr"
+                                advice = !this.langIsEn
                                     ? `Trop de notes dans ${nbSubjectsOver100} matière${nbSubjectsOver100>1?`s`:``}, et notes manquantes dans ${nbSubjectsBelow100} matières${nbSubjectsBelow100>1?`s`:``} !`
                                     : `Too many grades in ${nbSubjectsOver100} subject${nbSubjectsOver100>1?`s`:``}, and missing grades in ${nbSubjectsBelow100} subject${nbSubjectsBelow100>1?`s`:``}!`
                                 ;
                                 color = bad;
                             }
                             if (totalCoefEnabledRealGrades < 100) {
-                                advice = this.lang == "fr" 
+                                advice = !this.langIsEn 
                                     ? `Toutes tes notes sont là ! Réactive tes ${nbDisabledRealGrades} notes désactivées pour afficher ta vraie moyenne !` 
                                     : `All your grades are out! Enable your ${nbDisabledRealGrades} disabled grades to display your actual average!`
                                 ;
                                 color = meh;
                             }
                             else if (totalCoefEnabledSimGrades > 0) {
-                                advice = this.lang == "fr" 
+                                advice = !this.langIsEn 
                                     ? `Toutes tes notes sont là, mais tu devrais enlever tes ${nbSimGrades} notes simulées !` 
                                     : `All your grades are out, but you should remove your ${nbSimGrades} simulated grades!`
                                 ;
                                 color = meh;
                             }
                             else if (totalCoefSimGrades > 0) {
-                                advice = this.lang == "fr" 
+                                advice = !this.langIsEn 
                                     ? `Toutes tes notes sont là ! Tu peux enlever tes ${nbSimGrades} notes simulées !` 
                                     : `All your grades are out! You may remove your ${nbSimGrades} simulated grades!`
                                 ;
@@ -1980,7 +2001,7 @@ ecamDash = undefined;
                             }
                         }
 
-                        totalCoefValue.innerHTML = `${this.lang == "fr" ? "Coef Total des Matières :" : "Total Subjects Coef:"} <span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}% / ${totalCoefSubjects}%</span>`;
+                        totalCoefValue.innerHTML = `${!this.langIsEn ? "Coef Total des Matières :" : "Total Subjects Coef:"} <span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}% / ${totalCoefSubjects}%</span>`;
                         totalCoefDebug.innerHTML = `${advice}`;
                     })
                     container.querySelectorAll(".subject-total-coef-div").forEach(totalCoefDiv => {
@@ -2007,37 +2028,37 @@ ecamDash = undefined;
                         ;
                         
                         
-                        let advice = this.lang == `fr` ? `Toutes tes notes sont là !` : `All your grades are out!`;
+                        let advice = !this.langIsEn ? `Toutes tes notes sont là !` : `All your grades are out!`;
                         let color = ` #10b981`;
 
                         if (totalCoefRealGrades == 0) {
                             if (totalCoefEnabledSimGrades > 0) {
-                                advice = this.lang == "fr" 
+                                advice = !this.langIsEn 
                                     ? `Toutes tes notes sont simulées, tu n'as pas encore de notes !` 
                                     : `All your grades are simulated, you don't have any grades yet!`
                                 ;
                                 color = meh;
                             }
                             else {
-                                advice = this.lang == "fr" ? `Pas encore de notes` : `No grades yet`;
+                                advice = !this.langIsEn ? `Pas encore de notes` : `No grades yet`;
                                 color = unknown;
                             }
                         }
                         else if (totalCoefRealGrades < 100) {
                             if (totalCoefEnabledSimGrades > 0) {
-                                advice = this.lang == "fr" 
+                                advice = !this.langIsEn 
                                     ? `${totalCoefEnabledSimGrades}% de tes notes est simulé, toutes tes notes ne sont encore pas là !` 
                                     : `${totalCoefEnabledSimGrades}% of your grades is simulated, all your grades aren't out yet!`
                                 ;
                                 color = meh;
                             }
                             else if (totalCoefEnabledSimGrades == 0) {
-                                advice = this.lang == "fr" ? `Toutes tes notes ne sont encore pas là !` : `All your grades aren't out yet!`;
+                                advice = !this.langIsEn ? `Toutes tes notes ne sont encore pas là !` : `All your grades aren't out yet!`;
                                 color = meh;
                             }
                         }
                         else if (totalCoefEnabledRealGrades > 100) {
-                            advice = this.lang == "fr" 
+                            advice = !this.langIsEn 
                                 ? `Trop de notes (erreur du côté de l'ECAM), désactive les notes en trop !` 
                                 : `Too many grades (error on ECAM's side), turn off all irrelevant grades!`
                             ;
@@ -2045,21 +2066,21 @@ ecamDash = undefined;
                         }
                         else if (totalCoefRealGrades == 100) {
                             if (totalCoefEnabledRealGrades < 100) {
-                                advice = this.lang == "fr" 
+                                advice = !this.langIsEn 
                                     ? `Toutes tes notes sont là ! Réactive tes ${nbDisabledRealGrades} notes désactivées pour afficher ta vraie moyenne !` 
                                     : `All your grades are out! Enable your ${nbDisabledRealGrades} disabled grades to display your actual average!`
                                 ;
                                 color = meh;
                             }
                             else if (totalCoefEnabledSimGrades > 0) {
-                                advice = this.lang == "fr" 
+                                advice = !this.langIsEn 
                                     ? `Toutes tes notes sont là, mais tu devrais enlever tes ${nbSimGrades} notes simulées !` 
                                     : `All your grades are out, but you should remove your ${nbSimGrades} simulated grades!`
                                 ;
                                 color = meh;
                             }
                             else if (totalCoefSimGrades > 0) {
-                                advice = this.lang == "fr" 
+                                advice = !this.langIsEn 
                                     ? `Toutes tes notes sont là ! Tu peux enlever tes ${nbSimGrades} notes simulées !` 
                                     : `All your grades are out! You may remove your ${nbSimGrades} simulated grades!`
                                 ;
@@ -2067,7 +2088,7 @@ ecamDash = undefined;
                             }
                         }
                         
-                        totalCoefValue.innerHTML = `${this.lang == "fr" ? "Coef Total des Notes :" : "Total Grades Coef:"} <span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}%</span>`;
+                        totalCoefValue.innerHTML = `${!this.langIsEn ? "Coef Total des Notes :" : "Total Grades Coef:"} <span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}%</span>`;
                         totalCoefDebug.innerHTML = `${advice}`;
                     })
                 }
@@ -2775,15 +2796,15 @@ ecamDash = undefined;
                 updateAvailableNotif.id = "updateAvailableNotif";
                 updateAvailableNotif.innerHTML = `
                     <div class="update-available-notif-header">
-                        <div class="update-available-notif-text">${this.lang == "fr" ? "NOUVELLE MISE À JOUR DU TABLEAU DE BORD DISPONIBLE ! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".") : "NEW DASHBOARD UPDATE AVAILABLE! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".")}</div>
+                        <div class="update-available-notif-text">${!this.langIsEn ? "NOUVELLE MISE À JOUR DU TABLEAU DE BORD DISPONIBLE ! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".") : "NEW DASHBOARD UPDATE AVAILABLE! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".")}</div>
                     </div>`;
                 updateAvailableNotif.innerHTML += `
                     <div class="update-available-notif-btns">
                         <div style="display: flex; justify-content: center; width: 50%">
-                            <a class="update-btn" id="updateBtn" href="${this.repoScriptRaw}" target="_blank">${this.lang == "fr" ? "INSTALLER" : "INSTALL"}</a>
+                            <a class="update-btn" id="updateBtn" href="${this.repoScriptRaw}" target="_blank">${!this.langIsEn ? "INSTALLER" : "INSTALL"}</a>
                         </div>
                         <div style="display: flex; justify-content: center; width: 50%">
-                            <div class="dismiss-update-btn" id="dismissUpdateBtn" title="${this.lang == "fr" ? "Ignorer pour aujourd'hui" : "Ignore for today"}">${this.lang == "fr" ? "Ignorer" : "Ignore"}</div>
+                            <div class="dismiss-update-btn" id="dismissUpdateBtn" title="${!this.langIsEn ? "Ignorer pour aujourd'hui" : "Ignore for today"}">${!this.langIsEn ? "Ignorer" : "Ignore"}</div>
                         </div>
                     </div>
                 `;
@@ -2863,13 +2884,13 @@ ecamDash = undefined;
                     `<div class="over-header-btns jura">
 
                         <div class="over-header-report-btns">
-                            <div    class="over-header-btn issue mail-info    ${this.lang == "fr" ? "fr" : "en"}">
+                            <div    class="over-header-btn issue mail-info    ${this.lang}">
                                 <div class="over-header-btn-mail-info-text"></div>
                                 <div class="over-header-btn-copied-cue"></div>
                             </div>
-                            <a      class="over-header-btn issue share-config ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserConfigShare    }" target="_blank" tabindex="-1"></a>
-                            <a      class="over-header-btn issue suggest-idea ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserSuggestionIssue}" target="_blank" tabindex="-1"></a>
-                            <a      class="over-header-btn issue report-issue ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserReportIssue    }" target="_blank" tabindex="-1"></a>
+                            <a      class="over-header-btn issue share-config ${this.lang}" href="${this.repoUserConfigShare    }" target="_blank" tabindex="-1"></a>
+                            <a      class="over-header-btn issue suggest-idea ${this.lang}" href="${this.repoUserSuggestionIssue}" target="_blank" tabindex="-1"></a>
+                            <a      class="over-header-btn issue report-issue ${this.lang}" href="${this.repoUserReportIssue    }" target="_blank" tabindex="-1"></a>
                             <button class="over-header-btn issue issue-btn" id="reportIssueBtn" tabindex="0">🚩</button>
                         </div>
 
@@ -2897,14 +2918,14 @@ ecamDash = undefined;
                                 </div>
                                 <div class="dash-subtitle jura"></div>
                                 <div style="display: flex; gap: 2px; user-select: none;">
-                                    <div class="lang-btn active" id="fr-lang-btn">
-                                        <img style="display: flex; margin: 6px 0px 0px 6px; width:20px; height:20px" alt="🇫🇷" src="${`
-                                            data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAACTUExURUdwTAAkjM7Pzs7OzrMGE74QIMPEx4hTeAAkjQARewAagbIFEgAfhc3NzdDQ0M7PzrYMG8zMzbcMG8EXKcUbLQAMd7UKGLUKGMMWJ7OhrcMVJv///+oPIO4bLgAmoOwWKAAZmQArpO8iNgAfnQATlAIyqLUGFAEoksUSIwAYhgANePnCyMbO6djY2NUWJ+7u7sCep4f8c74AAAAbdFJOUwDL+z19ffsVe3qU1jy51pA+bLyNc+Vrnu+m2KjIWToAAALxSURBVFjD7djJcuIwEIDhAAMOxuwTCAnyKgxOxg7v/3SjtraWDJKTUw60K1Vc+OqX5APK09NjHvOLJxDz3a+t9Mcoeg7DgZrDcrkejUZBL2X7NuYfo4gRZ2MmNZvhYjEHz1EYrHab18tl3LaEEonFnOPT5KtWM1zMhReY27DabUG5ABQ8cyXLTnIy9pz+vcN8seFWPRxC32G7Hf+FGW/3m7fXVmkagJ5NpGXYCOjd5Or6ejGmaRpCctJw6HTqOgaEvM8GT07ynP0RXhTbSqcIzWduDWOIgHBRJqmeELkJtQB34v4QUUs7o8MSC4t7FYECkF2UKYW9Sb2KRI8FqVWB06OI4KJSQRnuyXoUiW0mHUj2iPFAJEdOoiGVE/OV+SCxqLxTpI+LT+GGcE8Cj4AypAiqcEDyrPTSFHSS25zxnMIH6W2GnsQsitVGM8sBEf36AAOOASkDHg+EcuyiWLw+TAHGCdk5EqrOKqhQjgfCJ8ahPxxCx1W0K0tdUG4qCJKrAoMXpd4i7BwFpM+rkJNmbijh7w+xIHRanPFAiXx/khuQ7mFM6i9CzFFAlQiSDHPcRQneoCM8uqhA29NOfB/Sr48MUkWF3uY0bVfmgqyF6aIKHVcqgpxFMETlGHtkrMoDdXKYVMqlqRxhUReUmBuNiro9KXVCcllcOaoiq4emlPaAOJMoaCogHdNSXgg7GEqRRL1FR709FqRzKO0PdYt0D6X+IrWqTlGnh9LzPYgk1rIQlKogqqj70NHYZgR9VN0eJ2Ttj1GkT6udygN1BhVR/vQp6m6RUYRzfl5k1lSeItfSOFBVH3KqCfw8vwPZTRddhAgx1+GE3T6GdW2CN4oYU5Y7gITy8jIIwymfMDzM54tJOy1XC86E2G0GlHKzCxjUIoNwGtmXqGA0Wi+X0uPgVd1DhFGWs/0KvjgFhSGOyyl4su9aGjPbcAWglzDqdd9k99L1ennYzMRs9tvdaqW/GkXfvAbL+/NT8PhXwmN+7/wHgdqiCaxyTNQAAAAASUVORK5CYII=
-                                        `}">
-                                    </div>
-                                    <div class="lang-btn " id="en-lang-btn">
+                                    <div class="lang-btn ${this.langIsEn ? "active" : ""}" id="en-lang-btn">
                                         <img style="display: flex; margin: 6px 0px 0px 6px; width:20px; height:20px" alt="🇬🇧" src="${`
                                                 data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAECUExURUdwTL6/w7pOXQcmd3aItpsCC7IaMURBdgAKW8rJy7QIJtPS0gIUZgASY7h7hZ4BDgADTwMofAASYxEka8/KywATZby0uQgda6gFGbpoc6QTIgAHVgAdcrC0v56jsszMzKkCFk1djU1Yg32Prv///8sBGNMHJs8CHdQLLAAegwATeNEDIAAujwAKZtYRMgANa9YgPAAoiP79/cQAEeZ9i+vt89Xc6wEKXPn3+N9vfhg/lOmKlwImfPPKzwIZb83U5fvu8AADTdtGXN9YaoydwxcwgfK8w11zrPfV2UNfovnh5Nk0TOycp7jD2t3d3TFLk6iz0fCttqsBEr0OLcy5vMWboL7jb4MAAAAkdFJOUwD+/X39/3kQfoH+/ShvJ4HW15JNuady6j+76b+/7/FQt331fQrzi9EAAAaxSURBVFjD7Zhpe6JYE4bd2mVMJz0TJ1t30t3zIiIkigjIIkoDsrihifn/f+WtOueAmjhz9XybD/1ovEyE26eqTp0lhcIv/dJ/VzXQWY3oX913fr5HnF1+/OPPL78zffnzj/LHy7Pzn+HVbi5uGwz4tdWqWOPxYHys3+9btxfVm5t/4NXOq9/uSjsE1b62muv1urmJrMHgkTxRCJoVm+ZvoLtvt42ry7Ozo4ghCWeXjVbp+bm0azYK51etNUozFGMaWY+HGlhTzXx5QZTZvJ9dX3+BiOvlj6ByHfJwfV3ZIcdZA6haMl8doHCKwnHGJjnAAEhXVKEnCC8v5ro4m+Tq9+HZf5oFu9Jw6MUcAb28yJ4auhyVHlgZBkRBIMFWpla32x2L4h6XrhxPkoCjrB++E5AsL/zlXCEkZZWZgjxlIEGwOd3qDsgjU6SHC8LhuOKsDqEtZLkHLC9DaRVr8EgfWWgZCCmM9BhoW1mSfOAoWjqqFxrN3Vb1ZIQBipAMMEUrR0CCkDnaY7rpyrV7Eu/jHVr0BKD/BStNmW/NBUQg+6FBMxU9Dvah5Y5yzCDSY5+XBNUlHBFB5bGVVFaa4agEZcY0vMA6cCTsHRFZgYbp6dmMw0BQHysJdCMmqMXSpTlPGYhHDn8IiqauDemRlwrj7EFY6YpuOKa8N6VHp0Fgx4GwJM/hMs4RiKDcrYemtgat3mMG4nPQAC5CO4I5p98m7kHjfCyngTa35Z4gq+QqI0gIiOdzULIyQrQjL8l3TRPCEUdHjrBfyYUwFnwH41emGoB4PnOEX6SCHZ5+zK1SkYEm5b0jK4mCYDM1ONdxnNCh44BDkEAdJRDVEoolyaRa0JgW41jRQ4OCoGorHTuXKX9DQCDJ5jTdDX1hb0cLBgjpzqKN3mwiaJAEU+3g3iPtQZxrL4DDhgekuSsO0qSy0Q1OaRavCuVko9HGmMfh1lZVE6Sq9nLrxHNXUVQpAxlzJ9wu6djgtE0F8qDTBLivpSr02lqBa0Lb92AQYT/wPB3MPXnh+aqXOzo2nf/iOrb3/OGi0FivsdOg6LSpiDC/pOoS+YGHH8auYbyJX3HBgNdrDwloZ6IVMnvlKJ5xmKBSPPozMeIQiho7GKUNd/Lt9rDdRhBMbD3G6b2xk7nBJ1Gn05F4AScvCKDTJgwUcVT97YXZEU7akY4FrDZT/uYtKDOUYagb9rrnEB1S2sMD0GF6hKPcvLHDIJ09Bkk56DDLp5Jz6KZ95Idw2h9yUGaGZhIH1InkUDfv/WBoVQIiww+qy4oLtcXiqr4Hw+sYw0hHfoZtufTaQBDY8O0Q+uHNcDNc6BqvwzBYp3dBIQWWxGaRgHw7dt/3fda01IxnYgtJxyQB1ujtnDVttfRKKYY2XW2CDZuHYggyxmsYSEV/dDibPggaG9p6Tm/VHv4qs6bVVkGUWoNuotNG3C6gKRYwgSlqm8SlUrPKu9kG9jBBOvqBK+1a20TpgM7sZEZRYlOAZlhsXZjrTJoZ9eRkpemrSjLrP/1AULFCKV3RCkhc7lKG9Mr2XMPJH0GQlwxkwCwcQ0qN6WYTRMls0n8CIej7bMJW4nRFzDs+2JHVWNuk4myKoDZxpOnk4xAXLN8xNmkfGYRDQOXJhC58ND1gp9Ph8cKkK2Yg4miabNgXQdVh/tej8VOmQ1BE0gNbA7CzdKcwI4sMRCoOoNk4INe4tgDDxwth0zJ+BxoQjgJbA7QDWwi6zlBQm4H6YjQleQo9MCWYobaqzPIclfsIIuUyMCwwPU264mlQn+UREgCDmjcdQw/SydMIQXUEEY6rCh3JC7VgJoqnQZBeGp5CM4WuXLBFxhGCSFxzk+/w5lyPuuLfg2A7S8PDMTvEVoNtnqE9RN8RRDm+1IGdU74MH4GGWWjgqT+jbaTArgRRQ+ja191Vof6UICf2pM5iq1UO7Ij9U47QFGsAJVYpavjhrlqop0X4I9kwO2y3k3MYCKevQ1Afck57W4ltEiDOkN/voWmdBUwUzirts3Exwhe4IQ/tEISfjSt6ttBuTfkZQdC0XAzY0q4yGb3V5H5deibm9yDaFqOUbRkUY717Ld2Rtd8hB5zK9afPcGSp45GlDkeWz58/ja4fiqUPoOdnU1uNn6gbanvUh02Zoa2bRVDrqoYbduS06Cmq8OYUddW4/XaHqFLxAYbdkd0fo78ekHLf+Ir3NXalu29VONnV/vZkd3NTvbhtPVz/eCdANb6yU+jV7cXNT503zy8vP2LEn5ggD3BWrZ061v7s6blGjpK1X/9K+KX/sP4PsW55UIo2Nb0AAAAASUVORK5CYII=
+                                        `}">
+                                    </div>
+                                    <div class="lang-btn ${!this.langIsEn ? "active" : ""}" id="fr-lang-btn">
+                                        <img style="display: flex; margin: 6px 0px 0px 6px; width:20px; height:20px" alt="🇫🇷" src="${`
+                                            data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAACTUExURUdwTAAkjM7Pzs7OzrMGE74QIMPEx4hTeAAkjQARewAagbIFEgAfhc3NzdDQ0M7PzrYMG8zMzbcMG8EXKcUbLQAMd7UKGLUKGMMWJ7OhrcMVJv///+oPIO4bLgAmoOwWKAAZmQArpO8iNgAfnQATlAIyqLUGFAEoksUSIwAYhgANePnCyMbO6djY2NUWJ+7u7sCep4f8c74AAAAbdFJOUwDL+z19ffsVe3qU1jy51pA+bLyNc+Vrnu+m2KjIWToAAALxSURBVFjD7djJcuIwEIDhAAMOxuwTCAnyKgxOxg7v/3SjtraWDJKTUw60K1Vc+OqX5APK09NjHvOLJxDz3a+t9Mcoeg7DgZrDcrkejUZBL2X7NuYfo4gRZ2MmNZvhYjEHz1EYrHab18tl3LaEEonFnOPT5KtWM1zMhReY27DabUG5ABQ8cyXLTnIy9pz+vcN8seFWPRxC32G7Hf+FGW/3m7fXVmkagJ5NpGXYCOjd5Or6ejGmaRpCctJw6HTqOgaEvM8GT07ynP0RXhTbSqcIzWduDWOIgHBRJqmeELkJtQB34v4QUUs7o8MSC4t7FYECkF2UKYW9Sb2KRI8FqVWB06OI4KJSQRnuyXoUiW0mHUj2iPFAJEdOoiGVE/OV+SCxqLxTpI+LT+GGcE8Cj4AypAiqcEDyrPTSFHSS25zxnMIH6W2GnsQsitVGM8sBEf36AAOOASkDHg+EcuyiWLw+TAHGCdk5EqrOKqhQjgfCJ8ahPxxCx1W0K0tdUG4qCJKrAoMXpd4i7BwFpM+rkJNmbijh7w+xIHRanPFAiXx/khuQ7mFM6i9CzFFAlQiSDHPcRQneoCM8uqhA29NOfB/Sr48MUkWF3uY0bVfmgqyF6aIKHVcqgpxFMETlGHtkrMoDdXKYVMqlqRxhUReUmBuNiro9KXVCcllcOaoiq4emlPaAOJMoaCogHdNSXgg7GEqRRL1FR709FqRzKO0PdYt0D6X+IrWqTlGnh9LzPYgk1rIQlKogqqj70NHYZgR9VN0eJ2Ttj1GkT6udygN1BhVR/vQp6m6RUYRzfl5k1lSeItfSOFBVH3KqCfw8vwPZTRddhAgx1+GE3T6GdW2CN4oYU5Y7gITy8jIIwymfMDzM54tJOy1XC86E2G0GlHKzCxjUIoNwGtmXqGA0Wi+X0uPgVd1DhFGWs/0KvjgFhSGOyyl4su9aGjPbcAWglzDqdd9k99L1ennYzMRs9tvdaqW/GkXfvAbL+/NT8PhXwmN+7/wHgdqiCaxyTNQAAAAASUVORK5CYII=
                                         `}">
                                     </div>
                                 </div>
@@ -2977,23 +2998,23 @@ ecamDash = undefined;
                                 <button class="view-btn ${this.viewMode == "detailed" ? "active" : ""}" id="view-btn-detailed" data-view="detailed">📊</button>
                                 <button class="view-btn ${this.viewMode == "compact"  ? "active" : ""}" id="view-btn-compact"  data-view="compact" >📋</button>
                             </div>
-                            <div class="fold-toggle jura"></div>
+                            <div class="fold-toggle jura ${this.lang}"></div>
                         </div>
                     </div>`
                     +
                     `<div class="drop-field remove-from-module${this.selectedSubjectCardsId.length > 0 ? " show" : ""}">
-                        <div class="drop-field-remove-from-module-text top${this.lang == "fr" ? " fr" : " en"}"></div>
+                        <div class="drop-field-remove-from-module-text top${!this.langIsEn ? " fr" : " en"}"></div>
                         <div class="drop-field-remove-from-module-minus">-</div>
-                        <div class="drop-field-remove-from-module-text bottom${this.lang == "fr" ? " fr" : " en"}"></div>
+                        <div class="drop-field-remove-from-module-text bottom${!this.langIsEn ? " fr" : " en"}"></div>
                         <div class="drop-field-remove-from-module-hitbox"></div>
                     </div>
 
                     <div class="content-area" id="contentArea"></div>
 
-                    <div class="drop-field create-module ${this.lang == "fr" ? "fr" : "en"}${this.selectedSubjectCardsId.length > 0 ? " show" : ""}">
-                        <div class="drop-field-create-module-text top ${this.lang == "fr" ? "fr" : "en"}"></div>
+                    <div class="drop-field create-module ${this.lang}${this.selectedSubjectCardsId.length > 0 ? " show" : ""}">
+                        <div class="drop-field-create-module-text top ${this.lang}"></div>
                         <div class="drop-field-create-module-plus">+</div>
-                        <div class="drop-field-create-module-text bottom ${this.lang == "fr" ? "fr" : "en"}"></div>
+                        <div class="drop-field-create-module-text bottom ${this.lang}"></div>
                         <div class="drop-field-create-module-hitbox"></div>
                     </div>
 
@@ -3031,10 +3052,10 @@ ecamDash = undefined;
                 
                 //MARK: language Sensitive
                 async languageSensitiveContent(fadeIn=true) {
-                    // Language Sensitive text in the Dashboard Header and Semester filter tab (which don't refresh on calling the generateContent() method)
+                    // Language Sensitive text in the Dashboard Header and Semester filter tab (which doesn't refresh on calling the generateContent() method)
                     if (this.error) {
                         const offlineSubTitle = document.querySelector(".offline-mode-subtitle");
-                        offlineSubTitle.innerHTML = this.lang == "fr" 
+                        offlineSubTitle.innerHTML = !this.langIsEn 
                             ? `Les serveurs de l'ECAM sont actuellement inaccessibles ! ${this.grades.length == 0
                                 ? "Pour l'instant, tu ne peux pas voir si tu as des nouvelles notes... En attendant, voici le tableau de bord en mode offline, tu as donc accès aux notes que j'ai gentiment sauvegardées dans le cache la dernière fois ! De rien ! <3" 
                                 : "Pour l'instant, tu ne peux pas voir tes notes... Tu peux quand même commencer à configurer tes modules, reviens quand les serveurs sont opérationnels pour voir tes notes !"
@@ -3050,9 +3071,9 @@ ecamDash = undefined;
                     const dashTitle             = document.querySelector(".dash-title-text");
                     const dashPatchNotesLink    = document.querySelector(".patch-notes-link");
                     const dashSubtitle          = document.querySelector(".dash-subtitle");
-                    dashTitle.innerHTML         = this.lang == "fr" ? 'Tableau de Bord des Notes ECAM' : "ECAM Grades Dashboard";
-                    dashPatchNotesLink.title    = this.lang == "fr" ? "Aller voir les notes de cette mise à jour" : "Go see this update's notes";
-                    dashSubtitle.innerHTML      = this.lang == "fr" ? 'Vue complète de vos résultats académiques !' : "Complete view of your academic results!";
+                    dashTitle.innerHTML         = !this.langIsEn ? 'Tableau de Bord des Notes ECAM' : "ECAM Grades Dashboard";
+                    dashPatchNotesLink.title    = !this.langIsEn ? "Aller voir les notes de cette mise à jour" : "Go see this update's notes";
+                    dashSubtitle.innerHTML      = !this.langIsEn ? 'Vue complète de vos résultats académiques !' : "Complete view of your academic results!";
 
                     const infoNotif     = document.querySelector(".temp-notif");
                     if (infoNotif) {
@@ -3062,8 +3083,8 @@ ecamDash = undefined;
 
                     const frBtn = document.querySelectorAll("#fr-lang-btn");
                     const enBtn = document.querySelectorAll("#en-lang-btn");
-                    frBtn.title = this.lang == "fr" ? "Maj+L" : "Shift+L";
-                    enBtn.title = this.lang == "fr" ? "Maj+L" : "Shift+L";
+                    frBtn.title = !this.langIsEn ? "Maj+L" : "Shift+L";
+                    enBtn.title = !this.langIsEn ? "Maj+L" : "Shift+L";
 
                     const reportIssueBtn    = document.querySelector(".issue.issue-btn");
                     const mailInfo          = document.querySelector(".issue.mail-info");
@@ -3084,7 +3105,7 @@ ecamDash = undefined;
                     const newUserNotif      = document.querySelector(".new-user-notif");
                     const newUserNotifText  = document.querySelector(".new-user-notif-text");
 
-                    if (this.lang == "fr") {
+                    if (!this.langIsEn) {
                         reportIssueBtn  .title     = "Signaler...";
                         mailInfo        .title     = "Clique pour copier mon adresse email !";
                         shareConfig     .title     = "Partage une configuration sur mon GitHub";
@@ -3172,10 +3193,10 @@ ecamDash = undefined;
                     const importBtn     = document.getElementById("importBtn");
                     const editModeBtn   = document.getElementById("editModeBtn");
                     const exportBtn     = document.getElementById("exportBtn");
-                    importBtn   .innerHTML  = `${this.lang == "fr" ? "Importer Config": "Import Config"}<span class="btn-icon">⬇️</span>`;
-                    editModeBtn .innerHTML  = `<div style="display:flex; flex-direction:column; gap:3px"><span style="font-size:40px">🖊️</span><div class="jura">${this.lang == "fr" ? "Mode Édition" : "Edit Mode"}</div></div>`;
-                    exportBtn   .innerHTML  = `${this.lang == "fr" ? "Exporter Config": "Export Config"}<span class="btn-icon">⬆️</span>`;
-                    editModeBtn .title      = this.lang == "fr" ? "Maj+E" : "Shift+E";
+                    importBtn   .innerHTML  = `${!this.langIsEn ? "Importer Config": "Import Config"}<span class="btn-icon">⬇️</span>`;
+                    editModeBtn .innerHTML  = `<div style="display:flex; flex-direction:column; gap:3px"><span style="font-size:40px">🖊️</span><div class="jura">${!this.langIsEn ? "Mode Édition" : "Edit Mode"}</div></div>`;
+                    exportBtn   .innerHTML  = `${!this.langIsEn ? "Exporter Config": "Export Config"}<span class="btn-icon">⬆️</span>`;
+                    editModeBtn .title      = !this.langIsEn ? "Maj+E" : "Shift+E";
                     if (this.editMode) {editModeBtn.classList.add('on')}
                     else    {editModeBtn.classList.remove('on')}
                     
@@ -3184,20 +3205,20 @@ ecamDash = undefined;
                     const importClear   = importMenu.querySelector(".import-menu-btn.clear");
                     const importOnline  = importMenu.querySelector(".import-menu-btn.online");
 
-                    importFile.children[0].innerHTML   = this.lang == "fr" ? "Importer un fichier de configuration .json"   : "Import a .json configuration file";
-                    importClear.innerHTML              = this.lang == "fr" ? "Effacer Config" : "Clear Config";
-                    importClear.title                  = this.lang == "fr" ? "Clique ici pour effacer ta configuration actuelle" : "Click here to clear your current configuration";
-                    importOnline.children[1].innerHTML = this.lang == "fr" ? "Obtenir un fichier de configuration en ligne" : "Get a configuration file online";
+                    importFile.children[0].innerHTML   = !this.langIsEn ? "Importer un fichier de configuration .json"   : "Import a .json configuration file";
+                    importClear.innerHTML              = !this.langIsEn ? "Effacer Config" : "Clear Config";
+                    importClear.title                  = !this.langIsEn ? "Clique ici pour effacer ta configuration actuelle" : "Click here to clear your current configuration";
+                    importOnline.children[1].innerHTML = !this.langIsEn ? "Obtenir un fichier de configuration en ligne" : "Get a configuration file online";
 
                     const onlineCfgPickerHeader = document.querySelector(".online-cfg-picker-menu-header");
                     if (onlineCfgPickerHeader) {
-                        onlineCfgPickerHeader.innerHTML = this.lang == "fr" 
+                        onlineCfgPickerHeader.innerHTML = !this.langIsEn 
                             ? "Note: Choisir une configuration effacera les traces de configuration pré-existante de l'année correspondante, mais pas des autres années" 
                             : "Tip: Choosing a configuration will erase all traces of pre-existing configuration of the corresponding year, but not of the other years"
                         ;
                     }
 
-                    if (this.lang == "fr") {
+                    if (!this.langIsEn) {
                         document.querySelectorAll(".drop-module-card-insert-text, .drop-field-remove-from-module-text, .drop-field-create-module-text").forEach(dropFieldText => {
                             dropFieldText.classList.replace("en", "fr")
                         })
@@ -3216,59 +3237,59 @@ ecamDash = undefined;
 
 
                     const avgLabel = document.querySelector(".average-label");
-                    avgLabel.innerHTML  = `/20 ${this.lang == "fr" ? "Moyenne Générale" : "Global Average"}`;
+                    avgLabel.innerHTML  = `/20 ${!this.langIsEn ? "Moyenne Générale" : "Global Average"}`;
 
                     const statLabelsArray = document.querySelectorAll(".stat-label");
-                    statLabelsArray[0].innerHTML = this.lang == "fr" ? "Notes" : "Grades";
-                    statLabelsArray[1].innerHTML = this.lang == "fr" ? "Semestres" : "Semesters";
-                    statLabelsArray[2].innerHTML = this.lang == "fr" ? "Modules Validés" : "Validated module";
+                    statLabelsArray[0].innerHTML = !this.langIsEn ? "Notes" : "Grades";
+                    statLabelsArray[1].innerHTML = !this.langIsEn ? "Semestres" : "Semesters";
+                    statLabelsArray[2].innerHTML = !this.langIsEn ? "Modules Validés" : "Validated module";
 
                     const allFilterTabs = document.querySelectorAll(`.filter-tab`);
                     allFilterTabs.forEach(tab => {
-                        if (tab.dataset.filter == "all") {tab.innerHTML = this.lang == "fr" ? `Tous` : `All`}
-                        tab.title = this.lang == "fr" ? `Maj+Flèche Droite/Gauche` : `Shift+Left/Right Arrow`;
+                        if (tab.dataset.filter == "all") {tab.innerHTML = !this.langIsEn ? `Tous` : `All`}
+                        tab.title = !this.langIsEn ? `Maj+Flèche Droite/Gauche` : `Shift+Left/Right Arrow`;
                     })
 
-                    document.querySelector(`.view-toggle`).children[0].innerHTML = this.lang == "fr" ? `Basculer le mode d'affichage` : `Toggle display mode`;
-                    document.querySelector(`.fold-toggle`)            .innerHTML = this.lang == "fr" ? `Plier tous les modules` : `Fold every module`;
-                    document.querySelector(`.view-toggle`).children[0].title     = this.lang == "fr" ? `Maj+D` : `Shift+D`;
-                    document.querySelector(`.fold-toggle`)            .title     = this.lang == "fr" ? `Maj+F` : `Shift+F`;
+                    document.querySelector(`.view-toggle`).children[0].innerHTML = !this.langIsEn ? `Basculer le mode d'affichage` : `Toggle display mode`;
+                    document.querySelector(`.fold-toggle`)            .classList.replace(this.langIsEn ? "fr" : "en", this.lang)
+                    document.querySelector(`.view-toggle`).children[0].title     = !this.langIsEn ? `Maj+D` : `Shift+D`;
+                    document.querySelector(`.fold-toggle`)            .title     = !this.langIsEn ? `Maj+F` : `Shift+F`;
 
 
                     const viewBtnsArray = document.querySelectorAll(".view-btn");
-                    viewBtnsArray[0].title = this.lang == "fr" ? "Vue détaillée" : "Detailed view";
-                    viewBtnsArray[1].title = this.lang == "fr" ? "Vue compacte" : "Compact view";
+                    viewBtnsArray[0].title = !this.langIsEn ? "Vue détaillée" : "Detailed view";
+                    viewBtnsArray[1].title = !this.langIsEn ? "Vue compacte" : "Compact view";
 
                     const intranetSubtext = document.querySelector(".intranet-subtext");
-                    if (intranetSubtext) intranetSubtext.innerHTML = this.lang == "fr" ? "Afficher le tableau des notes d'Espace ECAM" : "Show ECAM Intranet's Grades Table";
+                    if (intranetSubtext) intranetSubtext.innerHTML = !this.langIsEn ? "Afficher le tableau des notes d'Espace ECAM" : "Show ECAM Intranet's Grades Table";
 
                     const updateNotif = document.querySelector(".update-available-notif-header");
                     if (updateNotif) {
-                        updateNotif.querySelector(".update-available-notif-text").innerHTML = this.lang == "fr" ? "NOUVELLE MISE À JOUR DU TABLEAU DE BORD DISPONIBLE ! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".") : "NEW DASHBOARD UPDATE AVAILABLE! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".");
-                        updateNotif.querySelector(".update-available-notif-btns").children[0].innerHTML = this.lang == "fr" ? "INSTALLER" : "INSTALL";
-                        updateNotif.querySelector(".update-available-notif-btns").children[1].innerHTML = this.lang == "fr" ? "Ignorer" : "Ignore";
-                        updateNotif.querySelector(".update-available-notif-btns").children[1].title     = this.lang == "fr" ? "Ignorer pour aujourd'hui" : "Ignore for today";
+                        updateNotif.querySelector(".update-available-notif-text").innerHTML = !this.langIsEn ? "NOUVELLE MISE À JOUR DU TABLEAU DE BORD DISPONIBLE ! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".") : "NEW DASHBOARD UPDATE AVAILABLE! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".");
+                        updateNotif.querySelector(".update-available-notif-btns").children[0].innerHTML = !this.langIsEn ? "INSTALLER" : "INSTALL";
+                        updateNotif.querySelector(".update-available-notif-btns").children[1].innerHTML = !this.langIsEn ? "Ignorer" : "Ignore";
+                        updateNotif.querySelector(".update-available-notif-btns").children[1].title     = !this.langIsEn ? "Ignorer pour aujourd'hui" : "Ignore for today";
                     }
 
                     if (document.querySelector(".new-grades-card").children.length > 1) {document.querySelector(".new-grades-card").children[1].remove()}
                     document.querySelector(".new-grades-card-title").innerHTML = `
                         ${this.newGrades.length > 0 
-                            ? `${this.lang == "fr" 
+                            ? `${!this.langIsEn 
                                 ? `${this.newGrades.length} Nouvelle${ this.newGrades.length > 1 ? "s" : ""} Note${this.newGrades.length > 1 ? "s" : ""} !` 
                                 : `${this.newGrades.length} New Grade${this.newGrades.length > 1 ? "s" : ""}!`
                             }` 
-                            : `${this.lang == "fr" 
+                            : `${!this.langIsEn 
                                 ? `Pas de nouvelle note${this.error ? ", que je sache (mode offline)" : ""}` 
                                 : `No new grade${this.error ? ", as far as I know (offline mode)" : ""}`
                             }` 
                         }
                     `;
-                    document.querySelector(".new-grades-mark-as-read-text").innerHTML = this.lang == "fr" ? "Marquer comme lu" : "Mark as read";
-                    document.querySelector(".new-grades-mark-as-read").title = this.lang == "fr" ? "Marquer comme lu" : "Mark as read";
+                    document.querySelector(".new-grades-mark-as-read-text").innerHTML = !this.langIsEn ? "Marquer comme lu" : "Mark as read";
+                    document.querySelector(".new-grades-mark-as-read").title = !this.langIsEn ? "Marquer comme lu" : "Mark as read";
                     
 
                     document.querySelectorAll(".selected-card-notif-div").forEach(notifDiv => {
-                        notifDiv.children[2].innerHTML = this.lang == "fr" ? `est sélectionné!` : `is selected!`;
+                        notifDiv.children[2].innerHTML = !this.langIsEn ? `est sélectionné!` : `is selected!`;
                     })
 
                     if (fadeIn) {
@@ -3294,7 +3315,7 @@ ecamDash = undefined;
                         }}, 1)
                     }
 
-                    newGradesNotif.innerHTML = this.lang == "fr" 
+                    newGradesNotif.innerHTML = !this.langIsEn 
                         ? `${this.newGrades.length} NOUVELLE${ this.newGrades.length>1 ? "S !" : " !"} NOTE${this.newGrades.length>1 ? "S !" : " !"}` 
                         : `${this.newGrades.length} NEW GRADE${this.newGrades.length>1 ? "S!"  : "!" }` 
                     + `<button id="closeNewGradesNotif" style="padding-bottom: 3px;font-size: 10px;display: flex;width: 21px;height: 21px;position: fixed;right: calc(5% - -15px);border-radius: 5px;border: 3px solid #e0e6ff;justify-content: center;align-items: center;align-content: center;">❌</button>`;
@@ -3389,7 +3410,7 @@ ecamDash = undefined;
                         section.innerHTML = `
                         <div class="semester-header" data-semester="${sem}">
                             <div class="semester-info">
-                                <div class="semester-name jura">📚 ${this.lang == "fr" ? 'Semestre' : "Semester"} ${sem}</div>
+                                <div class="semester-name jura">📚 ${!this.langIsEn ? 'Semestre' : "Semester"} ${sem}</div>
                                     <div class="semester-average ${avgClass}">
                                         <span>${moyenneSem==" - " ? "" : `${moyenneSem >= 10 ? '✅' : '⚠️'}`}</span>
                                         <span>${moyenneSem}/20</span>
@@ -3405,7 +3426,7 @@ ecamDash = undefined;
                                 </div>
                                 <div class="unclassified-section" id="unclassified-section" style="height: 100%${unclassified.length > 0 ? `` : `; display: none`}">
                                     <div class="unclassified-title jura">
-                                        ${this.lang == "fr" ? `Matière${unclassified.length > 1 ?  `s` : ``} non classée${unclassified.length > 1 ?  `s` : ``} dans un module` : `Subject${unclassified.length > 1 ?  `s` : ``} not classified in a module`}
+                                        ${!this.langIsEn ? `Matière${unclassified.length > 1 ?  `s` : ``} non classée${unclassified.length > 1 ?  `s` : ``} dans un module` : `Subject${unclassified.length > 1 ?  `s` : ``} not classified in a module`}
                                     </div>
                                     <div class="unclassified-content">
                                         ${unclassified.length > 0 
@@ -3460,10 +3481,10 @@ ecamDash = undefined;
                     let html = `
                     <div class="module-card ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'validated' : 'failed'}`} ${folded ? "fold" : ""}" id="module-card-${moduleName}-in-semester-${sem}" data-semester="${sem}" data-module="${moduleName}" data-index="${moduleIndex}" ${folded ? `style="height: 77px"` : ""}>
                     
-                        <div class="module-header ${this.editMode ? "edit-mode" : ""} ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'validated' : 'failed'}`}" id="module-header-${moduleName}-in-semester${sem}" data-semester="${sem}" data-module="${moduleName}" ${this.editMode ? `draggable="true"` : ""}>
+                        <div class="module-card-header ${this.editMode ? "edit-mode" : ""} ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'validated' : 'failed'}`}" id="module-card-header-${moduleName}-in-semester${sem}" data-semester="${sem}" data-module="${moduleName}" ${this.editMode ? `draggable="true"` : ""}>
                             ${this.editMode 
                                 ? 
-                                `<div class="module-header-left-side">
+                                `<div class="module-card-header-left-side">
                                     <div style="margin-right: 5px; margin-bottom: 3px;">
                                     ${cardIsSelected 
                                         ? `<div class="tick-icon module" data-targetid="module-card-${moduleName}-in-semester-${sem}" data-semester="${sem}" data-module="${moduleName}" data-subject="">✔</div>`
@@ -3477,13 +3498,13 @@ ecamDash = undefined;
                                 `<div class="module-title">${moduleName}</div>`
                             }
                             <div class="module-subject-total-coef-div" data-semester="${sem}" data-module="${moduleName}">
-                                <div class="module-subject-total-coef-value" ${this.settings.totalCoefValuesEnabled.value     ? "" : "style=\"display: none\""}>${this.lang == "fr" ? `Coef Total des matières :` : `Total Subjects Coef:`}</div>
+                                <div class="module-subject-total-coef-value" ${this.settings.totalCoefValuesEnabled.value     ? "" : "style=\"display: none\""}>${!this.langIsEn ? `Coef Total des matières :` : `Total Subjects Coef:`}</div>
                                 <div class="module-subject-total-coef-debug" ${this.settings.totalCoefDebugTextsEnabled.value ? "" : "style=\"display: none\""}></div>
                             </div>
                             <div class="module-moyenne ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'good' : 'bad'}`}" data-semester="${sem}" data-module="${moduleName}" ${this.editMode ? "" : 'style="width:151px"'}>
                                 ${moyenne}/20 
                                 <div class="module-toggle fold-icon open">△</div>
-                                <button class="module-delete-btn" id="module-delete-btn-${moduleName}-in-semester-${sem}" title="${this.lang == "fr" ? "Supprimer ce module" : "Delete this module"}" data-semester="${sem}" data-module="${moduleName}" style="border-width: 3px;${this.editMode ? "" : " display: none;"}">🗑️</button>
+                                <button class="module-delete-btn" id="module-delete-btn-${moduleName}-in-semester-${sem}" title="${!this.langIsEn ? "Supprimer ce module" : "Delete this module"}" data-semester="${sem}" data-module="${moduleName}" style="border-width: 3px;${this.editMode ? "" : " display: none;"}">🗑️</button>
                             </div>
                         </div>
                         
@@ -3493,16 +3514,16 @@ ecamDash = undefined;
                                 ${hasDisabled 
                                     ? 
                                     `<div class="module-info-bar">
-                                        <div style="font-weight: 700; font-size: 15px;">${this.lang == "fr" ? "Inclus des notes désactivées" : "Includes disabled grades"}</div>
-                                        <div class="module-info-clear disabled" data-semester="${sem}" data-module="${moduleName}">${this.lang == "fr" ? "Activer toutes ces notes" : "Enable all the grades"}</div>
+                                        <div style="font-weight: 700; font-size: 15px;">${!this.langIsEn ? "Inclus des notes désactivées" : "Includes disabled grades"}</div>
+                                        <div class="module-info-clear disabled" data-semester="${sem}" data-module="${moduleName}">${!this.langIsEn ? "Activer toutes ces notes" : "Enable all the grades"}</div>
                                     </div>` 
                                     : ``
                                 }
                                 ${hasSim 
                                     ? 
                                     `<div class="module-info-bar">
-                                        <div style="font-weight: 700; font-size: 15px;">${this.lang == "fr" ? "Inclus des notes simulées" : "Includes simulated grades"}</div>
-                                        <div class="module-info-clear sim" data-semester="${sem}" data-module="${moduleName}">${this.lang == "fr" ? "Effacer toutes ces notes simulées" : "Erase all the simulated grades"}</div>
+                                        <div style="font-weight: 700; font-size: 15px;">${!this.langIsEn ? "Inclus des notes simulées" : "Includes simulated grades"}</div>
+                                        <div class="module-info-clear sim" data-semester="${sem}" data-module="${moduleName}">${!this.langIsEn ? "Effacer toutes ces notes simulées" : "Erase all the simulated grades"}</div>
                                     </div>` 
                                     : ``
                                 }
@@ -3576,13 +3597,18 @@ ecamDash = undefined;
                     const nbRealGrades          = nbGrades - nbSimGrades;
                     const classified            = moduleName != "__#unclassified#__" && this.moduleConfig[sem]?.[moduleName] != undefined;
                     const subjectCardId         = `subject-card-semester-${sem}-subject-${subject}`;
-                    const detailed              = (this.detailedSubjCardsId.includes(subjectCardId) && !this.compactSubjCardsId.includes(subjectCardId) && manageIndividualSubjectCardFolding) || (this.viewMode == "detailed" && !manageIndividualSubjectCardFolding);
                     const cardIsSelected        = this.selectedSubjectCardsId.includes(`subject-card-semester-${sem}-subject-${subject}`);
+                    const detailed              = 
+                        (this.detailedSubjCardsId.includes(subjectCardId) && !this.compactSubjCardsId.includes(subjectCardId) && manageIndividualSubjectCardFolding) 
+                        || 
+                        (this.viewMode == "detailed" && !manageIndividualSubjectCardFolding)
+                    ;
                     
-                    if (detailed) {this.detailedSubjCardsId.push(subjectCardId)} else {this.compactSubjCardsId.push(subjectCardId)}
+                    if (detailed)   {this.detailedSubjCardsId.push(subjectCardId); this.compactSubjCardsId.splice(this.compactSubjCardsId.indexOf(subjectCardId), 1)} 
+                    else            {this.compactSubjCardsId.push(subjectCardId); this.detailedSubjCardsId.splice(this.detailedSubjCardsId.indexOf(subjectCardId), 1)}
 
                     let html = `
-                    <div class="subject-card ${classified ? "classified" : "unclassified"} ${detailed ? "detailed" : "compact"} ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" id="${subjectCardId}" style="${this.editMode ? `cursor: grab; user-select: none;` : ""}${detailed ? ` height: 70px;` : ""}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
+                    <div class="subject-card ${classified ? "classified" : "unclassified"} ${detailed ? "detailed" : "compact"} ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" id="${subjectCardId}" style="${this.editMode ? `cursor: grab; user-select: none;` : ""}${detailed ? "" : " height: 70px;"}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
                         <div class="subject-card-header ${detailed ? "detailed" : "compact"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`} ${classified ? "classified" : "unclassified"}" ${this.editMode ? `style="cursor: grab;" draggable="true"` : ``} data-module="${moduleName}">
                             <div class="subject-card-header-left-side">
                                 ${this.editMode
@@ -3601,7 +3627,7 @@ ecamDash = undefined;
                                         }
                                         <div style="font-size: 13px; color: #666; text-wrap-mode: nowrap;">
                                             ${classified 
-                                                ? ` ${this.lang == "fr" 
+                                                ? ` ${!this.langIsEn 
                                                         ? "Poids dans module: " 
                                                         : "Weight in module: "
                                                     }
@@ -3615,18 +3641,18 @@ ecamDash = undefined;
                                             <span class="subject-card-header-grades-details ${detailed ? "" : "show"}">
                                                 ${classified ? "• " : ""}
                                                 ${nbGrades===0 
-                                                    ? `<span>${this.lang == "fr" ? "aucune note publiée" : "no published grade"}</span>` 
-                                                    : `<span>${nbGrades} ${this.lang == "fr" ? `note${nbGrades>1?"s":""} au total` : `grade${nbGrades>1?"s":""} total</span>`}`
+                                                    ? `<span>${!this.langIsEn ? "aucune note publiée" : "no published grade"}</span>` 
+                                                    : `<span>${nbGrades} ${!this.langIsEn ? `note${nbGrades>1?"s":""} au total` : `grade${nbGrades>1?"s":""} total</span>`}`
                                                 }
                                                 ${nbGrades>0 
                                                     ? ` • <span ${includedGradesLength<nbGrades ? `style="color: #df0000"` : ``}>
                                                         <span style="font-weight: 700; ">${includedGradesLength}/${nbGrades}</span> 
-                                                        ${this.lang == "fr" ? `note${includedGradesLength>1?"s":""} activée${includedGradesLength>1?"s":""}` : `grade${includedGradesLength>1?"s":""} enabled`}${includedGradesLength<nbGrades ? `!` : ``}
+                                                        ${!this.langIsEn ? `note${includedGradesLength>1?"s":""} activée${includedGradesLength>1?"s":""}` : `grade${includedGradesLength>1?"s":""} enabled`}${includedGradesLength<nbGrades ? `!` : ``}
                                                     </span>` 
                                                     : ``
                                                 }
                                                 ${nbSimGrades>0 
-                                                    ? `<span> • ${nbSimGrades} ${this.lang == "fr" ? `note${nbSimGrades>1?"s":""} simulée${nbSimGrades>1?"s":""}` : `simulated grade${nbSimGrades>1?"s":""}</span>`}`
+                                                    ? `<span> • ${nbSimGrades} ${!this.langIsEn ? `note${nbSimGrades>1?"s":""} simulée${nbSimGrades>1?"s":""}` : `simulated grade${nbSimGrades>1?"s":""}</span>`}`
                                                     : ``
                                                 }
                                             </span>
@@ -3634,7 +3660,7 @@ ecamDash = undefined;
                                     </div>
                                     <div class="subject-total-coef-div" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}">
                                         <div class="subject-total-coef-value" ${this.settings.totalCoefValuesEnabled.value     ? "" : "style=\"display: none\""}></div>
-                                        <div class="subject-total-coef-debug" ${this.settings.totalCoefDebugTextsEnabled.value ? "" : "style=\"display: none\""}>${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}</div>
+                                        <div class="subject-total-coef-debug" ${this.settings.totalCoefDebugTextsEnabled.value ? "" : "style=\"display: none\""}>${!this.langIsEn ? `Coef Total des notes :` : `Total Grades Coef:`}</div>
                                     </div>
                                 </div>
                             </div>
@@ -3642,7 +3668,7 @@ ecamDash = undefined;
                                 <div class="subj-moyenne ${subjAvg == " - " ? '' : `${subjAvg>=10 ? 'good' : 'bad'}`}">
                                     ${subjAvg}/20
                                 </div>
-                                <button class="subject-delete-btn" id="subject-delete-btn-${subject}-${moduleName}-in-semester-${sem}" title="${this.lang == "fr" ? "Enlever cette matière" : "Remove this subject"}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-targetid="${subjectCardId}" style="border-width: 3px;${this.editMode && classified ? "" : " display: none;"}">🗑️</button>
+                                <button class="subject-delete-btn" id="subject-delete-btn-${subject}-${moduleName}-in-semester-${sem}" title="${!this.langIsEn ? "Enlever cette matière" : "Remove this subject"}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-targetid="${subjectCardId}" style="border-width: 3px;${this.editMode && classified ? "" : " display: none;"}">🗑️</button>
                             </div>
                         </div>
 
@@ -3656,22 +3682,22 @@ ecamDash = undefined;
                         <thead>
                             <tr>
                                 <th class="grades-table-header-type" style="padding-left: 30px; border-left-width: 0px;">
-                                    ${this.lang == "fr" ? "Intitulé" : "Title"}
+                                    ${!this.langIsEn ? "Intitulé" : "Title"}
                                 </th>
                                 <th class="grades-table-header-grade">
-                                    ${this.lang == "fr" ? "Note" : "Grade"}
+                                    ${!this.langIsEn ? "Note" : "Grade"}
                                 </th>
                                 <th class="grades-table-header-coef">
-                                    ${this.lang == "fr" ? "Coef" : "Coef"}
+                                    ${!this.langIsEn ? "Coef" : "Coef"}
                                 </th>
                                 <th class="grades-table-header-classAvg">
-                                    ${this.lang == "fr" ? "Moy. Classe" : "Class Avg"}
+                                    ${!this.langIsEn ? "Moy. Classe" : "Class Avg"}
                                 </th>
                                 <th class="grades-table-header-date">
-                                    ${this.lang == "fr" ? "Date" : "Date"}
+                                    ${!this.langIsEn ? "Date" : "Date"}
                                 </th>
                                 <th class="grades-table-header-teacher" style="border-right-width: 0px;${this.selectedSubjectCardsId.length > 0 ? " display: none;" : ""}">
-                                    ${this.lang == "fr" ? "Prof(s)" : "Teacher(s)"}
+                                    ${!this.langIsEn ? "Prof(s)" : "Teacher(s)"}
                                 </th>
                                 <th class="grades-table-header-add-sim-cell" style="border-right-width: 0px; border-left-width: 0px;">
                                 </th>
@@ -3690,7 +3716,7 @@ ecamDash = undefined;
                                     <input type="checkbox" class="grade-checkbox any-input" id="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}" data-semester="${sem}" data-subj="${subject}" data-module="${moduleName||''}" data-prof="${grade.prof}" data-gradeid="${grade.type + " " + grade.date + " " + grade.prof}" ${gradeIsSim ? `data-simtimestamp="${grade.id}"` : ""} ${!this.gradeIsDisabled(grade) ? "checked" : ""}></input>
                                     ${gradeIsSim
                                         ? `<input class="grade-type simulated-grade-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="simulated-grade-input-type-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" data-modifType="type" data-simid="${index-nbRealGrades}" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" value="${grade.type}"/>` 
-                                        : `<label class="grade-type" style="width: auto"  id="grade-type-${grade.type}-${grade.date}" for="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}">${grade.type || ''}${gradeIsSim ? ` • ${this.lang == "fr" ? "Simulée" : "Simulated"}` : ''}</label>`
+                                        : `<label class="grade-type" style="width: auto"  id="grade-type-${grade.type}-${grade.date}" for="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}">${grade.type || ''}${gradeIsSim ? ` • ${!this.langIsEn ? "Simulée" : "Simulated"}` : ''}</label>`
                                     }
                                 </td>
                                 <td class="grade-value grade-${gradeClass} grades-table-grade" data-sim="${gradeIsSim}">
@@ -3738,8 +3764,8 @@ ecamDash = undefined;
                             <tr>
                                 <td class="grades-table-type">
                                     <div class="grade-type" style="display:flex; align-items:center; justify-content: flex-start">
-                                        <div class="jura" style="width: 140px">${this.lang == "fr" ? "Ajouter une note simulée: " : "Add a simulated grade: "}</div>
-                                        <input class="simulated-grade-input sim-inp-type any-input" id="simulated-grade-input-type-for-${subject}-from-${moduleName}-in-semester${sem}" data-semester="${sem}" data-subj="${subject}" placeholder="${this.lang == "fr" ? "Titre" : "Title"}" />
+                                        <div class="jura" style="width: 140px">${!this.langIsEn ? "Ajouter une note simulée: " : "Add a simulated grade: "}</div>
+                                        <input class="simulated-grade-input sim-inp-type any-input" id="simulated-grade-input-type-for-${subject}-from-${moduleName}-in-semester${sem}" data-semester="${sem}" data-subj="${subject}" placeholder="${!this.langIsEn ? "Titre" : "Title"}" />
                                     </div>
                                 </td>
                                 <td class="grades-table-grade">
@@ -3751,7 +3777,7 @@ ecamDash = undefined;
                                 <td colspan="3">
                                 </td>
                                 <td class="grades-table-add-sim-cell" style="border-right-width: 0px; border-left-width: 0px;">
-                                    <button class="btn-export sim-add-btn" data-semester="${sem}" data-subj="${subject}" data-module="${moduleName||''}">${this.lang == "fr" ? "Ajouter" : "Add"}</button>
+                                    <button class="btn-export sim-add-btn" data-semester="${sem}" data-subj="${subject}" data-module="${moduleName||''}">${!this.langIsEn ? "Ajouter" : "Add"}</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -3981,7 +4007,7 @@ ecamDash = undefined;
 
                 appendFullScreenNotif(container=document.body, text) {
                     if (!text) {
-                        text = this.lang == "fr" 
+                        text = !this.langIsEn 
                             ? `<div>Clique sur l'écran pour rafraichir la page et appliquer la mise à jour !</div><div>Utilisateurs de MAC, copiez le script qui s'est ouvert et collez-le dans votre extension à la place de l'ancien script</div>`
                             : `<div>Click on the screen to reload the page and apply the update!</div><div>MAC users, copy the script that opened up and paste it in your extension to replace the old script</div>
                         `;
@@ -4004,7 +4030,7 @@ ecamDash = undefined;
                     `;
 
                     const newFullScreenNotif = document.querySelector("#fullScreeNotif");
-                    newFullScreenNotif.title = this.lang == "fr" ? "Rafraichir" : "Reload";
+                    newFullScreenNotif.title = !this.langIsEn ? "Rafraichir" : "Reload";
                     setTimeout(() => {newFullScreenNotif.classList.add("show");}, 100)
                     newFullScreenNotif.onclick = () => {window.location.reload();};
                 }
@@ -4112,7 +4138,7 @@ ecamDash = undefined;
     
                         const newUserNotif  = document.createElement("div");
                         newUserNotif.className = "new-user-notif";
-                        newUserNotif.title = this.lang == "fr" ? "Clique pour fermer" : "Click to dismiss";
+                        newUserNotif.title = !this.langIsEn ? "Clique pour fermer" : "Click to dismiss";
                         newUserNotif.innerHTML = `
                             <div class="new-user-notif-arrow" style="right: -322px; bottom: ${this.error ? "-8px" : "-4px"};">
                                 <svg class="new-user-notif-arrow-svg" viewBox="0 0 100 100" style="z-index: 9;">
@@ -4123,7 +4149,7 @@ ecamDash = undefined;
                                 </svg>
                             </div>
                             <div class="new-user-notif-text">${
-                                this.lang == "fr" 
+                                !this.langIsEn 
                                     ? "Bonjour! Première fois? Clique ici pour apprendre à utiliser cette extension! (Clique ici pour fermer)" 
                                     : "Hey! New here? Click here to find a tutorial on how to use this extension! (Click here to dismiss)"
                                 }
@@ -4172,7 +4198,7 @@ ecamDash = undefined;
                         this.createTipNotif(
                             document.querySelector(".config-btns-container"),
                             document.querySelector("#importBtn"), 
-                            this.lang == "fr" ? "Clique ici pour importer une configuration de modules" : "Click here to import a module configuration", 
+                            !this.langIsEn ? "Clique ici pour importer une configuration de modules" : "Click here to import a module configuration", 
                             {
                                 nextAction: () => {callback()}, 
                                 nextActionDelay: 400,
@@ -4187,7 +4213,7 @@ ecamDash = undefined;
                         this.createTipNotif(
                             document.querySelector("#importMenu"),
                             document.querySelector(".import-menu-btn.online"), 
-                            this.lang == "fr" ? "Clique ici pour obtenir une configuration déjà disponible en ligne" : "Click here to obtain a configuration already available online", 
+                            !this.langIsEn ? "Clique ici pour obtenir une configuration déjà disponible en ligne" : "Click here to obtain a configuration already available online", 
                             {
                                 nextAction: () => {callback()}, 
                                 nextActionDelay: 400,
@@ -4371,6 +4397,9 @@ ecamDash = undefined;
             // MARK: Regenerate subject and module averages and total coef debug texts
             regenAveragesAndTotalCoefs(sem, moduleName="__#unclassified#__", subject) {
 
+                document.querySelector(".average-number").innerHTML = this.moyennePonderee(this.grades);
+
+
                 if (sem?.classList?.contains("module-card")) {
                     subject = undefined;
                     moduleName = sem.dataset.module;
@@ -4384,15 +4413,42 @@ ecamDash = undefined;
 
                 // subject average modification
                 if (subject) {
+                    const subjCard      = document.querySelector(`.subject-card[data-subject="${subject}"]`);
+                    const subjAvgDiv    = subjCard.querySelector(".subj-moyenne");
+                    const subjHeader    = subjCard.querySelector(".subject-card-header");
+                    const gradesTable   = subjCard.querySelector(".grades-table");
                     const subjAvg       = this.gradesDatas[sem][moduleName||"__#unclassified#__"].subjects[subject].average;
-                    const subjAvgDiv    = document.querySelector(`.subject-card[data-subject="${subject}"]`).querySelector(".subj-moyenne");
+                    const moduleAvg     = this.gradesDatas[sem][moduleName||"__#unclassified#__"].average;
+
                     subjAvgDiv.innerHTML = subjAvg + "/20";
-                    subjAvgDiv.classList.remove("good"); subjAvgDiv.classList.remove("bad");
-                    if (subjAvg >= 10) {
-                        subjAvgDiv.classList.add("good"); 
+                    subjCard   .classList.remove("good"); subjCard   .classList.remove("meh"); subjCard   .classList.remove("bad"); subjCard   .classList.remove("unknown");
+                    subjAvgDiv .classList.remove("good"); subjAvgDiv .classList.remove("meh"); subjAvgDiv .classList.remove("bad"); subjAvgDiv .classList.remove("unknown");
+                    subjHeader .classList.remove("good"); subjHeader .classList.remove("meh"); subjHeader .classList.remove("bad"); subjHeader .classList.remove("unknown");
+                    gradesTable.classList.remove("good"); gradesTable.classList.remove("meh"); gradesTable.classList.remove("bad"); gradesTable.classList.remove("unknown");
+
+                    if (isNaN(subjAvg)) {
+                        subjCard   .classList.add("unknown");
+                        subjAvgDiv .classList.add("unknown");
+                        subjHeader .classList.add("unknown");
+                        // gradesTable.classList.add("unknown");
+                    }
+                    else if (moduleAvg >= 10 && subjAvg < 10 || moduleAvg < 10 && subjAvg >= 10) {
+                        subjCard   .classList.add("meh"); 
+                        subjAvgDiv .classList.add("bad"); 
+                        subjHeader .classList.add("meh"); 
+                        gradesTable.classList.add("meh"); 
+                    }
+                    else if (subjAvg >= 10) {
+                        subjCard   .classList.add("good"); 
+                        subjAvgDiv .classList.add("good"); 
+                        subjHeader .classList.add("good"); 
+                        gradesTable.classList.add("good"); 
                     }
                     else {
-                        subjAvgDiv.classList.add("bad");
+                        subjCard   .classList.add("bad");
+                        subjAvgDiv .classList.add("bad");
+                        subjHeader .classList.add("bad");
+                        gradesTable.classList.add("bad");
                     }
                 }
                 
@@ -4400,7 +4456,7 @@ ecamDash = undefined;
                 if (moduleName != "__#unclassified#__") {
                     const moduleAvg         = this.gradesDatas[sem][moduleName].average;
                     const moduleCard        = document.querySelector(`.module-card[data-module="${moduleName}"]`);
-                    const moduleCardHeader  = moduleCard.querySelector(`.module-header`);
+                    const moduleCardHeader  = moduleCard.querySelector(`.module-card-header`);
                     const moduleAvgDiv      = moduleCard.querySelector(`.module-moyenne[data-module="${moduleName}"]`);
                     moduleAvgDiv.childNodes[0].data = moduleAvg + "/20";
                     moduleCard      .classList.remove("validated");     moduleCard      .classList.remove("failed");    moduleCard      .classList.remove("unknown");
@@ -4463,7 +4519,7 @@ ecamDash = undefined;
                 this.attachModuleInfoClearBtns();
                 this.attachAllModuleDeleteBtnsListener();
 
-                if (this.editMode) { this.attachDropFieldsEventListeners(); } else { this.detachOnDragEventListeners(); }
+                if (this.editMode) { this.attachDropFieldsEventListeners(); }
             }
 
 
@@ -4522,7 +4578,7 @@ ecamDash = undefined;
                                 if (e.target.closest('.semester-header')) {
                                     this.semesterHeaderMouseUpNoMoveAction();
                                 }
-                                else if (e.target.closest('.module-header') && !e.target.closest('.module-title.input, .module-delete-btn, .drag-icon, .tick-icon')) {
+                                else if (e.target.closest('.module-card-header') && !e.target.closest('.module-title.input, .module-delete-btn, .drag-icon, .tick-icon')) {
                                     this.moduleHeaderMouseUpNoMoveAction(e)
                                 }
                                 else if (e.target.closest('.subject-card-header, .subject-card.compact') && !e.target.closest('.any-input, .drag-icon, .tick-icon, .subject-delete-btn')) {
@@ -4545,20 +4601,20 @@ ecamDash = undefined;
 
                         if (input.classList.contains("module-title")) {   // Change modules name
                             input.onfocus   = ()  => { if (this.editMode) {
-                                this.detachOnDragEventListeners(); 
+                                this.detachAllCardsOnDragEventListeners(); 
                                 this.generalKeyboardEvents("edit sim grade", input); 
-                                document.querySelectorAll(".module-header").forEach(card => {card.draggable = false});
+                                document.querySelectorAll(".module-card-header").forEach(card => {card.draggable = false});
                             } }
                             input.onblur    = ()  => { if (this.editMode) {
-                                this.attachOnDragEventListeners(); 
+                                this.attachAllCardsOnDragEventListeners(); 
                                 this.generalKeyboardEvents("general"); 
-                                document.querySelectorAll(".module-header").forEach(card => {card.draggable = true;});
+                                document.querySelectorAll(".module-card-header").forEach(card => {card.draggable = true;});
                             } }
                             input.onchange  = (e) => { this.moduleTitleInputChangeAction(e.target) };
                         }
                         else {
-                            input.onfocus   = ( ) => { if (this.editMode) {this.detachOnDragEventListeners(); this.generalKeyboardEvents("edit sim grade", input); } };
-                            input.onblur    = ( ) => { if (this.editMode) {this.attachOnDragEventListeners(); this.generalKeyboardEvents("general"); } };
+                            input.onfocus   = ( ) => { if (this.editMode) {this.detachAllCardsOnDragEventListeners(); this.generalKeyboardEvents("edit sim grade", input); } };
+                            input.onblur    = ( ) => { if (this.editMode) {this.attachAllCardsOnDragEventListeners(); this.generalKeyboardEvents("general"); } };
                         }
                     }
 
@@ -4573,8 +4629,9 @@ ecamDash = undefined;
                     attachLangBtnsListener() {
                         // Change to English
                         document.getElementById('en-lang-btn').onclick = () => {
-                            if (this.lang == "fr") {
-                                this.lang = "en";
+                            if (!this.langIsEn) {
+                                this.lang       = "en";
+                                this.langIsEn   = true;
                                 localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
                                 document.getElementById('fr-lang-btn').classList.remove('active')
                                 document.getElementById('en-lang-btn').classList.add('active')
@@ -4584,8 +4641,9 @@ ecamDash = undefined;
 
                         // Change to French
                         document.getElementById('fr-lang-btn').onclick = () => {
-                            if (this.lang == "en") {
-                                this.lang = "fr";
+                            if (this.langIsEn) {
+                                this.lang       = "fr";
+                                this.langIsEn   = false;
                                 localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
                                 document.getElementById('fr-lang-btn').classList.add('active')
                                 document.getElementById('en-lang-btn').classList.remove('active')
@@ -4739,7 +4797,7 @@ ecamDash = undefined;
                             }
                             document.querySelector(".new-grades-card").classList.add("none");
                             document.querySelector(".new-grades-card-header").classList.add("none");
-                            document.querySelector(".new-grades-card-title").innerHTML = this.lang == "fr" 
+                            document.querySelector(".new-grades-card-title").innerHTML = !this.langIsEn 
                                 ? `Pas de nouvelle note${this.error ? ", que je sache (mode offline)" : ""}` 
                                 : `No new grade${this.error ? ", as far as I know (offline mode)" : ""}`
                             ;
@@ -4840,7 +4898,12 @@ ecamDash = undefined;
                     attachFoldToggleBtnListener() {
                         document.querySelector(".fold-toggle").onclick = (e) => {
                             e.target.classList.toggle("active");
-                            this.toggleFoldAllModuleCards();
+                            if (e.target.classList.contains("active")) {
+                                this.foldAllModuleCards();
+                            }
+                            else {
+                                this.unfoldAllModuleCards();
+                            }
                         }
                     }
 
@@ -4920,38 +4983,42 @@ ecamDash = undefined;
                 //#region Subject cards listeners
 
                     attachAllSubjectCardRelatedEventListenersForEverySubjectCard(container=document.body) {
-                        if (this.editMode) {this.attachOnDragEventListeners(container);}
 
                         this.attachAllDragOrTickIconsListener(container);
 
                         this.attachAllSubjectNameInputsListener(container);
-                        this.attachAllSubjectCoefInputBoxesListeners(container);
-                        this.attachAllSubjectsDeleteBtnListener(container);
+                        this.attachAllSubjectCoefInputBoxesListener(container);
+                        this.attachAllSubjectDeleteBtnsListener(container);
 
                         this.attachAllGradesCheckboxListeners(container);
 
-                        this.attachAllSubjectSimAddBtnsListener(container);
-                        this.attachAllSubjectSimDelBtnsListener(container);
-                        this.attachAllSubjectSimInputEditsListener(container);
+                        this.attachAllSimGradeAddBtnsListener(container);
+                        this.attachAllSimGradeInputEditsListener(container);
+                        this.attachAllSimGradeDelBtnsListener(container);
+
+                        if (this.editMode)  {this.attachAllCardsOnDragEventListeners(container);} else {this.detachAllCardsOnDragEventListeners(container)};
                     }
 
                     attachAllSubjectCardRelatedEventListeners(subjCard) {
-                        const isClassified  = subjCard.classList.contains("classified");
-                        const isDetailed    = subjCard.classList.contains("detailed");
-                        const coefInputBox  = subjCard.querySelector(".subject-coef-input-box");
                         const nameInputBox  = subjCard.querySelector(".subject-name.input");
-                        const simAddBtn     = subjCard.querySelector(".sim-add-btn");
-                        const simDelBtn     = subjCard.querySelector(".sim-del-btn");
+                        const coefInputBox  = subjCard.querySelector(".subject-coef-input-box");
+                        const subjectDelBtn = subjCard.querySelector(".subject-delete-btn");
 
-                        if (isClassified)   {this.attachAllGradesCheckboxListeners(subjCard);}
-                        if (isDetailed)     {this.attachAllSubjectSimInputEditsListener(subjCard);}
-                        if (coefInputBox)   {this.attachSubjectCoefInputBoxListeners(coefInputBox);}
-                        if (nameInputBox)   {this.attachSubjectNameInputListener(nameInputBox);}
-                        if (simAddBtn)      {this.attachSimGradeAddBtnListener(simAddBtn);}
-                        if (simDelBtn)      {this.attachSimGradeDelBtnListener(simDelBtn);}
+                        this.attachDragOrTickIconListener(subjCard);
+
+                        if (nameInputBox)   { this.attachSubjectNameInputListener(nameInputBox); }
+                        if (coefInputBox)   { this.attachSubjectCoefInputBoxListener(coefInputBox); }
+                        if (subjectDelBtn)  { this.attachSubjectDeleteBtnListener(subjectDelBtn); }
                         
+                        this.attachAllGradesCheckboxListeners(subjCard);
+
+                        this.attachAllSimGradeAddBtnsListener(subjCard);
+                        this.attachAllSimGradeInputEditsListener(subjCard);
+                        this.attachAllSimGradeDelBtnsListener(subjCard);
+
                         this.attachDragOrTickIconListener(subjCard)
-                        if (this.editMode)  {this.attachSubjectCardOnDragEventListeners(subjCard);};
+
+                        if (this.editMode)  {this.attachSubjectCardOnDragEventListeners(subjCard);} else {this.detachAllCardsOnDragEventListeners(subjCard)};
                     }
 
                     /** Ensures all selected Subject Cards have a tick icon with their assigned event listeners instead of the default drag icon, and attach them the correct event listener */
@@ -4975,12 +5042,12 @@ ecamDash = undefined;
                         }
                     }
 
-                    attachAllSubjectCoefInputBoxesListeners(container=document.body) {
+                    attachAllSubjectCoefInputBoxesListener(container=document.body) {
                         container.querySelectorAll(".subject-coef-input-box").forEach(inputBox => {
-                            this.attachSubjectCoefInputBoxListeners(inputBox);
+                            this.attachSubjectCoefInputBoxListener(inputBox);
                         })
                     }
-                    attachSubjectCoefInputBoxListeners(inputBox) {
+                    attachSubjectCoefInputBoxListener(inputBox) {
                         inputBox.onchange = (e) => {
                             const semX          = e.target.dataset.semester;
                             const moduleName    = e.target.dataset.module;
@@ -4995,12 +5062,12 @@ ecamDash = undefined;
                     }
 
                     
-                    attachAllSubjectsDeleteBtnListener(container=document.body) {
+                    attachAllSubjectDeleteBtnsListener(container=document.body) {
                         container.querySelectorAll(".subject-delete-btn").forEach(btn => {
-                            this.attachSubjectCardDeleteBtnListener(btn);
+                            this.attachSubjectDeleteBtnListener(btn);
                         })
                     }
-                    attachSubjectCardDeleteBtnListener(btn) {
+                    attachSubjectDeleteBtnListener(btn) {
                         btn.onclick = (e) => {this.subjectCardDeleteBtnAction(e.target)};
                     }
 
@@ -5025,14 +5092,13 @@ ecamDash = undefined;
                             this.attachGradeCheckboxListener(chbx)
                         });
                     }
-
                     attachGradeCheckboxListener(chbx) {
                         chbx.onclick = (e) => {
                             this.gradeCheckboxAction(e.target)
                         }
                     }
 
-                    attachAllSubjectSimAddBtnsListener(container=document.body) {
+                    attachAllSimGradeAddBtnsListener(container=document.body) {
                         container.querySelectorAll('.sim-add-btn').forEach(btn=>{
                             this.attachSimGradeAddBtnListener(btn);
                         });
@@ -5041,7 +5107,7 @@ ecamDash = undefined;
                         btn.onclick = (e) => {this.simGradeAddBtnAction(e.target)};
                     }
 
-                    attachAllSubjectSimDelBtnsListener(container=document.body) {
+                    attachAllSimGradeDelBtnsListener(container=document.body) {
                         container.querySelectorAll('.sim-del-btn').forEach(btn=>{
                             this.attachSimGradeDelBtnListener(btn)
                         })
@@ -5050,7 +5116,7 @@ ecamDash = undefined;
                         btn.onclick = (e) => {this.simGradeDelBtnAction(e.target)};
                     }
 
-                    attachAllSubjectSimInputEditsListener(container=document.body) {
+                    attachAllSimGradeInputEditsListener(container=document.body) {
                         container.querySelectorAll(".simulated-grade-input-edit").forEach(input => {
                             this.attachSimGradeInputEditListener(input)
                         })
@@ -5402,7 +5468,7 @@ ecamDash = undefined;
                         if (trigger?.classList?.contains("module-card") || (trigger?.target?.classList?.contains("module-card"))) {
                             // Identifying the moduleCard depending on whether the trigger argument is a module card or an event triggered by a module card
                             const moduleCard        = trigger?.target || trigger;
-                            const moduleHeader      = moduleCard.querySelector(".module-header");
+                            const moduleHeader      = moduleCard.querySelector(".module-card-header");
                             const toggle            = moduleCard.querySelector('.module-toggle');
                             const sem               = moduleCard.dataset.semester;
                             const module            = moduleCard.dataset.module;
@@ -5423,7 +5489,7 @@ ecamDash = undefined;
                                     this.detachInsertFieldHitboxEventListeners(subjInsFieldHitbox);
                                 })
 
-                                moduleCard.style.height = Array.from(moduleCard.children).reduce((total, child) => {return parseInt(total?.offsetHeight || total) + parseInt(child.offsetHeight)}) + "px";
+                                moduleCard.style.height = this.getElementHeightConsideringChildrenHeight(moduleCard) + "px";
                                 moduleHeader.classList.add("fold");
                                 moduleCard.classList.add("fold");
                                 setTimeout(() => {
@@ -5455,6 +5521,9 @@ ecamDash = undefined;
                             clearTimeout(this.timeouts.moduleCardElemsUnfoldTimeout);
                             clearTimeout(this.timeouts.moduleCardUnfoldTimeout);
 
+                            if (this.foldedModuleCardsId.length == document.querySelectorAll(".module-card").length) {
+                                document.querySelector(".fold-toggle").classList.add("active")
+                            }
                         }
                         
                     }
@@ -5485,7 +5554,7 @@ ecamDash = undefined;
                         if (trigger?.classList?.contains("module-card") || (trigger?.target?.classList?.contains("module-card"))) {
                             // Identifying the moduleCard depending on whether the trigger argument is a module card or an event triggered by a module card
                             const moduleCard        = trigger?.target || trigger;
-                            const moduleHeader      = moduleCard.querySelector(".module-header");
+                            const moduleHeader      = moduleCard.querySelector(".module-card-header");
                             const toggle            = moduleCard.querySelector('.module-toggle');
                             const sem               = moduleCard.dataset.semester;
                             const module            = moduleCard.dataset.module;
@@ -5533,7 +5602,7 @@ ecamDash = undefined;
                                 
                                 if (moduleCard) {
                                     setTimeout(() => {
-                                        moduleCard.style.height = Array.from(moduleCard.children).reduce((total, child) => {return parseInt(total?.offsetHeight || total) + parseInt(child.offsetHeight)}) + "px";
+                                        moduleCard.style.height = this.getElementHeightConsideringChildrenHeight(moduleCard) + "px";
                                         moduleCard.classList.remove("fold");
                                         this.timeouts.moduleCardUnfoldTimeout = setTimeout(() => {moduleCard.style.height = ""}, 300)
                                     }, 1)
@@ -5545,6 +5614,11 @@ ecamDash = undefined;
                                     }, 2)
                                 }
                             }
+
+                            if (this.foldedModuleCardsId.length == 0) {
+                                document.querySelector(".fold-toggle").classList.remove("active")
+                            }
+                            
                         }
                     }
 
@@ -5577,7 +5651,7 @@ ecamDash = undefined;
 
                         let diffName = true;
                         if (newModuleName == "__#unclassified#__") {
-                            alert(this.lang == "fr" 
+                            alert(!this.langIsEn 
                                 ? "Ce nom n'est pas autorisé ! C'est le nom utilisé en interne pour les matières non-classifiées... Choisis-en un autre!" 
                                 : "This name isn't allowed! That's the name used internally for unclassified subjects... Choose another one!"
                             )
@@ -5586,7 +5660,7 @@ ecamDash = undefined;
                         else {
                             Object.keys(this.moduleConfig[sem]).forEach(_moduleName => {
                                 if (_moduleName == newModuleName && _moduleName != oldModuleName) {
-                                    alert(this.lang == "fr" 
+                                    alert(!this.langIsEn 
                                         ? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
                                         : "This subject already exists! Please choose a different name"
                                     )
@@ -5612,12 +5686,12 @@ ecamDash = undefined;
                                     const moduleCardToFold = document.getElementById(foldedModuleCardId);
                                     if (!moduleCardToFold) {
                                         const newModuleCardToFold = document.getElementById(`module-card-${newModuleName}-in-semester-${sem}`);
-                                        this.foldModuleCard(newModuleCardToFold.querySelector(`.module-header`));
+                                        this.foldModuleCard(newModuleCardToFold.querySelector(`.module-card-header`));
                                     }
                                 }
                             })
                             
-                            this.attachOnDragEventListeners();
+                            this.attachAllCardsOnDragEventListeners();
                             this.scrollToClientHighestElem({id: `module-card-${newModuleName}-in-semester-${sem}`, smooth: true})
                         }
                     }
@@ -5707,9 +5781,9 @@ ecamDash = undefined;
 
 
 
-                    /** Toggle the folding of all the subject cards inside the given container
-                     * @param {HTMLElement} [container=document.body] The HTML element containing the subject cards whose fold mode will be toggled
-                     * @param {boolean} [smart=true] If true, takes into consideration the current view mode to know if the subject card should be folded of unfolded. If false, simply toggle the folding mode.
+                    /** Toggles the folding of all the subject cards inside the given container
+                     * @param {HTMLElement} [container=document.body] Default: document.body — The HTML element containing the subject cards whose fold mode will be toggled
+                     * @param {boolean} [smart=true] Default: true — If true, takes into consideration the current view mode to know if the subject card should be folded of unfolded. If false, simply toggle the folding mode.
                      */
                     async toggleFoldAllSubjCards(container=document.body, smart=true, bypassFoldedSubjectCardId=false) {
                         if (container instanceof HTMLElement) {
@@ -5722,7 +5796,7 @@ ecamDash = undefined;
                                 }
                             }
                             else {
-                                container.querySelectorAll(".subject-card").forEach(subjCard => {
+                                (container.querySelectorAll(".subject-card") || []).forEach(subjCard => {
                                     if (subjCard?.classList?.contains("detailed")) {
                                         this.foldSubjCard(subjCard, bypassFoldedSubjectCardId);
                                     }
@@ -5733,7 +5807,7 @@ ecamDash = undefined;
                             }
                         }
                     }
-                    /** Toggle the folding of the given subject card
+                    /** Toggles the folding of the given subject card
                      * @param {HTMLElement} subjCard The subject cards whose fold mode will be toggled
                      */
                     async toggleFoldSubjCard(subjCard, bypassFoldedSubjectCardId=false) {
@@ -5746,17 +5820,17 @@ ecamDash = undefined;
                     }
 
                     // MARK: fold subject card
-                    /** Fold all the subject cards inside the given container
+                    /** Folds all the subject cards inside the given container
                      * @param {HTMLElement} [container=document.body] The HTML element containing the subject cards to fold
                      */
                     async foldAllSubjCards(container=document.body, bypassFoldedSubjectCardId=false) {
                         if (container instanceof HTMLElement) {
-                            container.querySelectorAll(".subject-card.detailed").forEach(detailedSubjCard => {
+                            (container.querySelectorAll(".subject-card.detailed") || []).forEach(detailedSubjCard => {
                                 this.foldSubjCard(detailedSubjCard, bypassFoldedSubjectCardId);
                             })
                         }
                     }
-                    /** Fold the given subject card
+                    /** Folds the given subject card
                      * @param {HTMLElement} [subjCard] The subject card to fold
                      */
                     async foldSubjCard(subjCard, bypassFoldedSubjectCardId=false) {
@@ -5764,9 +5838,9 @@ ecamDash = undefined;
                             const subjCardHeader = subjCard.querySelector(".subject-card-header");
                             subjCardHeader.classList.add("fold");
                             subjCardHeader.classList.replace("detailed", "compact");
+                            
+                            // setting the proper height to the subject card so that only the header is visible
                             subjCard.style.height = "70px";
-    
-                            // prepare the aimed height below the higher instance height style
                             subjCard.classList.replace("detailed", "compact");
                             subjCard.querySelector(".subject-card-header-grades-details").classList.add("show");
                             
@@ -5776,27 +5850,29 @@ ecamDash = undefined;
                     }
 
                     // MARK: unfold subject card
-                    /** Unfold all the subject cards inside the given container
+                    /** Unfolds all the subject cards inside the given container
                      * @param {HTMLElement} [container=document.body] The HTML element containing the subject cards to unfold
+                     * @param {Boolean} [bypassFoldedSubjectCardId=false] Default: false — If true, allows to bypass saving the unfolded subject card's id upon unfolding it
                      */
                     async unfoldAllSubjCards(container=document.body, bypassFoldedSubjectCardId=false) {
                         if (container instanceof HTMLElement) {
-                            container.querySelectorAll(".subject-card.compact").forEach(compactSubjCard => {
+                            (container.querySelectorAll(".subject-card.compact") || []).forEach(compactSubjCard => {
                                 this.unfoldSubjCard(compactSubjCard, bypassFoldedSubjectCardId);
                             })
                         }
                     }
-                    /** Unfold the given subject card
+                    /** Unfolds the given subject card
                      * @param {HTMLElement} [subjCard] The subject card to unfold
+                     * @param {Boolean} [bypassFoldedSubjectCardId=false] Default: false — If true, allows to bypass removing the unfolded subject card's id from the saved folded subject cards' id upon unfolding it
                      */
                     async unfoldSubjCard(subjCard, bypassFoldedSubjectCardId=false) {
                         if (subjCard?.classList?.contains("subject-card")) {
                             const subjCardHeader = subjCard.querySelector(".subject-card-header");
                             subjCardHeader.classList.remove("fold");
                             subjCardHeader.classList.replace("compact", "detailed");
-                            subjCard.style.height = "";
-
-                            // makes the height go automatic -> correspond to the desired height
+                            
+                            // setting the proper height to the subject card so that its whole content is visible
+                            subjCard.style.height = this.getElementHeightConsideringChildrenHeight(subjCard) + "px";
                             subjCard.classList.replace("compact", "detailed");
                             subjCard.querySelector(".subject-card-header-grades-details").classList.remove("show");
 
@@ -5871,7 +5947,7 @@ ecamDash = undefined;
 
                         let diffName = true;
                         if (subjNewName == "__#unclassified#__") {
-                            alert(this.lang == "fr" 
+                            alert(!this.langIsEn 
                                 ? "Ce nom n'est pas autorisé ! C'est le nom utilisé en interne pour les matières non-classifiées... Choisis-en un autre!" 
                                 : "This name isn't allowed! That's the name used internally for unclassified subjects... Choose another one!"
                             )
@@ -5880,7 +5956,7 @@ ecamDash = undefined;
                         else {
                             this.moduleConfig[sem][moduleName].subjects.forEach(_subj => {
                                 if (_subj == subjNewName && _subj != subjOldName) {
-                                    alert(this.lang == "fr" 
+                                    alert(!this.langIsEn 
                                         ? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
                                         : "This subject already exists! Please choose a different name"
                                     )
@@ -5898,7 +5974,7 @@ ecamDash = undefined;
                             this.moduleConfig[sem].__modules__.forEach(moduleName => {
                                 this.moduleConfig[sem][moduleName].subjects.forEach(_subj => {
                                     if (_subj == subjNewName && _subj != subjOldName) {
-                                        alert(this.lang == "fr" 
+                                        alert(!this.langIsEn 
                                             ? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
                                             : "This subject already exists! Please choose a different name"
                                         )
@@ -5949,17 +6025,18 @@ ecamDash = undefined;
                             const simTimeStamp  = realTarget.dataset.simtimestamp;
                             const gradeId       = realTarget.dataset.gradeid;
                             const ignoredKey    = [semX, subj, simTimeStamp || gradeId].join("\\");
-                            if (e.target.checked) {
+
+                            if (realTarget.checked) {
                                 // remove this specific ignored key if present
                                 this.disabledGrades = this.disabledGrades?.filter(id => id !== ignoredKey);
                             } else {
                                 // add ignored key if not already present
                                 if (!this.disabledGrades?.includes(ignoredKey)) this.disabledGrades.push(ignoredKey);
                             }
+
                             this.saveIgnoredGrades();
                             this.getGradesDatas();
                             // this.getGradesDatas({sem: semX, module: moduleName, subj});
-                            document.querySelector(".average-number").innerHTML = this.moyennePonderee(this.grades);
                             this.regenAveragesAndTotalCoefs(semX, moduleName, subj)
                         }
                     }
@@ -5974,11 +6051,11 @@ ecamDash = undefined;
                         const gradeInp  = document.querySelector(`.simulated-grade-input.sim-inp-grade[data-semester="${semX}"][data-subj="${subj}"]`);
                         const coefInp   = document.querySelector(`.simulated-grade-input.sim-inp-coef[data-semester="${ semX}"][data-subj="${subj}"]`);
                         const dateInp   = document.querySelector(`.simulated-grade-input.sim-inp-date[data-semester="${ semX}"][data-subj="${subj}"]`);
-                        const type      = typeInp?.value||`${this.lang=="fr"? 'Simulé' : "Simulated"}`;
+                        const type      = typeInp?.value||`${!this.langIsEn? 'Simulé' : "Simulated"}`;
                         const grade     = parseFloat(gradeInp?.value||'');
                         const coef      = parseFloat(coefInp?.value||'');
                         const date      = dateInp?.value||'';
-                        if(isNaN(grade) || isNaN(coef)){ alert(this.lang == "fr" ? "Note et coef requis" : "Grade and coef required"); return; }
+                        if(isNaN(grade) || isNaN(coef)){ alert(!this.langIsEn ? "Note et coef requis" : "Grade and coef required"); return; }
 
                         this.ensureSimPath(semX, moduleName, subj);
 
@@ -6029,7 +6106,7 @@ ecamDash = undefined;
                         const newGrade      = parseFloat(gradeInp?.value||'');
                         const newCoef       = parseFloat(coefInp?.value||'');
 
-                        if(isNaN(newGrade) || isNaN(newCoef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
+                        if(isNaN(newGrade) || isNaN(newCoef)){ alert(!this.langIsEn ? "Grade et coef requis" : "Grade and coef required"); return; }
                         this.sim[semX][moduleName][subj][id][modifType] = value;
 
                         this.saveSim();
@@ -6053,10 +6130,11 @@ ecamDash = undefined;
                         const moduleCard = document.querySelector(`.module-card[data-module="${moduleName}"]`);
                         const moduleIndex = moduleCard.dataset.index;
                         moduleCard.outerHTML = this.createModuleCard(semX, moduleName, moduleIndex, true);
-                        this.attachAllSubjectCardRelatedEventListenersForEverySubjectCard(moduleCard);
-                        this.regenAveragesAndTotalCoefs(moduleCard);
-                    }
 
+                        const newModuleCard = document.querySelector(`.module-card[data-module="${moduleName}"]`);
+                        this.attachAllSubjectCardRelatedEventListenersForEverySubjectCard(newModuleCard);
+                        this.regenAveragesAndTotalCoefs(newModuleCard);
+                    }
 
                 //#endregion
 
@@ -6208,7 +6286,16 @@ ecamDash = undefined;
 
 
                 // MARK: attach ondrag events
-                attachOnDragEventListeners(container=document.body, descendants=true) {   // Add ONDRAG cards event
+
+                /** Attach the ondrag event listeners to the children/whole descendance of the given container
+                 * 
+                 * @example this.attachAllCardsOnDragEventListeners(document.querySelector("#container"))
+                 * @example this.attachAllCardsOnDragEventListeners(document.querySelector("#container"), false)
+                 * 
+                 * @param {HTMLElement} [container=document] Default: document — The container of the HTML Elements to attach the ondrag event listeners to
+                 * @param {Boolean} [descendants=true] Default: true — If true, also attaches the ondrag event listeners to all the descendance of the container. Otherwise, attaches the ondrag event listeners only to the direct children of the container
+                 */
+                attachAllCardsOnDragEventListeners(container=document, descendants=true) {
                     if (container instanceof HTMLElement || container == document) {
 
                         if (container?.classList?.contains("module-card-content") || container?.classList?.contains("module-details") || container?.classList?.contains("subject-card")) {
@@ -6216,7 +6303,7 @@ ecamDash = undefined;
                                 this.attachSubjectCardOnDragEventListeners(subjectCard);
                             })
                         }
-                        else if (container?.classList?.contains("semester-content") || container?.classList?.contains("semester-grid") || container?.classList?.contains("modules-section") || container?.classList?.contains("semester-section") || container?.classList?.contains("module-card") || container == document.body) {
+                        else if (container?.classList?.contains("semester-content") || container?.classList?.contains("semester-grid") || container?.classList?.contains("modules-section") || container?.classList?.contains("semester-section") || container?.classList?.contains("module-card") || container == document.body|| container == document) {
                             (container?.classList?.contains("module-card") ? [container] : container.querySelectorAll(".module-card") || []).forEach(moduleCard => {
                                 this.attachModuleCardOnDragEventListeners(moduleCard);
                                 
@@ -6225,10 +6312,11 @@ ecamDash = undefined;
                                         this.attachSubjectCardOnDragEventListeners(subjectCard);
                                     })
                                     
-                                    container.querySelectorAll(`.subject-card.unclassified`).forEach(subjectCard => {
-                                        this.attachSubjectCardOnDragEventListeners(subjectCard);
-                                    })
                                 }
+                            })
+
+                            container.querySelectorAll(`.subject-card.unclassified`).forEach(subjectCard => {
+                                this.attachSubjectCardOnDragEventListeners(subjectCard);
                             })
                         }
 
@@ -6237,8 +6325,7 @@ ecamDash = undefined;
                     this.attachNotifBtnsListener();
                 }
                 attachSubjectCardOnDragEventListeners(subjectCard) {
-
-                    let draggableElement = subjectCard.querySelector(".subject-card-header");
+                    const draggableElement = subjectCard.querySelector(".subject-card-header");
                     
                     draggableElement.draggable = true;
 
@@ -6247,7 +6334,7 @@ ecamDash = undefined;
 
                 }
                 attachModuleCardOnDragEventListeners(moduleCard) {
-                    const moduleHeader = moduleCard.querySelector(".module-header");
+                    const moduleHeader = moduleCard.querySelector(".module-card-header");
                     moduleHeader.draggable = true;
                     moduleHeader.ondragstart = (e) => {this.draggedElementOnDragStartAction(e, moduleCard)}
                     moduleHeader.ondragend   = (e) => {this.draggedElementOnDragEndAction(  e, moduleCard)}
@@ -6255,23 +6342,60 @@ ecamDash = undefined;
 
 
                 // MARK: detach ondrag events
-                detachOnDragEventListeners() {   // Remove ONDRAG cards event
-                    document.querySelectorAll(".subject-card").forEach(subjectCard => {
-                        let draggableElement = "";
-                        const isCompact = subjectCard.classList.contains("compact");
-                        if (isCompact) {draggableElement = subjectCard;}
-                        else {draggableElement = subjectCard.querySelector(".subject-card-header");}
+
+                /** Detach the ondrag event listeners from the children/whole descendance of the given container
+                 * 
+                 * @example this.detachAllCardsOnDragEventListeners(document.querySelector("#container"))
+                 * @example this.detachAllCardsOnDragEventListeners(document.querySelector("#container"), false)
+                 * 
+                 * @param {HTMLElement} [container=document] Default: document — The container of the HTML Elements to attach the ondrag event listeners to
+                 * @param {Boolean} [descendants=true] Default: true — If true, also attaches the ondrag event listeners to all the descendance of the container. Otherwise, attaches the ondrag event listeners only to the direct children of the container
+                 */
+                detachAllCardsOnDragEventListeners(container=document, descendants=true) {
+                    if (container instanceof HTMLElement || container == document) {
+
+                        if (container?.classList?.contains("module-card-content") || container?.classList?.contains("module-details") || container?.classList?.contains("subject-card")) {
+                            (container?.classList?.contains("subject-card") ? [container] : container.querySelectorAll(".subject-card") || []).forEach(subjectCard => {
+                                this.detachSubjectCardOnDragEventListeners(subjectCard);
+                            })
+                        }
+                        else if (container?.classList?.contains("semester-content") || container?.classList?.contains("semester-grid") || container?.classList?.contains("modules-section") || container?.classList?.contains("semester-section") || container?.classList?.contains("module-card") || container == document.body|| container == document) {
+                            (container?.classList?.contains("module-card") ? [container] : container.querySelectorAll(".module-card") || []).forEach(moduleCard => {
+                                this.detachModuleCardOnDragEventListeners(moduleCard);
+                                
+                                if (descendants) {
+                                    moduleCard.querySelectorAll(`.subject-card`).forEach(subjectCard => {
+                                        this.detachSubjectCardOnDragEventListeners(subjectCard);
+                                    })
+                                    
+                                }
+                            })
+
+                            container.querySelectorAll(`.subject-card.unclassified`).forEach(subjectCard => {
+                                this.detachSubjectCardOnDragEventListeners(subjectCard);
+                            })
+                        }
+
+                    }
+                }
+
+                detachModuleCardOnDragEventListeners(moduleCard) {
+                    if (moduleCard?.classList?.contains("module-card")) {
+                        const draggableElement = moduleCard.querySelector(".module-card-header");
                         
                         draggableElement.draggable   = false;
                         draggableElement.ondragstart = null;
                         draggableElement.ondragend   = null;
-                    })
-
-                    document.querySelectorAll(".module-header").forEach(moduleHeader => {
-                        moduleHeader.draggable   = false;
-                        moduleHeader.ondragstart = null;
-                        moduleHeader.ondragend   = null;
-                    })
+                    }
+                }
+                detachSubjectCardOnDragEventListeners(subjectCard) {
+                    if (subjectCard?.classList?.contains("subject-card")) {
+                        const draggableElement = subjectCard.querySelector(".subject-card-header");
+                        
+                        draggableElement.draggable   = false;
+                        draggableElement.ondragstart = null;
+                        draggableElement.ondragend   = null;
+                    }
                 }
 
 
@@ -6505,7 +6629,7 @@ ecamDash = undefined;
                         (draggedCardIsSelected ? this.selectedModuleCardsId : [card.id]).forEach(moduleCardId => {
                             const moduleCard            = document.getElementById(moduleCardId);
                             const moduleTotalCoef       = moduleCard.querySelector(".module-subject-total-coef-div");
-                            const moduleHeaderLeftSize  = moduleCard.querySelector(".module-header-left-side");
+                            const moduleHeaderLeftSize  = moduleCard.querySelector(".module-card-header-left-side");
 
                             moduleCard.style.width = "50%";
                             moduleTotalCoef.style.display = "none"; 
@@ -6619,7 +6743,7 @@ ecamDash = undefined;
                         (draggedCardIsSelected ? this.selectedModuleCardsId : [card.id]).forEach(moduleCardId => {
                             const moduleCard            = document.getElementById(moduleCardId);
                             const moduleTotalCoef       = moduleCard.querySelector(".module-subject-total-coef-div");
-                            const moduleHeaderLeftSize  = moduleCard.querySelector(".module-header-left-side");
+                            const moduleHeaderLeftSize  = moduleCard.querySelector(".module-card-header-left-side");
 
                             if (moduleCard) {
                                 moduleCard.style.width = "";
@@ -6689,7 +6813,7 @@ ecamDash = undefined;
                     selectionNotifDiv.innerHTML = `
                         <div class="selected-card-notif-div-scroll-btn" id="selected-card-notif-div-del-btn-for-${target}-from-semester-${semester}" data-targetId="${targetId}">\></div>
                         <span style="font-weight: 600; font-size: 14px; color: white">${target}${!isSubject ? ` Module` : ""}</span>
-                        <span>${this.lang == "fr" ? `est sélectionné!` : `is selected!`}</span>
+                        <span>${!this.langIsEn ? `est sélectionné!` : `is selected!`}</span>
                         <div class="selected-card-notif-div-del-btn" id="selected-card-notif-div-del-btn-for-${target}-from-semester-${semester}" data-targetId="${targetId}">x</div>
                     `;
 
@@ -6789,7 +6913,7 @@ ecamDash = undefined;
 
 
 
-            //#region -— Drop fields actions  ________________
+            //#region -— Drop fields  _________________________
 
 
 
@@ -7111,7 +7235,7 @@ ecamDash = undefined;
                         }
                     }
                     else {
-                        const newSubjName = this.lang == "fr" ? "Nouvelle matière" : "New subject";
+                        const newSubjName = !this.langIsEn ? "Nouvelle matière" : "New subject";
                         newModuleConfig.subjects.push(newSubjName);
                         newModuleConfig.coefficients[newSubjName] = 100;
                     }
@@ -7363,9 +7487,9 @@ ecamDash = undefined;
                         const moduleCard = document.getElementById(`module-card-${module}-in-semester-${sem}`);
                         const moduleDetails = moduleCard.querySelector(".module-details");
 
-                        let newSubjName = `${this.lang == "fr" ? "Nouvelle matière" : "New subject"} 1`; let count = 1;
+                        let newSubjName = `${!this.langIsEn ? "Nouvelle matière" : "New subject"} 1`; let count = 1;
                         while (this.gradesDatas[sem][module].subjects[newSubjName]) {
-                            count++; newSubjName = `${this.lang == "fr" ? "Nouvelle matière" : "New subject"} ${count}`;
+                            count++; newSubjName = `${!this.langIsEn ? "Nouvelle matière" : "New subject"} ${count}`;
                         }
 
                         const insertionIndex = methodCaller ? methodCaller.dataset.index : this.moduleConfig[sem][module].subjects.length;
@@ -7446,10 +7570,10 @@ ecamDash = undefined;
                 const importClear   = importMenu.querySelector(".import-menu-btn.clear");
                 const importOnline  = importMenu.querySelector(".import-menu-btn.online");
 
-                importFile.children[0].innerHTML   = this.lang == "fr" ? "Importer fichier de configuration .json"   : "Import a .json configuration file";
-                importClear.innerHTML = this.lang == "fr" ? "Effacer Config"   : "Clear Config";
-                importClear.title     = this.lang == "fr" ? "Clique ici pour effacer ta configuration actuelle" : "Click here to clear your current configuration";
-                importOnline.children[1].innerHTML = this.lang == "fr" ? "Obtenir fichier de configuration en ligne" : "Get a configuration file online";
+                importFile.children[0].innerHTML   = !this.langIsEn ? "Importer fichier de configuration .json"   : "Import a .json configuration file";
+                importClear.innerHTML = !this.langIsEn ? "Effacer Config"   : "Clear Config";
+                importClear.title     = !this.langIsEn ? "Clique ici pour effacer ta configuration actuelle" : "Click here to clear your current configuration";
+                importOnline.children[1].innerHTML = !this.langIsEn ? "Obtenir fichier de configuration en ligne" : "Get a configuration file online";
                 
                 if (!importMenu.classList.contains("show") || open == true) {
                     clearTimeout(this.timeouts?.closeImportMenu);
@@ -7495,7 +7619,7 @@ ecamDash = undefined;
 
                 pickerMenuContainer.innerHTML = `
                     <div class="online-cfg-picker-menu modal${this.settings.blurEnabled.value ? " blur" : ""}" id="pickerMenu">
-                        <div class="online-cfg-picker-menu-header jura">${this.lang == "fr" 
+                        <div class="online-cfg-picker-menu-header jura">${!this.langIsEn 
                             ? "Note: Choisir une configuration effacera les traces de configuration pré-existante de l'année correspondante, mais pas des autres années" 
                             : "Tip: Choosing a configuration will erase all traces of pre-existing configuration of the corresponding year, but not of the other years"
                         }</div>
@@ -7517,7 +7641,7 @@ ecamDash = undefined;
                         this.createTipNotif(
                             document.querySelector("#pickerMenu"),
                             ".online-cfg-picker-menu-dir-card.config",
-                            this.lang == "fr" ? "Navigue dans le menu pour trouver la configuration qui correspond à ta section → année → promo [→ fillière, si besoin] actuelle" : "Navigate through the menu to find the configuration that corresponds to your current section → year → prom [→ pathway, if needed]", 
+                            !this.langIsEn ? "Navigue dans le menu pour trouver la configuration qui correspond à ta section → année → promo [→ fillière, si besoin] actuelle" : "Navigate through the menu to find the configuration that corresponds to your current section → year → prom [→ pathway, if needed]", 
                             {
                                 nextAction: callback, 
                                 nextActionDelay: 550, 
@@ -7533,7 +7657,7 @@ ecamDash = undefined;
                         this.createTipNotif(
                             document.body,
                             ".tuto-tip-notif-container",
-                            this.lang == "fr" 
+                            !this.langIsEn 
                                 ? `Ta configuration est chargée ! Tu peux filtrer l'affichage des notes par semestres en sélectionnant le semestre désiré dans la barre de filtre.
                                 Tu peux également refaire la manipulation pour obtenir la configuration des années précédentes si elles sont disponibles.
                                 <div>[ Clique pour fermer le tuto ]</div>`
@@ -7642,7 +7766,7 @@ ecamDash = undefined;
 
                 let html = type == "section" ? `
                 <div class="online-cfg-picker-menu-dir-tree ${type} show" data-path="${sectionsData.path}">
-                    <div class="online-cfg-picker-menu-dir-tree-header ${type} ${this.lang == "fr" ? "fr" : "en"}"></div>
+                    <div class="online-cfg-picker-menu-dir-tree-header ${type} ${this.lang}"></div>
                     <div class="online-cfg-picker-menu-dir-tree-nb-cfgs jura">${sectionsData.nbCfgs} config${sectionsData.nbCfgs>1?"s":""}</div>
                     <div class="online-cfg-picker-menu-dir-tree-body">
                 ` : "";
@@ -7656,7 +7780,7 @@ ecamDash = undefined;
                     
                     let out = type == "year" ? `
                     <div class="online-cfg-picker-menu-dir-tree ${type}" data-path="${sectionDirData.path}">
-                        <div class="online-cfg-picker-menu-dir-tree-header ${type} ${this.lang == "fr" ? "fr" : "en"}"></div>
+                        <div class="online-cfg-picker-menu-dir-tree-header ${type} ${this.lang}"></div>
                         <div class="online-cfg-picker-menu-dir-tree-nb-cfgs jura">${sectionDirData.nbCfgs} config${sectionDirData.nbCfgs>1?"s":""}</div>
                         <div class="online-cfg-picker-menu-dir-tree-body">
                     ` : "";
@@ -7671,7 +7795,7 @@ ecamDash = undefined;
                         const name = yearDirData.path.split("/").at(-1);
                         let out = type == "prom" ? `
                         <div class="online-cfg-picker-menu-dir-tree ${type}" data-path="${yearDirData.path}">
-                            <div class="online-cfg-picker-menu-dir-tree-header ${type} ${this.lang == "fr" ? "fr" : "en"}"></div>
+                            <div class="online-cfg-picker-menu-dir-tree-header ${type} ${this.lang}"></div>
                             <div class="online-cfg-picker-menu-dir-tree-nb-cfgs jura">${yearDirData.nbCfgs} config${yearDirData.nbCfgs>1?"s":""}</div>
                             <div class="online-cfg-picker-menu-dir-tree-body">
                         ` : "";
@@ -7687,7 +7811,7 @@ ecamDash = undefined;
                             this.tempGitConfigParentDirData = promDirData;
                             let out = type == "config" ? `
                             <div class="online-cfg-picker-menu-dir-tree ${type}" data-path="${promDirData.path}">
-                                <div class="online-cfg-picker-menu-dir-tree-header ${type} ${this.lang == "fr" ? "fr" : "en"}"></div>
+                                <div class="online-cfg-picker-menu-dir-tree-header ${type} ${this.lang}"></div>
                                 <div class="online-cfg-picker-menu-dir-tree-nb-cfgs jura">${promDirData.nbCfgs} config${promDirData.nbCfgs>1?"s":""}</div>
                                 <div class="online-cfg-picker-menu-dir-tree-body">
                             ` : "";
@@ -7749,7 +7873,7 @@ ecamDash = undefined;
 
                             // If parsed contains moduleConfig, apply it to the dashboard and persist
                             if (parsed?.version != this.configVersion) {
-                                alert(this.lang == "fr" 
+                                alert(!this.langIsEn 
                                     ? `Ce fichier de configuration n'est pas de la bonne version ! Assure-toi de télécharger la dernière version ! (Ce fichier est de version "${parsed?.version}", alors qmodule la version de fichier attendmodule est "${this.configVersion}")`
                                     : `This configuration file isn't of the right version! Make sure you download the latest version! (This file's version is "${parsed?.version}", whereas the file's version expected is "${this.configVersion}")`
                                 )
@@ -7770,7 +7894,7 @@ ecamDash = undefined;
                             }
                             else {
                                 console.log(parsed);
-                                alert(this.lang == "fr" 
+                                alert(!this.langIsEn 
                                     ? `Ce fichier de configuration est invalide ! Je ne trouve pas les données attendmodules !`
                                     : `This configuration file is invalid! I don't find the expected datas!`
                                 )
@@ -7912,10 +8036,11 @@ ecamDash = undefined;
                     }
                     else if (this.keyInputMatch(e, "L", shiftRequired)) {
                         
-                        this.lang = this.lang == "fr" ? "en" : "fr";
+                        this.langIsEn = !this.langIsEn;
+                        this.lang     = this.langIsEn ? "en" : "fr";
                         localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
 
-                        if (this.lang == "fr") {
+                        if (!this.langIsEn) {
                             document.getElementById('fr-lang-btn').classList.add('active')
                             document.getElementById('en-lang-btn').classList.remove('active')
                         }
@@ -7928,7 +8053,7 @@ ecamDash = undefined;
                         this.generateContent({fadeIn: false});
                     }
                     else if (this.keyInputMatch(e, "F", shiftRequired)) {
-                        const className = "module-header", timeout = 210, highestElemInPageHandleType = "last above", smooth = true;
+                        const className = "module-card-header", timeout = 210, highestElemInPageHandleType = "last above", smooth = true;
 
                         if (this.foldedModuleCardsId.length == 0) {
                             this.scrollToClientHighestElem("first", {className, timeout, highestElemInPageHandleType, smooth, block: "center"});
@@ -7960,7 +8085,7 @@ ecamDash = undefined;
 
                         this.saveSemesterFilter();
                         this.removeCardFromSelection();
-                        this.generateContent({fadeIn: false});
+                        this.generateContent({fadeIn: false, manageIndividualSubjectCardFolding: false});
                     }
                 };
             }
