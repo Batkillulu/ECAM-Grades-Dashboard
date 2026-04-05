@@ -634,10 +634,10 @@ ecamDash = undefined;
                 .semester-header:hover  { background: #f3f4f6; }
                 .semester-info              { display: flex; align-items: center; gap: 12px; }
                 .semester-name              { font-size: 24px; font-weight: 600; color: #1a1a1a; }
-                .semester-average           { padding: 6px 12px; background: white; border-radius: 8px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
-                .average-good                   { color: #10b981; border: 1px solid #10b98130; }
-                .average-medium                 { color: #f59e0b; border: 1px solid #f59e0b30; }
-                .average-bad                    { color: #ef4444; border: 1px solid #ef444430; }
+                .semester-averages          { display: flex; align-items: baseline; gap: 6px; padding: 6px 12px; background: white; border: 1px solid #575757; border-radius: 8px; font-size: 19px; font-weight: 600; transition: all 0.2s ease; }
+                .semester-averages.good         { color: #10b981; border-color: #10b98130; }
+                .semester-averages.bad          { color: #ef4444; border-color: #ef444430; }
+
                 .semester-toggle                { display: flex; justify-content: center; align-items: center; width: 24px; height: 24px; font-size: 18px; transition: transform 0.3s ease; }
                 .semester-toggle.open           { transform: rotate(180deg); }
 
@@ -681,7 +681,7 @@ ecamDash = undefined;
                 .module-card-header:hover            { filter: brightness(calc(0.01 * 105)); opacity: 90%; }
                 .module-delete-btn                  { border-radius: 14px; background: transparent; margin: 0; text-transform: none; -webkit-appearance: button; font: 1em Arial,Helvetica,Verdana,sans-serif; width: auto; padding: 5px; overflow: visible; cursor: pointer; color: #34404F; text-shadow: none; font-weight: normal; border: 3px solid; border-color: white; transition: all 0.2s ease; } 
 
-                .module-card-header-left-side        { display: flex; align-items: center; justify-content: flex-start; width: 70%; }
+                .module-card-header-left-side        { display: flex; align-items: center; justify-content: flex-start; width: 35%; }
                 .module-title                    { font-size: 20px; font-weight: 800; color: #1a1a1a; width:42%; margin-bottom: 2px; }
                 .module-title.input              { font-size: 20px; font-weight: 800; color: #1a1a1a; width:90%; border-radius: 12px; padding-left: 10px; }
 
@@ -701,14 +701,18 @@ ecamDash = undefined;
                 .module-info-clear.disabled         {  }
                 .module-info-clear.sim              {  }
 
+                .module-card-header-right-side  { display: flex; justify-content: flex-end; align-items: center; width: 20%; gap: 6px; font-size: 19px; font-weight: 600; }
+                .module-class-average               { display: flex; justify-content: flex-end; align-items: center; width: 80px; font-size: 17px; }
+                .module-average                     { display: flex; justify-content: flex-end; align-items: center; font-size: 26px; font-weight: 800; }
+                .module-average.good                { color: #10b981; }
+                .module-average.bad                 { color: #ef4444; }
+                .module-average.unknown             { color: #6d6d6dff; }
+                .module-toggle                      { display: flex; justify-content: center; align-items: center; width: 24px; height: 24px; line-height: 1px; margin-left: 5px; font-size: 18px; color: #000000; transition: transform 0.3s ease; }
+                .module-toggle.open                 { transform: rotate(180deg); }
+
+
                 .module-details                     { display: flex; flex-direction: column; align-items: center; width: 97%; gap: 30px; opacity: 100%; transition: all 0.2s ease; }
                 .module-details.edit-mode           { gap: 0px; }
-                .module-moyenne                     { display: flex; align-items: center; justify-content: flex-end; font-size: 26px; font-weight: 800; gap:10px; width: 220px; }
-                .module-moyenne.good                { color: #10b981; }
-                .module-moyenne.bad                 { color: #ef4444; }
-                .module-moyenne.unknown             { color: #6d6d6dff; }
-                .module-toggle                      { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; margin-left: 5px; font-size: 18px; color: #000000; transition: transform 0.3s ease; }
-                .module-toggle.open                 { transform: rotate(180deg); }
 
             `;
                 
@@ -751,7 +755,7 @@ ecamDash = undefined;
                     .subject-card-header.unknown    { background: linear-gradient(300deg, #b8b8b8 30%, transparent); }
 
                     .subject-card-header-left-side          { display: flex; justify-content: flex-start; align-items: center; gap: 8px; width: 50%; height: 100%; text-wrap-mode: nowrap; }
-                    .subject-card-header-left-side-text     { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 8px; padding-left: 42px; width: 95%; height: 100%; text-wrap-mode: nowrap; }
+                    .subject-card-header-left-side-text     { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 8px; padding-left: 20px; width: 95%; height: 100%; text-wrap-mode: nowrap; }
                     .subject-card-header-left-side-text.edit    { padding-left: 0; }
                     .subject-card-header-grades-details         { opacity: 0%; transition: all 0.2s ease; }
                     .subject-card-header-grades-details.show    { opacity: 100%; }
@@ -765,10 +769,10 @@ ecamDash = undefined;
                     .subject-insert-field                           { display: flex: flex-direction: column; align-items: center; height: 0px; width: 100%; margin: 0px 0px; transition: height 0.2s ease, margin 0.2s ease; }
                     .subject-insert-field.show                      { height: 50px; margin: 10px 0px; }
                     
-                    .subject-card-header-right-side    { display: flex; justify-content: flex-end; align-items: center; width: 0; height: 100%; text-wrap-mode: nowrap; }
-                    .subj-moyenne           { display: flex; justify-content: flex-end; width: 0; padding-right: 20px; font-size: 24px; font-weight: 800; text-wrap-mode: nowrap; transition: all 0.2s ease; }
-                    .subj-moyenne.good      { color: #10b981; }
-                    .subj-moyenne.bad       { color: #ef4444; }
+                    .subject-card-header-right-side    { display: flex; justify-content: flex-end; align-items: center; width: 0; height: 100%; gap: 4px; font-size: 17px; text-wrap-mode: nowrap; }
+                    .subj-average           { display: flex; justify-content: flex-end; padding-right: 20px; font-size: 24px; font-weight: 800; text-wrap-mode: nowrap; transition: all 0.2s ease; }
+                    .subj-average.good      { color: #10b981; }
+                    .subj-average.bad       { color: #ef4444; }
                     .subject-delete-btn     { border-radius: 14px; background: transparent; margin: 0; text-transform: none; -webkit-appearance: button; font: 1em Arial,Helvetica,Verdana,sans-serif; width: auto; padding: 5px; overflow: visible; cursor: pointer; color: #34404F; text-shadow: none; font-weight: normal; border: 3px solid; border-color: white; transition: all 0.2s ease; } 
 
 
@@ -842,7 +846,7 @@ ecamDash = undefined;
 
                     .subject-sim-del-btn        { border: 1px solid #A7CEDF; border-radius: 6px; cursor: pointer; }
                     .sim-add-btn                { display: flex; align-items: center; justify-content: center; height: 25px; width: 67px; max-width: 140px; padding: 6px 10px; border: 1px solid; border-radius: 15px; user-select: none; }
-                    .simulated-grade-input         { border-radius: 10px; border-color: #667eea; padding: 2px 10px}
+                    .simulated-grade-input         { border-radius: 10px; border: 1px outset #667eea; padding: 2px 10px}
                     .simulated-grade-input.sim-inp-type    { width: 55%;  max-width:250px; height:25px }
                     .simulated-grade-input.sim-inp-grade    { width: 100%; max-width:75px;  height:25px }
                     .simulated-grade-input.sim-inp-coef    { width: 100%; max-width:60px;  height:25px }
@@ -870,16 +874,17 @@ ecamDash = undefined;
                     .tick-icon:hover    { color: #89adff; }
                 `;
             
+
+                // MARK: .................................................................
             //#endregion
             
-            // MARK: .................................................................
 
 
 
 
             
+            // MARK: _________________________________________
         //#endregion
-        // MARK: _________________________________________
             
 
             
@@ -1040,23 +1045,26 @@ ecamDash = undefined;
             //#region Settings
 
                 this.settings = {
-                    blurEnabled: {
+
+                    displayClassAvg: {
                         name: () => !this.langIsEn 
-                            ? "Activer le flou" 
-                            : "Enable blur"
+                            ? "Moyenne de classe de modules et matières" 
+                            : "Class average for modules and subjects"
                         ,
                         description: () => !this.langIsEn 
-                            ? "Activer le flou qui s'opère sur le fond des fenêtres (activé par défaut parce que je trouve ça joli :D)" 
-                            : "Enable the blur that operates on the background of the windows (turned on by default because I find it nice :D)"
+                            ? "Afficher les moyennes de classe pour les matières, modules et semestres, pour les étudiants avec un esprit de compétition :D" 
+                            : "Display the class averages for subjects, modules and semesters, for students with high competitive spirit :D"
                         ,
                         info: () => !this.langIsEn 
-                            ? "Non recommendé pour les appareils à basses performances" 
-                            : "Not recommended for low-end devices"
+                            ? "" 
+                            : ""
                         ,
-                        value: JSON.parse( JSON.parse(localStorage.getItem("ECAM_DASHBOARD_SETTINGS"))?.blurEnabled?.value?.toString() || "true"),
+                        value: JSON.parse( JSON.parse(localStorage.getItem("ECAM_DASHBOARD_SETTINGS"))?.displayClassAvg?.value?.toString() || "true"),
                         action: () => {
-                            document.querySelectorAll(".modal, .loading-symbol").forEach(elem => {if (this.settings.blurEnabled.value) {elem.classList.add("blur")} else {elem.classList.remove("blur")}});
-                            this.saveSettings();
+                            document.querySelectorAll(".semester-class-average, .semester-class-average-vs-average, .module-class-average, .module-class-average-vs-average, .subj-class-average,  .subj-class-average-vs-average").forEach(elem => {
+                                elem.style.display = this.settings.displayClassAvg.value ? "" : "none";
+                            })
+                            this.saveSettings(); 
                         },
                         parents:  [],
                         children: [],
@@ -1102,7 +1110,29 @@ ecamDash = undefined;
                             document.querySelectorAll(".module-subject-total-coef-debug, .subject-total-coef-debug").forEach(elem => {if (this.settings.totalCoefDebugTextsEnabled.value) {elem.style.display = "";} else {elem.style.display = "none";}});
                             this.saveSettings();
                         },
-                        parents: [],
+                        parents:  [],
+                        children: [],
+                    },
+
+                    blurEnabled: {
+                        name: () => !this.langIsEn 
+                            ? "Activer le flou" 
+                            : "Enable blur"
+                        ,
+                        description: () => !this.langIsEn 
+                            ? "Activer le flou qui s'opère sur le fond des fenêtres (activé par défaut parce que je trouve ça joli :D)" 
+                            : "Enable the blur that operates on the background of the windows (turned on by default because I find it nice :D)"
+                        ,
+                        info: () => !this.langIsEn 
+                            ? "Non recommendé pour les appareils à basses performances" 
+                            : "Not recommended for low-end devices"
+                        ,
+                        value: JSON.parse( JSON.parse(localStorage.getItem("ECAM_DASHBOARD_SETTINGS"))?.blurEnabled?.value?.toString() || "true"),
+                        action: () => {
+                            document.querySelectorAll(".modal, .loading-symbol").forEach(elem => {if (this.settings.blurEnabled.value) {elem.classList.add("blur")} else {elem.classList.remove("blur")}});
+                            this.saveSettings();
+                        },
+                        parents:  [],
                         children: [],
                     },
 
@@ -1121,7 +1151,7 @@ ecamDash = undefined;
                         ,
                         value: JSON.parse( JSON.parse(localStorage.getItem("ECAM_DASHBOARD_SETTINGS"))?.scrollHelpersEnabled?.value?.toString() || "true"),
                         action: () => { this.saveSettings(); },
-                        parents: [],
+                        parents:  [],
                         children: [],
                     },
                 };
@@ -1702,12 +1732,12 @@ ecamDash = undefined;
                         this.timeouts.releaseElementHeight[elem.id] = setTimeout(() => {
                             clearTimeout(this?.timeouts?.holdElementHeight);
     
-                            elem.style.height = ``;
+                            elem.style.height = "";
                             delete this.timeouts.releaseElementHeight[elem.id];
                         }, timeout);
                     }
                     else {
-                        elem.style.height = ``;
+                        elem.style.height = "";
                     }
                 }
 
@@ -1802,7 +1832,7 @@ ecamDash = undefined;
 
             //#region Module methods
 
-                getAllSubjectsForModule(sem, moduleName){
+                getAllSubjectsForModule(sem, moduleName="__#unclassified#__"){
                     const real = this.moduleConfig?.[sem]?.[moduleName]?.subjects || [];
                     const simOnly = Object.keys(((this.sim[sem]||{})[moduleName]||{}));
                     return Array.from(new Set([...real, ...simOnly]));
@@ -1846,13 +1876,17 @@ ecamDash = undefined;
             
                 getModuleStats() {
                     let validated = 0, total = 0;
+
                     Object.keys(this.moduleConfig).forEach(sem => {
                         Object.keys(this.moduleConfig[sem]).forEach(moduleName => {
-                            const moduleGrades = this.calculateModuleGrades(sem, moduleName);
-                            const moyenne = this.moyennePonderee(moduleGrades);
-                            if (moyenne != 0 && moduleGrades.length > 0) total++; if (moyenne >= 10) validated++;
+                            const nbGrades = this.gradesDatas[sem]?.[moduleName]?.nbGrades;
+                            const average = this.gradesDatas[sem]?.[moduleName]?.average;
+
+                            if (average != 0 && nbGrades > 0) total++; 
+                            if (average >= 10) validated++;
                         });
                     });
+                    
                     return { validated, total };
                 }
 
@@ -2096,31 +2130,80 @@ ecamDash = undefined;
 
                 // MARK: getGradesDatas
                 getGradesDatas({sem=undefined, module=undefined, subj=undefined}={sem: undefined, module: undefined, subj: undefined}) {
+
+                    
+                    
+                    // MARK: semester section
                     // FOR EACH SEMESTER
                     (sem && this.moduleConfig?.[sem] ? [sem] : Object.keys(this.semesters)).forEach((semX) => {
-                        this.gradesDatas[semX] = {
-                            "__#unclassified#__": {subjects: {}}
-                        };
+                        
+                        this.gradesDatas[semX] = {"__#unclassified#__": {}};
                         let semData = this.gradesDatas[semX];
+                        semData.average                     = 0;
+                        semData.classAvg                    = 0;
+                        semData.nbModules                   = 0;
+                        semData.nbSubjects                  = 0;
+                        semData.nbUnclassifiedSubjects      = 0;
+                        semData.modulesNoGrade              = [];
+                        semData.modulesNoEnabledGrade       = [];
+                        semData.totalCoefGrades             = 0;
+                        semData.totalCoefRealGrades         = 0;
+                        semData.totalCoefSimGrades          = 0;
+                        semData.totalCoefEnabledGrades      = 0;
+                        semData.totalCoefEnabledRealGrades  = 0;
+                        semData.totalCoefEnabledSimGrades   = 0;
 
                         
-                        // FOR EACH UNCLASSIFIED SUBJECT IN SEMESTER
+                        // MARK: Unclassified section
+                        // If there are unclassified subjects
                         const unclassified = this.getUnclassifiedSubjects(semX);
+                        let unclassifiedData = semData["__#unclassified#__"];
+
+                        unclassifiedData.moduleName                     = "__#unclassified#__";
+                        unclassifiedData.subjects                       = {};
+                        unclassifiedData.average                        = 0;
+                        unclassifiedData.classAvg                       = 0;
+                        unclassifiedData.nbGrades                       = 0;
+                        unclassifiedData.grades                         = [];
+                        unclassifiedData.simGrades                      = [];
+                        unclassifiedData.disabledRealGrades             = [];
+                        unclassifiedData.disabledSimGrades              = [];
+                        unclassifiedData.subjectsBelow100               = [];
+                        unclassifiedData.subjectsOver100                = [];
+                        unclassifiedData.subjectsReallyBelow100         = [];
+                        unclassifiedData.subjectsReallyOver100          = [];
+                        unclassifiedData.subjectsNoGrade                = [];
+                        unclassifiedData.subjectsNoEnabledGrade         = [];
+                        unclassifiedData.totalCoefGrades                = 0;
+                        unclassifiedData.totalCoefRealGrades            = 0;
+                        unclassifiedData.totalCoefSimGrades             = 0;
+                        unclassifiedData.totalCoefEnabledGrades         = 0;
+                        unclassifiedData.totalCoefEnabledRealGrades     = 0;
+                        unclassifiedData.totalCoefEnabledSimGrades      = 0;
+
                         if (unclassified.length > 0) {
+                            ++semData.nbModules;
+
+                            // MARK: Unclassified subjects
+                            // FOR EACH UNCLASSIFIED SUBJECT IN SEMESTER
                             (subj && unclassified.includes(subj) ? [subj] : unclassified).forEach(unclassifiedSubjectName => {
 
-                                semData["__#unclassified#__"].subjects[unclassifiedSubjectName] = {};
+                                ++semData.nbSubjects;
+                                ++semData.nbUnclassifiedSubjects;
+
+                                unclassifiedData.subjects[unclassifiedSubjectName] = {};
                                 const realGrades = Array(...(this.semesters[semX]||{})[unclassifiedSubjectName])||[];
                                 const simGrades = this.sim?.[semX]?.["__#unclassified#__"]?.[unclassifiedSubjectName] || [];
 
-                                let unclassifiedSubjectData = semData["__#unclassified#__"].subjects[unclassifiedSubjectName];
+                                let unclassifiedSubjectData = unclassifiedData.subjects[unclassifiedSubjectName];
+
                                 
                                 unclassifiedSubjectData.subjName                    = unclassifiedSubjectName;
-                                unclassifiedSubjectData.grades                      = (realGrades).concat(simGrades);
                                 unclassifiedSubjectData.average                     = 0;
                                 unclassifiedSubjectData.classAvg                    = 0;
-                                unclassifiedSubjectData.disabledRealGrades          = [];
+                                unclassifiedSubjectData.grades                      = (realGrades).concat(simGrades);
                                 unclassifiedSubjectData.simGrades                   = simGrades;
+                                unclassifiedSubjectData.disabledRealGrades          = [];
                                 unclassifiedSubjectData.disabledSimGrades           = [];
                                 unclassifiedSubjectData.totalCoefGrades             = 0;
                                 unclassifiedSubjectData.totalCoefRealGrades         = 0;
@@ -2131,66 +2214,134 @@ ecamDash = undefined;
 
 
 
+                                // MARK: Unclassified grades
                                 // FOR EACH GRADES AND SIM GRADES IN UNCLASSIFIED SUBJECT
                                 (unclassifiedSubjectData.grades).forEach(grade => {
-                                    const gradeValue = parseFloat(grade.grade),
-                                        classAvg = parseFloat(grade.classAvg),
-                                        coef = parseInt(grade.coef)
+                                    
+                                    const 
+                                        gradeValue = parseFloat(grade.grade),
+                                        classAvg   = parseFloat(grade.classAvg),
+                                        coef       = parseInt(grade.coef)
                                     ;
 
                                     unclassifiedSubjectData.totalCoefGrades += grade.coef;
+                                    ++unclassifiedData.nbGrades
 
                                     switch (`${this.gradeIsDisabled(grade) ? "disabled" : "enabled"} ${grade.__sim ? "sim" : "real"} grade`) {
                                         case `enabled real grade`:
                                             unclassifiedSubjectData.average                     += gradeValue*coef/100;
                                             unclassifiedSubjectData.classAvg                    += classAvg*coef/100;
-                                            unclassifiedSubjectData.totalCoefRealGrades         += coef;
 
+                                            unclassifiedSubjectData.totalCoefRealGrades         += coef;
                                             unclassifiedSubjectData.totalCoefEnabledGrades      += coef;
                                             unclassifiedSubjectData.totalCoefEnabledRealGrades  += coef;
                                         break;
 
                                         case `disabled real grade`:
-                                            unclassifiedSubjectData.classAvg                    += classAvg*coef/100;
                                             unclassifiedSubjectData.totalCoefRealGrades         += coef;
-
                                             unclassifiedSubjectData.disabledRealGrades.push(grade);
+                                            
                                         break;
 
                                         case `enabled sim grade`:
                                             unclassifiedSubjectData.average                     += gradeValue*coef/100;
-                                            unclassifiedSubjectData.totalCoefSimGrades          += coef;
 
+                                            unclassifiedSubjectData.totalCoefSimGrades          += coef;
                                             unclassifiedSubjectData.totalCoefEnabledGrades      += coef;
                                             unclassifiedSubjectData.totalCoefEnabledSimGrades   += coef;
                                         break;
 
                                         case `disabled sim grade`:
                                             unclassifiedSubjectData.totalCoefSimGrades          += coef;
-
                                             unclassifiedSubjectData.disabledSimGrades.push(grade);
                                         break;
                                     }                                
                                 })
 
-                                
-                                unclassifiedSubjectData.average                     = Math.round(100*unclassifiedSubjectData.average /(unclassifiedSubjectData.totalCoefEnabledGrades/100))/100;
-                                unclassifiedSubjectData.classAvg                    = Math.round(100*unclassifiedSubjectData.classAvg/(unclassifiedSubjectData.totalCoefEnabledGrades/100))/100;
-                                unclassifiedSubjectData.totalCoefGrades             = Math.round(unclassifiedSubjectData.totalCoefGrades);
-                                unclassifiedSubjectData.totalCoefRealGrades         = Math.round(unclassifiedSubjectData.totalCoefRealGrades);
-                                unclassifiedSubjectData.totalCoefSimGrades          = Math.round(unclassifiedSubjectData.totalCoefSimGrades);
-                                unclassifiedSubjectData.totalCoefEnabledGrades      = Math.round(unclassifiedSubjectData.totalCoefEnabledGrades);
-                                unclassifiedSubjectData.totalCoefEnabledRealGrades  = Math.round(unclassifiedSubjectData.totalCoefEnabledRealGrades);
-                                unclassifiedSubjectData.totalCoefEnabledSimGrades   = Math.round(unclassifiedSubjectData.totalCoefEnabledSimGrades);
+                                unclassifiedData.grades.push(...unclassifiedSubjectData.grades)
+                                unclassifiedData.simGrades.push(...unclassifiedSubjectData.simGrades)
+                                unclassifiedData.disabledRealGrades.push(...unclassifiedSubjectData.disabledRealGrades)
+                                unclassifiedData.disabledSimGrades.push(...unclassifiedSubjectData.disabledSimGrades)
+
+                                unclassifiedData.totalCoefGrades            += unclassifiedSubjectData.totalCoefGrades;
+                                unclassifiedData.totalCoefRealGrades        += unclassifiedSubjectData.totalCoefRealGrades;
+                                unclassifiedData.totalCoefSimGrades         += unclassifiedSubjectData.totalCoefSimGrades;
+                                unclassifiedData.totalCoefEnabledGrades     += unclassifiedSubjectData.totalCoefEnabledGrades;
+                                unclassifiedData.totalCoefEnabledRealGrades += unclassifiedSubjectData.totalCoefEnabledRealGrades;
+                                unclassifiedData.totalCoefEnabledSimGrades  += unclassifiedSubjectData.totalCoefEnabledSimGrades;
+
+
+                                // Checking the case where there are no grades in the unclassified subject (not possible tho, but oh well, error-proofing)
+                                if (unclassifiedSubjectData.totalCoefEnabledGrades == 0 || unclassifiedSubjectData.totalCoefGrades == 0) {
+                                    unclassifiedSubjectData.average  = " - ";
+                                    unclassifiedSubjectData.classAvg = " - ";
+
+                                    if (unclassifiedSubjectData.totalCoefEnabledGrades == 0) {
+                                        unclassifiedData.subjectsNoEnabledGrade.push(unclassifiedSubjectName);
+                                    }
+                                    if (unclassifiedSubjectData.totalCoefGrades == 0) {
+                                        unclassifiedData.subjectsNoGrade.push(unclassifiedSubjectName);
+                                    }
+                                    
+                                }
+                                else {
+                                    unclassifiedSubjectData.average                 =  Math.round(100*unclassifiedSubjectData.average /(unclassifiedSubjectData.totalCoefEnabledGrades/100))/100;
+                                    unclassifiedSubjectData.classAvg                =  Math.round(100*unclassifiedSubjectData.classAvg/(unclassifiedSubjectData.totalCoefEnabledRealGrades/100))/100;
+
+                                    unclassifiedData.average          += unclassifiedSubjectData.average ;
+                                    unclassifiedData.classAvg         += unclassifiedSubjectData.classAvg;
+                                }
+
+
+                                // Rounding the coefficients
+                                unclassifiedSubjectData.totalCoefGrades             = Math.floor(unclassifiedSubjectData.totalCoefGrades);
+                                unclassifiedSubjectData.totalCoefRealGrades         = Math.floor(unclassifiedSubjectData.totalCoefRealGrades);
+                                unclassifiedSubjectData.totalCoefSimGrades          = Math.floor(unclassifiedSubjectData.totalCoefSimGrades);
+                                unclassifiedSubjectData.totalCoefEnabledGrades      = Math.floor(unclassifiedSubjectData.totalCoefEnabledGrades);
+                                unclassifiedSubjectData.totalCoefEnabledRealGrades  = Math.floor(unclassifiedSubjectData.totalCoefEnabledRealGrades);
+                                unclassifiedSubjectData.totalCoefEnabledSimGrades   = Math.floor(unclassifiedSubjectData.totalCoefEnabledSimGrades);
                             })
+
+                            // Checking if the unclassified subjects only has subject that don't have any enabled grades
+                            if (unclassifiedData.subjectsNoEnabledGrade.length == Object.keys(unclassifiedData.subjects).length || unclassifiedData.subjectsNoGrade.length == Object.keys(unclassifiedData.subjects).length) {
+                                unclassifiedData.average  = " - ";
+                                unclassifiedData.classAvg = " - ";
+
+                                if (unclassifiedData.subjectsNoGrade.length == Object.keys(unclassifiedData.subjects).length) semData.modulesNoGrade.push(unclassifiedData.moduleName);
+                                if (unclassifiedData.subjectsNoEnabledGrade.length == Object.keys(unclassifiedData.subjects).length) semData.modulesNoEnabledGrade.push(unclassifiedData.moduleName);
+                            }
+                            // Scaling down the average and classAvg
+                            if (!isNaN(Number(unclassifiedData.average))) {
+                                unclassifiedData.average  =  Math.round(100*unclassifiedData.average /(Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length))/100;
+                                unclassifiedData.classAvg =  Math.round(100*unclassifiedData.classAvg/(Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length))/100;
+                            }
+                            // Error-proofing the average and classAvg calculations
+                            if (isNaN(Number(unclassifiedData.average))) {
+                                unclassifiedData.average  = " - ";
+                                unclassifiedData.classAvg = " - ";
+                            } 
+
+                            // Scaling down + rounding the total coefs
+                            unclassifiedData.totalCoefGrades            = Math.floor(unclassifiedData.totalCoefGrades           / (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
+                            unclassifiedData.totalCoefRealGrades        = Math.floor(unclassifiedData.totalCoefRealGrades       / (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
+                            unclassifiedData.totalCoefSimGrades         = Math.floor(unclassifiedData.totalCoefSimGrades        / (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
+                            unclassifiedData.totalCoefEnabledGrades     = Math.floor(unclassifiedData.totalCoefEnabledGrades    / (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
+                            unclassifiedData.totalCoefEnabledRealGrades = Math.floor(unclassifiedData.totalCoefEnabledRealGrades/ (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
+                            unclassifiedData.totalCoefEnabledSimGrades  = Math.floor(unclassifiedData.totalCoefEnabledSimGrades / (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
+
+                            semData.average     = unclassifiedData.average ;
+                            semData.classAvg    = unclassifiedData.classAvg;
                         }
 
 
+                        // MARK: Modules
                         // FOR EACH MODULE IN SEMESTER (if any)
                         if (this.moduleConfig?.[semX]?.__modules__) {
-                            (module && this.moduleConfig?.[sem]?.__modules__.includes(module) ? [module] : this.moduleConfig[semX].__modules__).forEach((moduleName) => {
-                                const allSubjs = this.getAllSubjectsForModule(semX, moduleName);
-                                const moduleGrades = this.calculateModuleGrades(semX, moduleName);
+                            (module && this.moduleConfig?.[sem]?.__modules__.includes(module) ? [module] : (this.moduleConfig[semX]?.__modules__ || [])).forEach((moduleName) => {
+                                const allSubjs      = this.getAllSubjectsForModule(semX, moduleName);
+                                const moduleGrades  = this.calculateModuleGrades(semX, moduleName);
+
+                                ++semData.nbModules;
 
                                 semData[moduleName] = {};
                                 
@@ -2201,6 +2352,7 @@ ecamDash = undefined;
                                 moduleData.average                      = 0;
                                 moduleData.classAvg                     = 0;
                                 moduleData.nbGrades                     = 0;
+                                moduleData.grades                       = [];
                                 moduleData.simGrades                    = [];
                                 moduleData.disabledRealGrades           = [];
                                 moduleData.disabledSimGrades            = [];
@@ -2209,7 +2361,9 @@ ecamDash = undefined;
                                 moduleData.subjectsReallyBelow100       = [];
                                 moduleData.subjectsReallyOver100        = [];
                                 moduleData.subjectsNoGrade              = [];
+                                moduleData.subjectsNoEnabledGrade       = [];
                                 moduleData.coefSubjectsNoGrade          = 0;
+                                moduleData.coefSubjectsNoEnabledGrade   = 0;
                                 moduleData.totalCoefSubjects            = 0;
                                 moduleData.totalCoefGrades              = 0;
                                 moduleData.totalCoefRealGrades          = 0;
@@ -2229,14 +2383,18 @@ ecamDash = undefined;
                                     if (!subjectData) {
                                         subjectData = {grades: []};
                                     }
+
+                                    moduleData.grades.push(n);
                                     subjectData.grades.push(n);
-                                    moduleData.nbGrades++;
                                 });
 
                                 
 
+                                // MARK: Classified subjects
                                 // FOR EACH SUBJECT IN MODULE
                                 (subj && this.moduleConfig?.[sem]?.[module]?.subjects?.includes(subj) ? [subj] : allSubjs).forEach(subjectName => {
+
+                                    ++semData.nbSubjects;
 
                                     let subjectData = moduleData.subjects[subjectName];
 
@@ -2259,6 +2417,7 @@ ecamDash = undefined;
                                     moduleData.totalCoefSubjects += parseInt(subjectData.coef);
                                     
                                     
+                                    // MARK: Classified grades
                                     // FOR EACH GRADE IN SUBJECT
                                     subjectData.grades.forEach(grade => {
                                         const gradeValue    = parseFloat(grade.grade),
@@ -2272,10 +2431,10 @@ ecamDash = undefined;
 
                                         switch (`${this.gradeIsDisabled(grade) ? "disabled" : "enabled"} ${grade.__sim ? "sim" : "real"} grade`) {
                                             case `enabled real grade`:
-                                                subjectData.classAvg                    += classAvg*coef/100;
-                                                subjectData.totalCoefRealGrades         += coef;
-
                                                 subjectData.average                     += gradeValue*coef/100;
+                                                subjectData.classAvg                    += classAvg*coef/100;
+                                                
+                                                subjectData.totalCoefRealGrades         += coef;
                                                 subjectData.totalCoefEnabledGrades      += coef;
                                                 subjectData.totalCoefEnabledRealGrades  += coef;
 
@@ -2285,17 +2444,30 @@ ecamDash = undefined;
 
                                                 moduleData.totalCoefEnabledGrades       += coef*subjCoef/100;
                                                 moduleData.totalCoefEnabledRealGrades   += coef*subjCoef/100;
+
+
+                                                semData.totalCoefGrades                 += coef*subjCoef/100;
+                                                semData.totalCoefRealGrades             += coef*subjCoef/100;
+
+                                                semData.totalCoefEnabledGrades          += coef*subjCoef/100;
+                                                semData.totalCoefEnabledRealGrades      += coef*subjCoef/100;
                                             break;
 
                                             case `disabled real grade`:
-                                                subjectData.classAvg                    += classAvg*coef/100;
+                                                // subjectData.classAvg                    += classAvg*coef/100;
                                                 subjectData.totalCoefRealGrades         += coef;
-                                                subjectData.disabledRealGrades.push(grade);
 
+                                                subjectData.disabledRealGrades.push(grade);
+                                                
+                                                
                                                 moduleData.totalCoefGrades              += coef*subjCoef/100;
                                                 moduleData.totalCoefRealGrades          += coef*subjCoef/100;
-
+                                                
                                                 moduleData.disabledRealGrades.push(grade);
+
+                                                
+                                                semData.totalCoefGrades                 += coef*subjCoef/100;
+                                                semData.totalCoefRealGrades             += coef*subjCoef/100;
                                             break;
 
                                             case `enabled sim grade`:
@@ -2310,47 +2482,66 @@ ecamDash = undefined;
                                                 moduleData.simGrades.push(grade);
                                                 moduleData.totalCoefGrades              += coef*subjCoef/100;
                                                 moduleData.totalCoefSimGrades           += coef*subjCoef/100;
-
+                                                
                                                 moduleData.totalCoefEnabledGrades       += coef*subjCoef/100;
                                                 moduleData.totalCoefEnabledSimGrades    += coef*subjCoef/100;
+                                                
+
+                                                semData.totalCoefGrades                 += coef*subjCoef/100;
+                                                semData.totalCoefSimGrades              += coef*subjCoef/100;
+
+                                                semData.totalCoefEnabledGrades          += coef*subjCoef/100;
+                                                semData.totalCoefEnabledSimGrades       += coef*subjCoef/100;
                                             break;
 
                                             case `disabled sim grade`:
                                                 subjectData.simGrades.push(grade);
-                                                subjectData.totalCoefSimGrades          += coef;
                                                 subjectData.disabledSimGrades.push(grade);
+                                                subjectData.totalCoefSimGrades          += coef;
 
                                                 moduleData.simGrades.push(grade);
                                                 moduleData.totalCoefGrades              += coef*subjCoef/100;
                                                 moduleData.totalCoefSimGrades           += coef*subjCoef/100;
 
                                                 moduleData.disabledSimGrades.push(grade);
+
+                                                semData.totalCoefGrades                 += coef*subjCoef/100;
+                                                semData.totalCoefSimGrades              += coef*subjCoef/100;
                                             break;
                                         }
                                     })
                                     
                                     
-                                    
-                                    if (subjectData.totalCoefEnabledGrades == 0) {
+                                    // "Nullyifing" the subject if no enabled grades (if there are grades) are here
+                                    if (subjectData.totalCoefEnabledGrades == 0 || subjectData.totalCoefGrades == 0) {
                                         subjectData.average  = " - ";
                                         subjectData.classAvg = " - ";
-                                        moduleData.subjectsNoGrade.push(subjectName);
-                                        moduleData.coefSubjectsNoGrade += parseInt(subjectData.coef);
+                                        if (subjectData.totalCoefEnabledGrades == 0) {
+                                            moduleData.subjectsNoEnabledGrade.push(subjectName);
+                                            moduleData.coefSubjectsNoEnabledGrade  += parseInt(subjectData.coef);
+    
+                                        }
+                                        if (subjectData.totalCoefGrades == 0) {
+                                            moduleData.subjectsNoGrade.push(subjectName);
+                                            moduleData.coefSubjectsNoGrade  += parseInt(subjectData.coef);
+                                        }
+                                        
                                     }
-                                    else {
-                                        subjectData.average     =  Math.round(100*subjectData.average /(subjectData.totalCoefEnabledGrades/100))/100;
-                                        subjectData.classAvg    =  Math.round(100*subjectData.classAvg/(subjectData.totalCoefEnabledRealGrades/100))/100;
+                                    else {  // Round the averages to the closest 2-decimals float number
+                                        subjectData.average     =  Math.round(100*subjectData.average /(subjectData.totalCoefEnabledGrades      /100))/100;
+                                        subjectData.classAvg    =  Math.round(100*subjectData.classAvg/(subjectData.totalCoefEnabledRealGrades  /100))/100;
 
                                         moduleData.average          += subjectData.average *subjectData.coef/100;
                                         moduleData.classAvg         += subjectData.classAvg*subjectData.coef/100;
                                     }
 
-                                    subjectData.totalCoefGrades             = Math.round(subjectData.totalCoefGrades);
-                                    subjectData.totalCoefRealGrades         = Math.round(subjectData.totalCoefRealGrades);
-                                    subjectData.totalCoefSimGrades          = Math.round(subjectData.totalCoefSimGrades);
-                                    subjectData.totalCoefEnabledGrades      = Math.round(subjectData.totalCoefEnabledGrades);
-                                    subjectData.totalCoefEnabledRealGrades  = Math.round(subjectData.totalCoefEnabledRealGrades);
-                                    subjectData.totalCoefEnabledSimGrades   = Math.round(subjectData.totalCoefEnabledSimGrades);
+                                    // Rounding down the total coefs
+                                    subjectData.totalCoefGrades             = Math.floor(subjectData.totalCoefGrades);
+                                    subjectData.totalCoefRealGrades         = Math.floor(subjectData.totalCoefRealGrades);
+                                    subjectData.totalCoefSimGrades          = Math.floor(subjectData.totalCoefSimGrades);
+                                    subjectData.totalCoefEnabledGrades      = Math.floor(subjectData.totalCoefEnabledGrades);
+                                    subjectData.totalCoefEnabledRealGrades  = Math.floor(subjectData.totalCoefEnabledRealGrades);
+                                    subjectData.totalCoefEnabledSimGrades   = Math.floor(subjectData.totalCoefEnabledSimGrades);
 
 
                                     if      (subjectData.totalCoefGrades < 100) moduleData.subjectsBelow100.push(subjectName);
@@ -2361,33 +2552,73 @@ ecamDash = undefined;
                                 });
 
 
-                                if (moduleData.subjectsNoGrade.length == Object.keys(moduleData.subjects).length) {
+                                // "Nullifying" the module if all its subjects don't have any enabled grade
+                                if (moduleData.subjectsNoEnabledGrade.length == Object.keys(moduleData.subjects).length || moduleData.subjectsNoGrade.length == Object.keys(moduleData.subjects).length) {
                                     moduleData.average  = " - ";
                                     moduleData.classAvg = " - ";
-                                }
 
+                                    if (moduleData.subjectsNoGrade.length == Object.keys(moduleData.subjects).length) semData.modulesNoGrade.push(moduleData.moduleName);
+                                    if (moduleData.subjectsNoEnabledGrade.length == Object.keys(moduleData.subjects).length) semData.modulesNoEnabledGrade.push(moduleData.moduleName);
+                                }
+                                // Scaling down + rounding the averages
                                 if (!isNaN(Number(moduleData.average))) {
-                                    moduleData.average  =  Math.round(100*moduleData.average /((moduleData.totalCoefSubjects-moduleData.coefSubjectsNoGrade)/100))/100;
-                                    moduleData.classAvg =  Math.round(100*moduleData.classAvg/((moduleData.totalCoefSubjects-moduleData.coefSubjectsNoGrade)/100))/100;
+                                    moduleData.average  =  Math.round(100*moduleData.average /((moduleData.totalCoefSubjects-moduleData.coefSubjectsNoEnabledGrade)/100))/100;
+                                    moduleData.classAvg =  Math.round(100*moduleData.classAvg/((moduleData.totalCoefSubjects-moduleData.coefSubjectsNoEnabledGrade)/100))/100;
                                 }
-
+                                // Error-proofing the averages
                                 if (isNaN(Number(moduleData.average))) {
                                     moduleData.average  = " - ";
                                     moduleData.classAvg = " - ";
                                 } 
+                                else {
+                                    semData.average     += moduleData.average;
+                                    semData.classAvg    += moduleData.classAvg;
+                                }
                                 
+                                // Rounding down the total coefs
+                                moduleData.totalCoefSubjects            =  Math.floor(moduleData.totalCoefSubjects);
+                                moduleData.totalCoefGrades              =  Math.floor(moduleData.totalCoefGrades);
+                                moduleData.totalCoefRealGrades          =  Math.floor(moduleData.totalCoefRealGrades);
+                                moduleData.totalCoefSimGrades           =  Math.floor(moduleData.totalCoefSimGrades);
+                                moduleData.totalCoefEnabledGrades       =  Math.floor(moduleData.totalCoefEnabledGrades);
+                                moduleData.totalCoefEnabledRealGrades   =  Math.floor(moduleData.totalCoefEnabledRealGrades);
+                                moduleData.totalCoefEnabledSimGrades    =  Math.floor(moduleData.totalCoefEnabledSimGrades);
 
-                                moduleData.totalCoefSubjects                =  Math.round(moduleData.totalCoefSubjects);
-                                moduleData.totalCoefGrades                  =  Math.round(moduleData.totalCoefGrades);
-                                moduleData.totalCoefRealGrades              =  Math.round(moduleData.totalCoefRealGrades);
-                                moduleData.totalCoefSimGrades               =  Math.round(moduleData.totalCoefSimGrades);
-                                moduleData.totalCoefEnabledGrades           =  Math.round(moduleData.totalCoefEnabledGrades);
-                                moduleData.totalCoefEnabledRealGrades       =  Math.round(moduleData.totalCoefEnabledRealGrades);
-                                moduleData.totalCoefEnabledSimGrades        =  Math.round(moduleData.totalCoefEnabledSimGrades);
-                                
                             })
+
+
+
                         }
                         
+                        semData.totalCoefGrades                 = semData.totalCoefGrades               /semData.nbSubjects;
+                        semData.totalCoefRealGrades             = semData.totalCoefRealGrades           /semData.nbSubjects;
+                        semData.totalCoefSimGrades              = semData.totalCoefSimGrades            /semData.nbSubjects;
+                        semData.totalCoefEnabledGrades          = semData.totalCoefEnabledGrades        /semData.nbSubjects;
+                        semData.totalCoefEnabledRealGrades      = semData.totalCoefEnabledRealGrades    /semData.nbSubjects;
+                        semData.totalCoefEnabledSimGrades       = semData.totalCoefEnabledSimGrades     /semData.nbSubjects;
+                        
+                        // "Nullifying" the semester if every single one of its subjects has all its grades disabled
+                        if (semData.modulesNoEnabledGrade.length == semData.nbModules) {
+                            semData.average     = " - ";
+                            semData.classAvg    = " - ";
+                        }
+                        
+                        if (!isNaN(Number(semData.average)) && Object.keys(semData["__#unclassified#__"].subjects).length < semData.nbSubjects) {
+                            semData.average  =  Math.round(100*semData.average /(semData.nbModules-semData.modulesNoEnabledGrade.length))/100;
+                            semData.classAvg =  Math.round(100*semData.classAvg/(semData.nbModules-semData.modulesNoEnabledGrade.length))/100;
+                        }
+
+                        if (isNaN(Number(semData.average))) {
+                            semData.average     = " - ";
+                            semData.classAvg    = " - ";
+                        } 
+                        
+                        semData.totalCoefGrades                 = Math.floor(semData.totalCoefGrades);
+                        semData.totalCoefRealGrades             = Math.floor(semData.totalCoefRealGrades);
+                        semData.totalCoefSimGrades              = Math.floor(semData.totalCoefSimGrades);
+                        semData.totalCoefEnabledGrades          = Math.floor(semData.totalCoefEnabledGrades);
+                        semData.totalCoefEnabledRealGrades      = Math.floor(semData.totalCoefEnabledRealGrades);
+                        semData.totalCoefEnabledSimGrades       = Math.floor(semData.totalCoefEnabledSimGrades);
                     })
 
                     return this.gradesDatas
@@ -2396,13 +2627,11 @@ ecamDash = undefined;
 
                 getGradeColor(grade) { if (grade >= 10) return 'good'; return 'bad'; }
 
-                getAverageColor(avg) { if (avg >= 12) return 'average-good'; if (avg >= 10) return 'average-medium'; return 'average-bad'; }
-
                 gradeIsDisabled(n) {
-                    return this.disabledGrades?.includes([n.semester, n.subject, (n?.id || n.type + " " + n.date + " " + n.prof)].join("\\"))
+                    return this.disabledGrades?.includes([n.semester, n.subject, (n?.id || n.type + " " + n.date + " " + n.prof)].join("\\")) || false
                 }
 
-                moyennePonderee(arr) {
+                averagePonderee(arr) {
                     if (!arr || arr.length === 0) return 0;
                     let total = 0, coeffs = 0;
                     arr.forEach(n => { 
@@ -2855,7 +3084,7 @@ ecamDash = undefined;
                         this.ecamDash.style.width = "94%";
                         this.ecamDash.style.margin = "40px 3% 30px";
                     }
-                    const moyenneGenerale = this.moyennePonderee(this.grades);
+                    const averageGenerale = this.averagePonderee(this.grades);
                     const totalGrades = this.grades.length;
                     const moduleStats = this.getModuleStats();
 
@@ -2966,7 +3195,7 @@ ecamDash = undefined;
                     +
                     `<div class="main-average-card" id="main-average-card">
                         <div class="average-display">
-                            <div class="average-number" ${this.error ? "style=\"padding-top: 0px;\"" : ""}>${moyenneGenerale}</div>
+                            <div class="average-number" ${this.error ? "style=\"padding-top: 0px;\"" : ""}>${averageGenerale}</div>
                             <div class="average-label"></div>
                         </div>
                         <div class="average-stats">
@@ -3056,11 +3285,11 @@ ecamDash = undefined;
                     if (this.error) {
                         const offlineSubTitle = document.querySelector(".offline-mode-subtitle");
                         offlineSubTitle.innerHTML = !this.langIsEn 
-                            ? `Les serveurs de l'ECAM sont actuellement inaccessibles ! ${this.grades.length == 0
+                            ? `Les serveurs de l'ECAM sont actuellement inaccessibles ! ${this.grades.length > 0
                                 ? "Pour l'instant, tu ne peux pas voir si tu as des nouvelles notes... En attendant, voici le tableau de bord en mode offline, tu as donc accès aux notes que j'ai gentiment sauvegardées dans le cache la dernière fois ! De rien ! <3" 
                                 : "Pour l'instant, tu ne peux pas voir tes notes... Tu peux quand même commencer à configurer tes modules, reviens quand les serveurs sont opérationnels pour voir tes notes !"
                             }` 
-                            : `ECAM's servers are currently down! ${this.grades.length == 0 
+                            : `ECAM's servers are currently down! ${this.grades.length > 0 
                                 ? "For now, you can't see if you have new grades... While waiting for the servers to be back up, here are the grades I nicely saved in your cache last time, so you can still see them even with the server down! You're welcome! <3" 
                                 : "For now, you can't see your grades... You can still start by configuring your modules, and come back once the servers are up again to see your grades!"
                             }`
@@ -3381,6 +3610,10 @@ ecamDash = undefined;
                     this.renderRecentGrades()
 
 
+                    if (!manageIndividualSubjectCardFolding) {
+                        this.detailedSubjCardsId = [], this.compactSubjCardsId = [];
+                    }
+
                     // Content area, refreshing often
                     const moduleStats = this.getModuleStats();
                     const validatedEUsStatLabel = document.querySelectorAll(".stat-value")[2];
@@ -3401,19 +3634,26 @@ ecamDash = undefined;
                     contentArea.innerHTML = "";
                     semesterKeys.forEach(sem => {
                         const section = document.createElement("div");
+                        contentArea.appendChild(section);
                         section.className   = `semester-section`;
-                        const moyenneSem    = Object.keys(this.semesters[sem]).length > 0 ? this.moyennePonderee([].concat(...Object.values(this.semesters[sem] || {}))) : " - ";
-                        const avgClass      = Object.keys(this.semesters[sem]).length > 0 ? this.getAverageColor(moyenneSem) : "";
-                        const unclassified  = this.getUnclassifiedSubjects(sem);
-                        const moduleConfig  = this.moduleConfig?.[sem] || {};
+
+                        const semData               = this.gradesDatas[sem];
+                        const semAvg                = semData.average;
+                        const semClassAvg           = semData.classAvg;
+                        const avgColor              = Object.keys(this.semesters[sem]).length > 0 ? (semAvg >= 10 ? "good" : "bad") : "";
+                        const avgSymbol             = isNaN(semAvg) ? "" : `${semAvg >= 10 ? '✅' : '⚠️'}`;
+                        const unclassifiedLength    = Object.keys(semData["__#unclassified#__"].subjects).length;
+                        const moduleConfig          = this.moduleConfig?.[sem] || {};
 
                         section.innerHTML = `
                         <div class="semester-header" data-semester="${sem}">
                             <div class="semester-info">
                                 <div class="semester-name jura">📚 ${!this.langIsEn ? 'Semestre' : "Semester"} ${sem}</div>
-                                    <div class="semester-average ${avgClass}">
-                                        <span>${moyenneSem==" - " ? "" : `${moyenneSem >= 10 ? '✅' : '⚠️'}`}</span>
-                                        <span>${moyenneSem}/20</span>
+                                    <div class="semester-averages ${avgColor}">
+                                        <span class="semester-average-symbol">${avgSymbol}</span>
+                                        <span class="semester-average">${semAvg}/20</span>
+                                        <span class="semester-class-average-vs-average jura" style="color: black${isNaN(semClassAvg) ? `; display: none` : ""}">vs</span>
+                                        <span class="semester-class-average" style="color: black; font-size: 15px${isNaN(semClassAvg) ? `; display: none` : ""}">${semClassAvg}/20</span>
                                     </div>
                                 </div>
                             <div class="semester-toggle open fold-icon">△</div>
@@ -3424,12 +3664,12 @@ ecamDash = undefined;
                                 <div class="modules-section ${this.editMode ? "edit" : ""}" id="modules-section" ${moduleConfig?.__modules__ ? "" : "style=\"display: none\""}>
                                     ${this.createAllModuleCards(sem, manageIndividualSubjectCardFolding)}
                                 </div>
-                                <div class="unclassified-section" id="unclassified-section" style="height: 100%${unclassified.length > 0 ? `` : `; display: none`}">
+                                <div class="unclassified-section" id="unclassified-section" style="${unclassifiedLength > 0 ? `` : `; display: none`}">
                                     <div class="unclassified-title jura">
-                                        ${!this.langIsEn ? `Matière${unclassified.length > 1 ?  `s` : ``} non classée${unclassified.length > 1 ?  `s` : ``} dans un module` : `Subject${unclassified.length > 1 ?  `s` : ``} not classified in a module`}
+                                        ${!this.langIsEn ? `Matière${unclassifiedLength > 1 ?  `s` : ``} non classée${unclassifiedLength > 1 ?  `s` : ``} dans un module` : `Subject${unclassifiedLength > 1 ?  `s` : ``} not classified in a module`}
                                     </div>
                                     <div class="unclassified-content">
-                                        ${unclassified.length > 0 
+                                        ${unclassifiedLength > 0 
                                             ? `<div style="margin: -10px 0px"></div>${this.createAllSubjCards(sem, "__#unclassified#__", manageIndividualSubjectCardFolding)}<div style="margin: -10px 0px"></div>` 
                                             : ``
                                         }
@@ -3437,11 +3677,18 @@ ecamDash = undefined;
                                 </div>
                             </div>
                         </div>`;
-                        contentArea.appendChild(section);
-
-                        this.setGradesTableTotalCoef();
-                        this.attachAllEventListeners();
                     });
+                    
+                    this.setGradesTableTotalCoef();
+                    this.attachAllEventListeners();
+
+                    if (document.body.clientHeight > document.body.offsetHeight) {
+                        // Semester has been collapsed, and now the page is tinier than the window, and i want to avoid the slider to offset the page. Only useful in Offline mode
+                        this.ecamDash.style.paddingRight = "10px";
+                    }
+                    else {
+                        this.ecamDash.style.paddingRight = "";
+                    }
 
                 }
 
@@ -3451,7 +3698,6 @@ ecamDash = undefined;
                 // MARK: Create Module Card
                 createAllModuleCards(sem, manageIndividualSubjectCardFolding=true) {
                     const moduleConfig = this.moduleConfig?.[sem] || {};
-                    const unclassified  = this.getUnclassifiedSubjects(sem);
 
                     let html =  this.editMode ? this.createDropFieldInsertionField("module", {sem, index:0}) : "";
 
@@ -3460,7 +3706,7 @@ ecamDash = undefined;
                         html += this.editMode ? this.createDropFieldInsertionField("module", {sem, index:moduleIndex+1}) : "";
                     });
 
-                    if (unclassified.length == 0 && !moduleConfig?.__modules__) {
+                    if (this.gradesDatas[sem]["__#unclassified#__"].length == 0 && !moduleConfig?.__modules__) {
                         html = this.editMode 
                             ? `<div style="font-size: 23px;">Rien à voir ici pour l'instant...</div>` 
                             : `<div style="font-size: 23px;">Nothing to see here yet...</div>`;
@@ -3469,19 +3715,17 @@ ecamDash = undefined;
                     return html;
                 }
                 createModuleCard(sem, moduleName, moduleIndex=-1, manageIndividualSubjectCardFolding=true) {
-                    const moduleGrades = this.calculateModuleGrades(sem, moduleName);
-                    const includedGrades = (moduleGrades || []).filter(n => !this.gradeIsDisabled(n));
-                    let weight = 0; includedGrades.forEach(grade => {weight += grade.coef/100})
-                    const moyenne           = this.gradesDatas[sem][moduleName].average;
+                    const average           = this.gradesDatas[sem][moduleName].average;
+                    const classAvg          = this.gradesDatas[sem][moduleName].classAvg;
                     const hasSim            = this.gradesDatas[sem][moduleName].simGrades.length > 0 ? true : false;
                     const hasDisabled       = this.gradesDatas[sem][moduleName].disabledSimGrades.length + this.gradesDatas[sem][moduleName].disabledRealGrades.length > 0 ? true : false;
                     const folded            = manageIndividualSubjectCardFolding && this.foldedModuleCardsId.includes(`module-card-${moduleName}-in-semester-${sem}`);
                     const cardIsSelected    = this.selectedModuleCardsId.includes(`module-card-${moduleName}-in-semester-${sem}`);
 
                     let html = `
-                    <div class="module-card ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'validated' : 'failed'}`} ${folded ? "fold" : ""}" id="module-card-${moduleName}-in-semester-${sem}" data-semester="${sem}" data-module="${moduleName}" data-index="${moduleIndex}" ${folded ? `style="height: 77px"` : ""}>
+                    <div class="module-card ${isNaN(average) ? "unknown" : `${average >= 10 ? 'validated' : 'failed'}`} ${folded ? "fold" : ""}" id="module-card-${moduleName}-in-semester-${sem}" data-semester="${sem}" data-module="${moduleName}" data-index="${moduleIndex}" ${folded ? `style="height: 77px"` : ""}>
                     
-                        <div class="module-card-header ${this.editMode ? "edit-mode" : ""} ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'validated' : 'failed'}`}" id="module-card-header-${moduleName}-in-semester${sem}" data-semester="${sem}" data-module="${moduleName}" ${this.editMode ? `draggable="true"` : ""}>
+                        <div class="module-card-header ${this.editMode ? "edit-mode" : ""} ${isNaN(average) ? "unknown" : `${average >= 10 ? 'validated' : 'failed'}`}" id="module-card-header-${moduleName}-in-semester${sem}" data-semester="${sem}" data-module="${moduleName}" ${this.editMode ? `draggable="true"` : ""}>
                             ${this.editMode 
                                 ? 
                                 `<div class="module-card-header-left-side">
@@ -3501,8 +3745,12 @@ ecamDash = undefined;
                                 <div class="module-subject-total-coef-value" ${this.settings.totalCoefValuesEnabled.value     ? "" : "style=\"display: none\""}>${!this.langIsEn ? `Coef Total des matières :` : `Total Subjects Coef:`}</div>
                                 <div class="module-subject-total-coef-debug" ${this.settings.totalCoefDebugTextsEnabled.value ? "" : "style=\"display: none\""}></div>
                             </div>
-                            <div class="module-moyenne ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'good' : 'bad'}`}" data-semester="${sem}" data-module="${moduleName}" ${this.editMode ? "" : 'style="width:151px"'}>
-                                ${moyenne}/20 
+                            <div class="module-card-header-right-side">
+                                <div style="display: flex; justify-content: flex-end; align-items: baseline; gap: 6px;">
+                                    <div class="module-class-average" ${isNaN(average) ? `style="display: none"` : ""}>${classAvg}/20</div>
+                                    <div class="module-class-average-vs-average jura" ${isNaN(average) ? `style="display: none"` : ""}>vs</div>
+                                    <div class="module-average ${isNaN(average) ? "unknown" : `${average >= 10 ? 'good' : 'bad'}`}" data-semester="${sem}" data-module="${moduleName}">${average}/20</div>
+                                </div>
                                 <div class="module-toggle fold-icon open">△</div>
                                 <button class="module-delete-btn" id="module-delete-btn-${moduleName}-in-semester-${sem}" title="${!this.langIsEn ? "Supprimer ce module" : "Delete this module"}" data-semester="${sem}" data-module="${moduleName}" style="border-width: 3px;${this.editMode ? "" : " display: none;"}">🗑️</button>
                             </div>
@@ -3589,6 +3837,7 @@ ecamDash = undefined;
                     const subjectGrades         = subjectData.grades;
                     const moduleMoy             = moduleData.average;
                     const subjAvg               = subjectData?.average >= 0 ? subjectData.average : " - ";
+                    const subjClassAvg          = subjectData?.classAvg >= 0 && !isNaN(subjectData?.classAvg) ? subjectData.classAvg : " - ";
                     const pct                   = subjectData.coef;
                     const isCustom              = subjectData.isCustom;
                     const nbGrades              = subjectGrades.length;
@@ -3604,12 +3853,14 @@ ecamDash = undefined;
                         (this.viewMode == "detailed" && !manageIndividualSubjectCardFolding)
                     ;
                     
-                    if (detailed)   {this.detailedSubjCardsId.push(subjectCardId); this.compactSubjCardsId.splice(this.compactSubjCardsId.indexOf(subjectCardId), 1)} 
-                    else            {this.compactSubjCardsId.push(subjectCardId); this.detailedSubjCardsId.splice(this.detailedSubjCardsId.indexOf(subjectCardId), 1)}
+                    if (!manageIndividualSubjectCardFolding) {
+                        if (detailed)   {this.detailedSubjCardsId.push(subjectCardId); this.compactSubjCardsId.splice(this.compactSubjCardsId.indexOf(subjectCardId), 1)} 
+                        else            {this.compactSubjCardsId.push(subjectCardId); this.detailedSubjCardsId.splice(this.detailedSubjCardsId.indexOf(subjectCardId), 1)}
+                    }
 
                     let html = `
-                    <div class="subject-card ${classified ? "classified" : "unclassified"} ${detailed ? "detailed" : "compact"} ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" id="${subjectCardId}" style="${this.editMode ? `cursor: grab; user-select: none;` : ""}${detailed ? "" : " height: 70px;"}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
-                        <div class="subject-card-header ${detailed ? "detailed" : "compact"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`} ${classified ? "classified" : "unclassified"}" ${this.editMode ? `style="cursor: grab;" draggable="true"` : ``} data-module="${moduleName}">
+                    <div class="subject-card ${classified ? "classified" : "unclassified"} ${detailed ? "detailed" : "compact"} ${this.editMode ? "" : "edit-mode"} ${isNaN(subjAvg) ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" id="${subjectCardId}" style="${this.editMode ? `user-select: none;` : ""}${detailed ? "" : " height: 70px;"}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
+                        <div class="subject-card-header ${detailed ? "detailed" : "compact"} ${isNaN(subjAvg) ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`} ${classified ? "classified" : "unclassified"}" ${this.editMode ? `style="cursor: grab;" draggable="true"` : ``} data-module="${moduleName}">
                             <div class="subject-card-header-left-side">
                                 ${this.editMode
                                     ? `<div style="margin: 0px 5px; margin-bottom: 3px;">
@@ -3665,8 +3916,10 @@ ecamDash = undefined;
                                 </div>
                             </div>
                             <div class="subject-card-header-right-side">
-                                <div class="subj-moyenne ${subjAvg == " - " ? '' : `${subjAvg>=10 ? 'good' : 'bad'}`}">
-                                    ${subjAvg}/20
+                                <div style="display: flex; justify-content: flex-end; align-items: baseline; gap: 4px;">
+                                    <div class="subj-class-average" ${isNaN(subjClassAvg) ? `style="display: none"` : ""}>${subjClassAvg}</div>
+                                    <div class="subj-class-average-vs-average jura" ${isNaN(subjClassAvg) ? `style="display: none"` : ""}>vs</div>
+                                    <div class="subj-average ${isNaN(subjAvg) ? '' : `${subjAvg>=10 ? 'good' : 'bad'}`}">${subjAvg}/20</div>
                                 </div>
                                 <button class="subject-delete-btn" id="subject-delete-btn-${subject}-${moduleName}-in-semester-${sem}" title="${!this.langIsEn ? "Enlever cette matière" : "Remove this subject"}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-targetid="${subjectCardId}" style="border-width: 3px;${this.editMode && classified ? "" : " display: none;"}">🗑️</button>
                             </div>
@@ -3674,10 +3927,10 @@ ecamDash = undefined;
 
                     `;
 
-                    
+
                     html += `
 
-                    <table class="grades-table ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" style="${this.editMode ? `user-select: text;` : ``}" id="grades-table-${subject}-semester${sem}" data-subject="${subject}">
+                    <table class="grades-table ${isNaN(subjAvg) ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" style="${this.editMode ? `user-select: text;` : ``}" id="grades-table-${subject}-semester${sem}" data-subject="${subject}">
 
                         <thead>
                             <tr>
@@ -3783,7 +4036,7 @@ ecamDash = undefined;
                         </tbody>
                     </table>
                     `;
-                    
+
 
                     html += `
                     </div>
@@ -3791,6 +4044,7 @@ ecamDash = undefined;
 
                     return html;
                 }
+
 
 
                 updateFirstLoadEvent() {
@@ -4397,9 +4651,9 @@ ecamDash = undefined;
             // MARK: Regenerate subject and module averages and total coef debug texts
             regenAveragesAndTotalCoefs(sem, moduleName="__#unclassified#__", subject) {
 
-                document.querySelector(".average-number").innerHTML = this.moyennePonderee(this.grades);
+                document.querySelector(".average-number").innerHTML = this.averagePonderee(this.grades);
 
-
+                
                 if (sem?.classList?.contains("module-card")) {
                     subject = undefined;
                     moduleName = sem.dataset.module;
@@ -4410,22 +4664,33 @@ ecamDash = undefined;
                     moduleName = sem.dataset.module;
                     sem = sem.dataset.semester;
                 }
-
+                
                 // subject average modification
                 if (subject) {
-                    const subjCard      = document.querySelector(`.subject-card[data-subject="${subject}"]`);
-                    const subjAvgDiv    = subjCard.querySelector(".subj-moyenne");
-                    const subjHeader    = subjCard.querySelector(".subject-card-header");
-                    const gradesTable   = subjCard.querySelector(".grades-table");
-                    const subjAvg       = this.gradesDatas[sem][moduleName||"__#unclassified#__"].subjects[subject].average;
-                    const moduleAvg     = this.gradesDatas[sem][moduleName||"__#unclassified#__"].average;
-
+                    const subjCard          = document.querySelector(`.subject-card[data-subject="${subject}"]`);
+                    const subjAvgDiv        = subjCard.querySelector(".subj-average");
+                    const subjAvgVsClassAvg = subjCard.querySelector(".subj-class-average-vs-average");
+                    const subjClassAvgDiv   = subjCard.querySelector(".subj-class-average");
+                    const subjHeader        = subjCard.querySelector(".subject-card-header");
+                    const gradesTable       = subjCard.querySelector(".grades-table");
+                    const subjAvg           = this.gradesDatas[sem][moduleName||"__#unclassified#__"].subjects[subject].average;
+                    const subjClassAvg      = this.gradesDatas[sem][moduleName||"__#unclassified#__"].subjects[subject].classAvg;
+                    const moduleAvg         = this.gradesDatas[sem][moduleName||"__#unclassified#__"].average;
+                    
                     subjAvgDiv.innerHTML = subjAvg + "/20";
+                    if (!isNaN(subjClassAvg)) {
+                        subjClassAvgDiv.innerHTML = subjClassAvg + "/20";
+                    }
+                    else {
+                        subjClassAvgDiv.style.display = "none";
+                        subjAvgVsClassAvg.style.display = "none";
+                    }
+                    
                     subjCard   .classList.remove("good"); subjCard   .classList.remove("meh"); subjCard   .classList.remove("bad"); subjCard   .classList.remove("unknown");
                     subjAvgDiv .classList.remove("good"); subjAvgDiv .classList.remove("meh"); subjAvgDiv .classList.remove("bad"); subjAvgDiv .classList.remove("unknown");
                     subjHeader .classList.remove("good"); subjHeader .classList.remove("meh"); subjHeader .classList.remove("bad"); subjHeader .classList.remove("unknown");
                     gradesTable.classList.remove("good"); gradesTable.classList.remove("meh"); gradesTable.classList.remove("bad"); gradesTable.classList.remove("unknown");
-
+                    
                     if (isNaN(subjAvg)) {
                         subjCard   .classList.add("unknown");
                         subjAvgDiv .classList.add("unknown");
@@ -4454,16 +4719,28 @@ ecamDash = undefined;
                 
                 // module average modification
                 if (moduleName != "__#unclassified#__") {
-                    const moduleAvg         = this.gradesDatas[sem][moduleName].average;
-                    const moduleCard        = document.querySelector(`.module-card[data-module="${moduleName}"]`);
-                    const moduleCardHeader  = moduleCard.querySelector(`.module-card-header`);
-                    const moduleAvgDiv      = moduleCard.querySelector(`.module-moyenne[data-module="${moduleName}"]`);
-                    moduleAvgDiv.childNodes[0].data = moduleAvg + "/20";
+                    const moduleCard            = document.querySelector(`.module-card[data-module="${moduleName}"]`);
+                    const moduleCardHeader      = moduleCard.querySelector(`.module-card-header`);
+                    const moduleClassAvgDiv     = moduleCardHeader.querySelector(`.module-class-average`);
+                    const moduleClassAvgVsAvg   = moduleCardHeader.querySelector(`.module-class-average-vs-average`);
+                    const moduleAvgDiv          = moduleCardHeader.querySelector(`.module-average`);
+                    const moduleAvg             = this.gradesDatas[sem][moduleName].average;
+                    const moduleClassAvg        = this.gradesDatas[sem][moduleName||"__#unclassified#__"].classAvg;
+                    
+                    moduleAvgDiv.innerHTML      = moduleAvg + "/20";
+                    if (!isNaN(moduleClassAvg)) {
+                        moduleClassAvgDiv.innerHTML = moduleClassAvg + "/20";
+                    }
+                    else {
+                        moduleClassAvgDiv.style.display = "none";
+                        moduleClassAvgVsAvg.style.display = "none";
+                    }
+                    
                     moduleCard      .classList.remove("validated");     moduleCard      .classList.remove("failed");    moduleCard      .classList.remove("unknown");
                     moduleCardHeader.classList.remove("validated");     moduleCardHeader.classList.remove("failed");    moduleCardHeader.classList.remove("unknown");
                     moduleAvgDiv    .classList.remove("good");          moduleAvgDiv    .classList.remove("bad");       moduleAvgDiv    .classList.remove("unknown");
 
-                    if (moduleAvg == " - ") {
+                    if (isNaN(moduleAvg)) {
                         moduleCard  .classList.add("unknown");
                         moduleAvgDiv.classList.add("unknown");
                     }
@@ -4485,6 +4762,41 @@ ecamDash = undefined;
                     this.setGradesTableTotalCoef(subjCard);
                 }
 
+                // semester average modification
+                if (sem) {
+
+                    const semAvgsDiv            = document.querySelector(".semester-averages");
+                    const semAvgDiv             = semAvgsDiv.querySelector(".semester-average");
+                    const semAvgSymbolDiv       = semAvgsDiv.querySelector(".semester-average-symbol");
+                    const semClassAvgVsAvgDiv   = semAvgsDiv.querySelector(".semester-class-average-vs-average");
+                    const semClassAvgDiv        = semAvgsDiv.querySelector(".semester-class-average");
+
+                    const semData       = this.gradesDatas[sem];
+                    const semAvg        = semData.average;
+                    const semClassAvg   = semData.classAvg;
+                    const semAvgSymbol  = isNaN(semAvg) ? "" : `${semAvg >= 10 ? '✅' : '⚠️'}`;
+
+                    semAvgsDiv.classList.remove("bad"); semAvgsDiv.classList.remove("good");
+
+                    semAvgDiv.innerHTML = semAvg + "/20";
+                    semAvgSymbolDiv.innerHTML = semAvgSymbol;
+                    if (!isNaN(semClassAvg)) {
+                        if (semAvg >= 10) {
+                            semAvgsDiv.classList.add("good");
+                        }
+                        else {
+                            semAvgsDiv.classList.add("bad");
+                        }
+
+                        semClassAvgDiv.innerHTML = semClassAvg + "/20";
+                    }
+                    else {
+                        semClassAvgDiv.style.display = "none";
+                        semClassAvgVsAvgDiv.style.display = "none";
+                    }
+
+                }
+
             }
 
         //#endregion
@@ -4498,6 +4810,7 @@ ecamDash = undefined;
 
             attachAllEventListeners() {
                 this.attachDocumentMouseListeners();
+                this.attachEcamDashMouseListeners();
                 this.attachAllAnyInputsListeners();
                 
                 this.attachLangBtnsListener();
@@ -4517,7 +4830,7 @@ ecamDash = undefined;
                 this.attachAllSubjectCardRelatedEventListenersForEverySubjectCard();
 
                 this.attachModuleInfoClearBtns();
-                this.attachAllModuleDeleteBtnsListener();
+                this.attachAllModuleCardDeleteBtnsListener();
 
                 if (this.editMode) { this.attachDropFieldsEventListeners(); }
             }
@@ -4534,64 +4847,32 @@ ecamDash = undefined;
 
                 //#region Document listeners
 
-                    attachDocumentMouseListeners(eventName="all") {
-                        if (eventName == "onclick" || eventName == "all") {
-                            document.onclick = (e) => {
+                    attachDocumentMouseListeners() {
+                        this.ecamDash.onclick = (e) => {
 
-                                // Toggle intranet table
-                                if (e.target.closest('.intranet-fold')) {
-                                    const header = e.target.closest('.intranet-fold');
-                                    const intranetTable = document.querySelector('.greyGridTable');
-                                    const intranetToggle = header.querySelectorAll('.intranet-toggle');
-                                    intranetToggle.forEach(t => {
-                                        if (t.previousElementSibling == null){
-                                            t.classList.toggle('openLeft')
-                                        } else {
-                                            t.classList.toggle('openRight');
-                                        }
-                                    });
+                            if (document.getElementById("importMenu").classList.contains("show") && !document.querySelector(".new-user-notif-fullscreen-effect.focus") && !e.target.closest(".import-menu")) {
+                                document.getElementById("importMenu").classList.remove("show");
 
-                                    if (intranetTable.style.display == 'none') {
-                                        intranetTable.style.display = 'block';
-                                    } else {
-                                        intranetTable.style.display = 'none';
-                                    }
-                                }
+                                clearTimeout(this?.timeouts?.closeImportMenu);
+                                this.timeouts.closeImportMenu = setTimeout(() => {document.getElementById("importMenu").style.display = "none"}, 300);
+                            }
 
-                                if (!e.target.closest(".import-menu") && document.getElementById("importMenu").classList.contains("show") && !document.querySelector(".new-user-notif-fullscreen-effect.focus")) {
-                                    document.getElementById("importMenu").classList.remove("show");
+                            if (!e.target.closest(".over-header-btn.issue.issue-btn, .over-header-btn.issue.mail-info, .over-header-btn.how-to-use-btn")) {
+                                this.dismissAllOverHeaderBtns();
+                            }
 
-                                    clearTimeout(this?.timeouts?.closeImportMenu);
-                                    this.timeouts.closeImportMenu = setTimeout(() => {document.getElementById("importMenu").style.display = "none"}, 300);
-                                }
-
-                                if (!e.target.closest(".over-header-btn.issue.issue-btn, .over-header-btn.issue.mail-info, .over-header-btn.how-to-use-btn")) {
-                                    this.dismissAllOverHeaderBtns();
-                                }
-                            };
-                        }
-                        
-                        if (eventName == "onmousedown" || eventName == "all") {
-                            // Fold/Unfold modules
-                            document.onmousedown = (e) => {
-                                // Toggle semesters
-                                if (e.target.closest('.semester-header')) {
-                                    this.semesterHeaderMouseUpNoMoveAction();
-                                }
-                                else if (e.target.closest('.module-card-header') && !e.target.closest('.module-title.input, .module-delete-btn, .drag-icon, .tick-icon')) {
-                                    this.moduleHeaderMouseUpNoMoveAction(e)
-                                }
-                                else if (e.target.closest('.subject-card-header, .subject-card.compact') && !e.target.closest('.any-input, .drag-icon, .tick-icon, .subject-delete-btn')) {
-                                    this.subjectHeaderMouseUpNoMoveAction(e)
-                                }
-                            };
-                        }
-
+                            if (e.target.classList.contains("any-input")) {
+                                this.generalKeyboardEvents("edit sim grade", e.target.closest(".any-input"));
+                            }
+                        };
                     }
-                    attachAllAnyInputsListeners() {
-                        document.querySelectorAll(".any-input").forEach(input => {
-                            this.attachAnyInputListeners(input)
-                        })
+
+                    attachAllAnyInputsListeners(container=document) {
+                        if (container instanceof HTMLElement || container == document) {
+                            container.querySelectorAll(".any-input").forEach(input => {
+                                this.attachAnyInputListeners(input)
+                            })
+                        }
                     }
                     attachAnyInputListeners(input) {
                         input.onfocus    = ()  => {this.generalKeyboardEvents("edit sim grade", input)}
@@ -4625,6 +4906,26 @@ ecamDash = undefined;
 
                 //#region Dashboard listeners
                     
+
+                    attachEcamDashMouseListeners() {
+                        
+                        this.ecamDash.onmousedown = (e) => {
+                            // Toggle semesters
+                            if (e.target.closest('.semester-header')) {
+                                this.semesterHeaderMouseUpNoMoveAction();
+                            }
+                            // Fold/Unfold modules
+                            else if (e.target.closest('.module-card-header') && !e.target.closest('.module-title.input, .module-delete-btn, .drag-icon, .tick-icon')) {
+                                this.moduleHeaderMouseUpNoMoveAction(e)
+                            }
+                            // Fold/unfold modules
+                            else if (e.target.closest('.subject-card-header, .subject-card.compact') && !e.target.closest('.any-input, .drag-icon, .tick-icon, .subject-delete-btn')) {
+                                this.subjectHeaderMouseUpNoMoveAction(e)
+                            }
+                        };
+
+                    }
+
 
                     attachLangBtnsListener() {
                         // Change to English
@@ -4691,7 +4992,7 @@ ecamDash = undefined;
                         document.getElementById('editModeBtn').onclick = () => {
                             this.editMode = !this.editMode;
                             localStorage.setItem("ECAM_DASHBOARD_DEFAULT_EDIT_MODE", this.editMode);
-                            this.generateContent({fadeIn: true});
+                            this.generateContent();
                         };
                     }
 
@@ -4701,6 +5002,7 @@ ecamDash = undefined;
                     attachExportBtnListener() {
                         document.getElementById('exportBtn').onclick = () => this.exportData();
                     }
+                    
                 //#endregion
 
                 
@@ -4868,8 +5170,9 @@ ecamDash = undefined;
                                     this.currentSemester = e.target.dataset.filter;
                                     this.saveSemesterFilter();
 
+                                    this.foldedModuleCardsId = []; document.querySelector(".fold-toggle").classList.remove("active");
                                     this.removeCardFromSelection();
-                                    this.generateContent({fadeIn: true});
+                                    this.generateContent({manageIndividualSubjectCardFolding: false});
                                 }
                             };
                         });
@@ -4954,18 +5257,18 @@ ecamDash = undefined;
                         document.querySelectorAll(".module-info-clear.sim").     forEach(simClear => {
                             simClear.onclick = () => {
                                 this.clearSimGrades(simClear.dataset.semester, simClear.dataset.module);
-                                this.generateContent({fadeIn: true});
+                                this.generateContent();
                             }
                         });
                         document.querySelectorAll(".module-info-clear.disabled").forEach(disClear => {
                             disClear.onclick = () => {
                                 this.clearIgnoredGradesForModule(disClear.dataset.semester, disClear.dataset.module);
-                                this.generateContent({fadeIn: true});
+                                this.generateContent();
                             }
                         });
                     }
 
-                    attachAllModuleDeleteBtnsListener(container=document.body) {
+                    attachAllModuleCardDeleteBtnsListener(container=document.body) {
                         container.querySelectorAll(".module-delete-btn").forEach(btn => {
                             this.attachModuleCardDeleteBtnListener(btn);
                         })
@@ -5729,7 +6032,7 @@ ecamDash = undefined;
                         this.clearSimGrades(sem, moduleName);
                         this.saveConfig();
                         this.getGradesDatas();
-                        this.generateContent({fadeIn: true});
+                        this.generateContent();
                     }
                     
                 //#endregion
@@ -5769,7 +6072,7 @@ ecamDash = undefined;
                                 this.attachAllSubjectCardRelatedEventListeners(subjCard);
 
                                 if (subjCard.classList.contains("unclassified")) {
-                                    this.holdElementHeight(unclassifiedSection, 100, {offset: 4});
+                                    this.holdElementHeight(unclassifiedSection, 200, {offset: 4});
                                 }
                             }
                             
@@ -5931,7 +6234,7 @@ ecamDash = undefined;
                         
                         this.saveConfig();
                         this.getGradesDatas();
-                        this.generateContent({fadeIn: true});
+                        this.generateContent();
                     }
 
                     subjectCardNameInputAction(target) {
@@ -6087,9 +6390,10 @@ ecamDash = undefined;
                             __sim: true,
                             id: new Date().getYear() + "" + new Date().getMonth() + "" + new Date().getDay() + "" + new Date().getHours() + "" + new Date().getMinutes() + "" + new Date().getSeconds() + "" + new Date().getMilliseconds()
                         });
+
                         this.saveSim();
                         this.getGradesDatas();
-                        this.generateContent({fadeIn: true});
+                        this.generateContent();
                     }
 
                     simGradeInputEditAction(target) {
@@ -6551,6 +6855,7 @@ ecamDash = undefined;
 
 
 
+
             //#region -— Dragged element actions __________
 
 
@@ -6633,6 +6938,7 @@ ecamDash = undefined;
 
                             moduleCard.style.width = "50%";
                             moduleTotalCoef.style.display = "none"; 
+                            moduleHeaderLeftSize.style.width = "50%";
 
                             if (!draggedCardIsSelected) {
                                 // A non-selected module card has been dragged: if it was already folded, we only remove its adjacent module insertion fields, but fold it as well otherwise
@@ -6748,6 +7054,7 @@ ecamDash = undefined;
                             if (moduleCard) {
                                 moduleCard.style.width = "";
                                 moduleTotalCoef.style.display = "";
+                                moduleHeaderLeftSize.style.width = "";
     
                                 if (!draggedCardIsSelected) {
                                     // A non-selected module card has been dropped: if it was already folded before being dragged, we only show its adjacent module insertion fields, but unfold it as well otherwise
@@ -7754,7 +8061,11 @@ ecamDash = undefined;
                 const pickerMenu = document.querySelector("#pickerMenu");
                 if (pickerMenu) {
                     pickerMenu.classList.remove("show");
-                    this.timeouts.closePickerMenu = setTimeout(() => {pickerMenu.parentElement.remove(); this.attachDocumentMouseListeners()}, 300);
+                    this.timeouts.closePickerMenu = setTimeout(() => {
+                        pickerMenu.parentElement.remove(); 
+                        this.attachDocumentMouseListeners();
+                        this.attachEcamDashMouseListeners();
+                    }, 300);
                 }
             }
 
@@ -8003,9 +8314,10 @@ ecamDash = undefined;
                         this.editMode = !this.editMode;
                         localStorage.setItem("ECAM_DASHBOARD_DEFAULT_EDIT_MODE", this.editMode);
 
+                        this.foldedModuleCardsId = []; document.querySelector(".fold-toggle").classList.remove("active");
                         this.removeCardFromSelection();
                         this.scrollToClientHighestElem();
-                        this.generateContent();
+                        this.generateContent({manageIndividualSubjectCardFolding: false});
                     }
                     else if (this.keyInputMatch(e, "D", shiftRequired)) {
                         const unclassifiedSection = document.querySelector(".unclassified-section");
@@ -8083,6 +8395,7 @@ ecamDash = undefined;
                         newActiveSemFilterTab.classList.add("active");
                         this.currentSemester = newActiveSemFilterTab.dataset.filter;
 
+                        this.foldedModuleCardsId = []; document.querySelector(".fold-toggle").classList.remove("active");
                         this.saveSemesterFilter();
                         this.removeCardFromSelection();
                         this.generateContent({fadeIn: false, manageIndividualSubjectCardFolding: false});
@@ -8092,9 +8405,9 @@ ecamDash = undefined;
             if (mode == "edit sim grade") {
                 document.onkeydown = (e) => {
                     if (this.keyInputMatch(e, "Enter", noModifierAllowed)) {
-                        if (target.classList.contains("simulated-grade-input")) {
+                        if (e.target.classList.contains("simulated-grade-input")) {
 
-                            if      (target.classList.contains("sim-inp-type")) {
+                            if      (e.target.classList.contains("sim-inp-type")) {
                                 const simInpGrade = document.querySelector(`.simulated-grade-input.sim-inp-grade[data-subj="${target.dataset.subj}"][data-semester="${target.dataset.semester}"]`);
                                 simInpGrade.focus({preventScroll: true, focusVisible: true});
                                 const simInpGradeCoord = simInpGrade.getBoundingClientRect().top;
@@ -8103,18 +8416,23 @@ ecamDash = undefined;
                                     simInpGrade.scrollIntoView({block: "center", smooth: true});
                                 }
                             }
-                            else if (target.classList.contains("sim-inp-grade")) {
+                            else if (e.target.classList.contains("sim-inp-grade")) {
                                 const simInpCoef = document.querySelector(`.simulated-grade-input.sim-inp-coef[data-subj="${target.dataset.subj}"][data-semester="${target.dataset.semester}"]`);
+                                // Prevents the instant scroll if the text field is out of the screen
                                 simInpCoef.focus({preventScroll: true, focusVisible: true});
                                 const simInpCoefTopCoord = simInpCoef.getBoundingClientRect().top;
                                 
+                                // Smoothly scrolls to the text field if it's out of the screen
                                 if (simInpCoefTopCoord < 0 || simInpCoefTopCoord > window.innerHeight) {
                                     simInpCoef.scrollIntoView({block: "center", smooth: true});
                                 }
                             }
-                            else if (target.classList.contains("sim-inp-coef")) {
+                            else if (e.target.classList.contains("sim-inp-coef")) {
                                 const simAddBtn = document.querySelector(`.sim-add-btn[data-subj="${target.dataset.subj}"][data-semester="${target.dataset.semester}"]`);
+                                
                                 this.simGradeAddBtnAction(simAddBtn);
+                                this.attachAllAnyInputsListeners();
+
                             }
 
                         }
@@ -8150,6 +8468,27 @@ ecamDash = undefined;
                     </div>
                 `;
                 document.querySelector("#currentNote").insertBefore(intranetFold, greyGridTable);
+
+                intranetFold.onclick = (e) => {
+                    const header            = e.target.closest('.intranet-fold');
+                    const intranetTable     = document.querySelector('.greyGridTable');
+                    const intranetToggle    = header.querySelectorAll('.intranet-toggle');
+
+                    intranetToggle.forEach(t => {
+                        if (t.previousElementSibling == null){
+                            t.classList.toggle('openLeft')
+                        } else {
+                            t.classList.toggle('openRight');
+                        }
+                    });
+
+                    if (intranetTable.style.display == 'none') {
+                        intranetTable.style.display = 'block';
+                    } else {
+                        intranetTable.style.display = 'none';
+                    }
+                }
+
                 greyGridTable.style.display = "none";
                 
                 new ECAMDashboard(error); 
