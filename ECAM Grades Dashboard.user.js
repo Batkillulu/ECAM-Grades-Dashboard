@@ -29,6 +29,7 @@
 //      (rendering the characters shortens the height of rows in the minimap, I prefer it like that since this script is quite long)
 // 
 // I've done a bit of styling intended for the minimap with the parameters I gave above, and it should make your reverse-engineering experience much easier!
+// Optimal display when the side bar is closed
 // 
 // 
 // Link for offline test: https://espace.ecam.fr/c/portal/login?redirect=%2Fgroup%2Feducation%2Fnotes&p_l_id=0&ticket=ST-113179-sbwjXieT3GLY9T3fXdsmFp9vCro-tomcat03
@@ -57,6 +58,7 @@ ecamDash = undefined;
 
 (function() {
     'use strict';
+
     //#region — CSS Style —
     //MARK: ——————————————————
 
@@ -133,18 +135,17 @@ ecamDash = undefined;
                 .loading-symbol.show    { animation: loading 1s infinite; }
                 @keyframes loading  { from {offset-distance: var(--offset-offset)} to {offset-distance: calc(var(--offset-offset) + 100%)} }
 
-                .new-user-notif     { display: flex; justify-content: center; align-items: center; width: 0; height: 0; position: relative; right: 303px; top: -22px; border-radius: 20px; text-align: center; cursor: pointer; user-select: none; z-index: 10; transition: all 0.3s ease; --hoverAmp: 15px; animation: hoveringElem 3s infinite ease-in-out; --arrow-path: path('M 0 30 c 20,46, 130,71, 156,-12 m -21,5 l 23,-8 l 9,19'); --arrow-join: round; } 
-                .new-user-notif-text    { min-width: 400px; min-height: 53px; padding: 10px; background: #00037b; outline: 2px solid; border-radius: 20px; font-size: 18px; text-wrap-mode: wrap; }
+                .new-user-notif     { display: flex; justify-content: center; align-items: center; width: 0; height: 0; position: relative; right: 296px; top: -22px; border-radius: 20px; text-align: center; cursor: pointer; user-select: none; z-index: 301; transition: all 0.3s ease; --hoveringElem-amp: 5px; animation: hoveringElem 2s infinite alternate ease-in-out; --arrow-join: round; } 
+                .new-user-notif-text    { min-width: 450px; min-height: 53px; padding: 10px; background: #00037b; outline: 3px solid; border-radius: 20px; font-size: 23px; text-wrap-mode: wrap; line-height: 24px; z-index: 10; }
                 .new-user-notif-arrow       { width: 0px; height: 0px; position: relative; transition: all 0.5s ease }
-                .new-user-notif-arrow-svg        { width: 0; height: 0; min-width: 200px; min-height: 70px; }
-                .new-user-notif-arrow-path       { animation: hoveringArrow 3s infinite ease-in-out; }
+                .new-user-notif-arrow-svg        { width: 0; height: 0; min-width: 210px; min-height: 70px; }
+                .new-user-notif-arrow-path       { animation: hoveringArrow 2s infinite alternate ease-in-out; }
                 .new-user-notif-arrow-path.outside   { fill: none; stroke: #ffffff; stroke-width: 15px; stroke-linejoin: var(--arrow-join); }
                 .new-user-notif-arrow-path.inside    { fill: none; stroke: #00037b; stroke-width: 8px;  stroke-linejoin: var(--arrow-join); }
-                @keyframes hoveringElem  { 0% { transform: translateY(0px); } 50% { transform: translateY(var(--hoverAmp)); } 100% { transform: translateY(0px); } }
-                @keyframes hoveringArrow { 0% { d: path('M 0 30 c 10,50, 128,77, 147,13 m -21,5 l 23,-8 l 9,19'); } 50% { d: path('M 0 30 c 20,46, 130,71, 156,-12 m -21,5 l 23,-8 l 9,19'); } 100% { d: path('M 0 30 c 10,50, 128,77, 147,13 m -21,5 l 23,-8 l 9,19'); } }
+                @keyframes hoveringArrow { from { d: path('M 0 30 c 10,59, 134,90, 165,16 m -19,3 l 21,-6 l 8,18'); } to { d: path('M 0 30 c 23,67, 156,87, 178,0 m -23,8 l 25,-15 l 13,22'); } }
 
                 .new-user-notif-fullscreen-effect   { position: fixed; width: 100%; height: 100%; right: 0px; top: 0px; background: black; overflow: clip; opacity: 0%; z-index: 8; transition: all 0.5s ease; }
-                .new-user-notif-fullscreen-effect.focus { opacity: 80%; }
+                .new-user-notif-fullscreen-effect.focus { opacity: 60%; }
             `;
             
             
@@ -153,7 +154,7 @@ ecamDash = undefined;
                     .lang-btn           { border: 2px solid #000000ff; background: #6f79ff; border-radius: 18px; width: 36px; height: 36px; }
                     .lang-btn.active    { border: 2px solid #ceefffff; }
                     .lang-btn:hover     { border: 2px solid #afe4ffff; background: #a6acff; }
-                    `;
+                `;
             
             
                 //#region -over header buttons
@@ -167,10 +168,10 @@ ecamDash = undefined;
 
                     // MARK: help buttons
                     styles += `
-                        .over-header-help-btns                  { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; z-index: 12; }
+                        .over-header-help-btns                  { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; /* z-index: 301; */ }
 
 
-                        .over-header-btn.how-to-use-btn                 { justify-content: center;  background: #0059ad; width: 40px; padding-left: 0px;  font-size: 20px; outline: 3px solid #c022ff; border: none; color: inherit; z-index: 12; }
+                        .over-header-btn.how-to-use-btn                 { justify-content: center;  background: #0059ad; width: 40px; padding-left: 0px;  font-size: 20px; outline: 3px solid #c022ff; border: none; color: inherit; }
                         .over-header-btn.how-to-use-btn:hover           { outline-color: white; background: #2888e2; }
                         .over-header-btn.how-to-use-btn.open            { outline-color: white; }
 
@@ -186,6 +187,12 @@ ecamDash = undefined;
                         .over-header-btn.help.doc-btn.fr::before                    { content: "Voir documentation"; }
                         .over-header-btn.help.doc-btn.en                            { width: 180px; }
                         .over-header-btn.help.doc-btn.en::before                    { content: "See documentation"; }
+                        
+                        .over-header-btn.help.keybinds-btn                          {  }
+                        .over-header-btn.help.keybinds-btn.fr                       { width: 180px; }
+                        .over-header-btn.help.keybinds-btn.fr::before               { content: "Raccourcis clavier ⌨️"; }
+                        .over-header-btn.help.keybinds-btn.en                       { width: 190px; }
+                        .over-header-btn.help.keybinds-btn.en::before               { content: "Keyboard shortcuts ⌨️"; }
 
                         .over-header-btn.help.tuto-btn                              { font-weight: 700; }
                         .over-header-btn.help.tuto-btn.fr                           { width: 168px; }
@@ -193,17 +200,11 @@ ecamDash = undefined;
                         .over-header-btn.help.tuto-btn.en                           { width: 135px; }
                         .over-header-btn.help.tuto-btn.en::before                   { content: "Start tutorial ▶︎"; }
 
-                        .over-header-btn.help.patch-btn                             { font-weight: 700; }
-                        .over-header-btn.help.patch-btn.fr                          { width: 168px; }
-                        .over-header-btn.help.patch-btn.fr::before                  { content: "Voir les notes de patch"; }
-                        .over-header-btn.help.patch-btn.en                          { width: 135px; }
-                        .over-header-btn.help.patch-btn.en::before                  { content: "See patch notes"; }
-
-                        .over-header-btn.help.keybinds-btn                          {  }
-                        .over-header-btn.help.keybinds-btn.fr                       { width: 180px; }
-                        .over-header-btn.help.keybinds-btn.fr::before               { content: "Raccourcis clavier ⌨️"; }
-                        .over-header-btn.help.keybinds-btn.en                       { width: 190px; }
-                        .over-header-btn.help.keybinds-btn.en::before               { content: "Keyboard shortcuts ⌨️"; }
+                        .over-header-btn.help.first-steps-btn                       { font-weight: 700; }
+                        .over-header-btn.help.first-steps-btn.fr                    { width: 168px; }
+                        .over-header-btn.help.first-steps-btn.fr::before            { content: "► Premiers pas ◄"; }
+                        .over-header-btn.help.first-steps-btn.en                    { width: 135px; }
+                        .over-header-btn.help.first-steps-btn.en::before            { content: "► First steps ◄"; }
                     `;
 
 
@@ -269,6 +270,7 @@ ecamDash = undefined;
                 styles += `
                 
                     .header-actions                 { display: flex; gap: 12px; }
+                    .config-btns-container          { display: flex; flex-direction: column; }
                     .btn                                { display: flex; justify-content: center; align-items: center; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-size: 14px; }
                     .btn-edit-mode:hover:not(:disabled) { transform: scale(0.95); background: linear-gradient(135deg, #7d92eeff 0%, #8e5ebeff 100%); }
                     .btn-edit-mode                      { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: grid; width: 126px; height: 108px; transition: all 0.2s ease }
@@ -318,7 +320,12 @@ ecamDash = undefined;
 
             //MARK: help and tutorial
             styles += `
+                .tuto-tip-notif-container   { display: flex; justify-content: center; align-items: center; position: relative; width: 0; height: 0; z-index: 10; opacity: 0; transform: scale(110%); --infinite-alternate-scale-up-scale: 100%; transition: all 0.3s ease;}
+                .tuto-tip-notif         { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 15px; padding: 20px; background: linear-gradient( #5334ff 0%, #7a62ff 100%); border-radius: 7px; outline: 5px solid; color: white; font-size: 31px; line-height: 31px; text-align: center; --hoveringElem-amp: 10px; animation: focusBlinkAnimation 2s infinite alternate ease-in-out, hoveringElem 2s infinite alternate ease-in-out; transition: all 0.3s ease; }
+                @keyframes focusBlinkAnimation  { from { filter: brightness(1); } to { filter: brightness(1.5) } }
 
+                .skip-tuto-btn          { display: flex; justify-content: center; align-items: center; padding: 10px; position: fixed; top: 20px; right: 20px; background: #4c84fde8; border-radius: 10px; color: white; font-size: 20px; text-decoration: underline; cursor: pointer; opacity: 0; z-index: 5000; transition: all 0.5s ease; }
+                .skip-tuto-btn::before      { content: "Skip tutorial"; }
             `;
 
 
@@ -328,7 +335,7 @@ ecamDash = undefined;
                 .import-menu        { display: flex; justify-content: space-around; position: relative; right: 375px; top: 0; color: black; font-size: 15px; border-radius: 13px; height: 0; width: 0; opacity: 0%; z-index: 0; transition: all 0.2s ease; }
                 .import-menu.show   { top: 16px; opacity: 100%; }
                 .import-menu-body   { display: flex; justify-content: space-around; align-items: center; border-radius: 13px; background: white; box-shadow: 5px 4px 20px 0px #00000066; min-height: 60px; min-width: 540px; transition: all 0.2s ease; }
-                .import-menu-btn        { display: flex; justify-content: center; align-items: center; text-align: center; user-select: none; cursor: pointer; border-radius: 12px; border: 2px solid; height: 40px; width: 40%; padding: 5px; transition: all 0.2s ease; }
+                .import-menu-btn        { display: flex; justify-content: center; align-items: center; text-align: center; user-select: none; cursor: pointer; background: white; border-radius: 12px; border: 2px solid; height: 40px; width: 40%; padding: 5px; transition: all 0.2s ease; }
                 .import-menu-btn:hover  { background: #dddddd; }
                 .import-menu-btn.file   {  }
                 .import-menu-btn.clear  { width: 15%; }
@@ -446,7 +453,9 @@ ecamDash = undefined;
                 .view-toggle        { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 4px; background: #f7f7f7; border-radius: 8px; }
                 .fold-toggle        { display: flex; align-items: center; justify-content: center; gap: 8px; height: 40px; width: 180px; background: #f7f7f7; outline: 1px solid; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; user-select: none; transition: all 0.3s ease; }
                 .fold-toggle:hover  { background: white; box-shadow: 3px 5px 5px 0px #00000042; transform: scale(0.95); }
-                .fold-toggle.active { background: white; box-shadow: 3px 5px 5px 0px #00000042; }
+                .fold-toggle.active { background: white; box-shadow: 3px 5px 5px 0px #00000042, inset 0px 0px 5px 2px #00000042; }
+                .fold-toggle.fr::after  { content: "Plier tous les modules" }
+                .fold-toggle.en::after  { content: "Fold all modules" }
                 .view-btn           { background: transparent; padding: 8px 12px; border: none; outline: 1px solid #adadad; border-radius: 6px; cursor: pointer; font-size: 18px; transition: all 0.2s ease; width: 48px; height: 40px; }
                 .view-btn:hover     { background: white; box-shadow: 3px 5px 5px 0px #00000042; transform: scale(0.95); }
                 .view-btn.active    { background: white; box-shadow: 3px 5px 5px 0px #00000042; outline-color: black; }
@@ -458,19 +467,9 @@ ecamDash = undefined;
 
 
 
-        //#region -DROP FIELDS REGION _________________
+        //#region -DROP FIELDS __________________________
             styles += `
                 .drop-field     { display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 20px; overflow: clip; user-select: none; }
-                `;
-
-
-            // MARK: scroll fields
-            styles += `
-                .scroll-field           { --scroll-field-height: 100px; display: flex; flex-direction: column; mix-blend-mode: multiply; position: fixed; left: 0px; user-select: none; width: 100%; height: var(--scroll-field-height); z-index: 299; transition: all 0.3s ease; }
-                .scroll-field.up        { top:    calc(-1*var(--scroll-field-height) - 45px); background: linear-gradient(  0deg, #b6d0ff00 0%, #5c95ff 100%); }
-                .scroll-field.down      { bottom: calc(-1*var(--scroll-field-height) - 45px); background: linear-gradient(180deg, #b6d0ff00 0%, #5c95ff 100%); }
-                .scroll-field.up.show   { top:    0px; opacity: 50%; }
-                .scroll-field.down.show { bottom: 0px; opacity: 50%; }
             `;
                 
 
@@ -635,10 +634,10 @@ ecamDash = undefined;
                 .semester-header:hover  { background: #f3f4f6; }
                 .semester-info              { display: flex; align-items: center; gap: 12px; }
                 .semester-name              { font-size: 24px; font-weight: 600; color: #1a1a1a; }
-                .semester-average           { padding: 6px 12px; background: white; border-radius: 8px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
-                .average-good                   { color: #10b981; border: 1px solid #10b98130; }
-                .average-medium                 { color: #f59e0b; border: 1px solid #f59e0b30; }
-                .average-bad                    { color: #ef4444; border: 1px solid #ef444430; }
+                .semester-averages          { display: flex; align-items: baseline; gap: 6px; padding: 6px 12px; background: white; border: 1px solid #575757; border-radius: 8px; font-size: 19px; font-weight: 600; transition: all 0.2s ease; }
+                .semester-averages.good         { color: #10b981; border-color: #10b98130; }
+                .semester-averages.bad          { color: #ef4444; border-color: #ef444430; }
+
                 .semester-toggle                { display: flex; justify-content: center; align-items: center; width: 24px; height: 24px; font-size: 18px; transition: transform 0.3s ease; }
                 .semester-toggle.open           { transform: rotate(180deg); }
 
@@ -674,15 +673,15 @@ ecamDash = undefined;
                 .module-card.failed         { outline-color: #ef4444ff; background: radial-gradient(transparent 0%, #fef2f2ff 75%); }
                 .module-card.unknown        { outline-color: #6d6d6dff; background: radial-gradient(transparent 0%, #d1d1d1ff 75%); }
 
-                .module-header                  { display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 18px 20px; border-bottom: 3px solid #e5e5e5; border-radius: 22px 22px 0px 0px; width: 100%; min-height: 80px; max-height: 80px; cursor: pointer; z-index: 2; transition: all 0.1s ease; }
-                .module-header.fold             { border-radius: 25px; }
-                .module-header.validated        { border-color: #10b981ff; background: linear-gradient(300deg, #e0ffeaff 30%, transparent); }
-                .module-header.failed           { border-color: #ef4444ff; background: linear-gradient(300deg, #ffd9d9ff 30%, transparent); }
-                .module-header.unknown          { border-color: #6d6d6dff; background: linear-gradient(300deg, #acacacff 30%, transparent); }
-                .module-header:hover            { filter: brightness(calc(0.01 * 105)); opacity: 90%; }
+                .module-card-header                  { display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 18px 20px; border-bottom: 3px solid #e5e5e5; border-radius: 22px 22px 0px 0px; width: 100%; min-height: 80px; max-height: 80px; cursor: pointer; z-index: 2; transition: all 0.1s ease; }
+                .module-card-header.fold             { border-radius: 25px; }
+                .module-card-header.validated        { border-color: #10b981ff; background: linear-gradient(300deg, #e0ffeaff 30%, transparent); }
+                .module-card-header.failed           { border-color: #ef4444ff; background: linear-gradient(300deg, #ffd9d9ff 30%, transparent); }
+                .module-card-header.unknown          { border-color: #6d6d6dff; background: linear-gradient(300deg, #acacacff 30%, transparent); }
+                .module-card-header:hover            { filter: brightness(calc(0.01 * 105)); opacity: 90%; }
                 .module-delete-btn                  { border-radius: 14px; background: transparent; margin: 0; text-transform: none; -webkit-appearance: button; font: 1em Arial,Helvetica,Verdana,sans-serif; width: auto; padding: 5px; overflow: visible; cursor: pointer; color: #34404F; text-shadow: none; font-weight: normal; border: 3px solid; border-color: white; transition: all 0.2s ease; } 
 
-                .module-header-left-side        { display: flex; align-items: center; justify-content: flex-start; width: 70%; }
+                .module-card-header-left-side        { display: flex; align-items: center; justify-content: flex-start; width: 35%; }
                 .module-title                    { font-size: 20px; font-weight: 800; color: #1a1a1a; width:42%; margin-bottom: 2px; }
                 .module-title.input              { font-size: 20px; font-weight: 800; color: #1a1a1a; width:90%; border-radius: 12px; padding-left: 10px; }
 
@@ -702,14 +701,18 @@ ecamDash = undefined;
                 .module-info-clear.disabled         {  }
                 .module-info-clear.sim              {  }
 
+                .module-card-header-right-side  { display: flex; justify-content: flex-end; align-items: center; width: 20%; gap: 6px; font-size: 19px; font-weight: 600; }
+                .module-class-average               { display: flex; justify-content: flex-end; align-items: center; width: 80px; font-size: 17px; }
+                .module-average                     { display: flex; justify-content: flex-end; align-items: center; font-size: 26px; font-weight: 800; }
+                .module-average.good                { color: #10b981; }
+                .module-average.bad                 { color: #ef4444; }
+                .module-average.unknown             { color: #6d6d6dff; }
+                .module-toggle                      { display: flex; justify-content: center; align-items: center; width: 24px; height: 24px; line-height: 1px; margin-left: 5px; font-size: 18px; color: #000000; transition: transform 0.3s ease; }
+                .module-toggle.open                 { transform: rotate(180deg); }
+
+
                 .module-details                     { display: flex; flex-direction: column; align-items: center; width: 97%; gap: 30px; opacity: 100%; transition: all 0.2s ease; }
                 .module-details.edit-mode           { gap: 0px; }
-                .module-moyenne                     { display: flex; align-items: center; justify-content: flex-end; font-size: 26px; font-weight: 800; gap:10px; width: 220px; }
-                .module-moyenne.good                { color: #10b981; }
-                .module-moyenne.bad                 { color: #ef4444; }
-                .module-moyenne.unknown             { color: #6d6d6dff; }
-                .module-toggle                      { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; margin-left: 5px; font-size: 18px; color: #000000; transition: transform 0.3s ease; }
-                .module-toggle.open                 { transform: rotate(180deg); }
 
             `;
                 
@@ -727,10 +730,10 @@ ecamDash = undefined;
 
 
 
-            //#region -SUBJECT CARDS _______________________
+            //#region -SUBJECT CARDS .....................................
                 styles += `
 
-                    .subject-card               { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; height: 70px; position: relative; border-radius: 20px; outline: 4px solid #ffffffff; opacity: 100%; overflow: clip; transition: outline-color 0.3s ease, transform 0.3s ease, all 0.1s ease; }
+                    .subject-card               { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; height: 100%; position: relative; border-radius: 20px; outline: 4px solid #ffffffff; opacity: 100%; overflow: clip; transition: outline-color 0.3s ease, transform 0.3s ease, all 0.2s ease; }
                     .subject-card.detailed      { }
                     .subject-card.compact       { }
                     .subject-card.scroll-to     { transform: scale(102%); outline-color: #5f77ff; border-color: #5f77ff; }
@@ -744,7 +747,7 @@ ecamDash = undefined;
                     .subject-card.unknown               { box-shadow: 0px 0px 0px 0px  #6d6d6d; background: linear-gradient(300deg, #c5c5c5 30%, transparent); }
                     .subject-card.unknown:hover         { box-shadow: 0px 0px 13px 5px #6d6d6d; }
                     
-                    .subject-card-header        { display: flex; flex-direction: row; justify-content: space-between; align-items: center; width: 100%; min-height: 70px; border-radius: 20px 20px 0px 0px; outline: 4px solid white; padding: 5px 11px; font-weight:700; font-size: 15px; vertical-align: top; cursor: pointer; z-index: 1; transition: all 0.1s ease; }
+                    .subject-card-header        { display: flex; flex-direction: row; justify-content: space-between; align-items: center; width: 100%; min-height: 70px; border-radius: 20px 20px 0px 0px; outline: 4px solid white; padding: 5px 11px; font-weight:700; font-size: 15px; vertical-align: top; cursor: pointer; z-index: 1; transition: all 0.2s ease; }
                     .subject-card-header.compact    { border-radius: 20px; }
                     .subject-card-header.good       { background: linear-gradient(300deg, #e3ffeb 30%, transparent); }
                     .subject-card-header.meh        { background: linear-gradient(300deg, #ffe8d0 30%, transparent); }
@@ -752,9 +755,9 @@ ecamDash = undefined;
                     .subject-card-header.unknown    { background: linear-gradient(300deg, #b8b8b8 30%, transparent); }
 
                     .subject-card-header-left-side          { display: flex; justify-content: flex-start; align-items: center; gap: 8px; width: 50%; height: 100%; text-wrap-mode: nowrap; }
-                    .subject-card-header-left-side-text     { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 8px; padding-left: 42px; width: 95%; height: 100%; text-wrap-mode: nowrap; }
+                    .subject-card-header-left-side-text     { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 8px; padding-left: 20px; width: 95%; height: 100%; text-wrap-mode: nowrap; }
                     .subject-card-header-left-side-text.edit    { padding-left: 0; }
-                    .subject-card-header-grades-details         { opacity: 0%; }
+                    .subject-card-header-grades-details         { opacity: 0%; transition: all 0.2s ease; }
                     .subject-card-header-grades-details.show    { opacity: 100%; }
                     .subject-name                   { font-weight: 800; color: #1a1a1a; font-size: 16px }
                     .subject-name.input             { font-weight: 800; color: #1a1a1a; font-size: 16px; border: 2px solid #797979; border-radius: 15px; padding-left: 8px; width: calc(100% + 10px); height: 25px;}
@@ -766,10 +769,10 @@ ecamDash = undefined;
                     .subject-insert-field                           { display: flex: flex-direction: column; align-items: center; height: 0px; width: 100%; margin: 0px 0px; transition: height 0.2s ease, margin 0.2s ease; }
                     .subject-insert-field.show                      { height: 50px; margin: 10px 0px; }
                     
-                    .subject-card-header-right-side    { display: flex; justify-content: flex-end; align-items: center; width: 0; height: 100%; text-wrap-mode: nowrap; }
-                    .subj-moyenne           { display: flex; justify-content: flex-end; width: 0; padding-right: 20px; font-size: 24px; font-weight: 800; text-wrap-mode: nowrap; }
-                    .subj-moyenne.good      { color: #10b981; }
-                    .subj-moyenne.bad       { color: #ef4444; }
+                    .subject-card-header-right-side    { display: flex; justify-content: flex-end; align-items: center; width: 0; height: 100%; gap: 4px; font-size: 17px; text-wrap-mode: nowrap; }
+                    .subj-average           { display: flex; justify-content: flex-end; padding-right: 20px; font-size: 24px; font-weight: 800; text-wrap-mode: nowrap; transition: all 0.2s ease; }
+                    .subj-average.good      { color: #10b981; }
+                    .subj-average.bad       { color: #ef4444; }
                     .subject-delete-btn     { border-radius: 14px; background: transparent; margin: 0; text-transform: none; -webkit-appearance: button; font: 1em Arial,Helvetica,Verdana,sans-serif; width: auto; padding: 5px; overflow: visible; cursor: pointer; color: #34404F; text-shadow: none; font-weight: normal; border: 3px solid; border-color: white; transition: all 0.2s ease; } 
 
 
@@ -784,22 +787,23 @@ ecamDash = undefined;
                     
 
 
+
                 // MARK: grades table
                 styles += `
 
-                    .grades-table                        { background: linear-gradient(300deg, #c5c5c5 30%, transparent); width: 98%; margin-top: 4px; }
+                    .grades-table                        { background: linear-gradient(300deg, #c5c5c5 30%, transparent); width: 98%; margin-top: 4px; transition: all 0.2s ease; }
                     .grades-table.good                   { background: linear-gradient(300deg, #f0fdf4 30%, transparent); }
                     .grades-table.meh                    { background: linear-gradient(300deg, #fff2e4 30%, transparent); }
                     .grades-table.bad                    { background: linear-gradient(300deg, #fef2f2 30%, transparent); }
 
                     .grade-row                           { border-bottom: 1px solid white /* #e4e4e4 */; height: 40px; transition: background 0.3s ease; }
-                    .grade-row.last                      { vertical-align: baseline; border-bottom: none; }
+                    .grade-row.last                      { border-bottom: none; }
                     .grade-row.sim                       { background: #e9efff9a; }
                     .grade-row:hover                     { background: #eeedfd; }
 
 
                     .grades-table th                     { padding: 10px 12px; height: 39px; font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 0.5px; border: 3px solid white; border-right-width: 2px; border-left-width: 2px; border-top-width: 0px; text-align: center; text-wrap-mode: nowrap; }
-                    .grades-table td                     { padding: 10px; font-size: 14px; text-wrap-mode: nowrap; }
+                    .grades-table td                     { padding: 10px; font-size: 14px; max-height: 45px; min-height: 40px; text-wrap-mode: nowrap; }
 
                     .grades-table-header-type               { width: 30%; }
                     .grades-table-header-type.dragging      { width: 30%; }
@@ -842,16 +846,17 @@ ecamDash = undefined;
 
                     .subject-sim-del-btn        { border: 1px solid #A7CEDF; border-radius: 6px; cursor: pointer; }
                     .sim-add-btn                { display: flex; align-items: center; justify-content: center; height: 25px; width: 67px; max-width: 140px; padding: 6px 10px; border: 1px solid; border-radius: 15px; user-select: none; }
-                    .simulated-grade-input         { border-radius: 10px; border-color: #667eea; padding: 2px 10px}
+                    .simulated-grade-input         { border-radius: 10px; border: 1px outset #667eea; padding: 2px 10px}
                     .simulated-grade-input.sim-inp-type    { width: 55%;  max-width:250px; height:25px }
                     .simulated-grade-input.sim-inp-grade    { width: 100%; max-width:75px;  height:25px }
                     .simulated-grade-input.sim-inp-coef    { width: 100%; max-width:60px;  height:25px }
                     .simulated-grade-input.sim-inp-date    { width: 100%; max-width:140px; height:25px }
-                    .simulated-grade-input-edit    { border-radius: 10px; border-color: #667eea; padding: 2px 10px}
+                    .simulated-grade-input-edit    { border-radius: 10px; border-color: #667eea; padding: 2px 10px; color: inherit; }
                     .grade-sim-del-btn           { border: none; border-radius: 6px; cursor: pointer; }
                     .grade-checkbox  { cursor: pointer; }
                 `;
                 
+
 
                 // MARK: icons
                 styles += `
@@ -860,7 +865,7 @@ ecamDash = undefined;
 
                     .drag-icon                  { display: flex; justify-content: center; align-items: center; border: 2px solid; color: black; border-radius: 8px; line-height: 0px; cursor: pointer; user-select: none; transition: all 0.2s ease; }
                     .drag-icon:hover            { color: #a1a1a1; }
-                    .drag-icon.subject              { width: 27px; height: 27px; font-size: 20px; }
+                    .drag-icon.subject              { width: 25px; height: 25px; font-size: 17px; }
                     .drag-icon.module               { width: 30px; height: 30px; font-size: 26px; font-weight: 600; }
 
                     .tick-icon          { height: 30px; width: 30px; font-size: 35px; line-height: 28px; color: #004cff; cursor:pointer; user-select:none; transition: all 0.2s ease; }
@@ -869,9 +874,19 @@ ecamDash = undefined;
                     .tick-icon:hover    { color: #89adff; }
                 `;
             
+
+                // MARK: .................................................................
             //#endregion
             
+
+
+
+
+            
+            // MARK: _________________________________________
         //#endregion
+            
+
             
 
 
@@ -903,6 +918,11 @@ ecamDash = undefined;
 
                 @keyframes slightHorizShake { 0% {left: 0px} 25% {left: 3px} 50% {left: -3px} 75% {left: 3px} 100% {left: 0px} }
                 .slight-horiz-shake { animation: var(--slight-horiz-shake-duration, 0.3s) slightHorizShake ease; }
+
+                @keyframes infiniteAlternateScaleUp     { from {transform: scale(100%)} to {transform: scale(var(--infinite-alternate-scale-up-scale, 110%))} }
+                .infinite-alternate-scale-up    { animation: infiniteAlternateScaleUp var(--infinite-alternate-scale-up-duration, 1s) alternate infinite ease-in-out; }
+
+                @keyframes hoveringElem  { from { transform: translateY(0px); } to { transform: translateY(var(--hoveringElem-amp, 20px)); } }
             `;
 
 
@@ -1000,12 +1020,12 @@ ecamDash = undefined;
 
     //#endregion
 
-    //MARK: —————————————————
+    //MARK: ——————————————————
+    ;
 
 
 
-
-    //MARK: ECAMDashboard —————————
+    //MARK: ECAMDashboard ——————————
     class ECAMDashboard {
 
 
@@ -1025,38 +1045,41 @@ ecamDash = undefined;
             //#region Settings
 
                 this.settings = {
-                    blurEnabled: {
-                        name: () => this.lang == "fr" 
-                            ? "Activer le flou" 
-                            : "Enable blur"
+
+                    displayClassAvg: {
+                        name: () => !this.langIsEn 
+                            ? "Moyenne de classe de modules et matières" 
+                            : "Class average for modules and subjects"
                         ,
-                        description: () => this.lang == "fr" 
-                            ? "Activer le flou qui s'opère sur le fond des fenêtres (allumé par défaut parce que je trouve ça beau :D)" 
-                            : "Enable the blur that operates on the background of the windows (turned on by default because I find it nice :D)"
+                        description: () => !this.langIsEn 
+                            ? "Afficher les moyennes de classe pour les matières, modules et semestres, pour les étudiants avec un esprit de compétition :D" 
+                            : "Display the class averages for subjects, modules and semesters, for students with high competitive spirit :D"
                         ,
-                        info: () => this.lang == "fr" 
-                            ? "Non recommendé pour les appareils à basses performances" 
-                            : "Not recommended for low-end devices"
+                        info: () => !this.langIsEn 
+                            ? "" 
+                            : ""
                         ,
-                        value: JSON.parse( JSON.parse(localStorage.getItem("ECAM_DASHBOARD_SETTINGS"))?.blurEnabled?.value?.toString() || "true"),
+                        value: JSON.parse( JSON.parse(localStorage.getItem("ECAM_DASHBOARD_SETTINGS"))?.displayClassAvg?.value?.toString() || "true"),
                         action: () => {
-                            document.querySelectorAll(".modal, .loading-symbol").forEach(elem => {if (this.settings.blurEnabled.value) {elem.classList.add("blur")} else {elem.classList.remove("blur")}});
-                            this.saveSettings();
+                            document.querySelectorAll(".semester-class-average, .semester-class-average-vs-average, .module-class-average, .module-class-average-vs-average, .subj-class-average,  .subj-class-average-vs-average").forEach(elem => {
+                                elem.style.display = this.settings.displayClassAvg.value ? "" : "none";
+                            })
+                            this.saveSettings(); 
                         },
                         parents:  [],
                         children: [],
                     },
 
                     totalCoefValuesEnabled: {
-                        name: () => this.lang == "fr" 
+                        name: () => !this.langIsEn 
                             ? "Afficher les coefs totaux" 
                             : "Display total coefs"
                         ,
-                        description: () => this.lang == "fr" 
+                        description: () => !this.langIsEn 
                             ? "Afficher les coefficients totaux pour les cartes de matière et de module" 
                             : "Display the total coefficients for subject and module cards"
                         ,
-                        info: () => this.lang == "fr" 
+                        info: () => !this.langIsEn 
                             ? "Le.s pourcentage.s apparraissant entre le nom des modules/sujets et leur moyenne" 
                             : "The percentage.s showing up between the name of modules/subjects and their average"
                         ,
@@ -1070,15 +1093,15 @@ ecamDash = undefined;
                     },
 
                     totalCoefDebugTextsEnabled: {
-                        name: () => this.lang == "fr" 
+                        name: () => !this.langIsEn 
                             ? "Afficher les textes d'aide" 
                             : "Display the helper texts"
                         ,
-                        description: () => this.lang == "fr" 
+                        description: () => !this.langIsEn 
                             ? "Afficher les textes d'aide des cartes de sujet et de module" 
                             : "Display the helper texts for subject and module cards"
                         ,
-                        info: () => this.lang == "fr" 
+                        info: () => !this.langIsEn 
                             ? "Il s'agit simplement des textes interprétant les nombres des \"Coef Total des Matières\" et \"Coef Total des Notes\"" 
                             : "It simply corresponds to the texts interpreting the numbers of \"Total Subjects Coef\" and \"Total Grades Coef\""
                         ,
@@ -1087,53 +1110,75 @@ ecamDash = undefined;
                             document.querySelectorAll(".module-subject-total-coef-debug, .subject-total-coef-debug").forEach(elem => {if (this.settings.totalCoefDebugTextsEnabled.value) {elem.style.display = "";} else {elem.style.display = "none";}});
                             this.saveSettings();
                         },
-                        parents: [],
+                        parents:  [],
+                        children: [],
+                    },
+
+                    blurEnabled: {
+                        name: () => !this.langIsEn 
+                            ? "Activer le flou" 
+                            : "Enable blur"
+                        ,
+                        description: () => !this.langIsEn 
+                            ? "Activer le flou qui s'opère sur le fond des fenêtres (activé par défaut parce que je trouve ça joli :D)" 
+                            : "Enable the blur that operates on the background of the windows (turned on by default because I find it nice :D)"
+                        ,
+                        info: () => !this.langIsEn 
+                            ? "Non recommendé pour les appareils à basses performances" 
+                            : "Not recommended for low-end devices"
+                        ,
+                        value: JSON.parse( JSON.parse(localStorage.getItem("ECAM_DASHBOARD_SETTINGS"))?.blurEnabled?.value?.toString() || "true"),
+                        action: () => {
+                            document.querySelectorAll(".modal, .loading-symbol").forEach(elem => {if (this.settings.blurEnabled.value) {elem.classList.add("blur")} else {elem.classList.remove("blur")}});
+                            this.saveSettings();
+                        },
+                        parents:  [],
                         children: [],
                     },
 
                     scrollHelpersEnabled: {
-                        name: () => this.lang == "fr" 
+                        name: () => !this.langIsEn 
                             ? "Aides au défilement" 
                             : "Scroll helpers"
                         ,
-                        description: () => this.lang == "fr" 
+                        description: () => !this.langIsEn 
                             ? "Activer l'aide au défilement pour suivre les éléments importants à l'écran lors de changements de verticalité. Désactive-la si tu n'aimes pas avoir ces défilements forcés" 
                             : "Enable the scroll helpers to follow the important elements on screen upon verticality changes. Disabled it if you don't like these forced scrolls"
                         ,
-                        info: () => this.lang == "fr" 
+                        info: () => !this.langIsEn 
                             ? "Certaines actions (changement de mode d'édition, changement entre vue détaillée/compacte...) font changer la position verical de certains éléments (cartes de module/matière, entre autres), donc un défilement est prévu pour maintenir certains éléments dans l'affichage" 
                             : "Some actions (edit mode change, detailed/compact view mode change...) change the vertical position of some elements (i.e. module/subject cards), so this setting allows to scroll to keep the most important elements on screen"
                         ,
                         value: JSON.parse( JSON.parse(localStorage.getItem("ECAM_DASHBOARD_SETTINGS"))?.scrollHelpersEnabled?.value?.toString() || "true"),
                         action: () => { this.saveSettings(); },
-                        parents: [],
+                        parents:  [],
                         children: [],
                     },
                 };
                 this.keybinds = [
                     {
-                        text: () => {return this.lang == "fr" ? "Fermer la fenêtre" : "Close the window"}, 
-                        keys: () => {return this.lang == "fr" ? "Échap" : "Escape"},
+                        text: () => {return !this.langIsEn ? "Fermer la fenêtre" : "Close the window"}, 
+                        keys: () => {return !this.langIsEn ? "Échap" : "Escape"},
                     },
                     {
-                        text: () => {return this.lang == "fr" ? "Plier/Déplier tous les modules (basculer)" : "Fold/Unfold all modules (toggle)"}, 
-                        keys: () => {return this.lang == "fr" ? "Maj + F" : "Shift + F"},
+                        text: () => {return !this.langIsEn ? "Plier/Déplier tous les modules (basculer)" : "Fold/Unfold all modules (toggle)"}, 
+                        keys: () => {return !this.langIsEn ? "Maj + F" : "Shift + F"},
                     },
                     {
-                        text: () => {return this.lang == "fr" ? "Vue détaillée/compacte pour toutes les matières (basculer)" : "Detailed/Compact view all subjects (toggle)"}, 
-                        keys: () => {return this.lang == "fr" ? "Maj + D" : "Shift + D"},
+                        text: () => {return !this.langIsEn ? "Vue détaillée/compacte pour toutes les matières (basculer)" : "Detailed/Compact view all subjects (toggle)"}, 
+                        keys: () => {return !this.langIsEn ? "Maj + D" : "Shift + D"},
                     },
                     {
-                        text: () => {return this.lang == "fr" ? "Mode édition (basculer)" : "Edit mode (toggle)"}, 
-                        keys: () => {return this.lang == "fr" ? "Maj + E" : "Shift + E"},
+                        text: () => {return !this.langIsEn ? "Mode édition (basculer)" : "Edit mode (toggle)"}, 
+                        keys: () => {return !this.langIsEn ? "Maj + E" : "Shift + E"},
                     },
                     {
-                        text: () => {return this.lang == "fr" ? "Langue français/anglais (basculer)" : "Language French/English (toggle)"}, 
-                        keys: () => {return this.lang == "fr" ? "Maj + L" : "Shift + L"},
+                        text: () => {return !this.langIsEn ? "Langue français/anglais (basculer)" : "Language French/English (toggle)"}, 
+                        keys: () => {return !this.langIsEn ? "Maj + L" : "Shift + L"},
                     },
                     {
-                        text: () => {return this.lang == "fr" ? "Changer de semestre (cycle)" : "Change semester (cycle)"}, 
-                        keys: () => {return this.lang == "fr" ? "Maj + ←/→" : "Shift + ←/→"},
+                        text: () => {return !this.langIsEn ? "Changer de semestre (cycle)" : "Change semester (cycle)"}, 
+                        keys: () => {return !this.langIsEn ? "Maj + ←/→" : "Shift + ←/→"},
                     },
                 ];
 
@@ -1151,7 +1196,7 @@ ecamDash = undefined;
                 this.dateHour   = () => {return new Date().toISOString().replace(/\:\d{2}\:\d{2}\.(\d{3})Z/, ":00:00Z")};   // Current date and time in ISO String, rounded down to the hour
                 this.dateTimeOfLastUpdateCheck          = localStorage.getItem("ECAM_DASHBOARD_DATE_TIME_OF_LAST_UPDATE_CHECK") || "2000-00-00T00:00:00Z"; // A day before the date of last update, so that the update check is ran to make sure the correct version is installed
                 this.checkForUpdate                     = localStorage.getItem("ECAM_DASHBOARD_CHECK_FOR_UPDATE")               || false;
-                this.firstLoad              = false /* JSON.parse( localStorage.getItem("ECAM_DASHBOARD_FIRST_LOAD")                     || "true") */;
+                this.firstLoad              = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_FIRST_LOAD")                     || "true");
                 this.updateFirstLoad        = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_UPDATE_FIRST_LOAD") || JSON.stringify({state: true, v: this.scriptVersion}));
                 
             //#endregion
@@ -1229,8 +1274,9 @@ ecamDash = undefined;
 
                 this.viewMode                           = localStorage.getItem("ECAM_DASHBOARD_VIEW_MODE")                      || "detailed";
 
-                this.lang                               = localStorage.getItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE")               || "en";
-                this.editMode               = JSON.parse( localStorage.getItem('ECAM_DASHBOARD_DEFAULT_EDIT_MODE'))             || false;
+                this.lang                   =             localStorage.getItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE")               || "en";
+                this.langIsEn               = this.lang == "en";
+                this.editMode               = JSON.parse( localStorage.getItem('ECAM_DASHBOARD_DEFAULT_EDIT_MODE')              || "false");
                 this.timeouts = {};
 
                 this.mobileVer = this.clientWidth <= 935;
@@ -1249,6 +1295,7 @@ ecamDash = undefined;
 
                 this.compactSubjCardsId = [];
                 this.detailedSubjCardsId = [];
+
                 this.foldedModuleCardsId = [];
                 
                 this.scrollToThisElem = "";
@@ -1291,7 +1338,7 @@ ecamDash = undefined;
             this.createDashboard();
 
             // Trigger the first load notifications to show some help to learn how to use the extension
-            if (this.firstLoad) {this.firstLoadEvent();}
+            this.firstLoadEvent();
 
             // Trigget the update's first load events
             if (this.updateFirstLoad.state && this.updateFirstLoad.v == this.scriptVersion) {this.updateFirstLoadEvent();}
@@ -1378,7 +1425,7 @@ ecamDash = undefined;
                         : Object.values(arguments)
                     ).forEach((_obj, _index) => {
                         // In case the first argument is the intendend priority argument:
-                        if (_obj instanceof String && _index == 0) { 
+                        if (typeof _obj == "string" && _index == 0) { 
                             effectivePriority = _obj;
                             settingCompliance = (_obj.match(/setting-compliant|ignore-setting/)?.[0] || "setting-compliant") == "setting-compliant";
                         }
@@ -1622,13 +1669,12 @@ ecamDash = undefined;
                 * @param {Object} param3 All the modifiers. Each element of this object `alt`, `ctrl`, `shift`, `meta`, and `repeat` take as value on of the following Strings: "required", "allowed", "dont care", 
                 * @returns {RegExpMatchArray} A formated RegExpMatchArray result following the key and the modifiers given as parameters
                 */
-                keyInputMatch(keyboardEvent, keyPressed="([a-zA-Z])", {alt="whatever", ctrl="whatever", shift="whatever", meta="whatever", repeat="whatever"}={alt:"whatever", ctrl:"whatever", shift:"whatever", meta:"whatever", repeat:"whatever"}) {
+                keyInputMatch(keyboardEvent, keyExpected="([a-zA-Z])", {alt="whatever", ctrl="whatever", shift="whatever", meta="whatever", repeat="whatever"}={alt:"whatever", ctrl:"whatever", shift:"whatever", meta:"whatever", repeat:"whatever"}) {
                     const e = keyboardEvent;
 
-                    let keyExpected = keyPressed;
-                    if      (keyPressed instanceof Array)   { keyExpected = keyPressed.map((s) => {if (s.match(/[^a-z]+/i)) {return "\\"+s} else {return s}}).join("|"); }
-                    else if (keyPressed instanceof String)  { keyExpected = "\\"+ keyPressed; }
-                    else if (keyPressed instanceof RegExp)  { keyExpected = keyPressed.source; }
+                    if      (typeof keyExpected == "string") { keyExpected = (keyExpected.match(/[^a-z]+/i) ? "\\" : "") + keyExpected; } // If the keyExpected is a string, proofing the case where the expected key is not an alphabetical character, making sure that the character doesn't have a special effect in the RegExp by adding a literal backslash in front of it in its string form so that it's turned into a backslash when forming the RegExp ("\\|", "\\_", "\\+", "\\/"...)
+                    else if (keyExpected instanceof Array)   { keyExpected = keyExpected.map((s) => {if (s.match(/[^a-z]+/i)) {return "\\"+s} else {return s}}).join("|"); } // If the keyExpected is an array, joining them with "|" in-between after applying the same process as above to each of them
+                    else if (keyExpected instanceof RegExp)  { keyExpected = keyExpected.source; }
 
                     const key = `${e.altKey ? "alt" : "no-alt"} ${e.ctrlKey ? "+ ctrl" : "+ no-ctrl"} ${e.shiftKey ? "+ shift" : "+ no-shift"} ${e.metaKey ? "+ meta" : "+ no-meta"} + ${e.key} (${e.repeat ? "repeat" : "no-repeat"})`;
 
@@ -1641,6 +1687,7 @@ ecamDash = undefined;
 
                     const keyPattern = RegExp(`${altPattern} \\+ ${ctrlPattern} \\+ ${shiftPattern} \\+ ${metaPattern} \\+ ${keyExpected} \\(${repeatPattern}\\)`);
                     const match = key.match(keyPattern);
+
                     return match;
                 }
 
@@ -1685,12 +1732,12 @@ ecamDash = undefined;
                         this.timeouts.releaseElementHeight[elem.id] = setTimeout(() => {
                             clearTimeout(this?.timeouts?.holdElementHeight);
     
-                            elem.style.height = ``;
+                            elem.style.height = "";
                             delete this.timeouts.releaseElementHeight[elem.id];
                         }, timeout);
                     }
                     else {
-                        elem.style.height = ``;
+                        elem.style.height = "";
                     }
                 }
 
@@ -1726,6 +1773,12 @@ ecamDash = undefined;
                     }
                     else {
                         elem.style.width = ``;
+                    }
+                }
+
+                getElementHeightConsideringChildrenHeight(elem) {
+                    if (elem instanceof HTMLElement) {
+                        return Array.from(elem.children).reduce((total, child) => {return parseInt(total?.offsetHeight || total) + parseInt(child.offsetHeight)})
                     }
                 }
 
@@ -1779,7 +1832,7 @@ ecamDash = undefined;
 
             //#region Module methods
 
-                getAllSubjectsForModule(sem, moduleName){
+                getAllSubjectsForModule(sem, moduleName="__#unclassified#__"){
                     const real = this.moduleConfig?.[sem]?.[moduleName]?.subjects || [];
                     const simOnly = Object.keys(((this.sim[sem]||{})[moduleName]||{}));
                     return Array.from(new Set([...real, ...simOnly]));
@@ -1823,13 +1876,17 @@ ecamDash = undefined;
             
                 getModuleStats() {
                     let validated = 0, total = 0;
+
                     Object.keys(this.moduleConfig).forEach(sem => {
                         Object.keys(this.moduleConfig[sem]).forEach(moduleName => {
-                            const moduleGrades = this.calculateModuleGrades(sem, moduleName);
-                            const moyenne = this.moyennePonderee(moduleGrades);
-                            if (moyenne != 0 && moduleGrades.length > 0) total++; if (moyenne >= 10) validated++;
+                            const nbGrades = this.gradesDatas[sem]?.[moduleName]?.nbGrades;
+                            const average = this.gradesDatas[sem]?.[moduleName]?.average;
+
+                            if (average != 0 && nbGrades > 0) total++; 
+                            if (average >= 10) validated++;
                         });
                     });
+                    
                     return { validated, total };
                 }
 
@@ -1902,46 +1959,46 @@ ecamDash = undefined;
                         ;
 
 
-                        let advice = this.lang == `fr` ? `Toutes tes notes sont là !` : `All your grades are out!`;
+                        let advice = !this.langIsEn ? `Toutes tes notes sont là !` : `All your grades are out!`;
                         let color = good;
 
                         
                         if (totalCoefSubjects != 100) {
-                            advice = this.lang == "fr" ? `Réajuste le coef de tes matières, leur somme n'est pas égale à 100% !` : `Readjust your subjects' coef, their sum isn't equal to 100%!`;
+                            advice = !this.langIsEn ? `Réajuste le coef de tes matières, leur somme n'est pas égale à 100% !` : `Readjust your subjects' coef, their sum isn't equal to 100%!`;
                             color = bad;
                         }
                         else if (totalCoefRealGrades == 0) {
                             if (totalCoefEnabledSimGrades > 0) {
-                                advice = this.lang == "fr" 
+                                advice = !this.langIsEn 
                                     ? `Toutes tes notes sont simulées, tu n'as pas encore de notes !` 
                                     : `All your grades are simulated, you don't have any grades yet!`
                                 ;
                                 color = meh;
                             }
                             else {
-                                advice = this.lang == "fr" ? `Pas encore de notes` : `No grades yet`;
+                                advice = !this.langIsEn ? `Pas encore de notes` : `No grades yet`;
                                 color = unknown;
                             }
                         }
                         else if (totalCoefRealGrades < 100) {
                             if (totalCoefEnabledSimGrades > 0) {
-                                advice = this.lang == "fr" 
+                                advice = !this.langIsEn 
                                     ? `${Math.round(10000*totalCoefEnabledSimGrades/totalCoefEnabledGrades)/100}% de tes notes est simulé, toutes tes notes ne sont encore pas là !` 
                                     : `${Math.round(10000*totalCoefEnabledSimGrades/totalCoefEnabledGrades)/100}% of your grades is simulated, all your grades aren't out yet!`
                                 ;
                                 color = meh;
                             }
                             else if (totalCoefEnabledSimGrades == 0) {
-                                advice = this.lang == "fr" ? `Toutes tes notes ne sont encore pas là !` : `All your grades aren't out yet!`;
+                                advice = !this.langIsEn ? `Toutes tes notes ne sont encore pas là !` : `All your grades aren't out yet!`;
                                 color = meh;
                             }
                         }
                         else if (totalCoefEnabledRealGrades > 100) {
-                            advice = this.lang == "fr" ? `Trop de notes (erreur du côté de l'ECAM), désactive les notes en trop !` : `Too many grades (error on ECAM's side), turn off all irrelevant grades!`;
+                            advice = !this.langIsEn ? `Trop de notes (erreur du côté de l'ECAM), désactive les notes en trop !` : `Too many grades (error on ECAM's side), turn off all irrelevant grades!`;
                             color = bad;
                         }
                         else if ((nbSubjectsBelow100 > 0 || nbSubjectsOver100 > 0) && nbEnabledSimGrades > 0) {
-                            advice = this.lang == "fr" 
+                            advice = !this.langIsEn 
                                 ? `Tes notes simulées faussent ta moyenne. Désactive/enlève-les !` 
                                 : `Your simulated grades falsify your average. Disable/remove them!`
                             ;
@@ -1949,28 +2006,28 @@ ecamDash = undefined;
                         }
                         else if (totalCoefRealGrades == 100) {
                             if (nbSubjectsBelow100 > 0 && nbSubjectsOver100 > 0) {
-                                advice = this.lang == "fr"
+                                advice = !this.langIsEn
                                     ? `Trop de notes dans ${nbSubjectsOver100} matière${nbSubjectsOver100>1?`s`:``}, et notes manquantes dans ${nbSubjectsBelow100} matières${nbSubjectsBelow100>1?`s`:``} !`
                                     : `Too many grades in ${nbSubjectsOver100} subject${nbSubjectsOver100>1?`s`:``}, and missing grades in ${nbSubjectsBelow100} subject${nbSubjectsBelow100>1?`s`:``}!`
                                 ;
                                 color = bad;
                             }
                             if (totalCoefEnabledRealGrades < 100) {
-                                advice = this.lang == "fr" 
+                                advice = !this.langIsEn 
                                     ? `Toutes tes notes sont là ! Réactive tes ${nbDisabledRealGrades} notes désactivées pour afficher ta vraie moyenne !` 
                                     : `All your grades are out! Enable your ${nbDisabledRealGrades} disabled grades to display your actual average!`
                                 ;
                                 color = meh;
                             }
                             else if (totalCoefEnabledSimGrades > 0) {
-                                advice = this.lang == "fr" 
+                                advice = !this.langIsEn 
                                     ? `Toutes tes notes sont là, mais tu devrais enlever tes ${nbSimGrades} notes simulées !` 
                                     : `All your grades are out, but you should remove your ${nbSimGrades} simulated grades!`
                                 ;
                                 color = meh;
                             }
                             else if (totalCoefSimGrades > 0) {
-                                advice = this.lang == "fr" 
+                                advice = !this.langIsEn 
                                     ? `Toutes tes notes sont là ! Tu peux enlever tes ${nbSimGrades} notes simulées !` 
                                     : `All your grades are out! You may remove your ${nbSimGrades} simulated grades!`
                                 ;
@@ -1978,7 +2035,7 @@ ecamDash = undefined;
                             }
                         }
 
-                        totalCoefValue.innerHTML = `${this.lang == "fr" ? "Coef Total des Matières :" : "Total Subjects Coef:"} <span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}% / ${totalCoefSubjects}%</span>`;
+                        totalCoefValue.innerHTML = `${!this.langIsEn ? "Coef Total des Matières :" : "Total Subjects Coef:"} <span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}% / ${totalCoefSubjects}%</span>`;
                         totalCoefDebug.innerHTML = `${advice}`;
                     })
                     container.querySelectorAll(".subject-total-coef-div").forEach(totalCoefDiv => {
@@ -2005,37 +2062,37 @@ ecamDash = undefined;
                         ;
                         
                         
-                        let advice = this.lang == `fr` ? `Toutes tes notes sont là !` : `All your grades are out!`;
+                        let advice = !this.langIsEn ? `Toutes tes notes sont là !` : `All your grades are out!`;
                         let color = ` #10b981`;
 
                         if (totalCoefRealGrades == 0) {
                             if (totalCoefEnabledSimGrades > 0) {
-                                advice = this.lang == "fr" 
+                                advice = !this.langIsEn 
                                     ? `Toutes tes notes sont simulées, tu n'as pas encore de notes !` 
                                     : `All your grades are simulated, you don't have any grades yet!`
                                 ;
                                 color = meh;
                             }
                             else {
-                                advice = this.lang == "fr" ? `Pas encore de notes` : `No grades yet`;
+                                advice = !this.langIsEn ? `Pas encore de notes` : `No grades yet`;
                                 color = unknown;
                             }
                         }
                         else if (totalCoefRealGrades < 100) {
                             if (totalCoefEnabledSimGrades > 0) {
-                                advice = this.lang == "fr" 
+                                advice = !this.langIsEn 
                                     ? `${totalCoefEnabledSimGrades}% de tes notes est simulé, toutes tes notes ne sont encore pas là !` 
                                     : `${totalCoefEnabledSimGrades}% of your grades is simulated, all your grades aren't out yet!`
                                 ;
                                 color = meh;
                             }
                             else if (totalCoefEnabledSimGrades == 0) {
-                                advice = this.lang == "fr" ? `Toutes tes notes ne sont encore pas là !` : `All your grades aren't out yet!`;
+                                advice = !this.langIsEn ? `Toutes tes notes ne sont encore pas là !` : `All your grades aren't out yet!`;
                                 color = meh;
                             }
                         }
                         else if (totalCoefEnabledRealGrades > 100) {
-                            advice = this.lang == "fr" 
+                            advice = !this.langIsEn 
                                 ? `Trop de notes (erreur du côté de l'ECAM), désactive les notes en trop !` 
                                 : `Too many grades (error on ECAM's side), turn off all irrelevant grades!`
                             ;
@@ -2043,21 +2100,21 @@ ecamDash = undefined;
                         }
                         else if (totalCoefRealGrades == 100) {
                             if (totalCoefEnabledRealGrades < 100) {
-                                advice = this.lang == "fr" 
+                                advice = !this.langIsEn 
                                     ? `Toutes tes notes sont là ! Réactive tes ${nbDisabledRealGrades} notes désactivées pour afficher ta vraie moyenne !` 
                                     : `All your grades are out! Enable your ${nbDisabledRealGrades} disabled grades to display your actual average!`
                                 ;
                                 color = meh;
                             }
                             else if (totalCoefEnabledSimGrades > 0) {
-                                advice = this.lang == "fr" 
+                                advice = !this.langIsEn 
                                     ? `Toutes tes notes sont là, mais tu devrais enlever tes ${nbSimGrades} notes simulées !` 
                                     : `All your grades are out, but you should remove your ${nbSimGrades} simulated grades!`
                                 ;
                                 color = meh;
                             }
                             else if (totalCoefSimGrades > 0) {
-                                advice = this.lang == "fr" 
+                                advice = !this.langIsEn 
                                     ? `Toutes tes notes sont là ! Tu peux enlever tes ${nbSimGrades} notes simulées !` 
                                     : `All your grades are out! You may remove your ${nbSimGrades} simulated grades!`
                                 ;
@@ -2065,7 +2122,7 @@ ecamDash = undefined;
                             }
                         }
                         
-                        totalCoefValue.innerHTML = `${this.lang == "fr" ? "Coef Total des Notes :" : "Total Grades Coef:"} <span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}%</span>`;
+                        totalCoefValue.innerHTML = `${!this.langIsEn ? "Coef Total des Notes :" : "Total Grades Coef:"} <span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}%</span>`;
                         totalCoefDebug.innerHTML = `${advice}`;
                     })
                 }
@@ -2073,32 +2130,81 @@ ecamDash = undefined;
 
                 // MARK: getGradesDatas
                 getGradesDatas({sem=undefined, module=undefined, subj=undefined}={sem: undefined, module: undefined, subj: undefined}) {
+
+                    
+                    
+                    // MARK: semester section
                     // FOR EACH SEMESTER
-                    (sem && this.moduleConfig[sem] ? [sem] : Object.keys(this.semesters)).forEach((semX) => {
-                        this.gradesDatas[semX] = {
-                            "__#unclassified#__": {subjects: {}}
-                        };
+                    (sem && this.moduleConfig?.[sem] ? [sem] : Object.keys(this.semesters)).forEach((semX) => {
+                        
+                        this.gradesDatas[semX] = {"__#unclassified#__": {}};
                         let semData = this.gradesDatas[semX];
+                        semData.average                     = 0;
+                        semData.classAvg                    = 0;
+                        semData.nbModules                   = 0;
+                        semData.nbSubjects                  = 0;
+                        semData.nbUnclassifiedSubjects      = 0;
+                        semData.modulesNoGrade              = [];
+                        semData.modulesNoEnabledGrade       = [];
+                        semData.totalCoefGrades             = 0;
+                        semData.totalCoefRealGrades         = 0;
+                        semData.totalCoefSimGrades          = 0;
+                        semData.totalCoefEnabledGrades      = 0;
+                        semData.totalCoefEnabledRealGrades  = 0;
+                        semData.totalCoefEnabledSimGrades   = 0;
 
                         
-                        // FOR EACH UNCLASSIFIED SUBJECT IN SEMESTER
+                        // MARK: Unclassified section
+                        // If there are unclassified subjects
                         const unclassified = this.getUnclassifiedSubjects(semX);
+                        let unclassifiedData = semData["__#unclassified#__"];
+
+                        unclassifiedData.moduleName                     = "__#unclassified#__";
+                        unclassifiedData.subjects                       = {};
+                        unclassifiedData.average                        = 0;
+                        unclassifiedData.classAvg                       = 0;
+                        unclassifiedData.nbGrades                       = 0;
+                        unclassifiedData.grades                         = [];
+                        unclassifiedData.simGrades                      = [];
+                        unclassifiedData.disabledRealGrades             = [];
+                        unclassifiedData.disabledSimGrades              = [];
+                        unclassifiedData.subjectsBelow100               = [];
+                        unclassifiedData.subjectsOver100                = [];
+                        unclassifiedData.subjectsReallyBelow100         = [];
+                        unclassifiedData.subjectsReallyOver100          = [];
+                        unclassifiedData.subjectsNoGrade                = [];
+                        unclassifiedData.subjectsNoEnabledGrade         = [];
+                        unclassifiedData.totalCoefGrades                = 0;
+                        unclassifiedData.totalCoefRealGrades            = 0;
+                        unclassifiedData.totalCoefSimGrades             = 0;
+                        unclassifiedData.totalCoefEnabledGrades         = 0;
+                        unclassifiedData.totalCoefEnabledRealGrades     = 0;
+                        unclassifiedData.totalCoefEnabledSimGrades      = 0;
+
                         if (unclassified.length > 0) {
+                            ++semData.nbModules;
+
+                            // MARK: Unclassified subjects
+                            // FOR EACH UNCLASSIFIED SUBJECT IN SEMESTER
                             (subj && unclassified.includes(subj) ? [subj] : unclassified).forEach(unclassifiedSubjectName => {
 
-                                semData["__#unclassified#__"].subjects[unclassifiedSubjectName] = {};
+                                ++semData.nbSubjects;
+                                ++semData.nbUnclassifiedSubjects;
+
+                                unclassifiedData.subjects[unclassifiedSubjectName] = {};
                                 const realGrades = Array(...(this.semesters[semX]||{})[unclassifiedSubjectName])||[];
                                 const simGrades = this.sim?.[semX]?.["__#unclassified#__"]?.[unclassifiedSubjectName] || [];
 
-                                let unclassifiedSubjectData = semData["__#unclassified#__"].subjects[unclassifiedSubjectName];
+                                let unclassifiedSubjectData = unclassifiedData.subjects[unclassifiedSubjectName];
+
                                 
                                 unclassifiedSubjectData.subjName                    = unclassifiedSubjectName;
-                                unclassifiedSubjectData.grades                      = (realGrades).concat(simGrades);
-                                unclassifiedSubjectData.disabledRealGrades          = [];
-                                unclassifiedSubjectData.simGrades                   = simGrades;
-                                unclassifiedSubjectData.disabledSimGrades           = [];
                                 unclassifiedSubjectData.average                     = 0;
                                 unclassifiedSubjectData.classAvg                    = 0;
+                                unclassifiedSubjectData.grades                      = (realGrades).concat(simGrades);
+                                unclassifiedSubjectData.simGrades                   = simGrades;
+                                unclassifiedSubjectData.disabledRealGrades          = [];
+                                unclassifiedSubjectData.disabledSimGrades           = [];
                                 unclassifiedSubjectData.totalCoefGrades             = 0;
                                 unclassifiedSubjectData.totalCoefRealGrades         = 0;
                                 unclassifiedSubjectData.totalCoefSimGrades          = 0;
@@ -2108,66 +2214,134 @@ ecamDash = undefined;
 
 
 
+                                // MARK: Unclassified grades
                                 // FOR EACH GRADES AND SIM GRADES IN UNCLASSIFIED SUBJECT
                                 (unclassifiedSubjectData.grades).forEach(grade => {
-                                    const gradeValue = parseFloat(grade.grade),
-                                        classAvg = parseFloat(grade.classAvg),
-                                        coef = parseInt(grade.coef)
+                                    
+                                    const 
+                                        gradeValue = parseFloat(grade.grade),
+                                        classAvg   = parseFloat(grade.classAvg),
+                                        coef       = parseInt(grade.coef)
                                     ;
 
                                     unclassifiedSubjectData.totalCoefGrades += grade.coef;
+                                    ++unclassifiedData.nbGrades
 
                                     switch (`${this.gradeIsDisabled(grade) ? "disabled" : "enabled"} ${grade.__sim ? "sim" : "real"} grade`) {
                                         case `enabled real grade`:
                                             unclassifiedSubjectData.average                     += gradeValue*coef/100;
                                             unclassifiedSubjectData.classAvg                    += classAvg*coef/100;
-                                            unclassifiedSubjectData.totalCoefRealGrades         += coef;
 
+                                            unclassifiedSubjectData.totalCoefRealGrades         += coef;
                                             unclassifiedSubjectData.totalCoefEnabledGrades      += coef;
                                             unclassifiedSubjectData.totalCoefEnabledRealGrades  += coef;
                                         break;
 
                                         case `disabled real grade`:
-                                            unclassifiedSubjectData.classAvg                    += classAvg*coef/100;
                                             unclassifiedSubjectData.totalCoefRealGrades         += coef;
-
                                             unclassifiedSubjectData.disabledRealGrades.push(grade);
+                                            
                                         break;
 
                                         case `enabled sim grade`:
                                             unclassifiedSubjectData.average                     += gradeValue*coef/100;
-                                            unclassifiedSubjectData.totalCoefSimGrades          += coef;
 
+                                            unclassifiedSubjectData.totalCoefSimGrades          += coef;
                                             unclassifiedSubjectData.totalCoefEnabledGrades      += coef;
                                             unclassifiedSubjectData.totalCoefEnabledSimGrades   += coef;
                                         break;
 
                                         case `disabled sim grade`:
                                             unclassifiedSubjectData.totalCoefSimGrades          += coef;
-
                                             unclassifiedSubjectData.disabledSimGrades.push(grade);
                                         break;
                                     }                                
                                 })
 
-                                
-                                unclassifiedSubjectData.average                     = Math.round(100*unclassifiedSubjectData.average /(unclassifiedSubjectData.totalCoefEnabledGrades/100))/100;
-                                unclassifiedSubjectData.classAvg                    = Math.round(100*unclassifiedSubjectData.classAvg/(unclassifiedSubjectData.totalCoefEnabledGrades/100))/100;
-                                unclassifiedSubjectData.totalCoefGrades             = Math.round(unclassifiedSubjectData.totalCoefGrades);
-                                unclassifiedSubjectData.totalCoefRealGrades         = Math.round(unclassifiedSubjectData.totalCoefRealGrades);
-                                unclassifiedSubjectData.totalCoefSimGrades          = Math.round(unclassifiedSubjectData.totalCoefSimGrades);
-                                unclassifiedSubjectData.totalCoefEnabledGrades      = Math.round(unclassifiedSubjectData.totalCoefEnabledGrades);
-                                unclassifiedSubjectData.totalCoefEnabledRealGrades  = Math.round(unclassifiedSubjectData.totalCoefEnabledRealGrades);
-                                unclassifiedSubjectData.totalCoefEnabledSimGrades   = Math.round(unclassifiedSubjectData.totalCoefEnabledSimGrades);
+                                unclassifiedData.grades.push(...unclassifiedSubjectData.grades)
+                                unclassifiedData.simGrades.push(...unclassifiedSubjectData.simGrades)
+                                unclassifiedData.disabledRealGrades.push(...unclassifiedSubjectData.disabledRealGrades)
+                                unclassifiedData.disabledSimGrades.push(...unclassifiedSubjectData.disabledSimGrades)
+
+                                unclassifiedData.totalCoefGrades            += unclassifiedSubjectData.totalCoefGrades;
+                                unclassifiedData.totalCoefRealGrades        += unclassifiedSubjectData.totalCoefRealGrades;
+                                unclassifiedData.totalCoefSimGrades         += unclassifiedSubjectData.totalCoefSimGrades;
+                                unclassifiedData.totalCoefEnabledGrades     += unclassifiedSubjectData.totalCoefEnabledGrades;
+                                unclassifiedData.totalCoefEnabledRealGrades += unclassifiedSubjectData.totalCoefEnabledRealGrades;
+                                unclassifiedData.totalCoefEnabledSimGrades  += unclassifiedSubjectData.totalCoefEnabledSimGrades;
+
+
+                                // Checking the case where there are no grades in the unclassified subject (not possible tho, but oh well, error-proofing)
+                                if (unclassifiedSubjectData.totalCoefEnabledGrades == 0 || unclassifiedSubjectData.totalCoefGrades == 0) {
+                                    unclassifiedSubjectData.average  = " - ";
+                                    unclassifiedSubjectData.classAvg = " - ";
+
+                                    if (unclassifiedSubjectData.totalCoefEnabledGrades == 0) {
+                                        unclassifiedData.subjectsNoEnabledGrade.push(unclassifiedSubjectName);
+                                    }
+                                    if (unclassifiedSubjectData.totalCoefGrades == 0) {
+                                        unclassifiedData.subjectsNoGrade.push(unclassifiedSubjectName);
+                                    }
+                                    
+                                }
+                                else {
+                                    unclassifiedSubjectData.average                 =  Math.round(100*unclassifiedSubjectData.average /(unclassifiedSubjectData.totalCoefEnabledGrades/100))/100;
+                                    unclassifiedSubjectData.classAvg                =  Math.round(100*unclassifiedSubjectData.classAvg/(unclassifiedSubjectData.totalCoefEnabledRealGrades/100))/100;
+
+                                    unclassifiedData.average          += unclassifiedSubjectData.average ;
+                                    unclassifiedData.classAvg         += unclassifiedSubjectData.classAvg;
+                                }
+
+
+                                // Rounding the coefficients
+                                unclassifiedSubjectData.totalCoefGrades             = Math.floor(unclassifiedSubjectData.totalCoefGrades);
+                                unclassifiedSubjectData.totalCoefRealGrades         = Math.floor(unclassifiedSubjectData.totalCoefRealGrades);
+                                unclassifiedSubjectData.totalCoefSimGrades          = Math.floor(unclassifiedSubjectData.totalCoefSimGrades);
+                                unclassifiedSubjectData.totalCoefEnabledGrades      = Math.floor(unclassifiedSubjectData.totalCoefEnabledGrades);
+                                unclassifiedSubjectData.totalCoefEnabledRealGrades  = Math.floor(unclassifiedSubjectData.totalCoefEnabledRealGrades);
+                                unclassifiedSubjectData.totalCoefEnabledSimGrades   = Math.floor(unclassifiedSubjectData.totalCoefEnabledSimGrades);
                             })
+
+                            // Checking if the unclassified subjects only has subject that don't have any enabled grades
+                            if (unclassifiedData.subjectsNoEnabledGrade.length == Object.keys(unclassifiedData.subjects).length || unclassifiedData.subjectsNoGrade.length == Object.keys(unclassifiedData.subjects).length) {
+                                unclassifiedData.average  = " - ";
+                                unclassifiedData.classAvg = " - ";
+
+                                if (unclassifiedData.subjectsNoGrade.length == Object.keys(unclassifiedData.subjects).length) semData.modulesNoGrade.push(unclassifiedData.moduleName);
+                                if (unclassifiedData.subjectsNoEnabledGrade.length == Object.keys(unclassifiedData.subjects).length) semData.modulesNoEnabledGrade.push(unclassifiedData.moduleName);
+                            }
+                            // Scaling down the average and classAvg
+                            if (!isNaN(Number(unclassifiedData.average))) {
+                                unclassifiedData.average  =  Math.round(100*unclassifiedData.average /(Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length))/100;
+                                unclassifiedData.classAvg =  Math.round(100*unclassifiedData.classAvg/(Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length))/100;
+                            }
+                            // Error-proofing the average and classAvg calculations
+                            if (isNaN(Number(unclassifiedData.average))) {
+                                unclassifiedData.average  = " - ";
+                                unclassifiedData.classAvg = " - ";
+                            } 
+
+                            // Scaling down + rounding the total coefs
+                            unclassifiedData.totalCoefGrades            = Math.floor(unclassifiedData.totalCoefGrades           / (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
+                            unclassifiedData.totalCoefRealGrades        = Math.floor(unclassifiedData.totalCoefRealGrades       / (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
+                            unclassifiedData.totalCoefSimGrades         = Math.floor(unclassifiedData.totalCoefSimGrades        / (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
+                            unclassifiedData.totalCoefEnabledGrades     = Math.floor(unclassifiedData.totalCoefEnabledGrades    / (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
+                            unclassifiedData.totalCoefEnabledRealGrades = Math.floor(unclassifiedData.totalCoefEnabledRealGrades/ (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
+                            unclassifiedData.totalCoefEnabledSimGrades  = Math.floor(unclassifiedData.totalCoefEnabledSimGrades / (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
+
+                            semData.average     = unclassifiedData.average ;
+                            semData.classAvg    = unclassifiedData.classAvg;
                         }
 
 
+                        // MARK: Modules
                         // FOR EACH MODULE IN SEMESTER (if any)
                         if (this.moduleConfig?.[semX]?.__modules__) {
-                            (module && this.moduleConfig?.[sem]?.__modules__.includes(module) ? [module] : this.moduleConfig[semX].__modules__).forEach((moduleName) => {
-                                const allSubjs = this.getAllSubjectsForModule(semX, moduleName);
-                                const moduleGrades = this.calculateModuleGrades(semX, moduleName);
+                            (module && this.moduleConfig?.[sem]?.__modules__.includes(module) ? [module] : (this.moduleConfig[semX]?.__modules__ || [])).forEach((moduleName) => {
+                                const allSubjs      = this.getAllSubjectsForModule(semX, moduleName);
+                                const moduleGrades  = this.calculateModuleGrades(semX, moduleName);
+
+                                ++semData.nbModules;
 
                                 semData[moduleName] = {};
                                 
@@ -2175,7 +2349,10 @@ ecamDash = undefined;
                                 
                                 moduleData.moduleName                   = moduleName;
                                 moduleData.subjects                     = {};
+                                moduleData.average                      = 0;
+                                moduleData.classAvg                     = 0;
                                 moduleData.nbGrades                     = 0;
+                                moduleData.grades                       = [];
                                 moduleData.simGrades                    = [];
                                 moduleData.disabledRealGrades           = [];
                                 moduleData.disabledSimGrades            = [];
@@ -2184,9 +2361,9 @@ ecamDash = undefined;
                                 moduleData.subjectsReallyBelow100       = [];
                                 moduleData.subjectsReallyOver100        = [];
                                 moduleData.subjectsNoGrade              = [];
+                                moduleData.subjectsNoEnabledGrade       = [];
                                 moduleData.coefSubjectsNoGrade          = 0;
-                                moduleData.average                      = 0;
-                                moduleData.classAvg                     = 0;
+                                moduleData.coefSubjectsNoEnabledGrade   = 0;
                                 moduleData.totalCoefSubjects            = 0;
                                 moduleData.totalCoefGrades              = 0;
                                 moduleData.totalCoefRealGrades          = 0;
@@ -2206,25 +2383,29 @@ ecamDash = undefined;
                                     if (!subjectData) {
                                         subjectData = {grades: []};
                                     }
+
+                                    moduleData.grades.push(n);
                                     subjectData.grades.push(n);
-                                    moduleData.nbGrades++;
                                 });
 
                                 
 
+                                // MARK: Classified subjects
                                 // FOR EACH SUBJECT IN MODULE
                                 (subj && this.moduleConfig?.[sem]?.[module]?.subjects?.includes(subj) ? [subj] : allSubjs).forEach(subjectName => {
+
+                                    ++semData.nbSubjects;
 
                                     let subjectData = moduleData.subjects[subjectName];
 
                                     subjectData.subjName                    = subjectName;
                                     subjectData.coef                        = this.moduleConfig[semX][moduleName].coefficients[subjectName];
-                                    subjectData.isCustom                    = true;
+                                    subjectData.average                     = 0;
+                                    subjectData.classAvg                    = 0;
                                     subjectData.disabledRealGrades          = [];
                                     subjectData.simGrades                   = [];
                                     subjectData.disabledSimGrades           = [];
-                                    subjectData.average                     = 0;
-                                    subjectData.classAvg                    = 0;
+                                    subjectData.isCustom                    = true;
                                     subjectData.totalCoefGrades             = 0;
                                     subjectData.totalCoefRealGrades         = 0;
                                     subjectData.totalCoefSimGrades          = 0;
@@ -2236,12 +2417,13 @@ ecamDash = undefined;
                                     moduleData.totalCoefSubjects += parseInt(subjectData.coef);
                                     
                                     
+                                    // MARK: Classified grades
                                     // FOR EACH GRADE IN SUBJECT
                                     subjectData.grades.forEach(grade => {
-                                        const gradeValue = parseFloat(grade.grade),
-                                            classAvg = parseFloat(grade.classAvg),
-                                            coef = parseInt(grade.coef),
-                                            subjCoef = parseInt(subjectData.coef)
+                                        const gradeValue    = parseFloat(grade.grade),
+                                              classAvg      = parseFloat(grade.classAvg),
+                                              coef          = parseInt(grade.coef),
+                                              subjCoef      = parseInt(subjectData.coef)
                                         ;
                                         
                                         subjectData.totalCoefGrades += grade.coef;
@@ -2249,10 +2431,10 @@ ecamDash = undefined;
 
                                         switch (`${this.gradeIsDisabled(grade) ? "disabled" : "enabled"} ${grade.__sim ? "sim" : "real"} grade`) {
                                             case `enabled real grade`:
-                                                subjectData.classAvg                    += classAvg*coef/100;
-                                                subjectData.totalCoefRealGrades         += coef;
-
                                                 subjectData.average                     += gradeValue*coef/100;
+                                                subjectData.classAvg                    += classAvg*coef/100;
+                                                
+                                                subjectData.totalCoefRealGrades         += coef;
                                                 subjectData.totalCoefEnabledGrades      += coef;
                                                 subjectData.totalCoefEnabledRealGrades  += coef;
 
@@ -2262,17 +2444,30 @@ ecamDash = undefined;
 
                                                 moduleData.totalCoefEnabledGrades       += coef*subjCoef/100;
                                                 moduleData.totalCoefEnabledRealGrades   += coef*subjCoef/100;
+
+
+                                                semData.totalCoefGrades                 += coef*subjCoef/100;
+                                                semData.totalCoefRealGrades             += coef*subjCoef/100;
+
+                                                semData.totalCoefEnabledGrades          += coef*subjCoef/100;
+                                                semData.totalCoefEnabledRealGrades      += coef*subjCoef/100;
                                             break;
 
                                             case `disabled real grade`:
-                                                subjectData.classAvg                    += classAvg*coef/100;
+                                                // subjectData.classAvg                    += classAvg*coef/100;
                                                 subjectData.totalCoefRealGrades         += coef;
-                                                subjectData.disabledRealGrades.push(grade);
 
+                                                subjectData.disabledRealGrades.push(grade);
+                                                
+                                                
                                                 moduleData.totalCoefGrades              += coef*subjCoef/100;
                                                 moduleData.totalCoefRealGrades          += coef*subjCoef/100;
-
+                                                
                                                 moduleData.disabledRealGrades.push(grade);
+
+                                                
+                                                semData.totalCoefGrades                 += coef*subjCoef/100;
+                                                semData.totalCoefRealGrades             += coef*subjCoef/100;
                                             break;
 
                                             case `enabled sim grade`:
@@ -2287,47 +2482,66 @@ ecamDash = undefined;
                                                 moduleData.simGrades.push(grade);
                                                 moduleData.totalCoefGrades              += coef*subjCoef/100;
                                                 moduleData.totalCoefSimGrades           += coef*subjCoef/100;
-
+                                                
                                                 moduleData.totalCoefEnabledGrades       += coef*subjCoef/100;
                                                 moduleData.totalCoefEnabledSimGrades    += coef*subjCoef/100;
+                                                
+
+                                                semData.totalCoefGrades                 += coef*subjCoef/100;
+                                                semData.totalCoefSimGrades              += coef*subjCoef/100;
+
+                                                semData.totalCoefEnabledGrades          += coef*subjCoef/100;
+                                                semData.totalCoefEnabledSimGrades       += coef*subjCoef/100;
                                             break;
 
                                             case `disabled sim grade`:
                                                 subjectData.simGrades.push(grade);
-                                                subjectData.totalCoefSimGrades          += coef;
                                                 subjectData.disabledSimGrades.push(grade);
+                                                subjectData.totalCoefSimGrades          += coef;
 
                                                 moduleData.simGrades.push(grade);
                                                 moduleData.totalCoefGrades              += coef*subjCoef/100;
                                                 moduleData.totalCoefSimGrades           += coef*subjCoef/100;
 
                                                 moduleData.disabledSimGrades.push(grade);
+
+                                                semData.totalCoefGrades                 += coef*subjCoef/100;
+                                                semData.totalCoefSimGrades              += coef*subjCoef/100;
                                             break;
                                         }
                                     })
                                     
                                     
-                                    
-                                    if (subjectData.totalCoefEnabledGrades == 0) {
+                                    // "Nullyifing" the subject if no enabled grades (if there are grades) are here
+                                    if (subjectData.totalCoefEnabledGrades == 0 || subjectData.totalCoefGrades == 0) {
                                         subjectData.average  = " - ";
                                         subjectData.classAvg = " - ";
-                                        moduleData.subjectsNoGrade.push(subjectName);
-                                        moduleData.coefSubjectsNoGrade += parseInt(subjectData.coef);
+                                        if (subjectData.totalCoefEnabledGrades == 0) {
+                                            moduleData.subjectsNoEnabledGrade.push(subjectName);
+                                            moduleData.coefSubjectsNoEnabledGrade  += parseInt(subjectData.coef);
+    
+                                        }
+                                        if (subjectData.totalCoefGrades == 0) {
+                                            moduleData.subjectsNoGrade.push(subjectName);
+                                            moduleData.coefSubjectsNoGrade  += parseInt(subjectData.coef);
+                                        }
+                                        
                                     }
-                                    else {
-                                        subjectData.average     =  Math.round(100*subjectData.average /(subjectData.totalCoefEnabledGrades/100))/100;
-                                        subjectData.classAvg    =  Math.round(100*subjectData.classAvg/(subjectData.totalCoefEnabledGrades/100))/100;
+                                    else {  // Round the averages to the closest 2-decimals float number
+                                        subjectData.average     =  Math.round(100*subjectData.average /(subjectData.totalCoefEnabledGrades      /100))/100;
+                                        subjectData.classAvg    =  Math.round(100*subjectData.classAvg/(subjectData.totalCoefEnabledRealGrades  /100))/100;
 
                                         moduleData.average          += subjectData.average *subjectData.coef/100;
                                         moduleData.classAvg         += subjectData.classAvg*subjectData.coef/100;
                                     }
 
-                                    subjectData.totalCoefGrades             = Math.round(subjectData.totalCoefGrades);
-                                    subjectData.totalCoefRealGrades         = Math.round(subjectData.totalCoefRealGrades);
-                                    subjectData.totalCoefSimGrades          = Math.round(subjectData.totalCoefSimGrades);
-                                    subjectData.totalCoefEnabledGrades      = Math.round(subjectData.totalCoefEnabledGrades);
-                                    subjectData.totalCoefEnabledRealGrades  = Math.round(subjectData.totalCoefEnabledRealGrades);
-                                    subjectData.totalCoefEnabledSimGrades   = Math.round(subjectData.totalCoefEnabledSimGrades);
+                                    // Rounding down the total coefs
+                                    subjectData.totalCoefGrades             = Math.floor(subjectData.totalCoefGrades);
+                                    subjectData.totalCoefRealGrades         = Math.floor(subjectData.totalCoefRealGrades);
+                                    subjectData.totalCoefSimGrades          = Math.floor(subjectData.totalCoefSimGrades);
+                                    subjectData.totalCoefEnabledGrades      = Math.floor(subjectData.totalCoefEnabledGrades);
+                                    subjectData.totalCoefEnabledRealGrades  = Math.floor(subjectData.totalCoefEnabledRealGrades);
+                                    subjectData.totalCoefEnabledSimGrades   = Math.floor(subjectData.totalCoefEnabledSimGrades);
 
 
                                     if      (subjectData.totalCoefGrades < 100) moduleData.subjectsBelow100.push(subjectName);
@@ -2338,46 +2552,86 @@ ecamDash = undefined;
                                 });
 
 
-                                if (moduleData.subjectsNoGrade.length == Object.keys(moduleData.subjects).length) {
+                                // "Nullifying" the module if all its subjects don't have any enabled grade
+                                if (moduleData.subjectsNoEnabledGrade.length == Object.keys(moduleData.subjects).length || moduleData.subjectsNoGrade.length == Object.keys(moduleData.subjects).length) {
                                     moduleData.average  = " - ";
                                     moduleData.classAvg = " - ";
-                                }
 
+                                    if (moduleData.subjectsNoGrade.length == Object.keys(moduleData.subjects).length) semData.modulesNoGrade.push(moduleData.moduleName);
+                                    if (moduleData.subjectsNoEnabledGrade.length == Object.keys(moduleData.subjects).length) semData.modulesNoEnabledGrade.push(moduleData.moduleName);
+                                }
+                                // Scaling down + rounding the averages
                                 if (!isNaN(Number(moduleData.average))) {
-                                    moduleData.average  =  Math.round(100*moduleData.average /((moduleData.totalCoefSubjects-moduleData.coefSubjectsNoGrade)/100))/100;
-                                    moduleData.classAvg =  Math.round(100*moduleData.classAvg/((moduleData.totalCoefSubjects-moduleData.coefSubjectsNoGrade)/100))/100;
+                                    moduleData.average  =  Math.round(100*moduleData.average /((moduleData.totalCoefSubjects-moduleData.coefSubjectsNoEnabledGrade)/100))/100;
+                                    moduleData.classAvg =  Math.round(100*moduleData.classAvg/((moduleData.totalCoefSubjects-moduleData.coefSubjectsNoEnabledGrade)/100))/100;
                                 }
-
+                                // Error-proofing the averages
                                 if (isNaN(Number(moduleData.average))) {
                                     moduleData.average  = " - ";
                                     moduleData.classAvg = " - ";
                                 } 
+                                else {
+                                    semData.average     += moduleData.average;
+                                    semData.classAvg    += moduleData.classAvg;
+                                }
                                 
+                                // Rounding down the total coefs
+                                moduleData.totalCoefSubjects            =  Math.floor(moduleData.totalCoefSubjects);
+                                moduleData.totalCoefGrades              =  Math.floor(moduleData.totalCoefGrades);
+                                moduleData.totalCoefRealGrades          =  Math.floor(moduleData.totalCoefRealGrades);
+                                moduleData.totalCoefSimGrades           =  Math.floor(moduleData.totalCoefSimGrades);
+                                moduleData.totalCoefEnabledGrades       =  Math.floor(moduleData.totalCoefEnabledGrades);
+                                moduleData.totalCoefEnabledRealGrades   =  Math.floor(moduleData.totalCoefEnabledRealGrades);
+                                moduleData.totalCoefEnabledSimGrades    =  Math.floor(moduleData.totalCoefEnabledSimGrades);
 
-                                moduleData.totalCoefSubjects                =  Math.round(moduleData.totalCoefSubjects);
-                                moduleData.totalCoefGrades                  =  Math.round(moduleData.totalCoefGrades);
-                                moduleData.totalCoefRealGrades              =  Math.round(moduleData.totalCoefRealGrades);
-                                moduleData.totalCoefSimGrades               =  Math.round(moduleData.totalCoefSimGrades);
-                                moduleData.totalCoefEnabledGrades           =  Math.round(moduleData.totalCoefEnabledGrades);
-                                moduleData.totalCoefEnabledRealGrades       =  Math.round(moduleData.totalCoefEnabledRealGrades);
-                                moduleData.totalCoefEnabledSimGrades        =  Math.round(moduleData.totalCoefEnabledSimGrades);
-                                
                             })
+
+
+
                         }
                         
+                        semData.totalCoefGrades                 = semData.totalCoefGrades               /semData.nbSubjects;
+                        semData.totalCoefRealGrades             = semData.totalCoefRealGrades           /semData.nbSubjects;
+                        semData.totalCoefSimGrades              = semData.totalCoefSimGrades            /semData.nbSubjects;
+                        semData.totalCoefEnabledGrades          = semData.totalCoefEnabledGrades        /semData.nbSubjects;
+                        semData.totalCoefEnabledRealGrades      = semData.totalCoefEnabledRealGrades    /semData.nbSubjects;
+                        semData.totalCoefEnabledSimGrades       = semData.totalCoefEnabledSimGrades     /semData.nbSubjects;
+                        
+                        // "Nullifying" the semester if every single one of its subjects has all its grades disabled
+                        if (semData.modulesNoEnabledGrade.length == semData.nbModules) {
+                            semData.average     = " - ";
+                            semData.classAvg    = " - ";
+                        }
+                        
+                        if (!isNaN(Number(semData.average)) && Object.keys(semData["__#unclassified#__"].subjects).length < semData.nbSubjects) {
+                            semData.average  =  Math.round(100*semData.average /(semData.nbModules-semData.modulesNoEnabledGrade.length))/100;
+                            semData.classAvg =  Math.round(100*semData.classAvg/(semData.nbModules-semData.modulesNoEnabledGrade.length))/100;
+                        }
+
+                        if (isNaN(Number(semData.average))) {
+                            semData.average     = " - ";
+                            semData.classAvg    = " - ";
+                        } 
+                        
+                        semData.totalCoefGrades                 = Math.floor(semData.totalCoefGrades);
+                        semData.totalCoefRealGrades             = Math.floor(semData.totalCoefRealGrades);
+                        semData.totalCoefSimGrades              = Math.floor(semData.totalCoefSimGrades);
+                        semData.totalCoefEnabledGrades          = Math.floor(semData.totalCoefEnabledGrades);
+                        semData.totalCoefEnabledRealGrades      = Math.floor(semData.totalCoefEnabledRealGrades);
+                        semData.totalCoefEnabledSimGrades       = Math.floor(semData.totalCoefEnabledSimGrades);
                     })
+
+                    return this.gradesDatas
                 }
 
 
                 getGradeColor(grade) { if (grade >= 10) return 'good'; return 'bad'; }
 
-                getAverageColor(avg) { if (avg >= 12) return 'average-good'; if (avg >= 10) return 'average-medium'; return 'average-bad'; }
-
                 gradeIsDisabled(n) {
-                    return this.disabledGrades?.includes([n.semester, n.subject, (n?.id || n.type + " " + n.date + " " + n.prof)].join("\\"))
+                    return this.disabledGrades?.includes([n.semester, n.subject, (n?.id || n.type + " " + n.date + " " + n.prof)].join("\\")) || false
                 }
 
-                moyennePonderee(arr) {
+                averagePonderee(arr) {
                     if (!arr || arr.length === 0) return 0;
                     let total = 0, coeffs = 0;
                     arr.forEach(n => { 
@@ -2630,7 +2884,7 @@ ecamDash = undefined;
              * 
              * @param {Boolean} show Optional, accepts true, false or nothing, to respectively show, hide or toggle the loading symbol
              */
-            async showLoadingSymbol(show=undefined) {
+            showLoadingSymbol(show=undefined) {
                 if (show === undefined) {
                     document.querySelector(".currently-loading").classList.toggle("show");
                     document.querySelectorAll(".loading-symbol").forEach(symbol => {symbol.classList.toggle("show")});
@@ -2771,15 +3025,15 @@ ecamDash = undefined;
                 updateAvailableNotif.id = "updateAvailableNotif";
                 updateAvailableNotif.innerHTML = `
                     <div class="update-available-notif-header">
-                        <div class="update-available-notif-text">${this.lang == "fr" ? "NOUVELLE MISE À JOUR DU TABLEAU DE BORD DISPONIBLE ! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".") : "NEW DASHBOARD UPDATE AVAILABLE! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".")}</div>
+                        <div class="update-available-notif-text">${!this.langIsEn ? "NOUVELLE MISE À JOUR DU TABLEAU DE BORD DISPONIBLE ! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".") : "NEW DASHBOARD UPDATE AVAILABLE! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".")}</div>
                     </div>`;
                 updateAvailableNotif.innerHTML += `
                     <div class="update-available-notif-btns">
                         <div style="display: flex; justify-content: center; width: 50%">
-                            <a class="update-btn" id="updateBtn" href="${this.repoScriptRaw}" target="_blank">${this.lang == "fr" ? "INSTALLER" : "INSTALL"}</a>
+                            <a class="update-btn" id="updateBtn" href="${this.repoScriptRaw}" target="_blank">${!this.langIsEn ? "INSTALLER" : "INSTALL"}</a>
                         </div>
                         <div style="display: flex; justify-content: center; width: 50%">
-                            <div class="dismiss-update-btn" id="dismissUpdateBtn" title="${this.lang == "fr" ? "Ignorer pour aujourd'hui" : "Ignore for today"}">${this.lang == "fr" ? "Ignorer" : "Ignore"}</div>
+                            <div class="dismiss-update-btn" id="dismissUpdateBtn" title="${!this.langIsEn ? "Ignorer pour aujourd'hui" : "Ignore for today"}">${!this.langIsEn ? "Ignorer" : "Ignore"}</div>
                         </div>
                     </div>
                 `;
@@ -2817,7 +3071,7 @@ ecamDash = undefined;
 
 
 
-            //#region -Main Dashboard generation
+            //#region Main Dashboard generation
 
 
 
@@ -2830,7 +3084,7 @@ ecamDash = undefined;
                         this.ecamDash.style.width = "94%";
                         this.ecamDash.style.margin = "40px 3% 30px";
                     }
-                    const moyenneGenerale = this.moyennePonderee(this.grades);
+                    const averageGenerale = this.averagePonderee(this.grades);
                     const totalGrades = this.grades.length;
                     const moduleStats = this.getModuleStats();
 
@@ -2845,6 +3099,7 @@ ecamDash = undefined;
                     <div class="offline-mode-title">OFFLINE</div>
                     <div class="offline-mode-subtitle jura"></div>
                     ` : ""}
+
                     <div id="emptyDivToRemoveTheDragImage"></div>
                     <div class="currently-loading">
                         <div class="loading-symbol" style="--offset-offset: calc(0 * 100% / 6)"></div>
@@ -2853,18 +3108,18 @@ ecamDash = undefined;
                         <div class="loading-symbol" style="--offset-offset: calc(3 * 100% / 6)"></div>
                         <div class="loading-symbol" style="--offset-offset: calc(4 * 100% / 6)"></div>
                         <div class="loading-symbol" style="--offset-offset: calc(5 * 100% / 6)"></div>
-                    </div>
-
-                    <div class="over-header-btns jura">
+                    </div>`
+                    +
+                    `<div class="over-header-btns jura">
 
                         <div class="over-header-report-btns">
-                            <div    class="over-header-btn issue mail-info    ${this.lang == "fr" ? "fr" : "en"}">
+                            <div    class="over-header-btn issue mail-info    ${this.lang}">
                                 <div class="over-header-btn-mail-info-text"></div>
                                 <div class="over-header-btn-copied-cue"></div>
                             </div>
-                            <a      class="over-header-btn issue share-config ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserConfigShare    }" target="_blank" tabindex="-1"></a>
-                            <a      class="over-header-btn issue suggest-idea ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserSuggestionIssue}" target="_blank" tabindex="-1"></a>
-                            <a      class="over-header-btn issue report-issue ${this.lang == "fr" ? "fr" : "en"}" href="${this.repoUserReportIssue    }" target="_blank" tabindex="-1"></a>
+                            <a      class="over-header-btn issue share-config ${this.lang}" href="${this.repoUserConfigShare    }" target="_blank" tabindex="-1"></a>
+                            <a      class="over-header-btn issue suggest-idea ${this.lang}" href="${this.repoUserSuggestionIssue}" target="_blank" tabindex="-1"></a>
+                            <a      class="over-header-btn issue report-issue ${this.lang}" href="${this.repoUserReportIssue    }" target="_blank" tabindex="-1"></a>
                             <button class="over-header-btn issue issue-btn" id="reportIssueBtn" tabindex="0">🚩</button>
                         </div>
 
@@ -2873,17 +3128,18 @@ ecamDash = undefined;
                             <div class="over-header-how-to-use-btns" style="display: none">
                                 <a   class="over-header-btn help doc-btn fr"  href="${this.repoReadMeHowToUse}" target="_blank" >${this.createExternalLinkSymbol({margin: [0,0,0,4]})}</a>
                                 <div class="over-header-btn help keybinds-btn fr"></div>
-                                ${/* `<div class="over-header-btn help tuto-btn fr"></div>` + */ ""}
+                                ${`<div class="over-header-btn help tuto-btn fr"></div>` + ""}
+                                <div class="over-header-btn help first-steps-btn fr"></div>
                             </div>
                         </div>
 
                         <div class="over-header-btn settings-btn">⚙️</div>
 
-                    </div>
-
-                    <div id="dash-header">
+                    </div>`
+                    +
+                    `<div id="dash-header">
                         <div style="display: flex;flex-direction: row;" id="aui_3_2_0_1305">
-                            <img draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/5/51/ECAM-LaSalle-bleu-seul.png" alt="ECAM Logo" style="margin: 0px 0px 0px -10px;height: 141px;width: 148px;" id="aui_3_2_0_1304">
+                            <img draggable="false" src="https://upload.wikimedia.org/wikipedia/commons/5/51/ECAM-LaSalle-bleu-seul.png" alt="ECAM Logo" style="margin: 0px 0px 0px -10px;height: 141px;width: 148px; user-select: none;" id="aui_3_2_0_1304">
                             <div style="margin: 30px 0px 0px 0px;">
                                 <div class="dash-title">
                                     <div class="dash-title-text"></div>
@@ -2891,14 +3147,14 @@ ecamDash = undefined;
                                 </div>
                                 <div class="dash-subtitle jura"></div>
                                 <div style="display: flex; gap: 2px; user-select: none;">
-                                    <div class="lang-btn active" id="fr-lang-btn">
-                                        <img style="display: flex; margin: 6px 0px 0px 6px; width:20px; height:20px" alt="🇫🇷" src="${`
-                                            data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAACTUExURUdwTAAkjM7Pzs7OzrMGE74QIMPEx4hTeAAkjQARewAagbIFEgAfhc3NzdDQ0M7PzrYMG8zMzbcMG8EXKcUbLQAMd7UKGLUKGMMWJ7OhrcMVJv///+oPIO4bLgAmoOwWKAAZmQArpO8iNgAfnQATlAIyqLUGFAEoksUSIwAYhgANePnCyMbO6djY2NUWJ+7u7sCep4f8c74AAAAbdFJOUwDL+z19ffsVe3qU1jy51pA+bLyNc+Vrnu+m2KjIWToAAALxSURBVFjD7djJcuIwEIDhAAMOxuwTCAnyKgxOxg7v/3SjtraWDJKTUw60K1Vc+OqX5APK09NjHvOLJxDz3a+t9Mcoeg7DgZrDcrkejUZBL2X7NuYfo4gRZ2MmNZvhYjEHz1EYrHab18tl3LaEEonFnOPT5KtWM1zMhReY27DabUG5ABQ8cyXLTnIy9pz+vcN8seFWPRxC32G7Hf+FGW/3m7fXVmkagJ5NpGXYCOjd5Or6ejGmaRpCctJw6HTqOgaEvM8GT07ynP0RXhTbSqcIzWduDWOIgHBRJqmeELkJtQB34v4QUUs7o8MSC4t7FYECkF2UKYW9Sb2KRI8FqVWB06OI4KJSQRnuyXoUiW0mHUj2iPFAJEdOoiGVE/OV+SCxqLxTpI+LT+GGcE8Cj4AypAiqcEDyrPTSFHSS25zxnMIH6W2GnsQsitVGM8sBEf36AAOOASkDHg+EcuyiWLw+TAHGCdk5EqrOKqhQjgfCJ8ahPxxCx1W0K0tdUG4qCJKrAoMXpd4i7BwFpM+rkJNmbijh7w+xIHRanPFAiXx/khuQ7mFM6i9CzFFAlQiSDHPcRQneoCM8uqhA29NOfB/Sr48MUkWF3uY0bVfmgqyF6aIKHVcqgpxFMETlGHtkrMoDdXKYVMqlqRxhUReUmBuNiro9KXVCcllcOaoiq4emlPaAOJMoaCogHdNSXgg7GEqRRL1FR709FqRzKO0PdYt0D6X+IrWqTlGnh9LzPYgk1rIQlKogqqj70NHYZgR9VN0eJ2Ttj1GkT6udygN1BhVR/vQp6m6RUYRzfl5k1lSeItfSOFBVH3KqCfw8vwPZTRddhAgx1+GE3T6GdW2CN4oYU5Y7gITy8jIIwymfMDzM54tJOy1XC86E2G0GlHKzCxjUIoNwGtmXqGA0Wi+X0uPgVd1DhFGWs/0KvjgFhSGOyyl4su9aGjPbcAWglzDqdd9k99L1ennYzMRs9tvdaqW/GkXfvAbL+/NT8PhXwmN+7/wHgdqiCaxyTNQAAAAASUVORK5CYII=
-                                        `}">
-                                    </div>
-                                    <div class="lang-btn " id="en-lang-btn">
+                                    <div class="lang-btn ${this.langIsEn ? "active" : ""}" id="en-lang-btn">
                                         <img style="display: flex; margin: 6px 0px 0px 6px; width:20px; height:20px" alt="🇬🇧" src="${`
                                                 data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAECUExURUdwTL6/w7pOXQcmd3aItpsCC7IaMURBdgAKW8rJy7QIJtPS0gIUZgASY7h7hZ4BDgADTwMofAASYxEka8/KywATZby0uQgda6gFGbpoc6QTIgAHVgAdcrC0v56jsszMzKkCFk1djU1Yg32Prv///8sBGNMHJs8CHdQLLAAegwATeNEDIAAujwAKZtYRMgANa9YgPAAoiP79/cQAEeZ9i+vt89Xc6wEKXPn3+N9vfhg/lOmKlwImfPPKzwIZb83U5fvu8AADTdtGXN9YaoydwxcwgfK8w11zrPfV2UNfovnh5Nk0TOycp7jD2t3d3TFLk6iz0fCttqsBEr0OLcy5vMWboL7jb4MAAAAkdFJOUwD+/X39/3kQfoH+/ShvJ4HW15JNuady6j+76b+/7/FQt331fQrzi9EAAAaxSURBVFjD7Zhpe6JYE4bd2mVMJz0TJ1t30t3zIiIkigjIIkoDsrihifn/f+WtOueAmjhz9XybD/1ovEyE26eqTp0lhcIv/dJ/VzXQWY3oX913fr5HnF1+/OPPL78zffnzj/LHy7Pzn+HVbi5uGwz4tdWqWOPxYHys3+9btxfVm5t/4NXOq9/uSjsE1b62muv1urmJrMHgkTxRCJoVm+ZvoLtvt42ry7Ozo4ghCWeXjVbp+bm0azYK51etNUozFGMaWY+HGlhTzXx5QZTZvJ9dX3+BiOvlj6ByHfJwfV3ZIcdZA6haMl8doHCKwnHGJjnAAEhXVKEnCC8v5ro4m+Tq9+HZf5oFu9Jw6MUcAb28yJ4auhyVHlgZBkRBIMFWpla32x2L4h6XrhxPkoCjrB++E5AsL/zlXCEkZZWZgjxlIEGwOd3qDsgjU6SHC8LhuOKsDqEtZLkHLC9DaRVr8EgfWWgZCCmM9BhoW1mSfOAoWjqqFxrN3Vb1ZIQBipAMMEUrR0CCkDnaY7rpyrV7Eu/jHVr0BKD/BStNmW/NBUQg+6FBMxU9Dvah5Y5yzCDSY5+XBNUlHBFB5bGVVFaa4agEZcY0vMA6cCTsHRFZgYbp6dmMw0BQHysJdCMmqMXSpTlPGYhHDn8IiqauDemRlwrj7EFY6YpuOKa8N6VHp0Fgx4GwJM/hMs4RiKDcrYemtgat3mMG4nPQAC5CO4I5p98m7kHjfCyngTa35Z4gq+QqI0gIiOdzULIyQrQjL8l3TRPCEUdHjrBfyYUwFnwH41emGoB4PnOEX6SCHZ5+zK1SkYEm5b0jK4mCYDM1ONdxnNCh44BDkEAdJRDVEoolyaRa0JgW41jRQ4OCoGorHTuXKX9DQCDJ5jTdDX1hb0cLBgjpzqKN3mwiaJAEU+3g3iPtQZxrL4DDhgekuSsO0qSy0Q1OaRavCuVko9HGmMfh1lZVE6Sq9nLrxHNXUVQpAxlzJ9wu6djgtE0F8qDTBLivpSr02lqBa0Lb92AQYT/wPB3MPXnh+aqXOzo2nf/iOrb3/OGi0FivsdOg6LSpiDC/pOoS+YGHH8auYbyJX3HBgNdrDwloZ6IVMnvlKJ5xmKBSPPozMeIQiho7GKUNd/Lt9rDdRhBMbD3G6b2xk7nBJ1Gn05F4AScvCKDTJgwUcVT97YXZEU7akY4FrDZT/uYtKDOUYagb9rrnEB1S2sMD0GF6hKPcvLHDIJ09Bkk56DDLp5Jz6KZ95Idw2h9yUGaGZhIH1InkUDfv/WBoVQIiww+qy4oLtcXiqr4Hw+sYw0hHfoZtufTaQBDY8O0Q+uHNcDNc6BqvwzBYp3dBIQWWxGaRgHw7dt/3fda01IxnYgtJxyQB1ujtnDVttfRKKYY2XW2CDZuHYggyxmsYSEV/dDibPggaG9p6Tm/VHv4qs6bVVkGUWoNuotNG3C6gKRYwgSlqm8SlUrPKu9kG9jBBOvqBK+1a20TpgM7sZEZRYlOAZlhsXZjrTJoZ9eRkpemrSjLrP/1AULFCKV3RCkhc7lKG9Mr2XMPJH0GQlwxkwCwcQ0qN6WYTRMls0n8CIej7bMJW4nRFzDs+2JHVWNuk4myKoDZxpOnk4xAXLN8xNmkfGYRDQOXJhC58ND1gp9Ph8cKkK2Yg4miabNgXQdVh/tej8VOmQ1BE0gNbA7CzdKcwI4sMRCoOoNk4INe4tgDDxwth0zJ+BxoQjgJbA7QDWwi6zlBQm4H6YjQleQo9MCWYobaqzPIclfsIIuUyMCwwPU264mlQn+UREgCDmjcdQw/SydMIQXUEEY6rCh3JC7VgJoqnQZBeGp5CM4WuXLBFxhGCSFxzk+/w5lyPuuLfg2A7S8PDMTvEVoNtnqE9RN8RRDm+1IGdU74MH4GGWWjgqT+jbaTArgRRQ+ja191Vof6UICf2pM5iq1UO7Ij9U47QFGsAJVYpavjhrlqop0X4I9kwO2y3k3MYCKevQ1Afck57W4ltEiDOkN/voWmdBUwUzirts3Exwhe4IQ/tEISfjSt6ttBuTfkZQdC0XAzY0q4yGb3V5H5deibm9yDaFqOUbRkUY717Ld2Rtd8hB5zK9afPcGSp45GlDkeWz58/ja4fiqUPoOdnU1uNn6gbanvUh02Zoa2bRVDrqoYbduS06Cmq8OYUddW4/XaHqFLxAYbdkd0fo78ekHLf+Ir3NXalu29VONnV/vZkd3NTvbhtPVz/eCdANb6yU+jV7cXNT503zy8vP2LEn5ggD3BWrZ061v7s6blGjpK1X/9K+KX/sP4PsW55UIo2Nb0AAAAASUVORK5CYII=
+                                        `}">
+                                    </div>
+                                    <div class="lang-btn ${!this.langIsEn ? "active" : ""}" id="fr-lang-btn">
+                                        <img style="display: flex; margin: 6px 0px 0px 6px; width:20px; height:20px" alt="🇫🇷" src="${`
+                                            data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAACTUExURUdwTAAkjM7Pzs7OzrMGE74QIMPEx4hTeAAkjQARewAagbIFEgAfhc3NzdDQ0M7PzrYMG8zMzbcMG8EXKcUbLQAMd7UKGLUKGMMWJ7OhrcMVJv///+oPIO4bLgAmoOwWKAAZmQArpO8iNgAfnQATlAIyqLUGFAEoksUSIwAYhgANePnCyMbO6djY2NUWJ+7u7sCep4f8c74AAAAbdFJOUwDL+z19ffsVe3qU1jy51pA+bLyNc+Vrnu+m2KjIWToAAALxSURBVFjD7djJcuIwEIDhAAMOxuwTCAnyKgxOxg7v/3SjtraWDJKTUw60K1Vc+OqX5APK09NjHvOLJxDz3a+t9Mcoeg7DgZrDcrkejUZBL2X7NuYfo4gRZ2MmNZvhYjEHz1EYrHab18tl3LaEEonFnOPT5KtWM1zMhReY27DabUG5ABQ8cyXLTnIy9pz+vcN8seFWPRxC32G7Hf+FGW/3m7fXVmkagJ5NpGXYCOjd5Or6ejGmaRpCctJw6HTqOgaEvM8GT07ynP0RXhTbSqcIzWduDWOIgHBRJqmeELkJtQB34v4QUUs7o8MSC4t7FYECkF2UKYW9Sb2KRI8FqVWB06OI4KJSQRnuyXoUiW0mHUj2iPFAJEdOoiGVE/OV+SCxqLxTpI+LT+GGcE8Cj4AypAiqcEDyrPTSFHSS25zxnMIH6W2GnsQsitVGM8sBEf36AAOOASkDHg+EcuyiWLw+TAHGCdk5EqrOKqhQjgfCJ8ahPxxCx1W0K0tdUG4qCJKrAoMXpd4i7BwFpM+rkJNmbijh7w+xIHRanPFAiXx/khuQ7mFM6i9CzFFAlQiSDHPcRQneoCM8uqhA29NOfB/Sr48MUkWF3uY0bVfmgqyF6aIKHVcqgpxFMETlGHtkrMoDdXKYVMqlqRxhUReUmBuNiro9KXVCcllcOaoiq4emlPaAOJMoaCogHdNSXgg7GEqRRL1FR709FqRzKO0PdYt0D6X+IrWqTlGnh9LzPYgk1rIQlKogqqj70NHYZgR9VN0eJ2Ttj1GkT6udygN1BhVR/vQp6m6RUYRzfl5k1lSeItfSOFBVH3KqCfw8vwPZTRddhAgx1+GE3T6GdW2CN4oYU5Y7gITy8jIIwymfMDzM54tJOy1XC86E2G0GlHKzCxjUIoNwGtmXqGA0Wi+X0uPgVd1DhFGWs/0KvjgFhSGOyyl4su9aGjPbcAWglzDqdd9k99L1ennYzMRs9tvdaqW/GkXfvAbL+/NT8PhXwmN+7/wHgdqiCaxyTNQAAAAASUVORK5CYII=
                                         `}">
                                     </div>
                                 </div>
@@ -2908,7 +3164,7 @@ ecamDash = undefined;
                         <div class="header-actions jura" style="display:flex; align-items:center; user-select: none;">
 
                             <button class="btn btn-edit-mode ${this.editMode ? "on" : "off"}" id="editModeBtn"></button>
-                            <div style="display: flex; flex-direction: column;">
+                            <div class="config-btns-container">
                                 <div class="btn btn-export" id="exportBtn"></div>
                                 <div class="btn btn-import" id="importBtn"></div>
                                 <div class="import-menu" id="importMenu" style="display: none">
@@ -2935,11 +3191,11 @@ ecamDash = undefined;
 
                         </div>
 
-                    </div>
-                    
-                    <div class="main-average-card" id="main-average-card">
+                    </div>`
+                    +
+                    `<div class="main-average-card" id="main-average-card">
                         <div class="average-display">
-                            <div class="average-number" ${this.error ? "style=\"padding-top: 0px;\"" : ""}>${moyenneGenerale}</div>
+                            <div class="average-number" ${this.error ? "style=\"padding-top: 0px;\"" : ""}>${averageGenerale}</div>
                             <div class="average-label"></div>
                         </div>
                         <div class="average-stats">
@@ -2971,29 +3227,26 @@ ecamDash = undefined;
                                 <button class="view-btn ${this.viewMode == "detailed" ? "active" : ""}" id="view-btn-detailed" data-view="detailed">📊</button>
                                 <button class="view-btn ${this.viewMode == "compact"  ? "active" : ""}" id="view-btn-compact"  data-view="compact" >📋</button>
                             </div>
-                            <div class="fold-toggle jura"></div>
+                            <div class="fold-toggle jura ${this.lang}"></div>
                         </div>
-                    </div>
-
-                    <div class="scroll-field up${this.selectedSubjectCardsId.length > 0 ? " show" : ""}"${document.body.classList.contains("lfr-dockbar-pinned") ? ` style="transform: translateY(45px)"` : ""}></div>
-
-                    <div class="drop-field remove-from-module${this.selectedSubjectCardsId.length > 0 ? " show" : ""}">
-                        <div class="drop-field-remove-from-module-text top${this.lang == "fr" ? " fr" : " en"}"></div>
+                    </div>`
+                    +
+                    `<div class="drop-field remove-from-module${this.selectedSubjectCardsId.length > 0 ? " show" : ""}">
+                        <div class="drop-field-remove-from-module-text top${!this.langIsEn ? " fr" : " en"}"></div>
                         <div class="drop-field-remove-from-module-minus">-</div>
-                        <div class="drop-field-remove-from-module-text bottom${this.lang == "fr" ? " fr" : " en"}"></div>
+                        <div class="drop-field-remove-from-module-text bottom${!this.langIsEn ? " fr" : " en"}"></div>
                         <div class="drop-field-remove-from-module-hitbox"></div>
                     </div>
 
                     <div class="content-area" id="contentArea"></div>
 
-                    <div class="drop-field create-module ${this.lang == "fr" ? "fr" : "en"}${this.selectedSubjectCardsId.length > 0 ? " show" : ""}">
-                        <div class="drop-field-create-module-text top ${this.lang == "fr" ? "fr" : "en"}"></div>
+                    <div class="drop-field create-module ${this.lang}${this.selectedSubjectCardsId.length > 0 ? " show" : ""}">
+                        <div class="drop-field-create-module-text top ${this.lang}"></div>
                         <div class="drop-field-create-module-plus">+</div>
-                        <div class="drop-field-create-module-text bottom ${this.lang == "fr" ? "fr" : "en"}"></div>
+                        <div class="drop-field-create-module-text bottom ${this.lang}"></div>
                         <div class="drop-field-create-module-hitbox"></div>
                     </div>
 
-                    <div class="scroll-field down${this.selectedSubjectCardsId.length > 0 ? " show" : ""}"></div>
                     `;
 
                     const notifContainer = document.createElement("div");
@@ -3028,17 +3281,16 @@ ecamDash = undefined;
                 
                 //MARK: language Sensitive
                 async languageSensitiveContent(fadeIn=true) {
-                    // Language Sensitive text in the Dashboard Header and Semester filter tab (which don't refresh on calling the generateContent() method)
+                    // Language Sensitive text in the Dashboard Header and Semester filter tab (which doesn't refresh on calling the generateContent() method)
                     if (this.error) {
-                        const offlineTitle = document.querySelector(".offline-mode-title");
                         const offlineSubTitle = document.querySelector(".offline-mode-subtitle");
-                        offlineSubTitle.innerHTML = this.lang == "fr" 
-                            ? `Les serveurs de l'ECAM sont actuellement inaccessibles ! ${!this.firstLoad 
-                                ? `Pour l'instant, tu ne peux pas voir si tu as des nouvelles notes... En attendant, voici le tableau de bord en mode offline, tu as donc accès aux notes que j'ai gentiment sauvegardées dans le cache la dernière fois ! De rien ! <3` 
-                                : "Pour l'instant, tu ne peux pas voir tes notes... Tu peux quand même commencer à configurer tes modules, et reviens quand les serveurs sont de nouveau opérationnels pour voir tes notes !"
+                        offlineSubTitle.innerHTML = !this.langIsEn 
+                            ? `Les serveurs de l'ECAM sont actuellement inaccessibles ! ${this.grades.length > 0
+                                ? "Pour l'instant, tu ne peux pas voir si tu as des nouvelles notes... En attendant, voici le tableau de bord en mode offline, tu as donc accès aux notes que j'ai gentiment sauvegardées dans le cache la dernière fois ! De rien ! <3" 
+                                : "Pour l'instant, tu ne peux pas voir tes notes... Tu peux quand même commencer à configurer tes modules, reviens quand les serveurs sont opérationnels pour voir tes notes !"
                             }` 
-                            : `ECAM's servers are currently down! ${!this.firstLoad 
-                                ? `For now, you can't see if you have new grades... While waiting for the servers to be back up, here are the grades I nicely saved in your cache last time, so you can still see them even with the server down! You're welcome! <3` 
+                            : `ECAM's servers are currently down! ${this.grades.length > 0 
+                                ? "For now, you can't see if you have new grades... While waiting for the servers to be back up, here are the grades I nicely saved in your cache last time, so you can still see them even with the server down! You're welcome! <3" 
                                 : "For now, you can't see your grades... You can still start by configuring your modules, and come back once the servers are up again to see your grades!"
                             }`
                         ;
@@ -3048,9 +3300,9 @@ ecamDash = undefined;
                     const dashTitle             = document.querySelector(".dash-title-text");
                     const dashPatchNotesLink    = document.querySelector(".patch-notes-link");
                     const dashSubtitle          = document.querySelector(".dash-subtitle");
-                    dashTitle.innerHTML         = this.lang == "fr" ? 'Tableau de Bord des Notes ECAM' : "ECAM Grades Dashboard";
-                    dashPatchNotesLink.title    = this.lang == "fr" ? "Aller voir les notes de cette mise à jour" : "Go see this update's notes";
-                    dashSubtitle.innerHTML      = this.lang == "fr" ? 'Vue complète de vos résultats académiques !' : "Complete view of your academic results!";
+                    dashTitle.innerHTML         = !this.langIsEn ? 'Tableau de Bord des Notes ECAM' : "ECAM Grades Dashboard";
+                    dashPatchNotesLink.title    = !this.langIsEn ? "Aller voir les notes de cette mise à jour" : "Go see this update's notes";
+                    dashSubtitle.innerHTML      = !this.langIsEn ? 'Vue complète de vos résultats académiques !' : "Complete view of your academic results!";
 
                     const infoNotif     = document.querySelector(".temp-notif");
                     if (infoNotif) {
@@ -3060,8 +3312,8 @@ ecamDash = undefined;
 
                     const frBtn = document.querySelectorAll("#fr-lang-btn");
                     const enBtn = document.querySelectorAll("#en-lang-btn");
-                    frBtn.title = this.lang == "fr" ? "Maj+L" : "Shift+L";
-                    enBtn.title = this.lang == "fr" ? "Maj+L" : "Shift+L";
+                    frBtn.title = !this.langIsEn ? "Maj+L" : "Shift+L";
+                    enBtn.title = !this.langIsEn ? "Maj+L" : "Shift+L";
 
                     const reportIssueBtn    = document.querySelector(".issue.issue-btn");
                     const mailInfo          = document.querySelector(".issue.mail-info");
@@ -3073,15 +3325,16 @@ ecamDash = undefined;
 
                     const helpMenu          = document.querySelector(".over-header-btn.how-to-use-btn");
                     const docBtn            = document.querySelector(".over-header-btn.doc-btn");
-                    // const tutoBtn           = document.querySelector(".over-header-btn.tuto-btn");
                     const keybindsBtn       = document.querySelector(".over-header-btn.keybinds-btn");
+                    const tutoBtn           = document.querySelector(".over-header-btn.tuto-btn");
+                    const firstStepsBtn     = document.querySelector(".over-header-btn.first-steps-btn");
 
                     const settingsBtn       = document.querySelector(".over-header-btn.settings-btn");
 
                     const newUserNotif      = document.querySelector(".new-user-notif");
                     const newUserNotifText  = document.querySelector(".new-user-notif-text");
 
-                    if (this.lang == "fr") {
+                    if (!this.langIsEn) {
                         reportIssueBtn  .title     = "Signaler...";
                         mailInfo        .title     = "Clique pour copier mon adresse email !";
                         shareConfig     .title     = "Partage une configuration sur mon GitHub";
@@ -3090,12 +3343,14 @@ ecamDash = undefined;
 
                         helpMenu        .title     = "Comment s'en servir?";
                         docBtn          .title     = "Aller vers la documentation";
-                        // tutoBtn         .title     = "Démarrer le tutoriel";
                         keybindsBtn     .title     = "Voir les raccourcis clavier";
+                        tutoBtn         .title     = "Démarrer le tutoriel";
+                        firstStepsBtn   .title     = "Démarrer le tutoriel pour vos premiers pas";
 
                         settingsBtn     .title     = "Ouvrir les paramètres";
 
-                        if (((newUserNotif?.style?.display || "none" == "none")?.toString() || "true") == "false") newUserNotif.title     = "Clique pour fermer";
+                        if (newUserNotif) 
+                            newUserNotif.title     = "Clique pour fermer";
 
                         shareConfig     .innerHTML = `Partager une config  ${this.createExternalLinkSymbol({margin: [0,0,0,4]})}`;
                         suggestIdea     .innerHTML = `Suggérer une idée    ${this.createExternalLinkSymbol({margin: [0,0,0,4]})}`;
@@ -3103,16 +3358,18 @@ ecamDash = undefined;
                         mailInfoText    .innerHTML = "Par mail: baptiste.jacquin@ecam.fr 📋";
                         mailInfoCopied  .innerHTML = "Copié !";
 
-                        if (((newUserNotif?.style?.display || "none" == "none")?.toString() || "true") == "false") newUserNotifText.innerHTML = "Bonjour! Nouveau ici? Clique ici pour apprendre à utiliser cette extension!";
+                        if (newUserNotif) 
+                            newUserNotifText.innerHTML = "Bonjour! Première fois? Clique ici pour apprendre à utiliser cette extension! (Clique ici pour fermer)";
 
                         mailInfo   .classList.replace("en", "fr");
                         shareConfig.classList.replace("en", "fr");
                         suggestIdea.classList.replace("en", "fr");
                         reportIssue.classList.replace("en", "fr");
 
-                        docBtn     .classList.replace("en", "fr");
-                        // tutoBtn    .classList.replace("en", "fr");
-                        keybindsBtn.classList.replace("en", "fr");
+                        docBtn       .classList.replace("en", "fr");
+                        keybindsBtn  .classList.replace("en", "fr");
+                        tutoBtn      .classList.replace("en", "fr");
+                        firstStepsBtn.classList.replace("en", "fr");
                     }
                     else {
                         reportIssueBtn  .title     = "Report...";
@@ -3123,12 +3380,14 @@ ecamDash = undefined;
 
                         helpMenu        .title     = "How to use?";
                         docBtn          .title     = "Go to the documentation";
-                        // tutoBtn         .title     = "Start the tutorial";
                         keybindsBtn     .title     = "See the keyboard shortcuts";
+                        tutoBtn         .title     = "Start the tutorial";
+                        firstStepsBtn   .title     = "Start the tutorial for your first steps";
 
                         settingsBtn     .title     = "Open the settings";
                         
-                        if (((newUserNotif?.style?.display || "none" == "none")?.toString() || "true") == "false") newUserNotif.title     = "Click to dismiss";
+                        if (newUserNotif) 
+                            newUserNotif.title     = "Click to dismiss";
 
                         shareConfig     .innerHTML = `Share a config  ${this.createExternalLinkSymbol({margin: [0,0,0,4]})}`;
                         suggestIdea     .innerHTML = `Suggest an idea ${this.createExternalLinkSymbol({margin: [0,0,0,4]})}`;
@@ -3136,16 +3395,18 @@ ecamDash = undefined;
                         mailInfoText    .innerHTML = "By mail: baptiste.jacquin@ecam.fr 📋";
                         mailInfoCopied  .innerHTML = "Copied!";
 
-                        if (((newUserNotif?.style?.display || "none" == "none")?.toString() || "true") == "false") newUserNotifText.innerHTML = "Hey! New here? Click here to find a tutorial on how to use this extension!";
+                        if (newUserNotif) 
+                            newUserNotifText.innerHTML = "Hey! New here? Click here to find a tutorial on how to use this extension! (Click here to dismiss)";
 
                         mailInfo   .classList.replace("fr", "en");
                         shareConfig.classList.replace("fr", "en");
                         suggestIdea.classList.replace("fr", "en");
                         reportIssue.classList.replace("fr", "en");
 
-                        docBtn     .classList.replace("fr", "en");
-                        // tutoBtn    .classList.replace("fr", "en");
-                        keybindsBtn.classList.replace("fr", "en");
+                        docBtn       .classList.replace("fr", "en");
+                        keybindsBtn  .classList.replace("fr", "en");
+                        tutoBtn      .classList.replace("fr", "en");
+                        firstStepsBtn.classList.replace("fr", "en");
                     }
                     
 
@@ -3161,10 +3422,10 @@ ecamDash = undefined;
                     const importBtn     = document.getElementById("importBtn");
                     const editModeBtn   = document.getElementById("editModeBtn");
                     const exportBtn     = document.getElementById("exportBtn");
-                    importBtn   .innerHTML  = `${this.lang == "fr" ? "Importer Config": "Import Config"}<span class="btn-icon">⬇️</span>`;
-                    editModeBtn .innerHTML  = `<div style="display:flex; flex-direction:column; gap:3px"><span style="font-size:40px">🖊️</span><div class="jura">${this.lang == "fr" ? "Mode Édition" : "Edit Mode"}</div></div>`;
-                    exportBtn   .innerHTML  = `${this.lang == "fr" ? "Exporter Config": "Export Config"}<span class="btn-icon">⬆️</span>`;
-                    editModeBtn .title      = this.lang == "fr" ? "Maj+E" : "Shift+E";
+                    importBtn   .innerHTML  = `${!this.langIsEn ? "Importer Config": "Import Config"}<span class="btn-icon">⬇️</span>`;
+                    editModeBtn .innerHTML  = `<div style="display:flex; flex-direction:column; gap:3px"><span style="font-size:40px">🖊️</span><div class="jura">${!this.langIsEn ? "Mode Édition" : "Edit Mode"}</div></div>`;
+                    exportBtn   .innerHTML  = `${!this.langIsEn ? "Exporter Config": "Export Config"}<span class="btn-icon">⬆️</span>`;
+                    editModeBtn .title      = !this.langIsEn ? "Maj+E" : "Shift+E";
                     if (this.editMode) {editModeBtn.classList.add('on')}
                     else    {editModeBtn.classList.remove('on')}
                     
@@ -3173,20 +3434,20 @@ ecamDash = undefined;
                     const importClear   = importMenu.querySelector(".import-menu-btn.clear");
                     const importOnline  = importMenu.querySelector(".import-menu-btn.online");
 
-                    importFile.children[0].innerHTML   = this.lang == "fr" ? "Importer un fichier de configuration .json"   : "Import a .json configuration file";
-                    importClear.innerHTML              = this.lang == "fr" ? "Effacer Config" : "Clear Config";
-                    importClear.title                  = this.lang == "fr" ? "Clique ici pour effacer ta configuration actuelle" : "Click here to clear your current configuration";
-                    importOnline.children[1].innerHTML = this.lang == "fr" ? "Obtenir un fichier de configuration en ligne" : "Get a configuration file online";
+                    importFile.children[0].innerHTML   = !this.langIsEn ? "Importer un fichier de configuration .json"   : "Import a .json configuration file";
+                    importClear.innerHTML              = !this.langIsEn ? "Effacer Config" : "Clear Config";
+                    importClear.title                  = !this.langIsEn ? "Clique ici pour effacer ta configuration actuelle" : "Click here to clear your current configuration";
+                    importOnline.children[1].innerHTML = !this.langIsEn ? "Obtenir un fichier de configuration en ligne" : "Get a configuration file online";
 
                     const onlineCfgPickerHeader = document.querySelector(".online-cfg-picker-menu-header");
                     if (onlineCfgPickerHeader) {
-                        onlineCfgPickerHeader.innerHTML = this.lang == "fr" 
+                        onlineCfgPickerHeader.innerHTML = !this.langIsEn 
                             ? "Note: Choisir une configuration effacera les traces de configuration pré-existante de l'année correspondante, mais pas des autres années" 
                             : "Tip: Choosing a configuration will erase all traces of pre-existing configuration of the corresponding year, but not of the other years"
                         ;
                     }
 
-                    if (this.lang == "fr") {
+                    if (!this.langIsEn) {
                         document.querySelectorAll(".drop-module-card-insert-text, .drop-field-remove-from-module-text, .drop-field-create-module-text").forEach(dropFieldText => {
                             dropFieldText.classList.replace("en", "fr")
                         })
@@ -3205,59 +3466,59 @@ ecamDash = undefined;
 
 
                     const avgLabel = document.querySelector(".average-label");
-                    avgLabel.innerHTML  = `/20 ${this.lang == "fr" ? "Moyenne Générale" : "Global Average"}`;
+                    avgLabel.innerHTML  = `/20 ${!this.langIsEn ? "Moyenne Générale" : "Global Average"}`;
 
                     const statLabelsArray = document.querySelectorAll(".stat-label");
-                    statLabelsArray[0].innerHTML = this.lang == "fr" ? "Notes" : "Grades";
-                    statLabelsArray[1].innerHTML = this.lang == "fr" ? "Semestres" : "Semesters";
-                    statLabelsArray[2].innerHTML = this.lang == "fr" ? "Modules Validés" : "Validated module";
+                    statLabelsArray[0].innerHTML = !this.langIsEn ? "Notes" : "Grades";
+                    statLabelsArray[1].innerHTML = !this.langIsEn ? "Semestres" : "Semesters";
+                    statLabelsArray[2].innerHTML = !this.langIsEn ? "Modules Validés" : "Validated module";
 
                     const allFilterTabs = document.querySelectorAll(`.filter-tab`);
                     allFilterTabs.forEach(tab => {
-                        if (tab.dataset.filter == "all") {tab.innerHTML = this.lang == "fr" ? `Tous` : `All`}
-                        tab.title = this.lang == "fr" ? `Maj+Flèche Droite/Gauche` : `Shift+Left/Right Arrow`;
+                        if (tab.dataset.filter == "all") {tab.innerHTML = !this.langIsEn ? `Tous` : `All`}
+                        tab.title = !this.langIsEn ? `Maj+Flèche Droite/Gauche` : `Shift+Left/Right Arrow`;
                     })
 
-                    document.querySelector(`.view-toggle`).children[0].innerHTML = this.lang == "fr" ? `Basculer le mode d'affichage` : `Toggle display mode`;
-                    document.querySelector(`.fold-toggle`)            .innerHTML = this.lang == "fr" ? `Plier tous les modules` : `Fold every module`;
-                    document.querySelector(`.view-toggle`).children[0].title     = this.lang == "fr" ? `Maj+D` : `Shift+D`;
-                    document.querySelector(`.fold-toggle`)            .title     = this.lang == "fr" ? `Maj+F` : `Shift+F`;
+                    document.querySelector(`.view-toggle`).children[0].innerHTML = !this.langIsEn ? `Basculer le mode d'affichage` : `Toggle display mode`;
+                    document.querySelector(`.fold-toggle`)            .classList.replace(this.langIsEn ? "fr" : "en", this.lang)
+                    document.querySelector(`.view-toggle`).children[0].title     = !this.langIsEn ? `Maj+D` : `Shift+D`;
+                    document.querySelector(`.fold-toggle`)            .title     = !this.langIsEn ? `Maj+F` : `Shift+F`;
 
 
                     const viewBtnsArray = document.querySelectorAll(".view-btn");
-                    viewBtnsArray[0].title = this.lang == "fr" ? "Vue détaillée" : "Detailed view";
-                    viewBtnsArray[1].title = this.lang == "fr" ? "Vue compacte" : "Compact view";
+                    viewBtnsArray[0].title = !this.langIsEn ? "Vue détaillée" : "Detailed view";
+                    viewBtnsArray[1].title = !this.langIsEn ? "Vue compacte" : "Compact view";
 
                     const intranetSubtext = document.querySelector(".intranet-subtext");
-                    if (intranetSubtext) intranetSubtext.innerHTML = this.lang == "fr" ? "Afficher le tableau des notes d'Espace ECAM" : "Show ECAM Intranet's Grades Table";
+                    if (intranetSubtext) intranetSubtext.innerHTML = !this.langIsEn ? "Afficher le tableau des notes d'Espace ECAM" : "Show ECAM Intranet's Grades Table";
 
                     const updateNotif = document.querySelector(".update-available-notif-header");
                     if (updateNotif) {
-                        updateNotif.querySelector(".update-available-notif-text").innerHTML = this.lang == "fr" ? "NOUVELLE MISE À JOUR DU TABLEAU DE BORD DISPONIBLE ! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".") : "NEW DASHBOARD UPDATE AVAILABLE! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".");
-                        updateNotif.querySelector(".update-available-notif-btns").children[0].innerHTML = this.lang == "fr" ? "INSTALLER" : "INSTALL";
-                        updateNotif.querySelector(".update-available-notif-btns").children[1].innerHTML = this.lang == "fr" ? "Ignorer" : "Ignore";
-                        updateNotif.querySelector(".update-available-notif-btns").children[1].title     = this.lang == "fr" ? "Ignorer pour aujourd'hui" : "Ignore for today";
+                        updateNotif.querySelector(".update-available-notif-text").innerHTML = !this.langIsEn ? "NOUVELLE MISE À JOUR DU TABLEAU DE BORD DISPONIBLE ! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".") : "NEW DASHBOARD UPDATE AVAILABLE! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".");
+                        updateNotif.querySelector(".update-available-notif-btns").children[0].innerHTML = !this.langIsEn ? "INSTALLER" : "INSTALL";
+                        updateNotif.querySelector(".update-available-notif-btns").children[1].innerHTML = !this.langIsEn ? "Ignorer" : "Ignore";
+                        updateNotif.querySelector(".update-available-notif-btns").children[1].title     = !this.langIsEn ? "Ignorer pour aujourd'hui" : "Ignore for today";
                     }
 
                     if (document.querySelector(".new-grades-card").children.length > 1) {document.querySelector(".new-grades-card").children[1].remove()}
                     document.querySelector(".new-grades-card-title").innerHTML = `
                         ${this.newGrades.length > 0 
-                            ? `${this.lang == "fr" 
+                            ? `${!this.langIsEn 
                                 ? `${this.newGrades.length} Nouvelle${ this.newGrades.length > 1 ? "s" : ""} Note${this.newGrades.length > 1 ? "s" : ""} !` 
                                 : `${this.newGrades.length} New Grade${this.newGrades.length > 1 ? "s" : ""}!`
                             }` 
-                            : `${this.lang == "fr" 
+                            : `${!this.langIsEn 
                                 ? `Pas de nouvelle note${this.error ? ", que je sache (mode offline)" : ""}` 
                                 : `No new grade${this.error ? ", as far as I know (offline mode)" : ""}`
                             }` 
                         }
                     `;
-                    document.querySelector(".new-grades-mark-as-read-text").innerHTML = this.lang == "fr" ? "Marquer comme lu" : "Mark as read";
-                    document.querySelector(".new-grades-mark-as-read").title = this.lang == "fr" ? "Marquer comme lu" : "Mark as read";
+                    document.querySelector(".new-grades-mark-as-read-text").innerHTML = !this.langIsEn ? "Marquer comme lu" : "Mark as read";
+                    document.querySelector(".new-grades-mark-as-read").title = !this.langIsEn ? "Marquer comme lu" : "Mark as read";
                     
 
                     document.querySelectorAll(".selected-card-notif-div").forEach(notifDiv => {
-                        notifDiv.children[2].innerHTML = this.lang == "fr" ? `est sélectionné!` : `is selected!`;
+                        notifDiv.children[2].innerHTML = !this.langIsEn ? `est sélectionné!` : `is selected!`;
                     })
 
                     if (fadeIn) {
@@ -3283,7 +3544,7 @@ ecamDash = undefined;
                         }}, 1)
                     }
 
-                    newGradesNotif.innerHTML = this.lang == "fr" 
+                    newGradesNotif.innerHTML = !this.langIsEn 
                         ? `${this.newGrades.length} NOUVELLE${ this.newGrades.length>1 ? "S !" : " !"} NOTE${this.newGrades.length>1 ? "S !" : " !"}` 
                         : `${this.newGrades.length} NEW GRADE${this.newGrades.length>1 ? "S!"  : "!" }` 
                     + `<button id="closeNewGradesNotif" style="padding-bottom: 3px;font-size: 10px;display: flex;width: 21px;height: 21px;position: fixed;right: calc(5% - -15px);border-radius: 5px;border: 3px solid #e0e6ff;justify-content: center;align-items: center;align-content: center;">❌</button>`;
@@ -3349,6 +3610,10 @@ ecamDash = undefined;
                     this.renderRecentGrades()
 
 
+                    if (!manageIndividualSubjectCardFolding) {
+                        this.detailedSubjCardsId = [], this.compactSubjCardsId = [];
+                    }
+
                     // Content area, refreshing often
                     const moduleStats = this.getModuleStats();
                     const validatedEUsStatLabel = document.querySelectorAll(".stat-value")[2];
@@ -3369,19 +3634,26 @@ ecamDash = undefined;
                     contentArea.innerHTML = "";
                     semesterKeys.forEach(sem => {
                         const section = document.createElement("div");
+                        contentArea.appendChild(section);
                         section.className   = `semester-section`;
-                        const moyenneSem    = Object.keys(this.semesters[sem]).length > 0 ? this.moyennePonderee([].concat(...Object.values(this.semesters[sem] || {}))) : " - ";
-                        const avgClass      = Object.keys(this.semesters[sem]).length > 0 ? this.getAverageColor(moyenneSem) : "";
-                        const unclassified  = this.getUnclassifiedSubjects(sem);
-                        const moduleConfig  = this.moduleConfig?.[sem] || {};
+
+                        const semData               = this.gradesDatas[sem];
+                        const semAvg                = semData.average;
+                        const semClassAvg           = semData.classAvg;
+                        const avgColor              = Object.keys(this.semesters[sem]).length > 0 ? (semAvg >= 10 ? "good" : "bad") : "";
+                        const avgSymbol             = isNaN(semAvg) ? "" : `${semAvg >= 10 ? '✅' : '⚠️'}`;
+                        const unclassifiedLength    = Object.keys(semData["__#unclassified#__"].subjects).length;
+                        const moduleConfig          = this.moduleConfig?.[sem] || {};
 
                         section.innerHTML = `
                         <div class="semester-header" data-semester="${sem}">
                             <div class="semester-info">
-                                <div class="semester-name jura">📚 ${this.lang == "fr" ? 'Semestre' : "Semester"} ${sem}</div>
-                                    <div class="semester-average ${avgClass}">
-                                        <span>${moyenneSem==" - " ? "" : `${moyenneSem >= 10 ? '✅' : '⚠️'}`}</span>
-                                        <span>${moyenneSem}/20</span>
+                                <div class="semester-name jura">📚 ${!this.langIsEn ? 'Semestre' : "Semester"} ${sem}</div>
+                                    <div class="semester-averages ${avgColor}">
+                                        <span class="semester-average-symbol">${avgSymbol}</span>
+                                        <span class="semester-average">${semAvg}/20</span>
+                                        <span class="semester-class-average-vs-average jura" style="color: black${isNaN(semClassAvg) ? `; display: none` : ""}">vs</span>
+                                        <span class="semester-class-average" style="color: black; font-size: 15px${isNaN(semClassAvg) ? `; display: none` : ""}">${semClassAvg}/20</span>
                                     </div>
                                 </div>
                             <div class="semester-toggle open fold-icon">△</div>
@@ -3392,24 +3664,31 @@ ecamDash = undefined;
                                 <div class="modules-section ${this.editMode ? "edit" : ""}" id="modules-section" ${moduleConfig?.__modules__ ? "" : "style=\"display: none\""}>
                                     ${this.createAllModuleCards(sem, manageIndividualSubjectCardFolding)}
                                 </div>
-                                <div class="unclassified-section" id="unclassified-section" style="height: 100%${unclassified.length > 0 ? `` : `; display: none`}">
+                                <div class="unclassified-section" id="unclassified-section" style="${unclassifiedLength > 0 ? `` : `; display: none`}">
                                     <div class="unclassified-title jura">
-                                        ${this.lang == "fr" ? `Matière${unclassified.length > 1 ?  `s` : ``} non classée${unclassified.length > 1 ?  `s` : ``} dans un module` : `Subject${unclassified.length > 1 ?  `s` : ``} not classified in a module`}
+                                        ${!this.langIsEn ? `Matière${unclassifiedLength > 1 ?  `s` : ``} non classée${unclassifiedLength > 1 ?  `s` : ``} dans un module` : `Subject${unclassifiedLength > 1 ?  `s` : ``} not classified in a module`}
                                     </div>
                                     <div class="unclassified-content">
-                                        ${unclassified.length > 0 
-                                            ? `<div style="margin: -10px 0px"></div>${this.createAllSubjCards(sem, "__#unclassified#__")}<div style="margin: -10px 0px"></div>` 
+                                        ${unclassifiedLength > 0 
+                                            ? `<div style="margin: -10px 0px"></div>${this.createAllSubjCards(sem, "__#unclassified#__", manageIndividualSubjectCardFolding)}<div style="margin: -10px 0px"></div>` 
                                             : ``
                                         }
                                     </div>
                                 </div>
                             </div>
                         </div>`;
-                        contentArea.appendChild(section);
-
-                        this.setGradesTableTotalCoef();
-                        this.attachAllEventListeners();
                     });
+                    
+                    this.setGradesTableTotalCoef();
+                    this.attachAllEventListeners();
+
+                    if (document.body.clientHeight > document.body.offsetHeight) {
+                        // Semester has been collapsed, and now the page is tinier than the window, and i want to avoid the slider to offset the page. Only useful in Offline mode
+                        this.ecamDash.style.paddingRight = "10px";
+                    }
+                    else {
+                        this.ecamDash.style.paddingRight = "";
+                    }
 
                 }
 
@@ -3419,7 +3698,6 @@ ecamDash = undefined;
                 // MARK: Create Module Card
                 createAllModuleCards(sem, manageIndividualSubjectCardFolding=true) {
                     const moduleConfig = this.moduleConfig?.[sem] || {};
-                    const unclassified  = this.getUnclassifiedSubjects(sem);
 
                     let html =  this.editMode ? this.createDropFieldInsertionField("module", {sem, index:0}) : "";
 
@@ -3428,7 +3706,7 @@ ecamDash = undefined;
                         html += this.editMode ? this.createDropFieldInsertionField("module", {sem, index:moduleIndex+1}) : "";
                     });
 
-                    if (unclassified.length == 0 && !moduleConfig?.__modules__) {
+                    if (this.gradesDatas[sem]["__#unclassified#__"].length == 0 && !moduleConfig?.__modules__) {
                         html = this.editMode 
                             ? `<div style="font-size: 23px;">Rien à voir ici pour l'instant...</div>` 
                             : `<div style="font-size: 23px;">Nothing to see here yet...</div>`;
@@ -3437,22 +3715,20 @@ ecamDash = undefined;
                     return html;
                 }
                 createModuleCard(sem, moduleName, moduleIndex=-1, manageIndividualSubjectCardFolding=true) {
-                    const moduleGrades = this.calculateModuleGrades(sem, moduleName);
-                    const includedGrades = (moduleGrades || []).filter(n => !this.gradeIsDisabled(n));
-                    let weight = 0; includedGrades.forEach(grade => {weight += grade.coef/100})
-                    const moyenne           = this.gradesDatas[sem][moduleName].average;
+                    const average           = this.gradesDatas[sem][moduleName].average;
+                    const classAvg          = this.gradesDatas[sem][moduleName].classAvg;
                     const hasSim            = this.gradesDatas[sem][moduleName].simGrades.length > 0 ? true : false;
                     const hasDisabled       = this.gradesDatas[sem][moduleName].disabledSimGrades.length + this.gradesDatas[sem][moduleName].disabledRealGrades.length > 0 ? true : false;
                     const folded            = manageIndividualSubjectCardFolding && this.foldedModuleCardsId.includes(`module-card-${moduleName}-in-semester-${sem}`);
                     const cardIsSelected    = this.selectedModuleCardsId.includes(`module-card-${moduleName}-in-semester-${sem}`);
 
                     let html = `
-                    <div class="module-card ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'validated' : 'failed'}`} ${folded ? "fold" : ""}" id="module-card-${moduleName}-in-semester-${sem}" data-semester="${sem}" data-module="${moduleName}" data-index="${moduleIndex}" ${folded ? `style="height: 77px"` : ""}>
+                    <div class="module-card ${isNaN(average) ? "unknown" : `${average >= 10 ? 'validated' : 'failed'}`} ${folded ? "fold" : ""}" id="module-card-${moduleName}-in-semester-${sem}" data-semester="${sem}" data-module="${moduleName}" data-index="${moduleIndex}" ${folded ? `style="height: 77px"` : ""}>
                     
-                        <div class="module-header ${this.editMode ? "edit-mode" : ""} ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'validated' : 'failed'}`}" id="module-header-${moduleName}-in-semester${sem}" data-semester="${sem}" data-module="${moduleName}" ${this.editMode ? `draggable="true"` : ""}>
+                        <div class="module-card-header ${this.editMode ? "edit-mode" : ""} ${isNaN(average) ? "unknown" : `${average >= 10 ? 'validated' : 'failed'}`}" id="module-card-header-${moduleName}-in-semester${sem}" data-semester="${sem}" data-module="${moduleName}" ${this.editMode ? `draggable="true"` : ""}>
                             ${this.editMode 
                                 ? 
-                                `<div class="module-header-left-side">
+                                `<div class="module-card-header-left-side">
                                     <div style="margin-right: 5px; margin-bottom: 3px;">
                                     ${cardIsSelected 
                                         ? `<div class="tick-icon module" data-targetid="module-card-${moduleName}-in-semester-${sem}" data-semester="${sem}" data-module="${moduleName}" data-subject="">✔</div>`
@@ -3466,13 +3742,17 @@ ecamDash = undefined;
                                 `<div class="module-title">${moduleName}</div>`
                             }
                             <div class="module-subject-total-coef-div" data-semester="${sem}" data-module="${moduleName}">
-                                <div class="module-subject-total-coef-value" ${this.settings.totalCoefValuesEnabled.value     ? "" : "style=\"display: none\""}>${this.lang == "fr" ? `Coef Total des matières :` : `Total Subjects Coef:`}</div>
+                                <div class="module-subject-total-coef-value" ${this.settings.totalCoefValuesEnabled.value     ? "" : "style=\"display: none\""}>${!this.langIsEn ? `Coef Total des matières :` : `Total Subjects Coef:`}</div>
                                 <div class="module-subject-total-coef-debug" ${this.settings.totalCoefDebugTextsEnabled.value ? "" : "style=\"display: none\""}></div>
                             </div>
-                            <div class="module-moyenne ${moyenne == " - " ? "unknown" : `${moyenne >= 10 ? 'good' : 'bad'}`}" data-semester="${sem}" data-module="${moduleName}" ${this.editMode ? "" : 'style="width:151px"'}>
-                                ${moyenne}/20 
+                            <div class="module-card-header-right-side">
+                                <div style="display: flex; justify-content: flex-end; align-items: baseline; gap: 6px;">
+                                    <div class="module-class-average" ${isNaN(average) ? `style="display: none"` : ""}>${classAvg}/20</div>
+                                    <div class="module-class-average-vs-average jura" ${isNaN(average) ? `style="display: none"` : ""}>vs</div>
+                                    <div class="module-average ${isNaN(average) ? "unknown" : `${average >= 10 ? 'good' : 'bad'}`}" data-semester="${sem}" data-module="${moduleName}">${average}/20</div>
+                                </div>
                                 <div class="module-toggle fold-icon open">△</div>
-                                <button class="module-delete-btn" id="module-delete-btn-${moduleName}-in-semester-${sem}" title="${this.lang == "fr" ? "Supprimer ce module" : "Delete this module"}" data-semester="${sem}" data-module="${moduleName}" style="border-width: 3px;${this.editMode ? "" : " display: none;"}">🗑️</button>
+                                <button class="module-delete-btn" id="module-delete-btn-${moduleName}-in-semester-${sem}" title="${!this.langIsEn ? "Supprimer ce module" : "Delete this module"}" data-semester="${sem}" data-module="${moduleName}" style="border-width: 3px;${this.editMode ? "" : " display: none;"}">🗑️</button>
                             </div>
                         </div>
                         
@@ -3482,16 +3762,16 @@ ecamDash = undefined;
                                 ${hasDisabled 
                                     ? 
                                     `<div class="module-info-bar">
-                                        <div style="font-weight: 700; font-size: 15px;">${this.lang == "fr" ? "Inclus des notes désactivées" : "Includes disabled grades"}</div>
-                                        <div class="module-info-clear disabled" data-semester="${sem}" data-module="${moduleName}">${this.lang == "fr" ? "Activer toutes ces notes" : "Enable all the grades"}</div>
+                                        <div style="font-weight: 700; font-size: 15px;">${!this.langIsEn ? "Inclus des notes désactivées" : "Includes disabled grades"}</div>
+                                        <div class="module-info-clear disabled" data-semester="${sem}" data-module="${moduleName}">${!this.langIsEn ? "Activer toutes ces notes" : "Enable all the grades"}</div>
                                     </div>` 
                                     : ``
                                 }
                                 ${hasSim 
                                     ? 
                                     `<div class="module-info-bar">
-                                        <div style="font-weight: 700; font-size: 15px;">${this.lang == "fr" ? "Inclus des notes simulées" : "Includes simulated grades"}</div>
-                                        <div class="module-info-clear sim" data-semester="${sem}" data-module="${moduleName}">${this.lang == "fr" ? "Effacer toutes ces notes simulées" : "Erase all the simulated grades"}</div>
+                                        <div style="font-weight: 700; font-size: 15px;">${!this.langIsEn ? "Inclus des notes simulées" : "Includes simulated grades"}</div>
+                                        <div class="module-info-clear sim" data-semester="${sem}" data-module="${moduleName}">${!this.langIsEn ? "Effacer toutes ces notes simulées" : "Erase all the simulated grades"}</div>
                                     </div>` 
                                     : ``
                                 }
@@ -3557,6 +3837,7 @@ ecamDash = undefined;
                     const subjectGrades         = subjectData.grades;
                     const moduleMoy             = moduleData.average;
                     const subjAvg               = subjectData?.average >= 0 ? subjectData.average : " - ";
+                    const subjClassAvg          = subjectData?.classAvg >= 0 && !isNaN(subjectData?.classAvg) ? subjectData.classAvg : " - ";
                     const pct                   = subjectData.coef;
                     const isCustom              = subjectData.isCustom;
                     const nbGrades              = subjectGrades.length;
@@ -3565,13 +3846,21 @@ ecamDash = undefined;
                     const nbRealGrades          = nbGrades - nbSimGrades;
                     const classified            = moduleName != "__#unclassified#__" && this.moduleConfig[sem]?.[moduleName] != undefined;
                     const subjectCardId         = `subject-card-semester-${sem}-subject-${subject}`;
-                    const detailed              = (this.detailedSubjCardsId.includes(subjectCardId) && manageIndividualSubjectCardFolding) || (this.viewMode == "detailed" && !manageIndividualSubjectCardFolding);
                     const cardIsSelected        = this.selectedSubjectCardsId.includes(`subject-card-semester-${sem}-subject-${subject}`);
-                    const cardClientHeight      = 166 + 40*nbGrades;
+                    const detailed              = 
+                        (this.detailedSubjCardsId.includes(subjectCardId) && !this.compactSubjCardsId.includes(subjectCardId) && manageIndividualSubjectCardFolding) 
+                        || 
+                        (this.viewMode == "detailed" && !manageIndividualSubjectCardFolding)
+                    ;
                     
+                    if (!manageIndividualSubjectCardFolding) {
+                        if (detailed)   {this.detailedSubjCardsId.push(subjectCardId); this.compactSubjCardsId.splice(this.compactSubjCardsId.indexOf(subjectCardId), 1)} 
+                        else            {this.compactSubjCardsId.push(subjectCardId); this.detailedSubjCardsId.splice(this.detailedSubjCardsId.indexOf(subjectCardId), 1)}
+                    }
+
                     let html = `
-                    <div class="subject-card ${classified ? "classified" : "unclassified"} ${detailed ? "detailed" : "compact"} ${this.editMode ? "" : "edit-mode"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" id="${subjectCardId}" style="${this.editMode ? `cursor: grab; user-select: none;` : ""}${detailed ? ` height: ${cardClientHeight};` : ""}"" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}" data-height="${cardClientHeight}">
-                        <div class="subject-card-header ${detailed ? "detailed" : "compact"} ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`} ${classified ? "classified" : "unclassified"}" ${this.editMode ? `style="cursor: grab;" draggable="true"` : ``} data-module="${moduleName}">
+                    <div class="subject-card ${classified ? "classified" : "unclassified"} ${detailed ? "detailed" : "compact"} ${this.editMode ? "" : "edit-mode"} ${isNaN(subjAvg) ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" id="${subjectCardId}" style="${this.editMode ? `user-select: none;` : ""}${detailed ? "" : " height: 70px;"}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-custom="${isCustom}" data-index="${index}">
+                        <div class="subject-card-header ${detailed ? "detailed" : "compact"} ${isNaN(subjAvg) ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`} ${classified ? "classified" : "unclassified"}" ${this.editMode ? `style="cursor: grab;" draggable="true"` : ``} data-module="${moduleName}">
                             <div class="subject-card-header-left-side">
                                 ${this.editMode
                                     ? `<div style="margin: 0px 5px; margin-bottom: 3px;">
@@ -3589,7 +3878,7 @@ ecamDash = undefined;
                                         }
                                         <div style="font-size: 13px; color: #666; text-wrap-mode: nowrap;">
                                             ${classified 
-                                                ? ` ${this.lang == "fr" 
+                                                ? ` ${!this.langIsEn 
                                                         ? "Poids dans module: " 
                                                         : "Weight in module: "
                                                     }
@@ -3603,18 +3892,18 @@ ecamDash = undefined;
                                             <span class="subject-card-header-grades-details ${detailed ? "" : "show"}">
                                                 ${classified ? "• " : ""}
                                                 ${nbGrades===0 
-                                                    ? `<span>${this.lang == "fr" ? "aucune note publiée" : "no published grade"}</span>` 
-                                                    : `<span>${nbGrades} ${this.lang == "fr" ? `note${nbGrades>1?"s":""} au total` : `grade${nbGrades>1?"s":""} total</span>`}`
+                                                    ? `<span>${!this.langIsEn ? "aucune note publiée" : "no published grade"}</span>` 
+                                                    : `<span>${nbGrades} ${!this.langIsEn ? `note${nbGrades>1?"s":""} au total` : `grade${nbGrades>1?"s":""} total</span>`}`
                                                 }
                                                 ${nbGrades>0 
                                                     ? ` • <span ${includedGradesLength<nbGrades ? `style="color: #df0000"` : ``}>
                                                         <span style="font-weight: 700; ">${includedGradesLength}/${nbGrades}</span> 
-                                                        ${this.lang == "fr" ? `note${includedGradesLength>1?"s":""} activée${includedGradesLength>1?"s":""}` : `grade${includedGradesLength>1?"s":""} enabled`}${includedGradesLength<nbGrades ? `!` : ``}
+                                                        ${!this.langIsEn ? `note${includedGradesLength>1?"s":""} activée${includedGradesLength>1?"s":""}` : `grade${includedGradesLength>1?"s":""} enabled`}${includedGradesLength<nbGrades ? `!` : ``}
                                                     </span>` 
                                                     : ``
                                                 }
                                                 ${nbSimGrades>0 
-                                                    ? `<span> • ${nbSimGrades} ${this.lang == "fr" ? `note${nbSimGrades>1?"s":""} simulée${nbSimGrades>1?"s":""}` : `simulated grade${nbSimGrades>1?"s":""}</span>`}`
+                                                    ? `<span> • ${nbSimGrades} ${!this.langIsEn ? `note${nbSimGrades>1?"s":""} simulée${nbSimGrades>1?"s":""}` : `simulated grade${nbSimGrades>1?"s":""}</span>`}`
                                                     : ``
                                                 }
                                             </span>
@@ -3622,44 +3911,46 @@ ecamDash = undefined;
                                     </div>
                                     <div class="subject-total-coef-div" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}">
                                         <div class="subject-total-coef-value" ${this.settings.totalCoefValuesEnabled.value     ? "" : "style=\"display: none\""}></div>
-                                        <div class="subject-total-coef-debug" ${this.settings.totalCoefDebugTextsEnabled.value ? "" : "style=\"display: none\""}>${this.lang == "fr" ? `Coef Total des notes :` : `Total Grades Coef:`}</div>
+                                        <div class="subject-total-coef-debug" ${this.settings.totalCoefDebugTextsEnabled.value ? "" : "style=\"display: none\""}>${!this.langIsEn ? `Coef Total des notes :` : `Total Grades Coef:`}</div>
                                     </div>
                                 </div>
                             </div>
                             <div class="subject-card-header-right-side">
-                                <div class="subj-moyenne ${subjAvg == " - " ? '' : `${subjAvg>=10 ? 'good' : 'bad'}`}">
-                                    ${subjAvg}/20
+                                <div style="display: flex; justify-content: flex-end; align-items: baseline; gap: 4px;">
+                                    <div class="subj-class-average" ${isNaN(subjClassAvg) ? `style="display: none"` : ""}>${subjClassAvg}</div>
+                                    <div class="subj-class-average-vs-average jura" ${isNaN(subjClassAvg) ? `style="display: none"` : ""}>vs</div>
+                                    <div class="subj-average ${isNaN(subjAvg) ? '' : `${subjAvg>=10 ? 'good' : 'bad'}`}">${subjAvg}/20</div>
                                 </div>
-                                <button class="subject-delete-btn" id="subject-delete-btn-${subject}-${moduleName}-in-semester-${sem}" title="${this.lang == "fr" ? "Enlever cette matière" : "Remove this subject"}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-targetid="${subjectCardId}" style="border-width: 3px;${this.editMode && classified ? "" : " display: none;"}">🗑️</button>
+                                <button class="subject-delete-btn" id="subject-delete-btn-${subject}-${moduleName}-in-semester-${sem}" title="${!this.langIsEn ? "Enlever cette matière" : "Remove this subject"}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-targetid="${subjectCardId}" style="border-width: 3px;${this.editMode && classified ? "" : " display: none;"}">🗑️</button>
                             </div>
                         </div>
 
                     `;
 
-                    
+
                     html += `
 
-                    <table class="grades-table ${subjAvg == " - " ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" style="${this.editMode ? `user-select: text;` : ``}" id="grades-table-${subject}-semester${sem}" data-subject="${subject}">
+                    <table class="grades-table ${isNaN(subjAvg) ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" style="${this.editMode ? `user-select: text;` : ``}" id="grades-table-${subject}-semester${sem}" data-subject="${subject}">
 
                         <thead>
                             <tr>
                                 <th class="grades-table-header-type" style="padding-left: 30px; border-left-width: 0px;">
-                                    ${this.lang == "fr" ? "Intitulé" : "Title"}
+                                    ${!this.langIsEn ? "Intitulé" : "Title"}
                                 </th>
                                 <th class="grades-table-header-grade">
-                                    ${this.lang == "fr" ? "Note" : "Grade"}
+                                    ${!this.langIsEn ? "Note" : "Grade"}
                                 </th>
                                 <th class="grades-table-header-coef">
-                                    ${this.lang == "fr" ? "Coef" : "Coef"}
+                                    ${!this.langIsEn ? "Coef" : "Coef"}
                                 </th>
                                 <th class="grades-table-header-classAvg">
-                                    ${this.lang == "fr" ? "Moy. Classe" : "Class Avg"}
+                                    ${!this.langIsEn ? "Moy. Classe" : "Class Avg"}
                                 </th>
                                 <th class="grades-table-header-date">
-                                    ${this.lang == "fr" ? "Date" : "Date"}
+                                    ${!this.langIsEn ? "Date" : "Date"}
                                 </th>
                                 <th class="grades-table-header-teacher" style="border-right-width: 0px;${this.selectedSubjectCardsId.length > 0 ? " display: none;" : ""}">
-                                    ${this.lang == "fr" ? "Prof(s)" : "Teacher(s)"}
+                                    ${!this.langIsEn ? "Prof(s)" : "Teacher(s)"}
                                 </th>
                                 <th class="grades-table-header-add-sim-cell" style="border-right-width: 0px; border-left-width: 0px;">
                                 </th>
@@ -3677,19 +3968,19 @@ ecamDash = undefined;
                                 <td class="grades-table-type" style="display: flex; align-items: stretch; gap: 6px">
                                     <input type="checkbox" class="grade-checkbox any-input" id="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}" data-semester="${sem}" data-subj="${subject}" data-module="${moduleName||''}" data-prof="${grade.prof}" data-gradeid="${grade.type + " " + grade.date + " " + grade.prof}" ${gradeIsSim ? `data-simtimestamp="${grade.id}"` : ""} ${!this.gradeIsDisabled(grade) ? "checked" : ""}></input>
                                     ${gradeIsSim
-                                        ? `<input class="grade-type simulated-grade-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="simulated-grade-input-type-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" data-modifType="type" data-simid="${nbSimGrades-1}" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" value="${grade.type}"/>` 
-                                        : `<label class="grade-type" style="width: auto"  id="grade-type-${grade.type}-${grade.date}" for="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}">${grade.type || ''}${gradeIsSim ? ` • ${this.lang == "fr" ? "Simulée" : "Simulated"}` : ''}</label>`
+                                        ? `<input class="grade-type simulated-grade-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="simulated-grade-input-type-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" data-modifType="type" data-simid="${index-nbRealGrades}" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" value="${grade.type}"/>` 
+                                        : `<label class="grade-type" style="width: auto"  id="grade-type-${grade.type}-${grade.date}" for="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}">${grade.type || ''}${gradeIsSim ? ` • ${!this.langIsEn ? "Simulée" : "Simulated"}` : ''}</label>`
                                     }
                                 </td>
                                 <td class="grade-value grade-${gradeClass} grades-table-grade" data-sim="${gradeIsSim}">
                                     ${gradeIsSim
-                                        ? `<input class="simulated-grade-input-edit sim-inp-grade any-input" style="width: 100%; max-width: 75px;" id="simulated-grade-input-grade-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" type="number" step="0.5" min="0" max="20" data-simid="${nbSimGrades-1}" data-modifType="grade" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" style="width:75px; height:25px" value="${grade.grade}"> /20`
+                                        ? `<input class="simulated-grade-input-edit sim-inp-grade any-input" style="width: 100%; max-width: 75px;" id="simulated-grade-input-grade-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" type="number" step="0.5" min="0" max="20" data-simid="${index-nbRealGrades}" data-modifType="grade" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" style="width:75px; height:25px" value="${grade.grade}"> /20`
                                         : `${grade.grade}/20`
                                     }
                                 </td>
                                 <td class="grades-table-coef" data-sim="${gradeIsSim}">
                                     ${gradeIsSim
-                                        ? `<input class="simulated-grade-input-edit sim-inp-coef any-input" style="width: 100%; max-width: 60px;" id="simulated-grade-input-coef-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" type="number" step="5" min="0" max="100" data-simid="${nbSimGrades-1}" data-modifType="coef" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" style="width:60px; height:25px"value="${grade.coef}"> %`
+                                        ? `<input class="simulated-grade-input-edit sim-inp-coef any-input" style="width: 100%; max-width: 60px;" id="simulated-grade-input-coef-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" type="number" step="5" min="0" max="100" data-simid="${index-nbRealGrades}" data-modifType="coef" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" style="width:60px; height:25px"value="${grade.coef}"> %`
                                         : `${grade.coef} %`
                                     }
                                 </td>
@@ -3726,8 +4017,8 @@ ecamDash = undefined;
                             <tr>
                                 <td class="grades-table-type">
                                     <div class="grade-type" style="display:flex; align-items:center; justify-content: flex-start">
-                                        <div class="jura" style="width: 140px">${this.lang == "fr" ? "Ajouter une note simulée: " : "Add a simulated grade: "}</div>
-                                        <input class="simulated-grade-input sim-inp-type any-input" id="simulated-grade-input-type-for-${subject}-from-${moduleName}-in-semester${sem}" data-semester="${sem}" data-subj="${subject}" placeholder="${this.lang == "fr" ? "Titre" : "Title"}" />
+                                        <div class="jura" style="width: 140px">${!this.langIsEn ? "Ajouter une note simulée: " : "Add a simulated grade: "}</div>
+                                        <input class="simulated-grade-input sim-inp-type any-input" id="simulated-grade-input-type-for-${subject}-from-${moduleName}-in-semester${sem}" data-semester="${sem}" data-subj="${subject}" placeholder="${!this.langIsEn ? "Titre" : "Title"}" />
                                     </div>
                                 </td>
                                 <td class="grades-table-grade">
@@ -3739,13 +4030,13 @@ ecamDash = undefined;
                                 <td colspan="3">
                                 </td>
                                 <td class="grades-table-add-sim-cell" style="border-right-width: 0px; border-left-width: 0px;">
-                                    <button class="btn-export sim-add-btn" data-semester="${sem}" data-subj="${subject}" data-module="${moduleName||''}">${this.lang == "fr" ? "Ajouter" : "Add"}</button>
+                                    <button class="btn-export sim-add-btn" data-semester="${sem}" data-subj="${subject}" data-module="${moduleName||''}">${!this.langIsEn ? "Ajouter" : "Add"}</button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                     `;
-                    
+
 
                     html += `
                     </div>
@@ -3753,6 +4044,7 @@ ecamDash = undefined;
 
                     return html;
                 }
+
 
 
                 updateFirstLoadEvent() {
@@ -3911,16 +4203,20 @@ ecamDash = undefined;
                     const closeModalCircle = closeModalIcon.querySelector(".modal-close-btn-circle");
 
                     closeModalIcon.onmouseenter = () => {
-                        closeModalIconContainer .classList.add("hover");
-                        closeModalIcon          .classList.add("hover");
-                        closeModalCross         .classList.add("hover");
-                        closeModalCircle        .classList.add("hover");
+                        if (!document.querySelector(".new-user-notif-fullscreen-effect.focus")) {
+                            closeModalIconContainer .classList.add("hover");
+                            closeModalIcon          .classList.add("hover");
+                            closeModalCross         .classList.add("hover");
+                            closeModalCircle        .classList.add("hover");
+                        }
                     };
                     closeModalIcon.onmouseleave = () => {
-                        closeModalIconContainer .classList.remove("hover");
-                        closeModalIcon          .classList.remove("hover");
-                        closeModalCross         .classList.remove("hover");
-                        closeModalCircle        .classList.remove("hover");
+                        if (!document.querySelector(".new-user-notif-fullscreen-effect.focus")) {
+                            closeModalIconContainer .classList.remove("hover");
+                            closeModalIcon          .classList.remove("hover");
+                            closeModalCross         .classList.remove("hover");
+                            closeModalCircle        .classList.remove("hover");
+                        }
                     };
                     //#endregion
                 }
@@ -3965,7 +4261,7 @@ ecamDash = undefined;
 
                 appendFullScreenNotif(container=document.body, text) {
                     if (!text) {
-                        text = this.lang == "fr" 
+                        text = !this.langIsEn 
                             ? `<div>Clique sur l'écran pour rafraichir la page et appliquer la mise à jour !</div><div>Utilisateurs de MAC, copiez le script qui s'est ouvert et collez-le dans votre extension à la place de l'ancien script</div>`
                             : `<div>Click on the screen to reload the page and apply the update!</div><div>MAC users, copy the script that opened up and paste it in your extension to replace the old script</div>
                         `;
@@ -3988,7 +4284,7 @@ ecamDash = undefined;
                     `;
 
                     const newFullScreenNotif = document.querySelector("#fullScreeNotif");
-                    newFullScreenNotif.title = this.lang == "fr" ? "Rafraichir" : "Reload";
+                    newFullScreenNotif.title = !this.langIsEn ? "Rafraichir" : "Reload";
                     setTimeout(() => {newFullScreenNotif.classList.add("show");}, 100)
                     newFullScreenNotif.onclick = () => {window.location.reload();};
                 }
@@ -4090,40 +4386,260 @@ ecamDash = undefined;
 
 
                 firstLoadEvent() {
-                    const overHeaderBtns = document.querySelector(".over-header-help-btns");
 
-                    const newUserNotif  = document.createElement("div");
-                    newUserNotif.className = "new-user-notif";
-                    newUserNotif.title = this.lang == "fr" ? "Clique pour fermer" : "Click to dismiss";
-                    newUserNotif.innerHTML = `
-                        <div class="new-user-notif-arrow" style="right: -322px; bottom: ${this.error ? "-8px" : "-4px"};">
-                            <svg class="new-user-notif-arrow-svg" viewBox="0 0 100 100" style="z-index: 9;">
-                                <path class="new-user-notif-arrow-path outside"></path>
-                            </svg>
-                            <svg class="new-user-notif-arrow-svg" viewBox="0 0 100 100" style="position: relative; bottom: ${this.error ? "70px" : "75px"}; z-index: 11;">
-                                <path class="new-user-notif-arrow-path inside"></path>
-                            </svg>
-                        </div>
-                        <div class="new-user-notif-text">${
-                            this.lang == "fr" 
-                                ? "Bonjour! Nouveau ici? Clique ici pour apprendre à utiliser cette extension!" 
-                                : "Hey! New here? Click here to find a tutorial on how to use this extension!"
-                            }
-                        </div>
-                    `;
-                    overHeaderBtns.appendChild(newUserNotif);
+                    if (this.firstLoad) {
+                        const overHeaderBtns = document.querySelector(".over-header-help-btns");
+    
+                        const newUserNotif  = document.createElement("div");
+                        newUserNotif.className = "new-user-notif";
+                        newUserNotif.title = !this.langIsEn ? "Clique pour fermer" : "Click to dismiss";
+                        newUserNotif.innerHTML = `
+                            <div class="new-user-notif-arrow" style="right: -322px; bottom: ${this.error ? "-8px" : "-4px"};">
+                                <svg class="new-user-notif-arrow-svg" viewBox="0 0 100 100" style="z-index: 9;">
+                                    <path class="new-user-notif-arrow-path outside"></path>
+                                </svg>
+                                <svg class="new-user-notif-arrow-svg" viewBox="0 0 100 100" style="position: relative; bottom: ${this.error ? "70px" : "75px"}; z-index: 11;">
+                                    <path class="new-user-notif-arrow-path inside"></path>
+                                </svg>
+                            </div>
+                            <div class="new-user-notif-text">${
+                                !this.langIsEn 
+                                    ? "Bonjour! Première fois? Clique ici pour apprendre à utiliser cette extension! (Clique ici pour fermer)" 
+                                    : "Hey! New here? Click here to find a tutorial on how to use this extension! (Click here to dismiss)"
+                                }
+                            </div>
+                        `;
+                        overHeaderBtns.appendChild(newUserNotif);
+    
+                        const newUserNotifFullScreen        = document.createElement("div");
+                        const helpMenuBtn                   = document.querySelector(".over-header-btn.how-to-use-btn");
+                        const firstStepsBtn                 = document.querySelector(".first-steps-btn");
+                        firstStepsBtn.classList.add("infinite-alternate-scale-up");
+                        helpMenuBtn.style.zIndex = 302;
+
+                        newUserNotifFullScreen.className    = "new-user-notif-fullscreen-effect";
+                        this.ecamDash.appendChild(newUserNotifFullScreen);
+                        setTimeout(() => {newUserNotifFullScreen?.classList?.add("focus");}, 10);
+    
+                        newUserNotif.onclick = () => {this.dismissFirstTimeNotif();}
+                    }
+                    
+                }
+
+                // MARK: start first steps tuto
+                startFirstStepsTutorial() {
+                    localStorage.setItem("ECAM_DASHBOARD_FIRST_LOAD", false);
+                    this.firstLoad = false;
+                    
+                    const firstStepsBtn = document.querySelector(".first-steps-btn");
+                    firstStepsBtn.classList.remove("infinite-alternate-scale-up");
+                    
 
                     const newUserNotifFullScreen     = document.createElement("div");
                     newUserNotifFullScreen.className = "new-user-notif-fullscreen-effect";
                     this.ecamDash.appendChild(newUserNotifFullScreen);
                     setTimeout(() => {newUserNotifFullScreen?.classList?.add("focus");}, 10);
 
-                    newUserNotif.onclick = () => {this.dismissFirstTimeNotif();}
-                    
+                    const skipTuto = document.createElement("div");
+                    skipTuto.className = "skip-tuto-btn jura";
+                    this.ecamDash.appendChild(skipTuto);
+                    setTimeout(() => {skipTuto.style.opacity = "1";}, 1)
+                    skipTuto.onclick = () => {
+                        this.stopFirstStepsTutorial();
+                    }
+
+                    const firstStepTipForImportBtn = (callback=()=>{}) => {
+                        this.createTipNotif(
+                            document.querySelector(".config-btns-container"),
+                            document.querySelector("#importBtn"), 
+                            !this.langIsEn ? "Clique ici pour importer une configuration de modules" : "Click here to import a module configuration", 
+                            {
+                                nextAction: () => {callback()}, 
+                                nextActionDelay: 400,
+                                containerStyle: {top: "-25px", right: "200px"}, 
+                                notifStyle: {minWidth: "330px"}, 
+                                containerElemStyle: {}
+                            }
+                        );
+                    };
+
+                    const firstStepTipForOnlineImportBtn = (callback=()=>{}) => {
+                        this.createTipNotif(
+                            document.querySelector("#importMenu"),
+                            document.querySelector(".import-menu-btn.online"), 
+                            !this.langIsEn ? "Clique ici pour obtenir une configuration déjà disponible en ligne" : "Click here to obtain a configuration already available online", 
+                            {
+                                nextAction: () => {callback()}, 
+                                nextActionDelay: 400,
+                                containerStyle: {top: "-125px", right: "110px"}, 
+                                notifStyle: {minWidth: "260px"}, 
+                                containerElemStyle: {zIndex: "unset"}
+                            }
+                        );
+                        this.firstStepsTutoPickerMenu = true;
+                    };
+
+                    firstStepTipForImportBtn(firstStepTipForOnlineImportBtn)
+
                 }
 
-                startTutorial() {
+                stopFirstStepsTutorial() {
+                    document.querySelectorAll(".tuto-tip-notif-container").forEach(tutoTipNotifContainer => {
+                        tutoTipNotifContainer.style.opacity = "0";
+                        tutoTipNotifContainer.style.transform = "scale(100%)";
+                        setTimeout(() => {tutoTipNotifContainer.remove()}, 300);
+                    })
 
+                    document.querySelectorAll(".infinite-alternate-scale-up.tuto-animation-effect").forEach(elem => {
+                        elem.classList.remove("infinite-alternate-scale-up", "tuto-animation-effect")
+                    })
+
+                    document.querySelector(".new-user-notif-fullscreen-effect").classList.remove("focus");
+                    setTimeout(() => {document.querySelector(".new-user-notif-fullscreen-effect").remove()}, 500)
+
+                    document.querySelector(".skip-tuto-btn").style.opacity = "0";
+                    document.querySelector(".skip-tuto-btn").style.animationPlayState = "paused";
+                    setTimeout(() => {document.querySelector(".skip-tuto-btn").remove()}, 500)
+
+                    this.firstStepsTutoPickerMenu = false;
+                    document.body.onclick = null;
+                }
+
+                /** Method allowing to attach a tip notif to an element `targetElem` inside of a container `containerElem`, handling specific styling for the different elements involved and a callback action `nextAction` to execute after clicking on the `nextActionTriggerElem`
+                 * 
+                 * Structure of the tip notif attached:
+                 * 
+                 * \<div`containerElem`\>
+                 * 
+                 * ............\<div`targetElem`\>\</div\>
+                 * 
+                 * ............\<div`tipNotifContainer`\> // used for the placement of the tip notif, as its position is set to relative and both its width and height are 0 by default, so it doesn't displace the display of containerElem)
+                 * 
+                 * ........................\<div`tipNotif`\> **`tipNotifText`** \</div\>
+                 * 
+                 * ............\</div\>
+                 * 
+                 * \</div\>
+                 * 
+                 * @example this.createTipNotif(document.querySelector("#containerId"), document.querySelector("#targetId"), "Test tip notif")
+                 * @example this.createTipNotif("#containerId", ".target(s)Class", "Test tip notif")
+                 * @example this.createTipNotif("#containerId", ".target(s)Class", "Test tip notif", {nextAction: () => {`Something to happen next`}, containerStyle: {right: "10px", top: "10px"}, targetElementStyle: {zIndex: "9"}, containerElemStyle: {zIndex:"0", background: white}})
+                 * 
+                 * @param {HTMLElement | String} containerElem The container or its CSS Selector to place the tip notif in (if CSS Selector is a class, take the first element matching the selector)
+                 * @param {HTMLElement | String} targetElem The element or the CSS Selector of the element.s that the tip notif is highlighting
+                 * @param {String} tipNotifText The text displayed by the tip notif
+                 * @param {{ nextAction: () => void; nextActionTriggerElem: string | HTMLElement; nextActionDelay: number; containerStyle: {}; notifStyle: {}; targetElemStyle: { zIndex: string; }; containerElemStyle: {}; }} [optionalData={nextAction: () => {}, nextActionTriggerElem: targetElem, nextActionDelay: 320, containerStyle: {}, notifStyle: {}, targetElemStyle: {zIndex: "12"}, containerElemStyle: {}}]
+                 * Optional data containing:
+                 * - nextAction — The callback function executed after clicking on the trigger element `nextActionTriggerElem`
+                 * - nextActionTriggerElem — The element or the CSS Selector of the element.s on which clicking triggers the `nextAction` callback function. Same as targetElem if not given.
+                 * - containerStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container of the tip notif `tipNotifContainer`
+                 * - notifStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the tip notif `tipNotif`
+                 * - targetElemStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the target element `targetElem` 
+                 * - containerElemStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container `containerElem`
+                 */
+                async createTipNotif(containerElem, targetElem, tipNotifText, optionalData=
+                    {
+                        nextAction: () => {}, 
+                        nextActionTriggerElem: targetElem, 
+                        nextActionDelay: 320, 
+                        containerStyle: {}, 
+                        notifStyle: {}, 
+                        targetElemStyle: {zIndex: "12"}, 
+                        containerElemStyle: {}
+                    }
+                ) {
+                    if (targetElem instanceof HTMLElement || typeof targetElem == "string") {
+
+                        const tutoTipNotifContainer = document.createElement("div");
+                        (typeof containerElem == "string" ? document.querySelector(containerElem) : containerElem).appendChild(tutoTipNotifContainer);
+                        tutoTipNotifContainer.className = "tuto-tip-notif-container";
+                        tutoTipNotifContainer.id        = `tutoTipNotifContainer-for-${typeof targetElem == "string" ? `${targetElem}` : (targetElem.id ? "#"+targetElem.id : "."+targetElem.className)}`;
+                        tutoTipNotifContainer.innerHTML = `
+                            <div class="tuto-tip-notif jura" id="tutoTipNotif-for-${typeof targetElem == "string" ? `${targetElem}` : (targetElem.id ? "#"+targetElem.id : "."+targetElem.className)}">${tipNotifText}</div>
+                        `;
+                        const tutoTipNotif = tutoTipNotifContainer.querySelector(`.tuto-tip-notif`);
+
+
+                        Object.assign(tutoTipNotifContainer.style, {...(optionalData.containerStyle || {})});
+                        Object.assign(tutoTipNotif.style, {...(optionalData.notifStyle || {})});
+                        (typeof targetElem == "string" ? document.querySelectorAll(`${targetElem}`) : [targetElem]).forEach(elem => {
+                            Object.assign(elem.style, {...(optionalData.targetElemStyle || {zIndex: "12"})});
+                            elem.classList.add("infinite-alternate-scale-up", "tuto-animation-effect");
+                        })
+                        Object.assign((typeof containerElem == "string" ? document.querySelector(containerElem) : containerElem).style, {...(optionalData.containerElemStyle || {})});
+
+
+                        setTimeout(() => {
+                            tutoTipNotifContainer.style.opacity = "1";
+                            tutoTipNotifContainer.style.transform = "scale(100%)";
+                        }, 1)
+
+                        if ((optionalData.nextActionTriggerElem || targetElem) instanceof HTMLElement || typeof (optionalData.nextActionTriggerElem || targetElem) == "string") {
+                            document.body.onclick = (e) => {
+                                if (e.target.closest(`${typeof (optionalData.nextActionTriggerElem || targetElem) == "string" ? `${optionalData.nextActionTriggerElem || targetElem}` : ((optionalData.nextActionTriggerElem || targetElem).id ? "#"+(optionalData.nextActionTriggerElem || targetElem).id : "."+(optionalData.nextActionTriggerElem || targetElem).className)}`)) {
+                                    this.dismissTipNotif(containerElem, targetElem, optionalData); 
+                                    document.body.onclick = null;
+                                    setTimeout(optionalData.nextAction || (() => {}), optionalData.nextActionDelay || 320);
+                                }
+                            };
+                        }
+                    }
+                }
+
+                /** Method allowing to detach a tip notif for an element `targetElem` and delete it from of a container `containerElem`, handling specific styling for the different elements involved.
+                 * Typically called from inside of the createTipNotif method, getting its argument from the corresponding arguments of createTipNotif
+                 * 
+                 * Structure of the tip notif attached:
+                 * 
+                 * \<div`containerElem`\>
+                 * 
+                 * ............\<div`targetElem`\>\</div\>
+                 * 
+                 * ............\<div`tipNotifContainer`\> // used for the placement of the tip notif, as its position is set to relative and both its width and height are 0 by default, so it doesn't displace the display of containerElem)
+                 * 
+                 * ........................\<div`tipNotif`\> **`tipNotifText`** \</div\>
+                 * 
+                 * ............\</div\>
+                 * 
+                 * \</div\>
+                 * 
+                 * @example this.dismissTipNotif(document.querySelector("#targetId"), document.querySelector("#containerId"))
+                 * @example this.dismissTipNotif(".target(s)Class", "#containerId")
+                 * @example this.dismissTipNotif(".target(s)Class", "#containerId", {targetElemStyle: {zIndex: "2"}, containerElemStyle: {zIndex:"1", background: transparent}})
+                 * 
+                 * @param {HTMLElement | String} containerElem The container or its CSS Selector to place the tip notif in (if CSS Selector is a class, take the first element matching the selector)
+                 * @param {HTMLElement | String} targetElem The element or the CSS Selector of the element.s that the tip notif is highlighting
+                 * @param {{ targetElemStyle: { zIndex: string; }; containerElemStyle: {}; }} [optionalData={nextAction: () => {}, nextActionTriggerElem: targetElem, nextActionDelay: 320, containerStyle: {}, notifStyle: {}, targetElemStyle: {zIndex: "12"}, containerElemStyle: {}}]
+                 * Optional data containing:
+                 * - targetElemStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the target element `targetElem` 
+                 * - containerElemStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container `containerElem`
+                 */
+                async dismissTipNotif(containerElem, targetElem, optionalData = {targetElemStyle: {}, containerElemStyle: {}}) {
+                    if (targetElem instanceof HTMLElement || typeof targetElem == "string") {
+                        const tutoTipNotifContainer = (typeof containerElem == "string" ? document.querySelector(containerElem) : containerElem).querySelector(`.tuto-tip-notif-container`);
+                        const tutoTipNotif = tutoTipNotifContainer.querySelector(`.tuto-tip-notif`);
+
+                        // undoing the style changes that occured when the tip text appeared, by taking the same style properties and removing its value by passing it an empty string
+                        const undoStyleChanges = (styleObj) => {
+                            return Object.fromEntries(Object.entries(styleObj).map(entry => {return [entry[0], ""]}))
+                        }
+                        
+                        (typeof targetElem == "string" ? document.querySelectorAll(`${targetElem}`) : [targetElem]).forEach(elem => {
+                            Object.assign(elem.style, {...undoStyleChanges(optionalData.targetElemStyle || {zIndex: ""})});
+                            elem.classList.remove("infinite-alternate-scale-up", "tuto-animation-effect");
+                        })
+                        Object.assign((typeof containerElem == "string" ? document.querySelector(containerElem) : containerElem).style, {...undoStyleChanges(optionalData.containerElemStyle || {})});
+
+                        // hiding the tip notif
+                        tutoTipNotifContainer.style.opacity = "";
+                        tutoTipNotifContainer.style.transform = "";
+                        
+                        // removing the tip notif after its hide effect occured
+                        setTimeout(() => {
+                            tutoTipNotifContainer.remove();
+                        }, 300);
+
+                    }
                 }
 
             //#endregion
@@ -4135,44 +4651,108 @@ ecamDash = undefined;
             // MARK: Regenerate subject and module averages and total coef debug texts
             regenAveragesAndTotalCoefs(sem, moduleName="__#unclassified#__", subject) {
 
+                document.querySelector(".average-number").innerHTML = this.averagePonderee(this.grades);
+
+                
+                if (sem?.classList?.contains("module-card")) {
+                    subject = undefined;
+                    moduleName = sem.dataset.module;
+                    sem = sem.dataset.semester;
+                }
+                else if (sem?.classList?.contains("subject-card")) {
+                    subject = sem.dataset.subject;
+                    moduleName = sem.dataset.module;
+                    sem = sem.dataset.semester;
+                }
+                
                 // subject average modification
                 if (subject) {
-                    const subjAvg = this.gradesDatas[sem][moduleName||"__#unclassified#__"].subjects[subject].average;
-                    const subjAvgDiv = document.querySelector(`.subject-card[data-subject="${subject}"]`).querySelector(".subj-moyenne");
+                    const subjCard          = document.querySelector(`.subject-card[data-subject="${subject}"]`);
+                    const subjAvgDiv        = subjCard.querySelector(".subj-average");
+                    const subjAvgVsClassAvg = subjCard.querySelector(".subj-class-average-vs-average");
+                    const subjClassAvgDiv   = subjCard.querySelector(".subj-class-average");
+                    const subjHeader        = subjCard.querySelector(".subject-card-header");
+                    const gradesTable       = subjCard.querySelector(".grades-table");
+                    const subjAvg           = this.gradesDatas[sem][moduleName||"__#unclassified#__"].subjects[subject].average;
+                    const subjClassAvg      = this.gradesDatas[sem][moduleName||"__#unclassified#__"].subjects[subject].classAvg;
+                    const moduleAvg         = this.gradesDatas[sem][moduleName||"__#unclassified#__"].average;
+                    
                     subjAvgDiv.innerHTML = subjAvg + "/20";
-                    subjAvgDiv.classList.remove("good"); subjAvgDiv.classList.remove("bad");
-                    if (subjAvg >= 10) {
-                        subjAvgDiv.classList.add("good"); 
+                    if (!isNaN(subjClassAvg)) {
+                        subjClassAvgDiv.innerHTML = subjClassAvg + "/20";
                     }
                     else {
-                        subjAvgDiv.classList.add("bad");
+                        subjClassAvgDiv.style.display = "none";
+                        subjAvgVsClassAvg.style.display = "none";
+                    }
+                    
+                    subjCard   .classList.remove("good"); subjCard   .classList.remove("meh"); subjCard   .classList.remove("bad"); subjCard   .classList.remove("unknown");
+                    subjAvgDiv .classList.remove("good"); subjAvgDiv .classList.remove("meh"); subjAvgDiv .classList.remove("bad"); subjAvgDiv .classList.remove("unknown");
+                    subjHeader .classList.remove("good"); subjHeader .classList.remove("meh"); subjHeader .classList.remove("bad"); subjHeader .classList.remove("unknown");
+                    gradesTable.classList.remove("good"); gradesTable.classList.remove("meh"); gradesTable.classList.remove("bad"); gradesTable.classList.remove("unknown");
+                    
+                    if (isNaN(subjAvg)) {
+                        subjCard   .classList.add("unknown");
+                        subjAvgDiv .classList.add("unknown");
+                        subjHeader .classList.add("unknown");
+                        // gradesTable.classList.add("unknown");
+                    }
+                    else if (moduleAvg >= 10 && subjAvg < 10 || moduleAvg < 10 && subjAvg >= 10) {
+                        subjCard   .classList.add("meh"); 
+                        subjAvgDiv .classList.add("bad"); 
+                        subjHeader .classList.add("meh"); 
+                        gradesTable.classList.add("meh"); 
+                    }
+                    else if (subjAvg >= 10) {
+                        subjCard   .classList.add("good"); 
+                        subjAvgDiv .classList.add("good"); 
+                        subjHeader .classList.add("good"); 
+                        gradesTable.classList.add("good"); 
+                    }
+                    else {
+                        subjCard   .classList.add("bad");
+                        subjAvgDiv .classList.add("bad");
+                        subjHeader .classList.add("bad");
+                        gradesTable.classList.add("bad");
                     }
                 }
                 
                 // module average modification
                 if (moduleName != "__#unclassified#__") {
-                    const moduleAvg         = this.gradesDatas[sem][moduleName].average;
-                    const moduleCard        = document.querySelector(`.module-card[data-module="${moduleName}"]`);
-                    const moduleCardHeader  = moduleCard.querySelector(`.module-header`);
-                    const moduleAvgDiv      = moduleCard.querySelector(`.module-moyenne[data-module="${moduleName}"]`);
-                    moduleAvgDiv.childNodes[0].data = moduleAvg + "/20";
-                    moduleCard.classList.remove("validated"); moduleCard.classList.remove("failed"); moduleCard.classList.remove("unknown");
-                    moduleCardHeader.classList.remove("validated"); moduleCardHeader.classList.remove("failed"); moduleCardHeader.classList.remove("unknown");
-                    moduleAvgDiv.classList.remove("good"); moduleAvgDiv.classList.remove("bad"); moduleAvgDiv.classList.remove("unknown");
+                    const moduleCard            = document.querySelector(`.module-card[data-module="${moduleName}"]`);
+                    const moduleCardHeader      = moduleCard.querySelector(`.module-card-header`);
+                    const moduleClassAvgDiv     = moduleCardHeader.querySelector(`.module-class-average`);
+                    const moduleClassAvgVsAvg   = moduleCardHeader.querySelector(`.module-class-average-vs-average`);
+                    const moduleAvgDiv          = moduleCardHeader.querySelector(`.module-average`);
+                    const moduleAvg             = this.gradesDatas[sem][moduleName].average;
+                    const moduleClassAvg        = this.gradesDatas[sem][moduleName||"__#unclassified#__"].classAvg;
+                    
+                    moduleAvgDiv.innerHTML      = moduleAvg + "/20";
+                    if (!isNaN(moduleClassAvg)) {
+                        moduleClassAvgDiv.innerHTML = moduleClassAvg + "/20";
+                    }
+                    else {
+                        moduleClassAvgDiv.style.display = "none";
+                        moduleClassAvgVsAvg.style.display = "none";
+                    }
+                    
+                    moduleCard      .classList.remove("validated");     moduleCard      .classList.remove("failed");    moduleCard      .classList.remove("unknown");
+                    moduleCardHeader.classList.remove("validated");     moduleCardHeader.classList.remove("failed");    moduleCardHeader.classList.remove("unknown");
+                    moduleAvgDiv    .classList.remove("good");          moduleAvgDiv    .classList.remove("bad");       moduleAvgDiv    .classList.remove("unknown");
 
-                    if (moduleAvg == " - ") {
-                        moduleCard.classList.add("unknown");
+                    if (isNaN(moduleAvg)) {
+                        moduleCard  .classList.add("unknown");
                         moduleAvgDiv.classList.add("unknown");
                     }
                     else if (moduleAvg >= 10) {
-                        moduleCard.classList.add("validated");
+                        moduleCard      .classList.add("validated");
                         moduleCardHeader.classList.add("validated");
-                        moduleAvgDiv.classList.add("good");
+                        moduleAvgDiv    .classList.add("good");
                     }
                     else {
-                        moduleCard.classList.add("failed");
+                        moduleCard      .classList.add("failed");
                         moduleCardHeader.classList.add("failed");
-                        moduleAvgDiv.classList.add("bad");
+                        moduleAvgDiv    .classList.add("bad");
                     }
 
                     this.setGradesTableTotalCoef(moduleCard);
@@ -4180,6 +4760,41 @@ ecamDash = undefined;
                 else if (subject) {
                     const subjCard = document.querySelector(`.subject-card[data-semester="${sem}"][data-subject="${subject}"]`);
                     this.setGradesTableTotalCoef(subjCard);
+                }
+
+                // semester average modification
+                if (sem) {
+
+                    const semAvgsDiv            = document.querySelector(".semester-averages");
+                    const semAvgDiv             = semAvgsDiv.querySelector(".semester-average");
+                    const semAvgSymbolDiv       = semAvgsDiv.querySelector(".semester-average-symbol");
+                    const semClassAvgVsAvgDiv   = semAvgsDiv.querySelector(".semester-class-average-vs-average");
+                    const semClassAvgDiv        = semAvgsDiv.querySelector(".semester-class-average");
+
+                    const semData       = this.gradesDatas[sem];
+                    const semAvg        = semData.average;
+                    const semClassAvg   = semData.classAvg;
+                    const semAvgSymbol  = isNaN(semAvg) ? "" : `${semAvg >= 10 ? '✅' : '⚠️'}`;
+
+                    semAvgsDiv.classList.remove("bad"); semAvgsDiv.classList.remove("good");
+
+                    semAvgDiv.innerHTML = semAvg + "/20";
+                    semAvgSymbolDiv.innerHTML = semAvgSymbol;
+                    if (!isNaN(semClassAvg)) {
+                        if (semAvg >= 10) {
+                            semAvgsDiv.classList.add("good");
+                        }
+                        else {
+                            semAvgsDiv.classList.add("bad");
+                        }
+
+                        semClassAvgDiv.innerHTML = semClassAvg + "/20";
+                    }
+                    else {
+                        semClassAvgDiv.style.display = "none";
+                        semClassAvgVsAvgDiv.style.display = "none";
+                    }
+
                 }
 
             }
@@ -4195,6 +4810,7 @@ ecamDash = undefined;
 
             attachAllEventListeners() {
                 this.attachDocumentMouseListeners();
+                this.attachEcamDashMouseListeners();
                 this.attachAllAnyInputsListeners();
                 
                 this.attachLangBtnsListener();
@@ -4211,12 +4827,12 @@ ecamDash = undefined;
                 this.attachViewModeBtnsListener();
                 this.attachFoldToggleBtnListener();
                 
-                this.attachAllSubjectCardRelatedEvenListenersForEverySubjectCard();
+                this.attachAllSubjectCardRelatedEventListenersForEverySubjectCard();
 
                 this.attachModuleInfoClearBtns();
-                this.attachAllModuleDeleteBtnsListener();
+                this.attachAllModuleCardDeleteBtnsListener();
 
-                if (this.editMode) { this.attachDropFieldsEventListeners(); } else { this.detachOnDragEventListeners(); }
+                if (this.editMode) { this.attachDropFieldsEventListeners(); }
             }
 
 
@@ -4231,64 +4847,32 @@ ecamDash = undefined;
 
                 //#region Document listeners
 
-                    attachDocumentMouseListeners(eventName="all") {
-                        if (eventName == "onclick" || eventName == "all") {
-                            document.onclick = (e) => {
+                    attachDocumentMouseListeners() {
+                        this.ecamDash.onclick = (e) => {
 
-                                // Toggle intranet table
-                                if (e.target.closest('.intranet-fold')) {
-                                    const header = e.target.closest('.intranet-fold');
-                                    const intranetTable = document.querySelector('.greyGridTable');
-                                    const intranetToggle = header.querySelectorAll('.intranet-toggle');
-                                    intranetToggle.forEach(t => {
-                                        if (t.previousElementSibling == null){
-                                            t.classList.toggle('openLeft')
-                                        } else {
-                                            t.classList.toggle('openRight');
-                                        }
-                                    });
+                            if (document.getElementById("importMenu").classList.contains("show") && !document.querySelector(".new-user-notif-fullscreen-effect.focus") && !e.target.closest(".import-menu")) {
+                                document.getElementById("importMenu").classList.remove("show");
 
-                                    if (intranetTable.style.display == 'none') {
-                                        intranetTable.style.display = 'block';
-                                    } else {
-                                        intranetTable.style.display = 'none';
-                                    }
-                                }
+                                clearTimeout(this?.timeouts?.closeImportMenu);
+                                this.timeouts.closeImportMenu = setTimeout(() => {document.getElementById("importMenu").style.display = "none"}, 300);
+                            }
 
-                                if (!e.target.closest(".import-menu") && document.getElementById("importMenu").classList.contains("show")) {
-                                    document.getElementById("importMenu").classList.remove("show");
+                            if (!e.target.closest(".over-header-btn.issue.issue-btn, .over-header-btn.issue.mail-info, .over-header-btn.how-to-use-btn")) {
+                                this.dismissAllOverHeaderBtns();
+                            }
 
-                                    clearTimeout(this?.timeouts?.closeImportMenu);
-                                    this.timeouts.closeImportMenu = setTimeout(() => {document.getElementById("importMenu").style.display = "none"}, 300);
-                                }
-
-                                if (!e.target.closest(".over-header-btn.issue.issue-btn, .over-header-btn.issue.mail-info, .over-header-btn.how-to-use-btn")) {
-                                    this.dismissAllOverHeaderBtns();
-                                }
-                            };
-                        }
-                        
-                        if (eventName == "onmousedown" || eventName == "all") {
-                            // Fold/Unfold modules
-                            document.onmousedown = (e) => {
-                                // Toggle semesters
-                                if (e.target.closest('.semester-header')) {
-                                    this.semesterHeaderMouseUpNoMoveAction();
-                                }
-                                else if (e.target.closest('.module-header') && !e.target.closest('.module-title.input, .module-delete-btn, .drag-icon, .tick-icon')) {
-                                    this.moduleHeaderMouseUpNoMoveAction(e)
-                                }
-                                else if (e.target.closest('.subject-card-header, .subject-card.compact') && !e.target.closest('.any-input, .drag-icon, .tick-icon, .subject-delete-btn')) {
-                                    this.subjectHeaderMouseUpNoMoveAction(e)
-                                }
-                            };
-                        }
-
+                            if (e.target.classList.contains("any-input")) {
+                                this.generalKeyboardEvents("edit sim grade", e.target.closest(".any-input"));
+                            }
+                        };
                     }
-                    attachAllAnyInputsListeners() {
-                        document.querySelectorAll(".any-input").forEach(input => {
-                            this.attachAnyInputListeners(input)
-                        })
+
+                    attachAllAnyInputsListeners(container=document) {
+                        if (container instanceof HTMLElement || container == document) {
+                            container.querySelectorAll(".any-input").forEach(input => {
+                                this.attachAnyInputListeners(input)
+                            })
+                        }
                     }
                     attachAnyInputListeners(input) {
                         input.onfocus    = ()  => {this.generalKeyboardEvents("edit sim grade", input)}
@@ -4298,20 +4882,20 @@ ecamDash = undefined;
 
                         if (input.classList.contains("module-title")) {   // Change modules name
                             input.onfocus   = ()  => { if (this.editMode) {
-                                this.detachOnDragEventListeners(); 
+                                this.detachAllCardsOnDragEventListeners(); 
                                 this.generalKeyboardEvents("edit sim grade", input); 
-                                document.querySelectorAll(".module-header").forEach(card => {card.draggable = false});
+                                document.querySelectorAll(".module-card-header").forEach(card => {card.draggable = false});
                             } }
                             input.onblur    = ()  => { if (this.editMode) {
-                                this.attachOnDragEventListeners(); 
+                                this.attachAllCardsOnDragEventListeners(); 
                                 this.generalKeyboardEvents("general"); 
-                                document.querySelectorAll(".module-header").forEach(card => {card.draggable = true;});
+                                document.querySelectorAll(".module-card-header").forEach(card => {card.draggable = true;});
                             } }
                             input.onchange  = (e) => { this.moduleTitleInputChangeAction(e.target) };
                         }
                         else {
-                            input.onfocus   = ( ) => { if (this.editMode) {this.detachOnDragEventListeners(); this.generalKeyboardEvents("edit sim grade", input); } };
-                            input.onblur    = ( ) => { if (this.editMode) {this.attachOnDragEventListeners(); this.generalKeyboardEvents("general"); } };
+                            input.onfocus   = ( ) => { if (this.editMode) {this.detachAllCardsOnDragEventListeners(); this.generalKeyboardEvents("edit sim grade", input); } };
+                            input.onblur    = ( ) => { if (this.editMode) {this.attachAllCardsOnDragEventListeners(); this.generalKeyboardEvents("general"); } };
                         }
                     }
 
@@ -4321,25 +4905,34 @@ ecamDash = undefined;
 
 
                 //#region Dashboard listeners
-                    attachPinDockbarListener() {
-                        document.querySelector(".pin-dockbar").children[0].children[0].onclick = () => {
-                            // when clicking on the button to unpin the dockbar, this event listener is triggered before the action of unpinning the dockbar is actually done, 
-                            // so the order might seem reverse logical but that's how it works
-                            if (!document.body.classList.contains("lfr-dockbar-pinned")) {
-                                document.querySelector(".scroll-field.up").style.transform = "translateY(45px)";
-                            }
-                            else {
-                                document.querySelector(".scroll-field.up").style.transform = "";
-                            }
-                        }
-                    }
                     
+
+                    attachEcamDashMouseListeners() {
+                        
+                        this.ecamDash.onmousedown = (e) => {
+                            // Toggle semesters
+                            if (e.target.closest('.semester-header')) {
+                                this.semesterHeaderMouseUpNoMoveAction();
+                            }
+                            // Fold/Unfold modules
+                            else if (e.target.closest('.module-card-header') && !e.target.closest('.module-title.input, .module-delete-btn, .drag-icon, .tick-icon')) {
+                                this.moduleHeaderMouseUpNoMoveAction(e)
+                            }
+                            // Fold/unfold modules
+                            else if (e.target.closest('.subject-card-header, .subject-card.compact') && !e.target.closest('.any-input, .drag-icon, .tick-icon, .subject-delete-btn')) {
+                                this.subjectHeaderMouseUpNoMoveAction(e)
+                            }
+                        };
+
+                    }
+
 
                     attachLangBtnsListener() {
                         // Change to English
                         document.getElementById('en-lang-btn').onclick = () => {
-                            if (this.lang == "fr") {
-                                this.lang = "en";
+                            if (!this.langIsEn) {
+                                this.lang       = "en";
+                                this.langIsEn   = true;
                                 localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
                                 document.getElementById('fr-lang-btn').classList.remove('active')
                                 document.getElementById('en-lang-btn').classList.add('active')
@@ -4349,8 +4942,9 @@ ecamDash = undefined;
 
                         // Change to French
                         document.getElementById('fr-lang-btn').onclick = () => {
-                            if (this.lang == "en") {
-                                this.lang = "fr";
+                            if (this.langIsEn) {
+                                this.lang       = "fr";
+                                this.langIsEn   = false;
                                 localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
                                 document.getElementById('fr-lang-btn').classList.add('active')
                                 document.getElementById('en-lang-btn').classList.remove('active')
@@ -4365,8 +4959,9 @@ ecamDash = undefined;
                         const mailInfo      = document.querySelector(".issue.mail-info");
 
                         const helpBtn       = document.querySelector(".over-header-btn.how-to-use-btn");
-                        // const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
                         const keybindsBtn   = document.querySelector(".over-header-btn.keybinds-btn");
+                        const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
+                        const firstStepsBtn = document.querySelector(".over-header-btn.first-steps-btn");
 
                         const settingsBtn   = document.querySelector(".over-header-btn.settings-btn");
 
@@ -4385,9 +4980,10 @@ ecamDash = undefined;
                             }
                         };
 
-                        helpBtn.onclick     = () => {if (helpBtn.classList.contains("open")) { this.dismissHelpOverHeaderBtns(); } else { this.openHelpOverHeaderBtns(); }};
-                        // tutoBtn.onclick     = () => { this.startTutorial(); };
-                        keybindsBtn.onclick = () => { this.openKeybindsModal(); };
+                        helpBtn.onclick         = () => {if (helpBtn.classList.contains("open")) { this.dismissHelpOverHeaderBtns(); } else { this.openHelpOverHeaderBtns(); }};
+                        keybindsBtn.onclick     = () => { this.openKeybindsModal(); };
+                        tutoBtn.onclick         = () => { this.startTutorial(); };
+                        firstStepsBtn.onclick   = () => { this.startFirstStepsTutorial(); };
 
                         settingsBtn.onclick = () => { this.openSettingsModal(); };
                     }
@@ -4396,7 +4992,7 @@ ecamDash = undefined;
                         document.getElementById('editModeBtn').onclick = () => {
                             this.editMode = !this.editMode;
                             localStorage.setItem("ECAM_DASHBOARD_DEFAULT_EDIT_MODE", this.editMode);
-                            this.generateContent({fadeIn: true});
+                            this.generateContent();
                         };
                     }
 
@@ -4406,6 +5002,7 @@ ecamDash = undefined;
                     attachExportBtnListener() {
                         document.getElementById('exportBtn').onclick = () => this.exportData();
                     }
+                    
                 //#endregion
 
                 
@@ -4416,9 +5013,9 @@ ecamDash = undefined;
                     attachSettingsModalContainerListeners(container=document.querySelector("#settingsModalContainer")) {
 
                         container.onmousedown = (e) => {
-                            if (e.target.closest(".modal-close-btn") || !e.target.closest(".settings-modal")) { 
+                            if ((e.target.closest(".modal-close-btn") || !e.target.closest(".settings-modal")) && !document.querySelector(".new-user-notif-fullscreen-effect.focus")) { 
                                 container.onmouseup = (e) => {
-                                    if (e.target.closest(".modal-close-btn") || !e.target.closest(".settings-modal")) {
+                                    if ((e.target.closest(".modal-close-btn") || !e.target.closest(".settings-modal")) && !document.querySelector(".new-user-notif-fullscreen-effect.focus")) {
                                         this.closeSettingsModal();
                                     }
                                     container.onmouseup = null;
@@ -4502,7 +5099,7 @@ ecamDash = undefined;
                             }
                             document.querySelector(".new-grades-card").classList.add("none");
                             document.querySelector(".new-grades-card-header").classList.add("none");
-                            document.querySelector(".new-grades-card-title").innerHTML = this.lang == "fr" 
+                            document.querySelector(".new-grades-card-title").innerHTML = !this.langIsEn 
                                 ? `Pas de nouvelle note${this.error ? ", que je sache (mode offline)" : ""}` 
                                 : `No new grade${this.error ? ", as far as I know (offline mode)" : ""}`
                             ;
@@ -4573,8 +5170,9 @@ ecamDash = undefined;
                                     this.currentSemester = e.target.dataset.filter;
                                     this.saveSemesterFilter();
 
+                                    this.foldedModuleCardsId = []; document.querySelector(".fold-toggle").classList.remove("active");
                                     this.removeCardFromSelection();
-                                    this.generateContent({fadeIn: true});
+                                    this.generateContent({manageIndividualSubjectCardFolding: false});
                                 }
                             };
                         });
@@ -4603,7 +5201,12 @@ ecamDash = undefined;
                     attachFoldToggleBtnListener() {
                         document.querySelector(".fold-toggle").onclick = (e) => {
                             e.target.classList.toggle("active");
-                            this.toggleFoldAllModuleCards();
+                            if (e.target.classList.contains("active")) {
+                                this.foldAllModuleCards();
+                            }
+                            else {
+                                this.unfoldAllModuleCards();
+                            }
                         }
                     }
 
@@ -4654,18 +5257,18 @@ ecamDash = undefined;
                         document.querySelectorAll(".module-info-clear.sim").     forEach(simClear => {
                             simClear.onclick = () => {
                                 this.clearSimGrades(simClear.dataset.semester, simClear.dataset.module);
-                                this.generateContent({fadeIn: true});
+                                this.generateContent();
                             }
                         });
                         document.querySelectorAll(".module-info-clear.disabled").forEach(disClear => {
                             disClear.onclick = () => {
                                 this.clearIgnoredGradesForModule(disClear.dataset.semester, disClear.dataset.module);
-                                this.generateContent({fadeIn: true});
+                                this.generateContent();
                             }
                         });
                     }
 
-                    attachAllModuleDeleteBtnsListener(container=document.body) {
+                    attachAllModuleCardDeleteBtnsListener(container=document.body) {
                         container.querySelectorAll(".module-delete-btn").forEach(btn => {
                             this.attachModuleCardDeleteBtnListener(btn);
                         })
@@ -4682,39 +5285,43 @@ ecamDash = undefined;
 
                 //#region Subject cards listeners
 
-                    attachAllSubjectCardRelatedEvenListenersForEverySubjectCard(container=document.body) {
-                        if (this.editMode) {this.attachOnDragEventListeners(container);}
+                    attachAllSubjectCardRelatedEventListenersForEverySubjectCard(container=document.body) {
 
                         this.attachAllDragOrTickIconsListener(container);
 
                         this.attachAllSubjectNameInputsListener(container);
-                        this.attachAllSubjectCoefInputBoxesListeners(container);
-                        this.attachAllSubjectsDeleteBtnListener(container);
+                        this.attachAllSubjectCoefInputBoxesListener(container);
+                        this.attachAllSubjectDeleteBtnsListener(container);
 
-                        this.attachCheckboxesListeners(container);
+                        this.attachAllGradesCheckboxListeners(container);
 
-                        this.attachAllSubjectSimAddBtnsListener(container);
-                        this.attachAllSubjectSimDelBtnsListener(container);
-                        this.attachAllSubjectSimInputEditsListener(container);
+                        this.attachAllSimGradeAddBtnsListener(container);
+                        this.attachAllSimGradeInputEditsListener(container);
+                        this.attachAllSimGradeDelBtnsListener(container);
+
+                        if (this.editMode)  {this.attachAllCardsOnDragEventListeners(container);} else {this.detachAllCardsOnDragEventListeners(container)};
                     }
 
                     attachAllSubjectCardRelatedEventListeners(subjCard) {
-                        const isClassified  = subjCard.classList.contains("classified");
-                        const isDetailed    = subjCard.classList.contains("detailed");
-                        const coefInputBox  = subjCard.querySelector(".subject-coef-input-box");
                         const nameInputBox  = subjCard.querySelector(".subject-name.input");
-                        const simAddBtn     = subjCard.querySelector(".sim-add-btn");
-                        const simDelBtn     = subjCard.querySelector(".sim-del-btn");
+                        const coefInputBox  = subjCard.querySelector(".subject-coef-input-box");
+                        const subjectDelBtn = subjCard.querySelector(".subject-delete-btn");
 
-                        if (isClassified)   {this.attachCheckboxesListeners(subjCard);}
-                        if (isDetailed)     {this.attachAllSubjectSimInputEditsListener(subjCard);}
-                        if (coefInputBox)   {this.attachSubjectCoefInputBoxListeners(coefInputBox);}
-                        if (nameInputBox)   {this.attachSubjectNameInputListener(nameInputBox);}
-                        if (simAddBtn)      {this.attachSubjectSimAddBtnListener(simAddBtn);}
-                        if (simDelBtn)      {this.attachSubjectSimDelBtnListener(simDelBtn);}
+                        this.attachDragOrTickIconListener(subjCard);
+
+                        if (nameInputBox)   { this.attachSubjectNameInputListener(nameInputBox); }
+                        if (coefInputBox)   { this.attachSubjectCoefInputBoxListener(coefInputBox); }
+                        if (subjectDelBtn)  { this.attachSubjectDeleteBtnListener(subjectDelBtn); }
                         
+                        this.attachAllGradesCheckboxListeners(subjCard);
+
+                        this.attachAllSimGradeAddBtnsListener(subjCard);
+                        this.attachAllSimGradeInputEditsListener(subjCard);
+                        this.attachAllSimGradeDelBtnsListener(subjCard);
+
                         this.attachDragOrTickIconListener(subjCard)
-                        if (this.editMode)  {this.attachSubjectCardOnDragEventListeners(subjCard);};
+
+                        if (this.editMode)  {this.attachSubjectCardOnDragEventListeners(subjCard);} else {this.detachAllCardsOnDragEventListeners(subjCard)};
                     }
 
                     /** Ensures all selected Subject Cards have a tick icon with their assigned event listeners instead of the default drag icon, and attach them the correct event listener */
@@ -4738,13 +5345,13 @@ ecamDash = undefined;
                         }
                     }
 
-                    attachAllSubjectCoefInputBoxesListeners(container=document.body) {
+                    attachAllSubjectCoefInputBoxesListener(container=document.body) {
                         container.querySelectorAll(".subject-coef-input-box").forEach(inputBox => {
-                            this.attachSubjectCoefInputBoxListeners(inputBox);
+                            this.attachSubjectCoefInputBoxListener(inputBox);
                         })
                     }
-                    attachSubjectCoefInputBoxListeners(inputBox) {
-                        inputBox.onchange = e => {
+                    attachSubjectCoefInputBoxListener(inputBox) {
+                        inputBox.onchange = (e) => {
                             const semX          = e.target.dataset.semester;
                             const moduleName    = e.target.dataset.module;
                             const subject       = e.target.dataset.subject;
@@ -4758,40 +5365,13 @@ ecamDash = undefined;
                     }
 
                     
-                    attachAllSubjectsDeleteBtnListener(container=document.body) {
+                    attachAllSubjectDeleteBtnsListener(container=document.body) {
                         container.querySelectorAll(".subject-delete-btn").forEach(btn => {
-                            this.attachSubjectCardDeleteBtnListener(btn);
+                            this.attachSubjectDeleteBtnListener(btn);
                         })
                     }
-
-                    attachSubjectCardDeleteBtnListener(btn) {
+                    attachSubjectDeleteBtnListener(btn) {
                         btn.onclick = (e) => {this.subjectCardDeleteBtnAction(e.target)};
-                    }
-
-                    attachCheckboxesListeners(container=document.body) {
-                        // Reusable method to attach listeners to grade checkboxes
-                        container.querySelectorAll('.grade-checkbox').forEach(chbx => {
-                            chbx.onclick = (e) => {
-                                const semX = e.target.dataset.semester;
-                                const module = e.target.dataset.module;
-                                const subj = e.target.dataset.subj;
-                                const simTimeStamp = e.target.dataset.simtimestamp;
-                                const gradeId = e.target.dataset.gradeid;
-                                const ignoredKey = [semX, subj, simTimeStamp || gradeId].join("\\");
-                                if (e.target.checked) {
-                                    // remove this specific ignored key if present
-                                    this.disabledGrades = this.disabledGrades?.filter(id => id !== ignoredKey);
-                                } else {
-                                    // add ignored key if not already present
-                                    if (!this.disabledGrades?.includes(ignoredKey)) this.disabledGrades.push(ignoredKey);
-                                }
-                                this.saveIgnoredGrades();
-                                this.getGradesDatas();
-                                document.querySelector(".average-number").innerHTML = this.moyennePonderee(this.grades);
-                                // this.getGradesDatas({semX, module:undefined, subj});
-                                this.regenAveragesAndTotalCoefs(semX, module, subj)
-                            }
-                        });
                     }
 
                     attachAllSubjectNameInputsListener(container=document.body) {
@@ -4802,34 +5382,52 @@ ecamDash = undefined;
                     attachSubjectNameInputListener(input) {
                         input.onchange = (e) => {this.subjectCardNameInputAction(e.target)};
                     }
+                    
+                //#endregion
 
-                    attachAllSubjectSimAddBtnsListener(container=document.body) {
-                        container.querySelectorAll('.sim-add-btn').forEach(btn=>{
-                            this.attachSubjectSimAddBtnListener(btn);
+
+
+
+                //#region grades listeners
+
+                    attachAllGradesCheckboxListeners(container=document.body) {
+                        container.querySelectorAll('.grade-checkbox').forEach(chbx => {
+                            this.attachGradeCheckboxListener(chbx)
                         });
                     }
-                    attachSubjectSimAddBtnListener(btn) {
-                        btn.onclick = (e) => {this.subjectCardSimAddBtnAction(e.target)};
+                    attachGradeCheckboxListener(chbx) {
+                        chbx.onclick = (e) => {
+                            this.gradeCheckboxAction(e.target)
+                        }
                     }
 
-                    attachAllSubjectSimDelBtnsListener(container=document.body) {
+                    attachAllSimGradeAddBtnsListener(container=document.body) {
+                        container.querySelectorAll('.sim-add-btn').forEach(btn=>{
+                            this.attachSimGradeAddBtnListener(btn);
+                        });
+                    }
+                    attachSimGradeAddBtnListener(btn) {
+                        btn.onclick = (e) => {this.simGradeAddBtnAction(e.target)};
+                    }
+
+                    attachAllSimGradeDelBtnsListener(container=document.body) {
                         container.querySelectorAll('.sim-del-btn').forEach(btn=>{
-                            this.attachSubjectSimDelBtnListener(btn)
+                            this.attachSimGradeDelBtnListener(btn)
                         })
                     }
-                    attachSubjectSimDelBtnListener(btn) {
-                        btn.onclick = (e) => {this.subjectCardSimDelBtnAction(e.target)};
+                    attachSimGradeDelBtnListener(btn) {
+                        btn.onclick = (e) => {this.simGradeDelBtnAction(e.target)};
                     }
 
-                    attachAllSubjectSimInputEditsListener(container=document.body) {
+                    attachAllSimGradeInputEditsListener(container=document.body) {
                         container.querySelectorAll(".simulated-grade-input-edit").forEach(input => {
-                            this.attachSubjectSimInputEditListener(input)
+                            this.attachSimGradeInputEditListener(input)
                         })
                     }
-                    attachSubjectSimInputEditListener(input) {
-                        input.onchange = (e) => {this.subjectCardSimInputEditAction(e.target)};
+                    attachSimGradeInputEditListener(input) {
+                        input.onchange = (e) => {this.simGradeInputEditAction(e.target)};
                     }
-                    
+
                 //#endregion
 
 
@@ -4886,7 +5484,7 @@ ecamDash = undefined;
                         const helpBtn       = document.querySelector(".over-header-btn.how-to-use-btn");
                         const helpMenu      = document.querySelector(".over-header-how-to-use-btns");
                         const docBtn        = document.querySelector(".over-header-btn.doc-btn");
-                        // const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
+                        const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
 
 
                         helpBtn .classList.add("open");
@@ -4894,7 +5492,7 @@ ecamDash = undefined;
                         clearTimeout(this.timeouts?.openHelpMenu);
                         this.timeouts.openHelpMenu = setTimeout(()=>{helpMenu.classList.add("open");}, 10);
                         docBtn  .tabIndex = "0";
-                        // tutoBtn .tabIndex = "0";
+                        tutoBtn .tabIndex = "0";
 
                         this.dismissFirstTimeNotif();
                     }
@@ -4903,7 +5501,7 @@ ecamDash = undefined;
                         const helpBtn       = document.querySelector(".over-header-btn.how-to-use-btn");
                         const helpMenu      = document.querySelector(".over-header-how-to-use-btns");
                         const docBtn        = document.querySelector(".over-header-btn.doc-btn");
-                        // const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
+                        const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
                         
                         
                         helpBtn    .classList.remove("open");
@@ -4911,18 +5509,19 @@ ecamDash = undefined;
                         clearTimeout(this.timeouts?.openHelpMenu);
                         this.timeouts.openHelpMenu = setTimeout(()=>{helpMenu.style.display = "none";}, 200);
                         docBtn     .tabIndex = "-1";
-                        // tutoBtn    .tabIndex = "-1";
+                        tutoBtn    .tabIndex = "-1";
                     }
 
                     dismissFirstTimeNotif() {
                         const newUserNotif  = document.querySelector(".new-user-notif");
 
                         if (newUserNotif) {
+                            const helpOverHeaderBtn = document.querySelector(".over-header-btn.how-to-use-btn");
                             const newUserNotifFullScreen = document.querySelector(".new-user-notif-fullscreen-effect");
                             const newUserNotifArrows = document.querySelectorAll(".new-user-notif-arrow-path");
                             
                             newUserNotifFullScreen.classList.remove("focus");
-                            setTimeout(() => {newUserNotifFullScreen.style.display = "none";}, 500);
+                            setTimeout(() => {helpOverHeaderBtn.style.zIndex = ""; newUserNotifFullScreen.style.display = "none";}, 500);
 
                             newUserNotif.style.animationPlayState = "paused";
                             newUserNotifArrows.forEach(arrow => {arrow.style.animationPlayState = "paused";})
@@ -4972,9 +5571,9 @@ ecamDash = undefined;
                         setTimeout(() => {keybindsMenu.querySelector("#keyboardShortcutListModal").classList.add("show");}, 5);
                         
                         keybindsMenu.onmousedown = (e) => {
-                            if (e.target.closest(".modal-close-btn") || !e.target.closest("#keyboardShortcutListModal")) {
+                            if ((e.target.closest(".modal-close-btn") || !e.target.closest("#keyboardShortcutListModal")) && !document.querySelector(".new-user-notif-fullscreen-effect.focus")) {
                                 keybindsMenu.onmouseup = (e) => {
-                                    if (e.target.closest(".modal-close-btn") || !e.target.closest("#keyboardShortcutListModal")) {
+                                    if ((e.target.closest(".modal-close-btn") || !e.target.closest("#keyboardShortcutListModal") && !document.querySelector(".new-user-notif-fullscreen-effect.focus"))) {
                                         this.closeKeybindsModal()
                                     }
                                     keybindsMenu.onmouseup = null;
@@ -5172,7 +5771,7 @@ ecamDash = undefined;
                         if (trigger?.classList?.contains("module-card") || (trigger?.target?.classList?.contains("module-card"))) {
                             // Identifying the moduleCard depending on whether the trigger argument is a module card or an event triggered by a module card
                             const moduleCard        = trigger?.target || trigger;
-                            const moduleHeader      = moduleCard.querySelector(".module-header");
+                            const moduleHeader      = moduleCard.querySelector(".module-card-header");
                             const toggle            = moduleCard.querySelector('.module-toggle');
                             const sem               = moduleCard.dataset.semester;
                             const module            = moduleCard.dataset.module;
@@ -5193,7 +5792,7 @@ ecamDash = undefined;
                                     this.detachInsertFieldHitboxEventListeners(subjInsFieldHitbox);
                                 })
 
-                                moduleCard.style.height = Array.from(moduleCard.children).reduce((total, child) => {return parseInt(total?.offsetHeight || total) + parseInt(child.offsetHeight)}) + "px";
+                                moduleCard.style.height = this.getElementHeightConsideringChildrenHeight(moduleCard) + "px";
                                 moduleHeader.classList.add("fold");
                                 moduleCard.classList.add("fold");
                                 setTimeout(() => {
@@ -5225,6 +5824,9 @@ ecamDash = undefined;
                             clearTimeout(this.timeouts.moduleCardElemsUnfoldTimeout);
                             clearTimeout(this.timeouts.moduleCardUnfoldTimeout);
 
+                            if (this.foldedModuleCardsId.length == document.querySelectorAll(".module-card").length) {
+                                document.querySelector(".fold-toggle").classList.add("active")
+                            }
                         }
                         
                     }
@@ -5255,7 +5857,7 @@ ecamDash = undefined;
                         if (trigger?.classList?.contains("module-card") || (trigger?.target?.classList?.contains("module-card"))) {
                             // Identifying the moduleCard depending on whether the trigger argument is a module card or an event triggered by a module card
                             const moduleCard        = trigger?.target || trigger;
-                            const moduleHeader      = moduleCard.querySelector(".module-header");
+                            const moduleHeader      = moduleCard.querySelector(".module-card-header");
                             const toggle            = moduleCard.querySelector('.module-toggle');
                             const sem               = moduleCard.dataset.semester;
                             const module            = moduleCard.dataset.module;
@@ -5303,7 +5905,7 @@ ecamDash = undefined;
                                 
                                 if (moduleCard) {
                                     setTimeout(() => {
-                                        moduleCard.style.height = Array.from(moduleCard.children).reduce((total, child) => {return parseInt(total?.offsetHeight || total) + parseInt(child.offsetHeight)}) + "px";
+                                        moduleCard.style.height = this.getElementHeightConsideringChildrenHeight(moduleCard) + "px";
                                         moduleCard.classList.remove("fold");
                                         this.timeouts.moduleCardUnfoldTimeout = setTimeout(() => {moduleCard.style.height = ""}, 300)
                                     }, 1)
@@ -5315,6 +5917,11 @@ ecamDash = undefined;
                                     }, 2)
                                 }
                             }
+
+                            if (this.foldedModuleCardsId.length == 0) {
+                                document.querySelector(".fold-toggle").classList.remove("active")
+                            }
+                            
                         }
                     }
 
@@ -5347,7 +5954,7 @@ ecamDash = undefined;
 
                         let diffName = true;
                         if (newModuleName == "__#unclassified#__") {
-                            alert(this.lang == "fr" 
+                            alert(!this.langIsEn 
                                 ? "Ce nom n'est pas autorisé ! C'est le nom utilisé en interne pour les matières non-classifiées... Choisis-en un autre!" 
                                 : "This name isn't allowed! That's the name used internally for unclassified subjects... Choose another one!"
                             )
@@ -5356,7 +5963,7 @@ ecamDash = undefined;
                         else {
                             Object.keys(this.moduleConfig[sem]).forEach(_moduleName => {
                                 if (_moduleName == newModuleName && _moduleName != oldModuleName) {
-                                    alert(this.lang == "fr" 
+                                    alert(!this.langIsEn 
                                         ? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
                                         : "This subject already exists! Please choose a different name"
                                     )
@@ -5382,12 +5989,12 @@ ecamDash = undefined;
                                     const moduleCardToFold = document.getElementById(foldedModuleCardId);
                                     if (!moduleCardToFold) {
                                         const newModuleCardToFold = document.getElementById(`module-card-${newModuleName}-in-semester-${sem}`);
-                                        this.foldModuleCard(newModuleCardToFold.querySelector(`.module-header`));
+                                        this.foldModuleCard(newModuleCardToFold.querySelector(`.module-card-header`));
                                     }
                                 }
                             })
                             
-                            this.attachOnDragEventListeners();
+                            this.attachAllCardsOnDragEventListeners();
                             this.scrollToClientHighestElem({id: `module-card-${newModuleName}-in-semester-${sem}`, smooth: true})
                         }
                     }
@@ -5425,7 +6032,7 @@ ecamDash = undefined;
                         this.clearSimGrades(sem, moduleName);
                         this.saveConfig();
                         this.getGradesDatas();
-                        this.generateContent({fadeIn: true});
+                        this.generateContent();
                     }
                     
                 //#endregion
@@ -5465,7 +6072,7 @@ ecamDash = undefined;
                                 this.attachAllSubjectCardRelatedEventListeners(subjCard);
 
                                 if (subjCard.classList.contains("unclassified")) {
-                                    this.holdElementHeight(unclassifiedSection, 100, {offset: 4});
+                                    this.holdElementHeight(unclassifiedSection, 200, {offset: 4});
                                 }
                             }
                             
@@ -5477,100 +6084,102 @@ ecamDash = undefined;
 
 
 
-                    /** Toggle the folding of all the subject cards inside the given container
-                     * @param {HTMLElement} [container=document.body] The HTML element containing the subject cards whose fold mode will be toggled
-                     * @param {boolean} [smart=true] If true, takes into consideration the current view mode to know if the subject card should be folded of unfolded. If false, simply toggle the folding mode.
+                    /** Toggles the folding of all the subject cards inside the given container
+                     * @param {HTMLElement} [container=document.body] Default: document.body — The HTML element containing the subject cards whose fold mode will be toggled
+                     * @param {boolean} [smart=true] Default: true — If true, takes into consideration the current view mode to know if the subject card should be folded of unfolded. If false, simply toggle the folding mode.
                      */
-                    async toggleFoldAllSubjCards(container=document.body, smart=true) {
+                    async toggleFoldAllSubjCards(container=document.body, smart=true, bypassFoldedSubjectCardId=false) {
                         if (container instanceof HTMLElement) {
                             if (smart) {
                                 if (this.viewMode == "detailed") {
-                                    this.unfoldAllSubjCards(container);
+                                    this.unfoldAllSubjCards(container, bypassFoldedSubjectCardId);
                                 }
                                 else if (this.viewMode == "compact") {
-                                    this.foldAllSubjCards(container);
+                                    this.foldAllSubjCards(container, bypassFoldedSubjectCardId);
                                 }
                             }
                             else {
-                                container.querySelectorAll(".subject-card").forEach(subjCard => {
+                                (container.querySelectorAll(".subject-card") || []).forEach(subjCard => {
                                     if (subjCard?.classList?.contains("detailed")) {
-                                        this.foldSubjCard(subjCard);
+                                        this.foldSubjCard(subjCard, bypassFoldedSubjectCardId);
                                     }
                                     else if (subjCard?.classList?.contains("compact")) {
-                                        this.unfoldSubjCard(subjCard);
+                                        this.unfoldSubjCard(subjCard, bypassFoldedSubjectCardId);
                                     }
                                 })
                             }
                         }
                     }
-                    /** Toggle the folding of the given subject card
+                    /** Toggles the folding of the given subject card
                      * @param {HTMLElement} subjCard The subject cards whose fold mode will be toggled
                      */
-                    async toggleFoldSubjCard(subjCard) {
+                    async toggleFoldSubjCard(subjCard, bypassFoldedSubjectCardId=false) {
                         if (subjCard?.classList?.contains("detailed")) {
-                            this.foldSubjCard(subjCard);
+                            this.foldSubjCard(subjCard, bypassFoldedSubjectCardId);
                         }
                         else if (subjCard?.classList?.contains("compact")) {
-                            this.unfoldSubjCard(subjCard);
+                            this.unfoldSubjCard(subjCard, bypassFoldedSubjectCardId);
                         }
                     }
 
                     // MARK: fold subject card
-                    /** Fold all the subject cards inside the given container
+                    /** Folds all the subject cards inside the given container
                      * @param {HTMLElement} [container=document.body] The HTML element containing the subject cards to fold
                      */
-                    async foldAllSubjCards(container=document.body) {
+                    async foldAllSubjCards(container=document.body, bypassFoldedSubjectCardId=false) {
                         if (container instanceof HTMLElement) {
-                            container.querySelectorAll(".subject-card.detailed").forEach(detailedSubjCard => {
-                                this.foldSubjCard(detailedSubjCard);
+                            (container.querySelectorAll(".subject-card.detailed") || []).forEach(detailedSubjCard => {
+                                this.foldSubjCard(detailedSubjCard, bypassFoldedSubjectCardId);
                             })
                         }
                     }
-                    /** Fold the given subject card
+                    /** Folds the given subject card
                      * @param {HTMLElement} [subjCard] The subject card to fold
                      */
-                    async foldSubjCard(subjCard) {
+                    async foldSubjCard(subjCard, bypassFoldedSubjectCardId=false) {
                         if (subjCard?.classList?.contains("subject-card")) {
                             const subjCardHeader = subjCard.querySelector(".subject-card-header");
                             subjCardHeader.classList.add("fold");
                             subjCardHeader.classList.replace("detailed", "compact");
-                            subjCard.style.height = "";
-    
-                            // prepare the aimed height below the higher instance height style
+                            
+                            // setting the proper height to the subject card so that only the header is visible
+                            subjCard.style.height = "70px";
                             subjCard.classList.replace("detailed", "compact");
                             subjCard.querySelector(".subject-card-header-grades-details").classList.add("show");
                             
-                            this.compactSubjCardsId.push(subjCard.id);
+                            if (!bypassFoldedSubjectCardId) this.compactSubjCardsId.push(subjCard.id);
                             this.detailedSubjCardsId.splice(this.detailedSubjCardsId.indexOf(subjCard.id), 1);
                         }
                     }
 
                     // MARK: unfold subject card
-                    /** Unfold all the subject cards inside the given container
+                    /** Unfolds all the subject cards inside the given container
                      * @param {HTMLElement} [container=document.body] The HTML element containing the subject cards to unfold
+                     * @param {Boolean} [bypassFoldedSubjectCardId=false] Default: false — If true, allows to bypass saving the unfolded subject card's id upon unfolding it
                      */
-                    async unfoldAllSubjCards(container=document.body) {
+                    async unfoldAllSubjCards(container=document.body, bypassFoldedSubjectCardId=false) {
                         if (container instanceof HTMLElement) {
-                            container.querySelectorAll(".subject-card.compact").forEach(compactSubjCard => {
-                                this.unfoldSubjCard(compactSubjCard);
+                            (container.querySelectorAll(".subject-card.compact") || []).forEach(compactSubjCard => {
+                                this.unfoldSubjCard(compactSubjCard, bypassFoldedSubjectCardId);
                             })
                         }
                     }
-                    /** Unfold the given subject card
+                    /** Unfolds the given subject card
                      * @param {HTMLElement} [subjCard] The subject card to unfold
+                     * @param {Boolean} [bypassFoldedSubjectCardId=false] Default: false — If true, allows to bypass removing the unfolded subject card's id from the saved folded subject cards' id upon unfolding it
                      */
-                    async unfoldSubjCard(subjCard) {
+                    async unfoldSubjCard(subjCard, bypassFoldedSubjectCardId=false) {
                         if (subjCard?.classList?.contains("subject-card")) {
                             const subjCardHeader = subjCard.querySelector(".subject-card-header");
                             subjCardHeader.classList.remove("fold");
                             subjCardHeader.classList.replace("compact", "detailed");
-                            subjCard.style.height = subjCard.dataset.height+"px";
-
-                            // makes the height go automatic -> correspond to the desired height
+                            
+                            // setting the proper height to the subject card so that its whole content is visible
+                            subjCard.style.height = this.getElementHeightConsideringChildrenHeight(subjCard) + "px";
                             subjCard.classList.replace("compact", "detailed");
                             subjCard.querySelector(".subject-card-header-grades-details").classList.remove("show");
 
-                            this.compactSubjCardsId.splice(this.compactSubjCardsId.indexOf(subjCard.id), 1);
+                            if (!bypassFoldedSubjectCardId) this.compactSubjCardsId.splice(this.compactSubjCardsId.indexOf(subjCard.id), 1);
                             this.detailedSubjCardsId.push(subjCard.id);
                         }
                     }
@@ -5625,7 +6234,7 @@ ecamDash = undefined;
                         
                         this.saveConfig();
                         this.getGradesDatas();
-                        this.generateContent({fadeIn: true});
+                        this.generateContent();
                     }
 
                     subjectCardNameInputAction(target) {
@@ -5641,7 +6250,7 @@ ecamDash = undefined;
 
                         let diffName = true;
                         if (subjNewName == "__#unclassified#__") {
-                            alert(this.lang == "fr" 
+                            alert(!this.langIsEn 
                                 ? "Ce nom n'est pas autorisé ! C'est le nom utilisé en interne pour les matières non-classifiées... Choisis-en un autre!" 
                                 : "This name isn't allowed! That's the name used internally for unclassified subjects... Choose another one!"
                             )
@@ -5650,7 +6259,7 @@ ecamDash = undefined;
                         else {
                             this.moduleConfig[sem][moduleName].subjects.forEach(_subj => {
                                 if (_subj == subjNewName && _subj != subjOldName) {
-                                    alert(this.lang == "fr" 
+                                    alert(!this.langIsEn 
                                         ? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
                                         : "This subject already exists! Please choose a different name"
                                     )
@@ -5668,7 +6277,7 @@ ecamDash = undefined;
                             this.moduleConfig[sem].__modules__.forEach(moduleName => {
                                 this.moduleConfig[sem][moduleName].subjects.forEach(_subj => {
                                     if (_subj == subjNewName && _subj != subjOldName) {
-                                        alert(this.lang == "fr" 
+                                        alert(!this.langIsEn 
                                             ? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
                                             : "This subject already exists! Please choose a different name"
                                         )
@@ -5696,28 +6305,60 @@ ecamDash = undefined;
                             unclassifiedContent.innerHTML = this.createAllSubjCards(sem, "__#unclassified#__");
                             
                             this.resetFixedUnclassifiedSectionHeight();
-                            this.attachAllSubjectCardRelatedEvenListenersForEverySubjectCard();
+                            this.attachAllSubjectCardRelatedEventListenersForEverySubjectCard();
                             this.setGradesTableTotalCoef();
                             this.saveConfig()
                             this.getGradesDatas();
                         }
                     }
 
+                //#endregion
 
-                    subjectCardSimAddBtnAction(target) {
-                        const moduleName = target.dataset.module;
-                        const semX = target.dataset.semester;
-                        const subj = target.dataset.subj;
+
+
+
+                //#region Grades
+
+                    gradeCheckboxAction(target) {
+                        if (target instanceof HTMLElement || target instanceof Event) {
+                            const realTarget    = target instanceof Event ? target.target : target;
+                            const semX          = realTarget.dataset.semester;
+                            const moduleName    = realTarget.dataset.module;
+                            const subj          = realTarget.dataset.subj;
+                            const simTimeStamp  = realTarget.dataset.simtimestamp;
+                            const gradeId       = realTarget.dataset.gradeid;
+                            const ignoredKey    = [semX, subj, simTimeStamp || gradeId].join("\\");
+
+                            if (realTarget.checked) {
+                                // remove this specific ignored key if present
+                                this.disabledGrades = this.disabledGrades?.filter(id => id !== ignoredKey);
+                            } else {
+                                // add ignored key if not already present
+                                if (!this.disabledGrades?.includes(ignoredKey)) this.disabledGrades.push(ignoredKey);
+                            }
+
+                            this.saveIgnoredGrades();
+                            this.getGradesDatas();
+                            // this.getGradesDatas({sem: semX, module: moduleName, subj});
+                            this.regenAveragesAndTotalCoefs(semX, moduleName, subj)
+                        }
+                    }
+                    
+                    simGradeAddBtnAction(target) {
+                        const moduleName    = target.dataset.module;
+                        const semX          = target.dataset.semester;
+                        const subj          = target.dataset.subj;
                         this.ensureSimPath(semX, moduleName, subj);
-                        const typeInp =  document.querySelector(`.simulated-grade-input.sim-inp-type[data-semester="${semX}"][data-subj="${subj}"]`);
-                        const gradeInp = document.querySelector(`.simulated-grade-input.sim-inp-grade[data-semester="${semX}"][data-subj="${subj}"]`);
-                        const coefInp =  document.querySelector(`.simulated-grade-input.sim-inp-coef[data-semester="${semX}"][data-subj="${subj}"]`);
-                        const dateInp =  document.querySelector(`.simulated-grade-input.sim-inp-date[data-semester="${semX}"][data-subj="${subj}"]`);
-                        const type = typeInp?.value||`${this.lang=="fr"? 'Simulé' : "Simulated"}`;
-                        const grade = parseFloat(gradeInp?.value||'');
-                        const coef = parseFloat(coefInp?.value||'');
-                        const date = dateInp?.value||'';
-                        if(isNaN(grade) || isNaN(coef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
+
+                        const typeInp   = document.querySelector(`.simulated-grade-input.sim-inp-type[data-semester="${ semX}"][data-subj="${subj}"]`);
+                        const gradeInp  = document.querySelector(`.simulated-grade-input.sim-inp-grade[data-semester="${semX}"][data-subj="${subj}"]`);
+                        const coefInp   = document.querySelector(`.simulated-grade-input.sim-inp-coef[data-semester="${ semX}"][data-subj="${subj}"]`);
+                        const dateInp   = document.querySelector(`.simulated-grade-input.sim-inp-date[data-semester="${ semX}"][data-subj="${subj}"]`);
+                        const type      = typeInp?.value||`${!this.langIsEn? 'Simulé' : "Simulated"}`;
+                        const grade     = parseFloat(gradeInp?.value||'');
+                        const coef      = parseFloat(coefInp?.value||'');
+                        const date      = dateInp?.value||'';
+                        if(isNaN(grade) || isNaN(coef)){ alert(!this.langIsEn ? "Note et coef requis" : "Grade and coef required"); return; }
 
                         this.ensureSimPath(semX, moduleName, subj);
 
@@ -5749,12 +6390,36 @@ ecamDash = undefined;
                             __sim: true,
                             id: new Date().getYear() + "" + new Date().getMonth() + "" + new Date().getDay() + "" + new Date().getHours() + "" + new Date().getMinutes() + "" + new Date().getSeconds() + "" + new Date().getMilliseconds()
                         });
+
                         this.saveSim();
                         this.getGradesDatas();
-                        this.generateContent({fadeIn: true});
+                        this.generateContent();
                     }
 
-                    subjectCardSimDelBtnAction(target) {
+                    simGradeInputEditAction(target) {
+                        const moduleName    = target.dataset.module;
+                        const semX          = target.dataset.semester;
+                        const subj          = target.dataset.subj;
+                        const id            = target.dataset.simid;
+                        const gradeRow      = target.parentElement.parentElement;
+                        const modifType     = target.dataset.modiftype;
+                        const value         = target.value;
+
+                        const gradeInp      = gradeRow.querySelector(`.simulated-grade-input-edit.sim-inp-grade`);
+                        const coefInp       = gradeRow.querySelector(`.simulated-grade-input-edit.sim-inp-coef `);
+                        const newGrade      = parseFloat(gradeInp?.value||'');
+                        const newCoef       = parseFloat(coefInp?.value||'');
+
+                        if(isNaN(newGrade) || isNaN(newCoef)){ alert(!this.langIsEn ? "Grade et coef requis" : "Grade and coef required"); return; }
+                        this.sim[semX][moduleName][subj][id][modifType] = value;
+
+                        this.saveSim();
+                        this.getGradesDatas();
+                        this.regenAveragesAndTotalCoefs(semX, moduleName, subj);
+
+                    }
+
+                    simGradeDelBtnAction(target) {
                         const semX          = target.dataset.semester;
                         const moduleName    = target.dataset.module;
                         const subj          = target.dataset.subj;
@@ -5764,27 +6429,15 @@ ecamDash = undefined;
                         this.deleteUnusedSimPath(false, semX, moduleName, subj);
                         this.saveSim();
                         this.getGradesDatas();
-                        this.generateContent({fadeIn: false});
-                    }
+                        // this.generateContent({fadeIn: false});
 
-                    subjectCardSimInputEditAction(target) {
-                        const moduleName    = target.dataset.module;
-                        const semX          = target.dataset.semester;
-                        const subj          = target.dataset.subj;
-                        const id            = target.dataset.simid;
-                        const gradeRow      = target.parentElement.parentElement;
-                        const gradeInp      = gradeRow.querySelector(`.simulated-grade-input-edit.sim-inp-grade`);
-                        const coefInp       = gradeRow.querySelector(`.simulated-grade-input-edit.sim-inp-coef `);
-                        const newGrade      = parseFloat(gradeInp?.value||'');
-                        const newCoef       = parseFloat(coefInp?.value||'');
+                        const moduleCard = document.querySelector(`.module-card[data-module="${moduleName}"]`);
+                        const moduleIndex = moduleCard.dataset.index;
+                        moduleCard.outerHTML = this.createModuleCard(semX, moduleName, moduleIndex, true);
 
-                        if(isNaN(newGrade) || isNaN(newCoef)){ alert(this.lang == "fr" ? "Grade et coef requis" : "Grade and coef required"); return; }
-                        this.sim[semX][moduleName][subj][id][target.dataset.modiftype] = target.value;
-
-                        this.saveSim();
-                        this.getGradesDatas();
-                        this.regenAveragesAndTotalCoefs(semX, moduleName, subj);
-
+                        const newModuleCard = document.querySelector(`.module-card[data-module="${moduleName}"]`);
+                        this.attachAllSubjectCardRelatedEventListenersForEverySubjectCard(newModuleCard);
+                        this.regenAveragesAndTotalCoefs(newModuleCard);
                     }
 
                 //#endregion
@@ -5937,7 +6590,16 @@ ecamDash = undefined;
 
 
                 // MARK: attach ondrag events
-                attachOnDragEventListeners(container=document.body, descendants=true) {   // Add ONDRAG cards event
+
+                /** Attach the ondrag event listeners to the children/whole descendance of the given container
+                 * 
+                 * @example this.attachAllCardsOnDragEventListeners(document.querySelector("#container"))
+                 * @example this.attachAllCardsOnDragEventListeners(document.querySelector("#container"), false)
+                 * 
+                 * @param {HTMLElement} [container=document] Default: document — The container of the HTML Elements to attach the ondrag event listeners to
+                 * @param {Boolean} [descendants=true] Default: true — If true, also attaches the ondrag event listeners to all the descendance of the container. Otherwise, attaches the ondrag event listeners only to the direct children of the container
+                 */
+                attachAllCardsOnDragEventListeners(container=document, descendants=true) {
                     if (container instanceof HTMLElement || container == document) {
 
                         if (container?.classList?.contains("module-card-content") || container?.classList?.contains("module-details") || container?.classList?.contains("subject-card")) {
@@ -5945,7 +6607,7 @@ ecamDash = undefined;
                                 this.attachSubjectCardOnDragEventListeners(subjectCard);
                             })
                         }
-                        else if (container?.classList?.contains("semester-content") || container?.classList?.contains("semester-grid") || container?.classList?.contains("modules-section") || container?.classList?.contains("semester-section") || container?.classList?.contains("module-card") || container == document.body) {
+                        else if (container?.classList?.contains("semester-content") || container?.classList?.contains("semester-grid") || container?.classList?.contains("modules-section") || container?.classList?.contains("semester-section") || container?.classList?.contains("module-card") || container == document.body|| container == document) {
                             (container?.classList?.contains("module-card") ? [container] : container.querySelectorAll(".module-card") || []).forEach(moduleCard => {
                                 this.attachModuleCardOnDragEventListeners(moduleCard);
                                 
@@ -5954,10 +6616,11 @@ ecamDash = undefined;
                                         this.attachSubjectCardOnDragEventListeners(subjectCard);
                                     })
                                     
-                                    container.querySelectorAll(`.subject-card.unclassified`).forEach(subjectCard => {
-                                        this.attachSubjectCardOnDragEventListeners(subjectCard);
-                                    })
                                 }
+                            })
+
+                            container.querySelectorAll(`.subject-card.unclassified`).forEach(subjectCard => {
+                                this.attachSubjectCardOnDragEventListeners(subjectCard);
                             })
                         }
 
@@ -5966,8 +6629,7 @@ ecamDash = undefined;
                     this.attachNotifBtnsListener();
                 }
                 attachSubjectCardOnDragEventListeners(subjectCard) {
-
-                    let draggableElement = subjectCard.querySelector(".subject-card-header");
+                    const draggableElement = subjectCard.querySelector(".subject-card-header");
                     
                     draggableElement.draggable = true;
 
@@ -5976,7 +6638,7 @@ ecamDash = undefined;
 
                 }
                 attachModuleCardOnDragEventListeners(moduleCard) {
-                    const moduleHeader = moduleCard.querySelector(".module-header");
+                    const moduleHeader = moduleCard.querySelector(".module-card-header");
                     moduleHeader.draggable = true;
                     moduleHeader.ondragstart = (e) => {this.draggedElementOnDragStartAction(e, moduleCard)}
                     moduleHeader.ondragend   = (e) => {this.draggedElementOnDragEndAction(  e, moduleCard)}
@@ -5984,23 +6646,60 @@ ecamDash = undefined;
 
 
                 // MARK: detach ondrag events
-                detachOnDragEventListeners() {   // Remove ONDRAG cards event
-                    document.querySelectorAll(".subject-card").forEach(subjectCard => {
-                        let draggableElement = "";
-                        const isCompact = subjectCard.classList.contains("compact");
-                        if (isCompact) {draggableElement = subjectCard;}
-                        else {draggableElement = subjectCard.querySelector(".subject-card-header");}
+
+                /** Detach the ondrag event listeners from the children/whole descendance of the given container
+                 * 
+                 * @example this.detachAllCardsOnDragEventListeners(document.querySelector("#container"))
+                 * @example this.detachAllCardsOnDragEventListeners(document.querySelector("#container"), false)
+                 * 
+                 * @param {HTMLElement} [container=document] Default: document — The container of the HTML Elements to attach the ondrag event listeners to
+                 * @param {Boolean} [descendants=true] Default: true — If true, also attaches the ondrag event listeners to all the descendance of the container. Otherwise, attaches the ondrag event listeners only to the direct children of the container
+                 */
+                detachAllCardsOnDragEventListeners(container=document, descendants=true) {
+                    if (container instanceof HTMLElement || container == document) {
+
+                        if (container?.classList?.contains("module-card-content") || container?.classList?.contains("module-details") || container?.classList?.contains("subject-card")) {
+                            (container?.classList?.contains("subject-card") ? [container] : container.querySelectorAll(".subject-card") || []).forEach(subjectCard => {
+                                this.detachSubjectCardOnDragEventListeners(subjectCard);
+                            })
+                        }
+                        else if (container?.classList?.contains("semester-content") || container?.classList?.contains("semester-grid") || container?.classList?.contains("modules-section") || container?.classList?.contains("semester-section") || container?.classList?.contains("module-card") || container == document.body|| container == document) {
+                            (container?.classList?.contains("module-card") ? [container] : container.querySelectorAll(".module-card") || []).forEach(moduleCard => {
+                                this.detachModuleCardOnDragEventListeners(moduleCard);
+                                
+                                if (descendants) {
+                                    moduleCard.querySelectorAll(`.subject-card`).forEach(subjectCard => {
+                                        this.detachSubjectCardOnDragEventListeners(subjectCard);
+                                    })
+                                    
+                                }
+                            })
+
+                            container.querySelectorAll(`.subject-card.unclassified`).forEach(subjectCard => {
+                                this.detachSubjectCardOnDragEventListeners(subjectCard);
+                            })
+                        }
+
+                    }
+                }
+
+                detachModuleCardOnDragEventListeners(moduleCard) {
+                    if (moduleCard?.classList?.contains("module-card")) {
+                        const draggableElement = moduleCard.querySelector(".module-card-header");
                         
                         draggableElement.draggable   = false;
                         draggableElement.ondragstart = null;
                         draggableElement.ondragend   = null;
-                    })
-
-                    document.querySelectorAll(".module-header").forEach(moduleHeader => {
-                        moduleHeader.draggable   = false;
-                        moduleHeader.ondragstart = null;
-                        moduleHeader.ondragend   = null;
-                    })
+                    }
+                }
+                detachSubjectCardOnDragEventListeners(subjectCard) {
+                    if (subjectCard?.classList?.contains("subject-card")) {
+                        const draggableElement = subjectCard.querySelector(".subject-card-header");
+                        
+                        draggableElement.draggable   = false;
+                        draggableElement.ondragstart = null;
+                        draggableElement.ondragend   = null;
+                    }
                 }
 
 
@@ -6156,6 +6855,7 @@ ecamDash = undefined;
 
 
 
+
             //#region -— Dragged element actions __________
 
 
@@ -6196,7 +6896,7 @@ ecamDash = undefined;
                             
 
                             if (!this.compactSubjCardsId.includes(subjectCardId) || this.detailedSubjCardsId.includes(subjectCardId)) {
-                                this.foldSubjCard(subjectCard);
+                                this.foldSubjCard(subjectCard, true);
                             }
 
                         })
@@ -6234,10 +6934,11 @@ ecamDash = undefined;
                         (draggedCardIsSelected ? this.selectedModuleCardsId : [card.id]).forEach(moduleCardId => {
                             const moduleCard            = document.getElementById(moduleCardId);
                             const moduleTotalCoef       = moduleCard.querySelector(".module-subject-total-coef-div");
-                            const moduleHeaderLeftSize  = moduleCard.querySelector(".module-header-left-side");
+                            const moduleHeaderLeftSize  = moduleCard.querySelector(".module-card-header-left-side");
 
                             moduleCard.style.width = "50%";
                             moduleTotalCoef.style.display = "none"; 
+                            moduleHeaderLeftSize.style.width = "50%";
 
                             if (!draggedCardIsSelected) {
                                 // A non-selected module card has been dragged: if it was already folded, we only remove its adjacent module insertion fields, but fold it as well otherwise
@@ -6308,7 +7009,7 @@ ecamDash = undefined;
                                 subjectTotalCoef.style.opacity = ""; 
                                 
     
-                                if (!this.compactSubjCardsId.includes(subjectCardId) || this.detailedSubjCardsId.includes(subjectCardId)) {
+                                if (card.classList.contains("compact") && !this.compactSubjCardsId.includes(subjectCardId) && !this.detailedSubjCardsId.includes(subjectCardId)) {
                                     this.unfoldSubjCard(subjectCard);
                                 }
                             }
@@ -6347,13 +7048,13 @@ ecamDash = undefined;
 
                         (draggedCardIsSelected ? this.selectedModuleCardsId : [card.id]).forEach(moduleCardId => {
                             const moduleCard            = document.getElementById(moduleCardId);
-                            
+                            const moduleTotalCoef       = moduleCard.querySelector(".module-subject-total-coef-div");
+                            const moduleHeaderLeftSize  = moduleCard.querySelector(".module-card-header-left-side");
+
                             if (moduleCard) {
-                                const moduleTotalCoef       = moduleCard.querySelector(".module-subject-total-coef-div");
-                                const moduleHeaderLeftSize  = moduleCard.querySelector(".module-header-left-side");
-                                
                                 moduleCard.style.width = "";
                                 moduleTotalCoef.style.display = "";
+                                moduleHeaderLeftSize.style.width = "";
     
                                 if (!draggedCardIsSelected) {
                                     // A non-selected module card has been dropped: if it was already folded before being dragged, we only show its adjacent module insertion fields, but unfold it as well otherwise
@@ -6419,7 +7120,7 @@ ecamDash = undefined;
                     selectionNotifDiv.innerHTML = `
                         <div class="selected-card-notif-div-scroll-btn" id="selected-card-notif-div-del-btn-for-${target}-from-semester-${semester}" data-targetId="${targetId}">\></div>
                         <span style="font-weight: 600; font-size: 14px; color: white">${target}${!isSubject ? ` Module` : ""}</span>
-                        <span>${this.lang == "fr" ? `est sélectionné!` : `is selected!`}</span>
+                        <span>${!this.langIsEn ? `est sélectionné!` : `is selected!`}</span>
                         <div class="selected-card-notif-div-del-btn" id="selected-card-notif-div-del-btn-for-${target}-from-semester-${semester}" data-targetId="${targetId}">x</div>
                     `;
 
@@ -6519,7 +7220,7 @@ ecamDash = undefined;
 
 
 
-            //#region -— Drop fields actions  ________________
+            //#region -— Drop fields  _________________________
 
 
 
@@ -6841,7 +7542,7 @@ ecamDash = undefined;
                         }
                     }
                     else {
-                        const newSubjName = this.lang == "fr" ? "Nouvelle matière" : "New subject";
+                        const newSubjName = !this.langIsEn ? "Nouvelle matière" : "New subject";
                         newModuleConfig.subjects.push(newSubjName);
                         newModuleConfig.coefficients[newSubjName] = 100;
                     }
@@ -6990,12 +7691,12 @@ ecamDash = undefined;
                                     break;
 
                                     case "subject card comes from a module and is moved to a different module":
-                                        // We move the datas from the old module to the new module
+                                        // We move the datas from the old module to the new module // may be coming from the unclassified section, so it's taken into account
                                         this.moduleConfig[sem][targetModuleName].subjects.splice(insertionIndex, 0, subject);
-                                        this.moduleConfig[sem][targetModuleName].coefficients[subject]  = Number (this.moduleConfig[sem][oldModuleName].coefficients[subject]);
+                                        this.moduleConfig[sem][targetModuleName].coefficients[subject]  = Number (this.moduleConfig[sem]?.[oldModuleName]?.coefficients?.[subject] || 0);
 
-                                        this.moduleConfig[sem][oldModuleName].subjects.splice(subjectOldIndex, 1);
-                                        delete this.moduleConfig[sem][oldModuleName].coefficients[subject];
+                                        this.moduleConfig[sem]?.[oldModuleName]?.subjects?.splice(subjectOldIndex, 1);
+                                        delete this.moduleConfig[sem]?.[oldModuleName]?.coefficients?.[subject];
                                     break;
 
                                     case "subject card comes from a module and is reorganized to a different index":
@@ -7093,9 +7794,9 @@ ecamDash = undefined;
                         const moduleCard = document.getElementById(`module-card-${module}-in-semester-${sem}`);
                         const moduleDetails = moduleCard.querySelector(".module-details");
 
-                        let newSubjName = `${this.lang == "fr" ? "Nouvelle matière" : "New subject"} 1`; let count = 1;
+                        let newSubjName = `${!this.langIsEn ? "Nouvelle matière" : "New subject"} 1`; let count = 1;
                         while (this.gradesDatas[sem][module].subjects[newSubjName]) {
-                            count++; newSubjName = `${this.lang == "fr" ? "Nouvelle matière" : "New subject"} ${count}`;
+                            count++; newSubjName = `${!this.langIsEn ? "Nouvelle matière" : "New subject"} ${count}`;
                         }
 
                         const insertionIndex = methodCaller ? methodCaller.dataset.index : this.moduleConfig[sem][module].subjects.length;
@@ -7108,7 +7809,7 @@ ecamDash = undefined;
                         
                         moduleDetails.innerHTML = this.createAllSubjCards(sem, module);
 
-                        this.attachAllSubjectCardRelatedEvenListenersForEverySubjectCard();
+                        this.attachAllSubjectCardRelatedEventListenersForEverySubjectCard();
                         this.setGradesTableTotalCoef();
                     }
                 }
@@ -7118,7 +7819,6 @@ ecamDash = undefined;
                 // MARK: dropFieldModuleInsertAction
                 dropFieldModuleInsertAction(cardId=null, methodCaller=null) {
                     const sem = this.currentSemester;
-                    debugger;
                     if (cardId) {
                         const card = document.getElementById(cardId);
 
@@ -7177,10 +7877,10 @@ ecamDash = undefined;
                 const importClear   = importMenu.querySelector(".import-menu-btn.clear");
                 const importOnline  = importMenu.querySelector(".import-menu-btn.online");
 
-                importFile.children[0].innerHTML   = this.lang == "fr" ? "Importer fichier de configuration .json"   : "Import a .json configuration file";
-                importClear.innerHTML = this.lang == "fr" ? "Effacer Config"   : "Clear Config";
-                importClear.title     = this.lang == "fr" ? "Clique ici pour effacer ta configuration actuelle" : "Click here to clear your current configuration";
-                importOnline.children[1].innerHTML = this.lang == "fr" ? "Obtenir fichier de configuration en ligne" : "Get a configuration file online";
+                importFile.children[0].innerHTML   = !this.langIsEn ? "Importer fichier de configuration .json"   : "Import a .json configuration file";
+                importClear.innerHTML = !this.langIsEn ? "Effacer Config"   : "Clear Config";
+                importClear.title     = !this.langIsEn ? "Clique ici pour effacer ta configuration actuelle" : "Click here to clear your current configuration";
+                importOnline.children[1].innerHTML = !this.langIsEn ? "Obtenir fichier de configuration en ligne" : "Get a configuration file online";
                 
                 if (!importMenu.classList.contains("show") || open == true) {
                     clearTimeout(this.timeouts?.closeImportMenu);
@@ -7217,6 +7917,7 @@ ecamDash = undefined;
                 this.timeouts.closeImportMenu = setTimeout(() => {importMenu.style.display = "none"}, 300);
 
                 const pickerMenuContainer        = document.createElement("div");
+                this.ecamDash.appendChild(pickerMenuContainer);
                 pickerMenuContainer.className    = `online-cfg-picker-menu-container`;
                 const sectionsHTML      = this.generateOnlineCfgPickerMenuDirTree("section");
                 const yearsHTML         = this.generateOnlineCfgPickerMenuDirTree("year");
@@ -7225,7 +7926,7 @@ ecamDash = undefined;
 
                 pickerMenuContainer.innerHTML = `
                     <div class="online-cfg-picker-menu modal${this.settings.blurEnabled.value ? " blur" : ""}" id="pickerMenu">
-                        <div class="online-cfg-picker-menu-header jura">${this.lang == "fr" 
+                        <div class="online-cfg-picker-menu-header jura">${!this.langIsEn 
                             ? "Note: Choisir une configuration effacera les traces de configuration pré-existante de l'année correspondante, mais pas des autres années" 
                             : "Tip: Choosing a configuration will erase all traces of pre-existing configuration of the corresponding year, but not of the other years"
                         }</div>
@@ -7240,7 +7941,53 @@ ecamDash = undefined;
                     </div>
                 `;
 
-                this.ecamDash.appendChild(pickerMenuContainer);
+
+                if (this.firstStepsTutoPickerMenu) {
+
+                    const firstStepTipForOnlineCfgPickerMenu = (callback=()=>{}) => {
+                        this.createTipNotif(
+                            document.querySelector("#pickerMenu"),
+                            ".online-cfg-picker-menu-dir-card.config",
+                            !this.langIsEn ? "Navigue dans le menu pour trouver la configuration qui correspond à ta section → année → promo [→ fillière, si besoin] actuelle" : "Navigate through the menu to find the configuration that corresponds to your current section → year → prom [→ pathway, if needed]", 
+                            {
+                                nextAction: callback, 
+                                nextActionDelay: 550, 
+                                containerStyle: {position: "absolute", width: "100%", top: "-76px", right: "0"}, 
+                                notifStyle: {minWidth: "1040px"}, 
+                                targetElemStyle: {}, 
+                                containerElemStyle: {}
+                            }
+                        )
+                    };
+
+                    const finalFirstStepTip = (callback=()=>{}) => {
+                        this.createTipNotif(
+                            document.body,
+                            ".tuto-tip-notif-container",
+                            !this.langIsEn 
+                                ? `Ta configuration est chargée ! Tu peux filtrer l'affichage des notes par semestres en sélectionnant le semestre désiré dans la barre de filtre.
+                                Tu peux également refaire la manipulation pour obtenir la configuration des années précédentes si elles sont disponibles.
+                                <div>[ Clique pour fermer le tuto ]</div>`
+                                : `Your configuration is loaded! You can filter the grades' display by semester, by selecting the desired semester in the filter bar.
+                                You can also do the manipulation again to obtain the configuration of previous years if they are available.
+                                <div>[ Click to close the tuto ]</div>`
+                            ,
+                            {
+                                nextAction: callback, 
+                                nextActionDelay: 1, 
+                                containerStyle: {position: "fixed", width: "100%", height: "100%", top: "0"}, 
+                                notifStyle: {maxWidth: "60%"}, 
+                                targetElemStyle: {}, 
+                                containerElemStyle: {}
+                            }
+                        )
+                    };
+
+                    setTimeout(() => {
+                        firstStepTipForOnlineCfgPickerMenu(() => (finalFirstStepTip(this.stopFirstStepsTutorial)));
+                    }, 10)
+                }
+
                 const pickerMenu = document.querySelector("#pickerMenu");
                 
                 this.appendCloseModalIcon(pickerMenu)
@@ -7249,9 +7996,9 @@ ecamDash = undefined;
                 setTimeout(() => {pickerMenu.classList.add("show");}, 10)
                 
                 pickerMenuContainer.onmousedown = (e) => {
-                    if (e.target.closest(".modal-close-btn") || !e.target.closest("#pickerMenu")) {
+                    if ((e.target.closest(".modal-close-btn") || !e.target.closest("#pickerMenu")) && !document.querySelector(".new-user-notif-fullscreen-effect.focus")) {
                         pickerMenuContainer.onmouseup = (e) => {
-                            if (e.target.closest(".modal-close-btn") || !e.target.closest("#pickerMenu")) {
+                            if ((e.target.closest(".modal-close-btn") || !e.target.closest("#pickerMenu")) && !document.querySelector(".new-user-notif-fullscreen-effect.focus")) {
                                 this.closeOnlineCfgPickerModal()
                             }
                             pickerMenuContainer.onmouseup = null;
@@ -7295,13 +8042,30 @@ ecamDash = undefined;
                         }
                     }
                 }
+
+                const modalCloseBtnContainer = pickerMenu.querySelector(".modal-close-btn-container");
+
+                modalCloseBtnContainer.onmouseenter = (e) => {
+                    if (document.querySelector(".new-user-notif-fullscreen-effect.focus")) {
+                        modalCloseBtnContainer.style.cursor = "not-allowed";
+                    }
+                };
+                modalCloseBtnContainer.onmouseleave = (e) => {
+                    if (document.querySelector(".new-user-notif-fullscreen-effect.focus")) {
+                        modalCloseBtnContainer.style.cursor = "";
+                    }
+                };
             }
 
             closeOnlineCfgPickerModal() {
                 const pickerMenu = document.querySelector("#pickerMenu");
                 if (pickerMenu) {
                     pickerMenu.classList.remove("show");
-                    this.timeouts.closePickerMenu = setTimeout(() => {pickerMenu.parentElement.remove(); this.attachDocumentMouseListeners()}, 300);
+                    this.timeouts.closePickerMenu = setTimeout(() => {
+                        pickerMenu.parentElement.remove(); 
+                        this.attachDocumentMouseListeners();
+                        this.attachEcamDashMouseListeners();
+                    }, 300);
                 }
             }
 
@@ -7313,7 +8077,7 @@ ecamDash = undefined;
 
                 let html = type == "section" ? `
                 <div class="online-cfg-picker-menu-dir-tree ${type} show" data-path="${sectionsData.path}">
-                    <div class="online-cfg-picker-menu-dir-tree-header ${type} ${this.lang == "fr" ? "fr" : "en"}"></div>
+                    <div class="online-cfg-picker-menu-dir-tree-header ${type} ${this.lang}"></div>
                     <div class="online-cfg-picker-menu-dir-tree-nb-cfgs jura">${sectionsData.nbCfgs} config${sectionsData.nbCfgs>1?"s":""}</div>
                     <div class="online-cfg-picker-menu-dir-tree-body">
                 ` : "";
@@ -7327,7 +8091,7 @@ ecamDash = undefined;
                     
                     let out = type == "year" ? `
                     <div class="online-cfg-picker-menu-dir-tree ${type}" data-path="${sectionDirData.path}">
-                        <div class="online-cfg-picker-menu-dir-tree-header ${type} ${this.lang == "fr" ? "fr" : "en"}"></div>
+                        <div class="online-cfg-picker-menu-dir-tree-header ${type} ${this.lang}"></div>
                         <div class="online-cfg-picker-menu-dir-tree-nb-cfgs jura">${sectionDirData.nbCfgs} config${sectionDirData.nbCfgs>1?"s":""}</div>
                         <div class="online-cfg-picker-menu-dir-tree-body">
                     ` : "";
@@ -7342,7 +8106,7 @@ ecamDash = undefined;
                         const name = yearDirData.path.split("/").at(-1);
                         let out = type == "prom" ? `
                         <div class="online-cfg-picker-menu-dir-tree ${type}" data-path="${yearDirData.path}">
-                            <div class="online-cfg-picker-menu-dir-tree-header ${type} ${this.lang == "fr" ? "fr" : "en"}"></div>
+                            <div class="online-cfg-picker-menu-dir-tree-header ${type} ${this.lang}"></div>
                             <div class="online-cfg-picker-menu-dir-tree-nb-cfgs jura">${yearDirData.nbCfgs} config${yearDirData.nbCfgs>1?"s":""}</div>
                             <div class="online-cfg-picker-menu-dir-tree-body">
                         ` : "";
@@ -7358,7 +8122,7 @@ ecamDash = undefined;
                             this.tempGitConfigParentDirData = promDirData;
                             let out = type == "config" ? `
                             <div class="online-cfg-picker-menu-dir-tree ${type}" data-path="${promDirData.path}">
-                                <div class="online-cfg-picker-menu-dir-tree-header ${type} ${this.lang == "fr" ? "fr" : "en"}"></div>
+                                <div class="online-cfg-picker-menu-dir-tree-header ${type} ${this.lang}"></div>
                                 <div class="online-cfg-picker-menu-dir-tree-nb-cfgs jura">${promDirData.nbCfgs} config${promDirData.nbCfgs>1?"s":""}</div>
                                 <div class="online-cfg-picker-menu-dir-tree-body">
                             ` : "";
@@ -7420,7 +8184,7 @@ ecamDash = undefined;
 
                             // If parsed contains moduleConfig, apply it to the dashboard and persist
                             if (parsed?.version != this.configVersion) {
-                                alert(this.lang == "fr" 
+                                alert(!this.langIsEn 
                                     ? `Ce fichier de configuration n'est pas de la bonne version ! Assure-toi de télécharger la dernière version ! (Ce fichier est de version "${parsed?.version}", alors qmodule la version de fichier attendmodule est "${this.configVersion}")`
                                     : `This configuration file isn't of the right version! Make sure you download the latest version! (This file's version is "${parsed?.version}", whereas the file's version expected is "${this.configVersion}")`
                                 )
@@ -7441,7 +8205,7 @@ ecamDash = undefined;
                             }
                             else {
                                 console.log(parsed);
-                                alert(this.lang == "fr" 
+                                alert(!this.langIsEn 
                                     ? `Ce fichier de configuration est invalide ! Je ne trouve pas les données attendmodules !`
                                     : `This configuration file is invalid! I don't find the expected datas!`
                                 )
@@ -7550,9 +8314,10 @@ ecamDash = undefined;
                         this.editMode = !this.editMode;
                         localStorage.setItem("ECAM_DASHBOARD_DEFAULT_EDIT_MODE", this.editMode);
 
+                        this.foldedModuleCardsId = []; document.querySelector(".fold-toggle").classList.remove("active");
                         this.removeCardFromSelection();
                         this.scrollToClientHighestElem();
-                        this.generateContent();
+                        this.generateContent({manageIndividualSubjectCardFolding: false});
                     }
                     else if (this.keyInputMatch(e, "D", shiftRequired)) {
                         const unclassifiedSection = document.querySelector(".unclassified-section");
@@ -7583,10 +8348,11 @@ ecamDash = undefined;
                     }
                     else if (this.keyInputMatch(e, "L", shiftRequired)) {
                         
-                        this.lang = this.lang == "fr" ? "en" : "fr";
+                        this.langIsEn = !this.langIsEn;
+                        this.lang     = this.langIsEn ? "en" : "fr";
                         localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
 
-                        if (this.lang == "fr") {
+                        if (!this.langIsEn) {
                             document.getElementById('fr-lang-btn').classList.add('active')
                             document.getElementById('en-lang-btn').classList.remove('active')
                         }
@@ -7599,7 +8365,7 @@ ecamDash = undefined;
                         this.generateContent({fadeIn: false});
                     }
                     else if (this.keyInputMatch(e, "F", shiftRequired)) {
-                        const className = "module-header", timeout = 210, highestElemInPageHandleType = "last above", smooth = true;
+                        const className = "module-card-header", timeout = 210, highestElemInPageHandleType = "last above", smooth = true;
 
                         if (this.foldedModuleCardsId.length == 0) {
                             this.scrollToClientHighestElem("first", {className, timeout, highestElemInPageHandleType, smooth, block: "center"});
@@ -7629,18 +8395,19 @@ ecamDash = undefined;
                         newActiveSemFilterTab.classList.add("active");
                         this.currentSemester = newActiveSemFilterTab.dataset.filter;
 
+                        this.foldedModuleCardsId = []; document.querySelector(".fold-toggle").classList.remove("active");
                         this.saveSemesterFilter();
                         this.removeCardFromSelection();
-                        this.generateContent({fadeIn: false});
+                        this.generateContent({fadeIn: false, manageIndividualSubjectCardFolding: false});
                     }
                 };
             }
             if (mode == "edit sim grade") {
                 document.onkeydown = (e) => {
                     if (this.keyInputMatch(e, "Enter", noModifierAllowed)) {
-                        if (target.classList.contains("simulated-grade-input")) {
+                        if (e.target.classList.contains("simulated-grade-input")) {
 
-                            if      (target.classList.contains("sim-inp-type")) {
+                            if      (e.target.classList.contains("sim-inp-type")) {
                                 const simInpGrade = document.querySelector(`.simulated-grade-input.sim-inp-grade[data-subj="${target.dataset.subj}"][data-semester="${target.dataset.semester}"]`);
                                 simInpGrade.focus({preventScroll: true, focusVisible: true});
                                 const simInpGradeCoord = simInpGrade.getBoundingClientRect().top;
@@ -7649,18 +8416,23 @@ ecamDash = undefined;
                                     simInpGrade.scrollIntoView({block: "center", smooth: true});
                                 }
                             }
-                            else if (target.classList.contains("sim-inp-grade")) {
+                            else if (e.target.classList.contains("sim-inp-grade")) {
                                 const simInpCoef = document.querySelector(`.simulated-grade-input.sim-inp-coef[data-subj="${target.dataset.subj}"][data-semester="${target.dataset.semester}"]`);
+                                // Prevents the instant scroll if the text field is out of the screen
                                 simInpCoef.focus({preventScroll: true, focusVisible: true});
                                 const simInpCoefTopCoord = simInpCoef.getBoundingClientRect().top;
                                 
+                                // Smoothly scrolls to the text field if it's out of the screen
                                 if (simInpCoefTopCoord < 0 || simInpCoefTopCoord > window.innerHeight) {
                                     simInpCoef.scrollIntoView({block: "center", smooth: true});
                                 }
                             }
-                            else if (target.classList.contains("sim-inp-coef")) {
+                            else if (e.target.classList.contains("sim-inp-coef")) {
                                 const simAddBtn = document.querySelector(`.sim-add-btn[data-subj="${target.dataset.subj}"][data-semester="${target.dataset.semester}"]`);
-                                this.subjectCardSimAddBtnAction(simAddBtn);
+                                
+                                this.simGradeAddBtnAction(simAddBtn);
+                                this.attachAllAnyInputsListeners();
+
                             }
 
                         }
@@ -7672,7 +8444,7 @@ ecamDash = undefined;
     }
 
 
-    //MARK: —————————————————
+    //MARK: ——————————————————
 
 
 
@@ -7682,7 +8454,7 @@ ecamDash = undefined;
 
         if (!error) {
             window.onload = () => { 
-                
+
                 const greyGridTable = document.querySelector(".greyGridTable");
                 const intranetFold = document.createElement("div");
                 intranetFold.className = "intranet-fold";
@@ -7696,6 +8468,27 @@ ecamDash = undefined;
                     </div>
                 `;
                 document.querySelector("#currentNote").insertBefore(intranetFold, greyGridTable);
+
+                intranetFold.onclick = (e) => {
+                    const header            = e.target.closest('.intranet-fold');
+                    const intranetTable     = document.querySelector('.greyGridTable');
+                    const intranetToggle    = header.querySelectorAll('.intranet-toggle');
+
+                    intranetToggle.forEach(t => {
+                        if (t.previousElementSibling == null){
+                            t.classList.toggle('openLeft')
+                        } else {
+                            t.classList.toggle('openRight');
+                        }
+                    });
+
+                    if (intranetTable.style.display == 'none') {
+                        intranetTable.style.display = 'block';
+                    } else {
+                        intranetTable.style.display = 'none';
+                    }
+                }
+
                 greyGridTable.style.display = "none";
                 
                 new ECAMDashboard(error); 

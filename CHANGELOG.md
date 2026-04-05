@@ -1,3 +1,36 @@
+# PATCH NOTES v2.5
+
+
+## What's new in v2.5.0 ?
+
+### Features
+- **First steps tutorial**:<br> 
+When you launch the extension for the first time since this update, you will be notified to click on the help menu button to access to the first steps tutorial. It will guide you through the dashboard for your first time, filing you in with the most basic informations. Honestly, following this SUPER LONG (4 steps) tutorial just the required amount of info to know how to use the extension. It doesn't cover all the features, just the bare minimum ones.<br>
+If you want more info... well wait for update v2.5.1 lol, I'll make a more complete tutorial to cover all the features of the dashboard, I'm procrastinating a bit on that one, it's been planned for a while, but yeah I'll get to it
+
+- **Class average**: <br>
+The class average for each subject, module and semester are now displayed. You can turn it off in the settings if you don't want to see them.
+
+
+### Improvements
+- Yet again more improvements for subject cards and module cards animations lol
+
+- Your semester average is now refreshed if you disable a grade, add or delete a simulated grade
+
+### Fixes
+- Fixed inconsistency with the switch between detailed and compact (and the other way around) on certain actions, and fixed the view mode not being saved for the next time you visit the dashboard
+- Fixed the issue with some actions not working after deleting a simulated grade
+
+
+
+
+
+<br>                    <br>                    <br>                    <br>
+
+
+
+
+
 # PATCH NOTES v2.4
 
 
@@ -7,7 +40,8 @@
 
 ## What's new in v2.4.1 ?
 ### Features
-- New setting: Scroll Helpers (enabled by default): some actions change the vertical size of the page (switching detailed/compact view mode, switching edit mode...). A scroll occurs to make sure the important elements (module/subject card, for instance) remain on screen, to follow this change of vertical size. You may not like being forced to scroll, I can understand, so I leave you the choice to turn it off. Though a few scroll helpers bypass this setting, but those are purely esthetic scrolls
+- **New setting: Scroll Helpers (enabled by default)**: <br>
+some actions change the vertical size of the page (switching detailed/compact view mode, switching edit mode...). A scroll occurs to make sure the important elements (module/subject card, for instance) remain on screen, to follow this change of vertical size. You may not like being forced to scroll, I can understand, so I leave you the choice to turn it off. Though a few scroll helpers bypass this setting, but those are purely esthetic scrolls
 
 ### Improvements
 - Slight improvement for folded module cards
@@ -24,17 +58,24 @@
 
 
 
+<br>        <br>
 
 
 ## What's new in v2.4.0 ?
 ### Features
-- Added subject card deletion buttons (you don't HAVE to drag and drop them in the "Remove from module" drop field anymore). All selected subject cards are deleted along with the subject card whose deletion button was pressed, if the said subject card is selected
 
-- Added module card selection: you can now select multiple module cards the same way you already could with the subject cards. Dropping a selection of module cards in a field applies the effect of the field on each module selected
+- **Patch note**: <br>
+A patch note will now be available for every update. You may visit it at any time by clicking on the number of the version, at the very top of the dashboard, next to the dashboard's title
 
-- You can now drag a module card and drop it onto a subject insertion field to insert all the subjects of the dragged module card in the new module card (containing the subject insertion field, in the same order as the subjects were in their old module card)
+- **Subject card deletion buttons**: <br> 
+Added subject card deletion buttons (you don't HAVE to drag and drop them in the "Remove from module" drop field anymore). All selected subject cards are deleted along with the subject card whose deletion button was pressed, if the said subject card is selected
 
-- A patch note will now be available for every update. You may visit it at any time by clicking on the number of the version, at the very top of the dashboard, next to the dashboard's title
+- **Added module card selection**: <br>
+You can now select multiple module cards the same way you already could with the subject cards. Dropping a selection of module cards in a field applies the effect of the field on each module selected
+
+- **Module card dropped in subject insertion field**: <br>
+You can now drag a module card and drop it onto a subject insertion field to insert all the subjects of the dragged module card in the new module card (containing the subject insertion field, in the same order as the subjects were in their old module card)
+
 
 ### Improvements
 - "Notes" in the dockbar now always appears on the right of the search bar (wasn't consistently inserted)
@@ -46,6 +87,7 @@
 - refreshing the content (by switching edit mode, view mode, or editing the name of a module) doesn't reset the individual folding state of a card, meaning that a folded card will remain folded even after refreshing the content
 - improved selected card notifs' texts alignment
 - proper handling of the subject card header grades details (indicating the number of grades in the subject and more) when un.folding a subject card
+
 
 ### Fixes
 - fixed the total coef value of the subject cards not disappearing after reloading when its setting is disabled
@@ -63,15 +105,7 @@
 
 
 
-
-
-
-
-
-
-
-
-
+<br>                    <br>                    <br>                    <br>
 
 
 

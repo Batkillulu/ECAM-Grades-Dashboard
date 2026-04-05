@@ -6,13 +6,8 @@ Institutional use, official deployment, or integration into the ECAM intranet re
 This project is not affiliated with or endorsed by ECAM LaSalle.
 All trademarks and logos belong to their respective owners.
 
-
-
-# Table of content
-### [○ Installation guide ⤦](#installation-guide)
-### [○ HOW TO USE: Quick start ⤦](#how-to-use-quick-start)
-
-
+[HOW TO USE: Quick start ⤦](#how-to-use-quick-start)
+<br></br>
 
 # Installation guide
 ## Available platforms:
@@ -37,13 +32,7 @@ This will redirect you to a Tampermonkey page that will ask you to install the s
 ### — Step 4: Enjoy! [Go to ECAM Grades! ↗](https://espace.ecam.fr/group/education/notes)
 Your ECAM Grades Dashboard is fully operational! If you're lucky enough, you may already have configurations prepared, you can go and check on `Import Config`, `Get a configuration online` and browse through the menu. If you don't find it and you're feeling generous, please share with me the details of your modules (specifically what subjects are in what modules, as well as their coefficients in their respective modules, you should have received a mail from ECAM with all the details somewhere, you can just provide me with this) at the following mail address baptiste.jacquin@ecam.fr, or in the message box on which will be redirected when clicking on the flag button, `Share a config`. You can also do the 2nd option if you already configured a semester, and want to share it, after pressing `Export config`. Thank you!
 
-
-### Step 5?
-If you want to take the time to have a look at all the features of this dashboard, [click here to read the following-up How-to-use section](#how-to-use-quick-start)
-
-
-
-## ———— IOS ————
+## - IOS - 
 
 ### — Step 1: [Install Userscripts ↗](https://apps.apple.com/us/app/userscripts/id1463298887)
 It's a web browser extension that allows to run JavaScript scripts upon loading a specified website.
@@ -60,14 +49,18 @@ In the Extension Page, click the + button, then click "New JS". Keep this page o
 ### — Step 5: [Get the ECAM Grades Dashboard Script ↗](https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/ECAM%20Grades%20Dashboard.user.js)
 Open the script's page by clicking on the header of this step, select the whole code by pressing `Command + A` and copy it with `Command + C`. Now come back on the previously opened Userscript New JS page, and paste the code with `Command + V`, and click on `Save`.
 
-### — Step6: Enjoy! [Go to ECAM Grades! ↗](https://espace.ecam.fr/group/education/notes)
-Your ECAM Grades Dashboard is fully operational! If you're lucky enough, you may already have configurations prepared, you can go and check on `Import Config`, `Get a configuration online` and browse through the menu. If you don't find it and you're feeling generous, please share with me the details of your modules (specifically what subjects are in what modules, as well as their coefficients in their respective modules, you should have received a mail from ECAM with all the details somewhere, you can just provide me with this) at the following mail address baptiste.jacquin@ecam.fr, or in the message box on which will be redirected when clicking on the flag button, `Share a config`. You can also do the 2nd option if you already configured a semester, and want to share it, after pressing `Export config`. Thank you!
+### — Step6:  Enjoy! [Go to ECAM Grades! ↗](https://espace.ecam.fr/group/education/notes)
+Your ECAM Grades Dashboard is fully operational! Click here to go to your ECAM Grades. You will be notified to click on the help menu button to follow a quick (4 steps) tutorial to guide you with your first visit on the dashboard!
+
+For people who prefer reading directly: If you're lucky enough, you may already have configurations prepared, you can go and check on `Import Config`, `Get a configuration online` and browse through the menu. If you don't find it and you're feeling generous, please share with me the details of your modules (specifically what subjects are in what modules, as well as their coefficients in their respective modules, you should have received a mail from ECAM with all the details somewhere, you can just provide me with this) at the following mail address baptiste.jacquin@ecam.fr, or in the message box on which will be redirected when clicking on the flag button, `Share a config`. You can also do the 2nd option if you already configured a semester, and want to share it, after pressing `Export config`. Thank you!
 
 ### Step 5?
 If you want to take the time to have a look at all the features of this dashboard, check the section just below to quickly learn about what the dashboard does.
 
 
 
+<br></br>
+<br></br>
 
 
 # HOW TO USE: QUICK START
@@ -76,13 +69,8 @@ If you want to take the time to have a look at all the features of this dashboar
 ## How does this dashboard work?
 It simply reads the classic ECAM Grades table (that you can still find all the way down, by clicking on "Show ECAM Intranet's Grades Table"), sort every grades of the same semester in ***semester sections***, and then packs them together in ***subject cards*** corresponding to the subject of the grade. An average of your subject is then calculated and displayed below the name of the subject. ***Subject cards*** may be packed in a ***module card*** when you turn on the ***edit mode*** by clicking on the ***edit mode button***, or by pressing `Shift+E`. For more informations on how to set up your modules, see the section below "[Modules configuration ⤦](#modules-configuration)".
 
-You can switch between the french and the english language by clicking on their corresponding ***language buttons***, or by pressing `Shift+L`.
-You can filter by semester with the ***semester filter bar*** (you can also collapse the content of a semester by clicking on its header, mainly useful when you're showing ALL the semesters). 
-You can switch between ***compact view mode*** (showing only the name of the subject and its average) and ***detailed view mode*** (showing the name of the subject and its average, but also the table of all the grades of this subject), by clicking on the appropriate ***view mode button*** next to the the ***semester filter bar***, or by pressing `Shift+D` to switch between the 2 view modes.
-You can also ***fold cards***: click on the ***header*** of a ***module card*** or of a ***subject card***, and the ***card*** will be ***folded*** (for a more compact view, note that a folded ***subject card*** is shown in ***compact view mode***)
-
-
-
+You can filter by semester with the ***semester filter bar*** (you can also collapse the content of a semester by clicking on its header, mainly useful when you're showing ALL the semesters), and you can switch between ***compact view mode*** (showing only the name of the subject and its average) and ***detailed view mode*** (showing the name of the subject and its average, but also the table of all the grades of this subject), by clicking on the appropriate ***view mode buttons*** next to the the ***semester filter bar***, or by pressing `Shift+D`. You may switch between the french and the english language by clicking on their corresponding ***language buttons***, or by pressing `Shift+L`.
+<br></br>
 
 # Features:
 ## Features list:
