@@ -8505,7 +8505,7 @@ ecamDash = undefined;
 
                 greyGridTable.style.display = "none";
                 
-                new ECAMDashboard(error); 
+                ecamDash = new ECAMDashboard(error); 
             };
         }
         else if (error == "servers are down") {
