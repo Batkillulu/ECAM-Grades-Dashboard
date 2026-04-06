@@ -1,6 +1,11 @@
 # PATCH NOTES v2.5
 
 
+## What's new in v2.5.1 ?
+
+### Fixes
+- hotfix for the number of validated modules
+
 ## What's new in v2.5.0 ?
 
 ### Features
@@ -51,6 +56,7 @@ some actions change the vertical size of the page (switching detailed/compact vi
 ### Fixes
 - Fixed problem with alone subjects when dragged in the addition drop field getting unclassified unintendedly
 
+- Fixed a problem occuring when dropping a card in the deletion drop field
 - Fixed the automatic scroll to the dash header when importing a config (it wasn't selecting the dash header and was using a fallback instead)
 - Fixed the side drop fields not removing their hover attribute when dropping a card inside (the next time a card was dragged, the said fields kept having their hover attribute)
 
