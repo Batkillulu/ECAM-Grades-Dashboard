@@ -1,6 +1,11 @@
 # PATCH NOTES v2.5
 
 
+## What's new in v2.5.1 ?
+
+### Fixes
+- hotfix for the number of validated modules
+
 ## What's new in v2.5.0 ?
 
 ### Features

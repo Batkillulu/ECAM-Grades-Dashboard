@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.5.0
+// @version      2.5.1
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/*
@@ -1036,7 +1036,7 @@ ecamDash = undefined;
             this.ecamDash = document.createElement("div");
 
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.5.0";
+            this.scriptVersion = "2.5.1";
             this.scriptGitVersion = "1.0.0";
             this.configVersion = 3;
             this.error = error; // test in error mode at this link: https://espace.ecam.fr/c/portal/login?redirect=%2Fgroup%2Feducation%2Fnotes&p_l_id=0&ticket=ST-113179-sbwjXieT3GLY9T3fXdsmFp9vCro-tomcat03
@@ -1915,6 +1915,509 @@ ecamDash = undefined;
 
 
 
+                // MARK: getGradesDatas
+                getGradesDatas({sem=undefined, module=undefined, subj=undefined}={sem: undefined, module: undefined, subj: undefined}) {
+
+                    
+                    
+                    // MARK: semester section
+                    // FOR EACH SEMESTER
+                    (sem && this.moduleConfig?.[sem] ? [sem] : Object.keys(this.semesters)).forEach((semX) => {
+                        
+                        this.gradesDatas[semX] = {"__#unclassified#__": {}};
+                        let semData = this.gradesDatas[semX];
+                        semData.average                     = 0;
+                        semData.classAvg                    = 0;
+                        semData.nbModules                   = 0;
+                        semData.nbSubjects                  = 0;
+                        semData.nbGrades                    = 0;
+                        semData.nbUnclassifiedSubjects      = 0;
+                        semData.modulesNoGrade              = [];
+                        semData.modulesNoEnabledGrade       = [];
+                        semData.totalCoefGrades             = 0;
+                        semData.totalCoefRealGrades         = 0;
+                        semData.totalCoefSimGrades          = 0;
+                        semData.totalCoefEnabledGrades      = 0;
+                        semData.totalCoefEnabledRealGrades  = 0;
+                        semData.totalCoefEnabledSimGrades   = 0;
+
+                        
+                        // MARK: Unclassified section
+                        // If there are unclassified subjects
+                        const unclassified = this.getUnclassifiedSubjects(semX);
+                        let unclassifiedData = semData["__#unclassified#__"];
+
+                        unclassifiedData.moduleName                     = "__#unclassified#__";
+                        unclassifiedData.subjects                       = {};
+                        unclassifiedData.average                        = 0;
+                        unclassifiedData.classAvg                       = 0;
+                        unclassifiedData.nbSubjects                     = 0;
+                        unclassifiedData.nbGrades                       = 0;
+                        unclassifiedData.grades                         = [];
+                        unclassifiedData.simGrades                      = [];
+                        unclassifiedData.disabledRealGrades             = [];
+                        unclassifiedData.disabledSimGrades              = [];
+                        unclassifiedData.subjectsBelow100               = [];
+                        unclassifiedData.subjectsOver100                = [];
+                        unclassifiedData.subjectsReallyBelow100         = [];
+                        unclassifiedData.subjectsReallyOver100          = [];
+                        unclassifiedData.subjectsNoGrade                = [];
+                        unclassifiedData.subjectsNoEnabledGrade         = [];
+                        unclassifiedData.totalCoefGrades                = 0;
+                        unclassifiedData.totalCoefRealGrades            = 0;
+                        unclassifiedData.totalCoefSimGrades             = 0;
+                        unclassifiedData.totalCoefEnabledGrades         = 0;
+                        unclassifiedData.totalCoefEnabledRealGrades     = 0;
+                        unclassifiedData.totalCoefEnabledSimGrades      = 0;
+
+                        if (unclassified.length > 0) {
+                            ++semData.nbModules;
+
+                            // MARK: Unclassified subjects
+                            // FOR EACH UNCLASSIFIED SUBJECT IN SEMESTER
+                            (subj && unclassified.includes(subj) ? [subj] : unclassified).forEach(unclassifiedSubjectName => {
+
+                                ++unclassifiedData.nbSubjects;
+                                ++semData.nbSubjects;
+                                ++semData.nbUnclassifiedSubjects;
+
+                                unclassifiedData.subjects[unclassifiedSubjectName] = {};
+                                const realGrades = Array(...(this.semesters[semX]||{})[unclassifiedSubjectName])||[];
+                                const simGrades = this.sim?.[semX]?.["__#unclassified#__"]?.[unclassifiedSubjectName] || [];
+
+                                let unclassifiedSubjectData = unclassifiedData.subjects[unclassifiedSubjectName];
+
+                                
+                                unclassifiedSubjectData.subjName                    = unclassifiedSubjectName;
+                                unclassifiedSubjectData.average                     = 0;
+                                unclassifiedSubjectData.classAvg                    = 0;
+                                unclassifiedSubjectData.grades                      = (realGrades).concat(simGrades);
+                                unclassifiedSubjectData.simGrades                   = simGrades;
+                                unclassifiedSubjectData.disabledRealGrades          = [];
+                                unclassifiedSubjectData.disabledSimGrades           = [];
+                                unclassifiedSubjectData.totalCoefGrades             = 0;
+                                unclassifiedSubjectData.totalCoefRealGrades         = 0;
+                                unclassifiedSubjectData.totalCoefSimGrades          = 0;
+                                unclassifiedSubjectData.totalCoefEnabledGrades      = 0;
+                                unclassifiedSubjectData.totalCoefEnabledRealGrades  = 0;
+                                unclassifiedSubjectData.totalCoefEnabledSimGrades   = 0;
+
+
+
+                                // MARK: Unclassified grades
+                                // FOR EACH GRADES AND SIM GRADES IN UNCLASSIFIED SUBJECT
+                                (unclassifiedSubjectData.grades).forEach(grade => {
+                                    
+                                    const 
+                                        gradeValue = parseFloat(grade.grade),
+                                        classAvg   = parseFloat(grade.classAvg),
+                                        coef       = parseInt(grade.coef)
+                                    ;
+
+                                    unclassifiedSubjectData.totalCoefGrades += grade.coef;
+                                    ++unclassifiedData.nbGrades;
+                                    ++semData.nbGrades;
+
+                                    switch (`${this.gradeIsDisabled(grade) ? "disabled" : "enabled"} ${grade.__sim ? "sim" : "real"} grade`) {
+                                        case `enabled real grade`:
+                                            unclassifiedSubjectData.average                     += gradeValue*coef/100;
+                                            unclassifiedSubjectData.classAvg                    += classAvg*coef/100;
+
+                                            unclassifiedSubjectData.totalCoefRealGrades         += coef;
+                                            unclassifiedSubjectData.totalCoefEnabledGrades      += coef;
+                                            unclassifiedSubjectData.totalCoefEnabledRealGrades  += coef;
+                                        break;
+
+                                        case `disabled real grade`:
+                                            unclassifiedSubjectData.totalCoefRealGrades         += coef;
+                                            unclassifiedSubjectData.disabledRealGrades.push(grade);
+                                            
+                                        break;
+
+                                        case `enabled sim grade`:
+                                            unclassifiedSubjectData.average                     += gradeValue*coef/100;
+
+                                            unclassifiedSubjectData.totalCoefSimGrades          += coef;
+                                            unclassifiedSubjectData.totalCoefEnabledGrades      += coef;
+                                            unclassifiedSubjectData.totalCoefEnabledSimGrades   += coef;
+                                        break;
+
+                                        case `disabled sim grade`:
+                                            unclassifiedSubjectData.totalCoefSimGrades          += coef;
+                                            unclassifiedSubjectData.disabledSimGrades.push(grade);
+                                        break;
+                                    }                                
+                                })
+
+                                unclassifiedData.grades.push(...unclassifiedSubjectData.grades)
+                                unclassifiedData.simGrades.push(...unclassifiedSubjectData.simGrades)
+                                unclassifiedData.disabledRealGrades.push(...unclassifiedSubjectData.disabledRealGrades)
+                                unclassifiedData.disabledSimGrades.push(...unclassifiedSubjectData.disabledSimGrades)
+
+                                unclassifiedData.totalCoefGrades            += unclassifiedSubjectData.totalCoefGrades;
+                                unclassifiedData.totalCoefRealGrades        += unclassifiedSubjectData.totalCoefRealGrades;
+                                unclassifiedData.totalCoefSimGrades         += unclassifiedSubjectData.totalCoefSimGrades;
+                                unclassifiedData.totalCoefEnabledGrades     += unclassifiedSubjectData.totalCoefEnabledGrades;
+                                unclassifiedData.totalCoefEnabledRealGrades += unclassifiedSubjectData.totalCoefEnabledRealGrades;
+                                unclassifiedData.totalCoefEnabledSimGrades  += unclassifiedSubjectData.totalCoefEnabledSimGrades;
+
+
+                                // Checking the case where there are no grades in the unclassified subject (not possible tho, but oh well, error-proofing)
+                                if (unclassifiedSubjectData.totalCoefEnabledGrades == 0 || unclassifiedSubjectData.totalCoefGrades == 0) {
+                                    unclassifiedSubjectData.average  = " - ";
+                                    unclassifiedSubjectData.classAvg = " - ";
+
+                                    if (unclassifiedSubjectData.totalCoefEnabledGrades == 0) {
+                                        unclassifiedData.subjectsNoEnabledGrade.push(unclassifiedSubjectName);
+                                    }
+                                    if (unclassifiedSubjectData.totalCoefGrades == 0) {
+                                        unclassifiedData.subjectsNoGrade.push(unclassifiedSubjectName);
+                                    }
+                                    
+                                }
+                                else {
+                                    unclassifiedSubjectData.average                 =  Math.round(100*unclassifiedSubjectData.average /(unclassifiedSubjectData.totalCoefEnabledGrades/100))/100;
+                                    unclassifiedSubjectData.classAvg                =  Math.round(100*unclassifiedSubjectData.classAvg/(unclassifiedSubjectData.totalCoefEnabledRealGrades/100))/100;
+
+                                    unclassifiedData.average          += unclassifiedSubjectData.average ;
+                                    unclassifiedData.classAvg         += unclassifiedSubjectData.classAvg;
+                                }
+
+
+                                // Rounding the coefficients
+                                unclassifiedSubjectData.totalCoefGrades             = Math.floor(unclassifiedSubjectData.totalCoefGrades);
+                                unclassifiedSubjectData.totalCoefRealGrades         = Math.floor(unclassifiedSubjectData.totalCoefRealGrades);
+                                unclassifiedSubjectData.totalCoefSimGrades          = Math.floor(unclassifiedSubjectData.totalCoefSimGrades);
+                                unclassifiedSubjectData.totalCoefEnabledGrades      = Math.floor(unclassifiedSubjectData.totalCoefEnabledGrades);
+                                unclassifiedSubjectData.totalCoefEnabledRealGrades  = Math.floor(unclassifiedSubjectData.totalCoefEnabledRealGrades);
+                                unclassifiedSubjectData.totalCoefEnabledSimGrades   = Math.floor(unclassifiedSubjectData.totalCoefEnabledSimGrades);
+                            })
+
+                            // Checking if the unclassified subjects only has subject that don't have any enabled grades
+                            if (unclassifiedData.subjectsNoEnabledGrade.length == Object.keys(unclassifiedData.subjects).length || unclassifiedData.subjectsNoGrade.length == Object.keys(unclassifiedData.subjects).length) {
+                                unclassifiedData.average  = " - ";
+                                unclassifiedData.classAvg = " - ";
+
+                                if (unclassifiedData.subjectsNoGrade.length == Object.keys(unclassifiedData.subjects).length) semData.modulesNoGrade.push(unclassifiedData.moduleName);
+                                if (unclassifiedData.subjectsNoEnabledGrade.length == Object.keys(unclassifiedData.subjects).length) semData.modulesNoEnabledGrade.push(unclassifiedData.moduleName);
+                            }
+                            // Scaling down the average and classAvg
+                            if (!isNaN(Number(unclassifiedData.average))) {
+                                unclassifiedData.average  =  Math.round(100*unclassifiedData.average /(Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length))/100;
+                                unclassifiedData.classAvg =  Math.round(100*unclassifiedData.classAvg/(Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length))/100;
+                            }
+                            // Error-proofing the average and classAvg calculations
+                            if (isNaN(Number(unclassifiedData.average))) {
+                                unclassifiedData.average  = " - ";
+                                unclassifiedData.classAvg = " - ";
+                            } 
+
+                            // Scaling down + rounding the total coefs
+                            unclassifiedData.totalCoefGrades            = Math.floor(unclassifiedData.totalCoefGrades           / (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
+                            unclassifiedData.totalCoefRealGrades        = Math.floor(unclassifiedData.totalCoefRealGrades       / (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
+                            unclassifiedData.totalCoefSimGrades         = Math.floor(unclassifiedData.totalCoefSimGrades        / (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
+                            unclassifiedData.totalCoefEnabledGrades     = Math.floor(unclassifiedData.totalCoefEnabledGrades    / (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
+                            unclassifiedData.totalCoefEnabledRealGrades = Math.floor(unclassifiedData.totalCoefEnabledRealGrades/ (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
+                            unclassifiedData.totalCoefEnabledSimGrades  = Math.floor(unclassifiedData.totalCoefEnabledSimGrades / (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
+
+                            semData.average     = unclassifiedData.average ;
+                            semData.classAvg    = unclassifiedData.classAvg;
+                        }
+
+
+                        // MARK: Modules
+                        // FOR EACH MODULE IN SEMESTER (if any)
+                        if (this.moduleConfig?.[semX]?.__modules__) {
+                            (module && this.moduleConfig?.[sem]?.__modules__.includes(module) ? [module] : (this.moduleConfig[semX]?.__modules__ || [])).forEach((moduleName) => {
+                                const allSubjs      = this.getAllSubjectsForModule(semX, moduleName);
+                                const moduleGrades  = this.calculateModuleGrades(semX, moduleName);
+
+                                ++semData.nbModules;
+
+                                semData[moduleName] = {};
+                                
+                                let moduleData = semData[moduleName];
+                                
+                                moduleData.moduleName                   = moduleName;
+                                moduleData.subjects                     = {};
+                                moduleData.average                      = 0;
+                                moduleData.classAvg                     = 0;
+                                moduleData.nbGrades                     = 0;
+                                moduleData.grades                       = [];
+                                moduleData.simGrades                    = [];
+                                moduleData.disabledRealGrades           = [];
+                                moduleData.disabledSimGrades            = [];
+                                moduleData.subjectsBelow100             = [];
+                                moduleData.subjectsOver100              = [];
+                                moduleData.subjectsReallyBelow100       = [];
+                                moduleData.subjectsReallyOver100        = [];
+                                moduleData.subjectsNoGrade              = [];
+                                moduleData.subjectsNoEnabledGrade       = [];
+                                moduleData.coefSubjectsNoGrade          = 0;
+                                moduleData.coefSubjectsNoEnabledGrade   = 0;
+                                moduleData.totalCoefSubjects            = 0;
+                                moduleData.totalCoefGrades              = 0;
+                                moduleData.totalCoefRealGrades          = 0;
+                                moduleData.totalCoefSimGrades           = 0;
+                                moduleData.totalCoefEnabledGrades       = 0;
+                                moduleData.totalCoefEnabledRealGrades   = 0;
+                                moduleData.totalCoefEnabledSimGrades    = 0;
+
+                                (this.moduleConfig?.[semX]?.[moduleName]?.subjects?.length > 0 ? this.moduleConfig[semX][moduleName].subjects : []).forEach(subject => {
+                                    moduleData.subjects[subject] = {grades: []};
+                                })
+                                
+                                moduleGrades.forEach(n => {
+                                    const subjectName = n.subject;
+                                    let subjectData = moduleData.subjects[subjectName];
+                                    
+                                    if (!subjectData) {
+                                        subjectData = {grades: []};
+                                    }
+
+                                    moduleData.grades.push(n);
+                                    subjectData.grades.push(n);
+                                });
+
+                                
+
+                                // MARK: Classified subjects
+                                // FOR EACH SUBJECT IN MODULE
+                                (subj && this.moduleConfig?.[sem]?.[module]?.subjects?.includes(subj) ? [subj] : allSubjs).forEach(subjectName => {
+
+                                    ++semData.nbSubjects;
+
+                                    let subjectData = moduleData.subjects[subjectName];
+
+                                    subjectData.subjName                    = subjectName;
+                                    subjectData.coef                        = this.moduleConfig[semX][moduleName].coefficients[subjectName];
+                                    subjectData.average                     = 0;
+                                    subjectData.classAvg                    = 0;
+                                    subjectData.disabledRealGrades          = [];
+                                    subjectData.simGrades                   = [];
+                                    subjectData.disabledSimGrades           = [];
+                                    subjectData.isCustom                    = true;
+                                    subjectData.totalCoefGrades             = 0;
+                                    subjectData.totalCoefRealGrades         = 0;
+                                    subjectData.totalCoefSimGrades          = 0;
+                                    subjectData.totalCoefEnabledGrades      = 0;
+                                    subjectData.totalCoefEnabledRealGrades  = 0;
+                                    subjectData.totalCoefEnabledSimGrades   = 0;
+                                    
+
+                                    moduleData.totalCoefSubjects += parseInt(subjectData.coef);
+                                    
+                                    
+                                    // MARK: Classified grades
+                                    // FOR EACH GRADE IN SUBJECT
+                                    subjectData.grades.forEach(grade => {
+                                        const gradeValue    = parseFloat(grade.grade),
+                                              classAvg      = parseFloat(grade.classAvg),
+                                              coef          = parseInt(grade.coef),
+                                              subjCoef      = parseInt(subjectData.coef)
+                                        ;
+                                        
+                                        ++semData.nbGrades;
+                                        ++moduleData.nbGrades;
+                                        subjectData.totalCoefGrades += grade.coef;
+                                        subjectData.isCustom = false;
+
+                                        switch (`${this.gradeIsDisabled(grade) ? "disabled" : "enabled"} ${grade.__sim ? "sim" : "real"} grade`) {
+                                            case `enabled real grade`:
+                                                subjectData.average                     += gradeValue*coef/100;
+                                                subjectData.classAvg                    += classAvg*coef/100;
+                                                
+                                                subjectData.totalCoefRealGrades         += coef;
+                                                subjectData.totalCoefEnabledGrades      += coef;
+                                                subjectData.totalCoefEnabledRealGrades  += coef;
+
+
+                                                moduleData.totalCoefGrades              += coef*subjCoef/100;
+                                                moduleData.totalCoefRealGrades          += coef*subjCoef/100;
+
+                                                moduleData.totalCoefEnabledGrades       += coef*subjCoef/100;
+                                                moduleData.totalCoefEnabledRealGrades   += coef*subjCoef/100;
+
+
+                                                semData.totalCoefGrades                 += coef*subjCoef/100;
+                                                semData.totalCoefRealGrades             += coef*subjCoef/100;
+
+                                                semData.totalCoefEnabledGrades          += coef*subjCoef/100;
+                                                semData.totalCoefEnabledRealGrades      += coef*subjCoef/100;
+                                            break;
+
+                                            case `disabled real grade`:
+                                                // subjectData.classAvg                    += classAvg*coef/100;
+                                                subjectData.totalCoefRealGrades         += coef;
+
+                                                subjectData.disabledRealGrades.push(grade);
+                                                
+                                                
+                                                moduleData.totalCoefGrades              += coef*subjCoef/100;
+                                                moduleData.totalCoefRealGrades          += coef*subjCoef/100;
+                                                
+                                                moduleData.disabledRealGrades.push(grade);
+
+                                                
+                                                semData.totalCoefGrades                 += coef*subjCoef/100;
+                                                semData.totalCoefRealGrades             += coef*subjCoef/100;
+                                            break;
+
+                                            case `enabled sim grade`:
+                                                subjectData.simGrades.push(grade);
+                                                subjectData.totalCoefSimGrades          += coef;
+
+                                                subjectData.average                     += gradeValue*coef/100;
+                                                subjectData.totalCoefEnabledGrades      += coef;
+                                                subjectData.totalCoefEnabledSimGrades   += coef;
+
+
+                                                moduleData.simGrades.push(grade);
+                                                moduleData.totalCoefGrades              += coef*subjCoef/100;
+                                                moduleData.totalCoefSimGrades           += coef*subjCoef/100;
+                                                
+                                                moduleData.totalCoefEnabledGrades       += coef*subjCoef/100;
+                                                moduleData.totalCoefEnabledSimGrades    += coef*subjCoef/100;
+                                                
+
+                                                semData.totalCoefGrades                 += coef*subjCoef/100;
+                                                semData.totalCoefSimGrades              += coef*subjCoef/100;
+
+                                                semData.totalCoefEnabledGrades          += coef*subjCoef/100;
+                                                semData.totalCoefEnabledSimGrades       += coef*subjCoef/100;
+                                            break;
+
+                                            case `disabled sim grade`:
+                                                subjectData.simGrades.push(grade);
+                                                subjectData.disabledSimGrades.push(grade);
+                                                subjectData.totalCoefSimGrades          += coef;
+
+                                                moduleData.simGrades.push(grade);
+                                                moduleData.totalCoefGrades              += coef*subjCoef/100;
+                                                moduleData.totalCoefSimGrades           += coef*subjCoef/100;
+
+                                                moduleData.disabledSimGrades.push(grade);
+
+                                                semData.totalCoefGrades                 += coef*subjCoef/100;
+                                                semData.totalCoefSimGrades              += coef*subjCoef/100;
+                                            break;
+                                        }
+                                    })
+                                    
+                                    
+                                    // "Nullyifing" the subject if no enabled grades (if there are grades) are here
+                                    if (subjectData.totalCoefEnabledGrades == 0 || subjectData.totalCoefGrades == 0) {
+                                        subjectData.average  = " - ";
+                                        subjectData.classAvg = " - ";
+                                        if (subjectData.totalCoefEnabledGrades == 0) {
+                                            moduleData.subjectsNoEnabledGrade.push(subjectName);
+                                            moduleData.coefSubjectsNoEnabledGrade  += parseInt(subjectData.coef);
+    
+                                        }
+                                        if (subjectData.totalCoefGrades == 0) {
+                                            moduleData.subjectsNoGrade.push(subjectName);
+                                            moduleData.coefSubjectsNoGrade  += parseInt(subjectData.coef);
+                                        }
+                                        
+                                    }
+                                    else {  // Round the averages to the closest 2-decimals float number
+                                        subjectData.average     =  Math.round(100*subjectData.average /(subjectData.totalCoefEnabledGrades      /100))/100;
+                                        subjectData.classAvg    =  Math.round(100*subjectData.classAvg/(subjectData.totalCoefEnabledRealGrades  /100))/100;
+
+                                        moduleData.average          += subjectData.average *subjectData.coef/100;
+                                        moduleData.classAvg         += subjectData.classAvg*subjectData.coef/100;
+                                    }
+
+                                    // Rounding down the total coefs
+                                    subjectData.totalCoefGrades             = Math.floor(subjectData.totalCoefGrades);
+                                    subjectData.totalCoefRealGrades         = Math.floor(subjectData.totalCoefRealGrades);
+                                    subjectData.totalCoefSimGrades          = Math.floor(subjectData.totalCoefSimGrades);
+                                    subjectData.totalCoefEnabledGrades      = Math.floor(subjectData.totalCoefEnabledGrades);
+                                    subjectData.totalCoefEnabledRealGrades  = Math.floor(subjectData.totalCoefEnabledRealGrades);
+                                    subjectData.totalCoefEnabledSimGrades   = Math.floor(subjectData.totalCoefEnabledSimGrades);
+
+
+                                    if      (subjectData.totalCoefGrades < 100) moduleData.subjectsBelow100.push(subjectName);
+                                    else if (subjectData.totalCoefGrades > 100) moduleData.subjectsOver100 .push(subjectName);
+
+                                    if      (subjectData.totalCoefRealGrades < 100) moduleData.subjectsReallyBelow100.push(subjectName);
+                                    else if (subjectData.totalCoefRealGrades > 100) moduleData.subjectsReallyOver100 .push(subjectName);
+                                });
+
+
+                                // "Nullifying" the module if all its subjects don't have any enabled grade
+                                if (moduleData.subjectsNoEnabledGrade.length == Object.keys(moduleData.subjects).length || moduleData.subjectsNoGrade.length == Object.keys(moduleData.subjects).length) {
+                                    moduleData.average  = " - ";
+                                    moduleData.classAvg = " - ";
+
+                                    if (moduleData.subjectsNoGrade.length == Object.keys(moduleData.subjects).length) semData.modulesNoGrade.push(moduleData.moduleName);
+                                    if (moduleData.subjectsNoEnabledGrade.length == Object.keys(moduleData.subjects).length) semData.modulesNoEnabledGrade.push(moduleData.moduleName);
+                                }
+                                // Scaling down + rounding the averages
+                                if (!isNaN(Number(moduleData.average))) {
+                                    moduleData.average  =  Math.round(100*moduleData.average /((moduleData.totalCoefSubjects-moduleData.coefSubjectsNoEnabledGrade)/100))/100;
+                                    moduleData.classAvg =  Math.round(100*moduleData.classAvg/((moduleData.totalCoefSubjects-moduleData.coefSubjectsNoEnabledGrade)/100))/100;
+                                }
+                                // Error-proofing the averages
+                                if (isNaN(Number(moduleData.average))) {
+                                    moduleData.average  = " - ";
+                                    moduleData.classAvg = " - ";
+                                } 
+                                else {
+                                    semData.average     += moduleData.average;
+                                    semData.classAvg    += moduleData.classAvg;
+                                }
+                                
+                                // Rounding down the total coefs
+                                moduleData.totalCoefSubjects            =  Math.floor(moduleData.totalCoefSubjects);
+                                moduleData.totalCoefGrades              =  Math.floor(moduleData.totalCoefGrades);
+                                moduleData.totalCoefRealGrades          =  Math.floor(moduleData.totalCoefRealGrades);
+                                moduleData.totalCoefSimGrades           =  Math.floor(moduleData.totalCoefSimGrades);
+                                moduleData.totalCoefEnabledGrades       =  Math.floor(moduleData.totalCoefEnabledGrades);
+                                moduleData.totalCoefEnabledRealGrades   =  Math.floor(moduleData.totalCoefEnabledRealGrades);
+                                moduleData.totalCoefEnabledSimGrades    =  Math.floor(moduleData.totalCoefEnabledSimGrades);
+
+                            })
+
+
+
+                        }
+                        
+                        semData.totalCoefGrades                 = semData.totalCoefGrades               /semData.nbSubjects;
+                        semData.totalCoefRealGrades             = semData.totalCoefRealGrades           /semData.nbSubjects;
+                        semData.totalCoefSimGrades              = semData.totalCoefSimGrades            /semData.nbSubjects;
+                        semData.totalCoefEnabledGrades          = semData.totalCoefEnabledGrades        /semData.nbSubjects;
+                        semData.totalCoefEnabledRealGrades      = semData.totalCoefEnabledRealGrades    /semData.nbSubjects;
+                        semData.totalCoefEnabledSimGrades       = semData.totalCoefEnabledSimGrades     /semData.nbSubjects;
+                        
+                        // "Nullifying" the semester if every single one of its subjects has all its grades disabled
+                        if (semData.modulesNoEnabledGrade.length == semData.nbModules) {
+                            semData.average     = " - ";
+                            semData.classAvg    = " - ";
+                        }
+                        
+                        if (!isNaN(Number(semData.average)) && Object.keys(semData["__#unclassified#__"].subjects).length < semData.nbSubjects) {
+                            semData.average  =  Math.round(100*semData.average /(semData.nbModules-semData.modulesNoEnabledGrade.length))/100;
+                            semData.classAvg =  Math.round(100*semData.classAvg/(semData.nbModules-semData.modulesNoEnabledGrade.length))/100;
+                        }
+
+                        if (isNaN(Number(semData.average))) {
+                            semData.average     = " - ";
+                            semData.classAvg    = " - ";
+                        } 
+                        
+                        semData.totalCoefGrades                 = Math.floor(semData.totalCoefGrades);
+                        semData.totalCoefRealGrades             = Math.floor(semData.totalCoefRealGrades);
+                        semData.totalCoefSimGrades              = Math.floor(semData.totalCoefSimGrades);
+                        semData.totalCoefEnabledGrades          = Math.floor(semData.totalCoefEnabledGrades);
+                        semData.totalCoefEnabledRealGrades      = Math.floor(semData.totalCoefEnabledRealGrades);
+                        semData.totalCoefEnabledSimGrades       = Math.floor(semData.totalCoefEnabledSimGrades);
+                    })
+
+                    return this.gradesDatas
+                }
+
+
                 // MARK: Set total coefs
                 setGradesTableTotalCoef(container=document.body) {
                     const good="#10b981", meh="#e98c00", bad="#e90000", unknown="#7a7a7a";
@@ -2125,503 +2628,6 @@ ecamDash = undefined;
                         totalCoefValue.innerHTML = `${!this.langIsEn ? "Coef Total des Notes :" : "Total Grades Coef:"} <span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}%</span>`;
                         totalCoefDebug.innerHTML = `${advice}`;
                     })
-                }
-
-
-                // MARK: getGradesDatas
-                getGradesDatas({sem=undefined, module=undefined, subj=undefined}={sem: undefined, module: undefined, subj: undefined}) {
-
-                    
-                    
-                    // MARK: semester section
-                    // FOR EACH SEMESTER
-                    (sem && this.moduleConfig?.[sem] ? [sem] : Object.keys(this.semesters)).forEach((semX) => {
-                        
-                        this.gradesDatas[semX] = {"__#unclassified#__": {}};
-                        let semData = this.gradesDatas[semX];
-                        semData.average                     = 0;
-                        semData.classAvg                    = 0;
-                        semData.nbModules                   = 0;
-                        semData.nbSubjects                  = 0;
-                        semData.nbUnclassifiedSubjects      = 0;
-                        semData.modulesNoGrade              = [];
-                        semData.modulesNoEnabledGrade       = [];
-                        semData.totalCoefGrades             = 0;
-                        semData.totalCoefRealGrades         = 0;
-                        semData.totalCoefSimGrades          = 0;
-                        semData.totalCoefEnabledGrades      = 0;
-                        semData.totalCoefEnabledRealGrades  = 0;
-                        semData.totalCoefEnabledSimGrades   = 0;
-
-                        
-                        // MARK: Unclassified section
-                        // If there are unclassified subjects
-                        const unclassified = this.getUnclassifiedSubjects(semX);
-                        let unclassifiedData = semData["__#unclassified#__"];
-
-                        unclassifiedData.moduleName                     = "__#unclassified#__";
-                        unclassifiedData.subjects                       = {};
-                        unclassifiedData.average                        = 0;
-                        unclassifiedData.classAvg                       = 0;
-                        unclassifiedData.nbGrades                       = 0;
-                        unclassifiedData.grades                         = [];
-                        unclassifiedData.simGrades                      = [];
-                        unclassifiedData.disabledRealGrades             = [];
-                        unclassifiedData.disabledSimGrades              = [];
-                        unclassifiedData.subjectsBelow100               = [];
-                        unclassifiedData.subjectsOver100                = [];
-                        unclassifiedData.subjectsReallyBelow100         = [];
-                        unclassifiedData.subjectsReallyOver100          = [];
-                        unclassifiedData.subjectsNoGrade                = [];
-                        unclassifiedData.subjectsNoEnabledGrade         = [];
-                        unclassifiedData.totalCoefGrades                = 0;
-                        unclassifiedData.totalCoefRealGrades            = 0;
-                        unclassifiedData.totalCoefSimGrades             = 0;
-                        unclassifiedData.totalCoefEnabledGrades         = 0;
-                        unclassifiedData.totalCoefEnabledRealGrades     = 0;
-                        unclassifiedData.totalCoefEnabledSimGrades      = 0;
-
-                        if (unclassified.length > 0) {
-                            ++semData.nbModules;
-
-                            // MARK: Unclassified subjects
-                            // FOR EACH UNCLASSIFIED SUBJECT IN SEMESTER
-                            (subj && unclassified.includes(subj) ? [subj] : unclassified).forEach(unclassifiedSubjectName => {
-
-                                ++semData.nbSubjects;
-                                ++semData.nbUnclassifiedSubjects;
-
-                                unclassifiedData.subjects[unclassifiedSubjectName] = {};
-                                const realGrades = Array(...(this.semesters[semX]||{})[unclassifiedSubjectName])||[];
-                                const simGrades = this.sim?.[semX]?.["__#unclassified#__"]?.[unclassifiedSubjectName] || [];
-
-                                let unclassifiedSubjectData = unclassifiedData.subjects[unclassifiedSubjectName];
-
-                                
-                                unclassifiedSubjectData.subjName                    = unclassifiedSubjectName;
-                                unclassifiedSubjectData.average                     = 0;
-                                unclassifiedSubjectData.classAvg                    = 0;
-                                unclassifiedSubjectData.grades                      = (realGrades).concat(simGrades);
-                                unclassifiedSubjectData.simGrades                   = simGrades;
-                                unclassifiedSubjectData.disabledRealGrades          = [];
-                                unclassifiedSubjectData.disabledSimGrades           = [];
-                                unclassifiedSubjectData.totalCoefGrades             = 0;
-                                unclassifiedSubjectData.totalCoefRealGrades         = 0;
-                                unclassifiedSubjectData.totalCoefSimGrades          = 0;
-                                unclassifiedSubjectData.totalCoefEnabledGrades      = 0;
-                                unclassifiedSubjectData.totalCoefEnabledRealGrades  = 0;
-                                unclassifiedSubjectData.totalCoefEnabledSimGrades   = 0;
-
-
-
-                                // MARK: Unclassified grades
-                                // FOR EACH GRADES AND SIM GRADES IN UNCLASSIFIED SUBJECT
-                                (unclassifiedSubjectData.grades).forEach(grade => {
-                                    
-                                    const 
-                                        gradeValue = parseFloat(grade.grade),
-                                        classAvg   = parseFloat(grade.classAvg),
-                                        coef       = parseInt(grade.coef)
-                                    ;
-
-                                    unclassifiedSubjectData.totalCoefGrades += grade.coef;
-                                    ++unclassifiedData.nbGrades
-
-                                    switch (`${this.gradeIsDisabled(grade) ? "disabled" : "enabled"} ${grade.__sim ? "sim" : "real"} grade`) {
-                                        case `enabled real grade`:
-                                            unclassifiedSubjectData.average                     += gradeValue*coef/100;
-                                            unclassifiedSubjectData.classAvg                    += classAvg*coef/100;
-
-                                            unclassifiedSubjectData.totalCoefRealGrades         += coef;
-                                            unclassifiedSubjectData.totalCoefEnabledGrades      += coef;
-                                            unclassifiedSubjectData.totalCoefEnabledRealGrades  += coef;
-                                        break;
-
-                                        case `disabled real grade`:
-                                            unclassifiedSubjectData.totalCoefRealGrades         += coef;
-                                            unclassifiedSubjectData.disabledRealGrades.push(grade);
-                                            
-                                        break;
-
-                                        case `enabled sim grade`:
-                                            unclassifiedSubjectData.average                     += gradeValue*coef/100;
-
-                                            unclassifiedSubjectData.totalCoefSimGrades          += coef;
-                                            unclassifiedSubjectData.totalCoefEnabledGrades      += coef;
-                                            unclassifiedSubjectData.totalCoefEnabledSimGrades   += coef;
-                                        break;
-
-                                        case `disabled sim grade`:
-                                            unclassifiedSubjectData.totalCoefSimGrades          += coef;
-                                            unclassifiedSubjectData.disabledSimGrades.push(grade);
-                                        break;
-                                    }                                
-                                })
-
-                                unclassifiedData.grades.push(...unclassifiedSubjectData.grades)
-                                unclassifiedData.simGrades.push(...unclassifiedSubjectData.simGrades)
-                                unclassifiedData.disabledRealGrades.push(...unclassifiedSubjectData.disabledRealGrades)
-                                unclassifiedData.disabledSimGrades.push(...unclassifiedSubjectData.disabledSimGrades)
-
-                                unclassifiedData.totalCoefGrades            += unclassifiedSubjectData.totalCoefGrades;
-                                unclassifiedData.totalCoefRealGrades        += unclassifiedSubjectData.totalCoefRealGrades;
-                                unclassifiedData.totalCoefSimGrades         += unclassifiedSubjectData.totalCoefSimGrades;
-                                unclassifiedData.totalCoefEnabledGrades     += unclassifiedSubjectData.totalCoefEnabledGrades;
-                                unclassifiedData.totalCoefEnabledRealGrades += unclassifiedSubjectData.totalCoefEnabledRealGrades;
-                                unclassifiedData.totalCoefEnabledSimGrades  += unclassifiedSubjectData.totalCoefEnabledSimGrades;
-
-
-                                // Checking the case where there are no grades in the unclassified subject (not possible tho, but oh well, error-proofing)
-                                if (unclassifiedSubjectData.totalCoefEnabledGrades == 0 || unclassifiedSubjectData.totalCoefGrades == 0) {
-                                    unclassifiedSubjectData.average  = " - ";
-                                    unclassifiedSubjectData.classAvg = " - ";
-
-                                    if (unclassifiedSubjectData.totalCoefEnabledGrades == 0) {
-                                        unclassifiedData.subjectsNoEnabledGrade.push(unclassifiedSubjectName);
-                                    }
-                                    if (unclassifiedSubjectData.totalCoefGrades == 0) {
-                                        unclassifiedData.subjectsNoGrade.push(unclassifiedSubjectName);
-                                    }
-                                    
-                                }
-                                else {
-                                    unclassifiedSubjectData.average                 =  Math.round(100*unclassifiedSubjectData.average /(unclassifiedSubjectData.totalCoefEnabledGrades/100))/100;
-                                    unclassifiedSubjectData.classAvg                =  Math.round(100*unclassifiedSubjectData.classAvg/(unclassifiedSubjectData.totalCoefEnabledRealGrades/100))/100;
-
-                                    unclassifiedData.average          += unclassifiedSubjectData.average ;
-                                    unclassifiedData.classAvg         += unclassifiedSubjectData.classAvg;
-                                }
-
-
-                                // Rounding the coefficients
-                                unclassifiedSubjectData.totalCoefGrades             = Math.floor(unclassifiedSubjectData.totalCoefGrades);
-                                unclassifiedSubjectData.totalCoefRealGrades         = Math.floor(unclassifiedSubjectData.totalCoefRealGrades);
-                                unclassifiedSubjectData.totalCoefSimGrades          = Math.floor(unclassifiedSubjectData.totalCoefSimGrades);
-                                unclassifiedSubjectData.totalCoefEnabledGrades      = Math.floor(unclassifiedSubjectData.totalCoefEnabledGrades);
-                                unclassifiedSubjectData.totalCoefEnabledRealGrades  = Math.floor(unclassifiedSubjectData.totalCoefEnabledRealGrades);
-                                unclassifiedSubjectData.totalCoefEnabledSimGrades   = Math.floor(unclassifiedSubjectData.totalCoefEnabledSimGrades);
-                            })
-
-                            // Checking if the unclassified subjects only has subject that don't have any enabled grades
-                            if (unclassifiedData.subjectsNoEnabledGrade.length == Object.keys(unclassifiedData.subjects).length || unclassifiedData.subjectsNoGrade.length == Object.keys(unclassifiedData.subjects).length) {
-                                unclassifiedData.average  = " - ";
-                                unclassifiedData.classAvg = " - ";
-
-                                if (unclassifiedData.subjectsNoGrade.length == Object.keys(unclassifiedData.subjects).length) semData.modulesNoGrade.push(unclassifiedData.moduleName);
-                                if (unclassifiedData.subjectsNoEnabledGrade.length == Object.keys(unclassifiedData.subjects).length) semData.modulesNoEnabledGrade.push(unclassifiedData.moduleName);
-                            }
-                            // Scaling down the average and classAvg
-                            if (!isNaN(Number(unclassifiedData.average))) {
-                                unclassifiedData.average  =  Math.round(100*unclassifiedData.average /(Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length))/100;
-                                unclassifiedData.classAvg =  Math.round(100*unclassifiedData.classAvg/(Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length))/100;
-                            }
-                            // Error-proofing the average and classAvg calculations
-                            if (isNaN(Number(unclassifiedData.average))) {
-                                unclassifiedData.average  = " - ";
-                                unclassifiedData.classAvg = " - ";
-                            } 
-
-                            // Scaling down + rounding the total coefs
-                            unclassifiedData.totalCoefGrades            = Math.floor(unclassifiedData.totalCoefGrades           / (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
-                            unclassifiedData.totalCoefRealGrades        = Math.floor(unclassifiedData.totalCoefRealGrades       / (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
-                            unclassifiedData.totalCoefSimGrades         = Math.floor(unclassifiedData.totalCoefSimGrades        / (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
-                            unclassifiedData.totalCoefEnabledGrades     = Math.floor(unclassifiedData.totalCoefEnabledGrades    / (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
-                            unclassifiedData.totalCoefEnabledRealGrades = Math.floor(unclassifiedData.totalCoefEnabledRealGrades/ (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
-                            unclassifiedData.totalCoefEnabledSimGrades  = Math.floor(unclassifiedData.totalCoefEnabledSimGrades / (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
-
-                            semData.average     = unclassifiedData.average ;
-                            semData.classAvg    = unclassifiedData.classAvg;
-                        }
-
-
-                        // MARK: Modules
-                        // FOR EACH MODULE IN SEMESTER (if any)
-                        if (this.moduleConfig?.[semX]?.__modules__) {
-                            (module && this.moduleConfig?.[sem]?.__modules__.includes(module) ? [module] : (this.moduleConfig[semX]?.__modules__ || [])).forEach((moduleName) => {
-                                const allSubjs      = this.getAllSubjectsForModule(semX, moduleName);
-                                const moduleGrades  = this.calculateModuleGrades(semX, moduleName);
-
-                                ++semData.nbModules;
-
-                                semData[moduleName] = {};
-                                
-                                let moduleData = semData[moduleName];
-                                
-                                moduleData.moduleName                   = moduleName;
-                                moduleData.subjects                     = {};
-                                moduleData.average                      = 0;
-                                moduleData.classAvg                     = 0;
-                                moduleData.nbGrades                     = 0;
-                                moduleData.grades                       = [];
-                                moduleData.simGrades                    = [];
-                                moduleData.disabledRealGrades           = [];
-                                moduleData.disabledSimGrades            = [];
-                                moduleData.subjectsBelow100             = [];
-                                moduleData.subjectsOver100              = [];
-                                moduleData.subjectsReallyBelow100       = [];
-                                moduleData.subjectsReallyOver100        = [];
-                                moduleData.subjectsNoGrade              = [];
-                                moduleData.subjectsNoEnabledGrade       = [];
-                                moduleData.coefSubjectsNoGrade          = 0;
-                                moduleData.coefSubjectsNoEnabledGrade   = 0;
-                                moduleData.totalCoefSubjects            = 0;
-                                moduleData.totalCoefGrades              = 0;
-                                moduleData.totalCoefRealGrades          = 0;
-                                moduleData.totalCoefSimGrades           = 0;
-                                moduleData.totalCoefEnabledGrades       = 0;
-                                moduleData.totalCoefEnabledRealGrades   = 0;
-                                moduleData.totalCoefEnabledSimGrades    = 0;
-
-                                (this.moduleConfig?.[semX]?.[moduleName]?.subjects?.length > 0 ? this.moduleConfig[semX][moduleName].subjects : []).forEach(subject => {
-                                    moduleData.subjects[subject] = {grades: []};
-                                })
-                                
-                                moduleGrades.forEach(n => {
-                                    const subjectName = n.subject;
-                                    let subjectData = moduleData.subjects[subjectName];
-                                    
-                                    if (!subjectData) {
-                                        subjectData = {grades: []};
-                                    }
-
-                                    moduleData.grades.push(n);
-                                    subjectData.grades.push(n);
-                                });
-
-                                
-
-                                // MARK: Classified subjects
-                                // FOR EACH SUBJECT IN MODULE
-                                (subj && this.moduleConfig?.[sem]?.[module]?.subjects?.includes(subj) ? [subj] : allSubjs).forEach(subjectName => {
-
-                                    ++semData.nbSubjects;
-
-                                    let subjectData = moduleData.subjects[subjectName];
-
-                                    subjectData.subjName                    = subjectName;
-                                    subjectData.coef                        = this.moduleConfig[semX][moduleName].coefficients[subjectName];
-                                    subjectData.average                     = 0;
-                                    subjectData.classAvg                    = 0;
-                                    subjectData.disabledRealGrades          = [];
-                                    subjectData.simGrades                   = [];
-                                    subjectData.disabledSimGrades           = [];
-                                    subjectData.isCustom                    = true;
-                                    subjectData.totalCoefGrades             = 0;
-                                    subjectData.totalCoefRealGrades         = 0;
-                                    subjectData.totalCoefSimGrades          = 0;
-                                    subjectData.totalCoefEnabledGrades      = 0;
-                                    subjectData.totalCoefEnabledRealGrades  = 0;
-                                    subjectData.totalCoefEnabledSimGrades   = 0;
-                                    
-
-                                    moduleData.totalCoefSubjects += parseInt(subjectData.coef);
-                                    
-                                    
-                                    // MARK: Classified grades
-                                    // FOR EACH GRADE IN SUBJECT
-                                    subjectData.grades.forEach(grade => {
-                                        const gradeValue    = parseFloat(grade.grade),
-                                              classAvg      = parseFloat(grade.classAvg),
-                                              coef          = parseInt(grade.coef),
-                                              subjCoef      = parseInt(subjectData.coef)
-                                        ;
-                                        
-                                        subjectData.totalCoefGrades += grade.coef;
-                                        subjectData.isCustom = false;
-
-                                        switch (`${this.gradeIsDisabled(grade) ? "disabled" : "enabled"} ${grade.__sim ? "sim" : "real"} grade`) {
-                                            case `enabled real grade`:
-                                                subjectData.average                     += gradeValue*coef/100;
-                                                subjectData.classAvg                    += classAvg*coef/100;
-                                                
-                                                subjectData.totalCoefRealGrades         += coef;
-                                                subjectData.totalCoefEnabledGrades      += coef;
-                                                subjectData.totalCoefEnabledRealGrades  += coef;
-
-
-                                                moduleData.totalCoefGrades              += coef*subjCoef/100;
-                                                moduleData.totalCoefRealGrades          += coef*subjCoef/100;
-
-                                                moduleData.totalCoefEnabledGrades       += coef*subjCoef/100;
-                                                moduleData.totalCoefEnabledRealGrades   += coef*subjCoef/100;
-
-
-                                                semData.totalCoefGrades                 += coef*subjCoef/100;
-                                                semData.totalCoefRealGrades             += coef*subjCoef/100;
-
-                                                semData.totalCoefEnabledGrades          += coef*subjCoef/100;
-                                                semData.totalCoefEnabledRealGrades      += coef*subjCoef/100;
-                                            break;
-
-                                            case `disabled real grade`:
-                                                // subjectData.classAvg                    += classAvg*coef/100;
-                                                subjectData.totalCoefRealGrades         += coef;
-
-                                                subjectData.disabledRealGrades.push(grade);
-                                                
-                                                
-                                                moduleData.totalCoefGrades              += coef*subjCoef/100;
-                                                moduleData.totalCoefRealGrades          += coef*subjCoef/100;
-                                                
-                                                moduleData.disabledRealGrades.push(grade);
-
-                                                
-                                                semData.totalCoefGrades                 += coef*subjCoef/100;
-                                                semData.totalCoefRealGrades             += coef*subjCoef/100;
-                                            break;
-
-                                            case `enabled sim grade`:
-                                                subjectData.simGrades.push(grade);
-                                                subjectData.totalCoefSimGrades          += coef;
-
-                                                subjectData.average                     += gradeValue*coef/100;
-                                                subjectData.totalCoefEnabledGrades      += coef;
-                                                subjectData.totalCoefEnabledSimGrades   += coef;
-
-
-                                                moduleData.simGrades.push(grade);
-                                                moduleData.totalCoefGrades              += coef*subjCoef/100;
-                                                moduleData.totalCoefSimGrades           += coef*subjCoef/100;
-                                                
-                                                moduleData.totalCoefEnabledGrades       += coef*subjCoef/100;
-                                                moduleData.totalCoefEnabledSimGrades    += coef*subjCoef/100;
-                                                
-
-                                                semData.totalCoefGrades                 += coef*subjCoef/100;
-                                                semData.totalCoefSimGrades              += coef*subjCoef/100;
-
-                                                semData.totalCoefEnabledGrades          += coef*subjCoef/100;
-                                                semData.totalCoefEnabledSimGrades       += coef*subjCoef/100;
-                                            break;
-
-                                            case `disabled sim grade`:
-                                                subjectData.simGrades.push(grade);
-                                                subjectData.disabledSimGrades.push(grade);
-                                                subjectData.totalCoefSimGrades          += coef;
-
-                                                moduleData.simGrades.push(grade);
-                                                moduleData.totalCoefGrades              += coef*subjCoef/100;
-                                                moduleData.totalCoefSimGrades           += coef*subjCoef/100;
-
-                                                moduleData.disabledSimGrades.push(grade);
-
-                                                semData.totalCoefGrades                 += coef*subjCoef/100;
-                                                semData.totalCoefSimGrades              += coef*subjCoef/100;
-                                            break;
-                                        }
-                                    })
-                                    
-                                    
-                                    // "Nullyifing" the subject if no enabled grades (if there are grades) are here
-                                    if (subjectData.totalCoefEnabledGrades == 0 || subjectData.totalCoefGrades == 0) {
-                                        subjectData.average  = " - ";
-                                        subjectData.classAvg = " - ";
-                                        if (subjectData.totalCoefEnabledGrades == 0) {
-                                            moduleData.subjectsNoEnabledGrade.push(subjectName);
-                                            moduleData.coefSubjectsNoEnabledGrade  += parseInt(subjectData.coef);
-    
-                                        }
-                                        if (subjectData.totalCoefGrades == 0) {
-                                            moduleData.subjectsNoGrade.push(subjectName);
-                                            moduleData.coefSubjectsNoGrade  += parseInt(subjectData.coef);
-                                        }
-                                        
-                                    }
-                                    else {  // Round the averages to the closest 2-decimals float number
-                                        subjectData.average     =  Math.round(100*subjectData.average /(subjectData.totalCoefEnabledGrades      /100))/100;
-                                        subjectData.classAvg    =  Math.round(100*subjectData.classAvg/(subjectData.totalCoefEnabledRealGrades  /100))/100;
-
-                                        moduleData.average          += subjectData.average *subjectData.coef/100;
-                                        moduleData.classAvg         += subjectData.classAvg*subjectData.coef/100;
-                                    }
-
-                                    // Rounding down the total coefs
-                                    subjectData.totalCoefGrades             = Math.floor(subjectData.totalCoefGrades);
-                                    subjectData.totalCoefRealGrades         = Math.floor(subjectData.totalCoefRealGrades);
-                                    subjectData.totalCoefSimGrades          = Math.floor(subjectData.totalCoefSimGrades);
-                                    subjectData.totalCoefEnabledGrades      = Math.floor(subjectData.totalCoefEnabledGrades);
-                                    subjectData.totalCoefEnabledRealGrades  = Math.floor(subjectData.totalCoefEnabledRealGrades);
-                                    subjectData.totalCoefEnabledSimGrades   = Math.floor(subjectData.totalCoefEnabledSimGrades);
-
-
-                                    if      (subjectData.totalCoefGrades < 100) moduleData.subjectsBelow100.push(subjectName);
-                                    else if (subjectData.totalCoefGrades > 100) moduleData.subjectsOver100 .push(subjectName);
-
-                                    if      (subjectData.totalCoefRealGrades < 100) moduleData.subjectsReallyBelow100.push(subjectName);
-                                    else if (subjectData.totalCoefRealGrades > 100) moduleData.subjectsReallyOver100 .push(subjectName);
-                                });
-
-
-                                // "Nullifying" the module if all its subjects don't have any enabled grade
-                                if (moduleData.subjectsNoEnabledGrade.length == Object.keys(moduleData.subjects).length || moduleData.subjectsNoGrade.length == Object.keys(moduleData.subjects).length) {
-                                    moduleData.average  = " - ";
-                                    moduleData.classAvg = " - ";
-
-                                    if (moduleData.subjectsNoGrade.length == Object.keys(moduleData.subjects).length) semData.modulesNoGrade.push(moduleData.moduleName);
-                                    if (moduleData.subjectsNoEnabledGrade.length == Object.keys(moduleData.subjects).length) semData.modulesNoEnabledGrade.push(moduleData.moduleName);
-                                }
-                                // Scaling down + rounding the averages
-                                if (!isNaN(Number(moduleData.average))) {
-                                    moduleData.average  =  Math.round(100*moduleData.average /((moduleData.totalCoefSubjects-moduleData.coefSubjectsNoEnabledGrade)/100))/100;
-                                    moduleData.classAvg =  Math.round(100*moduleData.classAvg/((moduleData.totalCoefSubjects-moduleData.coefSubjectsNoEnabledGrade)/100))/100;
-                                }
-                                // Error-proofing the averages
-                                if (isNaN(Number(moduleData.average))) {
-                                    moduleData.average  = " - ";
-                                    moduleData.classAvg = " - ";
-                                } 
-                                else {
-                                    semData.average     += moduleData.average;
-                                    semData.classAvg    += moduleData.classAvg;
-                                }
-                                
-                                // Rounding down the total coefs
-                                moduleData.totalCoefSubjects            =  Math.floor(moduleData.totalCoefSubjects);
-                                moduleData.totalCoefGrades              =  Math.floor(moduleData.totalCoefGrades);
-                                moduleData.totalCoefRealGrades          =  Math.floor(moduleData.totalCoefRealGrades);
-                                moduleData.totalCoefSimGrades           =  Math.floor(moduleData.totalCoefSimGrades);
-                                moduleData.totalCoefEnabledGrades       =  Math.floor(moduleData.totalCoefEnabledGrades);
-                                moduleData.totalCoefEnabledRealGrades   =  Math.floor(moduleData.totalCoefEnabledRealGrades);
-                                moduleData.totalCoefEnabledSimGrades    =  Math.floor(moduleData.totalCoefEnabledSimGrades);
-
-                            })
-
-
-
-                        }
-                        
-                        semData.totalCoefGrades                 = semData.totalCoefGrades               /semData.nbSubjects;
-                        semData.totalCoefRealGrades             = semData.totalCoefRealGrades           /semData.nbSubjects;
-                        semData.totalCoefSimGrades              = semData.totalCoefSimGrades            /semData.nbSubjects;
-                        semData.totalCoefEnabledGrades          = semData.totalCoefEnabledGrades        /semData.nbSubjects;
-                        semData.totalCoefEnabledRealGrades      = semData.totalCoefEnabledRealGrades    /semData.nbSubjects;
-                        semData.totalCoefEnabledSimGrades       = semData.totalCoefEnabledSimGrades     /semData.nbSubjects;
-                        
-                        // "Nullifying" the semester if every single one of its subjects has all its grades disabled
-                        if (semData.modulesNoEnabledGrade.length == semData.nbModules) {
-                            semData.average     = " - ";
-                            semData.classAvg    = " - ";
-                        }
-                        
-                        if (!isNaN(Number(semData.average)) && Object.keys(semData["__#unclassified#__"].subjects).length < semData.nbSubjects) {
-                            semData.average  =  Math.round(100*semData.average /(semData.nbModules-semData.modulesNoEnabledGrade.length))/100;
-                            semData.classAvg =  Math.round(100*semData.classAvg/(semData.nbModules-semData.modulesNoEnabledGrade.length))/100;
-                        }
-
-                        if (isNaN(Number(semData.average))) {
-                            semData.average     = " - ";
-                            semData.classAvg    = " - ";
-                        } 
-                        
-                        semData.totalCoefGrades                 = Math.floor(semData.totalCoefGrades);
-                        semData.totalCoefRealGrades             = Math.floor(semData.totalCoefRealGrades);
-                        semData.totalCoefSimGrades              = Math.floor(semData.totalCoefSimGrades);
-                        semData.totalCoefEnabledGrades          = Math.floor(semData.totalCoefEnabledGrades);
-                        semData.totalCoefEnabledRealGrades      = Math.floor(semData.totalCoefEnabledRealGrades);
-                        semData.totalCoefEnabledSimGrades       = Math.floor(semData.totalCoefEnabledSimGrades);
-                    })
-
-                    return this.gradesDatas
                 }
 
 
