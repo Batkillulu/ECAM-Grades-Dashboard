@@ -1,17 +1,28 @@
 # PATCH NOTES v2.5
 
+<br>
+
+## What's new in v2.5.2 ?
+
+### Fixes
+- adjusted the position of the first steps tutorial's 2nd notification's vertical position
+
+<br>
+
 
 ## What's new in v2.5.1 ?
 
 ### Fixes
 - hotfix for the number of validated modules
 
+<br>
+
 ## What's new in v2.5.0 ?
 
 ### Features
-- **First steps tutorial**:<br> 
+- **First steps tutorial**: <br> 
 When you launch the extension for the first time since this update, you will be notified to click on the help menu button to access to the first steps tutorial. It will guide you through the dashboard for your first time, filing you in with the most basic informations. Honestly, following this SUPER LONG (4 steps) tutorial just the required amount of info to know how to use the extension. It doesn't cover all the features, just the bare minimum ones.<br>
-If you want more info... well wait for update v2.5.1 lol, I'll make a more complete tutorial to cover all the features of the dashboard, I'm procrastinating a bit on that one, it's been planned for a while, but yeah I'll get to it
+If you want more info... well wait for update v2.5.1 lol, I'll make a more in-depth tutorial to cover all the features of the dashboard, I'm procrastinating a bit on that one, it's been planned for a while, but yeah I'll get to it eventually
 
 - **Class average**: <br>
 The class average for each subject, module and semester are now displayed. You can turn it off in the settings if you don't want to see them.
@@ -39,11 +50,10 @@ The class average for each subject, module and semester are now displayed. You c
 # PATCH NOTES v2.4
 
 
-
-
-
+<br>
 
 ## What's new in v2.4.1 ?
+
 ### Features
 - **New setting: Scroll Helpers (enabled by default)**: <br>
 some actions change the vertical size of the page (switching detailed/compact view mode, switching edit mode...). A scroll occurs to make sure the important elements (module/subject card, for instance) remain on screen, to follow this change of vertical size. You may not like being forced to scroll, I can understand, so I leave you the choice to turn it off. Though a few scroll helpers bypass this setting, but those are purely esthetic scrolls
@@ -63,10 +73,11 @@ some actions change the vertical size of the page (switching detailed/compact vi
 
 
 
-<br>        <br>
+<br>
 
 
 ## What's new in v2.4.0 ?
+
 ### Features
 
 - **Patch note**: <br>
@@ -117,15 +128,23 @@ You can now drag a module card and drop it onto a subject insertion field to ins
 
 
 # PATCH NOTES v2.3
+
+<br>
+
 ## What's new in v2.3.0 ?
+
 ### Features
-- Offline/Backup Mode! You can now access to the dashboard even if the servers are down! No magic behind it, you need to have launched the dashboard once before being in offline mode for your grades to appear, since the dashboard saves them to your browser's cache.
+- **Offline/Backup Mode!**: <br> 
+You can now access to the dashboard even if the servers are down! No magic behind it, you need to have launched the dashboard once before being in offline mode for your grades to appear, since the dashboard saves them to your browser's cache.
 
-- The extension now runs on espace.ecam.fr instead of espace.ecam.fr/group/education/notes, and creates a "Notes" button in the top dockbar to access the grades quickly
+- **Global operation**: <br> 
+The extension now runs on espace.ecam.fr instead of just espace.ecam.fr/group/education/notes, and creates a "Notes" button in the top dockbar to access to your grades quicker than ever
 
-- Settings: You now have access to settings by clicking on the settings button at the top right corner of the dashboard to enabled/disable the blur of the windows, and enabled/disable the value/text helpers for your module and subject total coefficients
+- **Settings**: <br> 
+You now have access to settings by clicking on the settings button at the top right corner of the dashboard to enabled/disable the blur of the windows, and enabled/disable the value/text helpers for your module and subject total coefficients
 
-- Keyboard Shortcuts: You may have a look at all the available shortcuts by clicking on the help button ? at the top of the page, and on Keyboard shortcuts
+- **Keyboard Shortcuts**: <br>
+You may have a look at all the available shortcuts by clicking on the help button ? at the top of the page, and on Keyboard shortcuts
 
 ### Improvement
 - Improved overall folding and dragging animations' smoothness
