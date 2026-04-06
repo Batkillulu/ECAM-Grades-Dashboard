@@ -1,40 +1,61 @@
-# ECAM Grades Dashboard ( [*quick update userscript*](https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/ECAM%20Grades%20Dashboard.user.js) )
-Browser userscript that enhances the ECAM intranet with a clean, real-time grades dashboard.
+# **ECAM Grades Dashboard** ( [*quick update userscript*](https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/ECAM%20Grades%20Dashboard.user.js) )
+A browser userscript that enhances the ECAM intranet with a clean grades dashboard!  
+[**HOW TO USE: Quick start ⤦**](#how-to-use-quick-start)
 
 Free for individual student use.  
-Institutional use, official deployment, or integration into the ECAM intranet requires a commercial license.
-This project is not affiliated with or endorsed by ECAM LaSalle.
+Institutional use, official deployment, or integration into the ECAM intranet requires a commercial license.  
+This project is not affiliated with or endorsed by ECAM LaSalle.  
 All trademarks and logos belong to their respective owners.
 
-[HOW TO USE: Quick start ⤦](#how-to-use-quick-start)
-<br></br>
-
-# Installation guide
-## Available platforms:
-### [○ Windows and Androids ⤦](#-windows-and-androids--1)
-### [○ IOS ⤦](#-ios--1)
+<br><br>
 
 
 
-## ———— Windows and Androids ————
-For Windows, any web browser works, and for Androids, only the [Firefox Nightly ↗](https://play.google.com/store/apps/details?id=org.mozilla.fenix&hl=en&pli=1) web browser manages extension, to my knowledge, so if you want to use the ECAM Grades Dashboard, install [Firefox Nightly ↗](https://play.google.com/store/apps/details?id=org.mozilla.fenix&hl=en&pli=1). For now, there's no proper mobile display, this is coming in the next major update, so for now, you may use the `Desktop version` that you can enabled when taping on the three dots in the top-right corner of the Firefox Nightly.
 
 
-### — Step 1: [Install Tampermonkey ↗](https://www.tampermonkey.net/)
+
+
+
+
+
+<!-- 
+MARK: Installation guide
+-->
+# **Installation guide**
+## *Available platforms*:
+### [○ **Windows and Androids** ⤦](#-windows-and-androids--1)
+### [○ **IOS** ⤦](#-ios--1)
+
+<br>
+
+## ———— **Windows and Androids** ————
+For Windows, any web browser works.<br>
+For Androids, to my knowledge, only the [Firefox Nightly ↗](https://play.google.com/store/apps/details?id=org.mozilla.fenix&hl=en&pli=1) and [Microsoft Edge ↗](https://play.google.com/store/apps/details?id=com.microsoft.emmx) web browsers manage extensions, so if you want to use the ECAM Grades Dashboard, install [Firefox Nightly ↗](https://play.google.com/store/apps/details?id=org.mozilla.fenix&hl=en&pli=1) or [Microsoft Edge ↗](https://play.google.com/store/apps/details?id=com.microsoft.emmx)
+
+
+### — Step 1: [Install *Tampermonkey* ↗](https://www.tampermonkey.net/)
 It's a web browser extension that allows to run JavaScript scripts upon loading a specified website. (Please ignore the thousand pop-ups and ads... I swear this is safe...)
 
 ### — Step 2: Setup Tampermonkey
 Open your extensions settings in `Manage extensions`. Enable `Developer Mode`, then find Tampermonkey, and click on `Details`. Make sure that `Allow User Scripts` and `Allow access to file URLs`.
 
-### — Step 3: [Install the ECAM Grades Dashboard Script ↗](https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/ECAM%20Grades%20Dashboard.user.js)
+### — Step 3: [Install the *ECAM Grades Dashboard* Script ↗](https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/ECAM%20Grades%20Dashboard.user.js)
 This will redirect you to a Tampermonkey page that will ask you to install the script. Press `Install` to complete the installation.
 
 ### — Step 4: Enjoy! [Go to ECAM Grades! ↗](https://espace.ecam.fr/group/education/notes)
-Your ECAM Grades Dashboard is fully operational! If you're lucky enough, you may already have configurations prepared, you can go and check on `Import Config`, `Get a configuration online` and browse through the menu. If you don't find it and you're feeling generous, please share with me the details of your modules (specifically what subjects are in what modules, as well as their coefficients in their respective modules, you should have received a mail from ECAM with all the details somewhere, you can just provide me with this) at the following mail address baptiste.jacquin@ecam.fr, or in the message box on which will be redirected when clicking on the flag button, `Share a config`. You can also do the 2nd option if you already configured a semester, and want to share it, after pressing `Export config`. Thank you!
+Your ECAM Grades Dashboard is fully operational! <br>
+For now, there's no proper mobile display, this will be implemented in the future, so for now, you may use the `Desktop version`, which you can enable by taping on the three dots in the top-right corner, then `Desktop version` for Firefox Nightly, or by taping on the three horizontal bars in the bottom-right corner, then `View desktop site` for Microsoft Edge.
 
-## - IOS - 
+If you're lucky enough, you may already have configurations prepared, you can go and check on `Import Config`, `Get a configuration online` and browse through the menu. If you don't find it and you're feeling generous, please share with me the details of your modules (specifically what subjects are in what modules, as well as their coefficients in their respective modules, you should have received a mail from ECAM with all the details somewhere, you can just provide me with this) at the following mail address baptiste.jacquin@ecam.fr, or in the message box on which will be redirected when clicking on the flag button, `Share a config`. You can also do the 2nd option if you already configured a semester, and want to share it, after pressing `Export config`. Thank you!
 
-### — Step 1: [Install Userscripts ↗](https://apps.apple.com/us/app/userscripts/id1463298887)
+### — Step 5 ?
+If you want to take the time to have a look at all the features of this dashboard, check [the section here](#how-to-use-quick-start) to quickly learn about what the dashboard does.
+
+<br>
+
+## ———— **IOS** ————
+
+### — Step 1: [Install *Userscripts* ↗](https://apps.apple.com/us/app/userscripts/id1463298887)
 It's a web browser extension that allows to run JavaScript scripts upon loading a specified website.
 
 ### — Step 2: Enable the extension
@@ -54,15 +75,24 @@ Your ECAM Grades Dashboard is fully operational! Click here to go to your ECAM G
 
 For people who prefer reading directly: If you're lucky enough, you may already have configurations prepared, you can go and check on `Import Config`, `Get a configuration online` and browse through the menu. If you don't find it and you're feeling generous, please share with me the details of your modules (specifically what subjects are in what modules, as well as their coefficients in their respective modules, you should have received a mail from ECAM with all the details somewhere, you can just provide me with this) at the following mail address baptiste.jacquin@ecam.fr, or in the message box on which will be redirected when clicking on the flag button, `Share a config`. You can also do the 2nd option if you already configured a semester, and want to share it, after pressing `Export config`. Thank you!
 
-### Step 5?
+### — Step 7 ?
 If you want to take the time to have a look at all the features of this dashboard, check the section just below to quickly learn about what the dashboard does.
 
 
 
-<br></br>
-<br></br>
+<br><br><br><br>
 
 
+
+
+
+
+
+
+
+<!-- 
+MARK: Quick start
+-->
 # HOW TO USE: QUICK START
 
 
@@ -70,7 +100,8 @@ If you want to take the time to have a look at all the features of this dashboar
 It simply reads the classic ECAM Grades table (that you can still find all the way down, by clicking on "Show ECAM Intranet's Grades Table"), sort every grades of the same semester in ***semester sections***, and then packs them together in ***subject cards*** corresponding to the subject of the grade. An average of your subject is then calculated and displayed below the name of the subject. ***Subject cards*** may be packed in a ***module card*** when you turn on the ***edit mode*** by clicking on the ***edit mode button***, or by pressing `Shift+E`. For more informations on how to set up your modules, see the section below "[Modules configuration ⤦](#modules-configuration)".
 
 You can filter by semester with the ***semester filter bar*** (you can also collapse the content of a semester by clicking on its header, mainly useful when you're showing ALL the semesters), and you can switch between ***compact view mode*** (showing only the name of the subject and its average) and ***detailed view mode*** (showing the name of the subject and its average, but also the table of all the grades of this subject), by clicking on the appropriate ***view mode buttons*** next to the the ***semester filter bar***, or by pressing `Shift+D`. You may switch between the french and the english language by clicking on their corresponding ***language buttons***, or by pressing `Shift+L`.
-<br></br>
+
+<br><br>
 
 # Features:
 ## Features list:
@@ -78,9 +109,12 @@ You can filter by semester with the ***semester filter bar*** (you can also coll
 ### [○ A feature you will like: the New Grades Section! ⤦](#a-feature-you-will-like-the-new-grades-section)
 ### [○ Custom subjects and custom grades! ⤦](#custom-subjects-and-custom-grades)
 ### [○ Turn off unwanted grades! ⤦](#turn-off-unwanted-grades)
+### [○ A back-up mode! ⤦](#a-back-up-mode)
 ### [○ A report/support section! ⤦](#a-reportsupport-section)
+### [○ Settings ⤦](#settings)
+### [○ Keyboard shortcuts ⤦](#keyboard-shortcuts)
 
-
+<br><br>
 
 ## Modules configuration!
 You can bring subjects together in a module! Start by checking if a module configuration already exists by clicking on `Import Config`, `Get a configuration online` and browsing through the menu to choose the configuration that matches your current section + year + prom + pathway! This requires a connection (I will assume it's the case, I don't quite see how you're gonna access the website otherwise...), as the configs are not in the script itself, it's in this repository (you're reading the README file of this repository), so the script checks in the repository for every config inside. You won't have to update the dashboard every time there's a new configs added!
@@ -156,5 +190,21 @@ Sooometimes, veeeery occasionally, the administration of ECAM Lasalle makes mist
 
 
 
+## A back-up mode!
+Sometimes, the ECAM's servers are down, meaning you can't see your lovely grades... How frustrating!  
+Well, fret not, for I implemented a ***back-up mode***! Even with the servers down, you can still have access to your grades, the dashboard will display them by reading the grades I nicely saved in your cache! Though, this means that you must have launched the dashbord at least one before the servers were down. You also can't see if you have new grades.
+
+
+
 ## A report/support section!
 You can click on the flag button to open a menu to choose what you want to communicate with me (this will be made through the `Issues` tab of this repository): a bug/something not working the way you expect, an idea to improve the dashboard, a configuration you made that you want to share with the rest of your prom... I'll do my best to actively work on the maintenance of the dashboard, so don't hesitate to mention anything! Your dear developer is doing all this for free and for fun, so if you have issues to report, he sincerely thanks you for giving him more stuff to do! :D
+
+
+
+## Settings
+Click on the settings icon, in the top right corner of the dashboard's header, to have access to the settings. Various settings can be manipulated here, so make sure to check them to customize your experience to your liking!
+
+
+
+## Keyboard shortcuts
+You can have a look at all the available keyboard shortcuts by clicking on the `?` icon in the top right corner of the dashboard's header, then click on `Keyboard shortcuts ⌨️`

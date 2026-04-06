@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.5.2
+// @version      2.5.3
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/*
@@ -32,7 +32,7 @@
 // Optimal display when the side bar is closed
 // 
 // 
-// Link for offline test: https://espace.ecam.fr/c/portal/login?redirect=%2Fgroup%2Feducation%2Fnotes&p_l_id=0&ticket=ST-113179-sbwjXieT3GLY9T3fXdsmFp9vCro-tomcat03
+// Link for backup test: https://espace.ecam.fr/c/portal/login?redirect=%2Fgroup%2Feducation%2Fnotes&p_l_id=0&ticket=ST-113179-sbwjXieT3GLY9T3fXdsmFp9vCro-tomcat03
 // (trying to access espace.ecam.fr wields a link of this sort. It doesn't seem to have a "unique" token or a time limited access, so this link should work for anyone)
 // 
 // =====================================================================================================================================================================
@@ -117,10 +117,10 @@ ecamDash = undefined;
                 }
                 
 
-                .offline-mode-title    { display: flex; justify-content: center; align-items: center; text-align: center; height: 60px; font-size: 50px; letter-spacing: 0.23em; font-family: "Rubik Glitch", system-ui; opacity: 0; transition: all 1s ease; }
-                .offline-mode-title.show    { opacity: 1; }
-                .offline-mode-subtitle { display: flex; justify-content: center; align-items: center; text-align: center; font-size: 17px; margin-bottom: 30px; opacity: 0; transition: all 1s ease; }
-                .offline-mode-subtitle.show { opacity: 1; }
+                .backup-mode-title    { display: flex; justify-content: center; align-items: center; text-align: center; height: 60px; font-size: 50px; letter-spacing: 0.23em; font-family: "Rubik Glitch", system-ui; opacity: 0; transition: all 1s ease; }
+                .backup-mode-title.show    { opacity: 1; }
+                .backup-mode-subtitle { display: flex; justify-content: center; align-items: center; text-align: center; font-size: 17px; margin-bottom: 30px; opacity: 0; transition: all 1s ease; }
+                .backup-mode-subtitle.show { opacity: 1; }
 
                 #dash-header { display: flex; justify-content: space-between; align-items: center; padding: 30px 40px; margin-bottom: 15px; width: 100%; background: linear-gradient(135deg, #5b62bf 0%, #2A2F72 100%); color: white; border-radius: 20px; box-shadow: 3px 5px 5px 0px #00000042; }
                 .dash-title { display: flex; justify-content: center; align-items: center; gap: 5px; font-size: 28px; font-weight: 700; margin: 0; }
@@ -322,6 +322,7 @@ ecamDash = undefined;
             styles += `
                 .tuto-tip-notif-container   { display: flex; justify-content: center; align-items: center; position: relative; width: 0; height: 0; z-index: 10; opacity: 0; transform: scale(110%); --infinite-alternate-scale-up-scale: 100%; transition: all 0.3s ease;}
                 .tuto-tip-notif         { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 15px; padding: 20px; background: linear-gradient( #5334ff 0%, #7a62ff 100%); border-radius: 7px; outline: 5px solid; color: white; font-size: 31px; line-height: 31px; text-align: center; --hoveringElem-amp: 10px; animation: focusBlinkAnimation 2s infinite alternate ease-in-out, hoveringElem 2s infinite alternate ease-in-out; transition: all 0.3s ease; }
+                .tuto-tip-notif:hover   { animation-play-state: running, paused; }
                 @keyframes focusBlinkAnimation  { from { filter: brightness(1); } to { filter: brightness(1.5) } }
 
                 .skip-tuto-btn          { display: flex; justify-content: center; align-items: center; padding: 10px; position: fixed; top: 20px; right: 20px; background: #4c84fde8; border-radius: 10px; color: white; font-size: 20px; text-decoration: underline; cursor: pointer; opacity: 0; z-index: 5000; transition: all 0.5s ease; }
@@ -1036,7 +1037,7 @@ ecamDash = undefined;
             this.ecamDash = document.createElement("div");
 
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.5.2";
+            this.scriptVersion = "2.5.3";
             this.scriptGitVersion = "1.0.0";
             this.configVersion = 3;
             this.error = error; // test in error mode at this link: https://espace.ecam.fr/c/portal/login?redirect=%2Fgroup%2Feducation%2Fnotes&p_l_id=0&ticket=ST-113179-sbwjXieT3GLY9T3fXdsmFp9vCro-tomcat03
@@ -3102,8 +3103,8 @@ ecamDash = undefined;
                     // but will be in the generateContent() method later on, to regenerate the text in case the language is changed
                     this.ecamDash.innerHTML = `
                     ${this.error ? `
-                    <div class="offline-mode-title">OFFLINE</div>
-                    <div class="offline-mode-subtitle jura"></div>
+                    <div class="backup-mode-title">OFFLINE</div>
+                    <div class="backup-mode-subtitle jura"></div>
                     ` : ""}
 
                     <div id="emptyDivToRemoveTheDragImage"></div>
@@ -3273,10 +3274,10 @@ ecamDash = undefined;
 
                     if (this.error) {
                         setTimeout(() => {
-                            const offlineTitle = document.querySelector(".offline-mode-title");
-                            const offlineSubTitle = document.querySelector(".offline-mode-subtitle");
-                            offlineTitle.classList.add("show");
-                            offlineSubTitle.classList.add("show");
+                            const backupTitle = document.querySelector(".backup-mode-title");
+                            const backupSubTitle = document.querySelector(".backup-mode-subtitle");
+                            backupTitle.classList.add("show");
+                            backupSubTitle.classList.add("show");
                         }, 1)
                     }
 
@@ -3289,10 +3290,10 @@ ecamDash = undefined;
                 async languageSensitiveContent(fadeIn=true) {
                     // Language Sensitive text in the Dashboard Header and Semester filter tab (which doesn't refresh on calling the generateContent() method)
                     if (this.error) {
-                        const offlineSubTitle = document.querySelector(".offline-mode-subtitle");
-                        offlineSubTitle.innerHTML = !this.langIsEn 
+                        const backupSubTitle = document.querySelector(".backup-mode-subtitle");
+                        backupSubTitle.innerHTML = !this.langIsEn 
                             ? `Les serveurs de l'ECAM sont actuellement inaccessibles ! ${this.grades.length > 0
-                                ? "Pour l'instant, tu ne peux pas voir si tu as des nouvelles notes... En attendant, voici le tableau de bord en mode offline, tu as donc accès aux notes que j'ai gentiment sauvegardées dans le cache la dernière fois ! De rien ! <3" 
+                                ? "Pour l'instant, tu ne peux pas voir si tu as des nouvelles notes... En attendant, voici le tableau de bord en mode backup, tu as donc accès aux notes que j'ai gentiment sauvegardées dans le cache la dernière fois ! De rien ! <3" 
                                 : "Pour l'instant, tu ne peux pas voir tes notes... Tu peux quand même commencer à configurer tes modules, reviens quand les serveurs sont opérationnels pour voir tes notes !"
                             }` 
                             : `ECAM's servers are currently down! ${this.grades.length > 0 
@@ -3514,8 +3515,8 @@ ecamDash = undefined;
                                 : `${this.newGrades.length} New Grade${this.newGrades.length > 1 ? "s" : ""}!`
                             }` 
                             : `${!this.langIsEn 
-                                ? `Pas de nouvelle note${this.error ? ", que je sache (mode offline)" : ""}` 
-                                : `No new grade${this.error ? ", as far as I know (offline mode)" : ""}`
+                                ? `Pas de nouvelle note${this.error ? ", que je sache (mode backup)" : ""}` 
+                                : `No new grade${this.error ? ", as far as I know (backup mode)" : ""}`
                             }` 
                         }
                     `;
@@ -3689,7 +3690,7 @@ ecamDash = undefined;
                     this.attachAllEventListeners();
 
                     if (document.body.clientHeight > document.body.offsetHeight) {
-                        // Semester has been collapsed, and now the page is tinier than the window, and i want to avoid the slider to offset the page. Only useful in Offline mode
+                        // Semester has been collapsed, and now the page is tinier than the window, and i want to avoid the slider to offset the page. Only useful in Backup mode
                         this.ecamDash.style.paddingRight = "10px";
                     }
                     else {
@@ -5113,8 +5114,8 @@ ecamDash = undefined;
                             document.querySelector(".new-grades-card").classList.add("none");
                             document.querySelector(".new-grades-card-header").classList.add("none");
                             document.querySelector(".new-grades-card-title").innerHTML = !this.langIsEn 
-                                ? `Pas de nouvelle note${this.error ? ", que je sache (mode offline)" : ""}` 
-                                : `No new grade${this.error ? ", as far as I know (offline mode)" : ""}`
+                                ? `Pas de nouvelle note${this.error ? ", que je sache (mode backup)" : ""}` 
+                                : `No new grade${this.error ? ", as far as I know (backup mode)" : ""}`
                             ;
                             document.querySelector(".new-grades-card-title").classList.add("none");
                             document.querySelector(".new-grades-mark-as-read").parentElement.disabled = true;
@@ -5658,7 +5659,7 @@ ecamDash = undefined;
                             }
 
                             if (document.body.clientHeight > document.body.offsetHeight) {
-                                // Semester has been collapsed, and now the page is tinier than the window, and i want to avoid the slider to offset the page. Only useful in Offline mode
+                                // Semester has been collapsed, and now the page is tinier than the window, and i want to avoid the slider to offset the page. Only useful in Backup mode
                                 this.ecamDash.style.paddingRight = "10px";
                             }
                             else {

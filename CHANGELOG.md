@@ -2,22 +2,7 @@
 
 <br>
 
-## What's new in v2.5.2 ?
-
-### Fixes
-- adjusted the position of the first steps tutorial's 2nd notification's vertical position
-
-<br>
-
-
-## What's new in v2.5.1 ?
-
-### Fixes
-- hotfix for the number of validated modules
-
-<br>
-
-## What's new in v2.5.0 ?
+## What's new in v2.5.0 - v2.5.3 ?
 
 ### Features
 - **First steps tutorial**: <br> 
@@ -36,6 +21,9 @@ The class average for each subject, module and semester are now displayed. You c
 ### Fixes
 - Fixed inconsistency with the switch between detailed and compact (and the other way around) on certain actions, and fixed the view mode not being saved for the next time you visit the dashboard
 - Fixed the issue with some actions not working after deleting a simulated grade
+- (*v2.5.1 hotfix*) hotfixed the number of validated modules
+- (*v2.5.2 hotfix*) adjusted the position of the first steps tutorial's 2nd notification's vertical position
+- (*v2.5.3 hotfix*) tutorial tip notifications now stop hovering up and down when the mouse is on it (so it's easier to read them)
 
 
 
