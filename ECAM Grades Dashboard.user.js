@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.5.1
+// @version      2.5.2
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/*
@@ -410,7 +410,7 @@ ecamDash = undefined;
             // MARK: notifs
             styles += `
 
-                .update-available-notif     { display: flex; align-items: center; justify-content: space-evenly; border-radius: 10px; color: #dafaff; font-weight: 800; font-size: 17px; background: #6554ff; width: 95%; height: 70px; position:fixed; left:2.5%; right:0px; top:-75px; z-index:301; box-shadow: 0 0 5px rgba(0,0,0,0.5); user-select: none; transition: all 0.5s ease; }
+                .update-available-notif     { display: flex; align-items: center; justify-content: space-evenly; border-radius: 10px; color: #dafaff; font-weight: 800; font-size: 17px; background: #6554ff; width: 95%; height: 70px; position:fixed; left:2.5%; right:0px; top:-75px; z-index: 400; box-shadow: 0 0 5px rgba(0,0,0,0.5); user-select: none; transition: all 0.5s ease; }
                 .update-available-notif.on  { top: 2px }
                 .update-available-notif-header  { display: flex; justify-content: center; align-items: center; width: 80%; font-size: 25px; gap: 15px; }
                 .update-available-notif-text        { display: flex; justify-content: center; align-items: center; }
@@ -1036,7 +1036,7 @@ ecamDash = undefined;
             this.ecamDash = document.createElement("div");
 
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.5.1";
+            this.scriptVersion = "2.5.2";
             this.scriptGitVersion = "1.0.0";
             this.configVersion = 3;
             this.error = error; // test in error mode at this link: https://espace.ecam.fr/c/portal/login?redirect=%2Fgroup%2Feducation%2Fnotes&p_l_id=0&ticket=ST-113179-sbwjXieT3GLY9T3fXdsmFp9vCro-tomcat03
@@ -4390,6 +4390,13 @@ ecamDash = undefined;
                     return html;
                 }
 
+            //#endregion
+
+
+
+
+
+            //#region Tutos
 
                 firstLoadEvent() {
 
@@ -4460,7 +4467,7 @@ ecamDash = undefined;
                             document.querySelector("#importBtn"), 
                             !this.langIsEn ? "Clique ici pour importer une configuration de modules" : "Click here to import a module configuration", 
                             {
-                                nextAction: () => {callback()}, 
+                                nextAction: callback, 
                                 nextActionDelay: 400,
                                 containerStyle: {top: "-25px", right: "200px"}, 
                                 notifStyle: {minWidth: "330px"}, 
@@ -4475,9 +4482,9 @@ ecamDash = undefined;
                             document.querySelector(".import-menu-btn.online"), 
                             !this.langIsEn ? "Clique ici pour obtenir une configuration déjà disponible en ligne" : "Click here to obtain a configuration already available online", 
                             {
-                                nextAction: () => {callback()}, 
+                                nextAction: callback, 
                                 nextActionDelay: 400,
-                                containerStyle: {top: "-125px", right: "110px"}, 
+                                containerStyle: {top: "175px", right: "110px"}, 
                                 notifStyle: {minWidth: "260px"}, 
                                 containerElemStyle: {zIndex: "unset"}
                             }
