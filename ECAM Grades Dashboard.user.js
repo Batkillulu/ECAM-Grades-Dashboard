@@ -54,10 +54,7 @@
 //  - maxence.leroux@ecam.fr    [more for the financial and responsibility part]
 // 
 
-ecamDash = undefined;
-
 (function() {
-    'use strict';
 
     //#region — CSS Style —
     //MARK: ——————————————————
