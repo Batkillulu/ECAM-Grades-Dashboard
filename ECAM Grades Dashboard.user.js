@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.5.3
+// @version      2.5.4
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/*
@@ -1034,7 +1034,7 @@
             this.ecamDash = document.createElement("div");
 
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.5.3";
+            this.scriptVersion = "2.5.4";
             this.scriptGitVersion = "1.0.0";
             this.configVersion = 3;
             this.error = error; // test in error mode at this link: https://espace.ecam.fr/c/portal/login?redirect=%2Fgroup%2Feducation%2Fnotes&p_l_id=0&ticket=ST-113179-sbwjXieT3GLY9T3fXdsmFp9vCro-tomcat03
@@ -1451,7 +1451,7 @@
                     }
 
 
-                    if (settingCompliance !== true && settingCompliance !== false && !priority?.split("/")?.[1]?.toLowerCase()?.trim()) {
+                    if (settingCompliance !== true && settingCompliance !== false && !effectivePriority?.split("/")?.[1]?.toLowerCase()?.trim()) {
                         settingCompliance = true;
                     }
                     else {

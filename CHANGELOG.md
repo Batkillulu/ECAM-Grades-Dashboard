@@ -2,7 +2,7 @@
 
 <br>
 
-## What's new in v2.5.0 - v2.5.3 ?
+## What's new in v2.5.0 - v2.5.4 ?
 
 ### Features
 - **First steps tutorial**: <br> 
@@ -24,6 +24,7 @@ The class average for each subject, module and semester are now displayed. You c
 - (*v2.5.1 hotfix*) hotfixed the number of validated modules
 - (*v2.5.2 hotfix*) adjusted the position of the first steps tutorial's 2nd notification's vertical position
 - (*v2.5.3 hotfix*) tutorial tip notifications now stop hovering up and down when the mouse is on it (so it's easier to read them)
+- (*v2.5.4 hotfix*) re-added the feature to scroll to the subject of a new grade when clicking on its new grade subject card
 
 
 
