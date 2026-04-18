@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.5.3
+// @version      2.5.4
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/*
@@ -54,10 +54,7 @@
 //  - maxence.leroux@ecam.fr    [more for the financial and responsibility part]
 // 
 
-ecamDash = undefined;
-
 (function() {
-    'use strict';
 
     //#region — CSS Style —
     //MARK: ——————————————————
@@ -1037,7 +1034,7 @@ ecamDash = undefined;
             this.ecamDash = document.createElement("div");
 
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.5.3";
+            this.scriptVersion = "2.5.4";
             this.scriptGitVersion = "1.0.0";
             this.configVersion = 3;
             this.error = error; // test in error mode at this link: https://espace.ecam.fr/c/portal/login?redirect=%2Fgroup%2Feducation%2Fnotes&p_l_id=0&ticket=ST-113179-sbwjXieT3GLY9T3fXdsmFp9vCro-tomcat03
@@ -1454,7 +1451,7 @@ ecamDash = undefined;
                     }
 
 
-                    if (settingCompliance !== true && settingCompliance !== false && !priority?.split("/")?.[1]?.toLowerCase()?.trim()) {
+                    if (settingCompliance !== true && settingCompliance !== false && !effectivePriority?.split("/")?.[1]?.toLowerCase()?.trim()) {
                         settingCompliance = true;
                     }
                     else {
@@ -3281,7 +3278,7 @@ ecamDash = undefined;
                         }, 1)
                     }
 
-                    this.generateContent({manageIndividualSubjectCardFolding: false, fadeIn:false});
+                    this.generateContent({manageIndividualCardFolding: false, fadeIn:false});
                 }
 
 
@@ -3607,7 +3604,7 @@ ecamDash = undefined;
 
 
                 // MARK: — GenerateContent
-                generateContent({manageIndividualSubjectCardFolding=true, fadeIn=true}={manageIndividualSubjectCardFolding: true, fadeIn: true}) {
+                generateContent({manageIndividualCardFolding=true, fadeIn=true}={manageIndividualCardFolding: true, fadeIn: true}) {
 
                     if (fadeIn == "big") {this.languageSensitiveContent(true);}
                     else {this.languageSensitiveContent(false);}
@@ -3617,7 +3614,7 @@ ecamDash = undefined;
                     this.renderRecentGrades()
 
 
-                    if (!manageIndividualSubjectCardFolding) {
+                    if (!manageIndividualCardFolding) {
                         this.detailedSubjCardsId = [], this.compactSubjCardsId = [];
                     }
 
@@ -3669,7 +3666,7 @@ ecamDash = undefined;
                         <div class="semester-content show${this.selectedSubjectCardsId.length > 0 || this.selectedModuleCardsId.length > 0 ? " dragging" : ""}${this.editMode ? " edit" : ""}${fadeIn ? " fade-in" : ""}" id="sem-content-${sem}">
                             <div class="semester-grid">
                                 <div class="modules-section ${this.editMode ? "edit" : ""}" id="modules-section" ${moduleConfig?.__modules__ ? "" : "style=\"display: none\""}>
-                                    ${this.createAllModuleCards(sem, manageIndividualSubjectCardFolding)}
+                                    ${this.createAllModuleCards(sem, manageIndividualCardFolding)}
                                 </div>
                                 <div class="unclassified-section" id="unclassified-section" style="${unclassifiedLength > 0 ? `` : `; display: none`}">
                                     <div class="unclassified-title jura">
@@ -3677,7 +3674,7 @@ ecamDash = undefined;
                                     </div>
                                     <div class="unclassified-content">
                                         ${unclassifiedLength > 0 
-                                            ? `<div style="margin: -10px 0px"></div>${this.createAllSubjCards(sem, "__#unclassified#__", manageIndividualSubjectCardFolding)}<div style="margin: -10px 0px"></div>` 
+                                            ? `<div style="margin: -10px 0px"></div>${this.createAllSubjCards(sem, "__#unclassified#__", manageIndividualCardFolding)}<div style="margin: -10px 0px"></div>` 
                                             : ``
                                         }
                                     </div>
@@ -3703,13 +3700,13 @@ ecamDash = undefined;
 
 
                 // MARK: Create Module Card
-                createAllModuleCards(sem, manageIndividualSubjectCardFolding=true) {
+                createAllModuleCards(sem, manageIndividualCardFolding=true) {
                     const moduleConfig = this.moduleConfig?.[sem] || {};
 
                     let html =  this.editMode ? this.createDropFieldInsertionField("module", {sem, index:0}) : "";
 
                     moduleConfig?.__modules__?.forEach((moduleName, moduleIndex) => {
-                        html += this.createModuleCard(sem, moduleName, moduleIndex, manageIndividualSubjectCardFolding);
+                        html += this.createModuleCard(sem, moduleName, moduleIndex, manageIndividualCardFolding);
                         html += this.editMode ? this.createDropFieldInsertionField("module", {sem, index:moduleIndex+1}) : "";
                     });
 
@@ -3721,12 +3718,12 @@ ecamDash = undefined;
 
                     return html;
                 }
-                createModuleCard(sem, moduleName, moduleIndex=-1, manageIndividualSubjectCardFolding=true) {
+                createModuleCard(sem, moduleName, moduleIndex=-1, manageIndividualCardFolding=true) {
                     const average           = this.gradesDatas[sem][moduleName].average;
                     const classAvg          = this.gradesDatas[sem][moduleName].classAvg;
                     const hasSim            = this.gradesDatas[sem][moduleName].simGrades.length > 0 ? true : false;
                     const hasDisabled       = this.gradesDatas[sem][moduleName].disabledSimGrades.length + this.gradesDatas[sem][moduleName].disabledRealGrades.length > 0 ? true : false;
-                    const folded            = manageIndividualSubjectCardFolding && this.foldedModuleCardsId.includes(`module-card-${moduleName}-in-semester-${sem}`);
+                    const folded            = manageIndividualCardFolding && this.foldedModuleCardsId.includes(`module-card-${moduleName}-in-semester-${sem}`);
                     const cardIsSelected    = this.selectedModuleCardsId.includes(`module-card-${moduleName}-in-semester-${sem}`);
 
                     let html = `
@@ -3785,7 +3782,7 @@ ecamDash = undefined;
                             </div>
 
                             <div class="module-details ${this.editMode ? "edit-mode": ""}${this.viewMode == "detailed" ? " detailed" :  " compact"}" id="module-details-${moduleName}-in-semester${sem}" data-module="${moduleName}">
-                                ${this.createAllSubjCards(sem, moduleName, manageIndividualSubjectCardFolding)}
+                                ${this.createAllSubjCards(sem, moduleName, manageIndividualCardFolding)}
                             </div>
                         </div>
                         
@@ -3808,7 +3805,7 @@ ecamDash = undefined;
                 * @param {string} moduleName Name of the subject's module
                 * @return {string} The outer HTML of all the subject cards of a module, in a single string
                 */
-                createAllSubjCards(sem, moduleName, manageIndividualSubjectCardFolding=true) {
+                createAllSubjCards(sem, moduleName, manageIndividualCardFolding=true) {
                     const moduleData = this.gradesDatas[sem][moduleName];
                     
                     let html  = this.editMode && moduleName != "__#unclassified#__" && this.moduleConfig[sem]?.[moduleName] != undefined 
@@ -3817,7 +3814,7 @@ ecamDash = undefined;
                     ;
 
                     Object.values(moduleData.subjects).forEach((_value, _index) => {
-                        html += this.createSubjCard(sem, moduleName, _value.subjName, _index, manageIndividualSubjectCardFolding);
+                        html += this.createSubjCard(sem, moduleName, _value.subjName, _index, manageIndividualCardFolding);
                         html += this.editMode && moduleName != "__#unclassified#__" && this.moduleConfig[sem]?.[moduleName] != undefined 
                             ? this.createDropFieldInsertionField("subject", {sem, moduleName, index:_index+1}) 
                             : ""
@@ -3838,7 +3835,7 @@ ecamDash = undefined;
                 * @param {number} [index=-1] Default: -1 — Index of the subject in its module, necessary if the subject is classified, useless if the subject is unclassified
                 * @return {string} The outer HTML of the subject card
                 */
-                createSubjCard(sem, moduleName, subject, index=-1, manageIndividualSubjectCardFolding=true) {
+                createSubjCard(sem, moduleName, subject, index=-1, manageIndividualCardFolding=true) {
                     const moduleData            = this.gradesDatas[sem][moduleName];
                     const subjectData           = moduleData.subjects[subject];
                     const subjectGrades         = subjectData.grades;
@@ -3855,12 +3852,12 @@ ecamDash = undefined;
                     const subjectCardId         = `subject-card-semester-${sem}-subject-${subject}`;
                     const cardIsSelected        = this.selectedSubjectCardsId.includes(`subject-card-semester-${sem}-subject-${subject}`);
                     const detailed              = 
-                        (this.detailedSubjCardsId.includes(subjectCardId) && !this.compactSubjCardsId.includes(subjectCardId) && manageIndividualSubjectCardFolding) 
+                        (this.detailedSubjCardsId.includes(subjectCardId) && !this.compactSubjCardsId.includes(subjectCardId) && manageIndividualCardFolding) 
                         || 
-                        (this.viewMode == "detailed" && !manageIndividualSubjectCardFolding)
+                        (this.viewMode == "detailed" && !manageIndividualCardFolding)
                     ;
                     
-                    if (!manageIndividualSubjectCardFolding) {
+                    if (!manageIndividualCardFolding) {
                         if (detailed)   {this.detailedSubjCardsId.push(subjectCardId); this.compactSubjCardsId.splice(this.compactSubjCardsId.indexOf(subjectCardId), 1)} 
                         else            {this.compactSubjCardsId.push(subjectCardId); this.detailedSubjCardsId.splice(this.detailedSubjCardsId.indexOf(subjectCardId), 1)}
                     }
@@ -5186,7 +5183,7 @@ ecamDash = undefined;
 
                                     this.foldedModuleCardsId = []; document.querySelector(".fold-toggle").classList.remove("active");
                                     this.removeCardFromSelection();
-                                    this.generateContent({manageIndividualSubjectCardFolding: false});
+                                    this.generateContent({manageIndividualCardFolding: false});
                                 }
                             };
                         });
@@ -8331,7 +8328,7 @@ ecamDash = undefined;
                         this.foldedModuleCardsId = []; document.querySelector(".fold-toggle").classList.remove("active");
                         this.removeCardFromSelection();
                         this.scrollToClientHighestElem();
-                        this.generateContent({manageIndividualSubjectCardFolding: false});
+                        this.generateContent({manageIndividualCardFolding: false});
                     }
                     else if (this.keyInputMatch(e, "D", shiftRequired)) {
                         const unclassifiedSection = document.querySelector(".unclassified-section");
@@ -8412,7 +8409,7 @@ ecamDash = undefined;
                         this.foldedModuleCardsId = []; document.querySelector(".fold-toggle").classList.remove("active");
                         this.saveSemesterFilter();
                         this.removeCardFromSelection();
-                        this.generateContent({fadeIn: false, manageIndividualSubjectCardFolding: false});
+                        this.generateContent({fadeIn: false, manageIndividualCardFolding: false});
                     }
                 };
             }
@@ -8505,7 +8502,7 @@ ecamDash = undefined;
 
                 greyGridTable.style.display = "none";
                 
-                new ECAMDashboard(error); 
+                ecamDash = new ECAMDashboard(error); 
             };
         }
         else if (error == "servers are down") {
