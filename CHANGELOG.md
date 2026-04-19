@@ -1,4 +1,4 @@
-<!-- WHAT'S NEW ?
+<!-- MARK: WHAT'S NEW ?
 
     Whenever an update is done, this section should be updated. 
     Make sure that the version number is update in the script, both in the userscript header's "@version" and in "this.scriptVersion"
@@ -29,6 +29,7 @@
 -->
 
 
+<!-- MARK: v2.5 -->
 # PATCH NOTES v2.5
 
 <br/>
@@ -76,6 +77,7 @@ The class average for each subject, module and semester are now displayed. You c
 
 
 
+<!-- MARK: v2.4 -->
 # PATCH NOTES v2.4
 
 
@@ -157,6 +159,7 @@ You can now drag a module card and drop it onto a subject insertion field to ins
 
 
 
+<!-- MARK: v2.3 -->
 # PATCH NOTES v2.3
 
 <br/>
