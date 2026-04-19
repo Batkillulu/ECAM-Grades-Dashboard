@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.5.4
+// @version      2.5.5
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/*
@@ -1034,7 +1034,7 @@
             this.ecamDash = document.createElement("div");
 
             // IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
-            this.scriptVersion = "2.5.4";
+            this.scriptVersion = "2.5.5";
             this.scriptGitVersion = "1.0.0";
             this.configVersion = 3;
             this.error = error; // test in error mode at this link: https://espace.ecam.fr/c/portal/login?redirect=%2Fgroup%2Feducation%2Fnotes&p_l_id=0&ticket=ST-113179-sbwjXieT3GLY9T3fXdsmFp9vCro-tomcat03
@@ -4892,21 +4892,33 @@
                         input.ondrop     = (e) => {e.preventDefault(); e.dataTransfer.dropEffect = "link";};
 
                         if (input.classList.contains("module-title")) {   // Change modules name
-                            input.onfocus   = ()  => { if (this.editMode) {
-                                this.detachAllCardsOnDragEventListeners(); 
+                            input.onfocus   = ()  => { 
                                 this.generalKeyboardEvents("edit sim grade", input); 
-                                document.querySelectorAll(".module-card-header").forEach(card => {card.draggable = false});
-                            } }
-                            input.onblur    = ()  => { if (this.editMode) {
-                                this.attachAllCardsOnDragEventListeners(); 
+
+                                if (this.editMode) {
+                                    this.detachAllCardsOnDragEventListeners(); 
+                                    document.querySelectorAll(".module-card-header").forEach(card => {card.draggable = false});
+                                } 
+                            };
+                            input.onblur    = ()  => { 
                                 this.generalKeyboardEvents("general"); 
-                                document.querySelectorAll(".module-card-header").forEach(card => {card.draggable = true;});
-                            } }
+
+                                if (this.editMode) {
+                                    this.attachAllCardsOnDragEventListeners(); 
+                                    document.querySelectorAll(".module-card-header").forEach(card => {card.draggable = true;});
+                                } 
+                            };
                             input.onchange  = (e) => { this.moduleTitleInputChangeAction(e.target) };
                         }
                         else {
-                            input.onfocus   = ( ) => { if (this.editMode) {this.detachAllCardsOnDragEventListeners(); this.generalKeyboardEvents("edit sim grade", input); } };
-                            input.onblur    = ( ) => { if (this.editMode) {this.attachAllCardsOnDragEventListeners(); this.generalKeyboardEvents("general"); } };
+                            input.onfocus   = ( ) => { 
+                                this.generalKeyboardEvents("edit sim grade", input); 
+                                if (this.editMode) this.detachAllCardsOnDragEventListeners(); 
+                            };
+                            input.onblur    = ( ) => { 
+                                this.generalKeyboardEvents("general"); 
+                                if (this.editMode) this.attachAllCardsOnDragEventListeners(); 
+                            };
                         }
                     }
 
@@ -8414,6 +8426,7 @@
                 };
             }
             if (mode == "edit sim grade") {
+                debugger;
                 document.onkeydown = (e) => {
                     if (this.keyInputMatch(e, "Enter", noModifierAllowed)) {
                         if (e.target.classList.contains("simulated-grade-input")) {
@@ -8443,6 +8456,8 @@
                                 
                                 this.simGradeAddBtnAction(simAddBtn);
                                 this.attachAllAnyInputsListeners();
+                                this.generalKeyboardEvents("general");
+
 
                             }
 
