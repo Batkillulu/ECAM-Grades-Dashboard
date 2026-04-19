@@ -8426,7 +8426,6 @@
                 };
             }
             if (mode == "edit sim grade") {
-                debugger;
                 document.onkeydown = (e) => {
                     if (this.keyInputMatch(e, "Enter", noModifierAllowed)) {
                         if (e.target.classList.contains("simulated-grade-input")) {

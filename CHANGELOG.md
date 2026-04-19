@@ -2,6 +2,7 @@
 
     Whenever an update is done, this section should be updated. 
     Make sure that the version number is update in the script, both in the userscript header's "@version" and in "this.scriptVersion"
+    Make sure that every "debugger;" (besides the one given to Shift+R) has been deleted
 
     A version number is formatted as follows:
         v[major update number].[update number].[fix number]
