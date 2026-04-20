@@ -13,11 +13,14 @@
         - replace the text under "### Fix" with the description of the new fix performed
         - update the range of version numbers to ## What's new in v... - v[new version number] ?
         - add the fix's description line under "### Fixes", starting with (*v[new version number] fix*)
+    LASTELY, add a tag to the commit and update the release by simply adding the next line to the release note, and update the tag associated with 
+    the correct release title
     
     If it's an update:
         - add 2 <br/>'s above the last "## What's new in v[latest update]-v[latest fix]"
         - add "## What's new in v[new version number]" above the <br/>'s
         - give a full explanation of all the points concerned by the update, under 3 categories: "### Features", "### Improvements", and "### Fixes"
+    LASTELY, add a tag to the commit and create a new release, taking the previous release as a template
     
     If it's a major update: 
         - add "# PATCH NOTES v[new major update]" above the last "# PATCH NOTES v[latest major update]"
@@ -25,6 +28,7 @@
         - add "## What's new in v[new major update]" below the <br/>
         - give a full explanation of all the points concerned by the update, under 3 categories: "### Features", "### Improvements", and "### Fixes"
         - add 4 <br/>'s below the content of "## What's new in v[new major update]"
+    LASTELY, add a tag to the commit and create a new release, taking the previous release as a template
 
 
 -->
