@@ -1,8 +1,52 @@
+<!-- MARK: WHAT'S NEW ?
+
+    Whenever an update is done, this section should be updated. 
+    Make sure that the version number is update in the script, both in the userscript header's "@version" and in "this.scriptVersion"
+    Make sure that every "debugger;" (besides the one given to Shift+R) has been deleted
+
+    A version number is formatted as follows:
+        v[major update number].[update number].[fix number]
+    
+
+    If it's just a fix (fix description fits one line):
+        - change the "## NEW UPDATE: " version number (add the said title if it's not there)
+        - replace the text under "### Fix" with the description of the new fix performed
+        - update the range of version numbers to ## What's new in v... - v[new version number] ?
+        - add the fix's description line under "### Fixes", starting with (*v[new version number] fix*)
+    LASTELY, add a tag to the commit and update the release by simply adding the next line to the release note, and update the tag associated with 
+    the correct release title
+    
+    If it's an update:
+        - add 2 <br/>'s above the last "## What's new in v[latest update]-v[latest fix]"
+        - add "## What's new in v[new version number]" above the <br/>'s
+        - give a full explanation of all the points concerned by the update, under 3 categories: "### Features", "### Improvements", and "### Fixes"
+    LASTELY, add a tag to the commit and create a new release, taking the previous release as a template
+    
+    If it's a major update: 
+        - add "# PATCH NOTES v[new major update]" above the last "# PATCH NOTES v[latest major update]"
+        - add 1 <br/> below "# PATCH NOTES v[new major update]"
+        - add "## What's new in v[new major update]" below the <br/>
+        - give a full explanation of all the points concerned by the update, under 3 categories: "### Features", "### Improvements", and "### Fixes"
+        - add 4 <br/>'s below the content of "## What's new in v[new major update]"
+    LASTELY, add a tag to the commit and create a new release, taking the previous release as a template
+
+
+-->
+
+
+<!-- MARK: v2.5 -->
 # PATCH NOTES v2.5
 
-<br>
+<br/>
 
-## What's new in v2.5.0 - v2.5.4 ?
+## NEW UPDATE: v2.5.5
+### Fix:
+Fixed the issue with the shortcuts not being properly recovered after focusing a field to enter text
+
+<br/>
+<br/>
+
+## What's new in v2.5.0 - v2.5.5 ?
 
 ### Features
 - **First steps tutorial**: <br> 
@@ -21,10 +65,12 @@ The class average for each subject, module and semester are now displayed. You c
 ### Fixes
 - Fixed inconsistency with the switch between detailed and compact (and the other way around) on certain actions, and fixed the view mode not being saved for the next time you visit the dashboard
 - Fixed the issue with some actions not working after deleting a simulated grade
-- (*v2.5.1 hotfix*) hotfixed the number of validated modules
-- (*v2.5.2 hotfix*) adjusted the position of the first steps tutorial's 2nd notification's vertical position
-- (*v2.5.3 hotfix*) tutorial tip notifications now stop hovering up and down when the mouse is on it (so it's easier to read them)
-- (*v2.5.4 hotfix*) re-added the feature to scroll to the subject of a new grade when clicking on its new grade subject card
+- (*v2.5.1 fix*) hotfixed the number of validated modules
+- (*v2.5.2 fix*) adjusted the position of the first steps tutorial's 2nd notification's vertical position
+- (*v2.5.3 fix*) tutorial tip notifications now stop hovering up and down when the mouse is on it (so it's easier to read them)
+- (*v2.5.4 fix*) re-added the feature to scroll to the subject of a new grade when clicking on its new grade subject card
+- (*v2.5.5 fix*) fixed the issue with the shortcuts not being properly recovered after focusing a field to enter text
+
 
 
 
@@ -36,10 +82,11 @@ The class average for each subject, module and semester are now displayed. You c
 
 
 
+<!-- MARK: v2.4 -->
 # PATCH NOTES v2.4
 
 
-<br>
+<br/>
 
 ## What's new in v2.4.1 ?
 
@@ -62,7 +109,8 @@ some actions change the vertical size of the page (switching detailed/compact vi
 
 
 
-<br>
+<br/>
+<br/>
 
 
 ## What's new in v2.4.0 ?
@@ -116,9 +164,10 @@ You can now drag a module card and drop it onto a subject insertion field to ins
 
 
 
+<!-- MARK: v2.3 -->
 # PATCH NOTES v2.3
 
-<br>
+<br/>
 
 ## What's new in v2.3.0 ?
 

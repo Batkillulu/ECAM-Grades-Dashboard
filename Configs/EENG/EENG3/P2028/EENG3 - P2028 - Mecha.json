@@ -65,12 +65,12 @@
         "subjects": [
           "Professional Engineering Project",
           "Engineering Ethics",
-          "Advanced English Skills 5: (IELTS Preparation)"
+          "Advanced English Skills 5: IELTS Preparation"
         ],
         "coefficients": {
           "Professional Engineering Project": 15,
           "Engineering Ethics": 35,
-          "Advanced English Skills 5: (IELTS Preparation)": 50
+          "Advanced English Skills 5: IELTS Preparation": 50
         }
       }
     },
