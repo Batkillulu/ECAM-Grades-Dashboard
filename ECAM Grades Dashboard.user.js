@@ -317,15 +317,27 @@
 			`;
 
 
-			//MARK: help and tutorial
+			//MARK: TUTOS
 			styles += `
-				.tuto-tip-notif-container   { display: flex; justify-content: center; align-items: center; position: relative; width: 0; height: 0; z-index: 10; opacity: 0; transform: scale(110%); --infinite-alternate-scale-up-scale: 100%; transition: all 0.3s ease;}
+				.tuto-tip-notif-container   { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; width: 0; height: 0; z-index: 10; opacity: 0; transform: scale(110%); --infinite-alternate-scale-up-scale: 100%; transition: all 0.3s ease;}
 				.tuto-tip-notif         { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 15px; padding: 20px; background: linear-gradient( #5334ff 0%, #7a62ff 100%); border-radius: 7px; outline: 5px solid; color: white; font-size: 31px; line-height: 31px; text-align: center; --hoveringElem-amp: 10px; animation: focusBlinkAnimation 2s infinite alternate ease-in-out, hoveringElem 2s infinite alternate ease-in-out; transition: all 0.3s ease; }
 				.tuto-tip-notif:hover   { animation-play-state: running, paused; }
+
+				.tuto-tip-btns-container 	{ display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; font-size: 28px; font-weight: 700; text-wrap-mode: nowrap; }
+				.tuto-tip-btns-container-header	{ display: flex; flex-direction: column; justify-content: center; align-items: center; text-wrap-mode: nowrap; width: 0; height: 0; }	
+				.tuto-tip-btns-body				{ display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px 10px; gap: 20px; overflow-x: visible; overflow-y: auto; }	
+				.tuto-tip-btn						{ display: flex; jusitfy-content: center; align-items: center; padding: 10px; outline: 2px solid white; border-radius: 10px; background: linear-gradient( #5334ff75 0%, #7a62ff75 100%); color: white; font-size: 26px; font-weight: 700; text-wrap-mode: nowrap; cursor: pointer; animation: none; animation-play-state: paused; transition: all 0.2s ease; }
+				.tuto-tip-btn:hover 				{ animation: focusBlinkAnimation 1s infinite alternate ease-in-out; transform: scale(101%); }
+
 				@keyframes focusBlinkAnimation  { from { filter: brightness(1); } to { filter: brightness(1.5) } }
 
 				.skip-tuto-btn          { display: flex; justify-content: center; align-items: center; padding: 10px; position: fixed; top: 20px; right: 20px; background: #4c84fde8; border-radius: 10px; color: white; font-size: 20px; text-decoration: underline; cursor: pointer; opacity: 0; z-index: 5000; transition: all 0.5s ease; }
 				.skip-tuto-btn::before      { content: "Skip tutorial"; }
+
+				.tuto-lang-btn-toggle-container	{ display: flex; justify-content: center; align-items: center; position: fixed; top: 26px; right: 170px; outline: 2px solid white; border-radius: 20px; width: 100px; height: 31px; overflow: clip; z-index: 12; opacity: 0; transition: all 0.5s ease; }
+				.tuto-lang-btn-toggle		{ display: flex; justify-content: space-evenly; align-items: center; padding: 10px; position: relative; min-width: 170px; height: 31px; background: linear-gradient(90deg, #3636ffc5 20%, #8e38ffc5 80%); transform: translateX(0px); transition: all 0.2s ease; }
+				.tuto-lang-btn-toggle.fr	{ transform: translateX(35px);  }
+				.tuto-lang-btn-toggle.en	{ transform: translateX(-35px); }
 			`;
 
 
@@ -1051,15 +1063,15 @@
 				this.settings = {
 
 					displayClassAvg: {
-						name: () => !this.langIsEn 
+						name: () => !this.isLangEn 
 							? "Moyenne de classe de modules et matières" 
 							: "Class average for modules and subjects"
 						,
-						description: () => !this.langIsEn 
+						description: () => !this.isLangEn 
 							? "Afficher les moyennes de classe pour les matières, modules et semestres, pour les étudiants avec un esprit de compétition :D" 
 							: "Display the class averages for subjects, modules and semesters, for students with high competitive spirit :D"
 						,
-						info: () => !this.langIsEn 
+						info: () => !this.isLangEn 
 							? "" 
 							: ""
 						,
@@ -1075,15 +1087,15 @@
 					},
 
 					totalCoefValuesEnabled: {
-						name: () => !this.langIsEn 
+						name: () => !this.isLangEn 
 							? "Afficher les coefs totaux" 
 							: "Display total coefs"
 						,
-						description: () => !this.langIsEn 
+						description: () => !this.isLangEn 
 							? "Afficher les coefficients totaux pour les cartes de matière et de module" 
 							: "Display the total coefficients for subject and module cards"
 						,
-						info: () => !this.langIsEn 
+						info: () => !this.isLangEn 
 							? "Le.s pourcentage.s apparraissant entre le nom des modules/sujets et leur moyenne" 
 							: "The percentage.s showing up between the name of modules/subjects and their average"
 						,
@@ -1097,15 +1109,15 @@
 					},
 
 					totalCoefDebugTextsEnabled: {
-						name: () => !this.langIsEn 
+						name: () => !this.isLangEn 
 							? "Afficher les textes d'aide" 
 							: "Display the helper texts"
 						,
-						description: () => !this.langIsEn 
+						description: () => !this.isLangEn 
 							? "Afficher les textes d'aide des cartes de sujet et de module" 
 							: "Display the helper texts for subject and module cards"
 						,
-						info: () => !this.langIsEn 
+						info: () => !this.isLangEn 
 							? "Il s'agit simplement des textes interprétant les nombres des \"Coef Total des Matières\" et \"Coef Total des Notes\"" 
 							: "It simply corresponds to the texts interpreting the numbers of \"Total Subjects Coef\" and \"Total Grades Coef\""
 						,
@@ -1119,15 +1131,15 @@
 					},
 
 					blurEnabled: {
-						name: () => !this.langIsEn 
+						name: () => !this.isLangEn 
 							? "Activer le flou" 
 							: "Enable blur"
 						,
-						description: () => !this.langIsEn 
+						description: () => !this.isLangEn 
 							? "Activer le flou qui s'opère sur le fond des fenêtres (activé par défaut parce que je trouve ça joli :D)" 
 							: "Enable the blur that operates on the background of the windows (turned on by default because I find it nice :D)"
 						,
-						info: () => !this.langIsEn 
+						info: () => !this.isLangEn 
 							? "Non recommendé pour les appareils à basses performances" 
 							: "Not recommended for low-end devices"
 						,
@@ -1141,15 +1153,15 @@
 					},
 
 					scrollHelpersEnabled: {
-						name: () => !this.langIsEn 
+						name: () => !this.isLangEn 
 							? "Aides au défilement" 
 							: "Scroll helpers"
 						,
-						description: () => !this.langIsEn 
+						description: () => !this.isLangEn 
 							? "Activer l'aide au défilement pour suivre les éléments importants à l'écran lors de changements de verticalité. Désactive-la si tu n'aimes pas avoir ces défilements forcés" 
 							: "Enable the scroll helpers to follow the important elements on screen upon verticality changes. Disabled it if you don't like these forced scrolls"
 						,
-						info: () => !this.langIsEn 
+						info: () => !this.isLangEn 
 							? "Certaines actions (changement de mode d'édition, changement entre vue détaillée/compacte...) font changer la position verical de certains éléments (cartes de module/matière, entre autres), donc un défilement est prévu pour maintenir certains éléments dans l'affichage" 
 							: "Some actions (edit mode change, detailed/compact view mode change...) change the vertical position of some elements (i.e. module/subject cards), so this setting allows to scroll to keep the most important elements on screen"
 						,
@@ -1161,28 +1173,28 @@
 				};
 				this.keybinds = [
 					{
-						text: () => {return !this.langIsEn ? "Fermer la fenêtre" : "Close the window"}, 
-						keys: () => {return !this.langIsEn ? "Échap" : "Escape"},
+						text: () => {return !this.isLangEn ? "Fermer la fenêtre" : "Close the window"}, 
+						keys: () => {return !this.isLangEn ? "Échap" : "Escape"},
 					},
 					{
-						text: () => {return !this.langIsEn ? "Plier/Déplier tous les modules (basculer)" : "Fold/Unfold all modules (toggle)"}, 
-						keys: () => {return !this.langIsEn ? "Maj + F" : "Shift + F"},
+						text: () => {return !this.isLangEn ? "Plier/Déplier tous les modules (basculer)" : "Fold/Unfold all modules (toggle)"}, 
+						keys: () => {return !this.isLangEn ? "Maj + F" : "Shift + F"},
 					},
 					{
-						text: () => {return !this.langIsEn ? "Vue détaillée/compacte pour toutes les matières (basculer)" : "Detailed/Compact view all subjects (toggle)"}, 
-						keys: () => {return !this.langIsEn ? "Maj + D" : "Shift + D"},
+						text: () => {return !this.isLangEn ? "Vue détaillée/compacte pour toutes les matières (basculer)" : "Detailed/Compact view all subjects (toggle)"}, 
+						keys: () => {return !this.isLangEn ? "Maj + D" : "Shift + D"},
 					},
 					{
-						text: () => {return !this.langIsEn ? "Mode édition (basculer)" : "Edit mode (toggle)"}, 
-						keys: () => {return !this.langIsEn ? "Maj + E" : "Shift + E"},
+						text: () => {return !this.isLangEn ? "Mode édition (basculer)" : "Edit mode (toggle)"}, 
+						keys: () => {return !this.isLangEn ? "Maj + E" : "Shift + E"},
 					},
 					{
-						text: () => {return !this.langIsEn ? "Langue français/anglais (basculer)" : "Language French/English (toggle)"}, 
-						keys: () => {return !this.langIsEn ? "Maj + L" : "Shift + L"},
+						text: () => {return !this.isLangEn ? "Langue français/anglais (basculer)" : "Language French/English (toggle)"}, 
+						keys: () => {return !this.isLangEn ? "Maj + L" : "Shift + L"},
 					},
 					{
-						text: () => {return !this.langIsEn ? "Changer de semestre (cycle)" : "Change semester (cycle)"}, 
-						keys: () => {return !this.langIsEn ? "Maj + ←/→" : "Shift + ←/→"},
+						text: () => {return !this.isLangEn ? "Changer de semestre (cycle)" : "Change semester (cycle)"}, 
+						keys: () => {return !this.isLangEn ? "Maj + ←/→" : "Shift + ←/→"},
 					},
 				];
 
@@ -1279,7 +1291,7 @@
 				this.viewMode                           = localStorage.getItem("ECAM_DASHBOARD_VIEW_MODE")                      || "detailed";
 
 				this.lang                   =             localStorage.getItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE")               || "en";
-				this.langIsEn               = this.lang == "en";
+				this.isLangEn               = this.lang == "en";
 				this.editMode               = JSON.parse( localStorage.getItem('ECAM_DASHBOARD_DEFAULT_EDIT_MODE')              || "false");
 				this.timeouts = {};
 
@@ -1301,8 +1313,12 @@
 				this.detailedSubjCardsId = [];
 
 				this.foldedModuleCardsId = [];
+
+				this.onGoingTutoTipNotifDivs = [];
+
+				/** @type {TutoTipNotif} */ this.currentTutoTipNotif = null;
 				
-				this.scrollToThisElem = "";
+				/** @type {String} */ this.scrollToThisElem = "";
 
 			//#endregion
 
@@ -1366,53 +1382,53 @@
 
 				// MARK: scrollToClientHighestElem
 				/**
-				* Scroll to an element depending on the target element datas passed as argument under the form of an object. If using the className method and not the id method, please make sure the elements of class className are in column.
-				* 
-				* Priority order defined by parameter `priority`. Scan through all the given classNames. If no match is found on a className: 
-				* - **"first"**:  
-				* **moves onto the next one**. The method will scroll to the **first** data matching the conditions, and skip the rest.
-				* - **"last"**:  
-				* **skip the rest**. The method will scroll to the **last** data matching the conditions, and skip the rest. If no match is found at all, doesn't scroll.
-				* 
-				* Behavior changes along with **`highestElemInPageHandleType`**'s value. Scan through all target element datas given, and (with X being an int between 0 and 100):
-				* - **"none"**:                   
-				* scroll to the first      element -                        *out of all the others* - (who's class name matches the `targetElementDatas`'s property `className`) **SUCH THAT** it's the highest        element in the current window view whose center doesn't go out of the screen from the top.
-				* - **"first/last above" / "first/last above X%"** (first is default if first/last isn't given):       
-				* scroll to the first/last element -                        *out of all the others* - (who's class name matches the `targetElementDatas`'s property `className`) **SUCH THAT** it's the highest/lowest element in the current window view whose center doesn't go out of the screen from the top **AND** its center   is above X% (default 50%) of the screen **IF** the top edge of the **first** element - *and only the first, independantly of the first/last parameter* - of same class is above X% (default 50%) of the screen. *Typically useful to scroll to the first/last element of class className that is in-between the top of the window and the given percentage of the height of the window when there are multiple small elements that could satisfy these conditions*
-				* - **"partial" / "partial X%"**:   
-				* scroll to the first      element - *and ONLY the first*                           - (who's class name matches the `targetElementDatas`'s property `className`) **SUCH THAT** it's the highest        element in the current window view whose center doesn't go out of the screen from the top **AND** its top edge is above X% (default 50%) of the screen. *Typically useful if you want to scroll to the highest element of class className if its center is in-between the top of the screen and the given percentage of the height of the window*
-				* - **"absolute" / "absolute X%"**:   
-				* scroll to the first      element - *and ONLY the first*                           - (who's class name matches the `targetElementDatas`'s property `className`) **IFF** its top edge is above X% (default 50%) of the screen. *Typically useful if you want to scroll to the highest element of class className if its top edge is above the given percentage of the height of the window, without any regard whether it's above the top of screen or not*
-				* - **"force"**:                       
-				* scroll to the first      element - *and ONLY the first*                           - (who's class name matches the `targetElementDatas`'s property `className`). *No condition, just forces the scroll to the top of this element*
-				* 
-				* In any case, the scroll is executed (after the `timeout` property of the same `targetElementDatas`) with respects to the `margin` property of the same `targetElementDatas` (it will be attributed as `scrollMargin` style property of the element to scroll to)
-				* 
-				* @returns The element that was scrolled to, or null if no element was scrolled to
-				* @param {String} priority             {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard String},  default: "first" — Defines how multiple `targetElementDatas` input are managed. Can be "first" or "last"
-				* @param targetElementDatas Any amount of objects. If ommited, uses a default object. Objects should all have the following properties (if any is omitted, they are given their default value):
-				* 
-				* **`className?`**                     {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard String},  default: ".subject-card" —  
-				*  Name of the class to target, if you want to target a category of elements
-				* 
-				* **`id?`**                            {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard String},  default: "" —              
-				*  ID of the element to target, if you want to target a specific element (ensure your element has an ID tho)
-				* 
-				* **`margin?`**                        {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard Number},  default: 23 (in px) —      
-				*  Used to define the scrollMargin CSS styles property of the element targeted
-				* 
-				* **`timeout?`**                       {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard Number},  default: 50 (in ms) —      
-				*  Timer before the scroll action is triggered
-				* 
-				* **`smooth?`**                        {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard Boolean}, default: false —           
-				*  If true, the page will smoothly scroll to the element targeted
-				* 
-				* **`highestElemInPageHandleType?`**   {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard String},  default: "none" —          
-				*  Can be "force", "absolute", "absolute X%", "partial", "partial X%", "above", "above X%" or "none" (with X being an int between 0 and 100). Any other value will be considered as "none"
-				* 
-				* **`block?`**                         {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard String},  default: "start" —         
-				*  Can be "start", "center", "end" or "nearest". Any other value will be considered as "start". Defines what part of the element will be taken as reference to scroll to, taking the margin into account
-				*/
+				 * Scroll to an element depending on the target element datas passed as argument under the form of an object. If using the className method and not the id method, please make sure the elements of class className are in column.
+				 * 
+				 * Priority order defined by parameter `priority`. Scan through all the given classNames. If no match is found on a className: 
+				 * - **"first"**:  
+				 * **moves onto the next one**. The method will scroll to the **first** data matching the conditions, and skip the rest.
+				 * - **"last"**:  
+				 * **skip the rest**. The method will scroll to the **last** data matching the conditions, and skip the rest. If no match is found at all, doesn't scroll.
+				 * 
+				 * Behavior changes along with **`highestElemInPageHandleType`**'s value. Scan through all target element datas given, and (with X being an int between 0 and 100):
+				 * - **"none"**:                   
+				 * scroll to the first      element -                        *out of all the others* - (who's class name matches the `targetElementDatas`'s property `className`) **SUCH THAT** it's the highest        element in the current window view whose center doesn't go out of the screen from the top.
+				 * - **"first/last above" / "first/last above X%"** (first is default if first/last isn't given):       
+				 * scroll to the first/last element -                        *out of all the others* - (who's class name matches the `targetElementDatas`'s property `className`) **SUCH THAT** it's the highest/lowest element in the current window view whose center doesn't go out of the screen from the top **AND** its center   is above X% (default 50%) of the screen **IF** the top edge of the **first** element - *and only the first, independantly of the first/last parameter* - of same class is above X% (default 50%) of the screen. *Typically useful to scroll to the first/last element of class className that is in-between the top of the window and the given percentage of the height of the window when there are multiple small elements that could satisfy these conditions*
+				 * - **"partial" / "partial X%"**:   
+				 * scroll to the first      element - *and ONLY the first*                           - (who's class name matches the `targetElementDatas`'s property `className`) **SUCH THAT** it's the highest        element in the current window view whose center doesn't go out of the screen from the top **AND** its top edge is above X% (default 50%) of the screen. *Typically useful if you want to scroll to the highest element of class className if its center is in-between the top of the screen and the given percentage of the height of the window*
+				 * - **"absolute" / "absolute X%"**:   
+				 * scroll to the first      element - *and ONLY the first*                           - (who's class name matches the `targetElementDatas`'s property `className`) **IFF** its top edge is above X% (default 50%) of the screen. *Typically useful if you want to scroll to the highest element of class className if its top edge is above the given percentage of the height of the window, without any regard whether it's above the top of screen or not*
+				 * - **"force"**:                       
+				 * scroll to the first      element - *and ONLY the first*                           - (who's class name matches the `targetElementDatas`'s property `className`). *No condition, just forces the scroll to the top of this element*
+				 * 
+				 * In any case, the scroll is executed (after the `timeout` property of the same `targetElementDatas`) with respects to the `margin` property of the same `targetElementDatas` (it will be attributed as `scrollMargin` style property of the element to scroll to)
+				 * 
+				 * @returns The element that was scrolled to, or null if no element was scrolled to
+				 * @param {String} priority             {@link String String},  default: "first" — Defines how multiple `targetElementDatas` input are managed. Can be "first" or "last"
+				 * @param targetElementDatas Any amount of objects. If ommited, uses a default object. Objects should all have the following properties (if any is omitted, they are given their default value):
+				 * 
+				 * **`className?`**                     {@link String String},  default: ".subject-card" —  
+				 *  Name of the class to target, if you want to target a category of elements
+				 * 
+				 * **`id?`**                            {@link String String},  default: "" —              
+				 *  ID of the element to target, if you want to target a specific element (ensure your element has an ID tho)
+				 * 
+				 * **`margin?`**                        {@link Number Number},  default: 23 (in px) —      
+				 *  Used to define the scrollMargin CSS styles property of the element targeted
+				 * 
+				 * **`timeout?`**                       {@link Number Number},  default: 50 (in ms) —      
+				 *  Timer before the scroll action is triggered
+				 * 
+				 * **`smooth?`**                        {@link Boolean Boolean}, default: false —           
+				 *  If true, the page will smoothly scroll to the element targeted
+				 * 
+				 * **`highestElemInPageHandleType?`**   {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard String},  default: "none" —          
+				 *  Can be "force", "absolute", "absolute X%", "partial", "partial X%", "above", "above X%" or "none" (with X being an int between 0 and 100). Any other value will be considered as "none"
+				 * 
+				 * **`block?`**                         {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard String},  default: "start" —         
+				 *  Can be "start", "center", "end" or "nearest". Any other value will be considered as "start". Defines what part of the element will be taken as reference to scroll to, taking the margin into account
+				 */
 				scrollToClientHighestElem(priority="first/setting-compliant", ...{className= "subject-card", id="", margin=this.editMode ? 100 : 25, timeout=20, smooth=false, highestElemInPageHandleType="none", block="start"}) {
 					const defaultTargetElementDatas = [
 						{className: "modules-section",      margin: 20,                        highestElemInPageHandleType:"partial"}, 
@@ -1793,6 +1809,7 @@
 
 			//#region Save to cache
 
+				/** Save the settings in the cache */
 				saveSettings() { 
 					localStorage.setItem("ECAM_DASHBOARD_SETTINGS", JSON.stringify(this.settings, (key, value) => {
 						if (key!="description" && key!="name" && key != "info") {return value}
@@ -1820,14 +1837,17 @@
 				/** Save the current view mode in the cache */
 				saveViewMode() { localStorage.setItem("ECAM_DASHBOARD_VIEW_MODE", this.viewMode); }
 
-				/** Save to the cache whether an update check should be ran on next load or not */
+				/** Save in the cache whether an update check should be ran on next load or not */
 				saveUpdateCheck() { localStorage.setItem("ECAM_DASHBOARD_CHECK_FOR_UPDATE", this.checkForUpdate); }
 
-				/** Save the date-time of the last update check ran */
+				/** Save in the cache the date-time of the last update check ran */
 				saveDateTimeOfLastUpdateCheck() { localStorage.setItem("ECAM_DASHBOARD_DATE_TIME_OF_LAST_UPDATE_CHECK", this.dateTimeOfLastUpdateCheck); }
 
-				/** Save that the update first load has passed */
+				/** Save in the cache the fact that this update has been loaded for the first time */
 				saveUpdateFirstLoad() { localStorage.setItem("ECAM_DASHBOARD_UPDATE_FIRST_LOAD", JSON.stringify({state: false, v: this.scriptVersion})) }
+
+				/** Save the current language in the cache */
+				saveLanguage() { localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang) }
 
 			//#endregion
 
@@ -2466,46 +2486,46 @@
 						;
 
 
-						let advice = !this.langIsEn ? `Toutes tes notes sont là !` : `All your grades are out!`;
+						let advice = !this.isLangEn ? `Toutes tes notes sont là !` : `All your grades are out!`;
 						let color = good;
 
 						
 						if (totalCoefSubjects != 100) {
-							advice = !this.langIsEn ? `Réajuste le coef de tes matières, leur somme n'est pas égale à 100% !` : `Readjust your subjects' coef, their sum isn't equal to 100%!`;
+							advice = !this.isLangEn ? `Réajuste le coef de tes matières, leur somme n'est pas égale à 100% !` : `Readjust your subjects' coef, their sum isn't equal to 100%!`;
 							color = bad;
 						}
 						else if (totalCoefRealGrades == 0) {
 							if (totalCoefEnabledSimGrades > 0) {
-								advice = !this.langIsEn 
+								advice = !this.isLangEn 
 									? `Toutes tes notes sont simulées, tu n'as pas encore de notes !` 
 									: `All your grades are simulated, you don't have any grades yet!`
 								;
 								color = meh;
 							}
 							else {
-								advice = !this.langIsEn ? `Pas encore de notes` : `No grades yet`;
+								advice = !this.isLangEn ? `Pas encore de notes` : `No grades yet`;
 								color = unknown;
 							}
 						}
 						else if (totalCoefRealGrades < 100) {
 							if (totalCoefEnabledSimGrades > 0) {
-								advice = !this.langIsEn 
+								advice = !this.isLangEn 
 									? `${Math.round(10000*totalCoefEnabledSimGrades/totalCoefEnabledGrades)/100}% de tes notes est simulé, toutes tes notes ne sont encore pas là !` 
 									: `${Math.round(10000*totalCoefEnabledSimGrades/totalCoefEnabledGrades)/100}% of your grades is simulated, all your grades aren't out yet!`
 								;
 								color = meh;
 							}
 							else if (totalCoefEnabledSimGrades == 0) {
-								advice = !this.langIsEn ? `Toutes tes notes ne sont encore pas là !` : `All your grades aren't out yet!`;
+								advice = !this.isLangEn ? `Toutes tes notes ne sont encore pas là !` : `All your grades aren't out yet!`;
 								color = meh;
 							}
 						}
 						else if (totalCoefEnabledRealGrades > 100) {
-							advice = !this.langIsEn ? `Trop de notes (erreur du côté de l'ECAM), désactive les notes en trop !` : `Too many grades (error on ECAM's side), turn off all irrelevant grades!`;
+							advice = !this.isLangEn ? `Trop de notes (erreur du côté de l'ECAM), désactive les notes en trop !` : `Too many grades (error on ECAM's side), turn off all irrelevant grades!`;
 							color = bad;
 						}
 						else if ((nbSubjectsBelow100 > 0 || nbSubjectsOver100 > 0) && nbEnabledSimGrades > 0) {
-							advice = !this.langIsEn 
+							advice = !this.isLangEn 
 								? `Tes notes simulées faussent ta moyenne. Désactive/enlève-les !` 
 								: `Your simulated grades falsify your average. Disable/remove them!`
 							;
@@ -2513,28 +2533,28 @@
 						}
 						else if (totalCoefRealGrades == 100) {
 							if (nbSubjectsBelow100 > 0 && nbSubjectsOver100 > 0) {
-								advice = !this.langIsEn
+								advice = !this.isLangEn
 									? `Trop de notes dans ${nbSubjectsOver100} matière${nbSubjectsOver100>1?`s`:``}, et notes manquantes dans ${nbSubjectsBelow100} matières${nbSubjectsBelow100>1?`s`:``} !`
 									: `Too many grades in ${nbSubjectsOver100} subject${nbSubjectsOver100>1?`s`:``}, and missing grades in ${nbSubjectsBelow100} subject${nbSubjectsBelow100>1?`s`:``}!`
 								;
 								color = bad;
 							}
 							if (totalCoefEnabledRealGrades < 100) {
-								advice = !this.langIsEn 
+								advice = !this.isLangEn 
 									? `Toutes tes notes sont là ! Réactive tes ${nbDisabledRealGrades} notes désactivées pour afficher ta vraie moyenne !` 
 									: `All your grades are out! Enable your ${nbDisabledRealGrades} disabled grades to display your actual average!`
 								;
 								color = meh;
 							}
 							else if (totalCoefEnabledSimGrades > 0) {
-								advice = !this.langIsEn 
+								advice = !this.isLangEn 
 									? `Toutes tes notes sont là, mais tu devrais enlever tes ${nbSimGrades} notes simulées !` 
 									: `All your grades are out, but you should remove your ${nbSimGrades} simulated grades!`
 								;
 								color = meh;
 							}
 							else if (totalCoefSimGrades > 0) {
-								advice = !this.langIsEn 
+								advice = !this.isLangEn 
 									? `Toutes tes notes sont là ! Tu peux enlever tes ${nbSimGrades} notes simulées !` 
 									: `All your grades are out! You may remove your ${nbSimGrades} simulated grades!`
 								;
@@ -2542,7 +2562,7 @@
 							}
 						}
 
-						totalCoefValue.innerHTML = `${!this.langIsEn ? "Coef Total des Matières :" : "Total Subjects Coef:"} <span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}% / ${totalCoefSubjects}%</span>`;
+						totalCoefValue.innerHTML = `${!this.isLangEn ? "Coef Total des Matières :" : "Total Subjects Coef:"} <span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}% / ${totalCoefSubjects}%</span>`;
 						totalCoefDebug.innerHTML = `${advice}`;
 					})
 					container.querySelectorAll(".subject-total-coef-div").forEach(totalCoefDiv => {
@@ -2569,37 +2589,37 @@
 						;
 						
 						
-						let advice = !this.langIsEn ? `Toutes tes notes sont là !` : `All your grades are out!`;
+						let advice = !this.isLangEn ? `Toutes tes notes sont là !` : `All your grades are out!`;
 						let color = ` #10b981`;
 
 						if (totalCoefRealGrades == 0) {
 							if (totalCoefEnabledSimGrades > 0) {
-								advice = !this.langIsEn 
+								advice = !this.isLangEn 
 									? `Toutes tes notes sont simulées, tu n'as pas encore de notes !` 
 									: `All your grades are simulated, you don't have any grades yet!`
 								;
 								color = meh;
 							}
 							else {
-								advice = !this.langIsEn ? `Pas encore de notes` : `No grades yet`;
+								advice = !this.isLangEn ? `Pas encore de notes` : `No grades yet`;
 								color = unknown;
 							}
 						}
 						else if (totalCoefRealGrades < 100) {
 							if (totalCoefEnabledSimGrades > 0) {
-								advice = !this.langIsEn 
+								advice = !this.isLangEn 
 									? `${totalCoefEnabledSimGrades}% de tes notes est simulé, toutes tes notes ne sont encore pas là !` 
 									: `${totalCoefEnabledSimGrades}% of your grades is simulated, all your grades aren't out yet!`
 								;
 								color = meh;
 							}
 							else if (totalCoefEnabledSimGrades == 0) {
-								advice = !this.langIsEn ? `Toutes tes notes ne sont encore pas là !` : `All your grades aren't out yet!`;
+								advice = !this.isLangEn ? `Toutes tes notes ne sont encore pas là !` : `All your grades aren't out yet!`;
 								color = meh;
 							}
 						}
 						else if (totalCoefEnabledRealGrades > 100) {
-							advice = !this.langIsEn 
+							advice = !this.isLangEn 
 								? `Trop de notes (erreur du côté de l'ECAM), désactive les notes en trop !` 
 								: `Too many grades (error on ECAM's side), turn off all irrelevant grades!`
 							;
@@ -2607,21 +2627,21 @@
 						}
 						else if (totalCoefRealGrades == 100) {
 							if (totalCoefEnabledRealGrades < 100) {
-								advice = !this.langIsEn 
+								advice = !this.isLangEn 
 									? `Toutes tes notes sont là ! Réactive tes ${nbDisabledRealGrades} notes désactivées pour afficher ta vraie moyenne !` 
 									: `All your grades are out! Enable your ${nbDisabledRealGrades} disabled grades to display your actual average!`
 								;
 								color = meh;
 							}
 							else if (totalCoefEnabledSimGrades > 0) {
-								advice = !this.langIsEn 
+								advice = !this.isLangEn 
 									? `Toutes tes notes sont là, mais tu devrais enlever tes ${nbSimGrades} notes simulées !` 
 									: `All your grades are out, but you should remove your ${nbSimGrades} simulated grades!`
 								;
 								color = meh;
 							}
 							else if (totalCoefSimGrades > 0) {
-								advice = !this.langIsEn 
+								advice = !this.isLangEn 
 									? `Toutes tes notes sont là ! Tu peux enlever tes ${nbSimGrades} notes simulées !` 
 									: `All your grades are out! You may remove your ${nbSimGrades} simulated grades!`
 								;
@@ -2629,7 +2649,7 @@
 							}
 						}
 						
-						totalCoefValue.innerHTML = `${!this.langIsEn ? "Coef Total des Notes :" : "Total Grades Coef:"} <span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}%</span>`;
+						totalCoefValue.innerHTML = `${!this.isLangEn ? "Coef Total des Notes :" : "Total Grades Coef:"} <span style="color:${color}; font-weight: 900">${totalCoefEnabledGrades}%</span>`;
 						totalCoefDebug.innerHTML = `${advice}`;
 					})
 				}
@@ -3035,15 +3055,15 @@
 				updateAvailableNotif.id = "updateAvailableNotif";
 				updateAvailableNotif.innerHTML = `
 					<div class="update-available-notif-header">
-						<div class="update-available-notif-text">${!this.langIsEn ? "NOUVELLE MISE À JOUR DU TABLEAU DE BORD DISPONIBLE ! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".") : "NEW DASHBOARD UPDATE AVAILABLE! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".")}</div>
+						<div class="update-available-notif-text">${!this.isLangEn ? "NOUVELLE MISE À JOUR DU TABLEAU DE BORD DISPONIBLE ! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".") : "NEW DASHBOARD UPDATE AVAILABLE! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".")}</div>
 					</div>`;
 				updateAvailableNotif.innerHTML += `
 					<div class="update-available-notif-btns">
 						<div style="display: flex; justify-content: center; width: 50%">
-							<a class="update-btn" id="updateBtn" href="${this.repoScriptRaw}" target="_blank">${!this.langIsEn ? "INSTALLER" : "INSTALL"}</a>
+							<a class="update-btn" id="updateBtn" href="${this.repoScriptRaw}" target="_blank">${!this.isLangEn ? "INSTALLER" : "INSTALL"}</a>
 						</div>
 						<div style="display: flex; justify-content: center; width: 50%">
-							<div class="dismiss-update-btn" id="dismissUpdateBtn" title="${!this.langIsEn ? "Ignorer pour aujourd'hui" : "Ignore for today"}">${!this.langIsEn ? "Ignorer" : "Ignore"}</div>
+							<div class="dismiss-update-btn" id="dismissUpdateBtn" title="${!this.isLangEn ? "Ignorer pour aujourd'hui" : "Ignore for today"}">${!this.isLangEn ? "Ignorer" : "Ignore"}</div>
 						</div>
 					</div>
 				`;
@@ -3157,21 +3177,21 @@
 								</div>
 								<div class="dash-subtitle jura"></div>
 								<div style="display: flex; gap: 2px; user-select: none;">
-									<div class="lang-btn ${this.langIsEn ? "active" : ""}" id="en-lang-btn">
+									<div class="lang-btn ${this.isLangEn ? "active" : ""}" id="en-lang-btn">
 										<img style="display: flex; margin: 6px 0px 0px 6px; width:20px; height:20px" alt="🇬🇧" src="${`
 												data:image/png;base64,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
 										`}">
 									</div>
-									<div class="lang-btn ${!this.langIsEn ? "active" : ""}" id="fr-lang-btn">
+									<div class="lang-btn ${!this.isLangEn ? "active" : ""}" id="fr-lang-btn">
 										<img style="display: flex; margin: 6px 0px 0px 6px; width:20px; height:20px" alt="🇫🇷" src="${`
 											data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAACTUExURUdwTAAkjM7Pzs7OzrMGE74QIMPEx4hTeAAkjQARewAagbIFEgAfhc3NzdDQ0M7PzrYMG8zMzbcMG8EXKcUbLQAMd7UKGLUKGMMWJ7OhrcMVJv///+oPIO4bLgAmoOwWKAAZmQArpO8iNgAfnQATlAIyqLUGFAEoksUSIwAYhgANePnCyMbO6djY2NUWJ+7u7sCep4f8c74AAAAbdFJOUwDL+z19ffsVe3qU1jy51pA+bLyNc+Vrnu+m2KjIWToAAALxSURBVFjD7djJcuIwEIDhAAMOxuwTCAnyKgxOxg7v/3SjtraWDJKTUw60K1Vc+OqX5APK09NjHvOLJxDz3a+t9Mcoeg7DgZrDcrkejUZBL2X7NuYfo4gRZ2MmNZvhYjEHz1EYrHab18tl3LaEEonFnOPT5KtWM1zMhReY27DabUG5ABQ8cyXLTnIy9pz+vcN8seFWPRxC32G7Hf+FGW/3m7fXVmkagJ5NpGXYCOjd5Or6ejGmaRpCctJw6HTqOgaEvM8GT07ynP0RXhTbSqcIzWduDWOIgHBRJqmeELkJtQB34v4QUUs7o8MSC4t7FYECkF2UKYW9Sb2KRI8FqVWB06OI4KJSQRnuyXoUiW0mHUj2iPFAJEdOoiGVE/OV+SCxqLxTpI+LT+GGcE8Cj4AypAiqcEDyrPTSFHSS25zxnMIH6W2GnsQsitVGM8sBEf36AAOOASkDHg+EcuyiWLw+TAHGCdk5EqrOKqhQjgfCJ8ahPxxCx1W0K0tdUG4qCJKrAoMXpd4i7BwFpM+rkJNmbijh7w+xIHRanPFAiXx/khuQ7mFM6i9CzFFAlQiSDHPcRQneoCM8uqhA29NOfB/Sr48MUkWF3uY0bVfmgqyF6aIKHVcqgpxFMETlGHtkrMoDdXKYVMqlqRxhUReUmBuNiro9KXVCcllcOaoiq4emlPaAOJMoaCogHdNSXgg7GEqRRL1FR709FqRzKO0PdYt0D6X+IrWqTlGnh9LzPYgk1rIQlKogqqj70NHYZgR9VN0eJ2Ttj1GkT6udygN1BhVR/vQp6m6RUYRzfl5k1lSeItfSOFBVH3KqCfw8vwPZTRddhAgx1+GE3T6GdW2CN4oYU5Y7gITy8jIIwymfMDzM54tJOy1XC86E2G0GlHKzCxjUIoNwGtmXqGA0Wi+X0uPgVd1DhFGWs/0KvjgFhSGOyyl4su9aGjPbcAWglzDqdd9k99L1ennYzMRs9tvdaqW/GkXfvAbL+/NT8PhXwmN+7/wHgdqiCaxyTNQAAAAASUVORK5CYII=
 										`}">
 									</div>
 								</div>
 							</div>
-						</div>
-						
-						<div class="header-actions jura" style="display:flex; align-items:center; user-select: none;">
+						</div>`
+					+
+					`	<div class="header-actions jura" style="display:flex; align-items:center; user-select: none;">
 
 							<button class="btn btn-edit-mode ${this.editMode ? "on" : "off"}" id="editModeBtn"></button>
 							<div class="config-btns-container">
@@ -3242,9 +3262,9 @@
 					</div>`
 					+
 					`<div class="drop-field remove-from-module${this.selectedSubjectCardsId.length > 0 ? " show" : ""}">
-						<div class="drop-field-remove-from-module-text top${!this.langIsEn ? " fr" : " en"}"></div>
+						<div class="drop-field-remove-from-module-text top${!this.isLangEn ? " fr" : " en"}"></div>
 						<div class="drop-field-remove-from-module-minus">-</div>
-						<div class="drop-field-remove-from-module-text bottom${!this.langIsEn ? " fr" : " en"}"></div>
+						<div class="drop-field-remove-from-module-text bottom${!this.isLangEn ? " fr" : " en"}"></div>
 						<div class="drop-field-remove-from-module-hitbox"></div>
 					</div>
 
@@ -3294,7 +3314,7 @@
 					// Language Sensitive text in the Dashboard Header and Semester filter tab (which doesn't refresh on calling the generateContent() method)
 					if (this.error) {
 						const backupSubTitle = document.querySelector(".backup-mode-subtitle");
-						backupSubTitle.innerHTML = !this.langIsEn 
+						backupSubTitle.innerHTML = !this.isLangEn 
 							? `Les serveurs de l'ECAM sont actuellement inaccessibles ! ${this.grades.length > 0
 								? "Pour l'instant, tu ne peux pas voir si tu as des nouvelles notes... En attendant, voici le tableau de bord en mode backup, tu as donc accès aux notes que j'ai gentiment sauvegardées dans le cache la dernière fois ! De rien ! <3" 
 								: "Pour l'instant, tu ne peux pas voir tes notes... Tu peux quand même commencer à configurer tes modules, reviens quand les serveurs sont opérationnels pour voir tes notes !"
@@ -3310,9 +3330,9 @@
 					const dashTitle             = document.querySelector(".dash-title-text");
 					const dashPatchNotesLink    = document.querySelector(".patch-notes-link");
 					const dashSubtitle          = document.querySelector(".dash-subtitle");
-					dashTitle.innerHTML         = !this.langIsEn ? 'Tableau de Bord des Notes ECAM' : "ECAM Grades Dashboard";
-					dashPatchNotesLink.title    = !this.langIsEn ? "Aller voir les notes de cette mise à jour" : "Go see this update's notes";
-					dashSubtitle.innerHTML      = !this.langIsEn ? 'Vue complète de vos résultats académiques !' : "Complete view of your academic results!";
+					dashTitle.innerHTML         = !this.isLangEn ? 'Tableau de Bord des Notes ECAM' : "ECAM Grades Dashboard";
+					dashPatchNotesLink.title    = !this.isLangEn ? "Aller voir les notes de cette mise à jour" : "Go see this update's notes";
+					dashSubtitle.innerHTML      = !this.isLangEn ? 'Vue complète de vos résultats académiques !' : "Complete view of your academic results!";
 
 					const infoNotif     = document.querySelector(".temp-notif");
 					if (infoNotif) {
@@ -3322,8 +3342,8 @@
 
 					const frBtn = document.querySelectorAll("#fr-lang-btn");
 					const enBtn = document.querySelectorAll("#en-lang-btn");
-					frBtn.title = !this.langIsEn ? "Maj+L" : "Shift+L";
-					enBtn.title = !this.langIsEn ? "Maj+L" : "Shift+L";
+					frBtn.title = !this.isLangEn ? "Maj+L" : "Shift+L";
+					enBtn.title = !this.isLangEn ? "Maj+L" : "Shift+L";
 
 					const reportIssueBtn    = document.querySelector(".issue.issue-btn");
 					const mailInfo          = document.querySelector(".issue.mail-info");
@@ -3344,7 +3364,7 @@
 					const newUserNotif      = document.querySelector(".new-user-notif");
 					const newUserNotifText  = document.querySelector(".new-user-notif-text");
 
-					if (!this.langIsEn) {
+					if (!this.isLangEn) {
 						reportIssueBtn  .title     = "Signaler...";
 						mailInfo        .title     = "Clique pour copier mon adresse email !";
 						shareConfig     .title     = "Partage une configuration sur mon GitHub";
@@ -3432,10 +3452,10 @@
 					const importBtn     = document.getElementById("importBtn");
 					const editModeBtn   = document.getElementById("editModeBtn");
 					const exportBtn     = document.getElementById("exportBtn");
-					importBtn   .innerHTML  = `${!this.langIsEn ? "Importer Config": "Import Config"}<span class="btn-icon">⬇️</span>`;
-					editModeBtn .innerHTML  = `<div style="display:flex; flex-direction:column; gap:3px"><span style="font-size:40px">🖊️</span><div class="jura">${!this.langIsEn ? "Mode Édition" : "Edit Mode"}</div></div>`;
-					exportBtn   .innerHTML  = `${!this.langIsEn ? "Exporter Config": "Export Config"}<span class="btn-icon">⬆️</span>`;
-					editModeBtn .title      = !this.langIsEn ? "Maj+E" : "Shift+E";
+					importBtn   .innerHTML  = `${!this.isLangEn ? "Importer Config": "Import Config"}<span class="btn-icon">⬇️</span>`;
+					editModeBtn .innerHTML  = `<div style="display:flex; flex-direction:column; gap:3px"><span style="font-size:40px">🖊️</span><div class="jura">${!this.isLangEn ? "Mode Édition" : "Edit Mode"}</div></div>`;
+					exportBtn   .innerHTML  = `${!this.isLangEn ? "Exporter Config": "Export Config"}<span class="btn-icon">⬆️</span>`;
+					editModeBtn .title      = !this.isLangEn ? "Maj+E" : "Shift+E";
 					if (this.editMode) {editModeBtn.classList.add('on')}
 					else    {editModeBtn.classList.remove('on')}
 					
@@ -3444,20 +3464,20 @@
 					const importClear   = importMenu.querySelector(".import-menu-btn.clear");
 					const importOnline  = importMenu.querySelector(".import-menu-btn.online");
 
-					importFile.children[0].innerHTML   = !this.langIsEn ? "Importer un fichier de configuration .json"   : "Import a .json configuration file";
-					importClear.innerHTML              = !this.langIsEn ? "Effacer Config" : "Clear Config";
-					importClear.title                  = !this.langIsEn ? "Clique ici pour effacer ta configuration actuelle" : "Click here to clear your current configuration";
-					importOnline.children[1].innerHTML = !this.langIsEn ? "Obtenir un fichier de configuration en ligne" : "Get a configuration file online";
+					importFile.children[0].innerHTML   = !this.isLangEn ? "Importer un fichier de configuration .json"   : "Import a .json configuration file";
+					importClear.innerHTML              = !this.isLangEn ? "Effacer Config" : "Clear Config";
+					importClear.title                  = !this.isLangEn ? "Clique ici pour effacer ta configuration actuelle" : "Click here to clear your current configuration";
+					importOnline.children[1].innerHTML = !this.isLangEn ? "Obtenir un fichier de configuration en ligne" : "Get a configuration file online";
 
 					const onlineCfgPickerHeader = document.querySelector(".online-cfg-picker-menu-header");
 					if (onlineCfgPickerHeader) {
-						onlineCfgPickerHeader.innerHTML = !this.langIsEn 
+						onlineCfgPickerHeader.innerHTML = !this.isLangEn 
 							? "Note: Choisir une configuration effacera les traces de configuration pré-existante de l'année correspondante, mais pas des autres années" 
 							: "Tip: Choosing a configuration will erase all traces of pre-existing configuration of the corresponding year, but not of the other years"
 						;
 					}
 
-					if (!this.langIsEn) {
+					if (!this.isLangEn) {
 						document.querySelectorAll(".drop-module-card-insert-text, .drop-field-remove-from-module-text, .drop-field-create-module-text").forEach(dropFieldText => {
 							dropFieldText.classList.replace("en", "fr")
 						})
@@ -3476,59 +3496,59 @@
 
 
 					const avgLabel = document.querySelector(".average-label");
-					avgLabel.innerHTML  = `/20 ${!this.langIsEn ? "Moyenne Générale" : "Global Average"}`;
+					avgLabel.innerHTML  = `/20 ${!this.isLangEn ? "Moyenne Générale" : "Global Average"}`;
 
 					const statLabelsArray = document.querySelectorAll(".stat-label");
-					statLabelsArray[0].innerHTML = !this.langIsEn ? "Notes" : "Grades";
-					statLabelsArray[1].innerHTML = !this.langIsEn ? "Semestres" : "Semesters";
-					statLabelsArray[2].innerHTML = !this.langIsEn ? "Modules Validés" : "Validated module";
+					statLabelsArray[0].innerHTML = !this.isLangEn ? "Notes" : "Grades";
+					statLabelsArray[1].innerHTML = !this.isLangEn ? "Semestres" : "Semesters";
+					statLabelsArray[2].innerHTML = !this.isLangEn ? "Modules Validés" : "Validated module";
 
 					const allFilterTabs = document.querySelectorAll(`.filter-tab`);
 					allFilterTabs.forEach(tab => {
-						if (tab.dataset.filter == "all") {tab.innerHTML = !this.langIsEn ? `Tous` : `All`}
-						tab.title = !this.langIsEn ? `Maj+Flèche Droite/Gauche` : `Shift+Left/Right Arrow`;
+						if (tab.dataset.filter == "all") {tab.innerHTML = !this.isLangEn ? `Tous` : `All`}
+						tab.title = !this.isLangEn ? `Maj+Flèche Droite/Gauche` : `Shift+Left/Right Arrow`;
 					})
 
-					document.querySelector(`.view-toggle`).children[0].innerHTML = !this.langIsEn ? `Basculer le mode d'affichage` : `Toggle display mode`;
-					document.querySelector(`.fold-toggle`)            .classList.replace(this.langIsEn ? "fr" : "en", this.lang)
-					document.querySelector(`.view-toggle`).children[0].title     = !this.langIsEn ? `Maj+D` : `Shift+D`;
-					document.querySelector(`.fold-toggle`)            .title     = !this.langIsEn ? `Maj+F` : `Shift+F`;
+					document.querySelector(`.view-toggle`).children[0].innerHTML = !this.isLangEn ? `Basculer le mode d'affichage` : `Toggle display mode`;
+					document.querySelector(`.fold-toggle`)            .classList.replace(this.isLangEn ? "fr" : "en", this.lang)
+					document.querySelector(`.view-toggle`).children[0].title     = !this.isLangEn ? `Maj+D` : `Shift+D`;
+					document.querySelector(`.fold-toggle`)            .title     = !this.isLangEn ? `Maj+F` : `Shift+F`;
 
 
 					const viewBtnsArray = document.querySelectorAll(".view-btn");
-					viewBtnsArray[0].title = !this.langIsEn ? "Vue détaillée" : "Detailed view";
-					viewBtnsArray[1].title = !this.langIsEn ? "Vue compacte" : "Compact view";
+					viewBtnsArray[0].title = !this.isLangEn ? "Vue détaillée" : "Detailed view";
+					viewBtnsArray[1].title = !this.isLangEn ? "Vue compacte" : "Compact view";
 
 					const intranetSubtext = document.querySelector(".intranet-subtext");
-					if (intranetSubtext) intranetSubtext.innerHTML = !this.langIsEn ? "Afficher le tableau des notes d'Espace ECAM" : "Show ECAM Intranet's Grades Table";
+					if (intranetSubtext) intranetSubtext.innerHTML = !this.isLangEn ? "Afficher le tableau des notes d'Espace ECAM" : "Show ECAM Intranet's Grades Table";
 
 					const updateNotif = document.querySelector(".update-available-notif-header");
 					if (updateNotif) {
-						updateNotif.querySelector(".update-available-notif-text").innerHTML = !this.langIsEn ? "NOUVELLE MISE À JOUR DU TABLEAU DE BORD DISPONIBLE ! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".") : "NEW DASHBOARD UPDATE AVAILABLE! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".");
-						updateNotif.querySelector(".update-available-notif-btns").children[0].innerHTML = !this.langIsEn ? "INSTALLER" : "INSTALL";
-						updateNotif.querySelector(".update-available-notif-btns").children[1].innerHTML = !this.langIsEn ? "Ignorer" : "Ignore";
-						updateNotif.querySelector(".update-available-notif-btns").children[1].title     = !this.langIsEn ? "Ignorer pour aujourd'hui" : "Ignore for today";
+						updateNotif.querySelector(".update-available-notif-text").innerHTML = !this.isLangEn ? "NOUVELLE MISE À JOUR DU TABLEAU DE BORD DISPONIBLE ! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".") : "NEW DASHBOARD UPDATE AVAILABLE! v" + this.scriptVersion + " → v"+this.scriptGitVersion.join(".");
+						updateNotif.querySelector(".update-available-notif-btns").children[0].innerHTML = !this.isLangEn ? "INSTALLER" : "INSTALL";
+						updateNotif.querySelector(".update-available-notif-btns").children[1].innerHTML = !this.isLangEn ? "Ignorer" : "Ignore";
+						updateNotif.querySelector(".update-available-notif-btns").children[1].title     = !this.isLangEn ? "Ignorer pour aujourd'hui" : "Ignore for today";
 					}
 
 					if (document.querySelector(".new-grades-card").children.length > 1) {document.querySelector(".new-grades-card").children[1].remove()}
 					document.querySelector(".new-grades-card-title").innerHTML = `
 						${this.newGrades.length > 0 
-							? `${!this.langIsEn 
+							? `${!this.isLangEn 
 								? `${this.newGrades.length} Nouvelle${ this.newGrades.length > 1 ? "s" : ""} Note${this.newGrades.length > 1 ? "s" : ""} !` 
 								: `${this.newGrades.length} New Grade${this.newGrades.length > 1 ? "s" : ""}!`
 							}` 
-							: `${!this.langIsEn 
+							: `${!this.isLangEn 
 								? `Pas de nouvelle note${this.error ? ", que je sache (mode backup)" : ""}` 
 								: `No new grade${this.error ? ", as far as I know (backup mode)" : ""}`
 							}` 
 						}
 					`;
-					document.querySelector(".new-grades-mark-as-read-text").innerHTML = !this.langIsEn ? "Marquer comme lu" : "Mark as read";
-					document.querySelector(".new-grades-mark-as-read").title = !this.langIsEn ? "Marquer comme lu" : "Mark as read";
+					document.querySelector(".new-grades-mark-as-read-text").innerHTML = !this.isLangEn ? "Marquer comme lu" : "Mark as read";
+					document.querySelector(".new-grades-mark-as-read").title = !this.isLangEn ? "Marquer comme lu" : "Mark as read";
 					
 
 					document.querySelectorAll(".selected-card-notif-div").forEach(notifDiv => {
-						notifDiv.children[2].innerHTML = !this.langIsEn ? `est sélectionné!` : `is selected!`;
+						notifDiv.children[2].innerHTML = !this.isLangEn ? `est sélectionné!` : `is selected!`;
 					})
 
 					if (fadeIn) {
@@ -3554,7 +3574,7 @@
 						}}, 1)
 					}
 
-					newGradesNotif.innerHTML = !this.langIsEn 
+					newGradesNotif.innerHTML = !this.isLangEn 
 						? `${this.newGrades.length} NOUVELLE${ this.newGrades.length>1 ? "S !" : " !"} NOTE${this.newGrades.length>1 ? "S !" : " !"}` 
 						: `${this.newGrades.length} NEW GRADE${this.newGrades.length>1 ? "S!"  : "!" }` 
 					+ `<button id="closeNewGradesNotif" style="padding-bottom: 3px;font-size: 10px;display: flex;width: 21px;height: 21px;position: fixed;right: calc(5% - -15px);border-radius: 5px;border: 3px solid #e0e6ff;justify-content: center;align-items: center;align-content: center;">❌</button>`;
@@ -3658,7 +3678,7 @@
 						section.innerHTML = `
 						<div class="semester-header" data-semester="${sem}">
 							<div class="semester-info">
-								<div class="semester-name jura">📚 ${!this.langIsEn ? 'Semestre' : "Semester"} ${sem}</div>
+								<div class="semester-name jura">📚 ${!this.isLangEn ? 'Semestre' : "Semester"} ${sem}</div>
 									<div class="semester-averages ${avgColor}">
 										<span class="semester-average-symbol">${avgSymbol}</span>
 										<span class="semester-average">${semAvg}/20</span>
@@ -3676,7 +3696,7 @@
 								</div>
 								<div class="unclassified-section" id="unclassified-section" style="${unclassifiedLength > 0 ? `` : `; display: none`}">
 									<div class="unclassified-title jura">
-										${!this.langIsEn ? `Matière${unclassifiedLength > 1 ?  `s` : ``} non classée${unclassifiedLength > 1 ?  `s` : ``} dans un module` : `Subject${unclassifiedLength > 1 ?  `s` : ``} not classified in a module`}
+										${!this.isLangEn ? `Matière${unclassifiedLength > 1 ?  `s` : ``} non classée${unclassifiedLength > 1 ?  `s` : ``} dans un module` : `Subject${unclassifiedLength > 1 ?  `s` : ``} not classified in a module`}
 									</div>
 									<div class="unclassified-content">
 										${unclassifiedLength > 0 
@@ -3752,7 +3772,7 @@
 								`<div class="module-title">${moduleName}</div>`
 							}
 							<div class="module-subject-total-coef-div" data-semester="${sem}" data-module="${moduleName}">
-								<div class="module-subject-total-coef-value" ${this.settings.totalCoefValuesEnabled.value     ? "" : "style=\"display: none\""}>${!this.langIsEn ? `Coef Total des matières :` : `Total Subjects Coef:`}</div>
+								<div class="module-subject-total-coef-value" ${this.settings.totalCoefValuesEnabled.value     ? "" : "style=\"display: none\""}>${!this.isLangEn ? `Coef Total des matières :` : `Total Subjects Coef:`}</div>
 								<div class="module-subject-total-coef-debug" ${this.settings.totalCoefDebugTextsEnabled.value ? "" : "style=\"display: none\""}></div>
 							</div>
 							<div class="module-card-header-right-side">
@@ -3762,7 +3782,7 @@
 									<div class="module-average ${isNaN(average) ? "unknown" : `${average >= 10 ? 'good' : 'bad'}`}" data-semester="${sem}" data-module="${moduleName}">${average}/20</div>
 								</div>
 								<div class="module-toggle fold-icon open">△</div>
-								<button class="module-delete-btn" id="module-delete-btn-${moduleName}-in-semester-${sem}" title="${!this.langIsEn ? "Supprimer ce module" : "Delete this module"}" data-semester="${sem}" data-module="${moduleName}" style="border-width: 3px;${this.editMode ? "" : " display: none;"}">🗑️</button>
+								<button class="module-delete-btn" id="module-delete-btn-${moduleName}-in-semester-${sem}" title="${!this.isLangEn ? "Supprimer ce module" : "Delete this module"}" data-semester="${sem}" data-module="${moduleName}" style="border-width: 3px;${this.editMode ? "" : " display: none;"}">🗑️</button>
 							</div>
 						</div>
 						
@@ -3772,16 +3792,16 @@
 								${hasDisabled 
 									? 
 									`<div class="module-info-bar">
-										<div style="font-weight: 700; font-size: 15px;">${!this.langIsEn ? "Inclus des notes désactivées" : "Includes disabled grades"}</div>
-										<div class="module-info-clear disabled" data-semester="${sem}" data-module="${moduleName}">${!this.langIsEn ? "Activer toutes ces notes" : "Enable all the grades"}</div>
+										<div style="font-weight: 700; font-size: 15px;">${!this.isLangEn ? "Inclus des notes désactivées" : "Includes disabled grades"}</div>
+										<div class="module-info-clear disabled" data-semester="${sem}" data-module="${moduleName}">${!this.isLangEn ? "Activer toutes ces notes" : "Enable all the grades"}</div>
 									</div>` 
 									: ``
 								}
 								${hasSim 
 									? 
 									`<div class="module-info-bar">
-										<div style="font-weight: 700; font-size: 15px;">${!this.langIsEn ? "Inclus des notes simulées" : "Includes simulated grades"}</div>
-										<div class="module-info-clear sim" data-semester="${sem}" data-module="${moduleName}">${!this.langIsEn ? "Effacer toutes ces notes simulées" : "Erase all the simulated grades"}</div>
+										<div style="font-weight: 700; font-size: 15px;">${!this.isLangEn ? "Inclus des notes simulées" : "Includes simulated grades"}</div>
+										<div class="module-info-clear sim" data-semester="${sem}" data-module="${moduleName}">${!this.isLangEn ? "Effacer toutes ces notes simulées" : "Erase all the simulated grades"}</div>
 									</div>` 
 									: ``
 								}
@@ -3888,7 +3908,7 @@
 										}
 										<div style="font-size: 13px; color: #666; text-wrap-mode: nowrap;">
 											${classified 
-												? ` ${!this.langIsEn 
+												? ` ${!this.isLangEn 
 														? "Poids dans module: " 
 														: "Weight in module: "
 													}
@@ -3902,18 +3922,18 @@
 											<span class="subject-card-header-grades-details ${detailed ? "" : "show"}">
 												${classified ? "• " : ""}
 												${nbGrades===0 
-													? `<span>${!this.langIsEn ? "aucune note publiée" : "no published grade"}</span>` 
-													: `<span>${nbGrades} ${!this.langIsEn ? `note${nbGrades>1?"s":""} au total` : `grade${nbGrades>1?"s":""} total</span>`}`
+													? `<span>${!this.isLangEn ? "aucune note publiée" : "no published grade"}</span>` 
+													: `<span>${nbGrades} ${!this.isLangEn ? `note${nbGrades>1?"s":""} au total` : `grade${nbGrades>1?"s":""} total</span>`}`
 												}
 												${nbGrades>0 
 													? ` • <span ${includedGradesLength<nbGrades ? `style="color: #df0000"` : ``}>
 														<span style="font-weight: 700; ">${includedGradesLength}/${nbGrades}</span> 
-														${!this.langIsEn ? `note${includedGradesLength>1?"s":""} activée${includedGradesLength>1?"s":""}` : `grade${includedGradesLength>1?"s":""} enabled`}${includedGradesLength<nbGrades ? `!` : ``}
+														${!this.isLangEn ? `note${includedGradesLength>1?"s":""} activée${includedGradesLength>1?"s":""}` : `grade${includedGradesLength>1?"s":""} enabled`}${includedGradesLength<nbGrades ? `!` : ``}
 													</span>` 
 													: ``
 												}
 												${nbSimGrades>0 
-													? `<span> • ${nbSimGrades} ${!this.langIsEn ? `note${nbSimGrades>1?"s":""} simulée${nbSimGrades>1?"s":""}` : `simulated grade${nbSimGrades>1?"s":""}</span>`}`
+													? `<span> • ${nbSimGrades} ${!this.isLangEn ? `note${nbSimGrades>1?"s":""} simulée${nbSimGrades>1?"s":""}` : `simulated grade${nbSimGrades>1?"s":""}</span>`}`
 													: ``
 												}
 											</span>
@@ -3921,7 +3941,7 @@
 									</div>
 									<div class="subject-total-coef-div" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}">
 										<div class="subject-total-coef-value" ${this.settings.totalCoefValuesEnabled.value     ? "" : "style=\"display: none\""}></div>
-										<div class="subject-total-coef-debug" ${this.settings.totalCoefDebugTextsEnabled.value ? "" : "style=\"display: none\""}>${!this.langIsEn ? `Coef Total des notes :` : `Total Grades Coef:`}</div>
+										<div class="subject-total-coef-debug" ${this.settings.totalCoefDebugTextsEnabled.value ? "" : "style=\"display: none\""}>${!this.isLangEn ? `Coef Total des notes :` : `Total Grades Coef:`}</div>
 									</div>
 								</div>
 							</div>
@@ -3931,7 +3951,7 @@
 									<div class="subj-class-average-vs-average jura" ${isNaN(subjClassAvg) ? `style="display: none"` : ""}>vs</div>
 									<div class="subj-average ${isNaN(subjAvg) ? '' : `${subjAvg>=10 ? 'good' : 'bad'}`}">${subjAvg}/20</div>
 								</div>
-								<button class="subject-delete-btn" id="subject-delete-btn-${subject}-${moduleName}-in-semester-${sem}" title="${!this.langIsEn ? "Enlever cette matière" : "Remove this subject"}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-targetid="${subjectCardId}" style="border-width: 3px;${this.editMode && classified ? "" : " display: none;"}">🗑️</button>
+								<button class="subject-delete-btn" id="subject-delete-btn-${subject}-${moduleName}-in-semester-${sem}" title="${!this.isLangEn ? "Enlever cette matière" : "Remove this subject"}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-targetid="${subjectCardId}" style="border-width: 3px;${this.editMode && classified ? "" : " display: none;"}">🗑️</button>
 							</div>
 						</div>
 
@@ -3945,22 +3965,22 @@
 						<thead>
 							<tr>
 								<th class="grades-table-header-type" style="padding-left: 30px; border-left-width: 0px;">
-									${!this.langIsEn ? "Intitulé" : "Title"}
+									${!this.isLangEn ? "Intitulé" : "Title"}
 								</th>
 								<th class="grades-table-header-grade">
-									${!this.langIsEn ? "Note" : "Grade"}
+									${!this.isLangEn ? "Note" : "Grade"}
 								</th>
 								<th class="grades-table-header-coef">
-									${!this.langIsEn ? "Coef" : "Coef"}
+									${!this.isLangEn ? "Coef" : "Coef"}
 								</th>
 								<th class="grades-table-header-classAvg">
-									${!this.langIsEn ? "Moy. Classe" : "Class Avg"}
+									${!this.isLangEn ? "Moy. Classe" : "Class Avg"}
 								</th>
 								<th class="grades-table-header-date">
-									${!this.langIsEn ? "Date" : "Date"}
+									${!this.isLangEn ? "Date" : "Date"}
 								</th>
 								<th class="grades-table-header-teacher" style="border-right-width: 0px;${this.selectedSubjectCardsId.length > 0 ? " display: none;" : ""}">
-									${!this.langIsEn ? "Prof(s)" : "Teacher(s)"}
+									${!this.isLangEn ? "Prof(s)" : "Teacher(s)"}
 								</th>
 								<th class="grades-table-header-add-sim-cell" style="border-right-width: 0px; border-left-width: 0px;">
 								</th>
@@ -3979,7 +3999,7 @@
 									<input type="checkbox" class="grade-checkbox any-input" id="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}" data-semester="${sem}" data-subj="${subject}" data-module="${moduleName||''}" data-prof="${grade.prof}" data-gradeid="${grade.type + " " + grade.date + " " + grade.prof}" ${gradeIsSim ? `data-simtimestamp="${grade.id}"` : ""} ${!this.gradeIsDisabled(grade) ? "checked" : ""}></input>
 									${gradeIsSim
 										? `<input class="grade-type simulated-grade-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="simulated-grade-input-type-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" data-modifType="type" data-simid="${index-nbRealGrades}" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" value="${grade.type}"/>` 
-										: `<label class="grade-type" style="width: auto"  id="grade-type-${grade.type}-${grade.date}" for="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}">${grade.type || ''}${gradeIsSim ? ` • ${!this.langIsEn ? "Simulée" : "Simulated"}` : ''}</label>`
+										: `<label class="grade-type" style="width: auto"  id="grade-type-${grade.type}-${grade.date}" for="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}">${grade.type || ''}${gradeIsSim ? ` • ${!this.isLangEn ? "Simulée" : "Simulated"}` : ''}</label>`
 									}
 								</td>
 								<td class="grade-value grade-${gradeClass} grades-table-grade" data-sim="${gradeIsSim}">
@@ -4027,8 +4047,8 @@
 							<tr>
 								<td class="grades-table-type">
 									<div class="grade-type" style="display:flex; align-items:center; justify-content: flex-start">
-										<div class="jura" style="width: 140px">${!this.langIsEn ? "Ajouter une note simulée: " : "Add a simulated grade: "}</div>
-										<input class="simulated-grade-input sim-inp-type any-input" id="simulated-grade-input-type-for-${subject}-from-${moduleName}-in-semester${sem}" data-semester="${sem}" data-subj="${subject}" placeholder="${!this.langIsEn ? "Titre" : "Title"}" />
+										<div class="jura" style="width: 140px">${!this.isLangEn ? "Ajouter une note simulée: " : "Add a simulated grade: "}</div>
+										<input class="simulated-grade-input sim-inp-type any-input" id="simulated-grade-input-type-for-${subject}-from-${moduleName}-in-semester${sem}" data-semester="${sem}" data-subj="${subject}" placeholder="${!this.isLangEn ? "Titre" : "Title"}" />
 									</div>
 								</td>
 								<td class="grades-table-grade">
@@ -4040,7 +4060,7 @@
 								<td colspan="3">
 								</td>
 								<td class="grades-table-add-sim-cell" style="border-right-width: 0px; border-left-width: 0px;">
-									<button class="btn-export sim-add-btn" data-semester="${sem}" data-subj="${subject}" data-module="${moduleName||''}">${!this.langIsEn ? "Ajouter" : "Add"}</button>
+									<button class="btn-export sim-add-btn" data-semester="${sem}" data-subj="${subject}" data-module="${moduleName||''}">${!this.isLangEn ? "Ajouter" : "Add"}</button>
 								</td>
 							</tr>
 						</tbody>
@@ -4271,7 +4291,7 @@
 
 				appendFullScreenNotif(container=document.body, text) {
 					if (!text) {
-						text = !this.langIsEn 
+						text = !this.isLangEn 
 							? `<div>Clique sur l'écran pour rafraichir la page et appliquer la mise à jour !</div><div>Utilisateurs de MAC, copiez le script qui s'est ouvert et collez-le dans votre extension à la place de l'ancien script</div>`
 							: `<div>Click on the screen to reload the page and apply the update!</div><div>MAC users, copy the script that opened up and paste it in your extension to replace the old script</div>
 						`;
@@ -4294,7 +4314,7 @@
 					`;
 
 					const newFullScreenNotif = document.querySelector("#fullScreeNotif");
-					newFullScreenNotif.title = !this.langIsEn ? "Rafraichir" : "Reload";
+					newFullScreenNotif.title = !this.isLangEn ? "Rafraichir" : "Reload";
 					setTimeout(() => {newFullScreenNotif.classList.add("show");}, 100)
 					newFullScreenNotif.onclick = () => {window.location.reload();};
 				}
@@ -4409,7 +4429,7 @@
 	
 						const newUserNotif  = document.createElement("div");
 						newUserNotif.className = "new-user-notif";
-						newUserNotif.title = !this.langIsEn ? "Clique pour fermer" : "Click to dismiss";
+						newUserNotif.title = !this.isLangEn ? "Clique pour fermer" : "Click to dismiss";
 						newUserNotif.innerHTML = `
 							<div class="new-user-notif-arrow" style="right: -322px; bottom: ${this.error ? "-8px" : "-4px"};">
 								<svg class="new-user-notif-arrow-svg" viewBox="0 0 100 100" style="z-index: 9;">
@@ -4420,7 +4440,7 @@
 								</svg>
 							</div>
 							<div class="new-user-notif-text">${
-								!this.langIsEn 
+								!this.isLangEn 
 									? "Bonjour! Première fois? Clique ici pour apprendre à utiliser cette extension! (Clique ici pour fermer)" 
 									: "Hey! New here? Click here to find a tutorial on how to use this extension! (Click here to dismiss)"
 								}
@@ -4444,6 +4464,8 @@
 				}
 
 				startTuto() {
+					this.generalKeyboardEvents("tuto Shift+L");
+
 					const newUserNotifFullScreen     = document.createElement("div");
 					newUserNotifFullScreen.className = "focus-notif-fullscreen-effect";
 					this.ecamDash.appendChild(newUserNotifFullScreen);
@@ -4453,14 +4475,43 @@
 					skipTuto.className = "skip-tuto-btn jura";
 					this.ecamDash.appendChild(skipTuto);
 					setTimeout(() => {skipTuto.style.opacity = "1";}, 1)
-					skipTuto.onclick = () => {
-						this.stopTuto();
-					}
+					skipTuto.onclick = this.stopTuto;
+
+					const langToggleContainer = document.createElement("div");
+					langToggleContainer.className = "tuto-lang-btn-toggle-container jura";
+					this.ecamDash.appendChild(langToggleContainer);
+
+					const langToggle = document.createElement("div");
+					langToggle.className = "tuto-lang-btn-toggle "+this.lang;
+					langToggleContainer.appendChild(langToggle);
+					langToggle.innerHTML = `
+						<img style="display: flex; width:30px; height:30px" alt="🇫🇷" src="${`
+							data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAACTUExURUdwTAAkjM7Pzs7OzrMGE74QIMPEx4hTeAAkjQARewAagbIFEgAfhc3NzdDQ0M7PzrYMG8zMzbcMG8EXKcUbLQAMd7UKGLUKGMMWJ7OhrcMVJv///+oPIO4bLgAmoOwWKAAZmQArpO8iNgAfnQATlAIyqLUGFAEoksUSIwAYhgANePnCyMbO6djY2NUWJ+7u7sCep4f8c74AAAAbdFJOUwDL+z19ffsVe3qU1jy51pA+bLyNc+Vrnu+m2KjIWToAAALxSURBVFjD7djJcuIwEIDhAAMOxuwTCAnyKgxOxg7v/3SjtraWDJKTUw60K1Vc+OqX5APK09NjHvOLJxDz3a+t9Mcoeg7DgZrDcrkejUZBL2X7NuYfo4gRZ2MmNZvhYjEHz1EYrHab18tl3LaEEonFnOPT5KtWM1zMhReY27DabUG5ABQ8cyXLTnIy9pz+vcN8seFWPRxC32G7Hf+FGW/3m7fXVmkagJ5NpGXYCOjd5Or6ejGmaRpCctJw6HTqOgaEvM8GT07ynP0RXhTbSqcIzWduDWOIgHBRJqmeELkJtQB34v4QUUs7o8MSC4t7FYECkF2UKYW9Sb2KRI8FqVWB06OI4KJSQRnuyXoUiW0mHUj2iPFAJEdOoiGVE/OV+SCxqLxTpI+LT+GGcE8Cj4AypAiqcEDyrPTSFHSS25zxnMIH6W2GnsQsitVGM8sBEf36AAOOASkDHg+EcuyiWLw+TAHGCdk5EqrOKqhQjgfCJ8ahPxxCx1W0K0tdUG4qCJKrAoMXpd4i7BwFpM+rkJNmbijh7w+xIHRanPFAiXx/khuQ7mFM6i9CzFFAlQiSDHPcRQneoCM8uqhA29NOfB/Sr48MUkWF3uY0bVfmgqyF6aIKHVcqgpxFMETlGHtkrMoDdXKYVMqlqRxhUReUmBuNiro9KXVCcllcOaoiq4emlPaAOJMoaCogHdNSXgg7GEqRRL1FR709FqRzKO0PdYt0D6X+IrWqTlGnh9LzPYgk1rIQlKogqqj70NHYZgR9VN0eJ2Ttj1GkT6udygN1BhVR/vQp6m6RUYRzfl5k1lSeItfSOFBVH3KqCfw8vwPZTRddhAgx1+GE3T6GdW2CN4oYU5Y7gITy8jIIwymfMDzM54tJOy1XC86E2G0GlHKzCxjUIoNwGtmXqGA0Wi+X0uPgVd1DhFGWs/0KvjgFhSGOyyl4su9aGjPbcAWglzDqdd9k99L1ennYzMRs9tvdaqW/GkXfvAbL+/NT8PhXwmN+7/wHgdqiCaxyTNQAAAAASUVORK5CYII=
+						`}">
+						<div style="display: flex; justify-content: center; align-items: center; width: 34px; height: 34px; border-radius: 17px; background: white; color: black; font-size: 15px; user-select: none;">||</div>
+						<img style="display: flex; width:30px; height:30px" alt="🇬🇧" src="${`
+								data:image/png;base64,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
+						`}">
+					`;
+
+					setTimeout(() => {langToggleContainer.style.opacity = "1";}, 1)
+
+					langToggleContainer.onclick = () => {
+						this.isLangEn = !this.isLangEn;
+						this.lang = this.isLangEn ? "en" : "fr";
+
+						this.ecamDash.querySelector("#en-lang-btn").classList.replace(this.isLangEn ? "inactive" : "active", this.isLangEn ? "active" : "inactive");
+						this.ecamDash.querySelector("#fr-lang-btn").classList.replace(this.isLangEn ? "active" : "inactive", this.isLangEn ? "inactive" : "active");
+						langToggle.classList.replace(this.isLangEn ? "fr" : "en", this.isLangEn ? "en" : "fr");
+
+						this.saveLanguage();
+
+						this.currentTutoTipNotif.regenerateTexts();
+					};
 				}
 
-				// MARK: start first steps tuto
+				// MARK: startFirstStepsTutorial
 				startFirstStepsTutorial() {
-					this.generalKeyboardEvents("tuto");
 
 					localStorage.setItem("ECAM_DASHBOARD_FIRST_LOAD", false);
 					this.firstLoad = false;
@@ -4468,11 +4519,16 @@
 					const firstStepsBtn = document.querySelector(".first-steps-btn");
 					firstStepsBtn.classList.remove("infinite-alternate-scale-up");
 
+					this.startTuto();
+
 					this.onGoingTutoTipNotifDivs = [
 						new TutoTipNotif(this,
 							".config-btns-container",
 							"#importBtn", 
-							!this.langIsEn ? "Clique ici pour importer une configuration de modules" : "Click here to import a module configuration"
+							{
+								fr: "Clique ici pour importer une configuration de modules", 
+								en: "Click here to import a module configuration",
+							}
 							, {
 								appearanceDelay: 400,
 								containerStyle: {top: "-25px", right: "200px"}, 
@@ -4483,7 +4539,10 @@
 						new TutoTipNotif(this,
 							"#importMenu",
 							".import-menu-btn.online", 
-							!this.langIsEn ? "Clique ici pour obtenir une configuration déjà disponible en ligne" : "Click here to obtain a configuration already available online"
+							{
+								fr: "Clique ici pour obtenir une configuration déjà disponible en ligne", 
+								en: "Click here to obtain a configuration already available online",
+							}
 							, {
 								appearanceDelay: 400,
 								containerStyle: {top: "175px", right: "110px"}, 
@@ -4494,7 +4553,10 @@
 						new TutoTipNotif(this,
 							"#pickerMenu",
 							".online-cfg-picker-menu-dir-card.config",
-							!this.langIsEn ? "Navigue dans le menu pour trouver la configuration qui correspond à ta section → année → promo [→ fillière, si besoin] actuelle" : "Navigate through the menu to find the configuration that corresponds to your current section → year → prom [→ pathway, if needed]"
+							{
+								fr: "Navigue dans le menu pour trouver la configuration qui correspond à ta section → année → promo [→ fillière, si besoin] actuelle", 
+								en: "Navigate through the menu to find the configuration that corresponds to your current section → year → prom [→ pathway, if needed]",
+							}
 							, {
 								appearanceDelay: 550, 
 								containerStyle: {position: "absolute", width: "100%", top: "-76px", right: "0"}, 
@@ -4505,14 +4567,15 @@
 						),
 						new TutoTipNotif(this,
 							document.body,
-							".tuto-tip-notif-container",
-							!this.langIsEn 
-								? `Ta configuration est chargée ! Tu peux filtrer l'affichage des notes par semestres en sélectionnant le semestre désiré dans la barre de filtre.
+							".tuto-tip-notif-container"
+							, {
+								fr: `Ta configuration est chargée ! Tu peux filtrer l'affichage des notes par semestres en sélectionnant le semestre désiré dans la barre de filtre.
 									Tu peux également refaire la manipulation pour obtenir la configuration des années précédentes si elles sont disponibles.
-									<div>[ Clique pour fermer le tuto ]</div>`
-								: `Your configuration is loaded! You can filter the grades' display by semester, by selecting the desired semester in the filter bar.
+									<div>[ Clique pour fermer le tuto ]</div>`,
+								en: `Your configuration is loaded! You can filter the grades' display by semester, by selecting the desired semester in the filter bar.
 									You can also do the manipulation again to obtain the configuration of previous years if they are available.
-									<div>[ Click to close the tuto ]</div>`
+									<div>[ Click to close the tuto ]</div>`,
+							}
 							, {
 								appearanceDelay: 1, 
 								containerStyle: {position: "fixed", width: "100%", height: "100%", top: "0"}, 
@@ -4529,22 +4592,106 @@
 
 				
 
-				// MARK: start complete tuto
+				// MARK: startCompleteTutorial
 				startCompleteTutorial() {
-					this.generalKeyboardEvents("tuto");
 
 					this.startTuto();
 
 					this.onGoingTutoTipNotifDivs = [
 						new TutoTipNotif(this,
 							document.body,
-							".tuto-tip-notif-container", 
-							!this.langIsEn ? "Bienvenu dans le tutoriel complet de ce tableau de bord ! :D" : "Welcome in the complete tutorial of this dashboard! :D", 
+							".tuto-tip-btn", 
 							{
+								fr: "Bienvenu dans le tutoriel complet de ce tableau de bord ! :D", 
+								en: "Welcome in the complete tutorial of this dashboard! :D",
+							}
+							, {
 								appearanceDelay: 400,
-								containerStyle: {position: "fixed", top: "50%", left: "50%"}, 
-								notifStyle: {minWidth: "1000px"}, 
-								containerElemStyle: {}
+								containerStyle: {position: "fixed", top: "0", left: "0", width: "100%", height: "100%", flexDirection: "column"}, 
+								notifStyle: {position: "relative", top: "-30px", minWidth: "1000px"}, 
+								buttonsContainer: {
+									style: {gap: "10px", maxWidth: "440px"},
+									texts: {
+										fr:"Sélectionne la section que tu veux explorer",
+										en: "Select the section you want to explore", 
+									},
+									textStyle: {},
+									buttons: [
+										{
+											style: {},
+											texts: {
+												fr: "Configure tes modules",
+												en: "Set up your modules", 
+											},
+											actionCallback: () => {
+												this.onGoingTutoTipNotifDivs = [
+													new TutoTipNotif(this, 
+														document.body,
+														".tuto-tip-notif-container",
+														{fr: "En cours de construction...", en: "Building ongoing..."}
+														, {
+															appearanceDelay: 400,
+															containerStyle: {position: "fixed", top: "50%", left: "50%"}, 
+															notifStyle: {minWidth: "1000px"}, 
+														}
+													)
+												];
+												this.nextTipNotif();
+											}
+										},
+										{
+											style: {},
+											texts: {
+												fr: "Simule et anticipe tes résultats",
+												en: "Simulate and anticipate your results", 
+											},
+											actionCallback: () => {
+												this.generalKeyboardEvents("tuto Shift+E");
+
+												if (this.grades.length > 0) {
+
+													this.onGoingTutoTipNotifDivs.push(
+														new TutoTipNotif(this,
+															".header-actions",
+															"#editModeBtn",
+															{fr: "Passe en mode édition ici (ou avec Maj+E)", en: "Get in edit mode here (or with Shift+E)"}
+															, {
+																appearanceDelay: 400,
+																containerStyle: {position: "relative", right: '500px'}, 
+																notifStyle: {minWidth: '320px'}, 
+															}
+														)
+													);
+
+												}
+
+												this.nextTipNotif();
+											}
+										},
+										{
+											style: {},
+											texts: {
+												fr: "Configure tes modules",
+												en: "Set up your modules", 
+											},
+											actionCallback: () => {
+												this.onGoingTutoTipNotifDivs = [
+													new TutoTipNotif(this, 
+														document.body,
+														".tuto-tip-notif-container",
+														{fr: "Tadaaa!", en: "Tadaaa!"}
+														, {
+															appearanceDelay: 400,
+															containerStyle: {position: "fixed", top: "50%", left: "50%"}, 
+															notifStyle: {minWidth: "1000px"}, 
+														}
+													)
+												];
+												this.nextTipNotif();
+											}
+										},
+									]
+								}
 							}
 						),
 					]
@@ -4560,7 +4707,10 @@
 				 * If no element is left, uses the endCallback function instead.
 				 */
 				nextTipNotif(endCallback = this.stopTuto) {
-					if (this.onGoingTutoTipNotifDivs.length > 0) this.currentTutoTipNotif = this.onGoingTutoTipNotifDivs.shift().createTipNotifDiv();
+					if (this.onGoingTutoTipNotifDivs.length > 0) {
+						this.currentTutoTipNotif = this.onGoingTutoTipNotifDivs.shift();
+						this.currentTutoTipNotif.createTipNotifDiv();
+					}
 					else endCallback()
 				}
 
@@ -4568,7 +4718,7 @@
 				// MARK: stopTuto()
 				/** Stops the currently on-going tuto, removing every tuto tip notif divs */
 				stopTuto() {
-					if ((this?.onGoingTutoTipNotifDivs?.length || 0) > 0) this.onGoingTutoTipNotifDivs = null;
+					if ((ecamDash?.onGoingTutoTipNotifDivs?.length || 0) > 0) ecamDash.onGoingTutoTipNotifDivs = [];
 
 					document.querySelectorAll(".tuto-tip-notif-container").forEach(tutoTipNotifContainer => {
 						tutoTipNotifContainer.style.opacity = "0";
@@ -4585,11 +4735,14 @@
 
 					document.querySelector(".skip-tuto-btn").style.opacity = "0";
 					document.querySelector(".skip-tuto-btn").style.animationPlayState = "paused";
-					setTimeout(() => {document.querySelector(".skip-tuto-btn").remove()}, 500)
+					setTimeout(() => {document.querySelector(".skip-tuto-btn").remove()}, 500);
+					
+					document.querySelector(".tuto-lang-btn-toggle-container").style.opacity = "0";
+					setTimeout(() => {document.querySelector(".tuto-lang-btn-toggle-container").remove()}, 500);
 
 					document.body.onclick = null;
 
-					this.generalKeyboardEvents();
+					ecamDash.generalKeyboardEvents();
 				}
 
 			//#endregion Tutos
@@ -4892,24 +5045,27 @@
 					attachLangBtnsListener() {
 						// Change to English
 						document.getElementById('en-lang-btn').onclick = () => {
-							if (!this.langIsEn) {
+							if (!this.isLangEn) {
 								this.lang       = "en";
-								this.langIsEn   = true;
-								localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
-								document.getElementById('fr-lang-btn').classList.remove('active')
-								document.getElementById('en-lang-btn').classList.add('active')
+								this.isLangEn   = true;
+								this.saveLanguage();
+								this.ecamDash.querySelector("#fr-lang-btn").classList.replace("active", "inactive");
+								this.ecamDash.querySelector("#en-lang-btn").classList.replace("inactive", "active");
 								this.generateContent({fadeIn: false});
 							}
 						};
 
 						// Change to French
 						document.getElementById('fr-lang-btn').onclick = () => {
-							if (this.langIsEn) {
+							if (this.isLangEn) {
 								this.lang       = "fr";
-								this.langIsEn   = false;
-								localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
+								this.isLangEn   = false;
+								this.saveLanguage();
+								this.ecamDash.querySelector("#fr-lang-btn").classList.replace("inactive", "active");
+								this.ecamDash.querySelector("#en-lang-btn").classList.replace("active", "inactive");
 								document.getElementById('fr-lang-btn').classList.add('active')
 								document.getElementById('en-lang-btn').classList.remove('active')
+
 								this.generateContent({fadeIn: false});
 							}
 						};
@@ -5061,7 +5217,7 @@
 							}
 							document.querySelector(".new-grades-card").classList.add("none");
 							document.querySelector(".new-grades-card-header").classList.add("none");
-							document.querySelector(".new-grades-card-title").innerHTML = !this.langIsEn 
+							document.querySelector(".new-grades-card-title").innerHTML = !this.isLangEn 
 								? `Pas de nouvelle note${this.error ? ", que je sache (mode backup)" : ""}` 
 								: `No new grade${this.error ? ", as far as I know (backup mode)" : ""}`
 							;
@@ -5916,7 +6072,7 @@
 
 						let diffName = true;
 						if (newModuleName == "__#unclassified#__") {
-							alert(!this.langIsEn 
+							alert(!this.isLangEn 
 								? "Ce nom n'est pas autorisé ! C'est le nom utilisé en interne pour les matières non-classifiées... Choisis-en un autre!" 
 								: "This name isn't allowed! That's the name used internally for unclassified subjects... Choose another one!"
 							)
@@ -5925,7 +6081,7 @@
 						else {
 							Object.keys(this.moduleConfig[sem]).forEach(_moduleName => {
 								if (_moduleName == newModuleName && _moduleName != oldModuleName) {
-									alert(!this.langIsEn 
+									alert(!this.isLangEn 
 										? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
 										: "This subject already exists! Please choose a different name"
 									)
@@ -6212,7 +6368,7 @@
 
 						let diffName = true;
 						if (subjNewName == "__#unclassified#__") {
-							alert(!this.langIsEn 
+							alert(!this.isLangEn 
 								? "Ce nom n'est pas autorisé ! C'est le nom utilisé en interne pour les matières non-classifiées... Choisis-en un autre!" 
 								: "This name isn't allowed! That's the name used internally for unclassified subjects... Choose another one!"
 							)
@@ -6221,7 +6377,7 @@
 						else {
 							this.moduleConfig[sem][moduleName].subjects.forEach(_subj => {
 								if (_subj == subjNewName && _subj != subjOldName) {
-									alert(!this.langIsEn 
+									alert(!this.isLangEn 
 										? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
 										: "This subject already exists! Please choose a different name"
 									)
@@ -6239,7 +6395,7 @@
 							this.moduleConfig[sem].__modules__.forEach(moduleName => {
 								this.moduleConfig[sem][moduleName].subjects.forEach(_subj => {
 									if (_subj == subjNewName && _subj != subjOldName) {
-										alert(!this.langIsEn 
+										alert(!this.isLangEn 
 											? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
 											: "This subject already exists! Please choose a different name"
 										)
@@ -6316,11 +6472,11 @@
 						const gradeInp  = document.querySelector(`.simulated-grade-input.sim-inp-grade[data-semester="${semX}"][data-subj="${subj}"]`);
 						const coefInp   = document.querySelector(`.simulated-grade-input.sim-inp-coef[data-semester="${ semX}"][data-subj="${subj}"]`);
 						const dateInp   = document.querySelector(`.simulated-grade-input.sim-inp-date[data-semester="${ semX}"][data-subj="${subj}"]`);
-						const type      = typeInp?.value||`${!this.langIsEn? 'Simulé' : "Simulated"}`;
+						const type      = typeInp?.value||`${!this.isLangEn? 'Simulé' : "Simulated"}`;
 						const grade     = parseFloat(gradeInp?.value||'');
 						const coef      = parseFloat(coefInp?.value||'');
 						const date      = dateInp?.value||'';
-						if(isNaN(grade) || isNaN(coef)){ alert(!this.langIsEn ? "Note et coef requis" : "Grade and coef required"); return; }
+						if(isNaN(grade) || isNaN(coef)){ alert(!this.isLangEn ? "Note et coef requis" : "Grade and coef required"); return; }
 
 						this.ensureSimPath(semX, moduleName, subj);
 
@@ -6372,7 +6528,7 @@
 						const newGrade      = parseFloat(gradeInp?.value||'');
 						const newCoef       = parseFloat(coefInp?.value||'');
 
-						if(isNaN(newGrade) || isNaN(newCoef)){ alert(!this.langIsEn ? "Grade et coef requis" : "Grade and coef required"); return; }
+						if(isNaN(newGrade) || isNaN(newCoef)){ alert(!this.isLangEn ? "Grade et coef requis" : "Grade and coef required"); return; }
 						this.sim[semX][moduleName][subj][id][modifType] = value;
 
 						this.saveSim();
@@ -7082,7 +7238,7 @@
 					selectionNotifDiv.innerHTML = `
 						<div class="selected-card-notif-div-scroll-btn" id="selected-card-notif-div-del-btn-for-${target}-from-semester-${semester}" data-targetId="${targetId}">\></div>
 						<span style="font-weight: 600; font-size: 14px; color: white">${target}${!isSubject ? ` Module` : ""}</span>
-						<span>${!this.langIsEn ? `est sélectionné!` : `is selected!`}</span>
+						<span>${!this.isLangEn ? `est sélectionné!` : `is selected!`}</span>
 						<div class="selected-card-notif-div-del-btn" id="selected-card-notif-div-del-btn-for-${target}-from-semester-${semester}" data-targetId="${targetId}">x</div>
 					`;
 
@@ -7504,7 +7660,7 @@
 						}
 					}
 					else {
-						const newSubjName = !this.langIsEn ? "Nouvelle matière" : "New subject";
+						const newSubjName = !this.isLangEn ? "Nouvelle matière" : "New subject";
 						newModuleConfig.subjects.push(newSubjName);
 						newModuleConfig.coefficients[newSubjName] = 100;
 					}
@@ -7756,9 +7912,9 @@
 						const moduleCard = document.getElementById(`module-card-${module}-in-semester-${sem}`);
 						const moduleDetails = moduleCard.querySelector(".module-details");
 
-						let newSubjName = `${!this.langIsEn ? "Nouvelle matière" : "New subject"} 1`; let count = 1;
+						let newSubjName = `${!this.isLangEn ? "Nouvelle matière" : "New subject"} 1`; let count = 1;
 						while (this.gradesDatas[sem][module].subjects[newSubjName]) {
-							count++; newSubjName = `${!this.langIsEn ? "Nouvelle matière" : "New subject"} ${count}`;
+							count++; newSubjName = `${!this.isLangEn ? "Nouvelle matière" : "New subject"} ${count}`;
 						}
 
 						const insertionIndex = methodCaller ? methodCaller.dataset.index : this.moduleConfig[sem][module].subjects.length;
@@ -7839,10 +7995,10 @@
 				const importClear   = importMenu.querySelector(".import-menu-btn.clear");
 				const importOnline  = importMenu.querySelector(".import-menu-btn.online");
 
-				importFile.children[0].innerHTML   = !this.langIsEn ? "Importer fichier de configuration .json"   : "Import a .json configuration file";
-				importClear.innerHTML = !this.langIsEn ? "Effacer Config"   : "Clear Config";
-				importClear.title     = !this.langIsEn ? "Clique ici pour effacer ta configuration actuelle" : "Click here to clear your current configuration";
-				importOnline.children[1].innerHTML = !this.langIsEn ? "Obtenir fichier de configuration en ligne" : "Get a configuration file online";
+				importFile.children[0].innerHTML   = !this.isLangEn ? "Importer fichier de configuration .json"   : "Import a .json configuration file";
+				importClear.innerHTML = !this.isLangEn ? "Effacer Config"   : "Clear Config";
+				importClear.title     = !this.isLangEn ? "Clique ici pour effacer ta configuration actuelle" : "Click here to clear your current configuration";
+				importOnline.children[1].innerHTML = !this.isLangEn ? "Obtenir fichier de configuration en ligne" : "Get a configuration file online";
 				
 				if (!importMenu.classList.contains("show") || open == true) {
 					clearTimeout(this.timeouts?.closeImportMenu);
@@ -7888,7 +8044,7 @@
 
 				pickerMenuContainer.innerHTML = `
 					<div class="online-cfg-picker-menu modal${this.settings.blurEnabled.value ? " blur" : ""}" id="pickerMenu">
-						<div class="online-cfg-picker-menu-header jura">${!this.langIsEn 
+						<div class="online-cfg-picker-menu-header jura">${!this.isLangEn 
 							? "Note: Choisir une configuration effacera les traces de configuration pré-existante de l'année correspondante, mais pas des autres années" 
 							: "Tip: Choosing a configuration will erase all traces of pre-existing configuration of the corresponding year, but not of the other years"
 						}</div>
@@ -8099,7 +8255,7 @@
 
 							// If parsed contains moduleConfig, apply it to the dashboard and persist
 							if (parsed?.version != this.configVersion) {
-								alert(!this.langIsEn 
+								alert(!this.isLangEn 
 									? `Ce fichier de configuration n'est pas de la bonne version ! Assure-toi de télécharger la dernière version ! (Ce fichier est de version "${parsed?.version}", alors qmodule la version de fichier attendmodule est "${this.configVersion}")`
 									: `This configuration file isn't of the right version! Make sure you download the latest version! (This file's version is "${parsed?.version}", whereas the file's version expected is "${this.configVersion}")`
 								)
@@ -8120,7 +8276,7 @@
 							}
 							else {
 								console.log(parsed);
-								alert(!this.langIsEn 
+								alert(!this.isLangEn 
 									? `Ce fichier de configuration est invalide ! Je ne trouve pas les données attendmodules !`
 									: `This configuration file is invalid! I don't find the expected datas!`
 								)
@@ -8219,12 +8375,12 @@
 		generalKeyboardEvents(mode="general", target=undefined) {
 			const noModifierAllowed = {alt:"forbidden", ctrl:"forbidden", shift:"forbidden", meta:"forbidden", repeat:"forbidden"};
 			const shiftRequired     = {alt:"forbidden", ctrl:"forbidden", shift:"required",  meta:"forbidden", repeat:"forbidden"};
-			if (mode == "general") {
+			if (mode == "general" || mode.match(/tuto|selective/i)) {
 				document.onkeydown = (e) => {
-					if      (this.keyInputMatch(e, "Escape")) {
+					if      (this.keyInputMatch(e, "Escape") 			&& (mode == "general" || mode.match(/\bEscape\b/i))) {
 						this.closeEveryModal();
 					}
-					else if (this.keyInputMatch(e, "E", shiftRequired)) {
+					else if (this.keyInputMatch(e, "E", shiftRequired) 	&& (mode == "general" || mode.match(/\bShift\+E\b/i))) {
 						
 						this.editMode = !this.editMode;
 						localStorage.setItem("ECAM_DASHBOARD_DEFAULT_EDIT_MODE", this.editMode);
@@ -8234,7 +8390,7 @@
 						this.scrollToClientHighestElem();
 						this.generateContent({manageIndividualCardFolding: false});
 					}
-					else if (this.keyInputMatch(e, "D", shiftRequired)) {
+					else if (this.keyInputMatch(e, "D", shiftRequired) 	&& (mode == "general" || mode.match(/\bShift\+D\b/i))) {
 						const unclassifiedSection = document.querySelector(".unclassified-section");
 						this.releaseElementHeight(unclassifiedSection);
 
@@ -8261,25 +8417,21 @@
 
 						this.holdElementHeight(unclassifiedSection, 1000);
 					}
-					else if (this.keyInputMatch(e, "L", shiftRequired)) {
+					else if (this.keyInputMatch(e, "L", shiftRequired) 	&& (mode == "general" || mode.match(/\bShift\+L\b/i))) {
 						
-						this.langIsEn = !this.langIsEn;
-						this.lang     = this.langIsEn ? "en" : "fr";
-						localStorage.setItem("ECAM_DASHBOARD_DEFAULT_LANGUAGE", this.lang)
+						this.isLangEn = !this.isLangEn;
+						this.lang     = this.isLangEn ? "en" : "fr";
+						this.saveLanguage();
 
-						if (!this.langIsEn) {
-							document.getElementById('fr-lang-btn').classList.add('active')
-							document.getElementById('en-lang-btn').classList.remove('active')
-						}
-						else {
-							document.getElementById('fr-lang-btn').classList.remove('active')
-							document.getElementById('en-lang-btn').classList.add('active')
-						}
-						
+						this.ecamDash.querySelector("#en-lang-btn").classList.replace(this.isLangEn ? "inactive" : "active", this.isLangEn ? "active" : "inactive");
+						this.ecamDash.querySelector("#fr-lang-btn").classList.replace(this.isLangEn ? "active" : "inactive", this.isLangEn ? "inactive" : "active");
+
+						this.ecamDash.querySelector(".tuto-lang-btn-toggle")?.classList?.replace(this.isLangEn ? "fr" : "en", this.isLangEn ? "en" : "fr");
+
 						this.scrollToClientHighestElem();
 						this.generateContent({fadeIn: false});
 					}
-					else if (this.keyInputMatch(e, "F", shiftRequired)) {
+					else if (this.keyInputMatch(e, "F", shiftRequired) 	&& (mode == "general" || mode.match(/\bShift\+F\b/i))) {
 						const className = "module-card-header", timeout = 210, highestElemInPageHandleType = "last above", smooth = true;
 
 						if (this.foldedModuleCardsId.length == 0) {
@@ -8294,10 +8446,10 @@
 						}
 						
 					}
-					else if (this.keyInputMatch(e, "R", shiftRequired)) {
+					else if (this.keyInputMatch(e, "R", shiftRequired) 	&& (mode == "general" || mode.match(/\bShift\+R\b/i))) {
 						debugger;
 					}
-					else if (this.keyInputMatch(e, ["ArrowLeft", "ArrowRight"], shiftRequired)) {
+					else if (this.keyInputMatch(e, ["ArrowLeft", "ArrowRight"], shiftRequired) && (mode == "general" || mode.match(/\bShift\+(ArrowLeft\b|ArrowRight\b)/i))) {
 						const increment = e.key == "ArrowLeft" ? -1 : 1;
 						
 						document.querySelectorAll('.filter-tab').forEach((t, _index) => {
@@ -8356,9 +8508,6 @@
 					}
 				}
 			}
-			else if (mode == "tuto") {
-				document.onkeydown = null;
-			}
 		};
 
 	}
@@ -8383,12 +8532,12 @@
 
 		/**
 		 * @param {ECAMDashboard} ecamDash
-		 * The ecam dashboard
+		 * The ecam dashboard.
 		 * @param {HTMLElement | String} containerElem 
 		 * The element (or its query selector) that will contain this {@link TutoTipNotif TutoTipNotif}
 		 * @param {HTMLElement | String} targetElem 
 		 * The element (or its query selector) that is the target of this {@link TutoTipNotif TutoTipNotif} (clicking on it will move to the next {@link TutoTipNotif TutoTipNotif})
-		 * @param {{"fr": String; "en": String;}} tipNotifTexts 
+		 * @param {{fr: String; en: String;}} tipNotifTexts 
 		 * An object with properties *fr* of value "theFrenchTextOfThis{@link TutoTipNotif TutoTipNotif}", and *en* of value "theEnglishTextOfThis{@link TutoTipNotif TutoTipNotif}"
 		 * @param {{ appearanceDelay: number; containerStyle: {}; notifStyle: {}; targetElemStyle: { zIndex: string; }; containerElemStyle: {}; buttonsContainer: { style: {}; texts: {fr: String; en: String}; buttons: [{style: {}; texts: {fr: String; en: String}; actionCallback: () => {}}] } }} optionalData
 		 * Optional data containing:
@@ -8401,10 +8550,7 @@
 			//#region 
 			{
 				appearanceDelay: 320, 
-				containerStyle: {}, 
-				notifStyle: {}, 
-				targetElemStyle: {zIndex: "12"}, 
-				containerElemStyle: {}
+				targetElemStyle: {zIndex: "12"},
 			}
 			//#endregion
 		) {
@@ -8448,7 +8594,7 @@
 		 * - targetElemStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the target element `targetElem` 
 		 * - containerElemStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container `containerElem`
 		 */
-		async createTipNotifDiv(containerElem=this.containerElem, targetElem=this.targetElem, tipNotifText=this.ecamDash.langIsEn ? this.tipNotifTexts.en : this.tipNotifTexts.fr, optionalData=this.optionalData) {
+		async createTipNotifDiv(containerElem=this.containerElem, targetElem=this.targetElem, tipNotifText=this.ecamDash.isLangEn ? this.tipNotifTexts.en : this.tipNotifTexts.fr, optionalData=this.optionalData) {
 			if (targetElem instanceof HTMLElement || typeof targetElem == "string") { setTimeout(() => {
 
 				this.tutoTipNotifContainer = document.createElement("div");
@@ -8479,7 +8625,7 @@
 				}, 10)
 
 				if ((optionalData.nextActionTriggerElem || targetElem) instanceof HTMLElement || typeof (optionalData.nextActionTriggerElem || targetElem) == "string") {
-					document.body.onclick = (e) => {
+					document.body.onmousedown = (e) => {
 						if (
 							e.target.closest(
 								`${typeof (optionalData.nextActionTriggerElem || targetElem) == "string" 
@@ -8491,10 +8637,15 @@
 									)
 								}`
 							)
+							&&
+							!e.target.closest(".tuto-tip-btns-container")
 						) {
-							this.dismissTipNotifDiv(containerElem, targetElem, optionalData); 
-							this.ecamDash.nextTipNotif();
-							document.body.onclick = null;
+							document.body.onmouseup = (e) => {
+								this.dismissTipNotifDiv(containerElem, targetElem, optionalData); 
+								this.ecamDash.nextTipNotif();
+								document.body.onclick = null;
+							};
+							document.body.onmousemove = () => { document.body.onmouseup = null; };
 						}
 					};
 				}
@@ -8562,30 +8713,42 @@
 
 		// MARK: createButton()
 		createButtons(containerElem=this.tutoTipNotifContainer, buttonsContainerData=this.optionalData.buttonsContainer || {}) {
-			this.buttonsContainer = document.createElement("div");
-			this.buttonsContainer.className = ".tuto-tip-btns-container";
-			this.buttonsContainer.innerHTML = buttonsContainerData.texts[this.ecamDash.lang];
-			Object.assign(this.buttonsContainer.style, {...(buttonsContainerData.style || {})});
-
-			(buttonsContainerData.buttons || []).forEach((btnData, _index) => {
-				const btn = document.createElement("div");
-				this.buttonsContainer.appendChild(btn);
-				btn.className = "tuto-tip-btn jura";
-				btn.id = `tutoTipButton-number-${_index}`;
-				btn.innerHTML = btnData.texts[this.ecamDash.lang];
-				Object.assign(btn.style, {...(btnData.style || {})});
-				btn.onclick = btnData.actionCallback;
-			})
-
-			containerElem.appendChild(this.buttonsContainer);
+			if (Object.keys(buttonsContainerData).length > 0) {
+				this.buttonsContainer = document.createElement("div");
+				this.buttonsContainer.className = "tuto-tip-btns-container";
+				this.buttonsContainer.innerHTML = `
+					<div class="tuto-tip-btns-container-header">${buttonsContainerData.texts[this.ecamDash.lang]}</div>
+					<div class="tuto-tip-btns-body"></div>
+				`;
+				Object.assign(this.buttonsContainer.style, {...(buttonsContainerData.style || {})});
+	
+				(buttonsContainerData.buttons || []).forEach((btnData, _index) => {
+					const btn = document.createElement("div");
+					this.buttonsContainer.querySelector(".tuto-tip-btns-body").appendChild(btn);
+					btn.className = "tuto-tip-btn jura";
+					btn.id = `tutoTipButton-number-${_index}`;
+					btn.innerHTML = btnData.texts[this.ecamDash.lang];
+					Object.assign(btn.style, {...(btnData.style || {})});
+					btn.onclick = () => {btnData.actionCallback(); this.dismissTipNotifDiv()};
+				})
+	
+				containerElem.appendChild(this.buttonsContainer);
+			}
 		}
 
 
+
+		// MARK: regenerateTexts()
+		/**
+		 * Regenerates the texts inside the given HTML Element
+		 * @param {HTMLElement} containerTuto The HTML Element containing the whole tuto tip
+		 */
 		regenerateTexts(containerTuto=this.tutoTipNotifContainer) {
-			containerTuto.querySelector(".tuto-tip-notif").innerHTML = this.tipNotifTexts[this.ecamDash.lang];
-			if (containerTuto.querySelector(".tuto-tip-btns-container")?.nodeValue) {
-				containerTuto.querySelector(".tuto-tip-btns-container" ).nodeValue = this.optionalData?.buttonsContainer?.texts?.[this.ecamDash.lang] || null;
-			}
+			if (containerTuto.querySelector(".tuto-tip-notif")) 
+				containerTuto.querySelector(".tuto-tip-notif").innerHTML = this.tipNotifTexts[this.ecamDash.lang];
+
+			if (containerTuto.querySelector(".tuto-tip-btns-container-header" )	) 
+				containerTuto.querySelector(".tuto-tip-btns-container-header" ).innerHTML = this.optionalData?.buttonsContainer?.texts?.[this.ecamDash.lang] || "";
 
 			(this.optionalData?.buttonsContainer?.buttons || []).forEach((btnData, _index) => {
 				const btn = containerTuto.querySelector(`#tutoTipButton-number-${_index}`);
