@@ -334,7 +334,7 @@
 				.skip-tuto-btn          { display: flex; justify-content: center; align-items: center; padding: 10px; position: fixed; top: 20px; right: 20px; background: #4c84fde8; border-radius: 10px; color: white; font-size: 20px; text-decoration: underline; cursor: pointer; opacity: 0; z-index: 5000; transition: all 0.5s ease; }
 				.skip-tuto-btn::before      { content: "Skip tutorial"; }
 
-				.tuto-lang-btn-toggle-container	{ display: flex; justify-content: center; align-items: center; position: fixed; top: 26px; right: 170px; outline: 2px solid white; border-radius: 20px; width: 100px; height: 31px; overflow: clip; z-index: 12; opacity: 0; transition: all 0.5s ease; }
+				.tuto-lang-btn-toggle-container	{ display: flex; justify-content: center; align-items: center; position: fixed; top: 26px; right: 200px; outline: 2px solid white; border-radius: 20px; width: 100px; height: 31px; overflow: clip; z-index: 12; opacity: 0; cursor: pointer; transition: all 0.5s ease; }
 				.tuto-lang-btn-toggle		{ display: flex; justify-content: space-evenly; align-items: center; padding: 10px; position: relative; min-width: 170px; height: 31px; background: linear-gradient(90deg, #3636ffc5 20%, #8e38ffc5 80%); transform: translateX(0px); transition: all 0.2s ease; }
 				.tuto-lang-btn-toggle.fr	{ transform: translateX(35px);  }
 				.tuto-lang-btn-toggle.en	{ transform: translateX(-35px); }
@@ -622,7 +622,7 @@
 
 		//#region -CONTENT AREA _______________________
 			styles += `
-				.content-area { display: grid; gap: 24px; width: 100%; }
+				.content-area { display: flex; flex-direction: column; align-items: center; gap: 24px; width: 100%; }
 			`;
 
 
@@ -658,7 +658,7 @@
 				.semester-content.show.edit     { padding: 24px; }
 				.semester-content.show.dragging { width: 73%; gap: 20px; }
 
-				.semester-grid      { display: grid; width: 100%; gap: 20px; transition: gap 0.2s ease; }
+				.semester-body      { display: flex; flex-direction: column; width: 100%; gap: 20px; transition: gap 0.2s ease; }
 			`;
 				
 
@@ -3177,12 +3177,12 @@
 								</div>
 								<div class="dash-subtitle jura"></div>
 								<div style="display: flex; gap: 2px; user-select: none;">
-									<div class="lang-btn ${this.isLangEn ? "active" : ""}" id="en-lang-btn">
+									<div class="lang-btn ${this.isLangEn ? "active" : "inactive"}" id="en-lang-btn">
 										<img style="display: flex; margin: 6px 0px 0px 6px; width:20px; height:20px" alt="🇬🇧" src="${`
 												data:image/png;base64,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
 										`}">
 									</div>
-									<div class="lang-btn ${!this.isLangEn ? "active" : ""}" id="fr-lang-btn">
+									<div class="lang-btn ${!this.isLangEn ? "active" : "inactive"}" id="fr-lang-btn">
 										<img style="display: flex; margin: 6px 0px 0px 6px; width:20px; height:20px" alt="🇫🇷" src="${`
 											data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAACTUExURUdwTAAkjM7Pzs7OzrMGE74QIMPEx4hTeAAkjQARewAagbIFEgAfhc3NzdDQ0M7PzrYMG8zMzbcMG8EXKcUbLQAMd7UKGLUKGMMWJ7OhrcMVJv///+oPIO4bLgAmoOwWKAAZmQArpO8iNgAfnQATlAIyqLUGFAEoksUSIwAYhgANePnCyMbO6djY2NUWJ+7u7sCep4f8c74AAAAbdFJOUwDL+z19ffsVe3qU1jy51pA+bLyNc+Vrnu+m2KjIWToAAALxSURBVFjD7djJcuIwEIDhAAMOxuwTCAnyKgxOxg7v/3SjtraWDJKTUw60K1Vc+OqX5APK09NjHvOLJxDz3a+t9Mcoeg7DgZrDcrkejUZBL2X7NuYfo4gRZ2MmNZvhYjEHz1EYrHab18tl3LaEEonFnOPT5KtWM1zMhReY27DabUG5ABQ8cyXLTnIy9pz+vcN8seFWPRxC32G7Hf+FGW/3m7fXVmkagJ5NpGXYCOjd5Or6ejGmaRpCctJw6HTqOgaEvM8GT07ynP0RXhTbSqcIzWduDWOIgHBRJqmeELkJtQB34v4QUUs7o8MSC4t7FYECkF2UKYW9Sb2KRI8FqVWB06OI4KJSQRnuyXoUiW0mHUj2iPFAJEdOoiGVE/OV+SCxqLxTpI+LT+GGcE8Cj4AypAiqcEDyrPTSFHSS25zxnMIH6W2GnsQsitVGM8sBEf36AAOOASkDHg+EcuyiWLw+TAHGCdk5EqrOKqhQjgfCJ8ahPxxCx1W0K0tdUG4qCJKrAoMXpd4i7BwFpM+rkJNmbijh7w+xIHRanPFAiXx/khuQ7mFM6i9CzFFAlQiSDHPcRQneoCM8uqhA29NOfB/Sr48MUkWF3uY0bVfmgqyF6aIKHVcqgpxFMETlGHtkrMoDdXKYVMqlqRxhUReUmBuNiro9KXVCcllcOaoiq4emlPaAOJMoaCogHdNSXgg7GEqRRL1FR709FqRzKO0PdYt0D6X+IrWqTlGnh9LzPYgk1rIQlKogqqj70NHYZgR9VN0eJ2Ttj1GkT6udygN1BhVR/vQp6m6RUYRzfl5k1lSeItfSOFBVH3KqCfw8vwPZTRddhAgx1+GE3T6GdW2CN4oYU5Y7gITy8jIIwymfMDzM54tJOy1XC86E2G0GlHKzCxjUIoNwGtmXqGA0Wi+X0uPgVd1DhFGWs/0KvjgFhSGOyyl4su9aGjPbcAWglzDqdd9k99L1ennYzMRs9tvdaqW/GkXfvAbL+/NT8PhXwmN+7/wHgdqiCaxyTNQAAAAASUVORK5CYII=
 										`}">
@@ -3690,8 +3690,8 @@
 						</div>`;
 						section.innerHTML += `
 						<div class="semester-content show${this.selectedSubjectCardsId.length > 0 || this.selectedModuleCardsId.length > 0 ? " dragging" : ""}${this.editMode ? " edit" : ""}${fadeIn ? " fade-in" : ""}" id="sem-content-${sem}">
-							<div class="semester-grid">
-								<div class="modules-section ${this.editMode ? "edit" : ""}" id="modules-section" ${moduleConfig?.__modules__ ? "" : "style=\"display: none\""}>
+							<div class="semester-body">
+								<div class="modules-section ${this.editMode ? "edit" : ""}" id="modules-section" ${moduleConfig?.__modules__ && !this.editMode ? "" : "style=\"margin: -20px 0px;\""}>
 									${this.createAllModuleCards(sem, manageIndividualCardFolding)}
 								</div>
 								<div class="unclassified-section" id="unclassified-section" style="${unclassifiedLength > 0 ? `` : `; display: none`}">
@@ -4422,6 +4422,12 @@
 
 			//#region Tutos
 
+
+
+
+
+			
+				// MARK: firstLoadEvent()
 				firstLoadEvent() {
 
 					if (this.firstLoad) {
@@ -4463,6 +4469,9 @@
 					
 				}
 
+
+
+				// MARK: startTuto()
 				startTuto() {
 					this.generalKeyboardEvents("tuto Shift+L");
 
@@ -4499,14 +4508,17 @@
 					langToggleContainer.onclick = () => {
 						this.isLangEn = !this.isLangEn;
 						this.lang = this.isLangEn ? "en" : "fr";
+						this.saveLanguage();
 
 						this.ecamDash.querySelector("#en-lang-btn").classList.replace(this.isLangEn ? "inactive" : "active", this.isLangEn ? "active" : "inactive");
 						this.ecamDash.querySelector("#fr-lang-btn").classList.replace(this.isLangEn ? "active" : "inactive", this.isLangEn ? "inactive" : "active");
 						langToggle.classList.replace(this.isLangEn ? "fr" : "en", this.isLangEn ? "en" : "fr");
 
-						this.saveLanguage();
+						this.languageSensitiveContent(false);
+						this.generateContent({fadeIn: false});
 
-						this.currentTutoTipNotif.regenerateTexts();
+						document.querySelector(".tuto-tip-notif-container").remove();
+						this.currentTutoTipNotif?.createTipNotifDiv({appearanceDelay: 1});
 					};
 				}
 
@@ -4606,9 +4618,9 @@
 								en: "Welcome in the complete tutorial of this dashboard! :D",
 							}
 							, {
-								appearanceDelay: 400,
+								appearanceDelay: 1,
 								containerStyle: {position: "fixed", top: "0", left: "0", width: "100%", height: "100%", flexDirection: "column"}, 
-								notifStyle: {position: "relative", top: "-30px", minWidth: "1000px"}, 
+								notifStyle: {position: "relative", top: "-50px", minWidth: "1000px"}, 
 								buttonsContainer: {
 									style: {gap: "10px", maxWidth: "440px"},
 									texts: {
@@ -4620,37 +4632,15 @@
 										{
 											style: {},
 											texts: {
-												fr: "Configure tes modules",
-												en: "Set up your modules", 
-											},
-											actionCallback: () => {
-												this.onGoingTutoTipNotifDivs = [
-													new TutoTipNotif(this, 
-														document.body,
-														".tuto-tip-notif-container",
-														{fr: "En cours de construction...", en: "Building ongoing..."}
-														, {
-															appearanceDelay: 400,
-															containerStyle: {position: "fixed", top: "50%", left: "50%"}, 
-															notifStyle: {minWidth: "1000px"}, 
-														}
-													)
-												];
-												this.nextTipNotif();
-											}
-										},
-										{
-											style: {},
-											texts: {
 												fr: "Simule et anticipe tes résultats",
 												en: "Simulate and anticipate your results", 
 											},
 											actionCallback: () => {
-												this.generalKeyboardEvents("tuto Shift+E");
+												this.generalKeyboardEvents("tuto Shift+L Shift+E");
 
-												if (this.grades.length > 0) {
+												if (/* this.grades.length == 0 && */ true) {
 
-													this.onGoingTutoTipNotifDivs.push(
+													if (!this.editMode) this.onGoingTutoTipNotifDivs.push(
 														new TutoTipNotif(this,
 															".header-actions",
 															"#editModeBtn",
@@ -4660,33 +4650,25 @@
 																containerStyle: {position: "relative", right: '500px'}, 
 																notifStyle: {minWidth: '320px'}, 
 															}
-														)
+														),
+													);
+
+													this.onGoingTutoTipNotifDivs.push(
+														new TutoTipNotif(this,
+															"#contentArea",
+															".drop-field.insert-field.module",
+															{fr: "Clique ici pour créer un module", en: "Click here to add a module"}
+															, {
+																appearanceDelay: 400,
+																containerStyle: {position: "relative", bottom: '-20px', marginBottom: "-24px"}, 
+																notifStyle: {minWidth: '320px'}, 
+																targetElemStyle: {zIndex: 12, background: '#bdb8ffb8', '--infinite-alternate-scale-up-scale': '103%'}
+															}
+														),
 													);
 
 												}
 
-												this.nextTipNotif();
-											}
-										},
-										{
-											style: {},
-											texts: {
-												fr: "Configure tes modules",
-												en: "Set up your modules", 
-											},
-											actionCallback: () => {
-												this.onGoingTutoTipNotifDivs = [
-													new TutoTipNotif(this, 
-														document.body,
-														".tuto-tip-notif-container",
-														{fr: "Tadaaa!", en: "Tadaaa!"}
-														, {
-															appearanceDelay: 400,
-															containerStyle: {position: "fixed", top: "50%", left: "50%"}, 
-															notifStyle: {minWidth: "1000px"}, 
-														}
-													)
-												];
 												this.nextTipNotif();
 											}
 										},
@@ -6725,7 +6707,7 @@
 								this.attachSubjectCardOnDragEventListeners(subjectCard);
 							})
 						}
-						else if (container?.classList?.contains("semester-content") || container?.classList?.contains("semester-grid") || container?.classList?.contains("modules-section") || container?.classList?.contains("semester-section") || container?.classList?.contains("module-card") || container == document.body|| container == document) {
+						else if (container?.classList?.contains("semester-content") || container?.classList?.contains("semester-body") || container?.classList?.contains("modules-section") || container?.classList?.contains("semester-section") || container?.classList?.contains("module-card") || container == document.body|| container == document) {
 							(container?.classList?.contains("module-card") ? [container] : container.querySelectorAll(".module-card") || []).forEach(moduleCard => {
 								this.attachModuleCardOnDragEventListeners(moduleCard);
 								
@@ -6781,7 +6763,7 @@
 								this.detachSubjectCardOnDragEventListeners(subjectCard);
 							})
 						}
-						else if (container?.classList?.contains("semester-content") || container?.classList?.contains("semester-grid") || container?.classList?.contains("modules-section") || container?.classList?.contains("semester-section") || container?.classList?.contains("module-card") || container == document.body|| container == document) {
+						else if (container?.classList?.contains("semester-content") || container?.classList?.contains("semester-body") || container?.classList?.contains("modules-section") || container?.classList?.contains("semester-section") || container?.classList?.contains("module-card") || container == document.body|| container == document) {
 							(container?.classList?.contains("module-card") ? [container] : container.querySelectorAll(".module-card") || []).forEach(moduleCard => {
 								this.detachModuleCardOnDragEventListeners(moduleCard);
 								
@@ -8430,6 +8412,9 @@
 
 						this.scrollToClientHighestElem();
 						this.generateContent({fadeIn: false});
+
+						document.querySelector(".tuto-tip-notif-container")?.remove();
+						this.currentTutoTipNotif?.createTipNotifDiv();
 					}
 					else if (this.keyInputMatch(e, "F", shiftRequired) 	&& (mode == "general" || mode.match(/\bShift\+F\b/i))) {
 						const className = "module-card-header", timeout = 210, highestElemInPageHandleType = "last above", smooth = true;
@@ -8446,7 +8431,7 @@
 						}
 						
 					}
-					else if (this.keyInputMatch(e, "R", shiftRequired) 	&& (mode == "general" || mode.match(/\bShift\+R\b/i))) {
+					else if (this.keyInputMatch(e, "R", shiftRequired)) {
 						debugger;
 					}
 					else if (this.keyInputMatch(e, ["ArrowLeft", "ArrowRight"], shiftRequired) && (mode == "general" || mode.match(/\bShift\+(ArrowLeft\b|ArrowRight\b)/i))) {
@@ -8594,8 +8579,13 @@
 		 * - targetElemStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the target element `targetElem` 
 		 * - containerElemStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container `containerElem`
 		 */
-		async createTipNotifDiv(containerElem=this.containerElem, targetElem=this.targetElem, tipNotifText=this.ecamDash.isLangEn ? this.tipNotifTexts.en : this.tipNotifTexts.fr, optionalData=this.optionalData) {
-			if (targetElem instanceof HTMLElement || typeof targetElem == "string") { setTimeout(() => {
+		async createTipNotifDiv(optionalDataArg={}) {
+			const containerElem = this.containerElem;
+			const targetElem = this.targetElem;
+			const tipNotifText = this.ecamDash.isLangEn ? this.tipNotifTexts.en : this.tipNotifTexts.fr;
+			const optionalData = Object.assign(this.optionalData, {...(optionalDataArg || {})});
+
+			if (targetElem instanceof HTMLElement || typeof targetElem == "string") { clearTimeout(this?.creationTimeout); this.creationTimeout = setTimeout(() => {
 
 				this.tutoTipNotifContainer = document.createElement("div");
 				(typeof containerElem == "string" ? document.querySelector(containerElem) : containerElem).appendChild(this.tutoTipNotifContainer);
@@ -8614,6 +8604,7 @@
 				(typeof targetElem == "string" ? document.querySelectorAll(`${targetElem}`) : [targetElem]).forEach(elem => {
 					Object.assign(elem.style, {...(optionalData.targetElemStyle || {zIndex: "12"})});
 					elem.classList.add("infinite-alternate-scale-up", "tuto-animation-effect");
+					elem.style
 				})
 				Object.assign((typeof containerElem == "string" ? document.querySelector(containerElem) : containerElem).style, {...(optionalData.containerElemStyle || {})});
 
@@ -8624,19 +8615,9 @@
 					this.tutoTipNotifContainer.style.transform = "scale(100%)";
 				}, 10)
 
-				if ((optionalData.nextActionTriggerElem || targetElem) instanceof HTMLElement || typeof (optionalData.nextActionTriggerElem || targetElem) == "string") {
+				if (targetElem instanceof HTMLElement || typeof targetElem == "string") {
 					document.body.onmousedown = (e) => {
-						if (
-							e.target.closest(
-								`${typeof (optionalData.nextActionTriggerElem || targetElem) == "string" 
-									? `${optionalData.nextActionTriggerElem || targetElem}` 
-									: (
-										(optionalData.nextActionTriggerElem || targetElem).id 
-										? "#"+(optionalData.nextActionTriggerElem || targetElem).id 
-										: "."+(optionalData.nextActionTriggerElem || targetElem).className
-									)
-								}`
-							)
+						if (e.target.closest(`${typeof targetElem == "string" ? targetElem : (targetElem.id ? "#"+targetElem.id : "."+targetElem.className)}`)
 							&&
 							!e.target.closest(".tuto-tip-btns-container")
 						) {
@@ -8648,6 +8629,10 @@
 							document.body.onmousemove = () => { document.body.onmouseup = null; };
 						}
 					};
+				}
+
+				if ((typeof targetElem == "string" ? document.querySelector(targetElem) : targetElem).getBoundingClientRect().y < 0 || (typeof targetElem == "string" ? document.querySelector(targetElem) : targetElem).getBoundingClientRect().y > window.clientHeight) {
+					this.ecamDash.scrollToClientHighestElem("first", {id: targetElem.id, smooth: true, block: "center" });
 				}
 
 			}, this.optionalData.appearanceDelay || 0); }
