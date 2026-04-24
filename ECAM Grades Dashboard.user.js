@@ -32,7 +32,7 @@
 // Optimal display when the side bar is closed
 // 
 // 
-// Link for backup test: https://espace.ecam.fr/c/portal/login?redirect=%2Fgroup%2Feducation%2Fnotes&p_l_id=0&ticket=ST-113179-sbwjXieT3GLY9T3fXdsmFp9vCro-tomcat03
+// Link for offline test: https://espace.ecam.fr/c/portal/login?redirect=%2Fgroup%2Feducation%2Fnotes&p_l_id=0&ticket=ST-113179-sbwjXieT3GLY9T3fXdsmFp9vCro-tomcat03
 // (trying to access espace.ecam.fr wields a link of this sort. It doesn't seem to have a "unique" token or a time limited access, so this link should work for anyone)
 // 
 // =====================================================================================================================================================================
@@ -114,10 +114,10 @@
 				}
 				
 
-				.backup-mode-title    { display: flex; justify-content: center; align-items: center; text-align: center; height: 60px; font-size: 50px; letter-spacing: 0.23em; font-family: "Rubik Glitch", system-ui; opacity: 0; transition: all 1s ease; }
-				.backup-mode-title.show    { opacity: 1; }
-				.backup-mode-subtitle { display: flex; justify-content: center; align-items: center; text-align: center; font-size: 17px; margin-bottom: 30px; opacity: 0; transition: all 1s ease; }
-				.backup-mode-subtitle.show { opacity: 1; }
+				.offline-mode-title    { display: flex; justify-content: center; align-items: center; text-align: center; height: 60px; font-size: 50px; letter-spacing: 0.23em; font-family: "Rubik Glitch", system-ui; opacity: 0; transition: all 1s ease; }
+				.offline-mode-title.show    { opacity: 1; }
+				.offline-mode-subtitle { display: flex; justify-content: center; align-items: center; text-align: center; font-size: 17px; margin-bottom: 30px; opacity: 0; transition: all 1s ease; }
+				.offline-mode-subtitle.show { opacity: 1; }
 
 				#dash-header { display: flex; justify-content: space-between; align-items: center; padding: 30px 40px; margin-bottom: 15px; width: 100%; background: linear-gradient(135deg, #5b62bf 0%, #2A2F72 100%); color: white; border-radius: 20px; box-shadow: 3px 5px 5px 0px #00000042; }
 				.dash-title { display: flex; justify-content: center; align-items: center; gap: 5px; font-size: 28px; font-weight: 700; margin: 0; }
@@ -1454,7 +1454,7 @@
 							settingCompliance = (_obj.match(/setting-compliant|ignore-setting/)?.[0] || "setting-compliant") == "setting-compliant";
 						}
 						// In case the priority argument isn't given, but the rest of the objects are provided:
-						else if (_obj instanceof Object && (_obj?.className || _obj?.id)) { 
+						else if (_obj instanceof Object && (_obj?.targetElem || _obj?.className || _obj?.id)) { 
 							argumentsArray.push(_obj)
 						}
 					})
@@ -1855,6 +1855,35 @@
 
 			//#endregion
 
+
+
+
+			//#region Semester methods
+
+
+				
+
+				// MARK: changeSemester()
+				/**
+				 * Changes the semester to the given sem String or Number
+				 * 
+				 * @param {String | Number} sem String or Number of the semester to change to
+				 */
+				changeSemester(sem="all") {
+					console.log(sem);
+					this.currentSemester = sem;
+
+					document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+					document.querySelector(`.filter-tab[data-filter="${this.currentSemester == 0 ? "all" : this.currentSemester}"]`).classList.add('active');
+
+					this.removeCardFromSelection();
+					this.foldedModuleCardsId = []; document.querySelector(".fold-toggle").classList.remove("active");
+					this.generateContent({fadeIn: false});
+					this.saveSemesterFilter();
+				}
+
+			//#endregion Semester methods
+			
 
 
 
@@ -3130,8 +3159,8 @@
 					// but will be in the generateContent() method later on, to regenerate the text in case the language is changed
 					this.ecamDash.innerHTML = `
 					${this.error ? `
-					<div class="backup-mode-title">OFFLINE</div>
-					<div class="backup-mode-subtitle jura"></div>
+					<div class="offline-mode-title">OFFLINE</div>
+					<div class="offline-mode-subtitle jura"></div>
 					` : ""}
 
 					<div id="emptyDivToRemoveTheDragImage"></div>
@@ -3301,8 +3330,8 @@
 
 					if (this.error) {
 						setTimeout(() => {
-							const backupTitle = document.querySelector(".backup-mode-title");
-							const backupSubTitle = document.querySelector(".backup-mode-subtitle");
+							const backupTitle = document.querySelector(".offline-mode-title");
+							const backupSubTitle = document.querySelector(".offline-mode-subtitle");
 							backupTitle.classList.add("show");
 							backupSubTitle.classList.add("show");
 						}, 1)
@@ -3317,10 +3346,10 @@
 				async languageSensitiveContent(fadeIn=true) {
 					// Language Sensitive text in the Dashboard Header and Semester filter tab (which doesn't refresh on calling the generateContent() method)
 					if (this.error) {
-						const backupSubTitle = document.querySelector(".backup-mode-subtitle");
+						const backupSubTitle = document.querySelector(".offline-mode-subtitle");
 						backupSubTitle.innerHTML = !this.isLangEn 
 							? `Les serveurs de l'ECAM sont actuellement inaccessibles ! ${this.grades.length > 0
-								? "Pour l'instant, tu ne peux pas voir si tu as des nouvelles notes... En attendant, voici le tableau de bord en mode backup, tu as donc accès aux notes que j'ai gentiment sauvegardées dans le cache la dernière fois ! De rien ! <3" 
+								? "Pour l'instant, tu ne peux pas voir si tu as des nouvelles notes... En attendant, voici le tableau de bord en mode offline, tu as donc accès aux notes que j'ai gentiment sauvegardées dans le cache la dernière fois ! De rien ! <3" 
 								: "Pour l'instant, tu ne peux pas voir tes notes... Tu peux quand même commencer à configurer tes modules, reviens quand les serveurs sont opérationnels pour voir tes notes !"
 							}` 
 							: `ECAM's servers are currently down! ${this.grades.length > 0 
@@ -3542,8 +3571,8 @@
 								: `${this.newGrades.length} New Grade${this.newGrades.length > 1 ? "s" : ""}!`
 							}` 
 							: `${!this.isLangEn 
-								? `Pas de nouvelle note${this.error ? ", que je sache (mode backup)" : ""}` 
-								: `No new grade${this.error ? ", as far as I know (backup mode)" : ""}`
+								? `Pas de nouvelle note${this.error ? ", que je sache (mode offline)" : ""}` 
+								: `No new grade${this.error ? ", as far as I know (offline mode)" : ""}`
 							}` 
 						}
 					`;
@@ -4488,7 +4517,7 @@
 					skipTuto.className = "skip-tuto-btn jura";
 					this.ecamDash.appendChild(skipTuto);
 					setTimeout(() => {skipTuto.style.opacity = "1";}, 1)
-					skipTuto.onclick = this.stopTuto;
+					skipTuto.onclick = () => {this.stopTuto()};
 
 					const langToggleContainer = document.createElement("div");
 					langToggleContainer.className = "tuto-lang-btn-toggle-container jura";
@@ -4525,6 +4554,8 @@
 						this.currentTutoTipNotif?.createTipNotifDiv({appearanceDelay: 1});
 					};
 				}
+
+
 
 				// MARK: startFirstStepsTutorial
 				startFirstStepsTutorial() {
@@ -4628,7 +4659,7 @@
 								buttonsContainer: {
 									style: {gap: "10px", maxWidth: "440px"},
 									texts: {
-										fr:"Sélectionne la section que tu veux explorer",
+										fr: "Sélectionne la section que tu veux explorer",
 										en: "Select the section you want to explore", 
 									},
 									textStyle: {},
@@ -4640,22 +4671,54 @@
 												en: "Simulate and anticipate your results", 
 											},
 											actionCallback: () => {
-												this.generalKeyboardEvents("tuto Shift+L Shift+E");
-
+												
 												if (/* this.grades.length == 0 && */ true) {
+													
+													if (!this.editMode) {
+														this.generalKeyboardEvents("tuto Shift+L Shift+E");
 
-													if (!this.editMode) this.onGoingTutoTipNotifDivs.push(
-														new TutoTipNotif(this,
-															".header-actions",
-															"#editModeBtn",
-															{fr: "Passe en mode édition ici (ou avec Maj+E)", en: "Get in edit mode here (or with Shift+E)"}
-															, {
-																appearanceDelay: 400,
-																containerStyle: {"position": "relative", "right": '500px'}, 
-																notifStyle: {"min-width": '320px'}, 
-															}
-														),
-													);
+														this.onGoingTutoTipNotifDivs.push(
+															new TutoTipNotif(this,
+																".header-actions",
+																"#editModeBtn",
+																{fr: "Passe en mode édition ici (ou avec Maj+E)", en: "Get in edit mode here (or with Shift+E)"}
+																, {
+																	appearanceDelay: 400,
+																	containerStyle: {"position": "relative", "right": '500px'}, 
+																	notifStyle: {"min-width": '320px'}, 
+																}
+															),
+														);
+													}
+
+													if (this.viewMode == "compact") {
+														this.generalKeyboardEvents("tuto Shift+L Shift+D");
+
+														this.onGoingTutoTipNotifDivs.push(
+															new TutoTipNotif(this,
+																".view-toggle",
+																"#view-btn-detailed",
+																{fr: "Passe en vue détaillée ici (ou avec Maj+D)", en: "Get in edit mode here (or with Shift+D)"}
+																, {
+																	appearanceDelay: 400,
+																	containerStyle: {"position": "relative", "right": '140px', 'top': "-120px", "margin-left": "-8px"}, 
+																	notifStyle: {"min-width": '430px'}, 
+																	targetElemStyle: {"z-index": "12", "background": "#e5e5e5"}
+																}
+															),
+														);
+													}
+
+													this.generalKeyboardEvents("tuto Shift+L");
+
+													let newSem = "0";
+													Object.entries(this.semesters).forEach(entry => {
+														if (entry[1] != {} && entry[0] > newSem) {
+															newSem = entry[0];
+														}
+													})
+
+													this.currentSemester = newSem;
 
 													this.onGoingTutoTipNotifDivs.push(
 														new TutoTipNotif(this,
@@ -4666,7 +4729,7 @@
 																appearanceDelay: 400,
 																containerStyle: {"position": "absolute"}, 
 																notifStyle: {"min-width": '320px'}, 
-																targetElemStyle: {"z-index": "12", "background": "#bdb8ffb8", '--infinite-alternate-scale-up-scale': '103%'}
+																targetElemStyle: {"z-index": "12", "box-shadow": "0px 0px 17px 8px white", '--infinite-alternate-scale-up-scale': '103%'}
 															}
 														),
 													);
@@ -4688,7 +4751,8 @@
 
 
 				// MARK: nextTipNotif()
-				/** Pops the first element of the array of {@link TutoTipNotif TutoTipNotif}s and create its tip notif by calling its {@link TutoTipNotif.createTipNotifDiv createTipNotifDiv} method.
+				/**
+				 * Pops the first element of the array of {@link TutoTipNotif TutoTipNotif}s and create its tip notif by calling its {@link TutoTipNotif.createTipNotifDiv createTipNotifDiv} method.
 				 * 
 				 * If no element is left, uses the endCallback function instead.
 				 */
@@ -4704,29 +4768,25 @@
 				// MARK: stopTuto()
 				/** Stops the currently on-going tuto, removing every tuto tip notif divs */
 				stopTuto() {
-					if ((ecamDash?.onGoingTutoTipNotifDivs?.length || 0) > 0) ecamDash.onGoingTutoTipNotifDivs = [];
+					if ((this?.onGoingTutoTipNotifDivs?.length || 0) > 0) this.onGoingTutoTipNotifDivs = [];
 
-					document.querySelectorAll(".tuto-tip-notif-container").forEach(tutoTipNotifContainer => {
-						tutoTipNotifContainer.style.opacity = "0";
-						tutoTipNotifContainer.style.transform = "scale(100%)";
-						setTimeout(() => {tutoTipNotifContainer.remove()}, 300);
-					})
-
-					document.querySelectorAll(".infinite-alternate-scale-up.tuto-animation-effect").forEach(elem => {
-						elem.classList.remove("infinite-alternate-scale-up", "tuto-animation-effect")
-					})
 
 					document.querySelector(".focus-notif-fullscreen-effect").classList.remove("focus");
 					setTimeout(() => {document.querySelector(".focus-notif-fullscreen-effect").remove()}, 500)
 
 					document.querySelector(".skip-tuto-btn").style.opacity = "0";
 					document.querySelector(".skip-tuto-btn").style.animationPlayState = "paused";
+					document.querySelector(".skip-tuto-btn").onclick = null;
 					setTimeout(() => {document.querySelector(".skip-tuto-btn").remove()}, 500);
 					
 					document.querySelector(".tuto-lang-btn-toggle-container").style.opacity = "0";
+					document.querySelector(".tuto-lang-btn-toggle-container").onclick = null;
 					setTimeout(() => {document.querySelector(".tuto-lang-btn-toggle-container").remove()}, 500);
 
 					document.body.onclick = null;
+
+					this.currentTutoTipNotif.dismissTipNotifDiv();
+					this.currentTutoTipNotif = null;
 
 					ecamDash.generalKeyboardEvents();
 				}
@@ -5204,8 +5264,8 @@
 							document.querySelector(".new-grades-card").classList.add("none");
 							document.querySelector(".new-grades-card-header").classList.add("none");
 							document.querySelector(".new-grades-card-title").innerHTML = !this.isLangEn 
-								? `Pas de nouvelle note${this.error ? ", que je sache (mode backup)" : ""}` 
-								: `No new grade${this.error ? ", as far as I know (backup mode)" : ""}`
+								? `Pas de nouvelle note${this.error ? ", que je sache (mode offline)" : ""}` 
+								: `No new grade${this.error ? ", as far as I know (offline mode)" : ""}`
 							;
 							document.querySelector(".new-grades-card-title").classList.add("none");
 							document.querySelector(".new-grades-mark-as-read").parentElement.disabled = true;
@@ -5230,14 +5290,7 @@
 					attachNewGradesSubjectCardsListener(card) {
 						if (card instanceof HTMLElement && card.classList.contains("new-grades-subject-card")) {
 							card.onclick = (e) => {
-								if (e.target.dataset.semester) {
-									this.currentSemester = e.target.dataset.semester;
-									document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-									document.getElementById('filter-tab-semester-'+this.currentSemester).classList.add('active');
-									this.generateContent({fadeIn: false});
-									this.saveSemesterFilter();
-								}
-
+								if (e.target.dataset.semester) this.changeSemester(e.target.dataset.semester);
 								
 								const targetElem = document.getElementById(`subject-card-semester-${e.target.dataset.semester}-subject-${e.target.dataset.subject}`);
 								this.unfoldSubjCard(targetElem);
@@ -5267,17 +5320,7 @@
 					attachFilterSemesterListener() {
 						document.querySelectorAll('.filter-tab').forEach(tab => {
 							tab.onclick = (e) => {
-								if (!e.target.classList.contains('active'))
-								{
-									document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-									e.target.classList.add('active');
-									this.currentSemester = e.target.dataset.filter;
-									this.saveSemesterFilter();
-
-									this.foldedModuleCardsId = []; document.querySelector(".fold-toggle").classList.remove("active");
-									this.removeCardFromSelection();
-									this.generateContent({manageIndividualCardFolding: false});
-								}
+								if (!e.target.classList.contains('active')) this.changeSemester(e.target.dataset.filter);
 							};
 						});
 					}
@@ -8252,10 +8295,7 @@
 										this.currentSemester = parseInt(semX);
 										this.moduleConfig[semX] = parsed.moduleConfig[semX];
 									})
-									document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
-									document.getElementById('filter-tab-semester-'+this.currentSemester).classList.add('active');
-									this.saveSemesterFilter();
-									this.saveConfig();
+									this.changeSemester(this.currentSemester);
 								} catch (e) {
 									// ignore storage errors
 								}
@@ -8441,20 +8481,10 @@
 					else if (this.keyInputMatch(e, ["ArrowLeft", "ArrowRight"], shiftRequired) && (mode == "general" || mode.match(/\bShift\+(ArrowLeft\b|ArrowRight\b)/i))) {
 						const increment = e.key == "ArrowLeft" ? -1 : 1;
 						
-						document.querySelectorAll('.filter-tab').forEach((t, _index) => {
-							if (t.classList.contains("active")) {this.currentSemester = _index}; 
-							t.classList.remove('active');
-						})
+						
+						const newSem = (this.currentSemester + increment)%(document.querySelectorAll(".filter-tab").length);
 
-						const newSem = (this.currentSemester + increment)%11;
-						const newActiveSemFilterTab = document.querySelector(".filter-tabs").children[newSem >= 0 ? newSem : 10];
-						newActiveSemFilterTab.classList.add("active");
-						this.currentSemester = newActiveSemFilterTab.dataset.filter;
-
-						this.foldedModuleCardsId = []; document.querySelector(".fold-toggle").classList.remove("active");
-						this.saveSemesterFilter();
-						this.removeCardFromSelection();
-						this.generateContent({fadeIn: false, manageIndividualCardFolding: false});
+						this.changeSemester(newSem);
 					}
 				};
 			}
@@ -8528,8 +8558,8 @@
 		 * The element (or its query selector) that is the target of this {@link TutoTipNotif TutoTipNotif} (clicking on it will move to the next {@link TutoTipNotif TutoTipNotif})
 		 * @param {{fr: String; en: String;}} tipNotifTexts 
 		 * An object with properties *fr* of value "theFrenchTextOfThis{@link TutoTipNotif TutoTipNotif}", and *en* of value "theEnglishTextOfThis{@link TutoTipNotif TutoTipNotif}"
-		 * @param {{ appearanceDelay: number; containerStyle: {}; notifStyle: {}; targetElemStyle: { zIndex: string; }; containerElemStyle: {}; buttonsContainer: { style: {}; texts: {fr: String; en: String}; buttons: [{style: {}; texts: {fr: String; en: String}; actionCallback: () => {}}] } }} optionalData
-		 * Optional data containing:
+		 * @param {{ appearanceDelay: number; containerStyle: {}; notifStyle: {}; targetElemStyle: { "property": "value"; }; containerElemStyle: {}; buttonsContainer: { style: {}; texts: {fr: String; en: String}; buttons: [{style: {}; texts: {fr: String; en: String}; actionCallback: () => {}}] } }} optionalData
+		 * Optional data, containing:
 		 * - containerStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container of the tip notif `tipNotifContainer`
 		 * - notifStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the tip notif `tipNotif`
 		 * - targetElemStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the target element `targetElem` 
@@ -8574,9 +8604,6 @@
 		 * this.createTipNotif("#containerId", ".target(s)Class", "Test tip notif")
 		 * this.createTipNotif("#containerId", ".target(s)Class", "Test tip notif", {nextAction: () => {`Something to happen next`}, containerStyle: {right: "10px", top: "10px"}, targetElementStyle: {zIndex: "9"}, containerElemStyle: {zIndex:"0", background: white}})
 		 * 
-		 * @param {HTMLElement | String} containerElem The container or its CSS Selector to place the tip notif in (if CSS Selector is a class, take the first element matching the selector)
-		 * @param {HTMLElement | String} targetElem The element or the CSS Selector of the element.s that the tip notif is highlighting
-		 * @param {String} tipNotifText The text displayed by the tip notif
 		 * @param {{ appearanceDelay: number; containerStyle: {}; notifStyle: {}; targetElemStyle: { zIndex: string; }; containerElemStyle: {}; }} [optionalData={appearanceDelay: 320, containerStyle: {}, notifStyle: {}, targetElemStyle: {zIndex: "12"}, containerElemStyle: {}}]
 		 * Optional data containing:
 		 * - containerStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container of the tip notif `tipNotifContainer`
@@ -8613,7 +8640,7 @@
 				});
 
 				(typeof targetElem == "string" ? document.querySelectorAll(targetElem) : [targetElem]).forEach(elem => {
-					Object.entries(optionalData.targetElemStyle || {zIndex: "12"})?.forEach(entry => {
+					Object.entries(optionalData.targetElemStyle || {"z-index": "12"})?.forEach(entry => {
 						elem.style.setProperty(entry[0], entry[1]);
 					})
 					elem.classList.add("infinite-alternate-scale-up", "tuto-animation-effect");
@@ -8645,7 +8672,7 @@
 				};
 
 				if ((typeof targetElem == "string" ? document.querySelector(targetElem) : targetElem).getBoundingClientRect().y < 0 || (typeof targetElem == "string" ? document.querySelector(targetElem) : targetElem).getBoundingClientRect().y > window.innerHeight) {
-					this.ecamDash.scrollToClientHighestElem("first", {targetElem: targetElem, smooth: true, block: "center" });
+					this.ecamDash.scrollToClientHighestElem("first", {targetElem: typeof targetElem == "string" ? document.querySelector(targetElem) : targetElem, smooth: true, block: "center" });
 				}
 
 			}, this.optionalData.appearanceDelay || 0); }
@@ -8691,13 +8718,13 @@
 				}
 				
 				(typeof targetElem == "string" ? document.querySelectorAll(`${targetElem}`) : [targetElem]).forEach(elem => {
-					Object.entries(undoStyleChanges(optionalData.targetElemStyle || {zIndex: ""}))?.forEach(entry => {
-						elem.style.setProperty(entry[0], entry[1]);
+					Object.entries(optionalData.targetElemStyle || {"z-tndex": ""})?.forEach(entry => {
+						elem.style.setProperty(entry[0], "");
 					})
 					elem.classList.remove("infinite-alternate-scale-up", "tuto-animation-effect");
 				})
-				Object.entries(undoStyleChanges(optionalData.containerElemStyle || {}))?.forEach(entry => {
-					(typeof containerElem == "string" ? document.querySelector(containerElem) : containerElem).style.setProperty(entry[0], entry[1]);
+				Object.entries(optionalData.containerElemStyle || {})?.forEach(entry => {
+					(typeof containerElem == "string" ? document.querySelector(containerElem) : containerElem).style.setProperty(entry[0], "");
 				})
 
 				// hiding the tip notif
