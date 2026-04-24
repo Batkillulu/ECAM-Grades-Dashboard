@@ -1406,13 +1406,17 @@
 				 * 
 				 * @returns The element that was scrolled to, or null if no element was scrolled to
 				 * @param {String} priority             {@link String String},  default: "first" — Defines how multiple `targetElementDatas` input are managed. Can be "first" or "last"
-				 * @param targetElementDatas Any amount of objects. If ommited, uses a default object. Objects should all have the following properties (if any is omitted, they are given their default value):
+				 * @param {{className?: String, id?: String, targetElem?: HTMLAllCollection, margin?: Number, timeout?: Number, smooth?: Boolean, highestElemInPageHandleType?: String, block?: String}} targetElementDatas 
+				 * Any amount of objects. If ommited, uses a default object. Objects should all have the following properties (if any is omitted, they are given their default value):
 				 * 
 				 * **`className?`**                     {@link String String},  default: ".subject-card" —  
 				 *  Name of the class to target, if you want to target a category of elements
 				 * 
 				 * **`id?`**                            {@link String String},  default: "" —              
-				 *  ID of the element to target, if you want to target a specific element (ensure your element has an ID tho)
+				 *  ID of the element to target, if you want to target a specific element (ensure your element has an ID though)
+				 * 
+				 * **`targetElem?`**                    {@link HTMLAllCollection HTMLAllCollection},  default: "" —              
+				 *  Element to target
 				 * 
 				 * **`margin?`**                        {@link Number Number},  default: 23 (in px) —      
 				 *  Used to define the scrollMargin CSS styles property of the element targeted
@@ -1423,13 +1427,13 @@
 				 * **`smooth?`**                        {@link Boolean Boolean}, default: false —           
 				 *  If true, the page will smoothly scroll to the element targeted
 				 * 
-				 * **`highestElemInPageHandleType?`**   {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard String},  default: "none" —          
+				 * **`highestElemInPageHandleType?`**   {@link String String},  default: "none" —          
 				 *  Can be "force", "absolute", "absolute X%", "partial", "partial X%", "above", "above X%" or "none" (with X being an int between 0 and 100). Any other value will be considered as "none"
 				 * 
-				 * **`block?`**                         {@link https://github.com/Batkillulu/ECAM-Grades-Dashboard String},  default: "start" —         
+				 * **`block?`**                         {@link String String},  default: "start" —         
 				 *  Can be "start", "center", "end" or "nearest". Any other value will be considered as "start". Defines what part of the element will be taken as reference to scroll to, taking the margin into account
 				 */
-				scrollToClientHighestElem(priority="first/setting-compliant", ...{className= "subject-card", id="", margin=this.editMode ? 100 : 25, timeout=20, smooth=false, highestElemInPageHandleType="none", block="start"}) {
+				scrollToClientHighestElem(priority="first/setting-compliant", ...{className= "subject-card", id="", targetElem=null, margin=this.editMode ? 100 : 25, timeout=20, smooth=false, highestElemInPageHandleType="none", block="start"}) {
 					const defaultTargetElementDatas = [
 						{className: "modules-section",      margin: 20,                        highestElemInPageHandleType:"partial"}, 
 						{className: "module-card",          margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"above"},
@@ -1517,7 +1521,7 @@
 								}
 	
 	
-								if (targetElemData?.id=="" || !document.getElementById(targetElemData?.id || id)) { // If no id is given, or if the given id doesn't correspond to any item in the document:
+								if (targetElemData?.id=="" || !document.getElementById(targetElemData?.id || id) || !targetElemData.targetElem instanceof HTMLAllCollection) { // If no id is given, or if the given id doesn't correspond to any item in the document:
 	
 									// getting the highest element of class className, as well as its top coordinate in the screen
 									const highestElem                   = document.querySelector("." + (targetElemData?.className?.match(/(\.|)(.+)/)?.[2].replace(" ", ".") || className));
@@ -1658,7 +1662,7 @@
 									}
 								}
 								else {
-									this.scrollToThisElem = targetElemData?.id || id;
+									this.scrollToThisElem = targetElemData?.targetElem?.id || (targetElemData?.id || id);
 									targetDataIndex = targetIndex;
 								}
 							}
@@ -1668,7 +1672,7 @@
 							const targetElemData = argumentsArray[targetDataIndex];
 	
 							setTimeout(() => {
-								const scrollToThisElem = document.getElementById(this.scrollToThisElem) || document.querySelector("."+targetElemData.className.match(/(\.|)(.+)/)?.[2].replace(" ", ".")); 
+								const scrollToThisElem = targetElemData?.targetElem || document.getElementById(this.scrollToThisElem) || document.querySelector("."+targetElemData.className.match(/(\.|)(.+)/)?.[2].replace(" ", ".")); 
 								scrollToThisElem.style.scrollMargin = (targetElemData?.block || block) == "center" ? "" : `${(targetElemData?.margin || margin) + (document.body.classList.contains("lfr-dockbar-pinned") ? 45 : 0)}px`;
 								scrollToThisElem.scrollIntoView({behavior: (targetElemData?.smooth || smooth) ? "smooth" : "instant", block: targetElemData.block});
 								this.scrollToThisElem = "";
@@ -4517,7 +4521,7 @@
 						this.languageSensitiveContent(false);
 						this.generateContent({fadeIn: false});
 
-						document.querySelector(".tuto-tip-notif-container").remove();
+						document.querySelector(".tuto-tip-notif-container")?.remove();
 						this.currentTutoTipNotif?.createTipNotifDiv({appearanceDelay: 1});
 					};
 				}
@@ -4543,8 +4547,8 @@
 							}
 							, {
 								appearanceDelay: 400,
-								containerStyle: {top: "-25px", right: "200px"}, 
-								notifStyle: {minWidth: "330px"}, 
+								containerStyle: {"top": "-25px", "right": "200px"}, 
+								notifStyle: {"min-width": "330px"}, 
 								containerElemStyle: {}
 							}
 						),
@@ -4557,8 +4561,8 @@
 							}
 							, {
 								appearanceDelay: 400,
-								containerStyle: {top: "175px", right: "110px"}, 
-								notifStyle: {minWidth: "260px"}, 
+								containerStyle: {"top": "175px", "right": "110px"}, 
+								notifStyle: {"min-width": "260px"}, 
 								containerElemStyle: {zIndex: "unset"}
 							}
 						),
@@ -4571,8 +4575,8 @@
 							}
 							, {
 								appearanceDelay: 550, 
-								containerStyle: {position: "absolute", width: "100%", top: "-76px", right: "0"}, 
-								notifStyle: {minWidth: "1040px"}, 
+								containerStyle: {"position": "absolute", "width": "100%", "top": "-76px", "right": "0"}, 
+								notifStyle: {"min-width": "1040px"}, 
 								targetElemStyle: {}, 
 								containerElemStyle: {}
 							}
@@ -4590,8 +4594,8 @@
 							}
 							, {
 								appearanceDelay: 1, 
-								containerStyle: {position: "fixed", width: "100%", height: "100%", top: "0"}, 
-								notifStyle: {maxWidth: "60%"}, 
+								containerStyle: {"position": "fixed", "width": "100%", "height": "100%", "top": "0"}, 
+								notifStyle: {"max-width": "60%"}, 
 								targetElemStyle: {}, 
 								containerElemStyle: {}
 							}
@@ -4619,8 +4623,8 @@
 							}
 							, {
 								appearanceDelay: 1,
-								containerStyle: {position: "fixed", top: "0", left: "0", width: "100%", height: "100%", flexDirection: "column"}, 
-								notifStyle: {position: "relative", top: "-50px", minWidth: "1000px"}, 
+								containerStyle: {"position": "fixed", "top": "0", "left": "0", "width": "100%", "height": "100%", "flex-direction": "column"}, 
+								notifStyle: {"position": "relative", "top": "-50px", "min-width": "1000px"}, 
 								buttonsContainer: {
 									style: {gap: "10px", maxWidth: "440px"},
 									texts: {
@@ -4647,8 +4651,8 @@
 															{fr: "Passe en mode édition ici (ou avec Maj+E)", en: "Get in edit mode here (or with Shift+E)"}
 															, {
 																appearanceDelay: 400,
-																containerStyle: {position: "relative", right: '500px'}, 
-																notifStyle: {minWidth: '320px'}, 
+																containerStyle: {"position": "relative", "right": '500px'}, 
+																notifStyle: {"min-width": '320px'}, 
 															}
 														),
 													);
@@ -4660,9 +4664,9 @@
 															{fr: "Clique ici pour créer un module", en: "Click here to add a module"}
 															, {
 																appearanceDelay: 400,
-																containerStyle: {position: "relative", bottom: '-20px', marginBottom: "-24px"}, 
-																notifStyle: {minWidth: '320px'}, 
-																targetElemStyle: {zIndex: 12, background: '#bdb8ffb8', '--infinite-alternate-scale-up-scale': '103%'}
+																containerStyle: {"position": "absolute"}, 
+																notifStyle: {"min-width": '320px'}, 
+																targetElemStyle: {"z-index": "12", "background": "#bdb8ffb8", '--infinite-alternate-scale-up-scale': '103%'}
 															}
 														),
 													);
@@ -8548,7 +8552,8 @@
 
 
 		// MARK: async createTipNotifDiv()
-		/** Method allowing to attach a tip notif to an element `targetElem` inside of a container `containerElem`, handling specific styling for the different elements involved and a callback action `nextAction` to execute after clicking on the `nextActionTriggerElem`
+		/** Method allowing to attach a tip notif to an element `targetElem` inside of a container `containerElem`, 
+		 * handling specific styling for the different elements involved and a callback action `nextAction` to execute after clicking on the `nextActionTriggerElem`
 		 * 
 		 * Structure of the tip notif attached:
 		 * 
@@ -8596,17 +8601,27 @@
 						${tipNotifText}
 					</div>
 				`;
-				const tutoTipNotif = this.tutoTipNotifContainer.querySelector(`.tuto-tip-notif`);
+				/** @type {HTMLElement} */ const tutoTipNotif = this.tutoTipNotifContainer.querySelector(`.tuto-tip-notif`);
 
 
-				Object.assign(this.tutoTipNotifContainer.style, {...(optionalData.containerStyle || {})});
-				Object.assign(tutoTipNotif.style, {...(optionalData.notifStyle || {})});
-				(typeof targetElem == "string" ? document.querySelectorAll(`${targetElem}`) : [targetElem]).forEach(elem => {
-					Object.assign(elem.style, {...(optionalData.targetElemStyle || {zIndex: "12"})});
+				Object.entries(optionalData.containerStyle || {})?.forEach(entry => {
+					this.tutoTipNotifContainer.style.setProperty(entry[0], entry[1]);
+				});
+
+				Object.entries(optionalData.notifStyle || {})?.forEach(entry => {
+					tutoTipNotif.style.setProperty(entry[0], entry[1]);
+				});
+
+				(typeof targetElem == "string" ? document.querySelectorAll(targetElem) : [targetElem]).forEach(elem => {
+					Object.entries(optionalData.targetElemStyle || {zIndex: "12"})?.forEach(entry => {
+						elem.style.setProperty(entry[0], entry[1]);
+					})
 					elem.classList.add("infinite-alternate-scale-up", "tuto-animation-effect");
-					elem.style
-				})
-				Object.assign((typeof containerElem == "string" ? document.querySelector(containerElem) : containerElem).style, {...(optionalData.containerElemStyle || {})});
+				});
+
+				Object.entries(optionalData.containerElemStyle || {})?.forEach(entry => {
+					(typeof containerElem == "string" ? document.querySelector(containerElem) : containerElem).style.setProperty(entry[0], entry[1]);
+				});
 
 				this.createButtons();
 
@@ -8615,24 +8630,22 @@
 					this.tutoTipNotifContainer.style.transform = "scale(100%)";
 				}, 10)
 
-				if (targetElem instanceof HTMLElement || typeof targetElem == "string") {
-					document.body.onmousedown = (e) => {
-						if (e.target.closest(`${typeof targetElem == "string" ? targetElem : (targetElem.id ? "#"+targetElem.id : "."+targetElem.className)}`)
-							&&
-							!e.target.closest(".tuto-tip-btns-container")
-						) {
-							document.body.onmouseup = (e) => {
-								this.dismissTipNotifDiv(containerElem, targetElem, optionalData); 
-								this.ecamDash.nextTipNotif();
-								document.body.onclick = null;
-							};
-							document.body.onmousemove = () => { document.body.onmouseup = null; };
-						}
-					};
-				}
+				document.body.onmousedown = (e) => {
+					if (e.target.closest(`${typeof targetElem == "string" ? targetElem : (targetElem.id ? "#"+targetElem.id : "."+targetElem.className)}`)
+						&&
+						!e.target.closest(".tuto-tip-btns-container")
+					) {
+						document.body.onmouseup = (e) => {
+							this.dismissTipNotifDiv(containerElem, targetElem, optionalData); 
+							this.ecamDash.nextTipNotif();
+							document.body.onclick = null;
+						};
+						document.body.onmousemove = () => { document.body.onmouseup = null; };
+					}
+				};
 
-				if ((typeof targetElem == "string" ? document.querySelector(targetElem) : targetElem).getBoundingClientRect().y < 0 || (typeof targetElem == "string" ? document.querySelector(targetElem) : targetElem).getBoundingClientRect().y > window.clientHeight) {
-					this.ecamDash.scrollToClientHighestElem("first", {id: targetElem.id, smooth: true, block: "center" });
+				if ((typeof targetElem == "string" ? document.querySelector(targetElem) : targetElem).getBoundingClientRect().y < 0 || (typeof targetElem == "string" ? document.querySelector(targetElem) : targetElem).getBoundingClientRect().y > window.innerHeight) {
+					this.ecamDash.scrollToClientHighestElem("first", {targetElem: targetElem, smooth: true, block: "center" });
 				}
 
 			}, this.optionalData.appearanceDelay || 0); }
@@ -8678,17 +8691,22 @@
 				}
 				
 				(typeof targetElem == "string" ? document.querySelectorAll(`${targetElem}`) : [targetElem]).forEach(elem => {
-					Object.assign(elem.style, {...undoStyleChanges(optionalData.targetElemStyle || {zIndex: ""})});
+					Object.entries(undoStyleChanges(optionalData.targetElemStyle || {zIndex: ""}))?.forEach(entry => {
+						elem.style.setProperty(entry[0], entry[1]);
+					})
 					elem.classList.remove("infinite-alternate-scale-up", "tuto-animation-effect");
 				})
-				Object.assign((typeof containerElem == "string" ? document.querySelector(containerElem) : containerElem).style, {...undoStyleChanges(optionalData.containerElemStyle || {})});
+				Object.entries(undoStyleChanges(optionalData.containerElemStyle || {}))?.forEach(entry => {
+					(typeof containerElem == "string" ? document.querySelector(containerElem) : containerElem).style.setProperty(entry[0], entry[1]);
+				})
 
 				// hiding the tip notif
 				this.tutoTipNotifContainer.style.opacity = "";
 				this.tutoTipNotifContainer.style.transform = "";
 				
 				// removing the tip notif after its hide effect occured
-				setTimeout(() => {
+				clearTimeout(this.deletionTimeout);
+				this.deletionTimeout = setTimeout(() => {
 					this.tutoTipNotifContainer.remove();
 				}, 300);
 
