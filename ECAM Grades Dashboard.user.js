@@ -319,7 +319,7 @@
 
 			//MARK: TUTOS
 			styles += `
-				.tuto-tip-notif-container   { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; width: 0; height: 0; z-index: 10; opacity: 0; transform: scale(110%); --infinite-alternate-scale-up-scale: 100%; transition: all 0.3s ease;}
+				.tuto-tip-notif-container   { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; width: 0; height: 0; z-index: 10; opacity: 0; transform: scale(110%); --infinite-alternate-scale-up-scale: 100%; user-select: text; transition: all 0.3s ease;}
 				.tuto-tip-notif         { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 15px; padding: 20px; background: linear-gradient( #5334ff 0%, #7a62ff 100%); border-radius: 7px; outline: 5px solid; color: white; font-size: 31px; line-height: 31px; text-align: center; --hoveringElem-amp: 10px; animation: focusBlinkAnimation 2s infinite alternate ease-in-out, hoveringElem 2s infinite alternate ease-in-out; transition: all 0.3s ease; }
 				.tuto-tip-notif:hover   { animation-play-state: running, paused; }
 
@@ -455,7 +455,7 @@
 				.filter-title       { border-radius: 20px; color: white; font-weight: 700; font-size: 14px; padding: 10px 15px; margin-right: 70%; margin-bottom: -15px; background: linear-gradient(45deg, #446dff 20%, #1222ff12 60%, #ffffff00 89%); position: relative; transition: all 0.2s ease; }
 				.filter-tabs        { display: flex; background: #f7f7f7; padding: 4px; border-radius: 12px; gap: 4px; height: 44px; }
 				.filter-tab         { display: flex; justify-content: center; padding: 10px 20px; background: transparent; border: none; border-radius: 8px; cursor: pointer; font-weight: 500; color: #666; transition: all 0.2s ease; font-size: 14px; width: 57px; }
-				.filter-tab:hover   { background: white; color: #333333ff; box-shadow: 3px 5px 5px 0px #00000042; transform: scale(1.1); }
+				.filter-tab:hover   { background: white; color: #333333ff; box-shadow: 3px 5px 5px 0px #00000042; transform: scale(110%); }
 				.filter-tab.active  { background: white; color: #667eeaff; box-shadow: 3px 5px 5px 0px #00000042; }
 			`;
 
@@ -857,7 +857,7 @@
 					.grade-date      { font-size: 12px; color: #999; }
 
 					.subject-sim-del-btn        { border: 1px solid #A7CEDF; border-radius: 6px; cursor: pointer; }
-					.sim-add-btn                { display: flex; align-items: center; justify-content: center; height: 25px; width: 67px; max-width: 140px; padding: 6px 10px; border: 1px solid; border-radius: 15px; user-select: none; }
+					.sim-add-btn                { display: flex; align-items: center; justify-content: center; height: 25px; width: 67px; max-width: 140px; margin-bottom: 0; padding: 6px 10px; border: 1px solid; border-radius: 15px; user-select: none; }
 					.simulated-grade-input         { border-radius: 10px; border: 1px outset #667eea; padding: 2px 10px}
 					.simulated-grade-input.sim-inp-type    { width: 55%;  max-width:250px; height:25px }
 					.simulated-grade-input.sim-inp-grade    { width: 100%; max-width:75px;  height:25px }
@@ -1041,6 +1041,7 @@
 
 
 
+
 	//MARK: ECAMDashboard ——————————
 	class ECAMDashboard {
 
@@ -1159,10 +1160,10 @@
 						,
 						description: () => !this.isLangEn 
 							? "Activer l'aide au défilement pour suivre les éléments importants à l'écran lors de changements de verticalité. Désactive-la si tu n'aimes pas avoir ces défilements forcés" 
-							: "Enable the scroll helpers to follow the important elements on screen upon verticality changes. Disabled it if you don't like these forced scrolls"
+							: "Enable the scroll helpers to follow the important elements on screen upon verticality changes. Disable it if you don't like these forced scrolls"
 						,
 						info: () => !this.isLangEn 
-							? "Certaines actions (changement de mode d'édition, changement entre vue détaillée/compacte...) font changer la position verical de certains éléments (cartes de module/matière, entre autres), donc un défilement est prévu pour maintenir certains éléments dans l'affichage" 
+							? "Certaines actions (changement de mode d'édition, changement vue détaillée/compacte...) font changer la position verical de certains éléments (cartes de module/matière, entre autres), donc un défilement maintient certains éléments à l'écran" 
 							: "Some actions (edit mode change, detailed/compact view mode change...) change the vertical position of some elements (i.e. module/subject cards), so this setting allows to scroll to keep the most important elements on screen"
 						,
 						value: JSON.parse( JSON.parse(localStorage.getItem("ECAM_DASHBOARD_SETTINGS"))?.scrollHelpersEnabled?.value?.toString() || "true"),
@@ -1286,7 +1287,8 @@
 
 			//#region Display
 
-				this.currentSemester                    = localStorage.getItem("ECAM_DASHBOARD_SEMESTER_FILTER")                || "all";
+				/** @type {Number} */
+				this.currentSemester        = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SEMESTER_FILTER")                || "0");
 
 				this.viewMode                           = localStorage.getItem("ECAM_DASHBOARD_VIEW_MODE")                      || "detailed";
 
@@ -1406,7 +1408,7 @@
 				 * 
 				 * @returns The element that was scrolled to, or null if no element was scrolled to
 				 * @param {String} priority             {@link String String},  default: "first" — Defines how multiple `targetElementDatas` input are managed. Can be "first" or "last"
-				 * @param {{className?: String, id?: String, targetElem?: HTMLAllCollection, margin?: Number, timeout?: Number, smooth?: Boolean, highestElemInPageHandleType?: String, block?: String}} targetElementDatas 
+				 * @param {{className?: String, id?: String, targetElem?: Node, margin?: Number, timeout?: Number, smooth?: Boolean, highestElemInPageHandleType?: String, block?: String}} targetElementDatas 
 				 * Any amount of objects. If ommited, uses a default object. Objects should all have the following properties (if any is omitted, they are given their default value):
 				 * 
 				 * **`className?`**                     {@link String String},  default: ".subject-card" —  
@@ -1415,7 +1417,7 @@
 				 * **`id?`**                            {@link String String},  default: "" —              
 				 *  ID of the element to target, if you want to target a specific element (ensure your element has an ID though)
 				 * 
-				 * **`targetElem?`**                    {@link HTMLAllCollection HTMLAllCollection},  default: "" —              
+				 * **`targetElem?`**                    {@link Node Node},  default: "" —              
 				 *  Element to target
 				 * 
 				 * **`margin?`**                        {@link Number Number},  default: 23 (in px) —      
@@ -1521,7 +1523,7 @@
 								}
 	
 	
-								if (targetElemData?.id=="" || !document.getElementById(targetElemData?.id || id) || !targetElemData.targetElem instanceof HTMLAllCollection) { // If no id is given, or if the given id doesn't correspond to any item in the document:
+								if (targetElemData?.id=="" || !document.getElementById(targetElemData?.id || id) || !targetElemData.targetElem instanceof Node) { // If no id is given, or if the given id doesn't correspond to any item in the document:
 	
 									// getting the highest element of class className, as well as its top coordinate in the screen
 									const highestElem                   = document.querySelector("." + (targetElemData?.className?.match(/(\.|)(.+)/)?.[2].replace(" ", ".") || className));
@@ -1801,7 +1803,7 @@
 				}
 
 				getElementHeightConsideringChildrenHeight(elem) {
-					if (elem instanceof HTMLElement) {
+					if (elem instanceof Node) {
 						return Array.from(elem.children).reduce((total, child) => {return parseInt(total?.offsetHeight || total) + parseInt(child.offsetHeight)})
 					}
 				}
@@ -1858,6 +1860,57 @@
 
 
 
+			//#region Dashboard methods
+
+
+
+				// MARK: toggleEditMode()
+				toggleEditMode() {
+					this.editMode = !this.editMode;
+					localStorage.setItem("ECAM_DASHBOARD_DEFAULT_EDIT_MODE", this.editMode);
+
+					this.foldedModuleCardsId = []; document.querySelector(".fold-toggle").classList.remove("active");
+					this.removeCardFromSelection();
+					this.scrollToClientHighestElem();
+					this.generateContent({manageIndividualCardFolding: false});
+				}
+
+
+				// MARK: toggleViewMode()
+				toggleViewMode() {
+					const unclassifiedSection = document.querySelector(".unclassified-section");
+					this.releaseElementHeight(unclassifiedSection);
+
+					this.viewMode = this.viewMode == "detailed" ? "compact" : "detailed";
+					if (this.viewMode == "detailed") {
+						document.querySelector("#view-btn-detailed").classList.add("active");
+						document.querySelector("#view-btn-compact").classList.remove("active");
+					}
+					else {
+						document.querySelector("#view-btn-detailed").classList.remove("active");
+						document.querySelector("#view-btn-compact").classList.add("active");
+					}
+
+
+					this.toggleFoldAllSubjCards();
+
+					this.saveViewMode();
+					this.scrollToClientHighestElem("first",
+						{className: "modules-section",      timeout: 101, smooth: false, margin: 20,                        highestElemInPageHandleType:"partial"}, 
+						{className: "module-card",          timeout: 101, smooth: false, margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"above"},
+						{className: "unclassified-section", timeout: 101, smooth: false, margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"partial"},
+						{className: "subject-card",         timeout: 101, smooth: false, margin: 10,                        highestElemInPageHandleType:"above"},
+					);
+
+					this.holdElementHeight(unclassifiedSection, 1000);
+				}
+
+			//#endregion
+
+
+
+
+
 			//#region Semester methods
 
 
@@ -1865,21 +1918,24 @@
 
 				// MARK: changeSemester()
 				/**
-				 * Changes the semester to the given sem String or Number
+				 * Changes the semester to the given semester Number
 				 * 
-				 * @param {String | Number} sem String or Number of the semester to change to
+				 * @param {int} sem The Number of the semester to change to
 				 */
-				changeSemester(sem="all") {
-					console.log(sem);
-					this.currentSemester = sem;
+				changeSemester(sem=-1) {
+					if (sem < 0) {
+						// Filtering out all the semesters that don't have any real grade, then taking the semester at the given sem index
+						this.currentSemester = parseInt(Object.entries(this.semesters).filter(entry => Object.values(entry[1]).length > 0)?.at(sem)?.[0] || "0");
+					}
+					else this.currentSemester = parseInt(sem);
+					this.saveSemesterFilter();
 
 					document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
 					document.querySelector(`.filter-tab[data-filter="${this.currentSemester == 0 ? "all" : this.currentSemester}"]`).classList.add('active');
 
 					this.removeCardFromSelection();
 					this.foldedModuleCardsId = []; document.querySelector(".fold-toggle").classList.remove("active");
-					this.generateContent({fadeIn: false});
-					this.saveSemesterFilter();
+					this.generateContent({fadeIn: false, manageIndividualCardFolding: false});
 				}
 
 			//#endregion Semester methods
@@ -3281,7 +3337,8 @@
 
 					<div class="controls-bar">
 						<div class="filter-tabs">
-							<button class="filter-tab ${this.currentSemester == "all" ? "active" : ""}" id="filter-tab-all-semesters" data-filter="all"></button>
+							<div style="display: flex; align-items: center; padding: 0px 7px;">Semester Filter:</div>
+							<button class="filter-tab ${this.currentSemester == 0 ? "active" : ""}" id="filter-tab-all-semesters" data-filter="all"></button>
 							${Object.keys(this.semesters).sort((a,b) => a-b).map(s => `<button class="filter-tab ${s == this.currentSemester ? "active" : ""}" id="filter-tab-semester-${s}" data-filter="${s}">S${s}</button>`).join('')}
 						</div>
 						<div style="display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 8px;">
@@ -3500,7 +3557,7 @@
 					importFile.children[0].innerHTML   = !this.isLangEn ? "Importer un fichier de configuration .json"   : "Import a .json configuration file";
 					importClear.innerHTML              = !this.isLangEn ? "Effacer Config" : "Clear Config";
 					importClear.title                  = !this.isLangEn ? "Clique ici pour effacer ta configuration actuelle" : "Click here to clear your current configuration";
-					importOnline.children[1].innerHTML = !this.isLangEn ? "Obtenir un fichier de configuration en ligne" : "Get a configuration file online";
+					importOnline.children[1].innerHTML = !this.isLangEn ? "Obtenir une configuration en ligne" : "Get a configuration online";
 
 					const onlineCfgPickerHeader = document.querySelector(".online-cfg-picker-menu-header");
 					if (onlineCfgPickerHeader) {
@@ -3682,16 +3739,7 @@
 					const validatedEUsStatLabel = document.querySelectorAll(".stat-value")[2];
 					validatedEUsStatLabel.innerHTML = `${moduleStats.validated}/${moduleStats.total}`;
 
-					let semesterKeys = [];
-					if (this.currentSemester === "all") {
-						semesterKeys =  Object.keys(this.semesters).sort((a,b) => a-b);
-					}
-					else if (this.currentSemester === "last") {
-						semesterKeys = [Object.keys(this.semesters).sort((a,b) => a-b).at(-1)];
-					}
-					else {
-						semesterKeys = [this.currentSemester];
-					}
+					let semesterKeys = this.currentSemester == 0 ? Object.keys(this.semesters).sort((a,b) => a-b) : [this.currentSemester];
 					
 					const contentArea = document.getElementById("contentArea");
 					contentArea.innerHTML = "";
@@ -3725,7 +3773,7 @@
 						<div class="semester-content show${this.selectedSubjectCardsId.length > 0 || this.selectedModuleCardsId.length > 0 ? " dragging" : ""}${this.editMode ? " edit" : ""}${fadeIn ? " fade-in" : ""}" id="sem-content-${sem}">
 							<div class="semester-body">
 								<div class="modules-section ${this.editMode ? "edit" : ""}" id="modules-section" ${moduleConfig?.__modules__ && !this.editMode ? "" : "style=\"margin: -20px 0px;\""}>
-									${this.createAllModuleCards(sem, manageIndividualCardFolding)}
+									${Object.values(this.semesters[sem]).length > 0 ? this.createAllModuleCards(sem, manageIndividualCardFolding) : `<div class="jura">Nothing to show here!</div>`}
 								</div>
 								<div class="unclassified-section" id="unclassified-section" style="${unclassifiedLength > 0 ? `` : `; display: none`}">
 									<div class="unclassified-title jura">
@@ -3993,33 +4041,33 @@
 
 					html += `
 
-					<table class="grades-table ${isNaN(subjAvg) ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" style="${this.editMode ? `user-select: text;` : ``}" id="grades-table-${subject}-semester${sem}" data-subject="${subject}">
+						<table class="grades-table ${isNaN(subjAvg) ? `unknown` : `${subjAvg >= 10 ? `${moduleMoy < 10 ? `meh` : `good`}` : `${moduleMoy >= 10 ? `meh` : `bad`}`}`}" style="${this.editMode ? `user-select: text;` : ``}" id="grades-table-${subject}-semester${sem}" data-subject="${subject}">
 
-						<thead>
-							<tr>
-								<th class="grades-table-header-type" style="padding-left: 30px; border-left-width: 0px;">
-									${!this.isLangEn ? "Intitulé" : "Title"}
-								</th>
-								<th class="grades-table-header-grade">
-									${!this.isLangEn ? "Note" : "Grade"}
-								</th>
-								<th class="grades-table-header-coef">
-									${!this.isLangEn ? "Coef" : "Coef"}
-								</th>
-								<th class="grades-table-header-classAvg">
-									${!this.isLangEn ? "Moy. Classe" : "Class Avg"}
-								</th>
-								<th class="grades-table-header-date">
-									${!this.isLangEn ? "Date" : "Date"}
-								</th>
-								<th class="grades-table-header-teacher" style="border-right-width: 0px;${this.selectedSubjectCardsId.length > 0 ? " display: none;" : ""}">
-									${!this.isLangEn ? "Prof(s)" : "Teacher(s)"}
-								</th>
-								<th class="grades-table-header-add-sim-cell" style="border-right-width: 0px; border-left-width: 0px;">
-								</th>
-							</tr>
-						</thead>
-						<tbody>
+							<thead>
+								<tr>
+									<th class="grades-table-header-type" style="padding-left: 30px; border-left-width: 0px;">
+										${!this.isLangEn ? "Intitulé" : "Title"}
+									</th>
+									<th class="grades-table-header-grade">
+										${!this.isLangEn ? "Note" : "Grade"}
+									</th>
+									<th class="grades-table-header-coef">
+										${!this.isLangEn ? "Coef" : "Coef"}
+									</th>
+									<th class="grades-table-header-classAvg">
+										${!this.isLangEn ? "Moy. Classe" : "Class Avg"}
+									</th>
+									<th class="grades-table-header-date">
+										${!this.isLangEn ? "Date" : "Date"}
+									</th>
+									<th class="grades-table-header-teacher" style="border-right-width: 0px;${this.selectedSubjectCardsId.length > 0 ? " display: none;" : ""}">
+										${!this.isLangEn ? "Prof(s)" : "Teacher(s)"}
+									</th>
+									<th class="grades-table-header-add-sim-cell" style="border-right-width: 0px; border-left-width: 0px;">
+									</th>
+								</tr>
+							</thead>
+							<tbody>
 					`;
 
 					subjectGrades.forEach((grade, index) => {
@@ -4027,77 +4075,77 @@
 						const gradeIsSim = grade.__sim ? true : false;
 
 						html += `
-							<tr class="grade-row ${index == nbGrades-1 ? `last` : ``} ${gradeIsSim ? `sim` : ``}" data-sim="${gradeIsSim}">
-								<td class="grades-table-type" style="display: flex; align-items: stretch; gap: 6px">
-									<input type="checkbox" class="grade-checkbox any-input" id="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}" data-semester="${sem}" data-subj="${subject}" data-module="${moduleName||''}" data-prof="${grade.prof}" data-gradeid="${grade.type + " " + grade.date + " " + grade.prof}" ${gradeIsSim ? `data-simtimestamp="${grade.id}"` : ""} ${!this.gradeIsDisabled(grade) ? "checked" : ""}></input>
-									${gradeIsSim
-										? `<input class="grade-type simulated-grade-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="simulated-grade-input-type-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" data-modifType="type" data-simid="${index-nbRealGrades}" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" value="${grade.type}"/>` 
-										: `<label class="grade-type" style="width: auto"  id="grade-type-${grade.type}-${grade.date}" for="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}">${grade.type || ''}${gradeIsSim ? ` • ${!this.isLangEn ? "Simulée" : "Simulated"}` : ''}</label>`
-									}
-								</td>
-								<td class="grade-value grade-${gradeClass} grades-table-grade" data-sim="${gradeIsSim}">
-									${gradeIsSim
-										? `<input class="simulated-grade-input-edit sim-inp-grade any-input" style="width: 100%; max-width: 75px;" id="simulated-grade-input-grade-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" type="number" step="0.5" min="0" max="20" data-simid="${index-nbRealGrades}" data-modifType="grade" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" style="width:75px; height:25px" value="${grade.grade}"> /20`
-										: `${grade.grade}/20`
-									}
-								</td>
-								<td class="grades-table-coef" data-sim="${gradeIsSim}">
-									${gradeIsSim
-										? `<input class="simulated-grade-input-edit sim-inp-coef any-input" style="width: 100%; max-width: 60px;" id="simulated-grade-input-coef-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" type="number" step="5" min="0" max="100" data-simid="${index-nbRealGrades}" data-modifType="coef" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" style="width:60px; height:25px"value="${grade.coef}"> %`
-										: `${grade.coef} %`
-									}
-								</td>
-								<td class="grades-table-classAvg" data-sim="${gradeIsSim}">
-									${gradeIsSim
-										? `<span style="width: 100%; display: flex; justify-content: center;"> — </span>`
-										: `${grade.classAvg}/20`
-									}
-								</td>
-								<td class="grades-table-date grade-date" data-sim="${gradeIsSim}">
-									${gradeIsSim
-										? `<span style="width: 100%; display: flex; justify-content: center;"> — </span>`
-										: `${grade.date}`
-									}
-								</td>
-								<td class="grades-table-teacher" ${this.selectedSubjectCardsId.length > 0 ? `style="display: none;"` : ""}>
-									${gradeIsSim
-										? `<span style="width: 100%; display: flex; justify-content: center;"> — </span>`
-										: `<span>${`${grade.prof.split(" / ").length <= 3 ? grade.prof : grade.prof.split(" / ").slice(0,3).join(" / ") + " / ... "}`||''}</span>`
-									}
-								</td>
-								<td class="grades-table-add-sim-cell" style="${gradeIsSim ? `width: 52px; padding: 3px; text-align: center;` : ``}">
-									${
-										gradeIsSim 
-										? `<button class="sim-del-btn" data-semester="${sem}" data-subj="${subject}" data-module="${moduleName||''}" data-type="${grade.type}" data-simid="${index-nbRealGrades}">🗑️</button>` 
-										: `<div style="width:32px"></div>`
-									}
-								</td>
-							</tr>
+								<tr class="grade-row ${index == nbGrades-1 ? `last` : ``} ${gradeIsSim ? `sim` : ``}" data-sim="${gradeIsSim}">
+									<td class="grades-table-type" style="display: flex; align-items: stretch; gap: 6px">
+										<input type="checkbox" class="grade-checkbox any-input" id="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}" data-semester="${sem}" data-subj="${subject}" data-module="${moduleName||''}" data-prof="${grade.prof}" data-gradeid="${grade.type + " " + grade.date + " " + grade.prof}" ${gradeIsSim ? `data-simtimestamp="${grade.id}"` : ""} ${!this.gradeIsDisabled(grade) ? "checked" : ""}></input>
+										${gradeIsSim
+											? `<input class="grade-type simulated-grade-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="simulated-grade-input-type-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" data-modifType="type" data-simid="${index-nbRealGrades}" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" value="${grade.type}"/>` 
+											: `<label class="grade-type" style="width: auto"  id="grade-type-${grade.type}-${grade.date}" for="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}">${grade.type || ''}${gradeIsSim ? ` • ${!this.isLangEn ? "Simulée" : "Simulated"}` : ''}</label>`
+										}
+									</td>
+									<td class="grade-value grade-${gradeClass} grades-table-grade" data-sim="${gradeIsSim}">
+										${gradeIsSim
+											? `<input class="simulated-grade-input-edit sim-inp-grade any-input" style="width: 100%; max-width: 75px;" id="simulated-grade-input-grade-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" type="number" step="0.5" min="0" max="20" data-simid="${index-nbRealGrades}" data-modifType="grade" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" style="width:75px; height:25px" value="${grade.grade}"> /20`
+											: `${grade.grade}/20`
+										}
+									</td>
+									<td class="grades-table-coef" data-sim="${gradeIsSim}">
+										${gradeIsSim
+											? `<input class="simulated-grade-input-edit sim-inp-coef any-input" style="width: 100%; max-width: 60px;" id="simulated-grade-input-coef-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" type="number" step="5" min="0" max="100" data-simid="${index-nbRealGrades}" data-modifType="coef" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" style="width:60px; height:25px"value="${grade.coef}"> %`
+											: `${grade.coef} %`
+										}
+									</td>
+									<td class="grades-table-classAvg" data-sim="${gradeIsSim}">
+										${gradeIsSim
+											? `<span style="width: 100%; display: flex; justify-content: center;"> — </span>`
+											: `${grade.classAvg}/20`
+										}
+									</td>
+									<td class="grades-table-date grade-date" data-sim="${gradeIsSim}">
+										${gradeIsSim
+											? `<span style="width: 100%; display: flex; justify-content: center;"> — </span>`
+											: `${grade.date}`
+										}
+									</td>
+									<td class="grades-table-teacher" ${this.selectedSubjectCardsId.length > 0 ? `style="display: none;"` : ""}>
+										${gradeIsSim
+											? `<span style="width: 100%; display: flex; justify-content: center;"> — </span>`
+											: `<span>${`${grade.prof.split(" / ").length <= 3 ? grade.prof : grade.prof.split(" / ").slice(0,3).join(" / ") + " / ... "}`||''}</span>`
+										}
+									</td>
+									<td class="grades-table-add-sim-cell" style="${gradeIsSim ? `width: 52px; padding: 3px; text-align: center;` : ``}">
+										${
+											gradeIsSim 
+											? `<button class="sim-del-btn" data-semester="${sem}" data-subj="${subject}" data-module="${moduleName||''}" data-type="${grade.type}" data-simid="${index-nbRealGrades}">🗑️</button>` 
+											: `<div style="width:32px"></div>`
+										}
+									</td>
+								</tr>
 						`;
 					});
 
 					html += `
-							<tr>
-								<td class="grades-table-type">
-									<div class="grade-type" style="display:flex; align-items:center; justify-content: flex-start">
-										<div class="jura" style="width: 140px">${!this.isLangEn ? "Ajouter une note simulée: " : "Add a simulated grade: "}</div>
-										<input class="simulated-grade-input sim-inp-type any-input" id="simulated-grade-input-type-for-${subject}-from-${moduleName}-in-semester${sem}" data-semester="${sem}" data-subj="${subject}" placeholder="${!this.isLangEn ? "Titre" : "Title"}" />
-									</div>
-								</td>
-								<td class="grades-table-grade">
-									<input class="simulated-grade-input sim-inp-grade any-input" id="simulated-grade-input-grade-for-${subject}-from-${moduleName}-in-semester${sem}" type="number" step="0.5" min="0" max="20" data-semester="${sem}" data-subj="${subject}" placeholder="/20"> /20
-								</td>
-								<td class="grades-table-coef">
-									<input class="simulated-grade-input sim-inp-coef any-input" id="simulated-grade-input-coef-for-${subject}-from-${moduleName}-in-semester${sem}" type="number" step="5" min="0" max="100" data-semester="${sem}" data-subj="${subject}" placeholder="%"> %
-								</td>
-								<td colspan="3">
-								</td>
-								<td class="grades-table-add-sim-cell" style="border-right-width: 0px; border-left-width: 0px;">
-									<button class="btn-export sim-add-btn" data-semester="${sem}" data-subj="${subject}" data-module="${moduleName||''}">${!this.isLangEn ? "Ajouter" : "Add"}</button>
-								</td>
-							</tr>
-						</tbody>
-					</table>
+								<tr class="simulated-grade-addition-setup-row">
+									<td class="grades-table-type">
+										<div class="grade-type" style="display:flex; align-items:center; justify-content: flex-start">
+											<div class="jura" style="width: 140px">${!this.isLangEn ? "Ajouter une note simulée: " : "Add a simulated grade: "}</div>
+											<input class="simulated-grade-input sim-inp-type any-input" id="simulated-grade-input-type-for-${subject}-from-${moduleName}-in-semester${sem}" data-semester="${sem}" data-subj="${subject}" placeholder="${!this.isLangEn ? "Titre" : "Title"}" />
+										</div>
+									</td>
+									<td class="grades-table-grade">
+										<input class="simulated-grade-input sim-inp-grade any-input" id="simulated-grade-input-grade-for-${subject}-from-${moduleName}-in-semester${sem}" type="number" step="0.5" min="0" max="20" data-semester="${sem}" data-subj="${subject}" placeholder="/20"> /20
+									</td>
+									<td class="grades-table-coef">
+										<input class="simulated-grade-input sim-inp-coef any-input" id="simulated-grade-input-coef-for-${subject}-from-${moduleName}-in-semester${sem}" type="number" step="5" min="0" max="100" data-semester="${sem}" data-subj="${subject}" placeholder="%"> %
+									</td>
+									<td colspan="3">
+									</td>
+									<td class="grades-table-add-sim-cell" style="border-right-width: 0px; border-left-width: 0px;">
+										<button class="btn-export sim-add-btn" data-semester="${sem}" data-subj="${subject}" data-module="${moduleName||''}">${!this.isLangEn ? "Ajouter" : "Add"}</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
 					`;
 
 
@@ -4293,7 +4341,7 @@
 			//#region -Modals
 
 				appendKeyboardShortcutsList(container=document.querySelector("#keyboardShortcutListModalBody")) {
-					if (container instanceof HTMLElement) {
+					if (container instanceof Node) {
 						let html = `
 						<table style="font-size: 20px; --row-height: 30px;">
 							<thead>
@@ -4353,7 +4401,7 @@
 				}
 
 				appendSettingsModalBody(container=document.querySelector("#settingsModal")) {
-					if (container instanceof HTMLElement) {
+					if (container instanceof Node) {
 						const settingsModalBody = document.createElement("div");
 						settingsModalBody.className = "settings-modal-body";
 						settingsModalBody.id = "settingsModalBody";
@@ -4453,7 +4501,7 @@
 
 
 
-			//#region Tutos
+			//#region -Tutos
 
 
 
@@ -4551,13 +4599,13 @@
 						this.generateContent({fadeIn: false});
 
 						document.querySelector(".tuto-tip-notif-container")?.remove();
-						this.currentTutoTipNotif?.createTipNotifDiv({appearanceDelay: 1});
+						this.currentTutoTipNotif?.createTipNotifDiv({appearanceDelay: 50});
 					};
 				}
 
 
 
-				// MARK: startFirstStepsTutorial
+				// MARK: startFirstStepsTutorial()
 				startFirstStepsTutorial() {
 
 					localStorage.setItem("ECAM_DASHBOARD_FIRST_LOAD", false);
@@ -4639,15 +4687,118 @@
 
 				
 
-				// MARK: startCompleteTutorial
+				// MARK: startCompleteTutorial()
 				startCompleteTutorial() {
 
 					this.startTuto();
 
+					const tutoSimulation = () => {
+
+						if (this.grades.length > 0) {
+
+							this.onGoingTutoTipNotifDivs.push(
+								new TutoTipNotif(this,
+									document.body,
+									".tuto-tip-notif-container",
+									{
+										fr: "Tu n'as encore pas de notes, nous allons donc commencer par créer un module, puis une matière<div style='cursor: pointer;'>[ Suivant ]</div>", 
+										en: "You don't have grades yet, so we will start by creating a module, and then a subject<div style='cursor: pointer;'>[ Next ]</div>"
+									}
+									, {
+										appearanceDelay: 1, 
+										containerStyle: {"position": "fixed", "width": "100%", "height": "100%", "top": "0"}, 
+										notifStyle: {"max-width": "60%"}, 
+										targetElemStyle: {}, 
+										containerElemStyle: {}
+									}
+								),
+							);
+
+							if (!this.editMode) this.onGoingTutoTipNotifDivs.push(
+								new TutoTipNotif(this,
+									".header-actions",
+									"#editModeBtn",
+									{fr: "Passe en mode édition ici (ou avec Maj+E)", en: "Get in edit mode here (or with Shift+E)"}
+									, {
+										appearanceDelay: 400,
+										containerStyle: {"position": "relative", "right": '500px'}, 
+										notifStyle: {"min-width": '320px'}, 
+										targetElemStyle: {"z-index": "12"},
+										initialAction(board) {board.generalKeyboardEvents("tuto Shift+L Shift+E");}
+									}
+								),
+							);
+
+						}
+
+						if (this.viewMode == "compact") this.onGoingTutoTipNotifDivs.push(
+							new TutoTipNotif(this,
+								".view-toggle",
+								"#view-btn-detailed",
+								{fr: "Passe en vue détaillée ici (ou avec Maj+D)", en: "Get in edit mode here (or with Shift+D)"}
+								, {
+									appearanceDelay: 400,
+									containerStyle: {"position": "relative", "right": '140px', 'top': "-120px", "margin-left": "-8px"}, 
+									notifStyle: {"min-width": '430px'}, 
+									targetElemStyle: {"z-index": "12", "background": "#e5e5e5"},
+										initialAction(board) {board.generalKeyboardEvents("tuto Shift+L Shift+D");}
+								}
+							)
+						);
+
+
+						this.generalKeyboardEvents("tuto Shift+L");
+
+						this.changeSemester(-1);
+						
+						this.onGoingTutoTipNotifDivs.push(
+							new TutoTipNotif(this,
+								".simulated-grade-addition-setup-row",
+								".btn-export.sim-add-btn",
+								{fr: "Entre le nom, valeur et coef de la note que tu veux simuler, puis clique sur \"Ajouter\"", en: "Enter the name, value and coef of the grade you want to simulate, then click on \"Add\""}
+								, {
+									appearanceDelay: 400,
+									containerStyle:     {"position": "absolute", "top": '120px', "left": '20%'}, 
+									notifStyle:         {"min-width": '620px'}, 
+									targetElemStyle:    {"--infinite-alternate-scale-up-scale": "110%"},
+									containerElemStyle: {"position": "sticky", "z-index": "12", "box-shadow": "0px 0px 17px 8px white", '--infinite-alternate-scale-up-scale': '100%', "backdrop-filter": 'brightness(230%)'},
+									initialAction(/** @type {ECAMDashboard} */ board)     {document.querySelector(".subject-card").style.overflow = "visible"; board.generalKeyboardEvents("tuto Shift+L");},
+									actionCallback(/** @type {ECAMDashboard} */ dash) {dash.currentTutoTipNotif.dismissTipNotifDiv(); dash.nextTipNotif();},
+									additionalActionCallback(/** @type {ECAMDashboard} */ dash) {document.querySelector(".subject-card").style.overflow = ""; dash.simGradeAddBtnAction(document.querySelector(".btn-export.sim-add-btn"));}
+								}
+							),
+						);
+
+
+
+						this.onGoingTutoTipNotifDivs.push(
+							new TutoTipNotif(this,
+								document.body,
+								".tuto-tip-notif-container",
+								{
+									fr: "Et voilà ! Tu peux modifier les valeurs de la note simulée que tu as rentré quand tu veux !", 
+									en: "And that's it! You can modify the values of the simulated grades that you entered whenever you want!"
+								}
+								, {
+									appearanceDelay: 1, 
+									containerStyle: {"position": "fixed", "width": "100%", "height": "100%", "top": "0"}, 
+									notifStyle: {"max-width": "60%"}, 
+									targetElemStyle: {}, 
+									containerElemStyle: {}
+								}
+							),
+						);
+
+						this.nextTipNotif();
+					}
+
+
+
+
 					this.onGoingTutoTipNotifDivs = [
 						new TutoTipNotif(this,
 							document.body,
-							".tuto-tip-btn", 
+							"All.tuto-tip-btn", 
 							{
 								fr: "Bienvenu dans le tutoriel complet de ce tableau de bord ! :D", 
 								en: "Welcome in the complete tutorial of this dashboard! :D",
@@ -4670,74 +4821,7 @@
 												fr: "Simule et anticipe tes résultats",
 												en: "Simulate and anticipate your results", 
 											},
-											actionCallback: () => {
-												
-												if (/* this.grades.length == 0 && */ true) {
-													
-													if (!this.editMode) {
-														this.generalKeyboardEvents("tuto Shift+L Shift+E");
-
-														this.onGoingTutoTipNotifDivs.push(
-															new TutoTipNotif(this,
-																".header-actions",
-																"#editModeBtn",
-																{fr: "Passe en mode édition ici (ou avec Maj+E)", en: "Get in edit mode here (or with Shift+E)"}
-																, {
-																	appearanceDelay: 400,
-																	containerStyle: {"position": "relative", "right": '500px'}, 
-																	notifStyle: {"min-width": '320px'}, 
-																}
-															),
-														);
-													}
-
-													if (this.viewMode == "compact") {
-														this.generalKeyboardEvents("tuto Shift+L Shift+D");
-
-														this.onGoingTutoTipNotifDivs.push(
-															new TutoTipNotif(this,
-																".view-toggle",
-																"#view-btn-detailed",
-																{fr: "Passe en vue détaillée ici (ou avec Maj+D)", en: "Get in edit mode here (or with Shift+D)"}
-																, {
-																	appearanceDelay: 400,
-																	containerStyle: {"position": "relative", "right": '140px', 'top': "-120px", "margin-left": "-8px"}, 
-																	notifStyle: {"min-width": '430px'}, 
-																	targetElemStyle: {"z-index": "12", "background": "#e5e5e5"}
-																}
-															),
-														);
-													}
-
-													this.generalKeyboardEvents("tuto Shift+L");
-
-													let newSem = "0";
-													Object.entries(this.semesters).forEach(entry => {
-														if (entry[1] != {} && entry[0] > newSem) {
-															newSem = entry[0];
-														}
-													})
-
-													this.currentSemester = newSem;
-
-													this.onGoingTutoTipNotifDivs.push(
-														new TutoTipNotif(this,
-															"#contentArea",
-															".drop-field.insert-field.module",
-															{fr: "Clique ici pour créer un module", en: "Click here to add a module"}
-															, {
-																appearanceDelay: 400,
-																containerStyle: {"position": "absolute"}, 
-																notifStyle: {"min-width": '320px'}, 
-																targetElemStyle: {"z-index": "12", "box-shadow": "0px 0px 17px 8px white", '--infinite-alternate-scale-up-scale': '103%'}
-															}
-														),
-													);
-
-												}
-
-												this.nextTipNotif();
-											}
+											actionCallback: tutoSimulation
 										},
 									]
 								}
@@ -4756,7 +4840,7 @@
 				 * 
 				 * If no element is left, uses the endCallback function instead.
 				 */
-				nextTipNotif(endCallback = this.stopTuto) {
+				nextTipNotif(endCallback = () => {this.stopTuto()}) {
 					if (this.onGoingTutoTipNotifDivs.length > 0) {
 						this.currentTutoTipNotif = this.onGoingTutoTipNotifDivs.shift();
 						this.currentTutoTipNotif.createTipNotifDiv();
@@ -4783,9 +4867,10 @@
 					document.querySelector(".tuto-lang-btn-toggle-container").onclick = null;
 					setTimeout(() => {document.querySelector(".tuto-lang-btn-toggle-container").remove()}, 500);
 
-					document.body.onclick = null;
+					document.body.onmousedown   = null;
+					document.body.onmouseup     = null;
 
-					this.currentTutoTipNotif.dismissTipNotifDiv();
+					this.currentTutoTipNotif?.dismissTipNotifDiv();
 					this.currentTutoTipNotif = null;
 
 					ecamDash.generalKeyboardEvents();
@@ -5017,7 +5102,7 @@
 					}
 
 					attachAllAnyInputsListeners(container=document) {
-						if (container instanceof HTMLElement || container == document) {
+						if (container instanceof Node || container == document) {
 							container.querySelectorAll(".any-input").forEach(input => {
 								this.attachAnyInputListeners(input)
 							})
@@ -5280,7 +5365,7 @@
 					}
 
 					attachAllNewGradesSubjectCardsListener(container=document) {
-						if (container instanceof HTMLElement || container instanceof HTMLDocument) {
+						if (container instanceof Node || container instanceof HTMLDocument) {
 							container.querySelectorAll(".new-grades-subject-card").forEach(card => {   // Scroll to the corresponding subject/grade on which the user clicked
 								this.attachNewGradesSubjectCardsListener(card);
 							})
@@ -5288,7 +5373,7 @@
 					}
 
 					attachNewGradesSubjectCardsListener(card) {
-						if (card instanceof HTMLElement && card.classList.contains("new-grades-subject-card")) {
+						if (card instanceof Node && card.classList.contains("new-grades-subject-card")) {
 							card.onclick = (e) => {
 								if (e.target.dataset.semester) this.changeSemester(e.target.dataset.semester);
 								
@@ -5370,7 +5455,7 @@
 							this.attachNotifScrollBtnListener(notifDiv.querySelector(".selected-card-notif-div-scroll-btn"));
 						}
 						else {
-							const validContainer = notifDiv instanceof HTMLElement || notifDiv instanceof HTMLDocument ? notifDiv : document;
+							const validContainer = notifDiv instanceof Node || notifDiv instanceof HTMLDocument ? notifDiv : document;
 							validContainer.querySelectorAll(".selected-card-notif-div-del-btn").forEach(delBtn => {
 								this.attachNotifDelBtnListener(delBtn);
 							})
@@ -5863,7 +5948,7 @@
 					// MARK: -toggle module card folding
 					/** Call this method to switch all Module cards' state between folded and unfolded 
 					 * 
-					 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module card HTML Element or an event triggered by a module card
+					 * @param {Node | Event} trigger The trigger of the folding action. Can be a module card HTML Element or an event triggered by a module card
 					 * @param {Boolean} [hideOtherSubjectInsertionFields = false] Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
 					 * @param {Boolean} [hideAdjacentModuleInsertionFields = false] Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
 					 * @param {Boolean} [bypassFoldedModuleCardsId = false] Default: false — Destined to control whether the folded module card ID's addition to/deletion from this.foldedModuleCardsId will be bypassed (if true) or not (if false)
@@ -5875,7 +5960,7 @@
 					}
 					/** Call this method to switch a module card's state between folded and unfolded 
 					 * 
-					 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module card HTML Element or an event triggered by a module card
+					 * @param {Node | Event} trigger The trigger of the folding action. Can be a module card HTML Element or an event triggered by a module card
 					 * @param {Boolean} [hideOtherSubjectInsertionFields = false] Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
 					 * @param {Boolean} [hideAdjacentModuleInsertionFields = false] Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
 					 * @param {Boolean} [bypassFoldedModuleCardsId = false] Default: false — Destined to control whether the folded module card ID's addition to/deletion from this.foldedModuleCardsId will be bypassed (if true) or not (if false)
@@ -5895,7 +5980,7 @@
 					// MARK: -fold module card
 					/** Call this method to fold all module cards 
 					 * 
-					 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module card HTML Element or an event triggered by a module card
+					 * @param {Node | Event} trigger The trigger of the folding action. Can be a module card HTML Element or an event triggered by a module card
 					 * @param {Boolean} [hideOtherSubjectInsertionFields = false] Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
 					 * @param {Boolean} [hideAdjacentModuleInsertionFields = false] Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
 					 * @param {Boolean} [bypassFoldedModuleCardsId = false] Default: false — Destined to control whether the folded module card ID's addition to this.foldedModuleCardsId will be bypassed (if true) or not (if false)
@@ -5907,7 +5992,7 @@
 					}
 					/** Call this method to fold a module card
 					 * 
-					 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module card HTML Element or an event triggered by a module card
+					 * @param {Node | Event} trigger The trigger of the folding action. Can be a module card HTML Element or an event triggered by a module card
 					 * @param {Boolean} [hideOtherSubjectInsertionFields = false] Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
 					 * @param {Boolean} [hideAdjacentModuleInsertionFields = false] Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
 					 * @param {Boolean} [bypassFoldedModuleCardsId = false] Default: false — Destined to control whether the folded module card ID's addition to this.foldedModuleCardsId will be bypassed (if true) or not (if false)
@@ -5981,7 +6066,7 @@
 					// MARK: -unfold module card
 					/** Call this method to unfold all module cards
 					 * 
-					 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module card HTML Element or an event triggered by a module card
+					 * @param {Node | Event} trigger The trigger of the folding action. Can be a module card HTML Element or an event triggered by a module card
 					 * @param {Boolean} [hideOtherSubjectInsertionFields = false] Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be shown (if true) or not (if false)
 					 * @param {Boolean} [hideAdjacentModuleInsertionFields = false] Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
 					 * @param {Boolean} [bypassFoldedModuleCardsId = false] Default: false — Destined to control whether the unfolded module card ID's deletion from this.foldedModuleCardsId will be bypassed (if true) or not (if false)
@@ -5993,7 +6078,7 @@
 					}
 					/** Call this method to unfold a module card
 					 * 
-					 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module card HTML Element or an event triggered by a module card
+					 * @param {Node | Event} trigger The trigger of the folding action. Can be a module card HTML Element or an event triggered by a module card
 					 * @param {Boolean} [hideOtherSubjectInsertionFields = false] Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be shown (if true) or not (if false)
 					 * @param {Boolean} [hideAdjacentModuleInsertionFields = false] Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
 					 * @param {Boolean} [bypassFoldedModuleCardsId = false] Default: false — Destined to control whether the unfolded module card ID's deletion from this.foldedModuleCardsId will be bypassed (if true) or not (if false)
@@ -6073,7 +6158,7 @@
 					}
 
 					ensureAllModuleCardsFoldingState(container=document.body) {
-						if (container instanceof HTMLElement || container instanceof HTMLDocument) {
+						if (container instanceof Node || container instanceof HTMLDocument) {
 							container.querySelectorAll(".module-card").forEach(moduleCard => {
 								this.ensureModuleCardFoldingState(moduleCard);
 							})
@@ -6147,7 +6232,7 @@
 					}
 
 					moduleCardDeleteBtnAction(e) {
-						const moduleCard    = e instanceof Event ? e.target.closest(".module-card") : (e instanceof HTMLElement ? e : undefined);
+						const moduleCard    = e instanceof Event ? e.target.closest(".module-card") : (e instanceof Node ? e : undefined);
 						let sem             = moduleCard.dataset.semester; 
 						let moduleName      = moduleCard.dataset.module;
 
@@ -6232,11 +6317,11 @@
 
 
 					/** Toggles the folding of all the subject cards inside the given container
-					 * @param {HTMLElement} [container=document.body] Default: document.body — The HTML element containing the subject cards whose fold mode will be toggled
+					 * @param {Node} [container=document.body] Default: document.body — The HTML element containing the subject cards whose fold mode will be toggled
 					 * @param {boolean} [smart=true] Default: true — If true, takes into consideration the current view mode to know if the subject card should be folded of unfolded. If false, simply toggle the folding mode.
 					 */
 					async toggleFoldAllSubjCards(container=document.body, smart=true, bypassFoldedSubjectCardId=false) {
-						if (container instanceof HTMLElement) {
+						if (container instanceof Node) {
 							if (smart) {
 								if (this.viewMode == "detailed") {
 									this.unfoldAllSubjCards(container, bypassFoldedSubjectCardId);
@@ -6258,7 +6343,7 @@
 						}
 					}
 					/** Toggles the folding of the given subject card
-					 * @param {HTMLElement} subjCard The subject cards whose fold mode will be toggled
+					 * @param {Node} subjCard The subject cards whose fold mode will be toggled
 					 */
 					async toggleFoldSubjCard(subjCard, bypassFoldedSubjectCardId=false) {
 						if (subjCard?.classList?.contains("detailed")) {
@@ -6271,17 +6356,17 @@
 
 					// MARK: fold subject card
 					/** Folds all the subject cards inside the given container
-					 * @param {HTMLElement} [container=document.body] The HTML element containing the subject cards to fold
+					 * @param {Node} [container=document.body] The HTML element containing the subject cards to fold
 					 */
 					async foldAllSubjCards(container=document.body, bypassFoldedSubjectCardId=false) {
-						if (container instanceof HTMLElement) {
+						if (container instanceof Node) {
 							(container.querySelectorAll(".subject-card.detailed") || []).forEach(detailedSubjCard => {
 								this.foldSubjCard(detailedSubjCard, bypassFoldedSubjectCardId);
 							})
 						}
 					}
 					/** Folds the given subject card
-					 * @param {HTMLElement} [subjCard] The subject card to fold
+					 * @param {Node} [subjCard] The subject card to fold
 					 */
 					async foldSubjCard(subjCard, bypassFoldedSubjectCardId=false) {
 						if (subjCard?.classList?.contains("subject-card")) {
@@ -6301,18 +6386,18 @@
 
 					// MARK: unfold subject card
 					/** Unfolds all the subject cards inside the given container
-					 * @param {HTMLElement} [container=document.body] The HTML element containing the subject cards to unfold
+					 * @param {Node} [container=document.body] The HTML element containing the subject cards to unfold
 					 * @param {Boolean} [bypassFoldedSubjectCardId=false] Default: false — If true, allows to bypass saving the unfolded subject card's id upon unfolding it
 					 */
 					async unfoldAllSubjCards(container=document.body, bypassFoldedSubjectCardId=false) {
-						if (container instanceof HTMLElement) {
+						if (container instanceof Node) {
 							(container.querySelectorAll(".subject-card.compact") || []).forEach(compactSubjCard => {
 								this.unfoldSubjCard(compactSubjCard, bypassFoldedSubjectCardId);
 							})
 						}
 					}
 					/** Unfolds the given subject card
-					 * @param {HTMLElement} [subjCard] The subject card to unfold
+					 * @param {Node} [subjCard] The subject card to unfold
 					 * @param {Boolean} [bypassFoldedSubjectCardId=false] Default: false — If true, allows to bypass removing the unfolded subject card's id from the saved folded subject cards' id upon unfolding it
 					 */
 					async unfoldSubjCard(subjCard, bypassFoldedSubjectCardId=false) {
@@ -6467,7 +6552,7 @@
 				//#region Grades
 
 					gradeCheckboxAction(target) {
-						if (target instanceof HTMLElement || target instanceof Event) {
+						if (target instanceof Node || target instanceof Event) {
 							const realTarget    = target instanceof Event ? target.target : target;
 							const semX          = realTarget.dataset.semester;
 							const moduleName    = realTarget.dataset.module;
@@ -6626,7 +6711,7 @@
 
 					// MARK: dragIconOnClickEvent
 					dragIconOnClickEvent(e, dontAddToSelection=false) {
-						const card                  = e?.target instanceof HTMLElement ? document.getElementById(e.target.dataset.targetid) : (e instanceof HTMLElement ? e : undefined);
+						const card                  = e?.target instanceof Node ? document.getElementById(e.target.dataset.targetid) : (e instanceof Node ? e : undefined);
 						const type                  = card.classList.contains("subject-card") ? "subject" : "module";
 						const dropFieldAdd          = document.querySelector(".drop-field.create-module");
 						const dropFieldAddHitbox    = document.querySelector(".drop-field-create-module-hitbox");
@@ -6743,11 +6828,11 @@
 				 * @example this.attachAllCardsOnDragEventListeners(document.querySelector("#container"))
 				 * @example this.attachAllCardsOnDragEventListeners(document.querySelector("#container"), false)
 				 * 
-				 * @param {HTMLElement} [container=document] Default: document — The container of the HTML Elements to attach the ondrag event listeners to
+				 * @param {Node} [container=document] Default: document — The container of the HTML Elements to attach the ondrag event listeners to
 				 * @param {Boolean} [descendants=true] Default: true — If true, also attaches the ondrag event listeners to all the descendance of the container. Otherwise, attaches the ondrag event listeners only to the direct children of the container
 				 */
 				attachAllCardsOnDragEventListeners(container=document, descendants=true) {
-					if (container instanceof HTMLElement || container == document) {
+					if (container instanceof Node || container == document) {
 
 						if (container?.classList?.contains("module-card-content") || container?.classList?.contains("module-details") || container?.classList?.contains("subject-card")) {
 							(container?.classList?.contains("subject-card") ? [container] : container.querySelectorAll(".subject-card") || []).forEach(subjectCard => {
@@ -6799,11 +6884,11 @@
 				 * @example this.detachAllCardsOnDragEventListeners(document.querySelector("#container"))
 				 * @example this.detachAllCardsOnDragEventListeners(document.querySelector("#container"), false)
 				 * 
-				 * @param {HTMLElement} [container=document] Default: document — The container of the HTML Elements to attach the ondrag event listeners to
+				 * @param {Node} [container=document] Default: document — The container of the HTML Elements to attach the ondrag event listeners to
 				 * @param {Boolean} [descendants=true] Default: true — If true, also attaches the ondrag event listeners to all the descendance of the container. Otherwise, attaches the ondrag event listeners only to the direct children of the container
 				 */
 				detachAllCardsOnDragEventListeners(container=document, descendants=true) {
-					if (container instanceof HTMLElement || container == document) {
+					if (container instanceof Node || container == document) {
 
 						if (container?.classList?.contains("module-card-content") || container?.classList?.contains("module-details") || container?.classList?.contains("subject-card")) {
 							(container?.classList?.contains("subject-card") ? [container] : container.querySelectorAll(".subject-card") || []).forEach(subjectCard => {
@@ -8027,7 +8112,7 @@
 				importFile.children[0].innerHTML   = !this.isLangEn ? "Importer fichier de configuration .json"   : "Import a .json configuration file";
 				importClear.innerHTML = !this.isLangEn ? "Effacer Config"   : "Clear Config";
 				importClear.title     = !this.isLangEn ? "Clique ici pour effacer ta configuration actuelle" : "Click here to clear your current configuration";
-				importOnline.children[1].innerHTML = !this.isLangEn ? "Obtenir fichier de configuration en ligne" : "Get a configuration file online";
+				importOnline.children[1].innerHTML = !this.isLangEn ? "Obtenir une configuration en ligne" : "Get a configuration online";
 				
 				if (!importMenu.classList.contains("show") || open == true) {
 					clearTimeout(this.timeouts?.closeImportMenu);
@@ -8407,41 +8492,12 @@
 						this.closeEveryModal();
 					}
 					else if (this.keyInputMatch(e, "E", shiftRequired) 	&& (mode == "general" || mode.match(/\bShift\+E\b/i))) {
-						
-						this.editMode = !this.editMode;
-						localStorage.setItem("ECAM_DASHBOARD_DEFAULT_EDIT_MODE", this.editMode);
-
-						this.foldedModuleCardsId = []; document.querySelector(".fold-toggle").classList.remove("active");
-						this.removeCardFromSelection();
-						this.scrollToClientHighestElem();
-						this.generateContent({manageIndividualCardFolding: false});
+						this.toggleEditMode();
+						if (this.currentTutoTipNotif?.optionalData?.actionCallback) this.currentTutoTipNotif?.optionalData?.actionCallback(this);
 					}
 					else if (this.keyInputMatch(e, "D", shiftRequired) 	&& (mode == "general" || mode.match(/\bShift\+D\b/i))) {
-						const unclassifiedSection = document.querySelector(".unclassified-section");
-						this.releaseElementHeight(unclassifiedSection);
-
-						this.viewMode = this.viewMode == "detailed" ? "compact" : "detailed";
-						if (this.viewMode == "detailed") {
-							document.querySelector("#view-btn-detailed").classList.add("active");
-							document.querySelector("#view-btn-compact").classList.remove("active");
-						}
-						else {
-							document.querySelector("#view-btn-detailed").classList.remove("active");
-							document.querySelector("#view-btn-compact").classList.add("active");
-						}
-
-
-						this.toggleFoldAllSubjCards();
-
-						this.saveViewMode();
-						this.scrollToClientHighestElem("first",
-							{className: "modules-section",      timeout: 101, smooth: false, margin: 20,                        highestElemInPageHandleType:"partial"}, 
-							{className: "module-card",          timeout: 101, smooth: false, margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"above"},
-							{className: "unclassified-section", timeout: 101, smooth: false, margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"partial"},
-							{className: "subject-card",         timeout: 101, smooth: false, margin: 10,                        highestElemInPageHandleType:"above"},
-						);
-
-						this.holdElementHeight(unclassifiedSection, 1000);
+						this.toggleViewMode();
+						if (this.currentTutoTipNotif?.optionalData?.actionCallback) this.currentTutoTipNotif?.optionalData?.actionCallback(this);
 					}
 					else if (this.keyInputMatch(e, "L", shiftRequired) 	&& (mode == "general" || mode.match(/\bShift\+L\b/i))) {
 						
@@ -8480,8 +8536,6 @@
 					}
 					else if (this.keyInputMatch(e, ["ArrowLeft", "ArrowRight"], shiftRequired) && (mode == "general" || mode.match(/\bShift\+(ArrowLeft\b|ArrowRight\b)/i))) {
 						const increment = e.key == "ArrowLeft" ? -1 : 1;
-						
-						
 						const newSem = (this.currentSemester + increment)%(document.querySelectorAll(".filter-tab").length);
 
 						this.changeSemester(newSem);
@@ -8516,11 +8570,11 @@
 							else if (e.target.classList.contains("sim-inp-coef")) {
 								const simAddBtn = document.querySelector(`.sim-add-btn[data-subj="${target.dataset.subj}"][data-semester="${target.dataset.semester}"]`);
 								
-								this.simGradeAddBtnAction(simAddBtn);
+
+								if (this.currentTutoTipNotif?.optionalData?.actionCallback) this.currentTutoTipNotif?.optionalData?.actionCallback(this)
+								else this.simGradeAddBtnAction(simAddBtn);
 								this.attachAllAnyInputsListeners();
 								this.generalKeyboardEvents("general");
-
-
 							}
 
 						}
@@ -8532,7 +8586,10 @@
 	}
 
 
+
 	//MARK: ——————————————————
+
+
 
 
 
@@ -8546,30 +8603,50 @@
 
 
 
+
 	//MARK: TutoTipNotif   ———————————
 	class TutoTipNotif {
 
 		/**
 		 * @param {ECAMDashboard} ecamDash
 		 * The ecam dashboard.
-		 * @param {HTMLElement | String} containerElem 
+		 * @param {Node | String} containerElem 
 		 * The element (or its query selector) that will contain this {@link TutoTipNotif TutoTipNotif}
-		 * @param {HTMLElement | String} targetElem 
+		 * @param {Node | String} targetElem 
 		 * The element (or its query selector) that is the target of this {@link TutoTipNotif TutoTipNotif} (clicking on it will move to the next {@link TutoTipNotif TutoTipNotif})
 		 * @param {{fr: String; en: String;}} tipNotifTexts 
 		 * An object with properties *fr* of value "theFrenchTextOfThis{@link TutoTipNotif TutoTipNotif}", and *en* of value "theEnglishTextOfThis{@link TutoTipNotif TutoTipNotif}"
-		 * @param {{ appearanceDelay: number; containerStyle: {}; notifStyle: {}; targetElemStyle: { "property": "value"; }; containerElemStyle: {}; buttonsContainer: { style: {}; texts: {fr: String; en: String}; buttons: [{style: {}; texts: {fr: String; en: String}; actionCallback: () => {}}] } }} optionalData
+		 * @param {{ 
+		 *  appearanceDelay: number, 
+		 *  containerStyle: {}, 
+		 *  notifStyle: {}, 
+		 *  targetElemStyle: { "property": "value" }, 
+		 *  containerElemStyle: {}, 
+		 *  initialAction: ()=>{}, 
+		 * 	nextTutoTipNotifCondition: ()=>{},
+		 *  actionCallback: ()=>{}, 
+		 *  additionalActionCallback: ()=>{}, 
+		 *  buttonsContainer: { 
+		 *      style: {}, 
+		 *      texts: {fr: String, en: String}, 
+		 *      buttons: [
+		 *          ...{style: {}, texts: {fr: String, en: String}, actionCallback: () => {}}
+		 *      ] 
+		 *  } 
+		 * }} optionalData
 		 * Optional data, containing:
 		 * - containerStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container of the tip notif `tipNotifContainer`
 		 * - notifStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the tip notif `tipNotif`
 		 * - targetElemStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the target element `targetElem` 
 		 * - containerElemStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container `containerElem`
 		 */
-		constructor(ecamDash, containerElem, targetElem, tipNotifTexts={fr: "", en: ""}, optionalData=
+		constructor(ecamDash, containerElem, targetElem=".tuto-tip-notif", tipNotifTexts={fr: "", en: ""}, optionalData=
 			//#region 
 			{
 				appearanceDelay: 320, 
 				targetElemStyle: {zIndex: "12"},
+				initialAction: () => {},
+				actionCallback: () => {this.dismissTipNotifDiv(containerElem, targetElem, optionalData); this.ecamDash.nextTipNotif();},
 			}
 			//#endregion
 		) {
@@ -8578,6 +8655,11 @@
 			this.targetElem    	= targetElem;
 			this.tipNotifTexts 	= tipNotifTexts;
 			this.optionalData  	= optionalData;
+
+			if (!this.optionalData.appearanceDelay) this.optionalData.appearanceDelay=320;
+			if (!this.optionalData.targetElemStyle) this.optionalData.targetElemStyle={zIndex: "12"};
+			if (!this.optionalData.initialAction)   this.optionalData.initialAction = () => {};
+			if (!this.optionalData.actionCallback)  this.optionalData.actionCallback = () => {this.dismissTipNotifDiv(containerElem, targetElem, optionalData); this.ecamDash.nextTipNotif();};
 		}
 
 
@@ -8617,18 +8699,20 @@
 			const tipNotifText = this.ecamDash.isLangEn ? this.tipNotifTexts.en : this.tipNotifTexts.fr;
 			const optionalData = Object.assign(this.optionalData, {...(optionalDataArg || {})});
 
-			if (targetElem instanceof HTMLElement || typeof targetElem == "string") { clearTimeout(this?.creationTimeout); this.creationTimeout = setTimeout(() => {
+			optionalData.initialAction(this.ecamDash);
+
+			if (targetElem instanceof Node || typeof targetElem == "string") { clearTimeout(this?.creationTimeout); this.creationTimeout = setTimeout(() => {
 
 				this.tutoTipNotifContainer = document.createElement("div");
 				(typeof containerElem == "string" ? document.querySelector(containerElem) : containerElem).appendChild(this.tutoTipNotifContainer);
 				this.tutoTipNotifContainer.className = "tuto-tip-notif-container";
-				this.tutoTipNotifContainer.id        = `this.tutoTipNotifContainer-for-${typeof targetElem == "string" ? `${targetElem}` : (targetElem.id ? "#"+targetElem.id : "."+targetElem.className)}`;
+				this.tutoTipNotifContainer.id        = `this.tutoTipNotifContainer-for-${typeof targetElem == "string" ? `${targetElem.replace(/\bAll\./, ".")}` : (targetElem.id ? "#"+targetElem.id : "."+targetElem.className)}`;
 				this.tutoTipNotifContainer.innerHTML = `
-					<div class="tuto-tip-notif jura" id="tutoTipNotif-for-${typeof targetElem == "string" ? `${targetElem}` : (targetElem.id ? "#"+targetElem.id : "."+targetElem.className)}">
+					<div class="tuto-tip-notif jura" id="tutoTipNotif-for-${typeof targetElem == "string" ? `${targetElem.replace(/\bAll\./, ".")}` : (targetElem.id ? "#"+targetElem.id : "."+targetElem.className)}">
 						${tipNotifText}
 					</div>
 				`;
-				/** @type {HTMLElement} */ const tutoTipNotif = this.tutoTipNotifContainer.querySelector(`.tuto-tip-notif`);
+				/** @type {Node} */ const tutoTipNotif = this.tutoTipNotifContainer.querySelector(`.tuto-tip-notif`);
 
 
 				Object.entries(optionalData.containerStyle || {})?.forEach(entry => {
@@ -8639,7 +8723,7 @@
 					tutoTipNotif.style.setProperty(entry[0], entry[1]);
 				});
 
-				(typeof targetElem == "string" ? document.querySelectorAll(targetElem) : [targetElem]).forEach(elem => {
+				(typeof targetElem == "string" ? (targetElem.match(/\bAll\./) ? document.querySelectorAll(targetElem.replace(/\bAll\./, ".")) : [document.querySelector(targetElem)]) : [targetElem]).forEach(elem => {
 					Object.entries(optionalData.targetElemStyle || {"z-index": "12"})?.forEach(entry => {
 						elem.style.setProperty(entry[0], entry[1]);
 					})
@@ -8658,20 +8742,29 @@
 				}, 10)
 
 				document.body.onmousedown = (e) => {
-					if (e.target.closest(`${typeof targetElem == "string" ? targetElem : (targetElem.id ? "#"+targetElem.id : "."+targetElem.className)}`)
+					if (e.target.closest(`${typeof targetElem == "string" ? targetElem.replace(/\bAll\./, ".") : (targetElem.id ? "#"+targetElem.id : "."+targetElem.className)}`)
 						&&
 						!e.target.closest(".tuto-tip-btns-container")
 					) {
 						document.body.onmouseup = (e) => {
-							this.dismissTipNotifDiv(containerElem, targetElem, optionalData); 
-							this.ecamDash.nextTipNotif();
-							document.body.onclick = null;
+							optionalData.actionCallback(this.ecamDash);
+							optionalData?.additionalActionCallback?.(this.ecamDash);
+
+							document.body.onmousedown   = null;
+							document.body.onmouseup     = null;
+							document.body.onmousemove   = null;
 						};
 						document.body.onmousemove = () => { document.body.onmouseup = null; };
 					}
 				};
 
-				if ((typeof targetElem == "string" ? document.querySelector(targetElem) : targetElem).getBoundingClientRect().y < 0 || (typeof targetElem == "string" ? document.querySelector(targetElem) : targetElem).getBoundingClientRect().y > window.innerHeight) {
+
+
+				if (
+					(typeof targetElem == "string" ? document.querySelector(targetElem.replace(/\bAll\./, ".")) : targetElem).getBoundingClientRect().y < 0 
+					|| 
+					(typeof targetElem == "string" ? document.querySelector(targetElem.replace(/\bAll\./, ".")) : targetElem).getBoundingClientRect().y > window.innerHeight
+				) {
 					this.ecamDash.scrollToClientHighestElem("first", {targetElem: typeof targetElem == "string" ? document.querySelector(targetElem) : targetElem, smooth: true, block: "center" });
 				}
 
@@ -8703,15 +8796,15 @@
 		 * this.dismissTipNotifDiv(".target(s)Class", "#containerId")
 		 * this.dismissTipNotifDiv(".target(s)Class", "#containerId", {targetElemStyle: {zIndex: "2"}, containerElemStyle: {zIndex:"1", background: transparent}})
 		 * 
-		 * @param {HTMLElement | String} containerElem The container or its CSS Selector to place the tip notif in (if CSS Selector is a class, take the first element matching the selector)
-		 * @param {HTMLElement | String} targetElem The element or the CSS Selector of the element.s that the tip notif is highlighting
+		 * @param {Node | String} containerElem The container or its CSS Selector to place the tip notif in (if CSS Selector is a class, take the first element matching the selector)
+		 * @param {Node | String} targetElem The element or the CSS Selector of the element.s that the tip notif is highlighting
 		 * @param {{ targetElemStyle: { zIndex: string; }; containerElemStyle: {}; }} [optionalData={targetElemStyle: {zIndex: "12"}, containerElemStyle: {}}]
 		 * Optional data containing:
 		 * - targetElemStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the target element `targetElem` 
 		 * - containerElemStyle — An object containing any number of entries in the format `stylePropName: "stylePropValue"`, to pass CSS Style attributes to the container `containerElem`
 		 */
 		async dismissTipNotifDiv(containerElem=this.containerElem, targetElem=this.targetElem, optionalData=this.optionalData) {
-			if (targetElem instanceof HTMLElement || typeof targetElem == "string") {
+			if (targetElem instanceof Node || typeof targetElem == "string") {
 				// undoing the style changes that occured when the tip text appeared, by taking the same style properties and removing its value by passing it an empty string
 				const undoStyleChanges = (styleObj) => {
 					return Object.fromEntries(Object.entries(styleObj).map(entry => {return [entry[0], ""]}))
@@ -8765,28 +8858,8 @@
 				containerElem.appendChild(this.buttonsContainer);
 			}
 		}
-
-
-
-		// MARK: regenerateTexts()
-		/**
-		 * Regenerates the texts inside the given HTML Element
-		 * @param {HTMLElement} containerTuto The HTML Element containing the whole tuto tip
-		 */
-		regenerateTexts(containerTuto=this.tutoTipNotifContainer) {
-			if (containerTuto.querySelector(".tuto-tip-notif")) 
-				containerTuto.querySelector(".tuto-tip-notif").innerHTML = this.tipNotifTexts[this.ecamDash.lang];
-
-			if (containerTuto.querySelector(".tuto-tip-btns-container-header" )	) 
-				containerTuto.querySelector(".tuto-tip-btns-container-header" ).innerHTML = this.optionalData?.buttonsContainer?.texts?.[this.ecamDash.lang] || "";
-
-			(this.optionalData?.buttonsContainer?.buttons || []).forEach((btnData, _index) => {
-				const btn = containerTuto.querySelector(`#tutoTipButton-number-${_index}`);
-				btn.innerHTML = btnData.texts[this.ecamDash.lang];
-			})
-		}
-
 	}
+
 
 
 	//MARK: ——————————————————
