@@ -326,15 +326,15 @@
 				.tuto-tip-btns-container 	{ display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; font-size: 28px; font-weight: 700; text-wrap-mode: nowrap; }
 				.tuto-tip-btns-container-header	{ display: flex; flex-direction: column; justify-content: center; align-items: center; text-wrap-mode: nowrap; width: 0; height: 0; }	
 				.tuto-tip-btns-body				{ display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px 10px; gap: 20px; overflow-x: visible; overflow-y: auto; }	
-				.tuto-tip-btn						{ display: flex; jusitfy-content: center; align-items: center; padding: 10px; outline: 2px solid white; border-radius: 10px; background: linear-gradient( #5334ff75 0%, #7a62ff75 100%); color: white; font-size: 26px; font-weight: 700; text-wrap-mode: nowrap; cursor: pointer; animation: none; animation-play-state: paused; transition: all 0.2s ease; }
+				.tuto-tip-btn						{ display: flex; justify-content: center; align-items: center; padding: 15px; outline: 2px solid white; border-radius: 10px; background: linear-gradient( #5334ff75 0%, #7a62ff75 100%); color: white; font-size: 26px; font-weight: 700; text-wrap-mode: nowrap; cursor: pointer; animation: none; animation-play-state: paused; transition: all 0.2s ease; }
 				.tuto-tip-btn:hover 				{ animation: focusBlinkAnimation 1s infinite alternate ease-in-out; transform: scale(101%); }
 
 				@keyframes focusBlinkAnimation  { from { filter: brightness(1); } to { filter: brightness(1.5) } }
 
-				.skip-tuto-btn          { display: flex; justify-content: center; align-items: center; padding: 10px; position: fixed; top: 20px; right: 20px; background: #4c84fde8; border-radius: 10px; color: white; font-size: 20px; text-decoration: underline; cursor: pointer; opacity: 0; z-index: 5000; transition: all 0.5s ease; }
+				.skip-tuto-btn          { display: flex; justify-content: center; align-items: center; padding: 10px; position: fixed; top: 45px; right: 20px; background: #4c84fde8; border-radius: 10px; color: white; font-size: 20px; text-decoration: underline; cursor: pointer; opacity: 0; z-index: 5000; transition: all 0.5s ease; }
 				.skip-tuto-btn::before      { content: "Skip tutorial"; }
 
-				.tuto-lang-btn-toggle-container	{ display: flex; justify-content: center; align-items: center; position: fixed; top: 26px; right: 200px; outline: 2px solid white; border-radius: 20px; width: 100px; height: 31px; overflow: clip; z-index: 12; opacity: 0; cursor: pointer; transition: all 0.5s ease; }
+				.tuto-lang-btn-toggle-container	{ display: flex; justify-content: center; align-items: center; position: fixed; top: 48px; right: 200px; outline: 2px solid white; border-radius: 20px; width: 100px; height: 31px; overflow: clip; z-index: 12; opacity: 0; cursor: pointer; transition: all 0.5s ease; }
 				.tuto-lang-btn-toggle		{ display: flex; justify-content: space-evenly; align-items: center; padding: 10px; position: relative; min-width: 170px; height: 31px; background: linear-gradient(90deg, #3636ffc5 20%, #8e38ffc5 80%); transform: translateX(0px); transition: all 0.2s ease; }
 				.tuto-lang-btn-toggle.fr	{ transform: translateX(35px);  }
 				.tuto-lang-btn-toggle.en	{ transform: translateX(-35px); }
@@ -713,7 +713,7 @@
 				.module-info-clear.disabled         {  }
 				.module-info-clear.sim              {  }
 
-				.module-card-header-right-side  { display: flex; justify-content: flex-end; align-items: center; width: 20%; gap: 6px; font-size: 19px; font-weight: 600; }
+				.module-card-header-right-side  { display: flex; justify-content: flex-end; align-items: center; width: 20%; gap: 6px; font-size: 19px; font-weight: 600; text-wrap-mode: nowrap; }
 				.module-class-average               { display: flex; justify-content: flex-end; align-items: center; width: 80px; font-size: 17px; }
 				.module-average                     { display: flex; justify-content: flex-end; align-items: center; font-size: 26px; font-weight: 800; }
 				.module-average.good                { color: #10b981; }
@@ -1011,10 +1011,6 @@
 
 
 
-
-
-
-
 	//#region init css
 		// Initializing the CSS style and checking for error before creating the dashboard
 		const styleSheet = document.createElement("style");
@@ -1042,7 +1038,7 @@
 
 
 
-	//MARK: ECAMDashboard ——————————
+	//MARK: ECAMDashboard  =============
 	class ECAMDashboard {
 
 
@@ -1918,14 +1914,18 @@
 
 				// MARK: changeSemester()
 				/**
-				 * Changes the semester to the given semester Number
+				 * Changes the semester to the given semester Number, clear selection, clear folding data and regenerates the content
 				 * 
-				 * @param {int} sem The Number of the semester to change to
+				 * @param {int} sem The Number of the semester to change to (a negative integer `sem` means the `sem`th last semester)
+				 * @param {boolean} strict Controls the way the semester is considered. `true` means that a `sem` index equal to -1 is the last semester that has a grade,`false` means that a `sem` index equal to -1 is the last semester in the semester filter tab
 				 */
-				changeSemester(sem=-1) {
-					if (sem < 0) {
+				changeSemester(sem=-1, strict=true) {
+					if (strict && sem < 0) {
 						// Filtering out all the semesters that don't have any real grade, then taking the semester at the given sem index
 						this.currentSemester = parseInt(Object.entries(this.semesters).filter(entry => Object.values(entry[1]).length > 0)?.at(sem)?.[0] || "0");
+					}
+					else if (!strict && sem < 0) {
+						this.currentSemester = Object.keys(this.semesters).length + parseInt(sem);
 					}
 					else this.currentSemester = parseInt(sem);
 					this.saveSemesterFilter();
@@ -2177,8 +2177,8 @@
 
 								// Checking the case where there are no grades in the unclassified subject (not possible tho, but oh well, error-proofing)
 								if (unclassifiedSubjectData.totalCoefEnabledGrades == 0 || unclassifiedSubjectData.totalCoefGrades == 0) {
-									unclassifiedSubjectData.average  = " - ";
-									unclassifiedSubjectData.classAvg = " - ";
+									unclassifiedSubjectData.average  = " — ";
+									unclassifiedSubjectData.classAvg = " — ";
 
 									if (unclassifiedSubjectData.totalCoefEnabledGrades == 0) {
 										unclassifiedData.subjectsNoEnabledGrade.push(unclassifiedSubjectName);
@@ -2208,8 +2208,8 @@
 
 							// Checking if the unclassified subjects only has subject that don't have any enabled grades
 							if (unclassifiedData.subjectsNoEnabledGrade.length == Object.keys(unclassifiedData.subjects).length || unclassifiedData.subjectsNoGrade.length == Object.keys(unclassifiedData.subjects).length) {
-								unclassifiedData.average  = " - ";
-								unclassifiedData.classAvg = " - ";
+								unclassifiedData.average  = " — ";
+								unclassifiedData.classAvg = " — ";
 
 								if (unclassifiedData.subjectsNoGrade.length == Object.keys(unclassifiedData.subjects).length) semData.modulesNoGrade.push(unclassifiedData.moduleName);
 								if (unclassifiedData.subjectsNoEnabledGrade.length == Object.keys(unclassifiedData.subjects).length) semData.modulesNoEnabledGrade.push(unclassifiedData.moduleName);
@@ -2221,8 +2221,8 @@
 							}
 							// Error-proofing the average and classAvg calculations
 							if (isNaN(Number(unclassifiedData.average))) {
-								unclassifiedData.average  = " - ";
-								unclassifiedData.classAvg = " - ";
+								unclassifiedData.average  = " — ";
+								unclassifiedData.classAvg = " — ";
 							} 
 
 							// Scaling down + rounding the total coefs
@@ -2420,8 +2420,8 @@
 									
 									// "Nullyifing" the subject if no enabled grades (if there are grades) are here
 									if (subjectData.totalCoefEnabledGrades == 0 || subjectData.totalCoefGrades == 0) {
-										subjectData.average  = " - ";
-										subjectData.classAvg = " - ";
+										subjectData.average  = " — ";
+										subjectData.classAvg = " — ";
 										if (subjectData.totalCoefEnabledGrades == 0) {
 											moduleData.subjectsNoEnabledGrade.push(subjectName);
 											moduleData.coefSubjectsNoEnabledGrade  += parseInt(subjectData.coef);
@@ -2460,8 +2460,8 @@
 
 								// "Nullifying" the module if all its subjects don't have any enabled grade
 								if (moduleData.subjectsNoEnabledGrade.length == Object.keys(moduleData.subjects).length || moduleData.subjectsNoGrade.length == Object.keys(moduleData.subjects).length) {
-									moduleData.average  = " - ";
-									moduleData.classAvg = " - ";
+									moduleData.average  = " — ";
+									moduleData.classAvg = " — ";
 
 									if (moduleData.subjectsNoGrade.length == Object.keys(moduleData.subjects).length) semData.modulesNoGrade.push(moduleData.moduleName);
 									if (moduleData.subjectsNoEnabledGrade.length == Object.keys(moduleData.subjects).length) semData.modulesNoEnabledGrade.push(moduleData.moduleName);
@@ -2473,8 +2473,8 @@
 								}
 								// Error-proofing the averages
 								if (isNaN(Number(moduleData.average))) {
-									moduleData.average  = " - ";
-									moduleData.classAvg = " - ";
+									moduleData.average  = " — ";
+									moduleData.classAvg = " — ";
 								} 
 								else {
 									semData.average     += moduleData.average;
@@ -2505,8 +2505,8 @@
 						
 						// "Nullifying" the semester if every single one of its subjects has all its grades disabled
 						if (semData.modulesNoEnabledGrade.length == semData.nbModules) {
-							semData.average     = " - ";
-							semData.classAvg    = " - ";
+							semData.average     = " — ";
+							semData.classAvg    = " — ";
 						}
 						
 						if (!isNaN(Number(semData.average)) && Object.keys(semData["__#unclassified#__"].subjects).length < semData.nbSubjects) {
@@ -2515,8 +2515,8 @@
 						}
 
 						if (isNaN(Number(semData.average))) {
-							semData.average     = " - ";
-							semData.classAvg    = " - ";
+							semData.average     = " — ";
+							semData.classAvg    = " — ";
 						} 
 						
 						semData.totalCoefGrades                 = Math.floor(semData.totalCoefGrades);
@@ -3743,6 +3743,8 @@
 					
 					const contentArea = document.getElementById("contentArea");
 					contentArea.innerHTML = "";
+
+
 					semesterKeys.forEach(sem => {
 						const section = document.createElement("div");
 						contentArea.appendChild(section);
@@ -3763,8 +3765,8 @@
 									<div class="semester-averages ${avgColor}">
 										<span class="semester-average-symbol">${avgSymbol}</span>
 										<span class="semester-average">${semAvg}/20</span>
-										<span class="semester-class-average-vs-average jura" style="color: black${isNaN(semClassAvg) ? `; display: none` : ""}">vs</span>
-										<span class="semester-class-average" style="color: black; font-size: 15px${isNaN(semClassAvg) ? `; display: none` : ""}">${semClassAvg}/20</span>
+										<span class="semester-class-average-vs-average jura" style="color: black;">vs</span>
+										<span class="semester-class-average" style="color: black; font-size: 15px">${isNaN(semClassAvg) ? " — " : semClassAvg}/20</span>
 									</div>
 								</div>
 							<div class="semester-toggle open fold-icon">△</div>
@@ -3772,8 +3774,21 @@
 						section.innerHTML += `
 						<div class="semester-content show${this.selectedSubjectCardsId.length > 0 || this.selectedModuleCardsId.length > 0 ? " dragging" : ""}${this.editMode ? " edit" : ""}${fadeIn ? " fade-in" : ""}" id="sem-content-${sem}">
 							<div class="semester-body">
-								<div class="modules-section ${this.editMode ? "edit" : ""}" id="modules-section" ${moduleConfig?.__modules__ && !this.editMode ? "" : "style=\"margin: -20px 0px;\""}>
-									${Object.values(this.semesters[sem]).length > 0 ? this.createAllModuleCards(sem, manageIndividualCardFolding) : `<div class="jura">Nothing to show here!</div>`}
+								<div class="modules-section ${this.editMode ? "edit" : ""}" id="modules-section" ${moduleConfig?.__modules__ && !this.editMode ? "" : "style=\"/* margin: -20px 0px;*/\""}>
+									${Object.values(this.semesters[sem]).length == 0 && Object.keys(this.moduleConfig?.[sem] || {}).length == 0
+										? (this.isLangEn 
+											? `<div class="jura" style="font-size: 30px;">Nothing to see here!${this.editMode 
+												? "... unless?..." 
+												: ""
+											}</div>` 
+											: `<div class="jura" style="font-size: 30px;">Rien à voir ici !${this.editMode 
+												? "... à moins que ?..." 
+												: ""
+											}</div>` 
+										)
+										: ``
+									}
+									${this.createAllModuleCards(sem, manageIndividualCardFolding)}
 								</div>
 								<div class="unclassified-section" id="unclassified-section" style="${unclassifiedLength > 0 ? `` : `; display: none`}">
 									<div class="unclassified-title jura">
@@ -3793,14 +3808,6 @@
 					this.setGradesTableTotalCoef();
 					this.attachAllEventListeners();
 
-					if (document.body.clientHeight > document.body.offsetHeight) {
-						// Semester has been collapsed, and now the page is tinier than the window, and i want to avoid the slider to offset the page. Only useful in Backup mode
-						this.ecamDash.style.paddingRight = "10px";
-					}
-					else {
-						this.ecamDash.style.paddingRight = "";
-					}
-
 				}
 
 
@@ -3812,7 +3819,7 @@
 
 					let html =  this.editMode ? this.createDropFieldInsertionField("module", {sem, index:0}) : "";
 
-					moduleConfig?.__modules__?.forEach((moduleName, moduleIndex) => {
+					(moduleConfig?.__modules__ || [])?.forEach((moduleName, moduleIndex) => {
 						html += this.createModuleCard(sem, moduleName, moduleIndex, manageIndividualCardFolding);
 						html += this.editMode ? this.createDropFieldInsertionField("module", {sem, index:moduleIndex+1}) : "";
 					});
@@ -3858,8 +3865,8 @@
 							</div>
 							<div class="module-card-header-right-side">
 								<div style="display: flex; justify-content: flex-end; align-items: baseline; gap: 6px;">
-									<div class="module-class-average" ${isNaN(average) ? `style="display: none"` : ""}>${classAvg}/20</div>
-									<div class="module-class-average-vs-average jura" ${isNaN(average) ? `style="display: none"` : ""}>vs</div>
+									<div class="module-class-average">${isNaN(classAvg) ? " — " : classAvg}/20</div>
+									<div class="module-class-average-vs-average jura">vs</div>
 									<div class="module-average ${isNaN(average) ? "unknown" : `${average >= 10 ? 'good' : 'bad'}`}" data-semester="${sem}" data-module="${moduleName}">${average}/20</div>
 								</div>
 								<div class="module-toggle fold-icon open">△</div>
@@ -3947,8 +3954,8 @@
 					const subjectData           = moduleData.subjects[subject];
 					const subjectGrades         = subjectData.grades;
 					const moduleMoy             = moduleData.average;
-					const subjAvg               = subjectData?.average >= 0 ? subjectData.average : " - ";
-					const subjClassAvg          = subjectData?.classAvg >= 0 && !isNaN(subjectData?.classAvg) ? subjectData.classAvg : " - ";
+					const subjAvg               = subjectData?.average >= 0 ? subjectData.average : " — ";
+					const subjClassAvg          = subjectData?.classAvg >= 0 && !isNaN(subjectData?.classAvg) ? subjectData.classAvg : " — ";
 					const pct                   = subjectData.coef;
 					const isCustom              = subjectData.isCustom;
 					const nbGrades              = subjectGrades.length;
@@ -3959,14 +3966,14 @@
 					const subjectCardId         = `subject-card-semester-${sem}-subject-${subject}`;
 					const cardIsSelected        = this.selectedSubjectCardsId.includes(`subject-card-semester-${sem}-subject-${subject}`);
 					const detailed              = 
-						(this.detailedSubjCardsId.includes(subjectCardId) && !this.compactSubjCardsId.includes(subjectCardId) && manageIndividualCardFolding) 
+						(!this.compactSubjCardsId.includes(subjectCardId) && manageIndividualCardFolding) 
 						|| 
 						(this.viewMode == "detailed" && !manageIndividualCardFolding)
 					;
 					
 					if (!manageIndividualCardFolding) {
-						if (detailed)   {this.detailedSubjCardsId.push(subjectCardId); this.compactSubjCardsId.splice(this.compactSubjCardsId.indexOf(subjectCardId), 1)} 
-						else            {this.compactSubjCardsId.push(subjectCardId); this.detailedSubjCardsId.splice(this.detailedSubjCardsId.indexOf(subjectCardId), 1)}
+						if (detailed)   {this.detailedSubjCardsId.push(subjectCardId); this.compactSubjCardsId .splice(this.compactSubjCardsId .indexOf(subjectCardId), 1)} 
+						else            {this.compactSubjCardsId .push(subjectCardId); this.detailedSubjCardsId.splice(this.detailedSubjCardsId.indexOf(subjectCardId), 1)}
 					}
 
 					let html = `
@@ -4028,8 +4035,8 @@
 							</div>
 							<div class="subject-card-header-right-side">
 								<div style="display: flex; justify-content: flex-end; align-items: baseline; gap: 4px;">
-									<div class="subj-class-average" ${isNaN(subjClassAvg) ? `style="display: none"` : ""}>${subjClassAvg}</div>
-									<div class="subj-class-average-vs-average jura" ${isNaN(subjClassAvg) ? `style="display: none"` : ""}>vs</div>
+									<div class="subj-class-average">${isNaN(subjClassAvg) ? " — " : subjClassAvg}</div>
+									<div class="subj-class-average-vs-average jura">vs</div>
 									<div class="subj-average ${isNaN(subjAvg) ? '' : `${subjAvg>=10 ? 'good' : 'bad'}`}">${subjAvg}/20</div>
 								</div>
 								<button class="subject-delete-btn" id="subject-delete-btn-${subject}-${moduleName}-in-semester-${sem}" title="${!this.isLangEn ? "Enlever cette matière" : "Remove this subject"}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" data-targetid="${subjectCardId}" style="border-width: 3px;${this.editMode && classified ? "" : " display: none;"}">🗑️</button>
@@ -4625,10 +4632,11 @@
 								en: "Click here to import a module configuration",
 							}
 							, {
-								appearanceDelay: 400,
+								appearanceDelay: 200,
 								containerStyle: {"top": "-25px", "right": "200px"}, 
 								notifStyle: {"min-width": "330px"}, 
-								containerElemStyle: {}
+								containerElemStyle: {},
+								targetElemStyle: {"z-index": "12"},
 							}
 						),
 						new TutoTipNotif(this,
@@ -4639,10 +4647,17 @@
 								en: "Click here to obtain a configuration already available online",
 							}
 							, {
-								appearanceDelay: 400,
+								appearanceDelay: 200,
 								containerStyle: {"top": "175px", "right": "110px"}, 
 								notifStyle: {"min-width": "260px"}, 
-								containerElemStyle: {zIndex: "unset"}
+								containerElemStyle: {zIndex: "unset"},
+								targetElemStyle: {"z-index": "12"},
+								initialAction() {setTimeout(() => {
+									document.querySelector("#importMenu").style.zIndex = "12"; 
+									document.querySelector(".import-menu-btn.file").onclick = null;
+									document.querySelector(".import-menu-btn.clear").onclick = null;
+								}, 1)},
+								actionCallback(board) {document.querySelector("#importMenu").style.zIndex = ""; board.attachImportMenuBtnsEvents(); board.nextTipNotif()}
 							}
 						),
 						new TutoTipNotif(this,
@@ -4653,7 +4668,7 @@
 								en: "Navigate through the menu to find the configuration that corresponds to your current section → year → prom [→ pathway, if needed]",
 							}
 							, {
-								appearanceDelay: 550, 
+								appearanceDelay: 10, 
 								containerStyle: {"position": "absolute", "width": "100%", "top": "-76px", "right": "0"}, 
 								notifStyle: {"min-width": "1040px"}, 
 								targetElemStyle: {}, 
@@ -4672,7 +4687,7 @@
 									<div>[ Click to close the tuto ]</div>`,
 							}
 							, {
-								appearanceDelay: 1, 
+								appearanceDelay: 200, 
 								containerStyle: {"position": "fixed", "width": "100%", "height": "100%", "top": "0"}, 
 								notifStyle: {"max-width": "60%"}, 
 								targetElemStyle: {}, 
@@ -4694,8 +4709,9 @@
 
 					const tutoSimulation = () => {
 
-						if (this.grades.length > 0) {
+						if (this.grades.length == 0) {
 
+							// MARK: .   no grade!
 							this.onGoingTutoTipNotifDivs.push(
 								new TutoTipNotif(this,
 									document.body,
@@ -4714,6 +4730,7 @@
 								),
 							);
 
+							// MARK: .   get in edit mode
 							if (!this.editMode) this.onGoingTutoTipNotifDivs.push(
 								new TutoTipNotif(this,
 									".header-actions",
@@ -4724,7 +4741,23 @@
 										containerStyle: {"position": "relative", "right": '500px'}, 
 										notifStyle: {"min-width": '320px'}, 
 										targetElemStyle: {"z-index": "12"},
-										initialAction(board) {board.generalKeyboardEvents("tuto Shift+L Shift+E");}
+										initialAction(dash) {dash.generalKeyboardEvents("tuto Shift+L Shift+E");},
+										additionalActionCallback(dash) {dash.generalKeyboardEvents("tuto Shift+L");},
+									}
+								),
+							);
+
+							// MARK: .   create a module
+							this.onGoingTutoTipNotifDivs.push(
+								new TutoTipNotif(this,
+									"#contentArea",
+									".drop-field.insert-field.module",
+									{fr: "Commence par cliquer ici pour créer un module", en: "Start by click here to add a module"}
+									, {
+										appearanceDelay: 400,
+										containerStyle: {position: "relative", bottom: '-20px', marginBottom: "-24px"}, 
+										notifStyle: {minWidth: '320px'}, 
+										targetElemStyle: {zIndex: 12, background: '#bdb8ffb8', '--infinite-alternate-scale-up-scale': '103%'},
 									}
 								),
 							);
@@ -4741,16 +4774,13 @@
 									containerStyle: {"position": "relative", "right": '140px', 'top': "-120px", "margin-left": "-8px"}, 
 									notifStyle: {"min-width": '430px'}, 
 									targetElemStyle: {"z-index": "12", "background": "#e5e5e5"},
-										initialAction(board) {board.generalKeyboardEvents("tuto Shift+L Shift+D");}
+									initialAction(dash) {dash.generalKeyboardEvents("tuto Shift+L Shift+D");},
+									additionalActionCallback(dash) {dash.generalKeyboardEvents("tuto Shift+L");},
 								}
 							)
 						);
 
 
-						this.generalKeyboardEvents("tuto Shift+L");
-
-						this.changeSemester(-1);
-						
 						this.onGoingTutoTipNotifDivs.push(
 							new TutoTipNotif(this,
 								".simulated-grade-addition-setup-row",
@@ -4762,9 +4792,8 @@
 									notifStyle:         {"min-width": '620px'}, 
 									targetElemStyle:    {"--infinite-alternate-scale-up-scale": "110%"},
 									containerElemStyle: {"position": "sticky", "z-index": "12", "box-shadow": "0px 0px 17px 8px white", '--infinite-alternate-scale-up-scale': '100%', "backdrop-filter": 'brightness(230%)'},
-									initialAction(/** @type {ECAMDashboard} */ board)     {document.querySelector(".subject-card").style.overflow = "visible"; board.generalKeyboardEvents("tuto Shift+L");},
-									actionCallback(/** @type {ECAMDashboard} */ dash) {dash.currentTutoTipNotif.dismissTipNotifDiv(); dash.nextTipNotif();},
-									additionalActionCallback(/** @type {ECAMDashboard} */ dash) {document.querySelector(".subject-card").style.overflow = ""; dash.simGradeAddBtnAction(document.querySelector(".btn-export.sim-add-btn"));}
+									initialAction(dash)     		{ dash.generalKeyboardEvents("tuto Shift+L"); dash.changeSemester(-1); document.querySelector(".subject-card").style.overflow = "visible"; },
+									additionalActionCallback(dash) 	{ document.querySelector(".subject-card").style.overflow = ""; dash.simGradeAddBtnAction(document.querySelector(".btn-export.sim-add-btn")); }
 								}
 							),
 						);
@@ -4777,7 +4806,7 @@
 								".tuto-tip-notif-container",
 								{
 									fr: "Et voilà ! Tu peux modifier les valeurs de la note simulée que tu as rentré quand tu veux !", 
-									en: "And that's it! You can modify the values of the simulated grades that you entered whenever you want!"
+									en: "That's it! You can modify the values of the simulated grades that you entered whenever you want!"
 								}
 								, {
 									appearanceDelay: 1, 
@@ -4842,6 +4871,7 @@
 				 */
 				nextTipNotif(endCallback = () => {this.stopTuto()}) {
 					if (this.onGoingTutoTipNotifDivs.length > 0) {
+						this.currentTutoTipNotif?.dismissTipNotifDiv();
 						this.currentTutoTipNotif = this.onGoingTutoTipNotifDivs.shift();
 						this.currentTutoTipNotif.createTipNotifDiv();
 					}
@@ -7186,11 +7216,11 @@
 					}
 
 					if (!selectionGoingOn) {
-						document.querySelector(".semester-content")                     .classList.add("dragging");
-						document.querySelector(".drop-field.create-module")             .classList.add("show");
-						document.querySelector(".drop-field.remove-from-module")        .classList.add("show");
-						document.querySelector(".drop-field-create-module-hitbox")      .classList.add("show");
-						document.querySelector(".drop-field-remove-from-module-hitbox") .classList.add("show");
+						document.querySelector(".semester-content")					.classList.add("dragging");
+						document.querySelector(".drop-field.create-module")				.classList.add("show");
+						document.querySelector(".drop-field.remove-from-module")		.classList.add("show");
+						document.querySelector(".drop-field-create-module-hitbox")		.classList.add("show");
+						document.querySelector(".drop-field-remove-from-module-hitbox")	.classList.add("show");
 						// Making sure there's no remaining hover class
 						document.querySelector(".drop-field.create-module")             .classList.remove("hover");
 						document.querySelector(".drop-field-create-module-text.top")    .classList.remove("hover");
@@ -7302,7 +7332,7 @@
 					}
 
 					if (!selectionGoingOn) {
-						document.querySelector(".semester-content")                     .classList.remove("dragging");
+						document.querySelector(".semester-content")               	.classList.remove("dragging");
 						document.querySelector(".drop-field.create-module")             .classList.remove("show");
 						document.querySelector(".drop-field-create-module-hitbox")      .classList.remove("show");
 						document.querySelector(".drop-field.remove-from-module")        .classList.remove("show");
@@ -8117,21 +8147,8 @@
 				if (!importMenu.classList.contains("show") || open == true) {
 					clearTimeout(this.timeouts?.closeImportMenu);
 					importMenu.style.display = "";
+					this.attachImportMenuBtnsEvents();
 					setTimeout(() => {importMenu.classList.add("show")}, 10)
-					importFile.onclick   = () => this.importData();
-					importClear.onclick  = () => {
-						this.moduleConfig = {}; 
-						this.compactSubjCardsId = []; 
-						this.detailedSubjCardsId = [];
-						this.foldedModuleCardsId = []; 
-						this.getGradesDatas(); 
-						this.saveConfig(); 
-						this.generateContent({fadeIn: false});
-					};
-					importOnline.onclick = () => {
-						if (this.onlineConfigs)
-						this.getConfigsFromRepoAPI(this.repoContentsAPI)
-					};
 				}
 				else if (importMenu.classList.contains("show") || open == false) {
 					importMenu.classList.remove("show");
@@ -8140,6 +8157,24 @@
 					importOnline.onclick = null;
 					this.timeouts.closeImportMenu = setTimeout(() => {importMenu.style.display = "none"}, 300);
 				}
+			}
+
+			attachImportMenuBtnsEvents() {
+				const importFile    = importMenu.querySelector(".import-menu-btn.file");
+				const importClear   = importMenu.querySelector(".import-menu-btn.clear");
+				const importOnline  = importMenu.querySelector(".import-menu-btn.online");
+
+				importFile.onclick   = () => this.importData();
+				importClear.onclick  = () => {
+					this.moduleConfig = {}; 
+					this.compactSubjCardsId = []; 
+					this.detailedSubjCardsId = [];
+					this.foldedModuleCardsId = []; 
+					this.getGradesDatas(); 
+					this.saveConfig(); 
+					this.generateContent({fadeIn: false});
+				};
+				importOnline.onclick = () => this.getConfigsFromRepoAPI(this.repoContentsAPI);
 			}
 
 			openOnlineCfgPickerModal(closeOtherModals=true) {
@@ -8380,7 +8415,7 @@
 										this.currentSemester = parseInt(semX);
 										this.moduleConfig[semX] = parsed.moduleConfig[semX];
 									})
-									this.changeSemester(this.currentSemester);
+									this.getGradesDatas();
 								} catch (e) {
 									// ignore storage errors
 								}
@@ -8398,10 +8433,10 @@
 								this.closeOnlineCfgPickerModal();
 								
 								this.timeouts.closePickerMenu = setTimeout(() => {
-									this.removeCardFromSelection(); 
 									this.getGradesDatas();
-									this.generateContent({fadeIn: false}); 
+									this.changeSemester(this.currentSemester);
 									this.scrollToClientHighestElem("", {id: "dash-header", margin: 10, smooth: true});
+									this.saveConfig();
 								}, 300); 
 							} catch (e) {}
 
@@ -8569,9 +8604,8 @@
 							}
 							else if (e.target.classList.contains("sim-inp-coef")) {
 								const simAddBtn = document.querySelector(`.sim-add-btn[data-subj="${target.dataset.subj}"][data-semester="${target.dataset.semester}"]`);
-								
 
-								if (this.currentTutoTipNotif?.optionalData?.actionCallback) this.currentTutoTipNotif?.optionalData?.actionCallback(this)
+								if (this.currentTutoTipNotif?.optionalData?.actionCallback) {this.simGradeAddBtnAction(simAddBtn); this.currentTutoTipNotif?.optionalData?.actionCallback(this);}
 								else this.simGradeAddBtnAction(simAddBtn);
 								this.attachAllAnyInputsListeners();
 								this.generalKeyboardEvents("general");
@@ -8604,7 +8638,7 @@
 
 
 
-	//MARK: TutoTipNotif   ———————————
+	//MARK: TutoTipNotif  ================
 	class TutoTipNotif {
 
 		/**
@@ -8618,19 +8652,24 @@
 		 * An object with properties *fr* of value "theFrenchTextOfThis{@link TutoTipNotif TutoTipNotif}", and *en* of value "theEnglishTextOfThis{@link TutoTipNotif TutoTipNotif}"
 		 * @param {{ 
 		 *  appearanceDelay: number, 
-		 *  containerStyle: {}, 
-		 *  notifStyle: {}, 
-		 *  targetElemStyle: { "property": "value" }, 
-		 *  containerElemStyle: {}, 
-		 *  initialAction: ()=>{}, 
-		 * 	nextTutoTipNotifCondition: ()=>{},
-		 *  actionCallback: ()=>{}, 
-		 *  additionalActionCallback: ()=>{}, 
+		 *  containerStyle: 	{ "style-property": String; },
+		 *  notifStyle: 		{ "style-property": String; },
+		 *  targetElemStyle: 	{ "style-property": String; }, 
+		 *  containerElemStyle: { "style-property": String; }, 
+		 *  initialAction: 				( board: ECAMDashboard ) => {}, 
+		 *  actionCallback: 			( board: ECAMDashboard ) => {}, 
+		 *  additionalActionCallback: 	( board: ECAMDashboard ) => {}, 
 		 *  buttonsContainer: { 
-		 *      style: {}, 
+		 *      style: { "style-property": String; }, 
 		 *      texts: {fr: String, en: String}, 
 		 *      buttons: [
-		 *          ...{style: {}, texts: {fr: String, en: String}, actionCallback: () => {}}
+		 *          ...{
+		 * 				style: { "style-property": String; }, 
+		 * 				texts: {fr: String, en: String}, 
+		 * 				initialAction: 				( board: ECAMDashboard ) => {},
+		 * 				actionCallback: 			( board: ECAMDashboard ) => {},
+		 * 				additionalActionCallback: 	( board: ECAMDashboard ) => {},
+		 * 			}
 		 *      ] 
 		 *  } 
 		 * }} optionalData
@@ -8646,7 +8685,7 @@
 				appearanceDelay: 320, 
 				targetElemStyle: {zIndex: "12"},
 				initialAction: () => {},
-				actionCallback: () => {this.dismissTipNotifDiv(containerElem, targetElem, optionalData); this.ecamDash.nextTipNotif();},
+				actionCallback: () => {this.dismissTipNotifDiv(); this.ecamDash.nextTipNotif();},
 			}
 			//#endregion
 		) {
@@ -8659,7 +8698,7 @@
 			if (!this.optionalData.appearanceDelay) this.optionalData.appearanceDelay=320;
 			if (!this.optionalData.targetElemStyle) this.optionalData.targetElemStyle={zIndex: "12"};
 			if (!this.optionalData.initialAction)   this.optionalData.initialAction = () => {};
-			if (!this.optionalData.actionCallback)  this.optionalData.actionCallback = () => {this.dismissTipNotifDiv(containerElem, targetElem, optionalData); this.ecamDash.nextTipNotif();};
+			if (!this.optionalData.actionCallback)  this.optionalData.actionCallback = () => {this.dismissTipNotifDiv(); this.ecamDash.nextTipNotif();};
 		}
 
 
@@ -8838,7 +8877,7 @@
 		createButtons(containerElem=this.tutoTipNotifContainer, buttonsContainerData=this.optionalData.buttonsContainer || {}) {
 			if (Object.keys(buttonsContainerData).length > 0) {
 				this.buttonsContainer = document.createElement("div");
-				this.buttonsContainer.className = "tuto-tip-btns-container";
+				this.buttonsContainer.className = "tuto-tip-btns-container jura";
 				this.buttonsContainer.innerHTML = `
 					<div class="tuto-tip-btns-container-header">${buttonsContainerData.texts[this.ecamDash.lang]}</div>
 					<div class="tuto-tip-btns-body"></div>
@@ -8852,7 +8891,7 @@
 					btn.id = `tutoTipButton-number-${_index}`;
 					btn.innerHTML = btnData.texts[this.ecamDash.lang];
 					Object.assign(btn.style, {...(btnData.style || {})});
-					btn.onclick = () => {btnData.actionCallback(); this.dismissTipNotifDiv()};
+					btn.onclick = () => {btnData.actionCallback();};
 				})
 	
 				containerElem.appendChild(this.buttonsContainer);
