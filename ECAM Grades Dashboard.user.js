@@ -3920,9 +3920,9 @@
 								html +=
 									`<tr class="new-grades-table-grades" id="new-grade-${subject}-${grade.type}" data-subject="${subject}" data-type="${grade.type}" data-semester="${grade.semester}">
 										<td style="width: 25%;padding: 5px 5px 5px 10px;" data-subject="${subject}" data-semester="${grade.semester}">${grade.type}</td>
-										<td style="width: 9%;"><span class="grade-value grade-${ (grade.grade >= 10) ? 'good' : 'bad' }" data-subject="${subject}" data-semester="${grade.semester}">${grade.grade}/20</span></td>
+										<td style="width: 9%;"><span class="grade-value grade-${ (grade.grade >= 10) ? 'good' : 'bad' }" data-subject="${subject}" data-semester="${grade.semester}">${!isNaN(grade.grade) ? grade.grade : " — "}/20</span></td>
 										<td style="width: 8%;" data-subject="${subject}" data-semester="${grade.semester}">${grade.coef}%</td>
-										<td style="width: 8%;" data-subject="${subject}" data-semester="${grade.semester}">${grade.classAvg}/20</td>
+										<td style="width: 8%;" data-subject="${subject}" data-semester="${grade.semester}">${!isNaN(grade.classAvg) ? grade.classAvg : " — "}/20</td>
 										<td style="width: 10%;" class="grade-date" data-subject="${subject}" data-semester="${grade.semester}">${grade.date}</td>
 										<td style="width: 25%;font-size:12px;color: #999;" data-subject="${subject}" data-semester="${grade.semester}">${grade.prof}</td>
 									</tr>`;
@@ -4309,8 +4309,8 @@
 									</td>
 									<td class="grade-value grade-${gradeClass} grades-table-grade" data-sim="${gradeIsSim}">
 										${gradeIsSim
-											? `<input class="simulated-grade-input-edit sim-inp-grade any-input" style="width: 100%; max-width: 75px;" id="simulated-grade-input-grade-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" type="number" step="0.5" min="0" max="20" data-simid="${index-nbRealGrades}" data-modifType="grade" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" style="width:75px; height:25px" value="${grade.grade}"> /20`
-											: `${grade.grade}/20`
+											? `<input class="simulated-grade-input-edit sim-inp-grade any-input" style="width: 100%; max-width: 75px;" id="simulated-grade-input-grade-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" type="number" step="0.5" min="0" max="20" data-simid="${index-nbRealGrades}" data-modifType="grade" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" style="width:75px; height:25px" value="${!isNaN(grade.grade) ? grade.grade : " — "}"> /20`
+											: `${!isNaN(grade.grade) ? grade.grade : " — "}/20`
 										}
 									</td>
 									<td class="grades-table-coef" data-sim="${gradeIsSim}">
@@ -4322,7 +4322,7 @@
 									<td class="grades-table-classAvg" data-sim="${gradeIsSim}">
 										${gradeIsSim
 											? `<span style="width: 100%; display: flex; justify-content: center;"> — </span>`
-											: `${grade.classAvg}/20`
+											: `${!isNaN(grade.classAvg) ? grade.classAvg : " — "}/20`
 										}
 									</td>
 									<td class="grades-table-date grade-date" data-sim="${gradeIsSim}">
@@ -5008,12 +5008,12 @@
 								{fr: "Entre le nom, valeur et coef de la note que tu veux simuler, puis clique sur \"Ajouter\"", en: "Enter the name, value and coef of the grade you want to simulate, then click on \"Add\""}
 								, {
 									appearanceDelay: 400,
-									containerStyle:     {"position": "absolute", "top": '120px', "left": '20%'}, 
+									containerStyle:     {"position": "absolute", "top": '120px', "left": '400px'}, 
 									notifStyle:         {"min-width": '620px'}, 
 									targetElemStyle:    {"--infinite-alternate-scale-up-scale": "110%"},
 									containerElemStyle: {"position": "sticky", "z-index": "12", "box-shadow": "0px 0px 17px 8px white", '--infinite-alternate-scale-up-scale': '100%', "backdrop-filter": 'brightness(230%)'},
 									initialAction(dash)     		{ dash.generalKeyboardEvents("tuto Shift+L"); dash.changeSemester(-1); document.querySelector(".subject-card").style.overflow = "visible"; },
-									actionCallback(dash) 	{ document.querySelector(".subject-card").style.overflow = ""; dash.simGradeAddBtnAction(document.querySelector(".btn-export.sim-add-btn")); dash.nextTipNotif(); }
+									actionCallback(dash) 	{ document.querySelector(".subject-card").style.overflow = ""; dash.nextTipNotif(); }
 								}
 							),
 						);
@@ -6846,7 +6846,6 @@
 						const moduleName    = target.dataset.module;
 						const semX          = target.dataset.semester;
 						const subj          = target.dataset.subj;
-						this.ensureSimPath(semX, moduleName, subj);
 
 						const typeInp   = document.querySelector(`.simulated-grade-input.sim-inp-type[data-semester="${ semX}"][data-subj="${subj}"]`);
 						const gradeInp  = document.querySelector(`.simulated-grade-input.sim-inp-grade[data-semester="${semX}"][data-subj="${subj}"]`);
