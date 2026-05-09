@@ -1319,13 +1319,18 @@
 
 			//#region temp/internal data assessment
 
+				/** @type {String[]} */
 				this.selectedSubjectCardsId = [];
 				this.selectedSubjectCardsSortedByModule = {};
+				/** @type {String[]} */
 				this.selectedModuleCardsId = [];
 
+				/** @type {String[]} */
 				this.compactSubjCardsId = [];
+				/** @type {String[]} */
 				this.detailedSubjCardsId = [];
 
+				/** @type {String[]} */
 				this.foldedModuleCardsId = [];
 
 				/** @type {TutoTipNotif[]} */ this.onGoingTutoTipNotifDivs = [];
@@ -1877,7 +1882,7 @@
 				getElementHeightFromChildrenHeight(elem) {
 					if (!(elem instanceof HTMLElement)) return false;
 
-					return Array.from(elem.children).reduce((total, child) => {return parseInt(total?.offsetHeight || total) + parseInt(child.offsetHeight)})
+					return Array.from(elem.children).reduce((/** @type {HTMLElement} */ total, /** @type {HTMLElement} */ child) => {return parseInt(total?.offsetHeight || total) + parseInt(child.offsetHeight)})
 				}
 
 			//#endregion
