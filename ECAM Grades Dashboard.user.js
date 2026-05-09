@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECAM Grades Dashboard
-// @version      2.5.5
+// @version      2.6.0
 // @description  Enhances the ECAM intranet with a clean, real-time grades dashboard.
 // @author       Baptiste JACQUIN
 // @match        https://espace.ecam.fr/*
@@ -1052,7 +1052,7 @@
 
 			// IMPORTANT: SCRIPT VERSION, UPDATE IT FOR EVERY UPDATE, SHOULD MATCH THE USERSCRIPT HEADER'S VERSION NUMBER
 			/** @type {string} */
-			this.scriptVersion = "2.5.5";
+			this.scriptVersion = "2.6.0";
 			/** @type {string} */
 			this.scriptGitVersion = "1.0.0";
 			/** The version number expected from a configuration imported @type {number} */
@@ -3337,19 +3337,27 @@
 				xhttp.open("GET", this.repoScriptRaw, true); 
 				xhttp.send(); 
 				xhttp.onload = () => {
+					debugger;
 					this.scriptGitVersion = xhttp.response.match(/\/\/ @version( +)(\d+(\.\d+|\.|)+)/)[2].trim().split(".");
 					let newUpdate = false;
+					let hasAMoreRecentUpdate = false;
 					
 					if (this.scriptGitVersion.length > this.scriptVersion.trim().split(".").length) {
 						newUpdate = true;
 					}
-					else {
-						this.scriptGitVersion.forEach((versElem, versIndex) => {
-							if (!newUpdate && Number(versElem) > Number(this.scriptVersion.trim().split(".")?.[versIndex] || -1)) {
-								newUpdate = true;
-							}
-						})
-					}
+					else this.scriptGitVersion.forEach((versElem, versIndex) => {
+						// If the git script version has a version number element HIGHER than the current client's script, then we want to update (we stop the scan)
+						if ( !hasAMoreRecentUpdate && !newUpdate && ( Number(versElem) > Number(this.scriptVersion.trim().split(".")?.[versIndex] || -1) ) ) {
+							newUpdate = true;
+						}
+						// If the git script version has a version number element LOWER than the current client script's, then we keep the current script (we stop the scan)
+						else if ( !hasAMoreRecentUpdate && !newUpdate && ( Number(versElem) < Number(this.scriptVersion.trim().split(".")?.[versIndex] || -1) ) ) {
+							hasAMoreRecentUpdate = true;
+						}
+						// If the git script version has a version number element is the same as the current client script's, 
+						// then we move on to the next version number element (keep going with the scan)
+					})
+					
 					
 
 					if (newUpdate) {

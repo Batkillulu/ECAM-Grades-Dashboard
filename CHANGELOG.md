@@ -13,14 +13,14 @@
         - replace the text under "### Fix" with the description of the new fix performed
         - update the range of version numbers to ## What's new in v... - v[new version number] ?
         - add the fix's description line under "### Fixes", starting with (*v[new version number] fix*)
-    LASTELY, add a tag to the commit and update the release by simply adding the next line to the release note, and update the tag associated with 
+    LASTLY, add a tag to the commit and update the release by simply adding the next line to the release note, and update the tag associated with 
     the correct release title
     
     If it's an update:
         - add 2 <br/>'s above the last "## What's new in v[latest update]-v[latest fix]"
         - add "## What's new in v[new version number]" above the <br/>'s
         - give a full explanation of all the points concerned by the update, under 3 categories: "### Features", "### Improvements", and "### Fixes"
-    LASTELY, add a tag to the commit and create a new release, taking the previous release as a template
+    LASTLY, add a tag to the commit and create a new release, taking the previous release as a template
     
     If it's a major update: 
         - add "# PATCH NOTES v[new major update]" above the last "# PATCH NOTES v[latest major update]"
@@ -28,30 +28,55 @@
         - add "## What's new in v[new major update]" below the <br/>
         - give a full explanation of all the points concerned by the update, under 3 categories: "### Features", "### Improvements", and "### Fixes"
         - add 4 <br/>'s below the content of "## What's new in v[new major update]"
-    LASTELY, add a tag to the commit and create a new release, taking the previous release as a template
+    LASTLY, add a tag to the commit and create a new release, taking the previous release as a template
 
 
 -->
 
 
+
+
+
+<!-- MARK: v2.6 -->
+# PATCH NOTES v2.6
+
+<br>
+<br>
+
+## What's new in v2.6.0 ?
+
+### Features
+- **In-depth tutorial**: <br>
+A more complete tutorial has been added! It may be accessed through the `?` button positioned in the top right corner of the page, and then by clicking on the `Start tutorial ▶︎` button, you will have access to a menu of different aspect to get a tutorial on. For now (as of I write these release notes), there's only one option to get a tutorial on how to create a simulated grade (because that's kind of one of the main and easily accessible features of this dashboard), but more will be coming in future updates. Patience!
+
+
+### Fixes
+- small fix on the update checker that wasn't exactly doing what I wanted, though it was still working
+
+
+
+
+
+
+
+<br>                    <br>                    <br>                    <br>
+
+
+
+
+
 <!-- MARK: v2.5 -->
 # PATCH NOTES v2.5
 
-<br/>
-
-## NEW UPDATE: v2.5.5
-### Fix:
-Fixed the issue with the shortcuts not being properly recovered after focusing a field to enter text
-
-<br/>
-<br/>
+<br>
+<br>
 
 ## What's new in v2.5.0 - v2.5.5 ?
 
 ### Features
 - **First steps tutorial**: <br> 
 When you launch the extension for the first time since this update, you will be notified to click on the help menu button to access to the first steps tutorial. It will guide you through the dashboard for your first time, filing you in with the most basic informations. Honestly, following this SUPER LONG (4 steps) tutorial just the required amount of info to know how to use the extension. It doesn't cover all the features, just the bare minimum ones.<br>
-If you want more info... well wait for update v2.5.1 lol, I'll make a more in-depth tutorial to cover all the features of the dashboard, I'm procrastinating a bit on that one, it's been planned for a while, but yeah I'll get to it eventually
+If you want more info... well wait for update v2.6.0 lol, I'll make a more in-depth tutorial to cover all the features of the dashboard, I'm procrastinating a bit on that one, it's been planned for a while, but yeah I'll get to it eventually
 
 - **Class average**: <br>
 The class average for each subject, module and semester are now displayed. You can turn it off in the settings if you don't want to see them.
