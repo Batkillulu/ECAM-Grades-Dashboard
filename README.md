@@ -1,7 +1,9 @@
-# **ECAM Grades Dashboard** ( [*quick update userscript*](https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/ECAM%20Grades%20Dashboard.user.js) )
+# <p style="text-align:center; font-size:50px">**ECAM Grades Dashboard: GUIDE**</p>
+# <p style="text-align:center; font-size:20px">[*quick update userscript ↗*](https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/ECAM%20Grades%20Dashboard.user.js)</p>
 A browser userscript that enhances the ECAM intranet with a clean grades dashboard!  
+In this guide, clicking on blue text transports you to either an external link if it has a "↗" at the end, either to somewhere else in the guide if it has a "⤦" at the end.  
 [**HOW TO USE: Quick start ⤦**](#how-to-use-quick-start)
-
+<br><br><br>
 Free for individual student use.  
 Institutional use, official deployment, or integration into the ECAM intranet requires a commercial license.  
 This project is not affiliated with or endorsed by ECAM LaSalle.  
@@ -24,7 +26,7 @@ MARK: Installation guide
 # **Installation guide**
 ## *Available platforms*:
 ### [○ **Windows and Androids** ⤦](#-windows-and-androids--1)
-### [○ **IOS** ⤦](#-ios--1)
+### [○ **IOS (MAC & IPhone)** ⤦](#-ios-mac--iphone--)
 
 <br>
 
@@ -53,7 +55,7 @@ If you want to take the time to have a look at all the features of this dashboar
 
 <br>
 
-## ———— **IOS** ————
+## ———— **IOS (MAC & IPhone)** ————
 
 ### — Step 1: [Install *Userscripts* ↗](https://apps.apple.com/us/app/userscripts/id1463298887)
 It's a web browser extension that allows to run JavaScript scripts upon loading a specified website.
