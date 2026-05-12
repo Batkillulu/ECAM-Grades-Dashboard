@@ -1,5 +1,5 @@
-# <p style="text-align:center; font-size:50px">**ECAM Grades Dashboard: GUIDE**</p>
-# <p style="text-align:center; font-size:20px">[*quick update userscript ↗*](https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/ECAM%20Grades%20Dashboard.user.js)</p>
+# <p align="center">**ECAM Grades Dashboard: <br>GUIDE**</p>
+### <p align="center">[***Quick update*** ↗](https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/ECAM%20Grades%20Dashboard.user.js)</p>
 A browser userscript that enhances the ECAM intranet with a clean grades dashboard!  
 In this guide, clicking on blue text transports you to either an external link if it has a "↗" at the end, either to somewhere else in the guide if it has a "⤦" at the end.  
 [**HOW TO USE: Quick start ⤦**](#how-to-use-quick-start)
@@ -26,7 +26,7 @@ MARK: Installation guide
 # **Installation guide**
 ## *Available platforms*:
 ### [○ **Windows and Androids** ⤦](#-windows-and-androids--1)
-### [○ **IOS (MAC & IPhone)** ⤦](#-ios-mac--iphone--)
+### [○ **IOS (MAC & IPhone)** ⤦](#-ios-mac--iphone--1)
 
 <br>
 
