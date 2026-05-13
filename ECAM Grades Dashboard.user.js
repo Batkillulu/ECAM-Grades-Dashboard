@@ -3187,17 +3187,35 @@
 				 */
 				getCSSClassCoordInStyleSheet(_class="") {
 					let styleSheetIndex = -1, ruleIndex = -1;
-					Object.keys(document.styleSheets).reverse().forEach(_CSSStyleSheet => {
-						Object.keys(document.styleSheets[_CSSStyleSheet].cssRules).forEach(_CSSRule => {
-							if (document.styleSheets[_CSSStyleSheet].cssRules[_CSSRule].selectorText == _class) ruleIndex = _CSSRule, styleSheetIndex = _CSSStyleSheet;
+					try {
+						Object.values(document.styleSheets).forEach((_CSSStyleSheet, _styleSheetIndex) => {
+							try {
+								Object.values(_CSSStyleSheet.cssRules).forEach((_CSSRule, _ruleIndex) => {
+									try {
+										if (_CSSRule.selectorText == _class) ruleIndex = _ruleIndex, styleSheetIndex = _styleSheetIndex;
+									}
+									catch(e) {
+										console.warn(JSON.stringify(_CSSStyleSheet));
+										console.warn(JSON.stringify(_CSSRule));
+										console.warn(e);
+									}
+								})
+							}
+							catch(e) {
+								console.warn(JSON.stringify(_CSSStyleSheet))
+								console.warn(e);
+							}
 						})
-					})
-					return document.styleSheets[styleSheetIndex].cssRules[ruleIndex]
-				}
+					}
+					catch(e) {
+						console.warn(e);
+					}
+					return document?.styleSheets?.[styleSheetIndex]?.cssRules?.[ruleIndex] || null;
+				};
 
-				/** Removes the `nb` latest grade.s from the saved read grades
+				/** Removes the `nb` latest grade.s from the saved read grades 
 				 * 
-				 * @param {Number} nb Number of grades to remove from the saved read grades
+				 * @param {Number} [nb=1] Number of grades to remove from the saved read grades
 				 */
 				removeFirstGradesFromSavedReadGrades(nb=1) {
 					localStorage.setItem("ECAM_DASHBOARD_SAVED_READ_GRADES", JSON.stringify(JSON.parse(localStorage["ECAM_DASHBOARD_SAVED_READ_GRADES"]).toSpliced(0,nb)))
@@ -3337,7 +3355,6 @@
 				xhttp.open("GET", this.repoScriptRaw, true); 
 				xhttp.send(); 
 				xhttp.onload = () => {
-					debugger;
 					this.scriptGitVersion = xhttp.response.match(/\/\/ @version( +)(\d+(\.\d+|\.|)+)/)[2].trim().split(".");
 					let newUpdate = false;
 					let hasAMoreRecentUpdate = false;
