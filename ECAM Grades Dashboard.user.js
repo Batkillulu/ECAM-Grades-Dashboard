@@ -745,7 +745,7 @@
 			//#region -SUBJECT CARDS .....................................
 				styles += `
 
-					.subject-card               { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; height: 100%; min-height: 70px; position: relative; border-radius: 20px; outline: 4px solid #ffffffff; opacity: 100%; overflow: clip; transition: outline-color 0.3s ease, transform 0.3s ease, all 0.2s ease; }
+					.subject-card               { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; height: 100%; max-height: 100%; position: relative; border-radius: 20px; outline: 4px solid #ffffffff; opacity: 100%; overflow: clip; transition: outline-color 0.3s ease, transform 0.3s ease, all 0.2s ease; }
 					.subject-card.detailed      { }
 					.subject-card.compact       { }
 					.subject-card.scroll-to     { transform: scale(102%); outline-color: #5f77ff; border-color: #5f77ff; }

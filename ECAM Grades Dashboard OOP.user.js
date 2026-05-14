@@ -59,42 +59,50 @@
 
 class Grade {
 
-    /** Constructs a {@link Grade}.
+    /** 
+     * Constructs a {@link Grade}.
      * 
-     * @param {Number} grade 	Value of this {@link Grade}, a positive float number below 20.
-     * @param {Number} classAvg Value of the class' average of this {@link Grade}, a positive float number below 20.
-     * @param {Number} coef 	Value of the coefficient of this {@link Grade} in the subject, a positive float number below 100, as a %.
-     * @param {Number} semester Number of the semester corresponding to this {@link Grade}.
-     * @param {String} subject 	Subject of this {@link Grade}.
-     * @param {String} title 	Title of this {@link Grade} (default when no title was given: " — ").
-     * @param {String} prof 	Name of the teacher.s who published this {@link Grade} (default when no teacher was given: " — ").
-     * @param {String} date 	Date of publication of this {@link Grade} entered by the administration (default when no date was given: " — ").  ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet* @type {String}.
+     * @param {Number} grade        Value of _this_ {@link Grade}, a positive float number below 20.
+     * @param {Number} classAvg     Value of the class' average of _this_ {@link Grade}, a positive float number below 20.
+     * @param {Number} coef         Value of the coefficient of _this_ {@link Grade} in its {@link Subject}, a positive float number below 100, as a %.
+     * @param {Number} semester     Number of the {@link Semester} corresponding to _this_ {@link Grade}.
+     * @param {string} subject      Name of the {@link Subject} of _this_ {@link Grade}.
+     * @param {string} moduleName   Name of the {@link Module} of _this_ {@link Grade}.
+     * @param {string} title        Title of _this_ {@link Grade} (default when no title was given: " — ").
+     * @param {string} prof         Name of the teacher.s who published _this_ {@link Grade} (default when no teacher was given: " — ").
+     * @param {string} date         Date of publication of _this_ {@link Grade} entered by the administration (default when no date was given: " — ").  ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet* @type {String}.
      */
-    constructor(grade, coef, semester, subject, title=" — ", classAvg=" — ", prof=" — ", date=" — ") {
+    constructor(grade, coef=100, semester, subject, moduleName="__#unclassified#__", title=" — ", classAvg=" — ", prof=" — ", date=" — ") {
+
         /** Value of _this_ {@link Grade}, a positive float number below 20 @type {Number} */
-        this.grade		= ( grade <= 20 ? (grade >= 0 ? grade : 0) : 20 );
+        this.grade      = ( grade <= 20 ? (grade >= 0 ? grade : 0) : 20 );
 
         /** Value of the class' average of _this_ {@link Grade}, a positive float number below 20 @type {Number} */
-        this.classAvg	= (classAvg == " — " || isNaN(classAvg)) ? " — " : ( classAvg <= 20 ? (classAvg >= 0 ? classAvg : 0) : 20 );
+        this.classAvg   = (classAvg == " — " || isNaN(classAvg)) ? " — " : ( classAvg <= 20 ? (classAvg >= 0 ? classAvg : 0) : 20 );
         
-        /** Value of the coefficient of _this_ {@link Grade} in the subject, a positive float number below 100, in % @type {Number} */
-        this.coef		= coef <= 100 ? (coef >= 0 ? coef : 0) : 100;
+        /** Value of the coefficient of _this_ {@link Grade} in its {@link Subject}, a positive float number below 100, in % @type {Number} */
+        this.coef       = coef <= 100 ? (coef >= 0 ? coef : 0) : 100;
 
         /** Number of the semester corresponding to _this_ {@link Grade} @type {Number} */
-        this.semester	= semester;
+        this.semester   = typeof semester == "number" ? semester : (() => {throw new Error("Wrong 'semester' input type for class Grade")})();
 
-        /** Subject of _this_ {@link Grade} @type {String} */
-        this.subject	= subject;
+        /** Name of the {@link Module} of _this_ {@link Grade} @type {string} */
+        this.module     = typeof moduleName == "string" ? moduleName : (() => {throw new Error("Wrong 'moduleName' input type for class Grade")})();
 
-        /** Title of _this_ {@link Grade} (default when no title was given: " — ") @type {String} */
-        this.title		= title;
+        /** Name of the {@link Subject} of _this_ {@link Grade} @type {string} */
+        this.subject    = typeof subject == "string" ? subject : (() => {throw new Error("Wrong 'subject' input type for class Grade")})();
 
-        /** Name of the teacher.s who published _this_ {@link Grade} (default when no teacher was given: " — ") @type {String} */
-        this.prof		= prof;
+        /** Title of _this_ {@link Grade} (default when no title was given: " — ") @type {string} */
+        this.title      = title;
+
+        /** Name of the teacher.s who published _this_ {@link Grade} (default when no teacher was given: " — ") @type {string} */
+        this.prof       = prof;
 
         /** Date of publication of _this_ {@link Grade} entered by the administration (default when no date was given: " — ")  
-         * ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet* @type {String} */
-        this.date		= date;
+         * ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet* @type {string} */
+        this.date       = date;
+
+
 
 
         /** `true` if _this_ {@link Grade} was marked as read, `false` otherwise */
@@ -103,7 +111,8 @@ class Grade {
 
 
 
-    /** Verifies that _this_ {@link Grade} has the exact same informations as the given {@link Grade}
+    /** 
+     * Verifies that _this_ {@link Grade} has the exact same informations as the given {@link Grade}
      * 
      * @param {Grade} grade The {@link Grade} to compare with _this_ {@link Grade}
      * @returns `true` if _this_ {@link Grade} has the exact same informations as the given {@link Grade}, `false` otherwise
@@ -125,32 +134,81 @@ class Grade {
     }
 
 
-    /** Calculates the weighted average between all the given {@link Grade}s.
+    /** 
+     * Calculates the weighted average between all the given {@link Grade}s.
      * 
-     * @param  {...Grade} grades Any amount of {@link Grade}s to calculate the weighted average from
+     * @param  {...Grade} grades Any amount of {@link Grade}s to calculate the weighted average from.
      */
     static average(...grades) {
-        if (grades instanceof Array) if (grades.length == 1 && grades[0] instanceof Array) {
-            let validArrayOfGrades = true;
-            grades[0].forEach(grade => { if (!(grade instanceof Grade)) validArrayOfGrades = false; })
+        if (grades instanceof Array) {
+            let validArrayOfGrades = true, average = 0, totalCoef = 0;
 
-            return validArrayOfGrades;
+            (grades.length == 1 && grades[0] instanceof Array ? grades[0] : (grades || [])).forEach(grade => {
+                if (grade instanceof Grade) {
+                    average += grade.grade * grade.coef;
+                    totalCoef += grade.coef;
+                }
+                else validArrayOfGrades = false;
+            })
+
+            if (!validArrayOfGrades) return " — ";
+            else return average;
+
         }
-        return false;
+        return " — ";
     }
 
-};
+}
 
 
 class Subject {
 
     /**
+     * Constructs an object of class {@link Subject}
      * 
-     * @param {Grade[]} [grades=[]] Array of the {@link Grade}s in this {@link Subject}. Default value is `[]`.
+     * @param {string} name Name of _this_ {@link Subject}.
+     * @param {string} name Name of the {@link Module} of _this_ {@link Subject}. Default value is "\_\_#unclassified#\_\_".
+     * @param {number} coef Coefficient of _this_ {@link Subject} in its {@link Module}.
+     * @param {Grade[]} [grades=[]] Array of the {@link Grade}s in _this_ {@link Subject}. Default value is `[]`.
      */
-    constructor(name, grades=[], coef) {
-        /** Array of the {@link Grade}s in this {@link Subject}. Default value is `[]`. @type {Grade[]} */
+    constructor(name, coef=100, moduleName="__#unclassified#__", grades=[], semester=-1) {
+
+        /** Name of _this_ {@link Subject}. @type {String} */
+        this.name = name;
+
+        /** Coefficient of _this_ {@link Subject} in its {@link Module} */
+        this.coef = coef;
+
+        /** Array of the {@link Grade}s in _this_ {@link Subject}. Default value is `[]`. @type {Grade[]} */
         this.grades = grades;
+
+
+        this.module = moduleName;
+
+    }q
+
+}
+
+
+class Module {
+
+    /**
+     * Constructs an object of class {@link Module}
+     * 
+     * @param {string} name Name of _this_ {@link Module}.
+     * @param {Subject[]} [subjects=[new Subject("New Subject 1")]] Array of the {@link Subject}s in _this_ {@link Module}. Default value is `[new Subject("New Subject 1")]`.
+     */
+    constructor(name, subjects=[new Subject("New Subject 1")], semester=0) {
+
+        /** Name of _this_ {@link Module}. @type {String} */
+        this.name = name;
+
+        /** Array of the {@link Subject}s in _this_ {@link Module}. Default value is `[new Subject("New Subject 1")]`. @type {Subject[]} */
+        this.subjects = subjects;
+
+        /** Number of the semester of _this_ {@link Module} */
+        this.semester = semester < 1 ? subjects?.[0].semester : semester;
+
     }
 
 }
@@ -158,48 +216,6 @@ class Subject {
 
 window.Grade = Grade;
 window.Subject = Subject;
-
-/**
- * @param {String|RegExp} _class
- */
-getCSSClassCoordInStyleSheet = (_class="") => {
-    let styleSheetIndex = -1, ruleIndex = -1;
-    try {
-        Object.values(document.styleSheets).forEach((_CSSStyleSheet, _styleSheetIndex) => {
-            try {
-                Object.values(_CSSStyleSheet.cssRules).forEach((_CSSRule, _ruleIndex) => {
-                    try {
-                        if (typeof _class == "string") {
-                            if (_CSSRule.selectorText == _class) {
-                                ruleIndex = _ruleIndex; 
-                                styleSheetIndex = _styleSheetIndex;
-                            }
-                        }
-                        else if (_class instanceof RegExp) {
-                            if (_CSSRule.selectorText.match(_class)) {
-                                ruleIndex = _ruleIndex; 
-                                styleSheetIndex = _styleSheetIndex;
-                            }
-                        }
-                    }
-                    catch(e) {
-                        console.warn(_CSSStyleSheet);
-                        console.warn(_CSSRule);
-                        console.warn(e);
-                    }
-                })
-            }
-            catch(e) {
-                console.warn(_CSSStyleSheet)
-                console.warn(e);
-            }
-        })
-    }
-    catch(e) {
-        console.warn(e);
-    }
-    return document?.styleSheets?.[styleSheetIndex]?.cssRules?.[ruleIndex] || null;
-};
 
 
 (function () {
