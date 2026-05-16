@@ -8901,7 +8901,7 @@
 			}
 		};
 
-	} window.ECAMDash = ECAMDash;
+	}; window.ECAMDash = ECAMDash;
 
 
 
