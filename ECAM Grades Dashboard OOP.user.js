@@ -68,104 +68,193 @@
 
 
 
+    // MARK: ——————————————————
 
 
-    // MARK: ———              Grade                ———
+
+
+
+    // MARK: ———              GRADE               ———
     class Grade {
 
 
 
 
 
-        // MARK: ___________ — contructor — ___________
+        //#region .                — properties —
+
+
+        /** Value of *this* {@link Grade}, a positive float number below 20. @type {number} */
+        #grade;
+
+        /** The {@link Subject} of *this* {@link Grade}. @type {Subject} @readonly */
+        #subject;
+
+        /** The {@link Module} of *this* {@link Grade}. Has a getter and a setter. @type {Module}  */
+        #module;
+
+        /** The {@link Semester} of *this* {@link Grade}. @type {Semester} @readonly */
+        #semester;
+
+        /** Value of the coefficient of *this* {@link Grade} in its {@link Subject}, a positive float number below 100, in %. @type {number} */
+        #coef;
+
+        /** Title of *this* {@link Grade} (default when no title was given: " — "). @type {string} */
+        #title;
+
+        /** `true` if *this* {@link Grade} is a simulated grade, `false` otherwise. @type {boolean} @readonly */
+        #isSim;
+
+        /** Value of the class' average of *this* {@link Grade}, a positive float number below 20 @type {number} */
+        #classAvg;
+
+        /** Name of the teacher.s who published *this* {@link Grade} (default when no teacher was given: " — ") @type {string} @readonly */
+        #teacher;
+
+        /** Date of publication of *this* {@link Grade} entered by the administration (default when no date was given: " — ").  
+         * ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet.* @type {string} @readonly 
+         */
+        #date;
+
+        /** `true` if *this* {@link Grade} is enabled (so it counts in the calculation of the averages), `false` otherwise. @type {boolean} */
+        #enabled;
+
+        /** `true` if *this* {@link Grade} was marked as read, `false` otherwise. @type {boolean} */
+        #markedAsRead;
+
+
+        //#endregion .                — properties —
+
+
+
+
+
+        // MARK: .                — contructor —
         /** 
          * Constructs a {@link Grade}.
          * 
-         * @param {number}          grade       Value of *this* {@link Grade}, a positive float number below 20.
-         * @param {number}          coef        Value of the coefficient of *this* {@link Grade} in its {@link Subject}, a positive float number below 100, as a %.
-         * @param {number}          semester    Number of the {@link Semester} corresponding to *this* {@link Grade}.
-         * @param {string}          subject     Name of the {@link Subject} of *this* {@link Grade}.
-         * @param {string}          [module]    Name of the {@link Module} of *this* {@link Grade}. Default value is "\_\_#unclassified#\_\_".
-         * @param {string}          [title]     Title of *this* {@link Grade}. Default value is " — ".
-         * @param {boolean}         [isSim]     `true` if *this* {@link Grade} is a simulated grade, `false` otherwise.
-         * @param {number|" — "}    [classAvg]  Value of the class' average of *this* {@link Grade}, a positive float number below 20. Default value is " — ".
-         * @param {string}          [prof]      Name of the teacher.s who published *this* {@link Grade}. Default value is " — ".
-         * @param {string}          [date]      Date of publication of *this* {@link Grade} entered by the administration. Default value is " — ".  ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet*.
+         * @param {number}          grade               Value of *this* {@link Grade}, a positive float number below 20.
+         * @param {number}          coef                Value of the coefficient of *this* {@link Grade} in its {@link Subject}, a positive float number below 100, as a %.
+         * @param {Subject}         subject             The {@link Subject} *this* {@link Grade} will belong to.
+         * @param {string}          [title=" — "]       Title of *this* {@link Grade}. Default value is " — ".
+         * @param {boolean}         [isSim=false]       `true` if *this* {@link Grade} is a simulated grade, `false` otherwise. `false` by default.
+         * @param {number|" — "}    [classAvg=" — "]    Value of the class' average of *this* {@link Grade}, a positive float number below 20. Default value is " — ".
+         * @param {string}          [prof=" — "]        Name of the teacher.s who published *this* {@link Grade}. Default value is " — ".
+         * @param {string}          [date=" — "]        Date of publication of *this* {@link Grade} entered by the administration. Default value is " — ". ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet*.
          * 
          * @throws {TypeError} If a parameter is of an unexpected type.
          */
-        constructor(grade, coef, semester, subject, module="__#unclassified#__", title=" — ", isSim=false, classAvg=" — ", prof=" — ", date=" — ") {
+        constructor(grade, coef, subject, title=" — ", isSim=false, classAvg=" — ", prof=" — ", date=" — ") {
 
-            /** Value of *this* {@link Grade}, a positive float number below 20 @type {number} */
-            if (!isNaN(grade)) {
-                this.grade      = grade <= 20 ? (grade >= 0 ? Number(grade) : 0) : 20
+            if (isNaN(grade))                   { throw new TypeError("Improper Grade construction: wrong '" + "grade"   + "' parameter type, was expecting a number")  }
+            if (!(subject instanceof Subject))  { throw new TypeError("Improper Grade construction: wrong '" + "subject" + "' parameter type, was expecting a Subject") } 
+            if (isNaN(coef))                    { throw new TypeError("Improper Grade construction: wrong '" + "coef"    + "' parameter type, was expecting a number")  }
+            if (typeof title == "string")       { throw new TypeError("Improper Grade construction: wrong '" + "title"   + "' parameter type, was expecting a string")  }
+            if (typeof isSim == "boolean")      { throw new TypeError("Improper Grade construction: wrong '" + "isSim"   + "' parameter type, was expecting a boolean") }
+            if (typeof prof == "string")        { throw new TypeError("Improper Grade construction: wrong '" + "prof"    + "' parameter type, was expecting a string")  }
+            if (typeof date == "string")        { throw new TypeError("Improper Grade construction: wrong '" + "date"    + "' parameter type, was expecting a string")  }
 
-            } else {throw new TypeError("Improper Grade construction: wrong 'grade' parameter type, was expecting a number")}
 
-            /** Number of the semester corresponding to *this* {@link Grade} @type {number} */
-            if (!isNaN(semester)) {
-                this.semester   = Number(semester)
-
-            } else {throw new TypeError("Improper Grade construction: wrong 'semester' parameter type, was expecting a number")}
-
-            /** Name of the {@link Subject} of *this* {@link Grade} @type {string} */
-            if (typeof subject == "string") {
-                this.subject    = subject
-
-            } else {throw new TypeError("Improper Grade construction: wrong 'subject' parameter type, was expecting a string")}
+            this.#grade     = grade <= 20 ? (grade >= 0 ? Number(grade) : 0) : 20;
+            this.#coef      = coef <= 100 ? (coef >= 0 ? Number(coef) : 0) : 100;
             
-            /** Value of the coefficient of *this* {@link Grade} in its {@link Subject}, a positive float number below 100, in % @type {number} */
-            if (!isNaN(coef)) {
-                this.coef       = coef <= 100 ? (coef >= 0 ? Number(coef) : 0) : 100
+            this.#subject   = subject;
+            this.#module    = subject.module;
+            this.#semester  = subject.semester;
 
-            } else {throw new TypeError("Improper Grade construction: wrong 'coef' parameter type, was expecting a number")}
+            this.#title     = title;
+            this.#isSim     = isSim;
 
-            /** Name of the {@link Module} of *this* {@link Grade} @type {string} */
-            if (typeof module == "string") {
-                this.module     = module
+            this.#classAvg  = (classAvg == " — " || isNaN(classAvg)) ? " — " : ( classAvg <= 20 ? (classAvg >= 0 ? classAvg : 0) : 20 );
 
-            } else {throw new TypeError("Improper Grade construction: wrong 'module' parameter type, was expecting a string")}
-
-            /** Title of *this* {@link Grade} (default when no title was given: " — ") @type {string} */
-            if (typeof title == "string") {
-                this.title      = title
-
-            } else {throw new TypeError("Improper Grade construction: wrong 'title' parameter type, was expecting a string")}
-
-            /** `true` if *this* {@link Grade} is a simulated grade, `false` otherwise. */
-            if (typeof isSim == "boolean") {
-                this.isSim      = isSim
-
-            } else {throw new TypeError("Improper Grade construction: wrong 'isSim' parameter type, was expecting a boolean")}
-
-            /** Value of the class' average of *this* {@link Grade}, a positive float number below 20 @type {number} */
-            this.classAvg   = (classAvg == " — " || isNaN(classAvg)) ? " — " : ( classAvg <= 20 ? (classAvg >= 0 ? classAvg : 0) : 20 );
-
-            /** Name of the teacher.s who published *this* {@link Grade} (default when no teacher was given: " — ") @type {string} */
-            if (typeof prof == "string") {
-                this.prof       = prof
-
-            } else {throw new TypeError("Improper Grade construction: wrong 'prof' parameter type, was expecting a string")}
-
-            /** Date of publication of *this* {@link Grade} entered by the administration (default when no date was given: " — ")  
-             * ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet* @type {string} */
-            if (typeof date == "string") {
-                this.date       = date
-
-            } else {throw new TypeError("Improper Grade construction: wrong 'date' parameter type, was expecting a string")}
+            this.#prof      = prof;
+            this.#date      = date;
 
 
+            this.#enabled = true;
 
-            /** `true` if *this* {@link Grade} is enabled (so it counts in the calculation of the averages), `false` otherwise. */
-            this.enabled = true;
-
-            /** `true` if *this* {@link Grade} was marked as read, `false` otherwise. */
-            this.markedAsRead = false;
+            this.#markedAsRead = false;
         }
 
 
+        //#region .             — encapsulation —
 
-        //#region ____________ — methods — ____________
+
+            /** Value of *this* {@link Grade}, a positive float number below 20. @type {number} */
+            get grade()     { return this.#grade    }
+            set grade(value) {
+                if (isNaN(value)) { throw new Error("Invalid Grade.grade setting: tried to set 'grade' to a type other than number") }
+                this.#grade = value <= 20 ? (value >= 0 ? Number(value) : 0) : 20;
+            }
+
+            /** Value of the coefficient of *this* {@link Grade} in its {@link Subject}, a positive float number below 100, in %. @type {number} */
+            get coef()      { return this.#coef     }
+            set coef(value) {
+                if (isNaN(value)) { throw new Error("Invalid Grade.coef setting: tried to set 'coef' to a type other than number") }
+                this.#coef = value <= 100 ? (value >= 0 ? Number(value) : 0) : 100;
+            }
+
+            /** The {@link Subject} of *this* {@link Grade}. @type {Subject} @readonly */
+            get subject()   { return this.#subject  }
+
+            /** The {@link Module} of *this* {@link Grade}. Has a getter and a setter. @type {Module}  */
+            get module()    { return this.#module   }
+            set module(value)    {
+                if (!(value instanceof Module)) {throw new Error("Invalid Grade.module setting: tried to set 'module' to a type other than Module")}
+
+                this.#module = value;
+            }
+
+            /** The {@link Semester} of *this* {@link Grade}. @type {Semester} @readonly */
+            get semester()  { return this.#semester }
+
+            /** Title of *this* {@link Grade} (default when no title was given: " — "). @type {string} */
+            get title()     { return this.#title    }
+            set title(value) {
+                if (typeof value != "string") { throw new Error("Invalid Grade.title setting: tried to set 'title' to a type other than string") }
+                this.#title = value;
+            }
+
+            /** `true` if *this* {@link Grade} is a simulated grade, `false` otherwise. @type {boolean} @readonly */
+            get isSim()     { return this.#isSim    }
+
+            /** Value of the class' average of *this* {@link Grade}, a positive float number below 20 @type {number} */
+            get classAvg()  { return this.#classAvg }
+            set classAvg(value) {
+                this.#classAvg = (value == " — " || isNaN(value)) ? " — " : ( value <= 20 ? (value >= 0 ? value : 0) : 20 );
+            }
+
+            /** Name of the teacher.s who published *this* {@link Grade} (default when no teacher was given: " — ") @type {string} @readonly */
+            get prof()      { return this.#prof      }
+
+            /** Date of publication of *this* {@link Grade} entered by the administration (default when no date was given: " — ").  
+             * ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet.* @type {string} @readonly 
+             */
+            get date()      { return this.#date      }
+
+            /** `true` if *this* {@link Grade} is enabled (so it counts in the calculation of the averages), `false` otherwise. @type {boolean} */
+            get enabled()   { return this.#enabled  }
+            set enabled(value) {
+                if (typeof value != "boolean") { throw new Error("Invalid Grade.enabled setting: tried to set 'enabled' to a type other than boolean") }
+                this.#enabled = value;
+            }
+
+            /** `true` if *this* {@link Grade} was marked as read, `false` otherwise. @type {boolean} */
+            get markedAsRead() { return this.#markedAsRead }
+            set markedAsRead(value) {
+                if (typeof value != "boolean") { throw new Error("Invalid Grade.markedAsRead setting: tried to set 'markedAsRead' to a type other than boolean") }
+                this.#markedAsRead = value;
+            }
+
+
+
+        //#endregion .             — encapsulation —
+
+
+
+
+
+        //#region .                 — methods —
 
             /** 
              * Verifies that *this* {@link Grade} has the exact same informations as the given {@link Grade}
@@ -176,15 +265,15 @@
             equals(grade) {
                 if (grade instanceof Grade) {
                     return ( true 
-                        && grade.grade 		== this.grade 
-                        && grade.classAvg 	== this.classAvg 
-                        && grade.coef 		== this.coef 
-                        && grade.semester 	== this.semester 
-                        && grade.subject 	== this.subject 
-                        && grade.title 		== this.title 
-                        && grade.prof 		== this.prof 
-                        && grade.date 		== this.date 
-                        && grade.isSim      == this.isSim
+                        && grade.#grade 	== this.#grade 
+                        && grade.#classAvg 	== this.#classAvg 
+                        && grade.#coef 		== this.#coef 
+                        && grade.#semester 	== this.#semester 
+                        && grade.#subject 	== this.#subject 
+                        && grade.#title 	== this.#title 
+                        && grade.#prof 		== this.#prof 
+                        && grade.#date 		== this.#date 
+                        && grade.#isSim     == this.#isSim
                     );
                 }
                 else return false;
@@ -202,8 +291,8 @@
 
                     grades.forEach(grade => {
                         if (grade instanceof Grade) {
-                            average += grade.grade * grade.coef;
-                            totalCoef += grade.coef;
+                            average += grade.#grade * grade.#coef;
+                            totalCoef += grade.#coef;
                         }
                         else validArrayOfGrades = false;
                     })
@@ -226,8 +315,8 @@
 
                     grades.forEach(grade => {
                         if (grade instanceof Grade) {
-                            average += grade.classAvg * grade.coef;
-                            totalCoef += grade.coef;
+                            average += grade.#classAvg * grade.#coef;
+                            totalCoef += grade.#coef;
                         }
                         else validArrayOfGrades = false;
                     })
@@ -239,229 +328,222 @@
                 return " — ";
             }
 
-        //#endregion ____________ — methods — ____________
+        //#endregion .                 — methods —
 
 
 
 
 
-        // MARK: _________________________________________
+
+
+        // MARK: ——————————————————
     }
 
 
 
-
-    // MARK: ———             Subject               ———
+    // MARK: ———             SUBJECT             ———
     class Subject {
 
 
 
 
 
-        //#region ___________ — properties — ___________
+        //#region .                — properties —
 
 
 
         /** Name of *this* {@link Subject}. @type {string} */
-        name;
+        #name;
 
-        /** Value of the class' average of *this* {@link Grade}, a positive float number below 20 @type {number} */
-        average;
+        /** Coefficient of *this* {@link Subject} in its {@link Module}. @type {number} */
+        #coef;
 
-        /** Value of the class' average of *this* {@link Grade}, a positive float number below 20 @type {number} */
-        classAvg;
+        /** Value of the class' average of *this* {@link Grade}, a positive float number below 20 @type {number} @readonly */
+        #average;
 
-        /** Array of the {@link Grade}s in *this* {@link Subject}. @type {Grade[]} */ 
-        grades;
+        /** Value of the class' average of *this* {@link Grade}, a positive float number below 20 @type {number} @readonly */
+        #classAvg;
 
-        /** Name of the module of *this* {@link Subject}. @type {string} */
-        module;
+        /** Array of the {@link Grade}s in *this* {@link Subject}. @type {Grade[]} @readonly */ 
+        #grades;
 
-        /** Number of the semester of *this* {@link Subject}. @type {number} */
-        semester;
+        /** Name of the module of *this* {@link Subject}. @type {Module} */
+        #module;
 
-
-
-        /** Array of the simulated {@link Grade}s in *this* {@link Subject}. @type {Grade[]} */
-        simGrades;
-
-        /** Array of the disabled real {@link Grade}s in *this* {@link Subject}. @type {Grade[]} */
-        disabledRealGrades;
-
-        /** Array of the disabled simulated {@link Grade}s in *this* {@link Subject}. @type {Grade[]} */
-        disabledSimGrades;
-
-        /** Total of the coefficients of all the {@link Grade}s in *this* {@link Subject}. @type {number} */
-        totalCoefGrades;
-
-        /** Total of the coefficients of all the real {@link Grade}s in *this* {@link Subject}. @type {number} */
-        totalCoefRealGrades;
-
-        /** Total of the coefficients of all the simulated {@link Grade}s in *this* {@link Subject}. @type {number} */
-        totalCoefSimGrades;
-
-        /** Total of the coefficients of all the enabled {@link Grade}s in *this* {@link Subject}. @type {number} */
-        totalCoefEnabledGrades;
-
-        /** Total of the coefficients of all the enabled real {@link Grade}s in *this* {@link Subject}. @type {number} */
-        totalCoefEnabledRealGrades;
-
-        /** Total of the coefficients of all the enabled simulated {@link Grade}s in *this* {@link Subject}. @type {number} */
-        totalCoefEnabledSimGrades;
+        /** The {@link Semester} of *this* {@link Subject}. @type {Semester} @readonly */
+        #semester;
 
 
 
-        //#endregion ___________ — properties — ___________
+        /** Array of the simulated {@link Grade}s in *this* {@link Subject}. @type {Grade[]} @readonly */
+        #simGrades;
+
+        /** Array of the disabled real {@link Grade}s in *this* {@link Subject}. @type {Grade[]} @readonly */
+        #disabledRealGrades;
+
+        /** Array of the disabled simulated {@link Grade}s in *this* {@link Subject}. @type {Grade[]} @readonly */
+        #disabledSimGrades;
+
+        /** Total of the coefficients of all the {@link Grade}s in *this* {@link Subject}. @type {number} @readonly */
+        #totalCoefGrades;
+
+        /** Total of the coefficients of all the real {@link Grade}s in *this* {@link Subject}. @type {number} @readonly */
+        #totalCoefRealGrades;
+
+        /** Total of the coefficients of all the simulated {@link Grade}s in *this* {@link Subject}. @type {number} @readonly */
+        #totalCoefSimGrades;
+
+        /** Total of the coefficients of all the enabled {@link Grade}s in *this* {@link Subject}. @type {number} @readonly */
+        #totalCoefEnabledGrades;
+
+        /** Total of the coefficients of all the enabled real {@link Grade}s in *this* {@link Subject}. @type {number} @readonly */
+        #totalCoefEnabledRealGrades;
+
+        /** Total of the coefficients of all the enabled simulated {@link Grade}s in *this* {@link Subject}. @type {number} @readonly */
+        #totalCoefEnabledSimGrades;
+
+
+
+        //#endregion .                — properties —
 
 
 
 
 
-        // MARK: ___________ — contructor — ___________
+        // MARK: .                — contructor —
         /**
          * Constructs an object of class {@link Subject} from an array of {@link Grade}s and an optional coefficient.
          * 
-         * The array of {@link Grade}s may be empty/undefined, in this case, the next parameters `name`, `module` and `semester` **must** be provided. This will create a simulated subject
-         * 
-         * If `name`, `module` and/or `semester` parameter.s are/is given, every {@link Grade} will have its corresponding property modified to the parameter's value.
-         * 
-         * Otherwise, the array of {@link Grade}s **MUST** contain {@link Grade}s of same subject `name`, `module` and `semester` property.  
-         * For each `name`, `module` and `semester` parameters individually, 
-         * throws an error if at least one {@link Grade} doesn't have the same value as the first {@link Grade} of the Array AND the corresponding property missmatched isn't given as parameter.
-         * 
-         * @example 
-         * const grade1 = new Grade(20, 25, 1, "Mathematics for Engineers 1", "Mathematics for Engineers 1", "Midterm 1", false, 20, "Bitar Diala",  date="12/09/2023");
-         * const grade2 = new Grade(18, 25, 1, "Mathematics for Engineers 1", "Mathematics for Engineers 1", "Midterm 2", false, 10, "Bitar Diala",  date="13/09/2023");
-         * const grade3 = new Grade(20, 50, 1, "Mathematics for Engineers 1", "Mathematics for Engineers 1", "Final",     false, 20, "Bitar Diala",  date="13/10/2023");
-         * const grade4 = new Grade(15, 15, 1, "General Mechanics 1",         "Mechanics for Engineers 1",   "Lab",       false, 20, "HAJJAR Ahmad", date="13/11/2023");
-         * 
-         * const properSubject = new Subject([grade1, grade2, grade3], 60, "Mathematics for Engineers 1", "Mathematics for Engineers 1", 1);
-         * // Creates the "Mathematics for Engineers 1" from the "Mathematics for Engineers 1" module of semester 1, 
-         * // with a coefficient in the module of 60% and contains the grades contained in an Array of Grades
-         * 
-         * const properSimSubject = new Subject(undefined, 60, "Mathematics for Engineers 1", "Mathematics for Engineers 1", 1);
-         * // Creates the "Mathematics for Engineers 1" from the "Mathematics for Engineers 1" module of semester 1, 
-         * // with a coefficient in the module of 60%, containing no grades yet (undefined Array of Grade)
-         * 
-         * const badSimSubject = new Subject([], 60, "Mathematics for Engineers 1", "Mathematics for Engineers 1");
-         * // Throws an Error: "Improper Subject construction: wrong 'semester' argument type, was expecting a number"
-         * // Since no semester parameter was given while the Array of Grades is empty
-         * 
-         * const properShortSubject = new Subject([grade1, grade2, grade3], 60);
-         * // Creates the "Mathematics for Engineers 1" from the "Mathematics for Engineers 1" module of semester 1, 
-         * // with a coefficient in the module of 60% and contains the grades contained in an Array of Grades,
-         * // just like properSubject, as grade1, grade2 and grade3 have the same subject, module and semester respective properties.
-         * 
-         * const improperShortSubject = new Subject([grade1, grade2, grade3, grade4], 60);
-         * // Throws an Error: "Improper Subject construction: the Grades in the Array of Grades don't all have the same subject name"
-         * // Since grade4 doesn't have the same module name as the rest, and no module parameter was given
-         * 
-         * const improperShortSubjectWithFallbackModule = new Subject([grade1, grade2, grade3, grade4], 60, "Mathematics for Engineers 1");
-         * // Throws an Error: "Improper Subject construction: the Grades in the Array of Grades don't all have the same subject name"
-         * // Since grade4 doesn't have the same subject name as the rest, and no subject parameter was given.
-         * // This time, compared to improperShortSubject, it doesn't throw an error on the module's name, 
-         * // as every grade are forcibly given the "Mathematics for Engineers 1" module name (useful in case of moving a subject to another module)
+         * The array of {@link Grade}s may be empty/undefined, in this case, the next parameters `name` and `module` **must** be provided. This will create a simulated subject.
          * 
          * 
-         * @param {Grade[]} grades      Array of the {@link Grade}s in *this* {@link Subject}. Default value is `[]`. 
-         * @param {number}  [coef]      Coefficient of *this* {@link Subject} in its {@link Module}, a positive float number below 100, as a %. Default value is 100.
-         * @param {string}  [module]    Name of the {@link Module} *this* {@link Subject} will belong to.
+         * @param {Grade[]} [grades=[]] Array of the {@link Grade}s in *this* {@link Subject}. Default value is `[]`. 
+         * @param {number}  [coef=100]  Coefficient of *this* {@link Subject} in its {@link Module}, a positive float number below 100, as a %. Default value is 100.
          * @param {string}  [name]      Name to give to *this* {@link Subject}.
-         * @param {number}  [semester]  Number of the semester *this* {@link Subject} will belong to.
+         * @param {Module}  [module]    The {@link Module} *this* {@link Subject} will belong to.
          * 
          * @throws {TypeError} If a parameter is of an unexpected type.
-         * @throws {Error} If `name`, `module` and/or `semester` isn't/aren't given, and the corresponding property of at least one {@link Grade} in the Array of {@link Grade}s differs from the first {@link Grade} of the same Array.
+         * @throws {Error} If the `subject` and/or `module` property of at least one {@link Grade} in the Array of {@link Grade}s differs from that of the first {@link Grade} of the same Array, or from the corresponding constructor parameter if given instead.
          */
-        constructor(grades=[], coef=100, module=null, name=null, semester=null) {
-            let subjectName = null,
-                moduleName = null,
-                semesterNumber = null
+        constructor(grades=[], coef=100, name=undefined, module=undefined) {
+            if (!(grades instanceof Array)) { throw new TypeError("Improper Subject construction: the 'grades' argument is not an ARRAY, was expecting an Array of Grades") }
+            if (isNaN(coef))                { throw new TypeError("Improper Subject construction: wrong 'coef' argument type, was expecting a number") }
+            if (name !== undefined && typeof name !== "string")         { throw new TypeError("Improper Subject construction: wrong 'name' argument type, was expecting a string or undefined") }
+            if (module !== undefined && !(module instanceof Module))    { throw new TypeError("Improper Subject construction: wrong 'module' argument type, was expecting a Module or undefined") }
+
+
+            const
+                subjectName = name              || grades[0]?.subject.name,
+                moduleObj   = module            || grades[0]?.module
             ;
 
-            if (grades instanceof Array) {
-                subjectName     = name      || grades[0]?.subject;
-                moduleName      = module    || grades[0]?.module;
-                semesterNumber  = semester  || grades[0]?.semester;
 
-                grades.forEach(grade => {
-                    if (grade instanceof Grade) {
-                        // If the name of the module of a Grade isn't the same as the one given as parameter (or the one of the first Grade if the parameter isn't given),
-                        // gives the module parameter to the module property of the Grade if the parameter was given, otherwise throws an Error
-                        // => FALLBACK ALLOWED
-                        if (grade.module    != moduleName) {
-                            if (module) grade.module = module;
-                            else {throw new Error("Improper Subject construction: the Grades in the Array of Grades don't all have the same module name")}
-                        }
+            grades.forEach(grade => {
+                if (!(grade instanceof Grade)) { 
+                    throw new TypeError("Improper Subject construction: the 'grades' argument is not an Array of GRADES (and ONLY of Grades), was expecting an Array of Grades");
+                }
 
-                        // If the name of the subject of a Grade isn't the same as the one given as parameter (or the one of the first Grade if the parameter isn't given),
-                        // throws an Error
-                        // => FALLBACK NOT ALLOWED
-                        if (grade.subject   != subjectName) {
-                            throw new Error("Improper Subject construction: the Grades in the Array of Grades don't all have the same subject name")
-                        }
+                if (grade.subject != subjectName) {
+                    throw new Error("Improper Subject construction: the Grades in the Array of Grades don't all have the same subject name");
+                }
 
-                        // If the number of the semester of a Grade isn't the same as the one given as parameter (or the one of the first Grade if the parameter isn't given),
-                        // throws an Error
-                        // => FALLBACK NOT ALLOWED
-                        if (grade.semester  != semesterNumber)  {
-                            throw new Error("Improper Subject construction: the Grades in the Array of Grades don't all have the same semester number")
-                        }
-                    }
-                    else {throw new TypeError("Improper Subject construction: the 'grades' argument is not an Array of GRADES (and ONLY of Grades), was expecting an Array of Grades")}
+                if (grade.module != moduleObj) {
+                    throw new Error("Improper Subject construction: the Grades in the Array of Grades don't all have the same module name");
+                }
 
-                });
-            }
-            else {throw new TypeError("Improper Subject construction: the 'grades' argument is not an ARRAY, was expecting an Array of Grades")}
+            });
 
-
-
-            this.grades = grades;
-
-
-            /** Coefficient of *this* {@link Subject} in its {@link Module}. @type {number} */  
-            if (!isNaN(coef)) {
-                this.coef = coef <= 100 ? (coef >= 0 ? coef : 0) : 100;
-
-            } else {throw new TypeError("Improper Subject construction: wrong 'coef' argument type, was expecting a number")};
-
+            this.#coef = coef <= 100 ? (coef >= 0 ? Number(coef) : 0) : 100;
+            this.#grades = grades;
 
             // Constructing from an Array of Grades
-            if (this.grades.length > 0) {
-
-                this.name       = subjectName;
-                this.module     = moduleName;
-                this.semester   = semesterNumber;
-
+            if (this.#grades.length > 0) {
+                this.#name      = this.#grades[0].subject;
+                this.#module    = this.#grades[0].module;
+                this.#semester  = this.#grades[0].semester;
             }
             // Constructing a simulated subject, it doesn't have grades (yet)
             else {
-                if (typeof name == "string") {
-                    this.name = name;
-
-                } else {throw new TypeError("Improper Subject construction: wrong 'name' argument type, was expecting a string")};
-
-
-                if (typeof module == "string") {
-                    this.module = module;
-
-                } else {throw new TypeError("Improper Subject construction: wrong 'module' argument type, was expecting a string")};
-
-
-                if (!isNaN(semester)) {
-                    this.semester = Number(semester);
-
-                } else {throw new TypeError("Improper Subject construction: wrong 'semester' argument type, was expecting a number")};
+                this.#name      = name;
+                this.#module    = module;
+                this.#semester  = module.semester;
             }
 
-
             this.computeStats();
-
         }
 
 
+        //#region .             — encapsulation —
+
+            /** Name of *this* {@link Subject}. @type {string} */
+            get name()      { return this.#name     }
+            set name(value) {
+                if (typeof value != "string") { throw new Error("Invalid Subject.name setting: tried to set 'name' to a type other than string") }
+                this.#name = value;
+            }
+
+            /** Coefficient of *this* {@link Subject} in its {@link Module}. @type {number} */
+            get coef()      { return this.#coef     }
+            set coef(value) {
+                if (isNaN(value)) { throw new Error("Invalid Subject.coef setting: tried to set 'coef' to a type other than number") }
+                this.#coef = value <= 100 ? (value >= 0 ? value : 0) : 100;
+            }
+
+            /** Value of the class' average of *this* {@link Grade}, a positive float number below 20 @type {number} @readonly */
+            get average()   { return this.#average  }
+
+            /** Value of the class' average of *this* {@link Grade}, a positive float number below 20 @type {number} @readonly */
+            get classAvg()  { return this.#classAvg }
+
+            /** Array of the {@link Grade}s in *this* {@link Subject}. @type {Grade[]} @readonly */
+            get grades()    { return this.#grades   }
+
+            /** The {@link Module} of *this* {@link Subject}. @type {Module} */
+            get module()    { return this.#module   }
+            set module(value)    {
+                if (!(value instanceof Module)) {throw new Error("Invalid Subject.module setting: tried to set 'module' to a type other than Module")}
+                this.#module = value;
+            }
+
+            /** The {@link Semester} of *this* {@link Subject}. @type {Semester} @readonly */
+            get semester()  { return this.#semester }
+
+            /** Array of the simulated {@link Grade}s in *this* {@link Subject}. @type {Grade[]} @readonly */
+            get simGrades() { return this.#simGrades }
+
+            /** Array of the disabled real {@link Grade}s in *this* {@link Subject}. @type {Grade[]} @readonly */
+            get disabledRealGrades() { return this.#disabledRealGrades }
+
+            /** Array of the disabled simulated {@link Grade}s in *this* {@link Subject}. @type {Grade[]} @readonly */
+            get disabledSimGrades() { return this.#disabledSimGrades }
+
+            /** Total of the coefficients of all the {@link Grade}s in *this* {@link Subject}. @type {number} @readonly */
+            get totalCoefGrades() { return this.#totalCoefGrades }
+
+            /** Total of the coefficients of all the real {@link Grade}s in *this* {@link Subject}. @type {number} @readonly */
+            get totalCoefRealGrades() { return this.#totalCoefRealGrades }
+
+            /** Total of the coefficients of all the simulated {@link Grade}s in *this* {@link Subject}. @type {number} @readonly */
+            get totalCoefSimGrades() { return this.#totalCoefSimGrades }
+
+            /** Total of the coefficients of all the enabled {@link Grade}s in *this* {@link Subject}. @type {number} @readonly */
+            get totalCoefEnabledGrades() { return this.#totalCoefEnabledGrades }
+
+            /** Total of the coefficients of all the enabled real {@link Grade}s in *this* {@link Subject}. @type {number} @readonly */
+            get totalCoefEnabledRealGrades() { return this.#totalCoefEnabledRealGrades }
+
+            /** Total of the coefficients of all the enabled simulated {@link Grade}s in *this* {@link Subject}. @type {number} @readonly */
+            get totalCoefEnabledSimGrades() { return this.#totalCoefEnabledSimGrades }
 
 
-        //#region ____________ — methods — ____________
+
+        //#endregion .             — encapsulation —
+
+
+
+
+
+        //#region .                 — methods —
 
 
 
@@ -512,103 +594,104 @@
 
                 });
                 
-                this.simGrades = simGrades;
+                this.#simGrades = simGrades;
 
-                this.disabledRealGrades         = disabledRealGrades;
-                this.disabledSimGrades          = disabledSimGrades;
-                this.totalCoefGrades            = Math.round(totalCoefGrades);
-                this.totalCoefRealGrades        = Math.round(totalCoefRealGrades);
-                this.totalCoefSimGrades         = Math.round(totalCoefSimGrades);
-                this.totalCoefEnabledGrades     = Math.round((totalCoefGrades-totalCoefDisabledGrades));
-                this.totalCoefEnabledRealGrades = Math.round((totalCoefRealGrades-totalCoefDisabledRealGrades));
-                this.totalCoefEnabledSimGrades  = Math.round((totalCoefSimGrades-totalCoefDisabledSimGrades));
+                this.#disabledRealGrades         = disabledRealGrades;
+                this.#disabledSimGrades          = disabledSimGrades;
+                this.#totalCoefGrades            = Math.round(totalCoefGrades);
+                this.#totalCoefRealGrades        = Math.round(totalCoefRealGrades);
+                this.#totalCoefSimGrades         = Math.round(totalCoefSimGrades);
+                this.#totalCoefEnabledGrades     = Math.round(totalCoefGrades       -totalCoefDisabledGrades);
+                this.#totalCoefEnabledRealGrades = Math.round(totalCoefRealGrades   -totalCoefDisabledRealGrades);
+                this.#totalCoefEnabledSimGrades  = Math.round(totalCoefSimGrades    -totalCoefDisabledSimGrades);
 
-                this.average = Grade.average(this.grades);
-                this.classAvg = Grade.classAverage(this.grades);
+                this.#average   = Grade.average(this.#grades);
+                this.#classAvg  = Grade.classAverage(this.#grades);
             }
 
-        //#endregion ____________ — methods — ____________
+        //#endregion .                 — methods —
 
 
 
 
 
-        // MARK: _________________________________________
+
+
+        // MARK: ——————————————————
     }
 
 
 
-
-    // MARK: ———             Module               ———
+    // MARK: ———            MODULE              ———
     class Module {
 
 
 
 
 
-        //#region ___________ — properties — ___________
+        //#region .                — properties —
 
 
 
         /** Name of *this* {@link Module}. @type {string} */
-        name;
+        #name;
 
-        /** Value of the class' average of *this* {@link Grade}, a positive float number below 20 @type {number} */
-        average;
+        /** Value of the class' average of *this* {@link Grade}, a positive float number below 20 @type {number} @readonly */
+        #average;
 
-        /** Value of the class' average of *this* {@link Grade}, a positive float number below 20 @type {number} */
-        classAvg;
+        /** Value of the class' average of *this* {@link Grade}, a positive float number below 20 @type {number} @readonly */
+        #classAvg;
 
         /** Object of the {@link Subject}s in *this* {@link Module}, with the {@link Subject}'s name as key and the {@link Subject} as value. @type {{string: Subject}} */
-        subjects;
+        #subjects;
 
-        /** Number of the semester of *this* {@link Module}. @type {number} */
-        semester;
-
-
-
-        /** Array of the {@link Grade}s in *this* {@link Module}. @type {Grade[]} */
-        grades;
-
-        /** Array of the simulated {@link Grade}s in *this* {@link Module}. @type {Grade[]} */
-        simGrades;
-
-        /** Array of the disabled real {@link Grade}s in *this* {@link Module}. @type {Grade[]} */
-        disabledRealGrades;
-
-        /** Array of the disabled simulated {@link Grade}s in *this* {@link Module}. @type {Grade[]} */
-        disabledSimGrades;
+        /** The {@link Semester} of *this* {@link Module}. @type {Semester} @readonly */
+        #semester;
 
 
 
-        /** Total of the coefficients of all the {@link Subject}s in *this* {@link Module}. @type {number} */ 
-        totalCoefSubjects;
+        /** Array of the {@link Grade}s in *this* {@link Module}. @type {Grade[]} @readonly */
+        #grades;
 
-        /** Total of the coefficients of all the {@link Subject}s that don't have any {@link Grade}s in *this* {@link Module}. @type {number} */ 
-        totalCoefSubjectsNoGrade;
+        /** Array of the simulated {@link Grade}s in *this* {@link Module}. @type {Grade[]} @readonly */
+        #simGrades;
 
-        /** Total of the coefficients of all the {@link Subject}s that don't have any enabled {@link Grade}s in *this* {@link Module}. @type {number} */ 
-        totalCoefSubjectsNoEnabledGrade;
+        /** Array of the disabled real {@link Grade}s in *this* {@link Module}. @type {Grade[]} @readonly */
+        #disabledRealGrades;
+
+        /** Array of the disabled simulated {@link Grade}s in *this* {@link Module}. @type {Grade[]} @readonly */
+        #disabledSimGrades;
 
 
 
-        /** Total of the coefficients of all the {@link Grade}s in *this* {@link Module}. @type {number} */
-        totalCoefGrades;
+        /** Total of the coefficients of all the {@link Subject}s in *this* {@link Module}. @type {number} @readonly */ 
+        #totalCoefSubjects;
 
-        /** Total of the coefficients of all the real {@link Grade}s in *this* {@link Module}. @type {number} */
-        totalCoefRealGrades;
+        /** Total of the coefficients of all the {@link Subject}s that don't have any {@link Grade}s in *this* {@link Module}. @type {number} @readonly */ 
+        #totalCoefSubjectsNoGrade;
 
-        /** Total of the coefficients of all the simulated {@link Grade}s in *this* {@link Module}. @type {number} */
-        totalCoefSimGrades;
+        /** Total of the coefficients of all the {@link Subject}s that don't have any enabled {@link Grade}s in *this* {@link Module}. @type {number} @readonly */ 
+        #totalCoefSubjectsNoEnabledGrade;
 
-        /** Total of the coefficients of all the enabled {@link Grade}s in *this* {@link Module}. @type {number} */
-        totalCoefEnabledGrades;
 
-        /** Total of the coefficients of all the enabled real {@link Grade}s in *this* {@link Module}. @type {number} */
-        totalCoefEnabledRealGrades;
 
-        /** Total of the coefficients of all the enabled simulated {@link Grade}s in *this* {@link Module}. @type {number} */
-        totalCoefEnabledSimGrades;
+        /** Total of the coefficients of all the {@link Grade}s in *this* {@link Module}. @type {number} @readonly */
+        #totalCoefGrades;
+
+        /** Total of the coefficients of all the real {@link Grade}s in *this* {@link Module}. @type {number} @readonly */
+        #totalCoefRealGrades;
+
+        /** Total of the coefficients of all the simulated {@link Grade}s in *this* {@link Module}. @type {number} @readonly */
+        #totalCoefSimGrades;
+
+        /** Total of the coefficients of all the enabled {@link Grade}s in *this* {@link Module}. @type {number} @readonly */
+        #totalCoefEnabledGrades;
+
+        /** Total of the coefficients of all the enabled real {@link Grade}s in *this* {@link Module}. @type {number} @readonly */
+        #totalCoefEnabledRealGrades;
+
+        /** Total of the coefficients of all the enabled simulated {@link Grade}s in *this* {@link Module}. @type {number} @readonly */
+        #totalCoefEnabledSimGrades;
 
 
 
@@ -618,7 +701,7 @@
 
 
 
-        // MARK: ___________ — contructor — ___________
+        // MARK: .                — contructor —
         /**
          * Constructs an object of class {@link Module} from an array of {@link Subject}s.
          * 
@@ -630,75 +713,66 @@
          * For each `name` and `semester` parameters individually, 
          * throws an error if at least one {@link Subject} doesn't have the same value as the first {@link Subject} of the Array AND the corresponding property missmatched isn't given as parameter.
          * 
-         * @param {Subject[]}   [subjects]  Array of the {@link Subject}s in *this* {@link Module}. Default value is `[]`. 
+         * @param {Subject[]}   [subjects=[]]  Array of the {@link Subject}s in *this* {@link Module}. Default value is `[]`. 
          * @param {string}      [name]      Name of *this* {@link Module}.
-         * @param {number}      [semester]  Number of the semester of *this* {@link Module}.
+         * @param {Semester}    [semester]  The {@link Semester} *this* {@link Module} will belong to.
          * 
          * @throws {TypeError} If a parameter is of an unexpected type.
-         * @throws {Error} If `name` and/or `semester` isn't/aren't given, and the corresponding property of at least one {@link Subject} in the Array of {@link Subject}s differs from the first {@link Subject} of the same Array.
+         * @throws {Error} If the `name` and/or `semester` property of at least one {@link Subject} in the Array of {@link Subject}s differs from that of the first {@link Subject} of the same Array, or from the corresponding constructor parameter if given instead.
          */
-        constructor(subjects=[], name=null, semester=null) {
-            let 
-                moduleName      = null,
-                semesterNumber  = null,
+        constructor(subjects=[], name=undefined, semester=undefined) {
+            if (!(subjects instanceof Array)) { throw new TypeError("Improper Module construction: the 'subjectsOrGrades' parameter is not an ARRAY, was expecting an Array of Subjects") }
+            if (typeof name != "string" && name !== undefined)              { throw new TypeError("Improper Module construction: wrong 'name' argument type, was expecting a string or undefined") }
+            if (!(semester instanceof Semester) && semester !== undefined)  { throw new TypeError("Improper Module construction: wrong 'name' argument type, was expecting a Semester or undefined") }
 
-                /** @type {Map<string, Subject>} */ subjectsEntries = new Map();
+
+            const 
+                moduleName   = name      || subjects[0]?.module.name,
+                semesterObj  = semester  || subjects[0]?.semester
             ;
 
-            if (subjects instanceof Array) {
-                semesterNumber  = semester  || subjects[0]?.semester;
-                moduleName      = name      || subjects[0]?.module;
+            /** @type {Map<string, Subject>} */
+            let subjectsEntries = new Map();
 
-                subjects.forEach(subject => {
-                    if (subject instanceof Subjects) {
-                        // If the name of the module of a Grade isn't the same as the one given as parameter (or the one of the first Grade if the parameter isn't given),
-                        // gives the module parameter to the module property of the Grade if the parameter was given, otherwise throws an Error
-                        // => FALLBACK ALLOWED
-                        if (subject.module != moduleName) {
-                            if (name) {subject.module = name}
-                            else {throw new Error("Improper Module construction: the Subjects in the Array of Subjects parameter 'subjectsOrGrades' don't all have the same module name")}
-                        }
 
-                        // If the number of the semester of a Grade isn't the same as the one given as parameter (or the one of the first Grade if the parameter isn't given),
-                        // throws an Error
-                        // => FALLBACK NOT ALLOWED
-                        if (subject.semester != semesterNumber) {
-                            throw new Error("Improper Module construction: the Subjects in the Array of Subjects parameter 'subjectsOrGrades' don't all have the same semester number")
-                        }
+            subjects.forEach(subject => {
+                if (!(subject instanceof Subjects)) { 
+                    throw new TypeError("Improper Module construction: the 'subjectsOrGrades' parameter is not an Array of SUBJECTS (and ONLY Subjects), was expecting an Array of Subjects") 
+                }
 
-                        subjectsEntries.set(subject.name, subject);
+                if (subject.module != moduleName) {
+                    throw new Error("Improper Module construction: the Subjects in the Array of Subjects parameter 'subjectsOrGrades' don't all have the same module name")
+                }
 
-                    } else {throw new TypeError("Improper Module construction: the 'subjectsOrGrades' parameter is not an Array of SUBJECTS (and ONLY Subjects), was expecting an Array of Subjects")}
-                })
-            } else {throw new TypeError("Improper Module construction: the 'subjectsOrGrades' parameter is not an ARRAY, was expecting an Array of Subjects")}
+                if (subject.semester != semesterObj) {
+                    throw new Error("Improper Module construction: the Subjects in the Array of Subjects parameter 'subjectsOrGrades' don't all have the same semester number")
+                }
+
+                subjectsEntries.set(subject.name, subject);
+
+            })
 
 
 
-            this.subjects = Object.fromEntries(subjectsEntries);
+            this.#subjects = Object.fromEntries(subjectsEntries);
 
-            const nbSubjects = Object.keys(this.subjects).length;
+            const nbSubjects = Object.keys(this.#subjects).length;
 
 
 
             // Constructing from an Array of Subjects
             if (nbSubjects > 0) {
 
-                this.name       = moduleName;
-                this.semester   = semesterNumber;
+                this.#name      = moduleName;
+                this.#semester  = semesterObj;
 
             }
             // Constructing a simulated module, it doesn't have subjects (yet)
             else {
-                if (typeof name == "string") {
-                    this.name = name;
 
-                } else {throw new TypeError("Improper Module construction: wrong 'name' argument type, was expecting a string")}
+                this.#name = name;
+                this.#semester = Number(semester);
 
-
-                if (!isNaN(semester)) {
-                    this.semester = Number(semester);
-
-                } else {throw new TypeError("Improper Module construction: wrong 'semester' argument type, was expecting a number")}
             }
 
             this.computeStats();
@@ -706,9 +780,78 @@
         }
 
 
+        //#region .             — encapsulation —
+
+            /** Name of *this* {@link Module}. @type {string} */
+            get name()      { return this.#name }
+            set name(value) {
+                if (typeof value != "string") { throw new Error("Invalid Module.name setting: tried to set 'name' to a type other than string") }
+                this.#name = value;
+            }
+
+            /** Value of the class' average of *this* {@link Grade}, a positive float number below 20 @type {number} @readonly */
+            get average()   { return this.#average }
+
+            /** Value of the class' average of *this* {@link Grade}, a positive float number below 20 @type {number} @readonly */
+            get classAvg()  { return this.#classAvg }
+
+            /** Object of the {@link Subject}s in *this* {@link Module}, with the {@link Subject}'s name as key and the {@link Subject} as value. @type {{string: Subject}} */
+            get subjects()  { return this.#subjects }
+            set subjects(value) {
+                if (typeof value != "object" || value === null) { throw new Error("Invalid Module.subjects setting: tried to set 'subjects' to a type other than object") }
+                this.#subjects = value;
+            }
+
+            /** The {@link Semester} of *this* {@link Module}. @type {Semester} @readonly */
+            get semester()  { return this.#semester }
+
+            /** Array of the {@link Grade}s in *this* {@link Module}. @type {Grade[]} @readonly */
+            get grades()    { return this.#grades }
+
+            /** Array of the simulated {@link Grade}s in *this* {@link Module}. @type {Grade[]} @readonly */
+            get simGrades() { return this.#simGrades }
+
+            /** Array of the disabled real {@link Grade}s in *this* {@link Module}. @type {Grade[]} @readonly */
+            get disabledRealGrades() { return this.#disabledRealGrades }
+
+            /** Array of the disabled simulated {@link Grade}s in *this* {@link Module}. @type {Grade[]} @readonly */
+            get disabledSimGrades() { return this.#disabledSimGrades }
+
+            /** Total of the coefficients of all the {@link Subject}s in *this* {@link Module}. @type {number} @readonly */
+            get totalCoefSubjects() { return this.#totalCoefSubjects }
+
+            /** Total of the coefficients of all the {@link Subject}s that don't have any {@link Grade}s in *this* {@link Module}. @type {number} @readonly */
+            get totalCoefSubjectsNoGrade() { return this.#totalCoefSubjectsNoGrade }
+
+            /** Total of the coefficients of all the {@link Subject}s that don't have any enabled {@link Grade}s in *this* {@link Module}. @type {number} @readonly */
+            get totalCoefSubjectsNoEnabledGrade() { return this.#totalCoefSubjectsNoEnabledGrade }
+
+            /** Total of the coefficients of all the {@link Grade}s in *this* {@link Module}. @type {number} @readonly */
+            get totalCoefGrades() { return this.#totalCoefGrades }
+
+            /** Total of the coefficients of all the real {@link Grade}s in *this* {@link Module}. @type {number} @readonly */
+            get totalCoefRealGrades() { return this.#totalCoefRealGrades }
+
+            /** Total of the coefficients of all the simulated {@link Grade}s in *this* {@link Module}. @type {number} @readonly */
+            get totalCoefSimGrades() { return this.#totalCoefSimGrades }
+
+            /** Total of the coefficients of all the enabled {@link Grade}s in *this* {@link Module}. @type {number} @readonly */
+            get totalCoefEnabledGrades() { return this.#totalCoefEnabledGrades }
+
+            /** Total of the coefficients of all the enabled real {@link Grade}s in *this* {@link Module}. @type {number} @readonly */
+            get totalCoefEnabledRealGrades() { return this.#totalCoefEnabledRealGrades }
+
+            /** Total of the coefficients of all the enabled simulated {@link Grade}s in *this* {@link Module}. @type {number} @readonly */
+            get totalCoefEnabledSimGrades() { return this.#totalCoefEnabledSimGrades }
 
 
-        //#region ____________ — methods — ____________
+        //#endregion .             — encapsulation —
+
+
+
+
+
+        //#region .                 — methods —
 
 
 
@@ -830,33 +973,50 @@
                 })
 
 
-                this.grades             = grades;
-                this.simGrades          = simGrades;
-                this.disabledRealGrades = disabledRealGrades;
-                this.disabledSimGrades  = disabledSimGrades;
+                this.#grades             = grades;
+                this.#simGrades          = simGrades;
+                this.#disabledRealGrades = disabledRealGrades;
+                this.#disabledSimGrades  = disabledSimGrades;
 
-                this.totalCoefSubjects                 = totalCoefSubjects;
-                this.totalCoefSubjectsNoGrade          = totalCoefSubjectsNoGrade;
-                this.totalCoefSubjectsNoEnabledGrade   = totalCoefSubjectsNoEnabledGrade;
+                this.#totalCoefSubjects                 = totalCoefSubjects;
+                this.#totalCoefSubjectsNoGrade          = totalCoefSubjectsNoGrade;
+                this.#totalCoefSubjectsNoEnabledGrade   = totalCoefSubjectsNoEnabledGrade;
 
-                this.totalCoefGrades            = Math.round(totalCoefGrades/nbSubjects);
-                this.totalCoefRealGrades        = Math.round(totalCoefRealGrades/nbSubjects);
-                this.totalCoefSimGrades         = Math.round(totalCoefSimGrades/nbSubjects);
-                this.totalCoefEnabledGrades     = Math.round(totalCoefEnabledGrades/nbSubjects);
-                this.totalCoefEnabledRealGrades = Math.round(totalCoefEnabledRealGrades/nbSubjects);            
-                this.totalCoefEnabledSimGrades  = Math.round(totalCoefEnabledSimGrades/nbSubjects);
+                this.#totalCoefGrades            = Math.round(totalCoefGrades/nbSubjects);
+                this.#totalCoefRealGrades        = Math.round(totalCoefRealGrades/nbSubjects);
+                this.#totalCoefSimGrades         = Math.round(totalCoefSimGrades/nbSubjects);
+                this.#totalCoefEnabledGrades     = Math.round(totalCoefEnabledGrades/nbSubjects);
+                this.#totalCoefEnabledRealGrades = Math.round(totalCoefEnabledRealGrades/nbSubjects);            
+                this.#totalCoefEnabledSimGrades  = Math.round(totalCoefEnabledSimGrades/nbSubjects);
 
-                this.average    = Grade.average(this.grades);
-                this.classAvg   = Grade.classAverage(this.grades);
+                this.#average    = Grade.average(this.grades);
+                this.#classAvg   = Grade.classAverage(this.grades);
             }
 
-        //#endregion ____________ — methods — ____________
+        //#endregion .                 — methods —
 
 
 
 
 
-        // MARK: _________________________________________
+
+
+        // MARK: ——————————————————
+    }
+
+
+
+    // MARK: ———           SEMESTER            ———
+    class Semester {
+
+
+
+
+
+
+
+        // MARK: ——————————————————
+
     }
 
 
@@ -868,13 +1028,22 @@
 
 
 
-    // MARK: ———              Setting              ———
-    class Setting {}
+    // MARK: ———             SETTING             ———
+    class Setting {
 
 
 
 
-    // MARK: ———     KeyboardShortcut      ———
+
+
+
+        // MARK: ——————————————————
+
+    }
+
+
+
+    // MARK: ———   KEYBOARDSHORTCUT   ———
     class KeyboardShortcut {}
 
 
@@ -904,16 +1073,21 @@
 
 
 
+    // MARK: ——————————————————
 
 
-    // MARK: ———               Card                 ———
+
+
+
+
+    // MARK: ———               CARD               ———
     class Card {
 
 
 
 
 
-        //#region ___________ — properties — ___________
+        //#region .                — properties —
 
             /** The ECAM Grades Dashboard. @type {ECAMDashboard|ECAMDash} */
             ecamDash;
@@ -927,13 +1101,13 @@
 
 
 
-        //#endregion ___________ — properties — ___________
+        //#endregion .                — properties —
 
 
 
 
 
-        // MARK: ___________ — contructor — ___________
+        // MARK: .                — contructor —
         constructor(ecamDash=window.ecamDash, className, id) {
             if (ecamDash instanceof ECAMDashboard) {
                 this.ecamDash = ecamDash;
@@ -953,17 +1127,13 @@
             } else {throw new TypeError("Improper Card construction: wrong 'id' argument type, was expecting a string")}
         }
 
-        // MARK: _________________________________________
+        // MARK: ——————————————————
     }
 
 
 
-    // MARK: ———         ModuleCard           ———
-    class ModuleCard extends Card {
-
-    }
-
-
+    // MARK: ———         MODULECARD        ———
+    class ModuleCard extends Card {}
 
 
 
@@ -992,7 +1162,7 @@ class ECAMDashboard {
 
 
 
-    // MARK: ___________ — contructor — ___________
+    // MARK: .                — contructor —
     constructor(online) {
 
 
@@ -1017,7 +1187,7 @@ class ECAMDashboard {
 
 
 
-    //#region -—— Methods
+    //#region .                 — methods —
 
 
 
