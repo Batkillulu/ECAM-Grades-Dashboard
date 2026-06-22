@@ -1,0 +1,580 @@
+// ============================================================
+//  ecam-dashboard.d.ts
+//  Type declarations for ECAMDashboard and its related classes
+// ============================================================
+
+
+// MARK: ─── String prototype extension ───
+
+interface String {
+    /** Replaces every whitespace character in ***this*** string by a single dash. @returns {string} ***This*** string after replacing every whitespace by a single dash. */
+    replaceSpacesWithDashes(): string;
+}
+
+
+// MARK: ─── Grade ─────────────────
+
+declare class Grade {
+
+    /** 
+     * Constructs a {@link Grade}.
+     * 
+     * @param grade               Value of ***this*** {@link Grade}, a positive float number below 20.
+     * @param coef                Value of the coefficient of ***this*** {@link Grade} in its {@link Subject}, a positive float number below 100, as a %.
+     * @param subject             The {@link Subject} ***this*** {@link Grade} will belong to.
+     * @param title               Title of ***this*** {@link Grade}. Default value is " — ".
+     * @param isSim               `true` if ***this*** {@link Grade} is a simulated grade, `false` otherwise. `false` by default.
+     * @param classAvg            Value of the class' average of ***this*** {@link Grade}, a positive float number below 20. Default value is " — ".
+     * @param prof                Name of the teacher.s who published ***this*** {@link Grade}. Default value is " — ".
+     * @param date                Date of publication of ***this*** {@link Grade} entered by the administration. Default value is " — ". ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet*.
+     * 
+     * @throws {TypeError} If a parameter is of an unexpected type.
+     */
+    constructor(
+        grade: number,
+        coef: number,
+        subject: Subject,
+        title?: string,
+        isSim?: boolean,
+        classAvg?: number | " — ",
+        prof?: string,
+        date?: string
+    );
+
+    /** Value of ***this*** {@link Grade}, a positive float number below 20. */
+    grade: number;
+
+    /** Value of the coefficient of ***this*** {@link Grade} in its {@link Subject}, a positive float number below 100, in %. */
+    coef: number;
+
+    /** The {@link Subject} of ***this*** {@link Grade}. */
+    readonly subject: Subject;
+
+    /** The {@link Module} of ***this*** {@link Grade}. Has a getter and a setter. */
+    module: Module;
+
+    /** The {@link Semester} of ***this*** {@link Grade}. */
+    readonly semester: Semester;
+
+    /** Title of ***this*** {@link Grade} (default when no title was given: " — "). */
+    title: string;
+
+    /** `true` if ***this*** {@link Grade} is a simulated grade, `false` otherwise. */
+    readonly isSim: boolean;
+
+    /** Value of the class' average of ***this*** {@link Grade}, a positive float number below 20 */
+    classAvg: number | " — ";
+
+    /** Name of the teacher.s who published ***this*** {@link Grade} (default when no teacher was given: " — ") */
+    readonly prof: string;
+
+    /** Date of publication of ***this*** {@link Grade} entered by the administration (default when no date was given: " — ").  
+     * ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet.* */
+    readonly date: string;
+
+    /** `true` if ***this*** {@link Grade} is enabled (so it counts in the calculation of the averages), `false` otherwise. */
+    enabled: boolean;
+
+    /** `true` if ***this*** {@link Grade} was marked as read, `false` otherwise. */
+    markedAsRead: boolean;
+
+    toString(): string;
+
+    /** 
+     * Verifies that ***this*** {@link Grade} has the exact same informations as the given {@link Grade}
+     * 
+     * @param grade The {@link Grade} to compare with ***this*** {@link Grade}
+     * @returns `true` if ***this*** {@link Grade} has the exact same informations as the given {@link Grade}, `false` otherwise
+     */
+    equals(grade: Grade): boolean;
+
+    /** 
+     * The `Grade.average()` static method calculates the weighted average between all the given {@link Grade}s' value, rounded to the nearest hundredth of the average
+     * 
+     * @param grades Array of {@link Grade}s to calculate the weighted average from.
+     */
+    static average(grades: Grade[]): number | " — ";
+
+    /** 
+     * The `Grade.average()` static method calculates the weighted average between all the given {@link Grade}s' classAvg value, 
+     * rounded to the nearest hundredth of the average
+     * 
+     * @param grades Array of {@link Grade}s to calculate the weighted class average from.
+     */
+    static classAverage(grades: Grade[]): number | " — ";
+}
+
+
+// MARK: ─── Subject ────────────────
+
+declare class Subject {
+
+    /**
+     * Constructs an object of class {@link Subject} from an array of {@link Grade}s and an optional coefficient.
+     * 
+     * The array of {@link Grade}s may be empty/undefined, in this case, the next parameters `name` and `module` **must** be provided. This will create a simulated subject.
+     * 
+     * @param name        Name to give to ***this*** {@link Subject}.
+     * @param coef        Coefficient of ***this*** {@link Subject} in its {@link Module}, a positive float number below 100, as a %. Default value is 100.
+     * @param grades      Array of the {@link Grade}s in ***this*** {@link Subject}. Default value is `[]`. 
+     * @param module      The {@link Module} ***this*** {@link Subject} will belong to.
+     * 
+     * @throws {TypeError} If a parameter is of an unexpected type.
+     * @throws {Error} If the `subject` and/or `module` property of at least one {@link Grade} in the Array of {@link Grade}s differs from that of the first {@link Grade} of the same Array, or from the corresponding constructor parameter if given instead.
+     */
+    constructor(
+        name: string,
+        coef?: number,
+        grades?: Grade[],
+        module?: Module
+    );
+
+    /** Name of ***this*** {@link Subject}. */
+    name: string;
+
+    /** Coefficient of ***this*** {@link Subject} in its {@link Module}. */
+    coef: number;
+
+    /** Average of the user for ***this*** {@link Subject}, a positive float number below 20 */
+    readonly average: number | " — ";
+
+    /** Value of the class' average for ***this*** {@link Subject}, a positive float number below 20 */
+    readonly classAvg: number | " — ";
+
+    /** Array of the {@link Grade}s in ***this*** {@link Subject}. */ 
+    readonly grades: Grade[];
+
+    /** Name of the module of ***this*** {@link Subject}. */
+    module: Module;
+
+    /** The {@link Semester} of ***this*** {@link Subject}. */
+    readonly semester: Semester;
+
+    /** Array of the real {@link Grade}s in ***this*** {@link Subject}. */
+    readonly realGrades: Grade[];
+
+    /** Array of the simulated {@link Grade}s in ***this*** {@link Subject}. */
+    readonly simGrades: Grade[];
+
+    /** Array of the enabled {@link Grade}s in ***this*** {@link Subject}. */
+    readonly enabledGrades: Grade[];
+
+    /** Array of the disabled {@link Grade}s in ***this*** {@link Subject}. */
+    readonly disabledGrades: Grade[];
+
+    /** Array of the enabled real {@link Grade}s in ***this*** {@link Subject}. */
+    readonly enabledRealGrades: Grade[];
+
+    /** Array of the disabled real {@link Grade}s in ***this*** {@link Subject}. */
+    readonly disabledRealGrades: Grade[];
+
+    /** Array of the enabled simulated {@link Grade}s in ***this*** {@link Subject}. */
+    readonly enabledSimGrades: Grade[];
+
+    /** Array of the disabled simulated {@link Grade}s in ***this*** {@link Subject}. */
+    readonly disabledSimGrades: Grade[];
+
+    /** Total of the coefficients of all the {@link Grade}s in ***this*** {@link Subject}. */
+    readonly totalCoefGrades: number;
+
+    /** Total of the coefficients of all the real {@link Grade}s in ***this*** {@link Subject}. */
+    readonly totalCoefRealGrades: number;
+
+    /** Total of the coefficients of all the simulated {@link Grade}s in ***this*** {@link Subject}. */
+    readonly totalCoefSimGrades: number;
+
+    /** Total of the coefficients of all the enabled {@link Grade}s in ***this*** {@link Subject}. */
+    readonly totalCoefEnabledGrades: number;
+
+    /** Total of the coefficients of all the enabled real {@link Grade}s in ***this*** {@link Subject}. */
+    readonly totalCoefEnabledRealGrades: number;
+
+    /** Total of the coefficients of all the enabled simulated {@link Grade}s in ***this*** {@link Subject}. */
+    readonly totalCoefEnabledSimGrades: number;
+
+    toString(): string;
+
+    /**
+     * Computes the total coefficients, the average and the class average of ***this*** {@link Subject}.
+     */
+    computeStats(): void;
+}
+
+
+// MARK: ─── Module ────────────────
+
+declare class Module {
+
+    /**
+     * Constructs an object of class {@link Module} from an array of {@link Subject}s.
+     * 
+     * @param name      Name of ***this*** {@link Module}.
+     * @param semester  The {@link Semester} ***this*** {@link Module} will belong to.
+     * @param subjects  Array of the {@link Subject}s in ***this*** {@link Module}. Default value is `[]`. 
+     * 
+     * @throws {TypeError} If a parameter is of an unexpected type.
+     * @throws {Error} If the `name` and/or `semester` property of at least one {@link Subject} in the Array of {@link Subject}s differs from that of the first {@link Subject} of the same Array, or from the corresponding constructor parameter if given instead.
+     */
+    constructor(
+        name?: string,
+        semester?: Semester,
+        subjects?: Subject[]
+    );
+
+    /** Name of ***this*** {@link Module}. */
+    name: string;
+
+    /** Average of the user for ***this*** {@link Module}, a positive float number below 20 */
+    readonly average: number | " — ";
+
+    /** Value of the class' average for ***this*** {@link Module}, a positive float number below 20 */
+    readonly classAvg: number | " — ";
+
+    /** Object of all the {@link Subject}s in ***this*** {@link Module}, with the {@link Subject}'s name as key and the {@link Subject} itself as value. */
+    readonly subjects: Record<string, Subject>;
+
+    /** The {@link Semester} of ***this*** {@link Module}. */
+    readonly semester: Semester;
+
+    /** Array of the {@link Grade}s in ***this*** {@link Module}. */
+    readonly grades: Grade[];
+
+    /** Array of the real {@link Grade}s in ***this*** {@link Module}. */
+    readonly realGrades: Grade[];
+
+    /** Array of the simulated {@link Grade}s in ***this*** {@link Module}. */
+    readonly simGrades: Grade[];
+
+    /** Array of the enabled real {@link Grade}s in ***this*** {@link Module}. */
+    readonly enabledRealGrades: Grade[];
+
+    /** Array of the disabled real {@link Grade}s in ***this*** {@link Module}. */
+    readonly disabledRealGrades: Grade[];
+
+    /** Array of the enabled simulated {@link Grade}s in ***this*** {@link Module}. */
+    readonly enabledSimGrades: Grade[];
+
+    /** Array of the disabled simulated {@link Grade}s in ***this*** {@link Module}. */
+    readonly disabledSimGrades: Grade[];
+
+    /** Total of the coefficients of all the {@link Subject}s in ***this*** {@link Module}. */ 
+    readonly totalCoefSubjects: number;
+
+    /** Total of the coefficients of all the {@link Subject}s that don't have any {@link Grade}s in ***this*** {@link Module}. */ 
+    readonly totalCoefSubjectsNoGrade: number;
+
+    /** Total of the coefficients of all the {@link Subject}s that don't have any enabled {@link Grade}s in ***this*** {@link Module}. */ 
+    readonly totalCoefSubjectsNoEnabledGrade: number;
+
+    /** Total of the coefficients of all the {@link Grade}s in ***this*** {@link Module}. */
+    readonly totalCoefGrades: number;
+
+    /** Total of the coefficients of all the real {@link Grade}s in ***this*** {@link Module}. */
+    readonly totalCoefRealGrades: number;
+
+    /** Total of the coefficients of all the simulated {@link Grade}s in ***this*** {@link Module}. */
+    readonly totalCoefSimGrades: number;
+
+    /** Total of the coefficients of all the enabled {@link Grade}s in ***this*** {@link Module}. */
+    readonly totalCoefEnabledGrades: number;
+
+    /** Total of the coefficients of all the enabled real {@link Grade}s in ***this*** {@link Module}. */
+    readonly totalCoefEnabledRealGrades: number;
+
+    /** Total of the coefficients of all the enabled simulated {@link Grade}s in ***this*** {@link Module}. */
+    readonly totalCoefEnabledSimGrades: number;
+
+    /** All the {@link Subject}s in ***this*** {@link Module} that have an average *below 100*. */
+    readonly subjectsBelow100: Subject[];
+
+    /** All the {@link Subject}s in ***this*** {@link Module} that have an average *above 100*. */
+    readonly subjectsAbove100: Subject[];
+
+    /** All the {@link Subject}s in ***this*** {@link Module} that have an average of their real grades only *below 100*. */
+    readonly subjectsReallyBelow100: Subject[];
+
+    /** All the {@link Subject}s in ***this*** {@link Module} that have an average of their real grades only *above 100*. */
+    readonly subjectsReallyAbove100: Subject[];
+
+    /** All the {@link Subject}s in ***this*** {@link Module} that don't have any grade. */
+    readonly subjectsNoGrade: Subject[];
+
+    /** All the {@link Subject}s in ***this*** {@link Module} that don't have any enabled grade. */
+    readonly subjectsNoEnabledGrade: Subject[];
+
+    /**
+     * Adds a {@link Subject} to ***this*** {@link Module}.
+     * @param subject The {@link Subject} to add to ***this*** {@link Module}.
+     * @returns {Subject} The {@link Subject} added to ***this*** {@link Module}.
+     */
+    addSubject(subject: Subject): Subject;
+
+    /**
+     * Adds {@link Subject}s to ***this*** {@link Module}.
+     * @param subjects The {@link Subject}s to add to ***this*** {@link Module}.
+     * @returns {Subject[]} The {@link Subject}s added to ***this*** {@link Module}.
+     */
+    addSubjects(...subjects: Subject[]): Subject[];
+
+    /**
+     * Removes a {@link Subject} from ***this*** {@link Module}.
+     * @param subject The {@link Subject} (or its name) to remove from ***this*** {@link Module}.
+     * @returns {Subject} The {@link Subject} removed from ***this*** {@link Module}.
+     */
+    removeSubject(subject: Subject | string): Subject;
+
+    /**
+     * Removes {@link Subject}s from ***this*** {@link Module}.
+     * @param subjects The {@link Subject}s to remove from ***this*** {@link Module}.
+     * @returns {Subject[]} The {@link Subject}s removed from ***this*** {@link Module}.
+     */
+    removeSubjects(...subjects: (Subject | string)[]): Subject[];
+
+    toString(): string;
+
+    /**
+     * The `Module.average()` static method builds a **new** {@link Module} of given name from a given Array of {@link Grade}s.
+     * 
+     * @param grades  Array of the {@link Grade}s to build a {@link Module} from.
+     * @param name    Name of the {@link Module} to build from the given Array of {@link Grade}s.
+     * 
+     * @returns A **new** {@link Module} of the given name from the given Array of {@link Grade}s.
+     * 
+     * @throws {TypeError} If a parameter is of an unexpected type.
+     */
+    static fromGrades(grades: Grade[], name: string): Module;
+
+    /**
+     * Computes the total coefficients, the average and the class average of ***this*** {@link Module}.
+     * @param recomputeSubjects `true` if the stats of the {@link Subject}s of ***this*** {@link Semester} has to be computed, `false` otherwise.
+     */
+    computeStats(recomputeSubjects?: boolean): void;
+}
+
+
+// MARK: ─── Semester ───────────────
+
+declare class Semester {
+
+    /**
+     * 
+     * @param number   Number of the {@link Semester}.
+     * @param modules  {@link Module}s in the {@link Semester}.
+     */
+    constructor(number: number, modules?: Module[]);
+
+    /** Number of ***this*** {@link Semester}. */
+    number: number;
+
+    /** Average of the user for ***this*** {@link Semester}, a positive float number below 20 */
+    readonly average: number | " — ";
+
+    /** Value of the class' average for ***this*** {@link Semester}, a positive float number below 20 */
+    readonly classAvg: number | " — ";
+
+    /** Object of all the {@link Module}s in ***this*** {@link Semester}, with the {@link Module}'s name as key and the {@link Module} itself as value. */
+    readonly modules: Record<string, Module>;
+
+    /** The undefined {@link Module} of ***this*** {@link Semester}. */
+    readonly undefinedModule: Module;
+
+    /** Array of the {@link Subject}s in ***this*** {@link Semester}. */
+    readonly subjects: Record<string, Subject>;
+
+    /** Total of the coefficients of all the {@link Subject}s in ***this*** {@link Semester}. */ 
+    readonly totalCoefSubjects: number;
+
+    /** Total of the coefficients of all the {@link Subject}s that don't have any {@link Grade}s in ***this*** {@link Semester}. */ 
+    readonly totalCoefSubjectsNoGrade: number;
+
+    /** Total of the coefficients of all the {@link Subject}s that don't have any enabled {@link Grade}s in ***this*** {@link Semester}. */ 
+    readonly totalCoefSubjectsNoEnabledGrade: number;
+
+    /** Array of the {@link Grade}s in ***this*** {@link Semester}. */
+    readonly grades: Grade[];
+
+    /** Array of the simulated {@link Grade}s in ***this*** {@link Semester}. */
+    readonly simGrades: Grade[];
+
+    /** Array of the disabled real {@link Grade}s in ***this*** {@link Semester}. */
+    readonly disabledRealGrades: Grade[];
+
+    /** Array of the disabled simulated {@link Grade}s in ***this*** {@link Semester}. */
+    readonly disabledSimGrades: Grade[];
+
+    /** Total of the coefficients of all the {@link Grade}s in ***this*** {@link Semester}. */
+    readonly totalCoefGrades: number;
+
+    /** Total of the coefficients of all the real {@link Grade}s in ***this*** {@link Semester}. */
+    readonly totalCoefRealGrades: number;
+
+    /** Total of the coefficients of all the simulated {@link Grade}s in ***this*** {@link Semester}. */
+    readonly totalCoefSimGrades: number;
+
+    /** Total of the coefficients of all the enabled {@link Grade}s in ***this*** {@link Semester}. */
+    readonly totalCoefEnabledGrades: number;
+
+    /** Total of the coefficients of all the enabled real {@link Grade}s in ***this*** {@link Semester}. */
+    readonly totalCoefEnabledRealGrades: number;
+
+    /** Total of the coefficients of all the enabled simulated {@link Grade}s in ***this*** {@link Semester}. */
+    readonly totalCoefEnabledSimGrades: number;
+
+    /**
+     * Adds the {@link Module}.s to ***this*** {@link Semester}.
+     * @param modules The {@link Module}.s (or its/their name) to add to ***this*** {@link Semester}.
+     * @returns {Module[]} The {@link Module}s added to ***this*** {@link Semester}.
+     */
+    addModules(...modules: (Module | string)[]): Module[];
+
+    /**
+     * Removes the {@link Module}.s from ***this*** {@link Semester}.
+     * @param modules The {@link Module}.s (or its/their name) to remove from ***this*** {@link Semester}.
+     * @returns {Module[]} The {@link Module}s removed from ***this*** {@link Semester}.
+     */
+    removeModules(...modules: (Module | string)[]): Module[];
+
+    addSubject(subject: Subject): Subject;
+    addSubjects(...subjects: Subject[]): Subject[];
+    removeSubject(subject: Subject): void;
+
+    toString(): string;
+
+    /**
+     * Computes the total coefficients, the average and the class average of ***this*** {@link Semester}.
+     * @param recomputeSubjects `true` if the stats of the {@link Subject}s of ***this*** {@link Semester} has to be computed, `false` otherwise.
+     * @param recomputeModules `true` if the stats of the {@link Module}s of ***this*** {@link Semester} has to be computed, `false` otherwise.
+     */
+    computeStats(recomputeSubjects?: boolean, recomputeModules?: boolean): void;
+}
+
+
+// MARK: ─── Setting ────────────────
+interface Setting {}
+
+
+
+
+// MARK: ─── Settings ────────────────
+interface Settings {}
+
+
+
+
+// MARK: ─── KeyboardShortcut ─────────
+interface KeyboardShortcut {}
+
+
+
+
+
+// MARK: ─── KeyboardShortcuts ────────
+interface KeyboardShortcuts {}
+
+
+
+
+
+// MARK: ─── Card ──────────────────
+
+declare class Card {
+
+    /**
+     * 
+     * @param className Name of the class of ***this*** {@link Card}.
+     * @param id Id of ***this*** {@link Card}.
+     * @param parent Parent 
+     */
+    constructor(className: string, id: string, parent?: HTMLElement | Card);
+
+    /** The {@link HTMLElement} linked to ***this*** {@link Card}. */
+    readonly html: HTMLElement;
+
+    render(): void;
+}
+
+
+// MARK: ─── SubjectCard ─────────────
+
+declare class SubjectCard extends Card {
+
+    /**
+     * @param subject The {@link Subject} to create a {@link SubjectCard} from.
+     * @throws {TypeError} if a parameter isn't of the expected type.
+     */
+    constructor(subject: Subject);
+
+    /** The {@link Subject} corresponding to ***this*** {@link SubjectCard}. */
+    readonly subject: Subject;
+
+    /** The {@link Module} corresponding to ***this*** {@link SubjectCard}. */
+    readonly module: Module;
+
+    /** The {@link Semester} corresponding to ***this*** {@link SubjectCard}. */
+    readonly semester: Semester;
+}
+
+
+// MARK: ─── ModuleCard ─────────────
+
+declare class ModuleCard extends Card {
+
+    /**
+     * @param module The {@link Module} to create a {@link ModuleCard} from.
+     * @throws {TypeError} if a parameter isn't of the expected type.
+     */
+    constructor(module: Module);
+
+    /** The {@link Module} corresponding to ***this*** {@link ModuleCard}. */
+    readonly module: Module;
+
+    /** The {@link Semester} corresponding to ***this*** {@link ModuleCard}. */
+    readonly semester: Semester;
+}
+
+
+// MARK: ─── SemesterCard ────────────
+
+declare class SemesterCard extends Card {
+
+    /**
+     * @param semester The {@link Semester} to create a {@link SemesterCard} from.
+     * @throws {TypeError} if a parameter isn't of the expected type.
+     */
+    constructor(semester: Semester);
+
+    /** The {@link Semester} corresponding to ***this*** {@link SemesterCard}. */
+    readonly semester: Semester;
+}
+
+
+// MARK: ─── ECAMDashboard ──────────
+
+declare class ECAMDashboard {
+
+    constructor(online: boolean);
+
+    /** Array of all the {@link Grade}s of the user. */
+    grades: Grade[];
+
+    /** Array of all the {@link Subject}s of the user. */
+    subjects: Subject[];
+
+    /** Array of all the {@link Module}s of the user. */
+    modules: Module[];
+
+    /** Array of all the {@link Semester}s of the user. */
+    semesters: Semester[];
+
+    /** Array of all the non-read {@link Grade}s of the user. */
+    newGrades: Grade[];
+
+    /** Array of the string representation of all the read {@link Grade}s of the user. */
+    savedReadGrades: string[];
+
+    /** Array of the string representation of all the {@link Grade}s disabled by the user. */
+    disabledGrades: string[];
+
+    /** Arrary of the string representation of all the simulated {@link Grade}s created by the user. */
+    sim: string[];
+}
