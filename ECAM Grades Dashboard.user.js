@@ -9,37 +9,37 @@
 // @run-at       document-end
 // @license      AGPL-3.0; Commercial license available
 // ==/UserScript==
-// 
-// 
-// 
-// 
-// 
+//
+//
+//
+//
+//
 // ========================================================================= HI, FELLOW CODER! =========================================================================
-// 
+//
 // If you're trying to get a look at this script and are on VSCode, I suggest you:
-// - enable your minimap                                        (Settings > Text Editor > Minimap: Enabled => checked)                      
-// - keep your minimap displayed at all time                    (Settings > Text Editor > Minimap: Autohide => none)                        
-// - set its max width to 200                                   (Settings > Text Editor > Minimap: Max Column => 200)                       
-// - set its font size to 10                                    (Settings > Text Editor > Minimap: Section Header Font Size => 10)          
-// - set its letter spacing to 0.5                              (Settings > Text Editor > Minimap: Section Header Letter Spacing => 0.5)    
-// - make sure you enabled the mark section headers             (Settings > Text Editor > Minimap: Show Mark Section Headers => checked)    
-// - make sure you enabled the region section headers as well   (Settings > Text Editor > Minimap: Show Region Section Headers => checked)  
+// - enable your minimap                                        (Settings > Text Editor > Minimap: Enabled => checked)
+// - keep your minimap displayed at all time                    (Settings > Text Editor > Minimap: Autohide => none)
+// - set its max width to 200                                   (Settings > Text Editor > Minimap: Max Column => 200)
+// - set its font size to 10                                    (Settings > Text Editor > Minimap: Section Header Font Size => 10)
+// - set its letter spacing to 0.5                              (Settings > Text Editor > Minimap: Section Header Letter Spacing => 0.5)
+// - make sure you enabled the mark section headers             (Settings > Text Editor > Minimap: Show Mark Section Headers => checked)
+// - make sure you enabled the region section headers as well   (Settings > Text Editor > Minimap: Show Region Section Headers => checked)
 // - and finally make sure to keep its size proportional        (Settings > Text Editor > Minimap: Size => proportional)                    (Right click on minimap > Vertical Size > Proportional)
 // - [OPTIONALLY] enabled "render characters"                   (Settings > Text Editor > Minimap: Render Characters => checked)            (Right click on minimap > Render Characters)
 //      (rendering the characters shortens the height of rows in the minimap, I prefer it like that since this script is quite long)
-// 
+//
 // I've done a bit of styling intended for the minimap with the parameters I gave above, and it should make your reverse-engineering experience much easier!
 // Optimal display when the side bar is closed
-// 
-// 
+//
+//
 // Link for offline test: https://espace.ecam.fr/c/portal/login?redirect=%2Fgroup%2Feducation%2Fnotes&p_l_id=0&ticket=ST-113179-sbwjXieT3GLY9T3fXdsmFp9vCro-tomcat03
 // (trying to access espace.ecam.fr wields a link of this sort. It doesn't seem to have a "unique" token or a time limited access, so this link should work for anyone)
-// 
+//
 // =====================================================================================================================================================================
 //
-// 
-// 
-// 
+//
+//
+//
 // Copyright (C) 2026 Baptiste Jaquin & Maxence Leroux
 //
 // This program is free software: you can redistribute it and/or modify
@@ -48,11 +48,11 @@
 //
 // Free for individual student use.
 // Institutional or official use requires a commercial license.
-// 
+//
 // Don't hesitate to contact us, at either:
 //  - baptiste.jacquin@ecam.fr  [more for the coding part]
 //  - maxence.leroux@ecam.fr    [more for the financial and responsibility part]
-// 
+//
 
 (function() {
 
@@ -77,11 +77,11 @@
 				@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 				@import url('https://fonts.googleapis.com/css2?family=Rubik+Glitch&display=swap');
 				@import url('https://fonts.googleapis.com/css2?family=Jura:wght@300..700&display=swap');
-				
-				* { 
-					box-sizing: border-box; 
+
+				* {
+					box-sizing: border-box;
 				}
-				
+
 				html {
 					font-family: sans-serif;
 					-ms-text-size-adjust: 100%;
@@ -93,16 +93,16 @@
 					margin: 0;
 					padding: 0;
 				}
-				
-				.ecam-dash { 
-					display: flex; 
-					flex-direction: column; 
-					justify-content:center; 
-					align-items: center; 
-					width: 97%; 
-					margin: 20px 1.5% 0px 1.5%; 
+
+				.ecam-dash {
+					display: flex;
+					flex-direction: column;
+					justify-content:center;
+					align-items: center;
+					width: 97%;
+					margin: 20px 1.5% 0px 1.5%;
 					color: #1a1a1a;
-					font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; 
+					font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 					/* font-family: "Jura", sans-serif;
 					font-optical-sizing: auto;
 					font-style: normal; */
@@ -112,7 +112,7 @@
 					border-collapse: collapse;
 					border-spacing: 0;
 				}
-				
+
 
 				.offline-mode-title    { display: flex; justify-content: center; align-items: center; text-align: center; height: 60px; font-size: 50px; letter-spacing: 0.23em; font-family: "Rubik Glitch", system-ui; opacity: 0; transition: all 1s ease; }
 				.offline-mode-title.show    { opacity: 1; }
@@ -124,7 +124,7 @@
 				.dash-title-text  {  }
 				.patch-notes-link { display: flex; justify-content: center; align-items: center; gap: 5px; cursor: pointer; color: inherit; }
 				.dash-subtitle { font-size: 16px; opacity: 95%; padding: 5px 0px; background: transparent; color: white; }
-				
+
 				.currently-loading      { display: flex; justify-content: center; align-items: center; height: 100px; width: 100px; min-height: 100px; min-width: 100px; position: fixed; bottom: 30px; right: -100px; opacity: 0%; z-index: 1500; transition: opacity 0.2s ease; }
 				.currently-loading.show { right: 30px; opacity: 100%; }
 				.loading-symbol         { position: absolute; top: 100px; right: 100px; height: 100px; width: 100px; clip-path: circle(20px); background: #594a8fe0; offset-path: circle(50px); offset-distance: var(--offset-offset); }
@@ -132,7 +132,7 @@
 				.loading-symbol.show    { animation: loading 1s infinite; }
 				@keyframes loading  { from {offset-distance: var(--offset-offset)} to {offset-distance: calc(var(--offset-offset) + 100%)} }
 
-				.new-user-notif     { display: flex; justify-content: center; align-items: center; width: 0; height: 0; position: relative; right: 296px; top: -22px; border-radius: 20px; text-align: center; cursor: pointer; user-select: none; z-index: 301; transition: all 0.3s ease; --hoveringElem-amp: 5px; animation: hoveringElem 2s infinite alternate ease-in-out; --arrow-join: round; } 
+				.new-user-notif     { display: flex; justify-content: center; align-items: center; width: 0; height: 0; position: relative; right: 296px; top: -22px; border-radius: 20px; text-align: center; cursor: pointer; user-select: none; z-index: 301; transition: all 0.3s ease; --hoveringElem-amp: 5px; animation: hoveringElem 2s infinite alternate ease-in-out; --arrow-join: round; }
 				.new-user-notif-text    { min-width: 450px; min-height: 53px; padding: 10px; background: #00037b; outline: 3px solid; border-radius: 20px; font-size: 23px; text-wrap-mode: wrap; line-height: 24px; z-index: 10; }
 				.new-user-notif-arrow       { width: 0px; height: 0px; position: relative; transition: all 0.5s ease }
 				.new-user-notif-arrow-svg        { width: 0; height: 0; min-width: 210px; min-height: 70px; }
@@ -144,21 +144,21 @@
 				.focus-notif-fullscreen-effect   { position: fixed; width: 100%; height: 100%; right: 0px; top: 0px; background: black; overflow: clip; opacity: 0%; z-index: 8; transition: all 0.5s ease; }
 				.focus-notif-fullscreen-effect.focus { opacity: 60%; }
 			`;
-			
-			
+
+
 			//#region -Buttons
 				styles += `
 					.lang-btn           { border: 2px solid #000000ff; background: #6f79ff; border-radius: 18px; width: 36px; height: 36px; }
 					.lang-btn.active    { border: 2px solid #ceefffff; }
 					.lang-btn:hover     { border: 2px solid #afe4ffff; background: #a6acff; }
 				`;
-			
-			
+
+
 				//#region -over header buttons
-				
+
 					styles += `
 
-						.over-header-btns                   { display: flex; flex-direction: row; justify-content: flex-end; align-items: center; position: relative; height: 0px; width: 95%; top: 0px; gap: 8px; color: white; }                        
+						.over-header-btns                   { display: flex; flex-direction: row; justify-content: flex-end; align-items: center; position: relative; height: 0px; width: 95%; top: 0px; gap: 8px; color: white; }
 						.over-header-btn                            { display: flex; justify-content: center; align-items: center; border-radius: 20px; position: relative; transition: all 0.2s ease; height: 40px; cursor: pointer; user-select: none; text-decoration: none; text-wrap-mode: nowrap; overflow: clip; }
 					`;
 
@@ -184,7 +184,7 @@
 						.over-header-btn.help.doc-btn.fr::before                    { content: "Voir documentation"; }
 						.over-header-btn.help.doc-btn.en                            { width: 180px; }
 						.over-header-btn.help.doc-btn.en::before                    { content: "See documentation"; }
-						
+
 						.over-header-btn.help.keybinds-btn                          {  }
 						.over-header-btn.help.keybinds-btn.fr                       { width: 180px; }
 						.over-header-btn.help.keybinds-btn.fr::before               { content: "Raccourcis clavier ⌨️"; }
@@ -228,14 +228,14 @@
 						.over-header-btn.issue.share-config             { justify-content: flex-start; background: #00569d; width: 39px; right: -117px; padding-left: 10px; font-size: 15px; outline: 2px solid #ffffff; border: none; color: white;   z-index: 2; }
 						.over-header-btn.issue.suggest-idea             { justify-content: flex-start; background: #009d40; width: 39px; right: -78px;  padding-left: 10px; font-size: 15px; outline: 2px solid #ffffff; border: none; color: white;   z-index: 3; }
 						.over-header-btn.issue.report-issue             { justify-content: flex-start; background: #ad0000; width: 39px; right: -40px;  padding-left: 10px; font-size: 15px; outline: 2px solid #ffffff; border: none; color: white;   z-index: 4; }
-						
+
 						.over-header-btn-mail-info-text             { color: white; transition: all 0.5s ease; }
 						.over-header-btn-mail-info-text.lighten     { animation: overHeaderBtnMailInfoText 1.5s ease; }
 						.over-header-btn-copied-cue                 { background: #555555; color: white; font-size: 17px; position: relative; left: -158px; top: -20px; opacity: 0%; }
 						.over-header-btn-copied-cue.show            { animation: overHeaderBtnCopiedCue 1.5s ease; }
 						@keyframes overHeaderBtnCopiedCue           { 0% {top: -20px; opacity: 0%;} 20% {top: 0px; opacity: 100%;} 50% {top: 0px; opacity: 100%} 100% {top: 20px; opacity: 0%;} }
 						@keyframes overHeaderBtnMailInfoText        { 0% {color: white;} 20% {color: #ffffff75;} 50% {color: #ffffff75;} 100% {color: white;} }
-						
+
 						.over-header-btn.issue.mail-info.fr.open            { width: 337px; right: -685px; box-shadow: 5px 7px 6px 0px black; }
 						.over-header-btn.issue.share-config.fr.open         { width: 557px; right: -640px; box-shadow: 5px 7px 6px 0px black; }
 						.over-header-btn.issue.suggest-idea.fr.open         { width: 391px; right: -261px; box-shadow: 5px 7px 6px 0px black; }
@@ -245,7 +245,7 @@
 						.over-header-btn.issue.share-config.en.open         { width: 455px; right: -530px; box-shadow: 5px 7px 6px 0px black; }
 						.over-header-btn.issue.suggest-idea.en.open         { width: 329px; right: -215px; box-shadow: 5px 7px 6px 0px black; }
 						.over-header-btn.issue.report-issue.en.open         { width: 191px; right: -40px;  box-shadow: 5px 7px 6px 0px black; }
-						
+
 
 						.over-header-btn.issue.mail-info.open:hover          { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
 						.over-header-btn.issue.share-config.open:hover       { color: #b8d7ff; outline-color: teal; box-shadow: 7px 9px 6px 2px black; }
@@ -260,12 +260,12 @@
 
 				//#endregion
 
-				
+
 
 
 				// MARK: -other buttons
 				styles += `
-				
+
 					.header-actions                 { display: flex; gap: 12px; }
 					.config-btns-container          { display: flex; flex-direction: column; }
 					.btn                                { display: flex; justify-content: center; align-items: center; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-size: 14px; }
@@ -300,7 +300,7 @@
 				.settings-row.disabled                      { background-position: 0% 100%; opacity: 80%; padding-left: calc(5px + var(--padding-left)); }
 				.settings-text                                  { display: flex; flex-direction: column; gap: 8px; padding: 13px 0px; }
 				.settings-checkbox                              { zoom: 130%; }
-			
+
 			`;
 
 
@@ -324,8 +324,8 @@
 				.tuto-tip-notif:hover   { animation-play-state: running, paused; }
 
 				.tuto-tip-btns-container 	{ display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; font-size: 28px; font-weight: 700; text-wrap-mode: nowrap; }
-				.tuto-tip-btns-container-header	{ display: flex; flex-direction: column; justify-content: center; align-items: center; text-wrap-mode: nowrap; width: 0; height: 0; }	
-				.tuto-tip-btns-body				{ display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px 10px; gap: 20px; overflow-x: visible; overflow-y: auto; }	
+				.tuto-tip-btns-container-header	{ display: flex; flex-direction: column; justify-content: center; align-items: center; text-wrap-mode: nowrap; width: 0; height: 0; }
+				.tuto-tip-btns-body				{ display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px 10px; gap: 20px; overflow-x: visible; overflow-y: auto; }
 				.tuto-tip-btn						{ display: flex; justify-content: center; align-items: center; padding: 15px; outline: 2px solid white; border-radius: 10px; background: linear-gradient( #5334ff75 0%, #7a62ff75 100%); color: white; font-size: 26px; font-weight: 700; text-wrap-mode: nowrap; cursor: pointer; animation: none; animation-play-state: paused; transition: all 0.2s ease; }
 				.tuto-tip-btn:hover 				{ animation: focusBlinkAnimation 1s infinite alternate ease-in-out; transform: scale(101%); }
 
@@ -352,7 +352,7 @@
 				.import-menu-btn.file   {  }
 				.import-menu-btn.clear  { width: 15%; }
 				.import-menu-btn.online {  }
-				
+
 
 				.online-cfg-picker-menu-container   { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; position: fixed; left: 0; top: 0; z-index: 999; }
 				.online-cfg-picker-menu                 { display: flex; flex-direction: column; justify-content: flex-start; padding: 20px 35px; z-index: 1000; }
@@ -474,8 +474,8 @@
 			`;
 
 		//#endregion
-		
-		
+
+
 
 
 
@@ -483,7 +483,7 @@
 			styles += `
 				.drop-field     { display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 20px; overflow: clip; user-select: none; }
 			`;
-				
+
 
 			// MARK: drop create fields
 			styles += `
@@ -506,12 +506,12 @@
 				.drop-field-create-module-hitbox                    { position: fixed; top: 50px; right:0px; height: calc(100% - 100px); width: 0%; border-radius: 20px 0px 0px 20px; transition: all 0.2s ease; }
 				.drop-field-create-module-hitbox.show               { width: 15%; border-width: 2px 0px 2px 2px; cursor: pointer; z-index: 298; }
 			`;
-				
+
 
 			// MARK: drop remove fields
 			styles += `
 
-				
+
 				.drop-field.remove-from-module                      { position: fixed; top: 50px; left:0px; height: calc(100% - 100px); width: 0%; border: 2px dashed #ff7f7f; border-radius: 0px 20px 20px 0px; border-color: #ff7f7f00; background: #ffb8b800; font-weight: 800; color: #ff7f7f00; z-index: 297; transition: all 0.2s ease; }
 				.drop-field.remove-from-module.show                 { width: 15%; border-width: 2px 2px 2px 0px; border-color: #ff7f7f; color: #ff7f7f; background: #ffb8b83d; cursor: pointer; }
 				.drop-field.remove-from-module.hover                     { background: #ffb8b8ce; }
@@ -531,7 +531,7 @@
 				.drop-field-remove-from-module-hitbox                    { position: fixed; top: 50px; left:0px; height: calc(100% - 100px); width: 0%; border-radius: 0px 20px 20px 0px; transition: all 0.2s ease; }
 				.drop-field-remove-from-module-hitbox.show               { width: 15%; border-width: 2px 2px 2px 0px; cursor: pointer; z-index: 298; }
 			`;
-				
+
 
 			// MARK: drop insert fields
 			styles += `
@@ -543,7 +543,7 @@
 				.drop-field.insert-field.subject                    { justify-content: flex-start; width: 98%; height: 4px; color: #9b9b9bff; opacity: 0%; border: 2px dashed #9b9b9b54; background: #bdb8ff1a; font-size: 25px; font-weight: 800; user-select: none; margin: 30px 0px; transition: all 0.2s ease; }
 				.drop-field.insert-field.subject.show               { color: #9b9b9bff; border-color: #9b9b9b54; opacity: 50%;  border-width: 2px 0px; border-radius: 0px; height: 30px; margin: 17px 0px; }
 				.drop-field.insert-field.subject.show.hover         { color: #887bffff; border-color: #7fc2ffff; opacity: 100%; border-width: 2px 2px; border-radius: 20px; }
-				
+
 				.drop-module-card-insert-content                        { position: relative; display: flex; align-items: center; width: 100%; height: 50px; overflow: clip; top:-2px; }
 				.drop-module-card-insert-content.plus                   {  }
 				.drop-module-card-insert-content.arrow                  { top: -52px; }
@@ -570,14 +570,14 @@
 				.drop-module-card-insert-text.add.en::before            { content: "Add a module here";}
 				.drop-module-card-insert-text.add                       { width: 0px; right: 0px; }
 				.drop-module-card-insert-text.add.hover                 { width: var(--width); right: var(--x-translation); opacity: 100%; }
-				
+
 				.drop-module-card-insert-text.insert.fr::before         { content: "Insérer ici"; }
 				.drop-module-card-insert-text.insert.en::before         { content: "Insert here"; }
 				.drop-module-card-insert-text.insert                    { width: 0px; right: calc(var(--x-translation) + var(--width) - 50%); }
 				.drop-module-card-insert-text.insert.hover              { width: var(--width); right: calc(var(--width) - 50%); opacity: 100%; }
 
 				.drop-module-card-insert-hitbox                     { display: flex; position: relative; top: -152px; width: calc(100% - -4px); min-height: 50px; border-radius: 20px; cursor: pointer; }
-				
+
 
 				.drop-subject-card-insert-content                   { position: relative; display: flex; align-items: center; width: 100%; height: 30px; overflow: clip; top:-2px; }
 				.drop-subject-card-insert-content.plus              {  }
@@ -585,7 +585,7 @@
 				.drop-subject-card-insert-content.text              { overflow: visible; top: -62px }
 				.drop-subject-card-insert-content.text.add          { justify-content: center; }
 				.drop-subject-card-insert-content.text.insert       { justify-content: flex-start; }
-				
+
 				.drop-subject-card-insert-arrow                     { font-size: 280px; display: flex; align-items: flex-start; justify-content: center; height: 30px; position: relative; left: calc(50% - 120px); background: transparent; opacity: 0%;                       transition: all 0.5s cubic-bezier(0, 1, 0.25, 1); line-height: 7%; }
 				.drop-subject-card-insert-arrow.show                { opacity: 50%; }
 				.drop-subject-card-insert-arrow.show.hover          { left: 50%; opacity: 100%; }
@@ -605,14 +605,14 @@
 				.drop-subject-card-insert-text.add.en::before       { content: "Add a subject here";}
 				.drop-subject-card-insert-text.add                  { width: 0px; right: 0px; }
 				.drop-subject-card-insert-text.add.hover            { width: var(--width); right: var(--x-translation); opacity: 100%; }
-				
+
 				.drop-subject-card-insert-text.insert.fr::before    { content: "Insérer ici"; }
 				.drop-subject-card-insert-text.insert.en::before    { content: "Insert here"; }
 				.drop-subject-card-insert-text.insert               { width: 0px; right: calc(var(--x-translation) + var(--width) - 50%); }
 				.drop-subject-card-insert-text.insert.hover         { width: var(--width); right: calc(var(--width) - 50%); opacity: 100%; }
 
 				.drop-subject-card-insert-hitbox                { display: flex; position: relative; top: -92px; width: calc(100% - -4px); min-height: 30px; border-radius: 20px; cursor: pointer; }
-				
+
 			`;
 		//#endregion
 
@@ -660,10 +660,10 @@
 
 				.semester-body      { display: flex; flex-direction: column; width: 100%; gap: 20px; transition: gap 0.2s ease; }
 			`;
-				
 
 
-			
+
+
 
 			// MARK: -MODULES SECTION
 			styles += `
@@ -671,7 +671,7 @@
 				.modules-section                                { display: flex; flex-direction: column; gap: 50px; align-items: center; width: 100%; transition: all 0.3s ease; }
 				.modules-section.edit                           { gap: 12.5px; }
 			`;
-				
+
 
 
 
@@ -691,7 +691,7 @@
 				.module-card-header.failed           { border-color: #ef4444ff; background: linear-gradient(300deg, #ffd9d9ff 30%, transparent); }
 				.module-card-header.unknown          { border-color: #6d6d6dff; background: linear-gradient(300deg, #acacacff 30%, transparent); }
 				.module-card-header:hover            { filter: brightness(calc(0.01 * 105)); opacity: 90%; }
-				.module-delete-btn                  { border-radius: 14px; background: transparent; margin: 0; text-transform: none; -webkit-appearance: button; font: 1em Arial,Helvetica,Verdana,sans-serif; width: auto; padding: 5px; overflow: visible; cursor: pointer; color: #34404F; text-shadow: none; font-weight: normal; border: 3px solid; border-color: white; transition: all 0.2s ease; } 
+				.module-delete-btn                  { border-radius: 14px; background: transparent; margin: 0; text-transform: none; -webkit-appearance: button; font: 1em Arial,Helvetica,Verdana,sans-serif; width: auto; padding: 5px; overflow: visible; cursor: pointer; color: #34404F; text-shadow: none; font-weight: normal; border: 3px solid; border-color: white; transition: all 0.2s ease; }
 
 				.module-card-header-left-side        { display: flex; align-items: center; justify-content: flex-start; width: 35%; }
 				.module-title                    { font-size: 20px; font-weight: 800; color: #1a1a1a; width:42%; margin-bottom: 2px; }
@@ -727,7 +727,7 @@
 				.module-details.edit-mode           { gap: 0px; }
 
 			`;
-				
+
 
 
 
@@ -738,7 +738,7 @@
 				.unclassified-content   { display: flex; flex-direction: column; align-items: center; gap: 25px; width: 99%; height: 100%; }
 				.unclassified-title     { display: flex; align-items: center; gap: 8px; width: 97%; font-size: 16px; font-weight: 600; color: #92400e; margin-bottom: 16px; }
 			`;
-				
+
 
 
 
@@ -758,7 +758,7 @@
 					.subject-card.bad:hover             { box-shadow: 0px 0px 13px 5px #ff7b7b; }
 					.subject-card.unknown               { box-shadow: 0px 0px 0px 0px  #6d6d6d; background: linear-gradient(300deg, #c5c5c5 30%, transparent); }
 					.subject-card.unknown:hover         { box-shadow: 0px 0px 13px 5px #6d6d6d; }
-					
+
 					.subject-card-header        { display: flex; flex-direction: row; justify-content: space-between; align-items: center; width: 100%; min-height: 70px; border-radius: 20px 20px 0px 0px; outline: 4px solid white; padding: 5px 11px; font-weight:700; font-size: 15px; vertical-align: top; cursor: pointer; z-index: 1; transition: all 0.2s ease; }
 					.subject-card-header.compact    { border-radius: 20px; }
 					.subject-card-header.good       { background: linear-gradient(300deg, #e3ffeb 30%, transparent); }
@@ -780,12 +780,12 @@
 					.subject-total-coef-debug      { display: flex; gap: 15px; text-align: left; font-weight: 400; }
 					.subject-insert-field                           { display: flex: flex-direction: column; align-items: center; height: 0px; width: 100%; margin: 0px 0px; transition: height 0.2s ease, margin 0.2s ease; }
 					.subject-insert-field.show                      { height: 50px; margin: 10px 0px; }
-					
+
 					.subject-card-header-right-side    { display: flex; justify-content: flex-end; align-items: center; width: 0; height: 100%; gap: 4px; font-size: 17px; text-wrap-mode: nowrap; }
 					.subj-average           { display: flex; justify-content: flex-end; padding-right: 20px; font-size: 24px; font-weight: 800; text-wrap-mode: nowrap; transition: all 0.2s ease; }
 					.subj-average.good      { color: #10b981; }
 					.subj-average.bad       { color: #ef4444; }
-					.subject-delete-btn     { border-radius: 14px; background: transparent; margin: 0; text-transform: none; -webkit-appearance: button; font: 1em Arial,Helvetica,Verdana,sans-serif; width: auto; padding: 5px; overflow: visible; cursor: pointer; color: #34404F; text-shadow: none; font-weight: normal; border: 3px solid; border-color: white; transition: all 0.2s ease; } 
+					.subject-delete-btn     { border-radius: 14px; background: transparent; margin: 0; text-transform: none; -webkit-appearance: button; font: 1em Arial,Helvetica,Verdana,sans-serif; width: auto; padding: 5px; overflow: visible; cursor: pointer; color: #34404F; text-shadow: none; font-weight: normal; border: 3px solid; border-color: white; transition: all 0.2s ease; }
 
 
 					.selected-card-notif-container              { display: grid; justify-items: end; gap: 10px; position: fixed; top: 50px; right: 10px; z-index: 301; transition: width 0.3s ease; }
@@ -796,7 +796,7 @@
 					.selected-card-notif-div-del-btn            { color: #640000; font-size: 20px; line-height: 17px; height: 20px; cursor: pointer; user-select: none; transition: color 0.2s ease; }
 					.selected-card-notif-div-del-btn:hover      { color: #ffffff; }
 				`;
-					
+
 
 
 
@@ -867,7 +867,7 @@
 					.grade-sim-del-btn           { border: none; border-radius: 6px; cursor: pointer; }
 					.grade-checkbox  { cursor: pointer; }
 				`;
-				
+
 
 
 				// MARK: icons
@@ -885,21 +885,21 @@
 					.tick-icon.module   {  }
 					.tick-icon:hover    { color: #89adff; }
 				`;
-			
+
 
 				// MARK: .................................................................
 			//#endregion
-			
 
 
 
 
-			
+
+
 			// MARK: _________________________________________
 		//#endregion
-			
 
-			
+
+
 
 
 
@@ -910,13 +910,13 @@
 
 
 
-		
+
 			// MARK: Animations
 			styles += `
 
 				/* @media (max-width: 768px)   {
-					#dash-header { flex-direction:column; align-items:start; gap:16px; } 
-					.average-display { flex-direction:column; gap:4px; } .average-number { font-size:36px; } 
+					#dash-header { flex-direction:column; align-items:start; gap:16px; }
+					.average-display { flex-direction:column; gap:4px; } .average-number { font-size:36px; }
 				} */
 
 				.loading            { text-align: center; padding: 40px; color: #999; }
@@ -940,7 +940,7 @@
 
 			// MARK: Modal
 			styles += `
-			
+
 				.modal  { --bg-end-color: white; --bg-start-color: #ffffff61; --bg-start-gradient: 20%; --scrollbar-thumb-color: #888; --scrollbar-thumb-color-hover: #555; max-width: min(var(--modal-max-width, 100%), 100%); max-height: min(var(--modal-max-height, 100%), 100%); transform: translateZ(0) scale(110%); border-radius: 20px; border: 0px solid #ffffff; background: radial-gradient(closest-corner, var(--bg-start-color) var(--bg-start-gradient), var(--bg-end-color)); opacity: 0%; transition: all 0.3s ease; }
 				.modal.blur { backdrop-filter: blur(calc(250px / 100)); }
 				.modal.show { border-width: 8px; transform: translateZ(0) scale(100%); opacity: 100%; }
@@ -999,11 +999,11 @@
 
 
 	//#endregion
-	
-	
-	
-	
-	
+
+
+
+
+
 	// MARK:  ——————————————————
 	//#endregion
 
@@ -1015,14 +1015,14 @@
 		// Initializing the CSS style and checking for error before creating the dashboard
 		const styleSheet = document.createElement("style");
 		styleSheet.textContent = styles;
-		
+
 		document.head.appendChild(styleSheet);
-		
-		const error = 
-		(window.location.pathname == "/c/portal/login" && window.location.search.match(/redirect/) ? "servers are down" : undefined) 
-		|| 
-		(window.location.pathname != "/group/education/notes" ? "not in grades" : undefined) 
-		|| 
+
+		const error =
+		(window.location.pathname == "/c/portal/login" && window.location.search.match(/redirect/) ? "servers are down" : undefined)
+		||
+		(window.location.pathname != "/group/education/notes" ? "not in grades" : undefined)
+		||
 		false
 		;
 
@@ -1067,16 +1067,16 @@
 				this.settings = {
 
 					displayClassAvg: {
-						name: () => !this.isLangEn 
-							? "Moyenne de classe de modules et matières" 
+						name: () => !this.isLangEn
+							? "Moyenne de classe de modules et matières"
 							: "Class average for modules and subjects"
 						,
-						description: () => !this.isLangEn 
-							? "Afficher les moyennes de classe pour les matières, modules et semestres, pour les étudiants avec un esprit de compétition :D" 
+						description: () => !this.isLangEn
+							? "Afficher les moyennes de classe pour les matières, modules et semestres, pour les étudiants avec un esprit de compétition :D"
 							: "Display the class averages for subjects, modules and semesters, for students with high competitive spirit :D"
 						,
-						info: () => !this.isLangEn 
-							? "" 
+						info: () => !this.isLangEn
+							? ""
 							: ""
 						,
 						value: JSON.parse( JSON.parse(localStorage.getItem("ECAM_DASHBOARD_SETTINGS"))?.displayClassAvg?.value?.toString() || "true"),
@@ -1084,23 +1084,23 @@
 							document.querySelectorAll(".semester-class-average, .semester-class-average-vs-average, .module-class-average, .module-class-average-vs-average, .subj-class-average,  .subj-class-average-vs-average").forEach(elem => {
 								elem.style.display = this.settings.displayClassAvg.value ? "" : "none";
 							})
-							this.saveSettings(); 
+							this.saveSettings();
 						},
 						parents:  [],
 						children: [],
 					},
 
 					totalCoefValuesEnabled: {
-						name: () => !this.isLangEn 
-							? "Afficher les coefs totaux" 
+						name: () => !this.isLangEn
+							? "Afficher les coefs totaux"
 							: "Display total coefs"
 						,
-						description: () => !this.isLangEn 
-							? "Afficher les coefficients totaux pour les cartes de matière et de module" 
+						description: () => !this.isLangEn
+							? "Afficher les coefficients totaux pour les cartes de matière et de module"
 							: "Display the total coefficients for subject and module cards"
 						,
-						info: () => !this.isLangEn 
-							? "Le.s pourcentage.s apparraissant entre le nom des modules/sujets et leur moyenne" 
+						info: () => !this.isLangEn
+							? "Le.s pourcentage.s apparraissant entre le nom des modules/sujets et leur moyenne"
 							: "The percentage.s showing up between the name of modules/subjects and their average"
 						,
 						value: JSON.parse( JSON.parse(localStorage.getItem("ECAM_DASHBOARD_SETTINGS"))?.totalCoefValuesEnabled?.value?.toString() || "true"),
@@ -1113,16 +1113,16 @@
 					},
 
 					totalCoefDebugTextsEnabled: {
-						name: () => !this.isLangEn 
-							? "Afficher les textes d'aide" 
+						name: () => !this.isLangEn
+							? "Afficher les textes d'aide"
 							: "Display the helper texts"
 						,
-						description: () => !this.isLangEn 
-							? "Afficher les textes d'aide des cartes de sujet et de module" 
+						description: () => !this.isLangEn
+							? "Afficher les textes d'aide des cartes de sujet et de module"
 							: "Display the helper texts for subject and module cards"
 						,
-						info: () => !this.isLangEn 
-							? "Il s'agit simplement des textes interprétant les nombres des \"Coef Total des Matières\" et \"Coef Total des Notes\"" 
+						info: () => !this.isLangEn
+							? "Il s'agit simplement des textes interprétant les nombres des \"Coef Total des Matières\" et \"Coef Total des Notes\""
 							: "It simply corresponds to the texts interpreting the numbers of \"Total Subjects Coef\" and \"Total Grades Coef\""
 						,
 						value: JSON.parse( JSON.parse(localStorage.getItem("ECAM_DASHBOARD_SETTINGS"))?.totalCoefDebugTextsEnabled?.value?.toString() || "true"),
@@ -1135,16 +1135,16 @@
 					},
 
 					blurEnabled: {
-						name: () => !this.isLangEn 
-							? "Activer le flou" 
+						name: () => !this.isLangEn
+							? "Activer le flou"
 							: "Enable blur"
 						,
-						description: () => !this.isLangEn 
-							? "Activer le flou qui s'opère sur le fond des fenêtres (activé par défaut parce que je trouve ça joli :D)" 
+						description: () => !this.isLangEn
+							? "Activer le flou qui s'opère sur le fond des fenêtres (activé par défaut parce que je trouve ça joli :D)"
 							: "Enable the blur that operates on the background of the windows (turned on by default because I find it nice :D)"
 						,
-						info: () => !this.isLangEn 
-							? "Non recommendé pour les appareils à basses performances" 
+						info: () => !this.isLangEn
+							? "Non recommendé pour les appareils à basses performances"
 							: "Not recommended for low-end devices"
 						,
 						value: JSON.parse( JSON.parse(localStorage.getItem("ECAM_DASHBOARD_SETTINGS"))?.blurEnabled?.value?.toString() || "true"),
@@ -1157,16 +1157,16 @@
 					},
 
 					scrollHelpersEnabled: {
-						name: () => !this.isLangEn 
-							? "Aides au défilement" 
+						name: () => !this.isLangEn
+							? "Aides au défilement"
 							: "Scroll helpers"
 						,
-						description: () => !this.isLangEn 
-							? "Activer l'aide au défilement pour suivre les éléments importants à l'écran lors de changements de verticalité. Désactive-la si tu n'aimes pas avoir ces défilements forcés" 
+						description: () => !this.isLangEn
+							? "Activer l'aide au défilement pour suivre les éléments importants à l'écran lors de changements de verticalité. Désactive-la si tu n'aimes pas avoir ces défilements forcés"
 							: "Enable the scroll helpers to follow the important elements on screen upon verticality changes. Disable it if you don't like these forced scrolls"
 						,
-						info: () => !this.isLangEn 
-							? "Certaines actions (changement de mode d'édition, changement vue détaillée/compacte...) font changer la position verical de certains éléments (cartes de module/matière, entre autres), donc un défilement maintient certains éléments à l'écran" 
+						info: () => !this.isLangEn
+							? "Certaines actions (changement de mode d'édition, changement vue détaillée/compacte...) font changer la position verical de certains éléments (cartes de module/matière, entre autres), donc un défilement maintient certains éléments à l'écran"
 							: "Some actions (edit mode change, detailed/compact view mode change...) change the vertical position of some elements (i.e. module/subject cards), so this setting allows to scroll to keep the most important elements on screen"
 						,
 						value: JSON.parse( JSON.parse(localStorage.getItem("ECAM_DASHBOARD_SETTINGS"))?.scrollHelpersEnabled?.value?.toString() || "true"),
@@ -1179,27 +1179,27 @@
 				/** The list of keybinds @type {[{text: (isLangEn: boolean) => {returns: string}, keys: (isLangEn: boolean) => {returns: string}}]} */
 				this.keybinds = [
 					{
-						text: () => {return !this.isLangEn ? "Fermer la fenêtre" : "Close the window"}, 
+						text: () => {return !this.isLangEn ? "Fermer la fenêtre" : "Close the window"},
 						keys: () => {return !this.isLangEn ? "Échap" : "Escape"},
 					},
 					{
-						text: () => {return !this.isLangEn ? "Plier/Déplier tous les modules (basculer)" : "Fold/Unfold all modules (toggle)"}, 
+						text: () => {return !this.isLangEn ? "Plier/Déplier tous les modules (basculer)" : "Fold/Unfold all modules (toggle)"},
 						keys: () => {return !this.isLangEn ? "Maj + F" : "Shift + F"},
 					},
 					{
-						text: () => {return !this.isLangEn ? "Vue détaillée/compacte pour toutes les matières (basculer)" : "Detailed/Compact view all subjects (toggle)"}, 
+						text: () => {return !this.isLangEn ? "Vue détaillée/compacte pour toutes les matières (basculer)" : "Detailed/Compact view all subjects (toggle)"},
 						keys: () => {return !this.isLangEn ? "Maj + D" : "Shift + D"},
 					},
 					{
-						text: () => {return !this.isLangEn ? "Mode édition (basculer)" : "Edit mode (toggle)"}, 
+						text: () => {return !this.isLangEn ? "Mode édition (basculer)" : "Edit mode (toggle)"},
 						keys: () => {return !this.isLangEn ? "Maj + E" : "Shift + E"},
 					},
 					{
-						text: () => {return !this.isLangEn ? "Langue français/anglais (basculer)" : "Language French/English (toggle)"}, 
+						text: () => {return !this.isLangEn ? "Langue français/anglais (basculer)" : "Language French/English (toggle)"},
 						keys: () => {return !this.isLangEn ? "Maj + L" : "Shift + L"},
 					},
 					{
-						text: () => {return !this.isLangEn ? "Changer de semestre (cycle)" : "Change semester (cycle)"}, 
+						text: () => {return !this.isLangEn ? "Changer de semestre (cycle)" : "Change semester (cycle)"},
 						keys: () => {return !this.isLangEn ? "Maj + ←/→" : "Shift + ←/→"},
 					},
 				];
@@ -1221,7 +1221,7 @@
 				this.checkForUpdate                     = localStorage.getItem("ECAM_DASHBOARD_CHECK_FOR_UPDATE")               || false;
 				this.firstLoad              = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_FIRST_LOAD")                     || "true");
 				this.updateFirstLoad        = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_UPDATE_FIRST_LOAD") || JSON.stringify({state: true, v: this.scriptVersion}));
-				
+
 			//#endregion
 
 
@@ -1234,17 +1234,17 @@
 				this.savedReadGrades        = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SAVED_READ_GRADES"))             || [];
 				this.sim                    = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SIM_GRADES"))                    || {};
 				this.newGrades = [];
-			
+
 				this.disabledGrades         = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_DISABLED_GRADES"))               || [];
 				this.gradesData = {};
-			
+
 			//#endregion
 
 
 
 
 			//#region Repo
-				
+
 				/** @type {string} */ this.repoUserReportIssue        = "https://github.com/Batkillulu/ECAM-Grades-Dashboard/issues/new?template=user-report-issue-template.md";
 				/** @type {string} */ this.repoUserSuggestionIssue    = "https://github.com/Batkillulu/ECAM-Grades-Dashboard/issues/new?template=feature-improvement-request-template.md";
 				/** @type {string} */ this.repoUserConfigShare        = "https://github.com/Batkillulu/ECAM-Grades-Dashboard/issues/new?template=share-config-template.md";
@@ -1252,7 +1252,7 @@
 				/** @type {string} */ this.repoContentsAPI            = "https://api.github.com/repos/Batkillulu/ECAM-Grades-Dashboard/contents";
 				/** @type {string} */ this.repoScriptRaw              = "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/ECAM%20Grades%20Dashboard.user.js";
 				/** @type {string} */ this.patchNotes                 = `https://github.com/Batkillulu/ECAM-Grades-Dashboard/blob/v${this.scriptVersion}/CHANGELOG.md`;
-			
+
 				this.gitFetchScanDoneArray = [];
 				this.tempGitConfigParentDirData = {};
 				this.onlineConfigs          = (localStorage.getItem("ECAM_DASHBOARD_ONLINE_CONFIGS") != "[object Object]" ? JSON.parse( localStorage.getItem("ECAM_DASHBOARD_ONLINE_CONFIGS")) : undefined)
@@ -1268,24 +1268,24 @@
 									Robotics:    "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20-%20P2028%20-%20Robotics.json",
 									SupplyChain: "https://raw.githubusercontent.com/Batkillulu/ECAM-Grades-Dashboard/refs/heads/main/Configs/EENG/EENG3/P2028/EENG3%20-%20P2028%20-%20SupplyChain.json",
 									path: "Configs/EENG/EENG3/P2028",
-									nbCfgs: 4, 
+									nbCfgs: 4,
 								},
 								path: "Configs/EENG/EENG3",
-								nbCfgs: 4, 
+								nbCfgs: 4,
 							},
 							EENG4: {},
 							EENG5: {},
 							path: "Configs/EENG",
-							nbCfgs: 4, 
+							nbCfgs: 4,
 						},
-						AM:     {}, 
+						AM:     {},
 						path: "Configs",
 						nbCfgs: 4,
 					},
 					nbCfgs: 4,
 					date: "0000-00-00T00:00:00Z",
 				};
-			
+
 			//#endregion
 
 
@@ -1336,7 +1336,7 @@
 				/** @type {TutoTipNotif[]} */ this.onGoingTutoTipNotifDivs = [];
 
 				/** @type {TutoTipNotif} */ this.currentTutoTipNotif = null;
-				
+
 				/** @type {String} */ this.scrollToThisElem = "";
 
 			//#endregion
@@ -1400,80 +1400,80 @@
 
 
 				// MARK: scrollToClientHighestElem()
-				/** Scrolls to an element depending on the target element datas passed as argument under the form of an object. 
+				/** Scrolls to an element depending on the target element datas passed as argument under the form of an object.
 				 * If using the className method and not the id method, please make sure the elements of class className are in column.
-				 * 
-				 * Priority order defined by parameter `priority`. Scan through all the given classNames. If no match is found on a className: 
-				 * - **"first"**:  
+				 *
+				 * Priority order defined by parameter `priority`. Scan through all the given classNames. If no match is found on a className:
+				 * - **"first"**:
 				 * **moves on to the next one**. The method will scroll to the **first** data matching the conditions, and skip the rest.
-				 * - **"last"**:  
+				 * - **"last"**:
 				 * **skip the rest**. The method will scroll to the **last** data matching the conditions such that all the previous data are matches as well, and skip the rest. If no match is found at all, doesn't scroll.
-				 * 
+				 *
 				 * Behavior changes along with **`highestElemInPageHandleType`**'s value. Scan through all target element datas given, and (with X being an int between 0 and 100):
-				 * - **"none"**:                   
+				 * - **"none"**:
 				 * scroll to the first      element -                        *out of all the others* - (who's class name matches the `targetElementDatas`'s property `className`) **SUCH THAT** it's the highest        element in the current window view whose center doesn't go out of the screen from the top.
-				 * - **"first/last above" / "first/last above X%"** (first is default if first/last isn't given):       
+				 * - **"first/last above" / "first/last above X%"** (first is default if first/last isn't given):
 				 * scroll to the first/last element -                        *out of all the others* - (who's class name matches the `targetElementDatas`'s property `className`) **SUCH THAT** it's the highest/lowest element in the current window view whose center doesn't go out of the screen from the top **AND** its center   is above X% (default 50%) of the screen **IF** the top edge of the **first** element - *and only the first, independantly of the first/last parameter* - of same class is above X% (default 50%) of the screen. *Typically useful to scroll to the first/last element of class className that is in-between the top of the window and the given percentage of the height of the window when there are multiple small elements that could satisfy these conditions*
-				 * - **"partial" / "partial X%"**:   
+				 * - **"partial" / "partial X%"**:
 				 * scroll to the first      element - *and ONLY the first*                           - (who's class name matches the `targetElementDatas`'s property `className`) **SUCH THAT** it's the highest        element in the current window view whose center doesn't go out of the screen from the top **AND** its top edge is above X% (default 50%) of the screen. *Typically useful if you want to scroll to the highest element of class className if its center is in-between the top of the screen and the given percentage of the height of the window*
-				 * - **"absolute" / "absolute X%"**:   
+				 * - **"absolute" / "absolute X%"**:
 				 * scroll to the first      element - *and ONLY the first*                           - (who's class name matches the `targetElementDatas`'s property `className`) **IFF** its top edge is above X% (default 50%) of the screen. *Typically useful if you want to scroll to the highest element of class className if its top edge is above the given percentage of the height of the window, without any regard whether it's above the top of screen or not*
-				 * - **"force"**:                       
+				 * - **"force"**:
 				 * scroll to the first      element - *and ONLY the first*                           - (who's class name matches the `targetElementDatas`'s property `className`). *No condition, just forces the scroll to the top of this element*
-				 * 
+				 *
 				 * In any case, the scroll is executed (after the `timeout` property of the same `targetElementDatas`) with respects to the `margin` property of the same `targetElementDatas` (it will be attributed as `scrollMargin` style property of the element to scroll to)
-				 * 
+				 *
 				 * @returns The element that was scrolled to, or null if no element was scrolled to
 				 * @param {String} priority             {@link String String},  default: "first" — Defines how multiple `targetElementDatas` input are managed. Can be "first" or "last"
-				 * @param {{className?: String, id?: String, targetElem?: HTMLElement, margin?: Number, timeout?: Number, smooth?: Boolean, highestElemInPageHandleType?: String, block?: String}} targetElementDatas 
+				 * @param {{className?: String, id?: String, targetElem?: HTMLElement, margin?: Number, timeout?: Number, smooth?: Boolean, highestElemInPageHandleType?: String, block?: String}} targetElementDatas
 				 * Any amount of objects. If ommited, uses a default object. Objects should all have the following properties (if any is omitted, they are given their default value):
-				 * 
-				 * **`className?`**                     {@link String String},  default: ".subject-card" —  
+				 *
+				 * **`className?`**                     {@link String String},  default: ".subject-card" —
 				 *  Name of the class to target, if you want to target a category of elements
-				 * 
-				 * **`id?`**                            {@link String String},  default: "" —              
+				 *
+				 * **`id?`**                            {@link String String},  default: "" —
 				 *  ID of the element to target, if you want to target a specific element (ensure your element has an ID though)
-				 * 
-				 * **`targetElem?`**                    {@link HTMLElement HTMLElement},  default: "" —              
+				 *
+				 * **`targetElem?`**                    {@link HTMLElement HTMLElement},  default: "" —
 				 *  Element to target
-				 * 
-				 * **`margin?`**                        {@link Number Number},  default: 23 (in px) —      
+				 *
+				 * **`margin?`**                        {@link Number Number},  default: 23 (in px) —
 				 *  Used to define the scrollMargin CSS styles property of the element targeted
-				 * 
-				 * **`timeout?`**                       {@link Number Number},  default: 50 (in ms) —      
+				 *
+				 * **`timeout?`**                       {@link Number Number},  default: 50 (in ms) —
 				 *  Timer before the scroll action is triggered
-				 * 
-				 * **`smooth?`**                        {@link Boolean Boolean}, default: false —           
+				 *
+				 * **`smooth?`**                        {@link Boolean Boolean}, default: false —
 				 *  If true, the page will smoothly scroll to the element targeted
-				 * 
-				 * **`highestElemInPageHandleType?`**   {@link String String},  default: "none" —          
+				 *
+				 * **`highestElemInPageHandleType?`**   {@link String String},  default: "none" —
 				 *  Can be "force", "absolute", "absolute X%", "partial", "partial X%", "above", "above X%" or "none" (with X being an int between 0 and 100). Any other value will be considered as "none"
-				 * 
-				 * **`block?`**                         {@link String String},  default: "start" —         
+				 *
+				 * **`block?`**                         {@link String String},  default: "start" —
 				 *  Can be "start", "center", "end" or "nearest". Any other value will be considered as "start". Defines what part of the element will be taken as reference to scroll to, taking the margin into account
 				 */
 				scrollToClientHighestElem(priority="first/setting-compliant", ...{className= "subject-card", id="", targetElem=null, margin=this.editMode ? 100 : 25, timeout=20, smooth=false, highestElemInPageHandleType="none", block="start"}) {
 					const defaultTargetElementDatas = [
-						{className: "modules-section",      margin: 20,                        highestElemInPageHandleType:"partial"}, 
+						{className: "modules-section",      margin: 20,                        highestElemInPageHandleType:"partial"},
 						{className: "module-card",          margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"above"},
 						{className: "unclassified-section", margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"partial"},
 						{className: "subject-card",         margin: 10,                        highestElemInPageHandleType:"above"},
 					];
 
 					// Error-proof for different invalid arguments inputs (no arguments given, targetElementData object given instead of priority, invalid targetElementData objects passed, priority given at the wrong spot...)
-					let argumentsArray = []; 
+					let argumentsArray = [];
 					let effectivePriority, settingCompliance;
-					(arguments?.length > 1 
-						? Object.values(arguments).splice(1,Object.values(arguments).length) 
+					(arguments?.length > 1
+						? Object.values(arguments).splice(1,Object.values(arguments).length)
 						: Object.values(arguments)
 					).forEach((_obj, _index) => {
 						// In case the first argument is the intendend priority argument:
-						if (typeof _obj == "string" && _index == 0) { 
+						if (typeof _obj == "string" && _index == 0) {
 							effectivePriority = _obj;
 							settingCompliance = (_obj.match(/setting-compliant|ignore-setting/)?.[0] || "setting-compliant") == "setting-compliant";
 						}
 						// In case the priority argument isn't given, but the rest of the objects are provided:
-						else if (_obj instanceof Object && (_obj?.targetElem || _obj?.className || _obj?.id)) { 
+						else if (_obj instanceof Object && (_obj?.targetElem || _obj?.className || _obj?.id)) {
 							argumentsArray.push(_obj)
 						}
 					})
@@ -1490,7 +1490,7 @@
 						effectivePriority = priority?.split("/")?.[0]?.toLowerCase()?.trim(); // formatting priority correctly if it was given
 						settingCompliance = priority?.split("/")?.[1]?.toLowerCase()?.trim() == "setting-compliant";
 					}
-					
+
 					if (!effectivePriority?.match(/first|last/i)) {
 						effectivePriority = "first";
 					}
@@ -1514,34 +1514,34 @@
 						const partialPattern  =              /partial( (\d{1,2}|100)%|)/i;
 						const absolutePattern =             /absolute( (\d{1,2}|100)%|)/i;
 						const highestElemInPageHandleTypePattern = RegExp("none|" + abovePattern.source + "|" + partialPattern.source + "|" + absolutePattern.source, "i");
-						
+
 						this.scrollToThisElem = ""; let targetDataIndex = -1;
-						
+
 						argumentsArray.forEach((targetElemData, targetIndex) => {
-	
+
 							if (    /* ensuring the priority order of the element of the first class className found */
 								(//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 									(
-										targetDataIndex < 0 
+										targetDataIndex < 0
 										&& (effectivePriority.toLowerCase()||"first") == "first"
-									) 
-									|| 
+									)
+									||
 									(
-										targetDataIndex == targetIndex-1 
+										targetDataIndex == targetIndex-1
 										&& (effectivePriority.toLowerCase()||"first") == "last"
 									)
 								)//////////////////////////////////////////////////////////////////////////////////////////////////////
-							) { 
+							) {
 								// ensuring that highestElemInPageHandleType has an expected value. Take it as "none" if that's not the case
 								targetElemData.highestElemInPageHandleType = targetElemData?.highestElemInPageHandleType?.toLowerCase()?.trim() || highestElemInPageHandleType;
 								if (targetElemData?.highestElemInPageHandleType?.match(highestElemInPageHandleTypePattern)?.[0] != targetElemData?.highestElemInPageHandleType) {
 									targetElemData.highestElemInPageHandleType = "none";
 									console.log(`The highestElemInPageHandleType given in the scrollToClientHighestElem method isn't of an expected value. Treating it as "none" instead.`)
 								}
-	
-	
+
+
 								if (targetElemData?.id=="" || !document.getElementById(targetElemData?.id || id) || !targetElemData.targetElem instanceof HTMLElement) { // If no id is given, or if the given id doesn't correspond to any item in the document:
-	
+
 									// getting the highest element of class className, as well as its top coordinate in the screen
 									const highestElem                   = document.querySelector("." + (targetElemData?.className?.match(/(\.|)(.+)/)?.[2].replace(" ", ".") || className));
 									const highestElemCoords             = highestElem?.getBoundingClientRect();
@@ -1549,33 +1549,33 @@
 									const highestElemTopCoordPercent    = 100 * highestElemTopCoord/window.innerHeight;
 									const highestElemCenterCoord        = (highestElemCoords?.top + highestElemCoords?.bottom)/2;
 									const highestElemCenterCoordPercent = 100 * highestElemCenterCoord/window.innerHeight;
-	
+
 									// if highestElemTopCoord < margin, then it means that the top of the highest element of class className has passed the top of the screen
-									
+
 									if ( // The highest AND ONLY THE HIGHEST elem case
 										(//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 											/* Force case */
 											targetElemData?.highestElemInPageHandleType?.toLowerCase() == "force"
-											|| 
+											||
 											( /* First Absolute case */
 												targetElemData?.highestElemInPageHandleType?.match(absolutePattern)
 												&& /* Checking if highestElemInPageHandleType starts with "last", because if it does, we just pass the highest elem case to scan through all the elem of class className to get the last elem satisfying the condition.s */
 												targetElemData?.highestElemInPageHandleType?.match(absolutePattern)?.[1]?.trim() != "last"
-	
+
 												&& /* Is the top coordinate of the highest element of class className: */
 												/* Above the required height (percentage of the total height)? */
 												highestElemTopCoordPercent < (targetElemData?.highestElemInPageHandleType?.match(absolutePattern)?.[3] || 50)
 											)
-											|| 
+											||
 											( /* First Partial case */
 												targetElemData?.highestElemInPageHandleType?.match(partialPattern)
 												&&  /* Checking if highestElemInPageHandleType starts with "last", because if it does, we just pass the highest elem case to scan through all the elem of class className to get the last elem satisfying the condition.s */
 												targetElemData?.highestElemInPageHandleType?.match(partialPattern)?.[1]?.trim() != "last"
-	
+
 												&&  /* Is the top coordinate of the highest element of class className: */
 												/* Above the required height (percentage of the total height)? */
 												highestElemTopCoordPercent < (targetElemData?.highestElemInPageHandleType?.match(partialPattern)?.[3] || 50)
-												&& 
+												&&
 												/* Below the top of the screen? */
 												highestElemTopCoordPercent >= 0
 											)
@@ -1584,81 +1584,81 @@
 												targetElemData?.highestElemInPageHandleType?.match(abovePattern)
 												&& /* Checking if highestElemInPageHandleType starts with "last", because if it does, we just pass the highest elem case to scan through all the elem of class className to get the last elem satisfying the condition.s */
 												targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[1]?.trim() != "last"
-	
+
 												&& /* Is the top coordinate of the highest element of class className: */
 												/* Above the required height (percentage of the total height)? */
 												highestElemTopCoordPercent < (targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[3] || 50)
-	
+
 												&& /* Is the center coordinate of the highest element of class className: */
 												/* Below the top of the screen? */
 												highestElemCenterCoordPercent >= 0
 											)
 										)//////////////////////////////////////////////////////////////////////////////////////////////////////
-									) { 
-	
+									) {
+
 										this.scrollToThisElem = highestElem.id;
 										targetDataIndex = targetIndex;
-	
+
 									}
 									else if (   // Get the first elem among all the other elements of class className satisfying the condition.s corresponding to the className's highestElemInPageHandleType prop
 										(//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 											/* None case */
 											targetElemData?.highestElemInPageHandleType?.toLowerCase() == "none"
-											|| 
+											||
 											( /* Last Above case or Above case if the highest elem isn't in the view */
 												targetElemData?.highestElemInPageHandleType?.match(abovePattern)
-												
+
 												&& /* Is the top coordinate of the highest element of class className: */
 												/* Above the required height (percentage of the total height)? */
 												highestElemTopCoordPercent < (targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[3] || 50)
 											)
 										)//////////////////////////////////////////////////////////////////////////////////////////////////////
 									) {
-	
+
 										let targetElemIndex = -1;
 										document.querySelectorAll("." + (targetElemData?.className?.match(/(\.|)(.+)/)?.[2].replace(" ", ".") || className)).forEach((elem, _index) => {
-	
+
 											if (    /* ensuring the priority order of the element of the first class className found, but also priority of the first/last element in the above case */
 												(//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 													(
-														targetDataIndex < 0 
+														targetDataIndex < 0
 														&& (effectivePriority.toLowerCase()||"first") == "first"
-													) 
-													|| 
+													)
+													||
 													(
-														targetDataIndex == targetIndex-1 
+														targetDataIndex == targetIndex-1
 														&& (effectivePriority.toLowerCase()||"first") == "last"
 													)
 													||
-													(   
+													(
 														targetElemIndex == _index-1
 														&&
 														targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[1]?.trim() == "last"
 													)
 												)//////////////////////////////////////////////////////////////////////////////////////////////////////
 											) {
-	
+
 												const elemCoordsClient          = elem.getBoundingClientRect();
 												const elemCenterClient          = (elemCoordsClient.top + elemCoordsClient.bottom)/2;
 												const elemCenterClientPercent   = 100 * elemCenterClient/window.innerHeight;
 												const elemTopClientPercent      = 100 * elemCoordsClient.top/window.innerHeight;
-			
+
 												if (
 													(//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 														( /* Checking if the element satisfies the conditions corresponding to its highestElemInPageHandleType */
 															( /* None case */
-																targetElemData?.highestElemInPageHandleType?.toLowerCase() == "none" 
+																targetElemData?.highestElemInPageHandleType?.toLowerCase() == "none"
 																&& /* Is the center of the currently observed element of class className: */
 																/* Below the top of the screen? */
-																elemCenterClientPercent >= 0 
+																elemCenterClientPercent >= 0
 															)
-															|| 
+															||
 															( /* Above case */
 																targetElemData?.highestElemInPageHandleType?.match(abovePattern)
 																&& /* Is the top of the currently observed element of class className: */
 																/* Below the top of the screen or in the "last" case? */
 																(
-																	elemCenterClientPercent >= 0 
+																	elemCenterClientPercent >= 0
 																	||
 																	targetElemData?.highestElemInPageHandleType?.match(abovePattern)?.[1]?.trim() == "last"
 																)
@@ -1669,13 +1669,13 @@
 														)
 													)//////////////////////////////////////////////////////////////////////////////////////////////////////
 												) {
-			
+
 													this.scrollToThisElem = elem.id;
 													targetDataIndex = targetIndex;
 													targetElemIndex = _index;
-																
+
 												}
-	
+
 											}
 										})
 									}
@@ -1686,17 +1686,17 @@
 								}
 							}
 						})
-	
+
 						if (targetDataIndex >= 0) {
 							const targetElemData = argumentsArray[targetDataIndex];
-	
+
 							setTimeout(() => {
-								const scrollToThisElem = targetElemData?.targetElem || document.getElementById(this.scrollToThisElem) || document.querySelector("."+targetElemData.className.match(/(\.|)(.+)/)?.[2].replace(" ", ".")); 
+								const scrollToThisElem = targetElemData?.targetElem || document.getElementById(this.scrollToThisElem) || document.querySelector("."+targetElemData.className.match(/(\.|)(.+)/)?.[2].replace(" ", "."));
 								scrollToThisElem.style.scrollMargin = (targetElemData?.block || block) == "center" ? "" : `${(targetElemData?.margin || margin) + (document.body.classList.contains("lfr-dockbar-pinned") ? 45 : 0)}px`;
 								scrollToThisElem.scrollIntoView({behavior: (targetElemData?.smooth || smooth) ? "smooth" : "instant", block: targetElemData.block});
 								this.scrollToThisElem = "";
 							}, (targetElemData?.timeout || timeout))
-	
+
 							return this.scrollToThisElem || String("."+targetElemData.className);
 						}
 					}
@@ -1708,7 +1708,7 @@
 
 				// MARK: keyInputMatch()
 				/** Call inside a onkeydown or onkeyup event listener to check if the key pressed during the given KeyboardEvent matches the expected pressed key, along with the optional modifiers and their requirements
-				*  
+				*
 				* @param {KeyboardEvent} keyboardEvent Pass the keyboard event trigger onkey event from which this method is called
 				* @param {String | Array} keyPressed The key expected to be pressed, an array of keys expected to be pressed or a regular expression to match the key pressed
 				* @param {{alt?: string, ctrl?: string, shift?: string, meta?: string, repeat?: string}} param2 All the modifiers. Each element of this object `alt`, `ctrl`, `shift`, `meta`, and `repeat` take as value one of the following strings: "required", "whatever", or "forbidden"
@@ -1724,11 +1724,11 @@
 					const key = `${e.altKey ? "alt" : "no-alt"} ${e.ctrlKey ? "+ ctrl" : "+ no-ctrl"} ${e.shiftKey ? "+ shift" : "+ no-shift"} ${e.metaKey ? "+ meta" : "+ no-meta"} + ${e.key} (${e.repeat ? "repeat" : "no-repeat"})`;
 
 					let altPattern, ctrlPattern, shiftPattern, metaPattern, repeatPattern;
-					if (alt    === "required") {altPattern    = "(alt)"}    else if (alt    === "whatever") {altPattern    = "(alt|no-alt)"}        else if (alt    === "forbidden") {altPattern    = "(no-alt)"}              
-					if (ctrl   === "required") {ctrlPattern   = "(ctrl)"}   else if (ctrl   === "whatever") {ctrlPattern   = "(ctrl|no-ctrl)"}      else if (ctrl   === "forbidden") {ctrlPattern   = "(no-ctrl)"}          
-					if (shift  === "required") {shiftPattern  = "(shift)"}  else if (shift  === "whatever") {shiftPattern  = "(shift|no-shift)"}    else if (shift  === "forbidden") {shiftPattern  = "(no-shift)"}         
-					if (meta   === "required") {metaPattern   = "(meta)"}   else if (meta   === "whatever") {metaPattern   = "(meta|no-meta)"}      else if (meta   === "forbidden") {metaPattern   = "(no-meta)"}          
-					if (repeat === "required") {repeatPattern = "(repeat)"} else if (repeat === "whatever") {repeatPattern = "(repeat|no-repeat)"}  else if (repeat === "forbidden") {repeatPattern = "(no-repeat)"}       
+					if (alt    === "required") {altPattern    = "(alt)"}    else if (alt    === "whatever") {altPattern    = "(alt|no-alt)"}        else if (alt    === "forbidden") {altPattern    = "(no-alt)"}
+					if (ctrl   === "required") {ctrlPattern   = "(ctrl)"}   else if (ctrl   === "whatever") {ctrlPattern   = "(ctrl|no-ctrl)"}      else if (ctrl   === "forbidden") {ctrlPattern   = "(no-ctrl)"}
+					if (shift  === "required") {shiftPattern  = "(shift)"}  else if (shift  === "whatever") {shiftPattern  = "(shift|no-shift)"}    else if (shift  === "forbidden") {shiftPattern  = "(no-shift)"}
+					if (meta   === "required") {metaPattern   = "(meta)"}   else if (meta   === "whatever") {metaPattern   = "(meta|no-meta)"}      else if (meta   === "forbidden") {metaPattern   = "(no-meta)"}
+					if (repeat === "required") {repeatPattern = "(repeat)"} else if (repeat === "whatever") {repeatPattern = "(repeat|no-repeat)"}  else if (repeat === "forbidden") {repeatPattern = "(no-repeat)"}
 
 					const keyPattern = RegExp(`${altPattern} \\+ ${ctrlPattern} \\+ ${shiftPattern} \\+ ${metaPattern} \\+ ${keyExpected} \\(${repeatPattern}\\)`);
 					const match = key.match(keyPattern);
@@ -1741,11 +1741,11 @@
 
 
 				// MARK: resetFixedUnclassifiedSectionHeight()
-				/** Resets the fixed height of the unclassified section.  
+				/** Resets the fixed height of the unclassified section.
 				 * Practically, if the unclassified section had a fixed height, its content's height changed and the unclassified section's height should also change,
-				 * then snaps back the unclassified section's height to fit its content's height to finally get its current height and set it as its height CSSStyle.  
+				 * then snaps back the unclassified section's height to fit its content's height to finally get its current height and set it as its height CSSStyle.
 				 * This forces the unclassified section height's change to respect its transition CSSStyle
-				 * 
+				 *
 				 * @param {number} [timeout=1] Delay before this method takes action
 				 */
 				resetFixedUnclassifiedSectionHeight(timeout=1) {
@@ -1765,7 +1765,7 @@
 
 				// MARK: holdElementHeight()
 				/** Holds the given HTMLElement's height by setting its height CSSStyle to its current clientHeight (considering the optionally given offset or height override)
-				 * 
+				 *
 				 * @param {HTMLElement} elem The HTMLElement to hold the height of
 				 * @param {number} [timeout=0] Delay before this method takes action
 				 * @param {Object} [param2={offset: 0, height: null}] Optional parameters
@@ -1775,11 +1775,11 @@
 				holdElementHeight(elem, timeout=0, {offset=0, height=null}={offset: 0, height: null}) {
 					if (timeout > 0) {
 						clearTimeout(this?.timeouts?.holdElementHeight?.[elem.id]);
-	
+
 						if (!this.timeouts.holdElementHeight) {this.timeouts.holdElementHeight = {}}
 						this.timeouts.holdElementHeight[elem.id] = setTimeout(() => {
 							clearTimeout(this?.timeouts?.releaseElementHeight);
-	
+
 							const currentHeight = height ? height : Number(elem.clientHeight);
 							elem.style.height = `${currentHeight+offset}px`;
 							delete this.timeouts.holdElementHeight[elem.id];
@@ -1794,18 +1794,18 @@
 
 				// MARK: releaseElementHeight()
 				/** Releases the given HTMLElement's height by unsetting its height CSSStyle
-				 * 
+				 *
 				 * @param {HTMLElement} elem The HTMLElement to release the height of
 				 * @param {number} [timeout=0] Delay before this method takes action
 				 */
 				releaseElementHeight(elem, timeout=0) {
 					if (timeout > 0) {
 						clearTimeout(this?.timeouts?.releaseElementHeight?.[elem.id]);
-						
+
 						if (!this.timeouts.releaseElementHeight) {this.timeouts.releaseElementHeight = {}}
 						this.timeouts.releaseElementHeight[elem.id] = setTimeout(() => {
 							clearTimeout(this?.timeouts?.holdElementHeight);
-	
+
 							elem.style.height = "";
 							delete this.timeouts.releaseElementHeight[elem.id];
 						}, timeout);
@@ -1820,7 +1820,7 @@
 
 				// MARK: holdElementWidth()
 				/** Holds the given HTMLElement's width by setting its width CSSStyle to its current clientHeight (considering the optionally given offset or width override)
-				 * 
+				 *
 				 * @param {HTMLElement} elem The HTMLElement to hold the width of
 				 * @param {number} [timeout=0] Delay before this method takes action
 				 * @param {Object} [param2={offset: 0, width: null}] Optional parameters
@@ -1830,11 +1830,11 @@
 				holdElementWidth(elem, timeout=0, {offset=0, width=null}={offset: 0, width: null}) {
 					if (timeout > 0) {
 						clearTimeout(this?.timeouts?.holdElementWidth);
-	
+
 						if (!this.timeouts.holdElementWidth) {this.timeouts.holdElementWidth = {}}
 						this.timeouts.holdElementWidth[elem.id] = setTimeout(() => {
 							clearTimeout(this?.timeouts?.releaseElementWidth);
-	
+
 							const currentWidth = width ? width : Number(elem.clientWidth);
 							elem.style.width = `${currentWidth+offset}px`;
 						}, timeout);
@@ -1848,18 +1848,18 @@
 
 				// MARK: releaseElementWidth()
 				/** Releases the given HTMLElement's width by unsetting its width CSSStyle
-				 * 
+				 *
 				 * @param {HTMLElement} elem The HTMLElement to release the width of
 				 * @param {number} [timeout=0] Delay before this method takes action
 				 */
 				releaseElementWidth(elem, timeout=0) {
 					if (timeout > 0) {
 						clearTimeout(this?.timeouts?.releaseElementWidth);
-						
+
 						if (!this.timeouts.releaseElementWidth) {this.timeouts.releaseElementWidth = {}}
 						this.timeouts.releaseElementWidth[elem.id] = setTimeout(() => {
 							clearTimeout(this?.timeouts?.holdElementWidth);
-	
+
 							elem.style.width = ``;
 						}, timeout);
 					}
@@ -1872,10 +1872,10 @@
 
 
 				// MARK: getElementHeightFromChildrenHeight()
-				/** Computes the given HTMLElement's height from the height of its content, or more specifically from the sum of the height of all its children HTMLElements.  
+				/** Computes the given HTMLElement's height from the height of its content, or more specifically from the sum of the height of all its children HTMLElements.
 				 * The goal is to get the height that would be passed to the given HTMLElement if its height CSSStyle was set to "auto", "fit-content" or unset, but these later methods don't take
 				 * the transition CSSStyle into account, so this method acts as a work around
-				 * 
+				 *
 				 * @param {HTMLElement} elem The HTMLElement to get the height from the sum of the height of its children
 				 * @returns The height to give to the HTMLElement for it to fit its content
 				 */
@@ -1909,7 +1909,7 @@
 
 				/** Save the read grades in the cache */
 				saveReadGrades() { localStorage.setItem("ECAM_DASHBOARD_SAVED_READ_GRADES", JSON.stringify(this.savedReadGrades)); }
-			
+
 				/** Save the current semester filter in the cache */
 				saveSemesterFilter() { localStorage.setItem("ECAM_DASHBOARD_SEMESTER_FILTER", this.currentSemester); }
 
@@ -1940,9 +1940,9 @@
 
 
 				// MARK: toggleEditMode()
-				/** Toggles between the edit mode of this ECAMDash being enabled or not.  
+				/** Toggles between the edit mode of this ECAMDash being enabled or not.
 				 * Performs all the actions related to the edit mode being changed
-				 * 
+				 *
 				 * @returns `true` if the edit mode has been enabled, `false` otherwise
 				 */
 				toggleEditMode() {
@@ -1959,9 +1959,9 @@
 
 
 				// MARK: toggleViewMode()
-				/** Toggles between the view mode of this ECAMDash being detailed or compact.  
+				/** Toggles between the view mode of this ECAMDash being detailed or compact.
 				 * Performs all the actions related to the view mode being changed
-				 * 
+				 *
 				 * @returns The view mode of this ECAMDash after being changed
 				 */
 				toggleViewMode() {
@@ -1983,7 +1983,7 @@
 
 					this.saveViewMode();
 					this.scrollToClientHighestElem("first",
-						{className: "modules-section",      timeout: 101, smooth: false, margin: 20,                        highestElemInPageHandleType:"partial"}, 
+						{className: "modules-section",      timeout: 101, smooth: false, margin: 20,                        highestElemInPageHandleType:"partial"},
 						{className: "module-card",          timeout: 101, smooth: false, margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"above"},
 						{className: "unclassified-section", timeout: 101, smooth: false, margin: this.editMode ? 100 : 25,  highestElemInPageHandleType:"partial"},
 						{className: "subject-card",         timeout: 101, smooth: false, margin: 10,                        highestElemInPageHandleType:"above"},
@@ -2002,11 +2002,11 @@
 			//#region — Semester methods
 
 
-				
+
 
 				// MARK: changeSemester()
 				/** Changes the semester to the given semester Number, clear selection, clear folding data and regenerates the content.
-				 * 
+				 *
 				 * @param {int} sem The Number of the semester to change to (a negative integer `sem` means the `sem`th last semester)
 				 * @param {boolean} strict Controls the way the semester is considered. `true` means that a `sem` index equal to -1 is the last semester that has a grade,`false` means that a `sem` index equal to -1 is the last semester in the semester filter tab
 				 * @returns The current semester after it being changed. `false` if the parameters were wrong.
@@ -2038,7 +2038,7 @@
 				}
 
 			//#endregion Semester methods
-			
+
 
 
 
@@ -2050,7 +2050,7 @@
 
 				// MARK: getAllModuleGrades()
 				/** Gets all the grades in the given module
-				 * 
+				 *
 				 * @param {number} sem The semester of the module
 				 * @param {string} moduleName The name of the module
 				 * @returns {Object[]} An array of all the grades in the module
@@ -2079,7 +2079,7 @@
 
 				// MARK: clearIgnoredGradesForModule()
 				/** Resets all the ignored (disabled) grades in the given module by enabling them back
-				 * 
+				 *
 				 * @param {number} sem The semester of the module
 				 * @param {string} moduleName The name of the module
 				 */
@@ -2101,7 +2101,7 @@
 
 				// MARK: getModuleStats()
 				/** Gets the number of modules and the number of validated modules
-				 * 
+				 *
 				 * @returns An object with the number of validated modules and the total of modules
 				 */
 				getModuleStats() {
@@ -2112,11 +2112,11 @@
 							const nbGrades = this.gradesData[sem]?.[moduleName]?.nbGrades;
 							const average = this.gradesData[sem]?.[moduleName]?.average;
 
-							if (average != 0 && nbGrades > 0) total++; 
+							if (average != 0 && nbGrades > 0) total++;
 							if (average >= 10) validated++;
 						});
 					});
-					
+
 					return { validated, total };
 				}
 
@@ -2132,7 +2132,7 @@
 
 				// MARK: getUnclassifiedSubjects()
 				/** Gets all the unclassified subjects in the given semester
-				 * 
+				 *
 				 * @param {number} sem The semester of the unclassified subjects to get
 				 * @returns All the unclassified subjects in the given semester
 				 */
@@ -2158,7 +2158,7 @@
 
 				// MARK: getGradesData()
 				/** Gets all the data related to the grades, and prepares the stats of the subjects, modules and semesters in a single object this.gradesData
-				 * 
+				 *
 				 * @param {Object} param0 Optional parameters
 				 * @param {number | undefined} [param0.sem=undefined] Number of the semester
 				 * @param {string | undefined} [param0.module=undefined] Name of the module
@@ -2173,7 +2173,7 @@
 					// MARK: semester section
 					// FOR EACH SEMESTER
 					(sem && this.moduleConfig?.[sem] ? [sem] : Object.keys(this.semesters)).forEach((semX) => {
-						
+
 						this.gradesData[semX] = {"__#unclassified#__": {}};
 						let semData = this.gradesData[semX];
 						semData.average                     = 0;
@@ -2257,8 +2257,8 @@
 								// MARK: Unclassified grades
 								// FOR EACH GRADES AND SIM GRADES IN UNCLASSIFIED SUBJECT
 								(unclassifiedSubjectData.grades).forEach(grade => {
-									
-									const 
+
+									const
 										gradeValue = parseFloat(grade.grade),
 										classAvg   = parseFloat(grade.classAvg),
 										coef       = parseInt(grade.coef)
@@ -2281,7 +2281,7 @@
 										case `disabled real grade`:
 											unclassifiedSubjectData.totalCoefRealGrades         += coef;
 											unclassifiedSubjectData.disabledRealGrades.push(grade);
-											
+
 										break;
 
 										case `enabled sim grade`:
@@ -2296,7 +2296,7 @@
 											unclassifiedSubjectData.totalCoefSimGrades          += coef;
 											unclassifiedSubjectData.disabledSimGrades.push(grade);
 										break;
-									}                                
+									}
 								})
 
 								unclassifiedData.grades.push(...unclassifiedSubjectData.grades)
@@ -2323,7 +2323,7 @@
 									if (unclassifiedSubjectData.totalCoefGrades == 0) {
 										unclassifiedData.subjectsNoGrade.push(unclassifiedSubjectName);
 									}
-									
+
 								}
 								else {
 									unclassifiedSubjectData.average                 =  Math.round(100*unclassifiedSubjectData.average /(unclassifiedSubjectData.totalCoefEnabledGrades/100))/100;
@@ -2360,7 +2360,7 @@
 							if (isNaN(Number(unclassifiedData.average))) {
 								unclassifiedData.average  = " — ";
 								unclassifiedData.classAvg = " — ";
-							} 
+							}
 
 							// Scaling down + rounding the total coefs
 							unclassifiedData.totalCoefGrades            = Math.floor(unclassifiedData.totalCoefGrades           / (Object.keys(unclassifiedData.subjects).length-unclassifiedData.subjectsNoEnabledGrade.length) )
@@ -2416,7 +2416,7 @@
 								(this.moduleConfig?.[semX]?.[moduleName]?.subjects?.length > 0 ? this.moduleConfig[semX][moduleName].subjects : []).forEach(subject => {
 									moduleData.subjects[subject] = {grades: []};
 								})
-								
+
 								moduleGrades.forEach(n => {
 									const subjectName = n.subject;
 									let subjectData = moduleData.subjects[subjectName];
@@ -2553,8 +2553,8 @@
 											break;
 										}
 									})
-									
-									
+
+
 									// "Nullyifing" the subject if no enabled grades (if there are grades) are here
 									if (subjectData.totalCoefEnabledGrades == 0 || subjectData.totalCoefGrades == 0) {
 										subjectData.average  = " — ";
@@ -2612,7 +2612,7 @@
 								if (isNaN(Number(moduleData.average))) {
 									moduleData.average  = " — ";
 									moduleData.classAvg = " — ";
-								} 
+								}
 								else {
 									semData.average     += moduleData.average;
 									semData.classAvg    += moduleData.classAvg;
@@ -2654,7 +2654,7 @@
 						if (isNaN(Number(semData.average))) {
 							semData.average     = " — ";
 							semData.classAvg    = " — ";
-						} 
+						}
 
 						semData.totalCoefGrades                 = Math.floor(semData.totalCoefGrades);
 						semData.totalCoefRealGrades             = Math.floor(semData.totalCoefRealGrades);
@@ -2670,14 +2670,14 @@
 
 				// MARK: setTotalCoefs()
 				/** Sets the subject total coef div.s of the module and/or subject cards inside the given container, from this.gradesDatas
-				 * 
+				 *
 				 * @param {HTMLElement | Document} [container=document.body] The container of the module and/or subject cards containing the subject total coef div.s to change
 				 */
 				setTotalCoefs(container=document.body) {
 					const good="#10b981", meh="#e98c00", bad="#e90000", unknown="#7a7a7a";
 
 					container.querySelectorAll(".module-subject-total-coef-div").forEach(totalCoefDiv => {
-						const 
+						const
 							totalCoefValue  = totalCoefDiv.querySelector(".module-subject-total-coef-value"),
 							totalCoefDebug  = totalCoefDiv.querySelector(".module-subject-total-coef-debug"),
 							sem             = totalCoefDiv.dataset.semester,
@@ -2686,32 +2686,32 @@
 							nbSubjects      = Object.keys(moduleData.subjects).length,
 
 							nbGrades                    = moduleData.nbGrades,
-							simGrades                   = moduleData.simGrades, 
-							disabledRealGrades          = moduleData.disabledRealGrades, 
-							disabledSimGrades           = moduleData.disabledSimGrades, 
+							simGrades                   = moduleData.simGrades,
+							disabledRealGrades          = moduleData.disabledRealGrades,
+							disabledSimGrades           = moduleData.disabledSimGrades,
 
-							totalCoefSubjects           = moduleData.totalCoefSubjects, 
-							totalCoefGrades             = moduleData.totalCoefGrades,  
-							totalCoefRealGrades         = moduleData.totalCoefRealGrades, 
-							totalCoefSimGrades          = moduleData.totalCoefSimGrades, 
-							totalCoefEnabledGrades      = moduleData.totalCoefEnabledGrades, 
-							totalCoefEnabledRealGrades  = moduleData.totalCoefEnabledRealGrades, 
-							totalCoefEnabledSimGrades   = moduleData.totalCoefEnabledSimGrades, 
+							totalCoefSubjects           = moduleData.totalCoefSubjects,
+							totalCoefGrades             = moduleData.totalCoefGrades,
+							totalCoefRealGrades         = moduleData.totalCoefRealGrades,
+							totalCoefSimGrades          = moduleData.totalCoefSimGrades,
+							totalCoefEnabledGrades      = moduleData.totalCoefEnabledGrades,
+							totalCoefEnabledRealGrades  = moduleData.totalCoefEnabledRealGrades,
+							totalCoefEnabledSimGrades   = moduleData.totalCoefEnabledSimGrades,
 
 
-							subjectsBelow100            = moduleData.subjectsBelow100, 
+							subjectsBelow100            = moduleData.subjectsBelow100,
 							subjectsOver100             = moduleData.subjectsOver100,
-							subjectsReallyBelow100      = moduleData.subjectsReallyBelow100, 
+							subjectsReallyBelow100      = moduleData.subjectsReallyBelow100,
 							subjectsReallyOver100       = moduleData.subjectsReallyOver100,
 
-							nbSubjectsBelow100          = subjectsBelow100.length, 
-							nbSubjectsOver100           = subjectsOver100.length, 
-							nbSubjectsReallyBelow100    = subjectsReallyBelow100.length, 
-							nbSubjectsReallyOver100     = subjectsReallyOver100.length, 
-							nbSubjectsSimBelow100       = nbSubjectsBelow100-nbSubjectsReallyBelow100, 
-							nbSubjectsSimOver100        = nbSubjectsOver100-nbSubjectsReallyOver100, 
-							nbDisabledRealGrades        = disabledRealGrades.length, 
-							nbSimGrades                 = simGrades.length, 
+							nbSubjectsBelow100          = subjectsBelow100.length,
+							nbSubjectsOver100           = subjectsOver100.length,
+							nbSubjectsReallyBelow100    = subjectsReallyBelow100.length,
+							nbSubjectsReallyOver100     = subjectsReallyOver100.length,
+							nbSubjectsSimBelow100       = nbSubjectsBelow100-nbSubjectsReallyBelow100,
+							nbSubjectsSimOver100        = nbSubjectsOver100-nbSubjectsReallyOver100,
+							nbDisabledRealGrades        = disabledRealGrades.length,
+							nbSimGrades                 = simGrades.length,
 							nbEnabledSimGrades          = nbSimGrades - disabledSimGrades.length
 						;
 
@@ -2726,8 +2726,8 @@
 						}
 						else if (totalCoefRealGrades == 0) {
 							if (totalCoefEnabledSimGrades > 0) {
-								advice = !this.isLangEn 
-									? `Toutes tes notes sont simulées, tu n'as pas encore de notes !` 
+								advice = !this.isLangEn
+									? `Toutes tes notes sont simulées, tu n'as pas encore de notes !`
 									: `All your grades are simulated, you don't have any grades yet!`
 								;
 								color = meh;
@@ -2739,8 +2739,8 @@
 						}
 						else if (totalCoefRealGrades < 100) {
 							if (totalCoefEnabledSimGrades > 0) {
-								advice = !this.isLangEn 
-									? `${Math.round(10000*totalCoefEnabledSimGrades/totalCoefEnabledGrades)/100}% de tes notes est simulé, toutes tes notes ne sont encore pas là !` 
+								advice = !this.isLangEn
+									? `${Math.round(10000*totalCoefEnabledSimGrades/totalCoefEnabledGrades)/100}% de tes notes est simulé, toutes tes notes ne sont encore pas là !`
 									: `${Math.round(10000*totalCoefEnabledSimGrades/totalCoefEnabledGrades)/100}% of your grades is simulated, all your grades aren't out yet!`
 								;
 								color = meh;
@@ -2755,8 +2755,8 @@
 							color = bad;
 						}
 						else if ((nbSubjectsBelow100 > 0 || nbSubjectsOver100 > 0) && nbEnabledSimGrades > 0) {
-							advice = !this.isLangEn 
-								? `Tes notes simulées faussent ta moyenne. Désactive/enlève-les !` 
+							advice = !this.isLangEn
+								? `Tes notes simulées faussent ta moyenne. Désactive/enlève-les !`
 								: `Your simulated grades falsify your average. Disable/remove them!`
 							;
 							color = bad;
@@ -2770,22 +2770,22 @@
 								color = bad;
 							}
 							if (totalCoefEnabledRealGrades < 100) {
-								advice = !this.isLangEn 
-									? `Toutes tes notes sont là ! Réactive tes ${nbDisabledRealGrades} notes désactivées pour afficher ta vraie moyenne !` 
+								advice = !this.isLangEn
+									? `Toutes tes notes sont là ! Réactive tes ${nbDisabledRealGrades} notes désactivées pour afficher ta vraie moyenne !`
 									: `All your grades are out! Enable your ${nbDisabledRealGrades} disabled grades to display your actual average!`
 								;
 								color = meh;
 							}
 							else if (totalCoefEnabledSimGrades > 0) {
-								advice = !this.isLangEn 
-									? `Toutes tes notes sont là, mais tu devrais enlever tes ${nbSimGrades} notes simulées !` 
+								advice = !this.isLangEn
+									? `Toutes tes notes sont là, mais tu devrais enlever tes ${nbSimGrades} notes simulées !`
 									: `All your grades are out, but you should remove your ${nbSimGrades} simulated grades!`
 								;
 								color = meh;
 							}
 							else if (totalCoefSimGrades > 0) {
-								advice = !this.isLangEn 
-									? `Toutes tes notes sont là ! Tu peux enlever tes ${nbSimGrades} notes simulées !` 
+								advice = !this.isLangEn
+									? `Toutes tes notes sont là ! Tu peux enlever tes ${nbSimGrades} notes simulées !`
 									: `All your grades are out! You may remove your ${nbSimGrades} simulated grades!`
 								;
 								color = good;
@@ -2796,7 +2796,7 @@
 						totalCoefDebug.innerHTML = `${advice}`;
 					})
 					container.querySelectorAll(".subject-total-coef-div").forEach(totalCoefDiv => {
-						const 
+						const
 							totalCoefValue  = totalCoefDiv.querySelector(".subject-total-coef-value"),
 							totalCoefDebug  = totalCoefDiv.querySelector(".subject-total-coef-debug"),
 							sem             = totalCoefDiv.dataset.semester,
@@ -2824,8 +2824,8 @@
 
 						if (totalCoefRealGrades == 0) {
 							if (totalCoefEnabledSimGrades > 0) {
-								advice = !this.isLangEn 
-									? `Toutes tes notes sont simulées, tu n'as pas encore de notes !` 
+								advice = !this.isLangEn
+									? `Toutes tes notes sont simulées, tu n'as pas encore de notes !`
 									: `All your grades are simulated, you don't have any grades yet!`
 								;
 								color = meh;
@@ -2837,8 +2837,8 @@
 						}
 						else if (totalCoefRealGrades < 100) {
 							if (totalCoefEnabledSimGrades > 0) {
-								advice = !this.isLangEn 
-									? `${totalCoefEnabledSimGrades}% de tes notes est simulé, toutes tes notes ne sont encore pas là !` 
+								advice = !this.isLangEn
+									? `${totalCoefEnabledSimGrades}% de tes notes est simulé, toutes tes notes ne sont encore pas là !`
 									: `${totalCoefEnabledSimGrades}% of your grades is simulated, all your grades aren't out yet!`
 								;
 								color = meh;
@@ -2849,30 +2849,30 @@
 							}
 						}
 						else if (totalCoefEnabledRealGrades > 100) {
-							advice = !this.isLangEn 
-								? `Trop de notes (erreur du côté de l'ECAM), désactive les notes en trop !` 
+							advice = !this.isLangEn
+								? `Trop de notes (erreur du côté de l'ECAM), désactive les notes en trop !`
 								: `Too many grades (error on ECAM's side), turn off all irrelevant grades!`
 							;
 							color = bad;
 						}
 						else if (totalCoefRealGrades == 100) {
 							if (totalCoefEnabledRealGrades < 100) {
-								advice = !this.isLangEn 
-									? `Toutes tes notes sont là ! Réactive tes ${nbDisabledRealGrades} notes désactivées pour afficher ta vraie moyenne !` 
+								advice = !this.isLangEn
+									? `Toutes tes notes sont là ! Réactive tes ${nbDisabledRealGrades} notes désactivées pour afficher ta vraie moyenne !`
 									: `All your grades are out! Enable your ${nbDisabledRealGrades} disabled grades to display your actual average!`
 								;
 								color = meh;
 							}
 							else if (totalCoefEnabledSimGrades > 0) {
-								advice = !this.isLangEn 
-									? `Toutes tes notes sont là, mais tu devrais enlever tes ${nbSimGrades} notes simulées !` 
+								advice = !this.isLangEn
+									? `Toutes tes notes sont là, mais tu devrais enlever tes ${nbSimGrades} notes simulées !`
 									: `All your grades are out, but you should remove your ${nbSimGrades} simulated grades!`
 								;
 								color = meh;
 							}
 							else if (totalCoefSimGrades > 0) {
-								advice = !this.isLangEn 
-									? `Toutes tes notes sont là ! Tu peux enlever tes ${nbSimGrades} notes simulées !` 
+								advice = !this.isLangEn
+									? `Toutes tes notes sont là ! Tu peux enlever tes ${nbSimGrades} notes simulées !`
 									: `All your grades are out! You may remove your ${nbSimGrades} simulated grades!`
 								;
 								color = good;
@@ -2888,7 +2888,7 @@
 
 				// MARK: gradeIsDisabled()
 				/** Checks if the given grade is disabled
-				 * 
+				 *
 				 * @param {Object} n The grade to check
 				 * @returns `true` if the grade is disabled, `false` otherwise
 				 */
@@ -2899,17 +2899,17 @@
 
 				// MARK: weightedAverage()
 				/** Calculates the weighted average of the given array of grades
-				 * 
+				 *
 				 * @param {Grade[]} arr An array of grades
 				 * @returns The weighted average of the given array of grades
 				 */
 				weightedAverage(arr) {
 					if (!arr || arr.length === 0) return 0;
 					let total = 0, coeffs = 0;
-					arr.forEach(n => { 
+					arr.forEach(n => {
 						if (!this.gradeIsDisabled(n)) {
-							total += n.grade * (n.coef||0); 
-							coeffs += (n.coef||0); 
+							total += n.grade * (n.coef||0);
+							coeffs += (n.coef||0);
 						}
 					});
 					const v = coeffs ? (total / coeffs) : 0;
@@ -2977,8 +2977,8 @@
 
 
 				// MARK: ensureSimPath()
-				/** Ensures that a path composed of `sem`, `module` and `subj` exists in this.sim 
-				 * 
+				/** Ensures that a path composed of `sem`, `module` and `subj` exists in this.sim
+				 *
 				 * @param {number | undefined} [sem=undefined] The number of the semester
 				 * @param {string | undefined} [module=undefined] The name of the module
 				 * @param {subj | undefined} [subj=undefined] The name of the subject
@@ -2991,8 +2991,8 @@
 
 
 				// MARK: deleteUnusedSimPath()
-				/** Delete every unused simulated grade pathes 
-				 * 
+				/** Delete every unused simulated grade pathes
+				 *
 				 * @param {boolean} [flex=true] Flexible search: `true` means that if the given semester/module/subject wasn't found inside this.sim/this.sim[semester]/this.sim[module], then the deletion is performed for every semester/module/subject inside this.sim/this.sim[semester]/this.sim[module] as a fallback. `false` means that if it doesn't exist, ignore it
 				 * @param {number | undefined} [sem=undefined] The number of the semester
 				 * @param {string | undefined} [module=undefined] The name of the module
@@ -3011,7 +3011,7 @@
 				}
 
 				/** Clear all simulated grades in the farthest grade path provided. If no argument is provided, clears all simulated grades.
-				 * 
+				 *
 				 * @param {number | undefined} [sem=undefined] The number of the semester
 				 * @param {string | undefined} [moduleName=undefined] The name of the module
 				 * @param {string | undefined} [subj=undefined] The name of the subject
@@ -3058,7 +3058,7 @@
 
 				// MARK: compareArraysOfObjects()
 				/** Compares two arrays of object `a` and `b`, identifying common objects, objects that `a` has more than `b`, and objects that `a` is missing compared to `b`
-				 * 
+				 *
 				 * @param {Object[]} a The first array of objects
 				 * @param {Object[]} b The second array of objects
 				 * @returns {{common: Object[], more: Object[], missing: Object[]}}
@@ -3112,7 +3112,7 @@
 							out.more.push(a[index]);
 						}
 					})
-					
+
 					out.missing = b2;
 
 					return out;
@@ -3121,34 +3121,34 @@
 
 
 				// MARK: dateTimeMinuteUpperSlice()
-				/** Calculates the upper slice of given period of the minutes of the given date-time ISO String.  
+				/** Calculates the upper slice of given period of the minutes of the given date-time ISO String.
 				 * In other words, this methods calculates the next minute that is a multiple of `slicePeriod`
-				 * 
+				 *
 				 * @example
-				 * this.dateTimeMinuteUpperSlice("2026-01-01T10:01:18", 5) 
+				 * this.dateTimeMinuteUpperSlice("2026-01-01T10:01:18", 5)
 				 * ///////////////////// Output: "2026-01-01T10:05:00"
-				 * 
-				 * this.dateTimeMinuteUpperSlice("2026-01-01T10:04:59", 5) 
+				 *
+				 * this.dateTimeMinuteUpperSlice("2026-01-01T10:04:59", 5)
 				 * ///////////////////// Output: "2026-01-01T10:05:00"
-				 * 
-				 * this.dateTimeMinuteUpperSlice("2026-01-01T10:05:00", 5) 
+				 *
+				 * this.dateTimeMinuteUpperSlice("2026-01-01T10:05:00", 5)
 				 * ///////////////////// Output: "2026-01-01T10:10:00"
-				 * 
-				 * this.dateTimeMinuteUpperSlice("2026-01-01T10:05:00", 5) 
+				 *
+				 * this.dateTimeMinuteUpperSlice("2026-01-01T10:05:00", 5)
 				 * ///////////////////// Output: "2026-01-01T10:10:00"
-				 * 
-				 * this.dateTimeMinuteUpperSlice("2026-01-01T10:59:00", 5) 
+				 *
+				 * this.dateTimeMinuteUpperSlice("2026-01-01T10:59:00", 5)
 				 * ///////////////////// Output: "2026-01-01T11:00:00"
-				 * 
-				 * this.dateTimeMinuteUpperSlice("2026-01-01T10:10:00", 10) 
+				 *
+				 * this.dateTimeMinuteUpperSlice("2026-01-01T10:10:00", 10)
 				 * ///////////////////// Output: "2026-01-01T10:20:00"
-				 * 
-				 * this.dateTimeMinuteUpperSlice("2026-01-01T10:11:00", 10) 
+				 *
+				 * this.dateTimeMinuteUpperSlice("2026-01-01T10:11:00", 10)
 				 * ///////////////////// Output: "2026-01-01T10:20:00"
-				 * 
-				 * this.dateTimeMinuteUpperSlice("2026-01-01T10:20:00", 10) 
+				 *
+				 * this.dateTimeMinuteUpperSlice("2026-01-01T10:20:00", 10)
 				 * ///////////////////// Output: "2026-01-01T10:30:00"
-				 * 
+				 *
 				 * @param {string} dateTime A string in date-time ISO String format
 				 * @param {number} slicePeriod Period of a slice
 				 * @returns A new date-time ISO String rounded up at the upper slice of given period
@@ -3161,8 +3161,8 @@
 					const months     = parseInt(dateTime.match(/\d{4}-(\d{2})-\d{2}T\d{2}:\d{2}:\d{2}Z/)[1]);
 
 					const newMinutes  = minutes + (slicePeriod-minutes%slicePeriod);
-					const newHour     = minutes >= 60 
-						? ((hours + 1).toString().length > 1 ? (hours + 1).toString() : "0"+(hours + 1).toString()) 
+					const newHour     = minutes >= 60
+						? ((hours + 1).toString().length > 1 ? (hours + 1).toString() : "0"+(hours + 1).toString())
 						: (hours.toString().length > 1 ? hours.toString() : "0"+hours.toString())
 					;
 
@@ -3177,11 +3177,11 @@
 
 
 			//#region methods hidden from user
-				
+
 
 				/** Use only in the console: iterating through a long list of objects isn't very optimized. Use it only to obtain the indices pointing at the class you want to change.
 				 *  Grade for now: the style sheet of this script is located at document.styleSheets[11];
-				 * 
+				 *
 				 * @param _class Name of the class to search for
 				 * @returns The path in document.styleSheets to to the class of name the param _class (to modify its definition)
 				 */
@@ -3213,8 +3213,8 @@
 					return document?.styleSheets?.[styleSheetIndex]?.cssRules?.[ruleIndex] || null;
 				};
 
-				/** Removes the `nb` latest grade.s from the saved read grades 
-				 * 
+				/** Removes the `nb` latest grade.s from the saved read grades
+				 *
 				 * @param {Number} [nb=1] Number of grades to remove from the saved read grades
 				 */
 				removeFirstGradesFromSavedReadGrades(nb=1) {
@@ -3236,7 +3236,7 @@
 
 			/** Shows/Hides/Toggles the loading symbol when called depending on the argument `show`.
 			 * Default call: `this.showLoadingSymbol()`
-			 * 
+			 *
 			 * @param {Boolean} show Optional, accepts true, false or nothing, to respectively show, hide or toggle the loading symbol
 			 */
 			showLoadingSymbol(show=undefined) {
@@ -3256,22 +3256,22 @@
 
 
 
-			/** Send a request to my repo to obtain the configs. The request is allowed to be sent by slices of 5 minutes 
-			 * (if a request was sent at 12:43PM, next request is allowed at 12:45PM, and the next at 12:50PM), 
+			/** Send a request to my repo to obtain the configs. The request is allowed to be sent by slices of 5 minutes
+			 * (if a request was sent at 12:43PM, next request is allowed at 12:45PM, and the next at 12:50PM),
 			 * so if this method is called before the validity date and time is passed, runs it from memory instead of from a new request.
-			 * 
+			 *
 			 * @param {URL} repoAPIUrl URL of the repo's API to fetch the data to
 			 */
 			async getConfigsFromRepoAPI(repoAPIUrl) {
-				
+
 				// Making sure a request isn't sent everytime the import online config button is clicked by saving in the cache the previous online config fetch, and giving it a validity date and time.
 				const dateTimeOfLastConfigFetchValidUntil = this.onlineConfigs.date;
-				
+
 				if (dateTimeOfLastConfigFetchValidUntil < this.now()) {
 					// Sending a request if the validity date and time is passed
 					this.showLoadingSymbol(true);
 					const newDateTimeOfLastConfigFetchValidUntil = this.dateTimeMinuteUpperSlice(this.now(), 10);
-	
+
 					this.onlineConfigs = {Configs: {nbCfgs: 0, path: ""}, nbCfgs: 0, date: newDateTimeOfLastConfigFetchValidUntil};
 
 					// Fetch repo's API data
@@ -3285,28 +3285,28 @@
 							alert("A problem has occured... this configuration file isn't accessible anymore? Let the devs know!");
 							return;
 						}
-						
+
 						const repoContent = JSON.parse(xhttp.response);
-	
-	
+
+
 						repoContent.forEach(elem => {if (elem.name == "Configs" && elem.type == "dir") {
 							const configsTreeUrl = repoAPIUrl.replace("/contents", "/git/trees/"+elem.sha+"?recursive=true");
 							const configsTreeReq = new XMLHttpRequest();
 							configsTreeReq.open("GET", configsTreeUrl, true);
 							configsTreeReq.send();
-	
+
 							configsTreeReq.onload = () => {
 								const configsTree = JSON.parse(configsTreeReq.response).tree;
 								configsTree.forEach(dir => {
 									if (dir?.type == "blob") {
 										const path      = dir.path;
 										const pathArray = path.split("/");
-	
+
 										this.onlineConfigs.nbCfgs++;
 										this.onlineConfigs.Configs.nbCfgs++;
 										this.onlineConfigs.Configs.path = "Configs";
 										this.tempGitConfigParentDirData = this.onlineConfigs.Configs;
-										
+
 										pathArray.forEach((dirName, hierarchyIndex, pathArray) => {
 											if (hierarchyIndex == pathArray.length-1) {
 												const url = repoAPIUrl.replace("api.github.com/repos", "raw.githubusercontent.com").replace("/contents", "/refs/heads/main/") + (this.tempGitConfigParentDirData.path+"/"+dirName).replace(/ /g, "%20");
@@ -3321,11 +3321,11 @@
 												this.tempGitConfigParentDirData[dirName].nbCfgs++;
 												this.tempGitConfigParentDirData = this.tempGitConfigParentDirData[dirName];
 											}
-	
+
 										})
 									}
 								})
-	
+
 								this.tempGitConfigParentDirData = undefined;
 								this.saveOnlineConfig();
 								this.showLoadingSymbol(false);
@@ -3338,8 +3338,8 @@
 					// If the validity date and time isn't passed yet, don't send a request and open the online picker menu using the online configs from memory
 					this.openOnlineCfgPickerModal();
 				}
-				
-				
+
+
 			}
 
 			async autoUpdateCheck() {
@@ -3351,14 +3351,14 @@
 			}
 
 			async runUpdateCheck() {
-				const xhttp = new XMLHttpRequest(); 
-				xhttp.open("GET", this.repoScriptRaw, true); 
-				xhttp.send(); 
+				const xhttp = new XMLHttpRequest();
+				xhttp.open("GET", this.repoScriptRaw, true);
+				xhttp.send();
 				xhttp.onload = () => {
 					this.scriptGitVersion = xhttp.response.match(/\/\/ @version( +)(\d+(\.\d+|\.|)+)/)[2].trim().split(".");
 					let newUpdate = false;
 					let hasAMoreRecentUpdate = false;
-					
+
 					if (this.scriptGitVersion.length > this.scriptVersion.trim().split(".").length) {
 						newUpdate = true;
 					}
@@ -3371,16 +3371,16 @@
 						else if ( !hasAMoreRecentUpdate && !newUpdate && ( Number(versElem) < Number(this.scriptVersion.trim().split(".")?.[versIndex] || -1) ) ) {
 							hasAMoreRecentUpdate = true;
 						}
-						// If the git script version has a version number element is the same as the current client script's, 
+						// If the git script version has a version number element is the same as the current client script's,
 						// then we move on to the next version number element (keep going with the scan)
 					})
-					
-					
+
+
 
 					if (newUpdate) {
 						this.updateAvailable();
 					}
-	
+
 				}
 			}
 
@@ -3410,13 +3410,13 @@
 					updateAvailableNotif.classList.remove("on");
 					setTimeout(() => {updateAvailableNotif.remove()}, 300)
 
-					this.dateTimeOfLastUpdateCheck = this.today; 
+					this.dateTimeOfLastUpdateCheck = this.today;
 					this.saveDateTimeOfLastUpdateCheck();
 				};
 
 				updateAvailableNotif.querySelector(".update-btn").onclick = () => {
 
-					this.dateTimeOfLastUpdateCheck = this.now(); 
+					this.dateTimeOfLastUpdateCheck = this.now();
 					this.saveDateTimeOfLastUpdateCheck();
 
 					this.appendFullScreenNotif();
@@ -3458,7 +3458,7 @@
 					document.querySelector(".portlet-topper")?.remove();
 
 					// Creating the content of the dashboard that doesn't vary along with the user's actions besides the language selection.
-					// Therefore, besides the text that doesn't vary with the language, the text isn't yet created, 
+					// Therefore, besides the text that doesn't vary with the language, the text isn't yet created,
 					// but will be in the generateContent() method later on, to regenerate the text in case the language is changed
 					this.ecamDash.innerHTML = `
 					${this.error ? `
@@ -3645,24 +3645,24 @@
 				}
 
 
-				
+
 				//MARK: language Sensitive
 				async languageSensitiveContent(fadeIn=true) {
 					// Language Sensitive text in the Dashboard Header and Semester filter tab (which doesn't refresh on calling the generateContent() method)
 					if (this.error) {
 						const backupSubTitle = document.querySelector(".offline-mode-subtitle");
-						backupSubTitle.innerHTML = !this.isLangEn 
+						backupSubTitle.innerHTML = !this.isLangEn
 							? `Les serveurs de l'ECAM sont actuellement inaccessibles ! ${this.grades.length > 0
-								? "Pour l'instant, tu ne peux pas voir si tu as des nouvelles notes... En attendant, voici le tableau de bord en mode offline, tu as donc accès aux notes que j'ai gentiment sauvegardées dans le cache la dernière fois ! De rien ! <3" 
+								? "Pour l'instant, tu ne peux pas voir si tu as des nouvelles notes... En attendant, voici le tableau de bord en mode offline, tu as donc accès aux notes que j'ai gentiment sauvegardées dans le cache la dernière fois ! De rien ! <3"
 								: "Pour l'instant, tu ne peux pas voir tes notes... Tu peux quand même commencer à configurer tes modules, reviens quand les serveurs sont opérationnels pour voir tes notes !"
-							}` 
-							: `ECAM's servers are currently down! ${this.grades.length > 0 
-								? "For now, you can't see if you have new grades... While waiting for the servers to be back up, here are the grades I nicely saved in your cache last time, so you can still see them even with the server down! You're welcome! <3" 
+							}`
+							: `ECAM's servers are currently down! ${this.grades.length > 0
+								? "For now, you can't see if you have new grades... While waiting for the servers to be back up, here are the grades I nicely saved in your cache last time, so you can still see them even with the server down! You're welcome! <3"
 								: "For now, you can't see your grades... You can still start by configuring your modules, and come back once the servers are up again to see your grades!"
 							}`
 						;
 					}
-					
+
 
 					const dashTitle             = document.querySelector(".dash-title-text");
 					const dashPatchNotesLink    = document.querySelector(".patch-notes-link");
@@ -3716,7 +3716,7 @@
 
 						settingsBtn     .title     = "Ouvrir les paramètres";
 
-						if (newUserNotif) 
+						if (newUserNotif)
 							newUserNotif.title     = "Clique pour fermer";
 
 						shareConfig     .innerHTML = `Partager une config  ${this.createExternalLinkSymbol({margin: [0,0,0,4]})}`;
@@ -3725,7 +3725,7 @@
 						mailInfoText    .innerHTML = "Par mail: baptiste.jacquin@ecam.fr 📋";
 						mailInfoCopied  .innerHTML = "Copié !";
 
-						if (newUserNotif) 
+						if (newUserNotif)
 							newUserNotifText.innerHTML = "Bonjour! Première fois? Clique ici pour apprendre à utiliser cette extension! (Clique ici pour fermer)";
 
 						mailInfo   .classList.replace("en", "fr");
@@ -3752,8 +3752,8 @@
 						firstStepsBtn   .title     = "Start the tutorial for your first steps";
 
 						settingsBtn     .title     = "Open the settings";
-						
-						if (newUserNotif) 
+
+						if (newUserNotif)
 							newUserNotif.title     = "Click to dismiss";
 
 						shareConfig     .innerHTML = `Share a config  ${this.createExternalLinkSymbol({margin: [0,0,0,4]})}`;
@@ -3762,7 +3762,7 @@
 						mailInfoText    .innerHTML = "By mail: baptiste.jacquin@ecam.fr 📋";
 						mailInfoCopied  .innerHTML = "Copied!";
 
-						if (newUserNotif) 
+						if (newUserNotif)
 							newUserNotifText.innerHTML = "Hey! New here? Click here to find a tutorial on how to use this extension! (Click here to dismiss)";
 
 						mailInfo   .classList.replace("fr", "en");
@@ -3775,7 +3775,7 @@
 						tutoBtn      .classList.replace("fr", "en");
 						firstStepsBtn.classList.replace("fr", "en");
 					}
-					
+
 
 					const keybindsTableModalBody = document.querySelector("#keyboardShortcutListModalBody");
 					if (keybindsTableModalBody) { this.appendKeyboardShortcutsList(keybindsTableModalBody); }
@@ -3784,8 +3784,8 @@
 					const settingsModalBody = document.querySelector("#settingsModalBody");
 					if (settingsModal) { if (settingsModalBody) {settingsModalBody.remove()} this.appendSettingsModalBody(); }
 
-					
-					
+
+
 					const importBtn     = document.getElementById("importBtn");
 					const editModeBtn   = document.getElementById("editModeBtn");
 					const exportBtn     = document.getElementById("exportBtn");
@@ -3795,7 +3795,7 @@
 					editModeBtn .title      = !this.isLangEn ? "Maj+E" : "Shift+E";
 					if (this.editMode) {editModeBtn.classList.add('on')}
 					else    {editModeBtn.classList.remove('on')}
-					
+
 					const importMenu    = document.getElementById("importMenu");
 					const importFile    = importMenu.querySelector(".import-menu-btn.file");
 					const importClear   = importMenu.querySelector(".import-menu-btn.clear");
@@ -3808,8 +3808,8 @@
 
 					const onlineCfgPickerHeader = document.querySelector(".online-cfg-picker-menu-header");
 					if (onlineCfgPickerHeader) {
-						onlineCfgPickerHeader.innerHTML = !this.isLangEn 
-							? "Note: Choisir une configuration effacera les traces de configuration pré-existante de l'année correspondante, mais pas des autres années" 
+						onlineCfgPickerHeader.innerHTML = !this.isLangEn
+							? "Note: Choisir une configuration effacera les traces de configuration pré-existante de l'année correspondante, mais pas des autres années"
 							: "Tip: Choosing a configuration will erase all traces of pre-existing configuration of the corresponding year, but not of the other years"
 						;
 					}
@@ -3869,20 +3869,20 @@
 
 					if (document.querySelector(".new-grades-card").children.length > 1) {document.querySelector(".new-grades-card").children[1].remove()}
 					document.querySelector(".new-grades-card-title").innerHTML = `
-						${this.newGrades.length > 0 
-							? `${!this.isLangEn 
-								? `${this.newGrades.length} Nouvelle${ this.newGrades.length > 1 ? "s" : ""} Note${this.newGrades.length > 1 ? "s" : ""} !` 
+						${this.newGrades.length > 0
+							? `${!this.isLangEn
+								? `${this.newGrades.length} Nouvelle${ this.newGrades.length > 1 ? "s" : ""} Note${this.newGrades.length > 1 ? "s" : ""} !`
 								: `${this.newGrades.length} New Grade${this.newGrades.length > 1 ? "s" : ""}!`
-							}` 
-							: `${!this.isLangEn 
-								? `Pas de nouvelle note${this.error ? ", que je sache (mode offline)" : ""}` 
+							}`
+							: `${!this.isLangEn
+								? `Pas de nouvelle note${this.error ? ", que je sache (mode offline)" : ""}`
 								: `No new grade${this.error ? ", as far as I know (offline mode)" : ""}`
-							}` 
+							}`
 						}
 					`;
 					document.querySelector(".new-grades-mark-as-read-text").innerHTML = !this.isLangEn ? "Marquer comme lu" : "Mark as read";
 					document.querySelector(".new-grades-mark-as-read").title = !this.isLangEn ? "Marquer comme lu" : "Mark as read";
-					
+
 
 					document.querySelectorAll(".selected-card-notif-div").forEach(notifDiv => {
 						notifDiv.children[2].innerHTML = !this.isLangEn ? `est sélectionné!` : `is selected!`;
@@ -3911,9 +3911,9 @@
 						}}, 1)
 					}
 
-					newGradesNotif.innerHTML = !this.isLangEn 
-						? `${this.newGrades.length} NOUVELLE${ this.newGrades.length>1 ? "S !" : " !"} NOTE${this.newGrades.length>1 ? "S !" : " !"}` 
-						: `${this.newGrades.length} NEW GRADE${this.newGrades.length>1 ? "S!"  : "!" }` 
+					newGradesNotif.innerHTML = !this.isLangEn
+						? `${this.newGrades.length} NOUVELLE${ this.newGrades.length>1 ? "S !" : " !"} NOTE${this.newGrades.length>1 ? "S !" : " !"}`
+						: `${this.newGrades.length} NEW GRADE${this.newGrades.length>1 ? "S!"  : "!" }`
 					+ `<button id="closeNewGradesNotif" style="padding-bottom: 3px;font-size: 10px;display: flex;width: 21px;height: 21px;position: fixed;right: calc(5% - -15px);border-radius: 5px;border: 3px solid #e0e6ff;justify-content: center;align-items: center;align-content: center;">❌</button>`;
 				}
 
@@ -3923,7 +3923,7 @@
 				renderRecentGrades() {
 					const newGradesCard = document.querySelector(".new-grades-card");
 					const grades = {};
-					
+
 					if (this.newGrades.length > 0) {
 
 						// sorting the new grades by subjects
@@ -3934,9 +3934,9 @@
 							else {
 								grades[grade.subject].push(grade)
 							}
-											
+
 						}))
-						
+
 						let html = `<div class="new-grades-content">`;
 						Object.keys(grades).forEach(subject => {
 							html += `
@@ -3945,7 +3945,7 @@
 									${subject}
 								</div>
 							<table class="new-grades-table">`;
-							
+
 							grades[subject].forEach(grade => {
 								html +=
 									`<tr class="new-grades-table-grades" id="new-grade-${subject}-${grade.type}" data-subject="${subject}" data-type="${grade.type}" data-semester="${grade.semester}">
@@ -3971,8 +3971,8 @@
 
 					if (fadeIn == "big") {this.languageSensitiveContent(true);}
 					else {this.languageSensitiveContent(false);}
-					
-					
+
+
 					// Call renderRecentGrades to... well... render the recent grades' section
 					this.renderRecentGrades()
 
@@ -3987,7 +3987,7 @@
 					validatedEUsStatLabel.innerHTML = `${moduleStats.validated}/${moduleStats.total}`;
 
 					let semesterKeys = this.currentSemester == 0 ? Object.keys(this.semesters).sort((a,b) => a-b) : [this.currentSemester];
-					
+
 					const contentArea = document.getElementById("contentArea");
 					contentArea.innerHTML = "";
 
@@ -4023,15 +4023,15 @@
 							<div class="semester-body">
 								<div class="modules-section ${this.editMode ? "edit" : ""}" id="modules-section" ${moduleConfig?.__modules__ && !this.editMode ? "" : "style=\"/* margin: -20px 0px;*/\""}>
 									${Object.values(this.semesters[sem]).length == 0 && Object.keys(this.moduleConfig?.[sem] || {}).length == 0
-										? (this.isLangEn 
-											? `<div class="jura" style="font-size: 30px;">Nothing to see here!${this.editMode 
-												? "... unless?..." 
+										? (this.isLangEn
+											? `<div class="jura" style="font-size: 30px;">Nothing to see here!${this.editMode
+												? "... unless?..."
 												: ""
-											}</div>` 
-											: `<div class="jura" style="font-size: 30px;">Rien à voir ici !${this.editMode 
-												? "... à moins que ?..." 
+											}</div>`
+											: `<div class="jura" style="font-size: 30px;">Rien à voir ici !${this.editMode
+												? "... à moins que ?..."
 												: ""
-											}</div>` 
+											}</div>`
 										)
 										: ``
 									}
@@ -4042,8 +4042,8 @@
 										${!this.isLangEn ? `Matière${unclassifiedLength > 1 ?  `s` : ``} non classée${unclassifiedLength > 1 ?  `s` : ``} dans un module` : `Subject${unclassifiedLength > 1 ?  `s` : ``} not classified in a module`}
 									</div>
 									<div class="unclassified-content">
-										${unclassifiedLength > 0 
-											? `<div style="margin: -10px 0px"></div>${this.createAllSubjCards(sem, "__#unclassified#__", manageIndividualCardFolding)}<div style="margin: -10px 0px"></div>` 
+										${unclassifiedLength > 0
+											? `<div style="margin: -10px 0px"></div>${this.createAllSubjCards(sem, "__#unclassified#__", manageIndividualCardFolding)}<div style="margin: -10px 0px"></div>`
 											: ``
 										}
 									</div>
@@ -4051,7 +4051,7 @@
 							</div>
 						</div>`;
 					});
-					
+
 					this.setTotalCoefs();
 					this.attachAllEventListeners();
 
@@ -4072,8 +4072,8 @@
 					});
 
 					if (this.gradesData[sem]["__#unclassified#__"].length == 0 && !moduleConfig?.__modules__) {
-						html = this.editMode 
-							? `<div style="font-size: 23px;">Rien à voir ici pour l'instant...</div>` 
+						html = this.editMode
+							? `<div style="font-size: 23px;">Rien à voir ici pour l'instant...</div>`
 							: `<div style="font-size: 23px;">Nothing to see here yet...</div>`;
 					}
 
@@ -4089,21 +4089,21 @@
 
 					let html = `
 					<div class="module-card ${isNaN(average) ? "unknown" : `${average >= 10 ? 'validated' : 'failed'}`} ${folded ? "fold" : ""}" id="module-card-${moduleName}-in-semester-${sem}" data-semester="${sem}" data-module="${moduleName}" data-index="${moduleIndex}" ${folded ? `style="height: 77px"` : ""}>
-					
+
 						<div class="module-card-header ${this.editMode ? "edit-mode" : ""} ${isNaN(average) ? "unknown" : `${average >= 10 ? 'validated' : 'failed'}`}" id="module-card-header-${moduleName}-in-semester${sem}" data-semester="${sem}" data-module="${moduleName}" ${this.editMode ? `draggable="true"` : ""}>
-							${this.editMode 
-								? 
+							${this.editMode
+								?
 								`<div class="module-card-header-left-side">
 									<div style="margin-right: 5px; margin-bottom: 3px;">
-									${cardIsSelected 
+									${cardIsSelected
 										? `<div class="tick-icon module" data-targetid="module-card-${moduleName}-in-semester-${sem}" data-semester="${sem}" data-module="${moduleName}" data-subject="">✔</div>`
 										: this.createDraggableIcon("module", {targetId: `module-card-${moduleName}-in-semester-${sem}`})
 									}</div>
 									<input type="text" class="module-title input any-input" id="module-title-input-${sem}-${moduleName}" value="${moduleName}" data-semester="${sem}" data-module="${moduleName}" draggable="false"/>
 									<div class="module-title-state">
 									</div>
-								</div>` 
-								: 
+								</div>`
+								:
 								`<div class="module-title">${moduleName}</div>`
 							}
 							<div class="module-subject-total-coef-div" data-semester="${sem}" data-module="${moduleName}">
@@ -4120,24 +4120,24 @@
 								<button class="module-delete-btn" id="module-delete-btn-${moduleName}-in-semester-${sem}" title="${!this.isLangEn ? "Supprimer ce module" : "Delete this module"}" data-semester="${sem}" data-module="${moduleName}" style="border-width: 3px;${this.editMode ? "" : " display: none;"}">🗑️</button>
 							</div>
 						</div>
-						
+
 						<div class="module-card-content" data-module="${moduleName}">
-						
+
 							<div class="module-info">
-								${hasDisabled 
-									? 
+								${hasDisabled
+									?
 									`<div class="module-info-bar">
 										<div style="font-weight: 700; font-size: 15px;">${!this.isLangEn ? "Inclus des notes désactivées" : "Includes disabled grades"}</div>
 										<div class="module-info-clear disabled" data-semester="${sem}" data-module="${moduleName}">${!this.isLangEn ? "Activer toutes ces notes" : "Enable all the grades"}</div>
-									</div>` 
+									</div>`
 									: ``
 								}
-								${hasSim 
-									? 
+								${hasSim
+									?
 									`<div class="module-info-bar">
 										<div style="font-weight: 700; font-size: 15px;">${!this.isLangEn ? "Inclus des notes simulées" : "Includes simulated grades"}</div>
 										<div class="module-info-clear sim" data-semester="${sem}" data-module="${moduleName}">${!this.isLangEn ? "Effacer toutes ces notes simulées" : "Erase all the simulated grades"}</div>
-									</div>` 
+									</div>`
 									: ``
 								}
 							</div>
@@ -4146,50 +4146,50 @@
 								${this.createAllSubjCards(sem, moduleName, manageIndividualCardFolding)}
 							</div>
 						</div>
-						
+
 					</div>
 					`;
-						
+
 					return html
 				}
-				
 
-				
+
+
 				// MARK: Create Subject Card
-				/** 
+				/**
 				* Call this method to create the outer HTML of all subject cards of a module.
-				* 
-				* Detects automatically from the name of the moduleName and from `this.gradesData` (as a safe guard, also from `this.moduleConfig`) if the card is classified or unclassified, 
+				*
+				* Detects automatically from the name of the moduleName and from `this.gradesData` (as a safe guard, also from `this.moduleConfig`) if the card is classified or unclassified,
 				* and detects automatically from this.compactSubjCardsId if the card is detailed or compact.
-				* 
+				*
 				* @param {number | string} sem Number of the semester of the subject
 				* @param {string} moduleName Name of the subject's module
 				* @return {string} The outer HTML of all the subject cards of a module, in a single string
 				*/
 				createAllSubjCards(sem, moduleName, manageIndividualCardFolding=true) {
 					const moduleData = this.gradesData[sem][moduleName];
-					
-					let html  = this.editMode && moduleName != "__#unclassified#__" && this.moduleConfig[sem]?.[moduleName] != undefined 
-							? this.createDropFieldInsertionField("subject", {sem, moduleName, index:0}) 
+
+					let html  = this.editMode && moduleName != "__#unclassified#__" && this.moduleConfig[sem]?.[moduleName] != undefined
+							? this.createDropFieldInsertionField("subject", {sem, moduleName, index:0})
 							: ""
 					;
 
 					Object.values(moduleData.subjects).forEach((_value, _index) => {
 						html += this.createSubjCard(sem, moduleName, _value.subjName, _index, manageIndividualCardFolding);
-						html += this.editMode && moduleName != "__#unclassified#__" && this.moduleConfig[sem]?.[moduleName] != undefined 
-							? this.createDropFieldInsertionField("subject", {sem, moduleName, index:_index+1}) 
+						html += this.editMode && moduleName != "__#unclassified#__" && this.moduleConfig[sem]?.[moduleName] != undefined
+							? this.createDropFieldInsertionField("subject", {sem, moduleName, index:_index+1})
 							: ""
 						;
 					})
 
 					return html;
 				}
-				/** 
-				* Call this method to create the outer HTML of a subject card. 
-				* 
-				* Detects automatically from the name of the moduleName and from `this.gradesData` (to error-proof the moduleName, also from `this.moduleConfig`) if the card is classified or unclassified, 
+				/**
+				* Call this method to create the outer HTML of a subject card.
+				*
+				* Detects automatically from the name of the moduleName and from `this.gradesData` (to error-proof the moduleName, also from `this.moduleConfig`) if the card is classified or unclassified,
 				* and detects automatically from this.compactSubjCardsId if the card is detailed or compact.
-				* 
+				*
 				* @param {number | string} sem Number of the semester of the subject
 				* @param {string} moduleName Name of the subject's module
 				* @param {string} subject Name of the subject
@@ -4212,14 +4212,14 @@
 					const classified            = moduleName != "__#unclassified#__" && this.moduleConfig[sem]?.[moduleName] != undefined;
 					const subjectCardId         = `subject-card-semester-${sem}-subject-${subject}`;
 					const cardIsSelected        = this.selectedSubjectCardsId.includes(`subject-card-semester-${sem}-subject-${subject}`);
-					const detailed              = 
-						(!this.compactSubjCardsId.includes(subjectCardId) && manageIndividualCardFolding) 
-						|| 
+					const detailed              =
+						(!this.compactSubjCardsId.includes(subjectCardId) && manageIndividualCardFolding)
+						||
 						(this.viewMode == "detailed" && !manageIndividualCardFolding)
 					;
-					
+
 					if (!manageIndividualCardFolding) {
-						if (detailed)   {this.detailedSubjCardsId.push(subjectCardId); this.compactSubjCardsId .splice(this.compactSubjCardsId .indexOf(subjectCardId), 1)} 
+						if (detailed)   {this.detailedSubjCardsId.push(subjectCardId); this.compactSubjCardsId .splice(this.compactSubjCardsId .indexOf(subjectCardId), 1)}
 						else            {this.compactSubjCardsId .push(subjectCardId); this.detailedSubjCardsId.splice(this.detailedSubjCardsId.indexOf(subjectCardId), 1)}
 					}
 
@@ -4231,43 +4231,43 @@
 									? `<div style="margin: 0px 5px; margin-bottom: 3px;">
 									${cardIsSelected
 										? `<div class="tick-icon subject" data-targetid="${subjectCardId}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}">✔</div>`
-										: this.createDraggableIcon(`subject`, {targetId: subjectCardId}) 
+										: this.createDraggableIcon(`subject`, {targetId: subjectCardId})
 									}</div>`
 									: ""
 								}
 								<div  style="display: flex; justify-content: space-between; align-items: center; width: 80%;">
 									<div class="subject-card-header-left-side-text ${this.editMode ? "edit" : ""}">
-										${isCustom 
+										${isCustom
 											? `<input type="text" class="subject-name input any-input" id="subject-name-input-semester-${sem}-subject-${subject}" value="${subject}"/>`
 											: `<div class="subject-name">${subject}</div>`
 										}
 										<div style="font-size: 13px; color: #666; text-wrap-mode: nowrap;">
-											${classified 
-												? ` ${!this.isLangEn 
-														? "Poids dans module: " 
+											${classified
+												? ` ${!this.isLangEn
+														? "Poids dans module: "
 														: "Weight in module: "
 													}
-													${this.editMode 
+													${this.editMode
 														? `<span><input class="subject-coef-input-box any-input" id="subject-coef-input-box-semester-${sem}-subject-${subject}" data-semester="${sem}" data-module="${moduleName}" data-subject="${subject}" type="number" placeholder="%" step="5" min="0" max="100" value="${pct}"/>%</span>`
 														: `<span style="font-weight: 800">${pct}%</span>`
 													}
-												` 
+												`
 												: ""
 											}
 											<span class="subject-card-header-grades-details ${detailed ? "" : "show"}">
 												${classified ? "• " : ""}
-												${nbGrades===0 
-													? `<span>${!this.isLangEn ? "aucune note publiée" : "no published grade"}</span>` 
+												${nbGrades===0
+													? `<span>${!this.isLangEn ? "aucune note publiée" : "no published grade"}</span>`
 													: `<span>${nbGrades} ${!this.isLangEn ? `note${nbGrades>1?"s":""} au total` : `grade${nbGrades>1?"s":""} total</span>`}`
 												}
-												${nbGrades>0 
+												${nbGrades>0
 													? ` • <span ${includedGradesLength<nbGrades ? `style="color: #df0000"` : ``}>
-														<span style="font-weight: 700; ">${includedGradesLength}/${nbGrades}</span> 
+														<span style="font-weight: 700; ">${includedGradesLength}/${nbGrades}</span>
 														${!this.isLangEn ? `note${includedGradesLength>1?"s":""} activée${includedGradesLength>1?"s":""}` : `grade${includedGradesLength>1?"s":""} enabled`}${includedGradesLength<nbGrades ? `!` : ``}
-													</span>` 
+													</span>`
 													: ``
 												}
-												${nbSimGrades>0 
+												${nbSimGrades>0
 													? `<span> • ${nbSimGrades} ${!this.isLangEn ? `note${nbSimGrades>1?"s":""} simulée${nbSimGrades>1?"s":""}` : `simulated grade${nbSimGrades>1?"s":""}</span>`}`
 													: ``
 												}
@@ -4333,7 +4333,7 @@
 									<td class="grades-table-type" style="display: flex; align-items: stretch; gap: 6px">
 										<input type="checkbox" class="grade-checkbox any-input" id="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}" data-semester="${sem}" data-subj="${subject}" data-module="${moduleName||''}" data-prof="${grade.prof}" data-gradeid="${grade.type + " " + grade.date + " " + grade.prof}" ${gradeIsSim ? `data-simtimestamp="${grade.id}"` : ""} ${!this.gradeIsDisabled(grade) ? "checked" : ""}></input>
 										${gradeIsSim
-											? `<input class="grade-type simulated-grade-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="simulated-grade-input-type-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" data-modifType="type" data-simid="${index-nbRealGrades}" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" value="${grade.type}"/>` 
+											? `<input class="grade-type simulated-grade-input-edit sim-inp-type any-input" style="width: 100%; max-width: 250px;" id="simulated-grade-input-type-for-${subject}-from-${moduleName}-in-semester${sem}-${grade.type}" data-modifType="type" data-simid="${index-nbRealGrades}" data-semester="${sem}" data-subj="${subject}" data-type="${grade.type}" data-module="${moduleName||''}" value="${grade.type}"/>`
 											: `<label class="grade-type" style="width: auto"  id="grade-type-${grade.type}-${grade.date}" for="grade-checkbox-${grade.subject}-${grade.type}-${grade.date}-${grade.prof}">${grade.type || ''}${gradeIsSim ? ` • ${!this.isLangEn ? "Simulée" : "Simulated"}` : ''}</label>`
 										}
 									</td>
@@ -4369,8 +4369,8 @@
 									</td>
 									<td class="grades-table-add-sim-cell" style="${gradeIsSim ? `width: 52px; padding: 3px; text-align: center;` : ``}">
 										${
-											gradeIsSim 
-											? `<button class="sim-del-btn" data-semester="${sem}" data-subj="${subject}" data-module="${moduleName||''}" data-type="${grade.type}" data-simid="${index-nbRealGrades}">🗑️</button>` 
+											gradeIsSim
+											? `<button class="sim-del-btn" data-semester="${sem}" data-subj="${subject}" data-module="${moduleName||''}" data-type="${grade.type}" data-simid="${index-nbRealGrades}">🗑️</button>`
 											: `<div style="width:32px"></div>`
 										}
 									</td>
@@ -4439,27 +4439,27 @@
 
 				createDraggableIcon(source="subject", {size=undefined, width=undefined, height=undefined, fontSize=undefined, targetId="none"}={targetId:"none"}) {
 					return `
-						<div 
-							class="drag-icon ${source}" 
-							data-targetid="${targetId}" 
-							style="${height || size ? `height:${height || size}px;` : ""} ${width || size ? `width:${width || size}px;` : ""} ${fontSize ? `font-size: ${fontSize || Math.floor((width || size)*0.75)}px` : ""}" 
+						<div
+							class="drag-icon ${source}"
+							data-targetid="${targetId}"
+							style="${height || size ? `height:${height || size}px;` : ""} ${width || size ? `width:${width || size}px;` : ""} ${fontSize ? `font-size: ${fontSize || Math.floor((width || size)*0.75)}px` : ""}"
 							draggable="false"
 						>☰</div>
 					`;
 				}
 				createExternalLinkSymbol({fillColor="white", strokeColor="none", size=15, margin=0}={fillColor:"white", strokeColor:"none", size:15, margin:0}) {
-					return `<svg 
-						xmlns="http://www.w3.org/2000/svg" 
+					return `<svg
+						xmlns="http://www.w3.org/2000/svg"
 						style="
-							width: ${size}px; 
-							height: ${size}px; 
+							width: ${size}px;
+							height: ${size}px;
 							margin: ${(margin instanceof Array ? margin : [margin]).map(value => {if (value instanceof Number || !isNaN(Number(value))) {return `${value}px`}}).join(" ")};
 							fill: ${fillColor};
 							stroke: ${strokeColor};
 							stroke-linecap: round;
-							stroke-linejoin: round; 
+							stroke-linejoin: round;
 							stroke-width: 2;
-						" 
+						"
 						viewBox="0 0 513 513"
 					>
 						<path style="d:path('M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z')""/>
@@ -4472,20 +4472,20 @@
 						size="28px",
 						sizeTransformScaleHover="28px",
 
-						borderColor="black", 
-						borderThickness="6px", 
-						borderRadius="50px", 
-						crossColor="#b70000", 
-						crossThickness="13px", 
-						crossLength="100", 
+						borderColor="black",
+						borderThickness="6px",
+						borderRadius="50px",
+						crossColor="#b70000",
+						crossThickness="13px",
+						crossLength="100",
 						crossStrokeLinecap="round",
 
-						borderColorHover="black", 
-						borderThicknessHover="6px", 
-						borderRadiusHover="45px", 
-						crossColorHover="#dd5454", 
-						crossThicknessHover="17px", 
-						crossLengthHover="110", 
+						borderColorHover="black",
+						borderThicknessHover="6px",
+						borderRadiusHover="45px",
+						crossColorHover="#dd5454",
+						crossThicknessHover="17px",
+						crossLengthHover="110",
 						crossStrokeLinecapHover="round",
 
 						transitionTime="0.2s",
@@ -4497,20 +4497,20 @@
 						size:"28px",
 						sizeTransformScaleHover:"28px",
 
-						borderColor:"black", 
-						borderThickness:"6px", 
-						borderRadius:"50px", 
-						crossColor:"#b70000", 
-						crossThickness:"13px", 
-						crossLength:"100", 
+						borderColor:"black",
+						borderThickness:"6px",
+						borderRadius:"50px",
+						crossColor:"#b70000",
+						crossThickness:"13px",
+						crossLength:"100",
 						crossStrokeLinecap:"round",
 
-						borderColorHover:"black", 
-						borderThicknessHover:"6px", 
-						borderRadiusHover:"45px", 
-						crossColorHover:"#dd5454", 
-						crossThicknessHover:"17px", 
-						crossLengthHover:"110", 
+						borderColorHover:"black",
+						borderThicknessHover:"6px",
+						borderRadiusHover:"45px",
+						crossColorHover:"#dd5454",
+						crossThicknessHover:"17px",
+						crossLengthHover:"110",
 						crossStrokeLinecapHover:"round",
 
 						transitionTime: "0.2s",
@@ -4519,7 +4519,7 @@
 					}
 					//#endregion
 				) {
-					//#region 
+					//#region
 					const additionalCSSPropList = additionalCSS.split(";").map(elem => {
 						if (elem.length > 0) {
 							const styleSeparation = elem.trim().split(":");
@@ -4529,7 +4529,7 @@
 							}
 							else if (styleSeparation[0].trim().split("-").length > 1) {
 								const formatedStyleName = styleSeparation[0].trim().split("-").map((sub, index) => {
-									if (index>0)    {return sub[0].toUpperCase() + sub.slice(1)} 
+									if (index>0)    {return sub[0].toUpperCase() + sub.slice(1)}
 									else            {return sub}
 								}).join("");
 								return {style: "property", name: formatedStyleName, value: styleSeparation[1].trim()}
@@ -4620,14 +4620,14 @@
 							</tbody>
 						</table>
 						`
-		
+
 						container.innerHTML = html;
 					}
 				}
 
 				appendFullScreenNotif(container=document.body, text) {
 					if (!text) {
-						text = !this.isLangEn 
+						text = !this.isLangEn
 							? `<div>Clique sur l'écran pour rafraichir la page et appliquer la mise à jour !</div><div>Utilisateurs de MAC, copiez le script qui s'est ouvert et collez-le dans votre extension à la place de l'ancien script</div>`
 							: `<div>Click on the screen to reload the page and apply the update!</div><div>MAC users, copy the script that opened up and paste it in your extension to replace the old script</div>
 						`;
@@ -4640,9 +4640,9 @@
 					container.appendChild(fullScreenNotif);
 
 					fullScreenNotif.outerHTML = `
-						<div 
-							class="modal${this.settings.blurEnabled.value ? " blur" : ""}" 
-							id="fullScreeNotif" 
+						<div
+							class="modal${this.settings.blurEnabled.value ? " blur" : ""}"
+							id="fullScreeNotif"
 							style="display: flex; flex-direction: column; justify-content: space-evenly; position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; text-align: center; font-size: 50px; font-weight: 100; text-emphasis-style: ' '; cursor: pointer; z-index: 1000"
 						>
 							${text}
@@ -4661,7 +4661,7 @@
 						settingsModalBody.className = "settings-modal-body";
 						settingsModalBody.id = "settingsModalBody";
 						container.appendChild(settingsModalBody);
-						
+
 						Object.keys(this.settings).forEach((settingId, _index, settingsIdArray) => {
 							const settingChildren = this.settings[settingId].children;
 
@@ -4721,11 +4721,11 @@
 					}
 
 					html += `
-					<div 
-						class="settings-row${settingParents.length > 0 ? ` child` : ""}${settingChildren.length > 0 ? " parent": ""}${settingParentsValidValue && settingValue ? "" : " disabled"}" 
-						id="settings-row-${settingId}" 
-						${index > 0 && settingParents.length==0 ? `style="border-top: 1px solid"` : ``} 
-						data-setting="${settingId}" 
+					<div
+						class="settings-row${settingParents.length > 0 ? ` child` : ""}${settingChildren.length > 0 ? " parent": ""}${settingParentsValidValue && settingValue ? "" : " disabled"}"
+						id="settings-row-${settingId}"
+						${index > 0 && settingParents.length==0 ? `style="border-top: 1px solid"` : ``}
+						data-setting="${settingId}"
 						data-parent="${settingParents.length > 0 ? settingParents[0].parentName : ""}"
 					>
 						<div class="settings-text">
@@ -4735,13 +4735,13 @@
 								<span style="font-size: 13px; font-weight: 400; font-style: italic;">${settingInfo}</span>
 							</div>
 						</div>
-						<input 
-							type="checkbox" 
-							class="settings-checkbox" 
-							id="settings-checkbox-${settingId}" 
-							data-setting="${settingId}" 
+						<input
+							type="checkbox"
+							class="settings-checkbox"
+							id="settings-checkbox-${settingId}"
+							data-setting="${settingId}"
 							${settingParents.length>0 ? `data-parent="${settingParents[0].parentName}"` : ""}
-							${settingParentsValidValue ? "" : "disabled"} 
+							${settingParentsValidValue ? "" : "disabled"}
 							${settingValue ? "checked" : ""}
 						></input>
 					</div>
@@ -4762,13 +4762,13 @@
 
 
 
-			
+
 				// MARK: firstLoadEvent()
 				firstLoadEvent() {
 
 					if (this.firstLoad) {
 						const overHeaderBtns = document.querySelector(".over-header-help-btns");
-	
+
 						const newUserNotif  = document.createElement("div");
 						newUserNotif.className = "new-user-notif";
 						newUserNotif.title = !this.isLangEn ? "Clique pour fermer" : "Click to dismiss";
@@ -4782,14 +4782,14 @@
 								</svg>
 							</div>
 							<div class="new-user-notif-text">${
-								!this.isLangEn 
-									? "Bonjour! Première fois? Clique ici pour apprendre à utiliser cette extension! (Clique ici pour fermer)" 
+								!this.isLangEn
+									? "Bonjour! Première fois? Clique ici pour apprendre à utiliser cette extension! (Clique ici pour fermer)"
 									: "Hey! New here? Click here to find a tutorial on how to use this extension! (Click here to dismiss)"
 								}
 							</div>
 						`;
 						overHeaderBtns.appendChild(newUserNotif);
-	
+
 						const newUserNotifFullScreen        = document.createElement("div");
 						const helpMenuBtn                   = document.querySelector(".over-header-btn.how-to-use-btn");
 						const firstStepsBtn                 = document.querySelector(".first-steps-btn");
@@ -4799,10 +4799,10 @@
 						newUserNotifFullScreen.className    = "focus-notif-fullscreen-effect";
 						this.ecamDash.appendChild(newUserNotifFullScreen);
 						setTimeout(() => {newUserNotifFullScreen?.classList?.add("focus");}, 10);
-	
+
 						newUserNotif.onclick = () => {this.dismissFirstTimeNotif();}
 					}
-					
+
 				}
 
 
@@ -4865,7 +4865,7 @@
 
 					localStorage.setItem("ECAM_DASHBOARD_FIRST_LOAD", false);
 					this.firstLoad = false;
-					
+
 					const firstStepsBtn = document.querySelector(".first-steps-btn");
 					firstStepsBtn.classList.remove("infinite-alternate-scale-up");
 
@@ -4874,34 +4874,34 @@
 					this.onGoingTutoTipNotifDivs = [
 						new TutoTipNotif(this,
 							".config-btns-container",
-							"#importBtn", 
+							"#importBtn",
 							{
-								fr: "Clique ici pour importer une configuration de modules", 
+								fr: "Clique ici pour importer une configuration de modules",
 								en: "Click here to import a module configuration",
 							}
 							, {
 								appearanceDelay: 200,
-								containerStyle: {"top": "-25px", "right": "200px"}, 
-								notifStyle: {"min-width": "330px"}, 
+								containerStyle: {"top": "-25px", "right": "200px"},
+								notifStyle: {"min-width": "330px"},
 								containerElemStyle: {},
 								targetElemStyle: {"z-index": "12"},
 							}
 						),
 						new TutoTipNotif(this,
 							"#importMenu",
-							".import-menu-btn.online", 
+							".import-menu-btn.online",
 							{
-								fr: "Clique ici pour obtenir une configuration déjà disponible en ligne", 
+								fr: "Clique ici pour obtenir une configuration déjà disponible en ligne",
 								en: "Click here to obtain a configuration already available online",
 							}
 							, {
 								appearanceDelay: 200,
-								containerStyle: {"top": "175px", "right": "110px"}, 
-								notifStyle: {"min-width": "260px"}, 
+								containerStyle: {"top": "175px", "right": "110px"},
+								notifStyle: {"min-width": "260px"},
 								containerElemStyle: {zIndex: "unset"},
 								targetElemStyle: {"z-index": "12"},
 								initialAction() {setTimeout(() => {
-									document.querySelector("#importMenu").style.zIndex = "12"; 
+									document.querySelector("#importMenu").style.zIndex = "12";
 									document.querySelector(".import-menu-btn.file").onclick = null;
 									document.querySelector(".import-menu-btn.clear").onclick = null;
 								}, 1)},
@@ -4912,14 +4912,14 @@
 							"#pickerMenu",
 							".online-cfg-picker-menu-dir-card.config",
 							{
-								fr: "Navigue dans le menu pour trouver la configuration qui correspond à ta section → année → promo [→ fillière, si besoin] actuelle", 
+								fr: "Navigue dans le menu pour trouver la configuration qui correspond à ta section → année → promo [→ fillière, si besoin] actuelle",
 								en: "Navigate through the menu to find the configuration that corresponds to your current section → year → prom [→ pathway, if needed]",
 							}
 							, {
-								appearanceDelay: 10, 
-								containerStyle: {"position": "absolute", "width": "100%", "top": "-76px", "right": "0"}, 
-								notifStyle: {"min-width": "1040px"}, 
-								targetElemStyle: {}, 
+								appearanceDelay: 10,
+								containerStyle: {"position": "absolute", "width": "100%", "top": "-76px", "right": "0"},
+								notifStyle: {"min-width": "1040px"},
+								targetElemStyle: {},
 								containerElemStyle: {}
 							}
 						),
@@ -4935,10 +4935,10 @@
 									<div>[ Click to close the tuto ]</div>`,
 							}
 							, {
-								appearanceDelay: 200, 
-								containerStyle: {"position": "fixed", "width": "100%", "height": "100%", "top": "0"}, 
-								notifStyle: {"max-width": "60%"}, 
-								targetElemStyle: {}, 
+								appearanceDelay: 200,
+								containerStyle: {"position": "fixed", "width": "100%", "height": "100%", "top": "0"},
+								notifStyle: {"max-width": "60%"},
+								targetElemStyle: {},
 								containerElemStyle: {}
 							}
 						),
@@ -4948,7 +4948,7 @@
 				}
 
 
-				
+
 
 				// MARK: startCompleteTutorial()
 				startCompleteTutorial() {
@@ -4965,14 +4965,14 @@
 									document.body,
 									".tuto-tip-notif-container",
 									{
-										fr: "Tu n'as encore pas de notes, nous allons donc commencer par créer un module, puis une matière<div style='cursor: pointer;'>[ Suivant ]</div>", 
+										fr: "Tu n'as encore pas de notes, nous allons donc commencer par créer un module, puis une matière<div style='cursor: pointer;'>[ Suivant ]</div>",
 										en: "You don't have grades yet, so we will start by creating a module, and then a subject<div style='cursor: pointer;'>[ Next ]</div>"
 									}
 									, {
-										appearanceDelay: 1, 
-										containerStyle: {"position": "fixed", "width": "100%", "height": "100%", "top": "0"}, 
-										notifStyle: {"max-width": "60%"}, 
-										targetElemStyle: {}, 
+										appearanceDelay: 1,
+										containerStyle: {"position": "fixed", "width": "100%", "height": "100%", "top": "0"},
+										notifStyle: {"max-width": "60%"},
+										targetElemStyle: {},
 										containerElemStyle: {}
 									}
 								),
@@ -4986,8 +4986,8 @@
 									{fr: "Passe en mode édition ici (ou avec Maj+E)", en: "Get in edit mode here (or with Shift+E)"}
 									, {
 										appearanceDelay: 400,
-										containerStyle: {"position": "relative", "right": '500px'}, 
-										notifStyle: {"min-width": '320px'}, 
+										containerStyle: {"position": "relative", "right": '500px'},
+										notifStyle: {"min-width": '320px'},
 										targetElemStyle: {"z-index": "12"},
 										initialAction(dash) {dash.generalKeyboardEvents("tuto Shift+L Shift+E");},
 										additionalActionCallback(dash) {dash.generalKeyboardEvents("tuto Shift+L");},
@@ -5003,8 +5003,8 @@
 									{fr: "Commence par cliquer ici pour créer un module", en: "Start by click here to add a module"}
 									, {
 										appearanceDelay: 400,
-										containerStyle: {position: "relative", bottom: '-20px', marginBottom: "-24px"}, 
-										notifStyle: {minWidth: '320px'}, 
+										containerStyle: {position: "relative", bottom: '-20px', marginBottom: "-24px"},
+										notifStyle: {minWidth: '320px'},
 										targetElemStyle: {zIndex: 12, background: '#bdb8ffb8', '--infinite-alternate-scale-up-scale': '103%'},
 									}
 								),
@@ -5020,8 +5020,8 @@
 								{fr: "Passe en vue détaillée ici (ou avec Maj+D)", en: "Get in edit mode here (or with Shift+D)"}
 								, {
 									appearanceDelay: 400,
-									containerStyle: {"position": "relative", "right": '140px', 'top': "-120px", "margin-left": "-8px"}, 
-									notifStyle: {"min-width": '430px'}, 
+									containerStyle: {"position": "relative", "right": '140px', 'top': "-120px", "margin-left": "-8px"},
+									notifStyle: {"min-width": '430px'},
 									targetElemStyle: {"z-index": "12", "background": "#e5e5e5"},
 									initialAction(dash) {dash.generalKeyboardEvents("tuto Shift+L Shift+D");},
 									additionalActionCallback(dash) {dash.generalKeyboardEvents("tuto Shift+L");},
@@ -5038,8 +5038,8 @@
 								{fr: "Entre le nom, valeur et coef de la note que tu veux simuler, puis clique sur \"Ajouter\"", en: "Enter the name, value and coef of the grade you want to simulate, then click on \"Add\""}
 								, {
 									appearanceDelay: 400,
-									containerStyle:     {"position": "absolute", "top": '120px', "left": '400px'}, 
-									notifStyle:         {"min-width": '620px'}, 
+									containerStyle:     {"position": "absolute", "top": '120px', "left": '400px'},
+									notifStyle:         {"min-width": '620px'},
 									targetElemStyle:    {"--infinite-alternate-scale-up-scale": "110%"},
 									containerElemStyle: {"position": "sticky", "z-index": "12", "box-shadow": "0px 0px 17px 8px white", '--infinite-alternate-scale-up-scale': '100%', "backdrop-filter": 'brightness(230%)'},
 									initialAction(dash)     		{ dash.generalKeyboardEvents("tuto Shift+L"); dash.changeSemester(-1); document.querySelector(".subject-card").style.overflow = "visible"; },
@@ -5056,14 +5056,14 @@
 								document.body,
 								".tuto-tip-notif-container",
 								{
-									fr: "Et voilà ! Tu peux modifier les valeurs de la note simulée que tu as rentré quand tu veux !", 
+									fr: "Et voilà ! Tu peux modifier les valeurs de la note simulée que tu as rentré quand tu veux !",
 									en: "That's it! You can modify the values of the simulated grades that you entered whenever you want!"
 								}
 								, {
-									appearanceDelay: 1, 
-									containerStyle: {"position": "fixed", "width": "100%", "height": "100%", "top": "0"}, 
-									notifStyle: {"max-width": "60%"}, 
-									targetElemStyle: {}, 
+									appearanceDelay: 1,
+									containerStyle: {"position": "fixed", "width": "100%", "height": "100%", "top": "0"},
+									notifStyle: {"max-width": "60%"},
+									targetElemStyle: {},
 									containerElemStyle: {}
 								}
 							),
@@ -5079,20 +5079,20 @@
 					this.onGoingTutoTipNotifDivs = [
 						new TutoTipNotif(this,
 							document.body,
-							"All.tuto-tip-btn", 
+							"All.tuto-tip-btn",
 							{
-								fr: "Bienvenu dans le tutoriel complet de ce tableau de bord ! :D", 
+								fr: "Bienvenu dans le tutoriel complet de ce tableau de bord ! :D",
 								en: "Welcome in the complete tutorial of this dashboard! :D",
 							}
 							, {
 								appearanceDelay: 1,
-								containerStyle: {"position": "fixed", "top": "0", "left": "0", "width": "100%", "height": "100%", "flex-direction": "column"}, 
-								notifStyle: {"position": "relative", "top": "-50px", "min-width": "1000px"}, 
+								containerStyle: {"position": "fixed", "top": "0", "left": "0", "width": "100%", "height": "100%", "flex-direction": "column"},
+								notifStyle: {"position": "relative", "top": "-50px", "min-width": "1000px"},
 								buttonsContainer: {
 									style: {gap: "10px", maxWidth: "440px"},
 									texts: {
 										fr: "Sélectionne la section que tu veux explorer",
-										en: "Select the section you want to explore", 
+										en: "Select the section you want to explore",
 									},
 									textStyle: {},
 									buttons: [
@@ -5100,7 +5100,7 @@
 											style: {},
 											texts: {
 												fr: "Simule et anticipe tes résultats",
-												en: "Simulate and anticipate your results", 
+												en: "Simulate and anticipate your results",
 											},
 											actionCallback: tutoSimulation
 										},
@@ -5118,7 +5118,7 @@
 				// MARK: nextTipNotif()
 				/**
 				 * Pops the first element of the array of {@link TutoTipNotif TutoTipNotif}s and create its tip notif by calling its {@link TutoTipNotif.createTipNotifDiv createTipNotifDiv} method.
-				 * 
+				 *
 				 * If no element is left, uses the endCallback function instead.
 				 */
 				nextTipNotif(endCallback = () => {this.stopTuto()}) {
@@ -5144,7 +5144,7 @@
 					document.querySelector(".skip-tuto-btn").style.animationPlayState = "paused";
 					document.querySelector(".skip-tuto-btn").onclick = null;
 					setTimeout(() => {document.querySelector(".skip-tuto-btn").remove()}, 500);
-					
+
 					document.querySelector(".tuto-lang-btn-toggle-container").style.opacity = "0";
 					document.querySelector(".tuto-lang-btn-toggle-container").onclick = null;
 					setTimeout(() => {document.querySelector(".tuto-lang-btn-toggle-container").remove()}, 500);
@@ -5159,7 +5159,7 @@
 				}
 
 			//#endregion -Tutos
-			
+
 
 
 
@@ -5169,7 +5169,7 @@
 
 				document.querySelector(".average-number").innerHTML = this.weightedAverage(this.grades);
 
-				
+
 				if (sem?.classList?.contains("module-card")) {
 					subject = undefined;
 					moduleName = sem.dataset.module;
@@ -5180,7 +5180,7 @@
 					moduleName = sem.dataset.module;
 					sem = sem.dataset.semester;
 				}
-				
+
 				// subject average modification
 				if (subject) {
 					const subjCard          = document.querySelector(`.subject-card[data-subject="${subject}"]`);
@@ -5192,7 +5192,7 @@
 					const subjAvg           = this.gradesData[sem][moduleName||"__#unclassified#__"].subjects[subject].average;
 					const subjClassAvg      = this.gradesData[sem][moduleName||"__#unclassified#__"].subjects[subject].classAvg;
 					const moduleAvg         = this.gradesData[sem][moduleName||"__#unclassified#__"].average;
-					
+
 					subjAvgDiv.innerHTML = subjAvg + "/20";
 					if (!isNaN(subjClassAvg)) {
 						subjClassAvgDiv.innerHTML = subjClassAvg + "/20";
@@ -5201,12 +5201,12 @@
 						subjClassAvgDiv.style.display = "none";
 						subjAvgVsClassAvg.style.display = "none";
 					}
-					
+
 					subjCard   .classList.remove("good"); subjCard   .classList.remove("meh"); subjCard   .classList.remove("bad"); subjCard   .classList.remove("unknown");
 					subjAvgDiv .classList.remove("good"); subjAvgDiv .classList.remove("meh"); subjAvgDiv .classList.remove("bad"); subjAvgDiv .classList.remove("unknown");
 					subjHeader .classList.remove("good"); subjHeader .classList.remove("meh"); subjHeader .classList.remove("bad"); subjHeader .classList.remove("unknown");
 					gradesTable.classList.remove("good"); gradesTable.classList.remove("meh"); gradesTable.classList.remove("bad"); gradesTable.classList.remove("unknown");
-					
+
 					if (isNaN(subjAvg)) {
 						subjCard   .classList.add("unknown");
 						subjAvgDiv .classList.add("unknown");
@@ -5214,16 +5214,16 @@
 						// gradesTable.classList.add("unknown");
 					}
 					else if (moduleAvg >= 10 && subjAvg < 10 || moduleAvg < 10 && subjAvg >= 10) {
-						subjCard   .classList.add("meh"); 
-						subjAvgDiv .classList.add("bad"); 
-						subjHeader .classList.add("meh"); 
-						gradesTable.classList.add("meh"); 
+						subjCard   .classList.add("meh");
+						subjAvgDiv .classList.add("bad");
+						subjHeader .classList.add("meh");
+						gradesTable.classList.add("meh");
 					}
 					else if (subjAvg >= 10) {
-						subjCard   .classList.add("good"); 
-						subjAvgDiv .classList.add("good"); 
-						subjHeader .classList.add("good"); 
-						gradesTable.classList.add("good"); 
+						subjCard   .classList.add("good");
+						subjAvgDiv .classList.add("good");
+						subjHeader .classList.add("good");
+						gradesTable.classList.add("good");
 					}
 					else {
 						subjCard   .classList.add("bad");
@@ -5232,7 +5232,7 @@
 						gradesTable.classList.add("bad");
 					}
 				}
-				
+
 				// module average modification
 				if (moduleName != "__#unclassified#__") {
 					const moduleCard            = document.querySelector(`.module-card[data-module="${moduleName}"]`);
@@ -5242,7 +5242,7 @@
 					const moduleAvgDiv          = moduleCardHeader.querySelector(`.module-average`);
 					const moduleAvg             = this.gradesData[sem][moduleName].average;
 					const moduleClassAvg        = this.gradesData[sem][moduleName||"__#unclassified#__"].classAvg;
-					
+
 					moduleAvgDiv.innerHTML      = moduleAvg + "/20";
 					if (!isNaN(moduleClassAvg)) {
 						moduleClassAvgDiv.innerHTML = moduleClassAvg + "/20";
@@ -5251,7 +5251,7 @@
 						moduleClassAvgDiv.style.display = "none";
 						moduleClassAvgVsAvg.style.display = "none";
 					}
-					
+
 					moduleCard      .classList.remove("validated");     moduleCard      .classList.remove("failed");    moduleCard      .classList.remove("unknown");
 					moduleCardHeader.classList.remove("validated");     moduleCardHeader.classList.remove("failed");    moduleCardHeader.classList.remove("unknown");
 					moduleAvgDiv    .classList.remove("good");          moduleAvgDiv    .classList.remove("bad");       moduleAvgDiv    .classList.remove("unknown");
@@ -5328,21 +5328,21 @@
 				this.attachDocumentMouseListeners();
 				this.attachEcamDashMouseListeners();
 				this.attachAllAnyInputsListeners();
-				
+
 				this.attachLangBtnsListener();
 				this.attachOverHeaderBtnsMouseListeners();
 				this.attachEditModeListener();
 				this.attachImportBtnListener();
 				this.attachExportBtnListener();
-				
+
 				this.attachNewGradesNotifListener();
 				this.attachNewGradesMarkAsReadBtnListener();
 				this.attachAllNewGradesSubjectCardsListener();
-				
+
 				this.attachFilterSemesterListener();
 				this.attachViewModeBtnsListener();
 				this.attachFoldToggleBtnListener();
-				
+
 				this.attachAllSubjectCardRelatedEventListenersForEverySubjectCard();
 
 				this.attachModuleInfoClearBtns();
@@ -5397,32 +5397,32 @@
 						input.ondrop     = (e) => {e.preventDefault(); e.dataTransfer.dropEffect = "link";};
 
 						if (input.classList.contains("module-title")) {   // Change modules name
-							input.onfocus   = ()  => { 
-								this.generalKeyboardEvents("edit sim grade", input); 
+							input.onfocus   = ()  => {
+								this.generalKeyboardEvents("edit sim grade", input);
 
 								if (this.editMode) {
-									this.detachAllCardsOnDragEventListeners(); 
+									this.detachAllCardsOnDragEventListeners();
 									document.querySelectorAll(".module-card-header").forEach(card => {card.draggable = false});
-								} 
+								}
 							};
-							input.onblur    = ()  => { 
-								this.generalKeyboardEvents("general"); 
+							input.onblur    = ()  => {
+								this.generalKeyboardEvents("general");
 
 								if (this.editMode) {
-									this.attachAllCardsOnDragEventListeners(); 
+									this.attachAllCardsOnDragEventListeners();
 									document.querySelectorAll(".module-card-header").forEach(card => {card.draggable = true;});
-								} 
+								}
 							};
 							input.onchange  = (e) => { this.moduleTitleInputChangeAction(e.target) };
 						}
 						else {
-							input.onfocus   = ( ) => { 
-								this.generalKeyboardEvents("edit sim grade", input); 
-								if (this.editMode) this.detachAllCardsOnDragEventListeners(); 
+							input.onfocus   = ( ) => {
+								this.generalKeyboardEvents("edit sim grade", input);
+								if (this.editMode) this.detachAllCardsOnDragEventListeners();
 							};
-							input.onblur    = ( ) => { 
-								this.generalKeyboardEvents("general"); 
-								if (this.editMode) this.attachAllCardsOnDragEventListeners(); 
+							input.onblur    = ( ) => {
+								this.generalKeyboardEvents("general");
+								if (this.editMode) this.attachAllCardsOnDragEventListeners();
 							};
 						}
 					}
@@ -5433,10 +5433,10 @@
 
 
 				//#region Dashboard listeners
-					
+
 
 					attachEcamDashMouseListeners() {
-						
+
 						this.ecamDash.onmousedown = (e) => {
 							// Toggle semesters
 							if (e.target.closest('.semester-header')) {
@@ -5533,18 +5533,18 @@
 					attachExportBtnListener() {
 						document.getElementById('exportBtn').onclick = () => this.exportData();
 					}
-					
+
 				//#endregion Dashboard listeners
 
-				
 
-				
+
+
 				//#region Modals
 
 					attachSettingsModalContainerListeners(container=document.querySelector("#settingsModalContainer")) {
 
 						container.onmousedown = (e) => {
-							if ((e.target.closest(".modal-close-btn") || !e.target.closest(".settings-modal")) && !document.querySelector(".focus-notif-fullscreen-effect.focus")) { 
+							if ((e.target.closest(".modal-close-btn") || !e.target.closest(".settings-modal")) && !document.querySelector(".focus-notif-fullscreen-effect.focus")) {
 								container.onmouseup = (e) => {
 									if ((e.target.closest(".modal-close-btn") || !e.target.closest(".settings-modal")) && !document.querySelector(".focus-notif-fullscreen-effect.focus")) {
 										this.closeSettingsModal();
@@ -5586,7 +5586,7 @@
 											}
 										})
 
-										
+
 										container.onmouseup = null;
 									}
 								}
@@ -5630,8 +5630,8 @@
 							}
 							document.querySelector(".new-grades-card").classList.add("none");
 							document.querySelector(".new-grades-card-header").classList.add("none");
-							document.querySelector(".new-grades-card-title").innerHTML = !this.isLangEn 
-								? `Pas de nouvelle note${this.error ? ", que je sache (mode offline)" : ""}` 
+							document.querySelector(".new-grades-card-title").innerHTML = !this.isLangEn
+								? `Pas de nouvelle note${this.error ? ", que je sache (mode offline)" : ""}`
 								: `No new grade${this.error ? ", as far as I know (offline mode)" : ""}`
 							;
 							document.querySelector(".new-grades-card-title").classList.add("none");
@@ -5658,7 +5658,7 @@
 						if (card instanceof HTMLElement && card.classList.contains("new-grades-subject-card")) {
 							card.onclick = (e) => {
 								if (card.dataset.semester) this.changeSemester(card.dataset.semester);
-								
+
 								setTimeout(() => {
 									const targetElem = document.getElementById(`subject-card-semester-${card.dataset.semester}-subject-${card.dataset.subject}`);
 									this.unfoldSubjCard(targetElem);
@@ -5666,7 +5666,7 @@
 									targetElem.classList.add("scroll-to");
 									targetElem.onmouseenter = () => {targetElem.classList.remove("scroll-to")};
 								}, 10)
-								
+
 							}
 							card.onmouseenter = (e) => {
 								card.classList.add("hover");
@@ -5697,7 +5697,7 @@
 					attachViewModeBtnsListener() {
 						document.querySelectorAll('.view-btn').forEach(btn => {
 							btn.onclick = (e) => {
-								
+
 								const unclassifiedSection = document.querySelector(".unclassified-section");
 								this.releaseElementHeight(unclassifiedSection);
 
@@ -5828,7 +5828,7 @@
 						if (nameInputBox)   { this.attachSubjectNameInputListener(nameInputBox); }
 						if (coefInputBox)   { this.attachSubjectCoefInputBoxListener(coefInputBox); }
 						if (subjectDelBtn)  { this.attachSubjectDeleteBtnListener(subjectDelBtn); }
-						
+
 						this.attachAllGradesCheckboxListeners(subjCard);
 
 						this.attachAllSimGradeAddBtnsListener(subjCard);
@@ -5853,7 +5853,7 @@
 								const dragIcon = card.querySelector(`.drag-icon.${type}`);
 								dragIcon.onclick = (e) => { this.dragIconOnClickEvent(e) };
 							}
-							else 
+							else
 							if (card.querySelector(`.tick-icon.${type}`)) {
 								const tick = card.querySelector(`.tick-icon.${type}`);
 								tick.onclick = (e) => { this.tickIconOnClickEvent(e, tick) };
@@ -5880,7 +5880,7 @@
 						};
 					}
 
-					
+
 					attachAllSubjectDeleteBtnsListener(container=document.body) {
 						container.querySelectorAll(".subject-delete-btn").forEach(btn => {
 							this.attachSubjectDeleteBtnListener(btn);
@@ -5898,7 +5898,7 @@
 					attachSubjectNameInputListener(input) {
 						input.onchange = (e) => {this.subjectCardNameInputAction(e.target)};
 					}
-					
+
 				//#endregion Subject cards listeners
 
 
@@ -6018,8 +6018,8 @@
 						const helpMenu      = document.querySelector(".over-header-how-to-use-btns");
 						const docBtn        = document.querySelector(".over-header-btn.doc-btn");
 						const tutoBtn       = document.querySelector(".over-header-btn.tuto-btn");
-						
-						
+
+
 						helpBtn    .classList.remove("open");
 						helpMenu   .classList.remove("open");
 						clearTimeout(this.timeouts?.openHelpMenu);
@@ -6035,7 +6035,7 @@
 							const helpOverHeaderBtn = document.querySelector(".over-header-btn.how-to-use-btn");
 							const newUserNotifFullScreen = document.querySelector(".focus-notif-fullscreen-effect");
 							const newUserNotifArrows = document.querySelectorAll(".new-user-notif-arrow-path");
-							
+
 							newUserNotifFullScreen.classList.remove("focus");
 							setTimeout(() => {helpOverHeaderBtn.style.zIndex = ""; newUserNotifFullScreen.style.display = "none";}, 500);
 
@@ -6046,7 +6046,7 @@
 							newUserNotif.style.cursor = "default";
 							newUserNotif.onclick = null;
 							setTimeout(() => {newUserNotif.style.display = "none"}, 300);
-							
+
 							localStorage.setItem("ECAM_DASHBOARD_FIRST_LOAD", false);
 							this.firstLoad = false;
 							setTimeout(() => {newUserNotifFullScreen.remove(); newUserNotif.remove()}, 500);
@@ -6068,7 +6068,7 @@
 					}
 
 
-					
+
 					openKeybindsModal(closeOtherModals=true) {
 						if (closeOtherModals) { this.closeEveryModal() }
 
@@ -6085,7 +6085,7 @@
 						this.appendCloseModalIcon(document.querySelector("#keyboardShortcutListModal"))
 						this.appendKeyboardShortcutsList(keybindsMenu.querySelector("#keyboardShortcutListModalBody"));
 						setTimeout(() => {keybindsMenu.querySelector("#keyboardShortcutListModal").classList.add("show");}, 5);
-						
+
 						keybindsMenu.onmousedown = (e) => {
 							if ((e.target.closest(".modal-close-btn") || !e.target.closest("#keyboardShortcutListModal")) && !document.querySelector(".focus-notif-fullscreen-effect.focus")) {
 								keybindsMenu.onmouseup = (e) => {
@@ -6108,12 +6108,12 @@
 
 					openSettingsModal(closeOtherModals=true) {
 						if (closeOtherModals) { this.closeEveryModal() }
-						
+
 						const settingsModalContainer = document.createElement("div");
 						settingsModalContainer.className = "settings-modal-container";
 						settingsModalContainer.id = "settingsModalContainer";
 						settingsModalContainer.innerHTML = `<div class="settings-modal modal${this.settings.blurEnabled.value ? " blur" : ""}" id="settingsModal"></div>`;
-						
+
 						this.ecamDash.appendChild(settingsModalContainer);
 						const settingsModal = settingsModalContainer.querySelector("#settingsModal");
 
@@ -6128,8 +6128,8 @@
 					closeSettingsModal() {
 						const settingsModal = document.querySelector("#settingsModal");
 						if (settingsModal) {
-							settingsModal.classList.remove("show"); 
-							setTimeout(() => {settingsModal.parentElement.remove()}, 300); 
+							settingsModal.classList.remove("show");
+							setTimeout(() => {settingsModal.parentElement.remove()}, 300);
 						}
 					}
 
@@ -6167,14 +6167,14 @@
 							else {
 								this.ecamDash.style.paddingRight = "";
 							}
-							
+
 							document.body.onmouseup = null;
 							document.body.onmousemove = null;
 						}
 					}
 
 					releaseUnclassifiedSection() {
-						
+
 						const unclassifiedSection = document.querySelector(".unclassified-section");
 						unclassifiedSection.style.height = "";
 					}
@@ -6192,12 +6192,12 @@
 
 
 
-					
+
 					// MARK: - module header mouse action
 					/** Method temporarily attaching an onmousemove and an onmouseup event listener to the document's body.
-					 * 
+					 *
 					 * Meant to be invoked when the mouse down event is triggered if the target is or is contained in a module header.
-					 * 
+					 *
 					 * In practice, when the onmousedown event of the document is triggered on a module card, call this method to:
 					 * - attach an onmousemove event listener to the document's body that will clear the onmousemove and onmouseup events of the document's body in order to "cancel" the action (safe guard for when the edit mode is off and the user attempts to drag the module header, it will not do anything instead of triggering an onclick event)
 					 * - attach an onmouseup event listener to the document's body that will make the action intended to happen when the user clicks on the module header (folding the module card) WITHOUT moving the mouse (so if it wasn't an attempt to drag the module header). Both the onmousemove and onmouseup event listeners of the document's body will then be cleared.
@@ -6211,15 +6211,15 @@
 						document.body.onmouseup = (e) => {
 							const moduleCard    = e.target.closest('.module-card');
 							const moduleDetails = moduleCard.querySelector(".module-details");
-							
-							// moduleDetails.querySelectorAll(".subject-card").forEach(subjCard => { 
+
+							// moduleDetails.querySelectorAll(".subject-card").forEach(subjCard => {
 							//     if (this.selectedSubjectCardsId.includes(subjCard.id)) {
 							//         this.changeDragIconToTickIcon(subjCard);
-							//     } 
+							//     }
 							// })
 
 							this.toggleFoldModuleCard(moduleCard);
-							
+
 							this.attachDropFieldsEventListeners("insert", moduleDetails);
 							document.body.onmousemove   = null;
 							document.body.onmouseup     = null;
@@ -6228,10 +6228,10 @@
 
 
 
-				
+
 					// MARK: -toggle module card folding
-					/** Call this method to switch all Module cards' state between folded and unfolded 
-					 * 
+					/** Call this method to switch all Module cards' state between folded and unfolded
+					 *
 					 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module card HTML Element or an event triggered by a module card
 					 * @param {Boolean} [hideOtherSubjectInsertionFields = false] Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
 					 * @param {Boolean} [hideAdjacentModuleInsertionFields = false] Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
@@ -6242,8 +6242,8 @@
 							this.toggleFoldModuleCard(moduleCard, hideOtherSubjectInsertionFields, hideAdjacentModuleInsertionFields, bypassFoldedModuleCardsId)
 						})
 					}
-					/** Call this method to switch a module card's state between folded and unfolded 
-					 * 
+					/** Call this method to switch a module card's state between folded and unfolded
+					 *
 					 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module card HTML Element or an event triggered by a module card
 					 * @param {Boolean} [hideOtherSubjectInsertionFields = false] Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
 					 * @param {Boolean} [hideAdjacentModuleInsertionFields = false] Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
@@ -6262,8 +6262,8 @@
 					}
 
 					// MARK: -fold module card
-					/** Call this method to fold all module cards 
-					 * 
+					/** Call this method to fold all module cards
+					 *
 					 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module card HTML Element or an event triggered by a module card
 					 * @param {Boolean} [hideOtherSubjectInsertionFields = false] Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
 					 * @param {Boolean} [hideAdjacentModuleInsertionFields = false] Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
@@ -6275,7 +6275,7 @@
 						})
 					}
 					/** Call this method to fold a module card
-					 * 
+					 *
 					 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module card HTML Element or an event triggered by a module card
 					 * @param {Boolean} [hideOtherSubjectInsertionFields = false] Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be hidden (if true) or not (if false)
 					 * @param {Boolean} [hideAdjacentModuleInsertionFields = false] Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
@@ -6298,9 +6298,9 @@
 								if (!bypassFoldedModuleCardsId) {
 									this.foldedModuleCardsId.push(moduleCard.id);
 								}
-								
+
 								toggle.classList.remove("open");
-								
+
 								const subjectInsertFields = document.querySelectorAll(`.drop-field.insert-field.subject[data-semester="${sem}"]${hideOtherSubjectInsertionFields ? "" : `[data-module="${module}"]`}`)
 								const subjectInsertFieldHitboxes = Object.values(subjectInsertFields).map(elem => {return elem.querySelector(".drop-subject-card-insert-hitbox")});
 
@@ -6325,7 +6325,7 @@
 
 								lowerInsertField = document.querySelector(`.drop-field.insert-field.module[data-semester="${sem}"][data-index="${parseInt(index)+1}"]`)
 								const lowerInsertFieldHitbox = lowerInsertField.querySelector(".drop-module-card-insert-hitbox");
-								
+
 								this.detachInsertFieldHitboxEventListeners(upperInsertFieldHitbox);
 								this.detachInsertFieldHitboxEventListeners(lowerInsertFieldHitbox);
 								upperInsertField.classList.remove("show");
@@ -6344,12 +6344,12 @@
 								document.querySelector(".fold-toggle").classList.add("active")
 							}
 						}
-						
+
 					}
 
 					// MARK: -unfold module card
 					/** Call this method to unfold all module cards
-					 * 
+					 *
 					 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module card HTML Element or an event triggered by a module card
 					 * @param {Boolean} [hideOtherSubjectInsertionFields = false] Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be shown (if true) or not (if false)
 					 * @param {Boolean} [hideAdjacentModuleInsertionFields = false] Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
@@ -6361,7 +6361,7 @@
 						})
 					}
 					/** Call this method to unfold a module card
-					 * 
+					 *
 					 * @param {HTMLElement | Event} trigger The trigger of the folding action. Can be a module card HTML Element or an event triggered by a module card
 					 * @param {Boolean} [hideOtherSubjectInsertionFields = false] Default: false — Destined to control whether all the subject insertion fields of all the other modules are to be shown (if true) or not (if false)
 					 * @param {Boolean} [hideAdjacentModuleInsertionFields = false] Default: false — Destined to control whether the upper and lower module insertion fields are to be hidden (if true) or not (if false). Makes this method ONLY hide the said insertion fields if its value is "only"
@@ -6392,7 +6392,7 @@
 									const upperInsertFieldHitbox = upperInsertField.querySelector(".drop-module-card-insert-hitbox");
 									this.attachInsertFieldHitboxEventListeners(upperInsertFieldHitbox)
 								}
-								
+
 								if (lowerInsertField) {
 									lowerInsertField.classList.add("show");
 									const lowerInsertFieldHitbox = lowerInsertField.querySelector(".drop-module-card-insert-hitbox");
@@ -6412,13 +6412,13 @@
 										subjectInsertFieldHitboxes.forEach(subjInsFieldHitbox => {this.attachInsertFieldHitboxEventListeners(subjInsFieldHitbox)})
 									}, 1)
 								}
-								
+
 								if (moduleHeader) {
 									setTimeout(() => {
 										moduleHeader.classList.remove("fold");
 									}, 1)
 								}
-								
+
 								if (moduleCard) {
 									setTimeout(() => {
 										moduleCard.style.height = this.getElementHeightFromChildrenHeight(moduleCard) + "px";
@@ -6437,7 +6437,7 @@
 							if (this.foldedModuleCardsId.length == 0) {
 								document.querySelector(".fold-toggle").classList.remove("active")
 							}
-							
+
 						}
 					}
 
@@ -6465,13 +6465,13 @@
 					moduleTitleInputChangeAction(target) {
 						const sem               = target.dataset.semester;
 						const newModuleName     = target.value;
-						const oldModuleName     = target.dataset.module; 
+						const oldModuleName     = target.dataset.module;
 						const oldModuleIndex    = this.moduleConfig[sem].__modules__.indexOf(oldModuleName);
 
 						let diffName = true;
 						if (newModuleName == "__#unclassified#__") {
-							alert(!this.isLangEn 
-								? "Ce nom n'est pas autorisé ! C'est le nom utilisé en interne pour les matières non-classifiées... Choisis-en un autre!" 
+							alert(!this.isLangEn
+								? "Ce nom n'est pas autorisé ! C'est le nom utilisé en interne pour les matières non-classifiées... Choisis-en un autre!"
 								: "This name isn't allowed! That's the name used internally for unclassified subjects... Choose another one!"
 							)
 							return;
@@ -6479,8 +6479,8 @@
 						else {
 							Object.keys(this.moduleConfig[sem]).forEach(_moduleName => {
 								if (_moduleName == newModuleName && _moduleName != oldModuleName) {
-									alert(!this.isLangEn 
-										? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
+									alert(!this.isLangEn
+										? "Cette matière existe déjà! Choisis un autre nom, s'il te plait"
 										: "This subject already exists! Please choose a different name"
 									)
 									diffName = false;
@@ -6490,16 +6490,16 @@
 								}
 							});
 						}
-						
+
 						if (diffName) {
 							this.moduleConfig[sem][newModuleName] = this.moduleConfig[sem][oldModuleName];
 							delete this.moduleConfig[sem][oldModuleName];
 							this.moduleConfig[sem].__modules__[oldModuleIndex] = newModuleName;
-	
+
 							this.saveConfig()
 							this.getGradesData();
 							this.generateContent({fadeIn: false});
-	
+
 							this.foldedModuleCardsId.forEach(foldedModuleCardId => {
 								if (foldedModuleCardId == `module-card-${oldModuleName}-in-semester-${sem}`) {
 									const moduleCardToFold = document.getElementById(foldedModuleCardId);
@@ -6509,7 +6509,7 @@
 									}
 								}
 							})
-							
+
 							this.attachAllCardsOnDragEventListeners();
 							this.scrollToClientHighestElem({id: `module-card-${newModuleName}-in-semester-${sem}`, smooth: true})
 						}
@@ -6517,7 +6517,7 @@
 
 					moduleCardDeleteBtnAction(e) {
 						const moduleCard    = e instanceof Event ? e.target.closest(".module-card") : (e instanceof HTMLElement ? e : undefined);
-						let sem             = moduleCard.dataset.semester; 
+						let sem             = moduleCard.dataset.semester;
 						let moduleName      = moduleCard.dataset.module;
 
 						if (this.selectedModuleCardsId.includes(moduleCard.id)) {
@@ -6525,11 +6525,11 @@
 								const selectedModuleCard = document.getElementById(selectedModuleCardId);
 								sem         = selectedModuleCard.dataset.semester;
 								moduleName  = selectedModuleCard.dataset.module;
-								
+
 								const moduleIndex = this.moduleConfig[sem].__modules__.indexOf(moduleName);
 								this.moduleConfig[sem].__modules__.splice(moduleIndex, 1);
 								delete this.moduleConfig[sem][moduleName];
-								
+
 								if (this.moduleConfig[sem].__modules__.length == 0) {delete this.moduleConfig[sem]}
 
 								this.removeCardFromSelection()
@@ -6537,20 +6537,20 @@
 						}
 						else {
 							const moduleIndex = this.moduleConfig[sem].__modules__.indexOf(moduleName);
-	
+
 							this.moduleConfig[sem].__modules__.splice(moduleIndex, 1);
 							delete this.moduleConfig[sem][moduleName];
-	
+
 							if (this.moduleConfig[sem].__modules__.length == 0) {delete this.moduleConfig[sem]}
 						}
-						
-						
+
+
 						this.clearSimGrades(sem, moduleName);
 						this.saveConfig();
 						this.getGradesData();
 						this.generateContent();
 					}
-					
+
 				//#endregion Module
 
 
@@ -6559,9 +6559,9 @@
 				//#region Subject
 
 					/** Method temporarily attaching an onmousemove and an onmouseup event listener to the document's body.
-					 * 
+					 *
 					 * Meant to be invoked when the mouse down event is triggered if the target is or is contained in a card header.
-					 * 
+					 *
 					 * In practice, when the onmousedown event of the document is triggered on a card header, call this method to:
 					 * - attach an onmousemove event listener to the document's body that will clear the onmousemove and onmouseup events of the document's body in order to "cancel" the action (safe guard for when the edit mode is off and the user attempts to drag the card header, it will not do anything instead of triggering an onclick event)
 					 * - attach an onmouseup event listener to the document's body that will make the action intended to happen when the user clicks on the card header (switching the card card between detailed and comapct view modes) WITHOUT moving the mouse (so if it wasn't an attempt to drag the card header). Both the onmousemove and onmouseup event listeners of the document's body will then be cleared.
@@ -6583,7 +6583,7 @@
 								}
 
 								this.toggleFoldSubjCard(subjCard);
-							
+
 								this.setTotalCoefs(subjCard);
 								this.attachAllSubjectCardRelatedEventListeners(subjCard);
 
@@ -6591,11 +6591,11 @@
 									this.holdElementHeight(unclassifiedSection, 200, {offset: 4});
 								}
 							}
-							
+
 							document.body.onmousemove = null;
 							document.body.onmouseup = null;
 						}
-						
+
 					}
 
 
@@ -6657,12 +6657,12 @@
 							const subjCardHeader = subjCard.querySelector(".subject-card-header");
 							subjCardHeader.classList.add("fold");
 							subjCardHeader.classList.replace("detailed", "compact");
-							
+
 							// setting the proper height to the subject card so that only the header is visible
 							subjCard.style.height = "70px";
 							subjCard.classList.replace("detailed", "compact");
 							subjCard.querySelector(".subject-card-header-grades-details").classList.add("show");
-							
+
 							if (!bypassFoldedSubjectCardId) this.compactSubjCardsId.push(subjCard.id);
 							this.detailedSubjCardsId.splice(this.detailedSubjCardsId.indexOf(subjCard.id), 1);
 						}
@@ -6689,7 +6689,7 @@
 							const subjCardHeader = subjCard.querySelector(".subject-card-header");
 							subjCardHeader.classList.remove("fold");
 							subjCardHeader.classList.replace("compact", "detailed");
-							
+
 							// setting the proper height to the subject card so that its whole content is visible
 							subjCard.style.height = this.getElementHeightFromChildrenHeight(subjCard) + "px";
 							subjCard.classList.replace("compact", "detailed");
@@ -6711,15 +6711,15 @@
 								const sem           = selectedSubjectCard.dataset.semester;
 								const moduleName    = selectedSubjectCard.dataset.module;
 								const subject       = selectedSubjectCard.dataset.subject;
-		
+
 								const semData       = this.moduleConfig[sem];
 								const moduleData    = semData[moduleName];
 								const moduleIndex   = semData.__modules__.indexOf(moduleName);
 								const subjectIndex  = moduleData.subjects.indexOf(subject);
-		
+
 								moduleData.subjects.splice(subjectIndex, 1);
 								delete moduleData.coefficients[subject];
-		
+
 								if (moduleData.subjects.length == 0) {semData.__modules__.splice(moduleIndex, 1); delete semData[moduleName];}
 								if (semData.__modules__.length == 0) {delete this.moduleConfig[sem]}
 
@@ -6731,23 +6731,23 @@
 							const sem           = target.dataset.semester;
 							const moduleName    = target.dataset.module;
 							const subject       = target.dataset.subject;
-	
+
 							const semData       = this.moduleConfig[sem];
 							const moduleData    = semData[moduleName];
-							
+
 							const moduleIndex   = semData.__modules__.indexOf(moduleName);
 							const subjectIndex  = moduleData.subjects.indexOf(subject);
-	
+
 							moduleData.subjects.splice(subjectIndex, 1);
 							delete moduleData.coefficients[subject];
-	
+
 							if (moduleData.subjects.length == 0) {semData.__modules__.splice(moduleIndex, 1); delete semData[moduleName];}
 							if (semData.__modules__.length == 0) {delete this.moduleConfig[sem]}
-							
+
 							this.clearSimGrades(sem, moduleName, subject);
 						}
 
-						
+
 						this.saveConfig();
 						this.getGradesData();
 						this.generateContent();
@@ -6766,8 +6766,8 @@
 
 						let diffName = true;
 						if (subjNewName == "__#unclassified#__") {
-							alert(!this.isLangEn 
-								? "Ce nom n'est pas autorisé ! C'est le nom utilisé en interne pour les matières non-classifiées... Choisis-en un autre!" 
+							alert(!this.isLangEn
+								? "Ce nom n'est pas autorisé ! C'est le nom utilisé en interne pour les matières non-classifiées... Choisis-en un autre!"
 								: "This name isn't allowed! That's the name used internally for unclassified subjects... Choose another one!"
 							)
 							return;
@@ -6775,8 +6775,8 @@
 						else {
 							this.moduleConfig[sem][moduleName].subjects.forEach(_subj => {
 								if (_subj == subjNewName && _subj != subjOldName) {
-									alert(!this.isLangEn 
-										? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
+									alert(!this.isLangEn
+										? "Cette matière existe déjà! Choisis un autre nom, s'il te plait"
 										: "This subject already exists! Please choose a different name"
 									)
 									diffName = false;
@@ -6793,8 +6793,8 @@
 							this.moduleConfig[sem].__modules__.forEach(moduleName => {
 								this.moduleConfig[sem][moduleName].subjects.forEach(_subj => {
 									if (_subj == subjNewName && _subj != subjOldName) {
-										alert(!this.isLangEn 
-											? "Cette matière existe déjà! Choisis un autre nom, s'il te plait" 
+										alert(!this.isLangEn
+											? "Cette matière existe déjà! Choisis un autre nom, s'il te plait"
 											: "This subject already exists! Please choose a different name"
 										)
 										diffName = false;
@@ -6810,7 +6810,7 @@
 							this.moduleConfig[sem][moduleName].subjects[oldSubjIndex]=subjNewName ;    // Replace the subject's old name by the subject's new name
 							delete this.moduleConfig[sem][moduleName].coefficients [subjOldName];
 							this.moduleConfig[sem][moduleName].coefficients [subjNewName] = pct;
-										
+
 							this.getGradesData();
 
 							moduleDetails.innerHTML = this.createSubjCard(sem, moduleName, subjNewName);
@@ -6819,7 +6819,7 @@
 							const unclassifiedContent = unclassifiedSection.querySelector(".unclassified-content");
 							unclassifiedSection.style.height = "";
 							unclassifiedContent.innerHTML = this.createAllSubjCards(sem, "__#unclassified#__");
-							
+
 							this.resetFixedUnclassifiedSectionHeight();
 							this.attachAllSubjectCardRelatedEventListenersForEverySubjectCard();
 							this.setTotalCoefs();
@@ -6836,7 +6836,7 @@
 				//#region Grades
 
 					/** Performs the action linked to clicking on a grade's checkbox, i.e. disables/enables the said grade, to make it count or not in the average
-					 * 
+					 *
 					 * @param {HTMLElement} target The checkbox triggering this action
 					 * @returns `true` if the action was performed, `false` if the action was aborted
 					 */
@@ -6864,9 +6864,9 @@
 						this.regenAveragesAndTotalCoefs(semX, moduleName, subj);
 						return true;
 					}
-					
+
 					/** Performs the action linked to clicking on a target "Add" button, i.e. creates a simulated grade using the data filled in the fields of the same row
-					 * 
+					 *
 					 * @param {HTMLElement} target The "Add" button triggering this action
 					 * @returns `true` if the action was performed, `false` if the action was aborted
 					 */
@@ -6889,7 +6889,7 @@
 
 						this.ensureSimPath(semX, moduleName, subj);
 
-						// Making sure the automatically generated name (if the user didn't input any type name) isn't the same as one that already exists 
+						// Making sure the automatically generated name (if the user didn't input any type name) isn't the same as one that already exists
 						// (incrementing an index every time it's the case and add it at the end of the new sim grade's name)
 						let newName = type, validNewName = newName != type, count = 2;
 
@@ -6905,7 +6905,7 @@
 						}
 
 						this.sim[semX][moduleName][subj].push({
-							grade, 
+							grade,
 							coef,
 							classAvg: '—',
 							type: newName,
@@ -6925,7 +6925,7 @@
 					}
 
 					/** Performs the action linked to changing a value in a simulated grade's edition field, i.e. changing its data
-					 * 
+					 *
 					 * @param {HTMLElement} target The simulated grade edition field triggering this action
 					 * @returns `true` if the action was performed, `false` if the action was aborted
 					 */
@@ -6956,7 +6956,7 @@
 					}
 
 					/** Performs the action linked to clicking on the bin button of a simulated grade, i.e. deleting the said simulated grade
-					 * 
+					 *
 					 * @param {HTMLElement} target The bin button triggering this action
 					 * @returns `true` if the action was performed, `false` if the action was aborted
 					 */
@@ -6996,7 +6996,7 @@
 						if (dragIcon) {
 							const type = dragIcon.classList.contains("subject") ? "subject" : "module";
 							dragIcon.outerHTML = `<div class="tick-icon ${type}" data-targetid="${card.id}" data-semester="${card.dataset.sem}" data-module="${card.dataset.moduleName}" data-subject="${card.dataset.subject}">✔</div>`;
-							
+
 							this.attachDragOrTickIconListener(card);
 						}
 					}
@@ -7032,7 +7032,7 @@
 						const sem                   = card.dataset.semester;
 						const moduleName            = card.dataset.module;
 						const subject               = card.dataset.subject;
-						
+
 						card.draggable = true;
 
 						if (!dontAddToSelection) {
@@ -7047,21 +7047,21 @@
 								infoNotif.className = `temp-notif ${this.lang}`;
 								this.ecamDash.appendChild(infoNotif);
 								setTimeout(() => {infoNotif.classList.add("show")}, 1);
-								
-								
+
+
 								if (!this?.timeouts?.dragIconOnClickEvent) {this.timeouts.dragIconOnClickEvent = {}}
 								this.timeouts.dragIconOnClickEvent.hideInfoNotif = setTimeout(() => {
 									infoNotif.classList.remove("show");
 									this.timeouts.dragIconOnClickEvent.removeInfoNotif = setTimeout(() => {oldInfoNotif.remove()}, 1000);
 								}, 4000);
-	
+
 								card.classList.add("slight-horiz-shake");
 								card.onanimationend = (e) => {e.target.classList.remove("slight-horiz-shake");};
 								return
 							}
 							else if (type == "subject") {
 								this.selectedSubjectCardsId.push(card.id);
-								
+
 								if (!this.selectedSubjectCardsSortedByModule[card.dataset.module]) { this.selectedSubjectCardsSortedByModule[card.dataset.module] = []; };
 								this.selectedSubjectCardsSortedByModule[card.dataset.module].push({cardId: card.id, selectionIndex: this.selectedSubjectCardsId.length-1});
 							}
@@ -7087,7 +7087,7 @@
 							});
 						}
 
-						
+
 						dropFieldAdd.classList.add("show");
 						dropFieldAddHitbox.classList.add("show");
 						dropFieldRemove.classList.add("show");
@@ -7103,7 +7103,7 @@
 						e.preventDefault();
 						const targetId      = tick.dataset.targetid;
 						const notifDiv      = document.querySelector(`.selected-card-notif-div.on[data-targetid="${targetId}"]`);
-						
+
 						this.removeCardFromSelection(notifDiv);
 					}
 
@@ -7136,10 +7136,10 @@
 				// MARK: attach ondrag events
 
 				/** Attach the ondrag event listeners to the children/whole descendance of the given container
-				 * 
+				 *
 				 * @example this.attachAllCardsOnDragEventListeners(document.querySelector("#container"))
 				 * @example this.attachAllCardsOnDragEventListeners(document.querySelector("#container"), false)
-				 * 
+				 *
 				 * @param {HTMLElement} [container=document] Default: document — The container of the HTML Elements to attach the ondrag event listeners to
 				 * @param {Boolean} [descendants=true] Default: true — If true, also attaches the ondrag event listeners to all the descendance of the container. Otherwise, attaches the ondrag event listeners only to the direct children of the container
 				 */
@@ -7154,12 +7154,12 @@
 						else if (container?.classList?.contains("semester-content") || container?.classList?.contains("semester-body") || container?.classList?.contains("modules-section") || container?.classList?.contains("semester-section") || container?.classList?.contains("module-card") || container == document.body|| container == document) {
 							(container?.classList?.contains("module-card") ? [container] : container.querySelectorAll(".module-card") || []).forEach(moduleCard => {
 								this.attachModuleCardOnDragEventListeners(moduleCard);
-								
+
 								if (descendants) {
 									moduleCard.querySelectorAll(`.subject-card`).forEach(subjectCard => {
 										this.attachSubjectCardOnDragEventListeners(subjectCard);
 									})
-									
+
 								}
 							})
 
@@ -7174,7 +7174,7 @@
 				}
 				attachSubjectCardOnDragEventListeners(subjectCard) {
 					const draggableElement = subjectCard.querySelector(".subject-card-header");
-					
+
 					draggableElement.draggable = true;
 
 					draggableElement.ondragstart = (e) => {this.draggedElementOnDragStartAction( e, subjectCard)};
@@ -7192,10 +7192,10 @@
 				// MARK: detach ondrag events
 
 				/** Detach the ondrag event listeners from the children/whole descendance of the given container
-				 * 
+				 *
 				 * @example this.detachAllCardsOnDragEventListeners(document.querySelector("#container"))
 				 * @example this.detachAllCardsOnDragEventListeners(document.querySelector("#container"), false)
-				 * 
+				 *
 				 * @param {HTMLElement} [container=document] Default: document — The container of the HTML Elements to attach the ondrag event listeners to
 				 * @param {Boolean} [descendants=true] Default: true — If true, also attaches the ondrag event listeners to all the descendance of the container. Otherwise, attaches the ondrag event listeners only to the direct children of the container
 				 */
@@ -7210,12 +7210,12 @@
 						else if (container?.classList?.contains("semester-content") || container?.classList?.contains("semester-body") || container?.classList?.contains("modules-section") || container?.classList?.contains("semester-section") || container?.classList?.contains("module-card") || container == document.body|| container == document) {
 							(container?.classList?.contains("module-card") ? [container] : container.querySelectorAll(".module-card") || []).forEach(moduleCard => {
 								this.detachModuleCardOnDragEventListeners(moduleCard);
-								
+
 								if (descendants) {
 									moduleCard.querySelectorAll(`.subject-card`).forEach(subjectCard => {
 										this.detachSubjectCardOnDragEventListeners(subjectCard);
 									})
-									
+
 								}
 							})
 
@@ -7230,7 +7230,7 @@
 				detachModuleCardOnDragEventListeners(moduleCard) {
 					if (moduleCard?.classList?.contains("module-card")) {
 						const draggableElement = moduleCard.querySelector(".module-card-header");
-						
+
 						draggableElement.draggable   = false;
 						draggableElement.ondragstart = null;
 						draggableElement.ondragend   = null;
@@ -7239,7 +7239,7 @@
 				detachSubjectCardOnDragEventListeners(subjectCard) {
 					if (subjectCard?.classList?.contains("subject-card")) {
 						const draggableElement = subjectCard.querySelector(".subject-card-header");
-						
+
 						draggableElement.draggable   = false;
 						draggableElement.ondragstart = null;
 						draggableElement.ondragend   = null;
@@ -7257,10 +7257,10 @@
 						const insertFieldText   = insertField.querySelector(`.drop-${type}-card-insert-text`);
 						const insertFieldHitbox = insertField.querySelector(`.drop-${type}-card-insert-hitbox`);
 
-						e.preventDefault(); 
+						e.preventDefault();
 						e.dataTransfer.dropEffect = "link";
 						insertField.classList.add("hover");
-						insertFieldArrow?.classList?.add("hover"); 
+						insertFieldArrow?.classList?.add("hover");
 						insertFieldPlus?.classList?.add("hover");
 						insertFieldText.classList.add("hover");
 					}
@@ -7272,9 +7272,9 @@
 						const insertFieldText   = insertField.querySelector(`.drop-${type}-card-insert-text`);
 						const insertFieldHitbox = insertField.querySelector(`.drop-${type}-card-insert-hitbox`);
 
-						e.preventDefault(); 
+						e.preventDefault();
 						insertField.classList.remove("hover");
-						insertFieldArrow?.classList?.remove("hover"); 
+						insertFieldArrow?.classList?.remove("hover");
 						insertFieldPlus?.classList?.remove("hover");
 						insertFieldText?.classList?.remove("hover");
 					}
@@ -7287,7 +7287,7 @@
 						const dataTransferMatch = dataTransfer.match(/module-card|subject-card/);
 						const sourceType        = dataTransferMatch?.[0] ? dataTransferMatch[0] : "errr... something wrong, probably?";
 
-						e.preventDefault(); 
+						e.preventDefault();
 
 						insertFieldHitbox.ondragover = (e) => {this.insertFieldHitboxOnDragOverEvent(e)};
 
@@ -7314,7 +7314,7 @@
 						const insertFieldText   = insertField.querySelector(`.drop-${type}-card-insert-text`);
 
 						insertField.classList.add("hover");
-						insertFieldArrow?.classList?.add("hover"); 
+						insertFieldArrow?.classList?.add("hover");
 						insertFieldPlus?.classList?.add("hover");
 						insertFieldText?.classList?.add("hover");
 					}
@@ -7324,7 +7324,7 @@
 						const insertFieldArrow  = insertField.querySelector(`.drop-${type}-card-insert-arrow`);
 						const insertFieldPlus   = insertField.querySelector(`.drop-${type}-card-insert-plus`);
 						const insertFieldText   = insertField.querySelector(`.drop-${type}-card-insert-text`);
-						
+
 						insertField.classList.remove("hover");
 						insertFieldArrow?.classList?.remove("hover");
 						insertFieldPlus?.classList?.remove("hover");
@@ -7337,8 +7337,8 @@
 						const insertFieldArrow  = insertField.querySelector(`.drop-${type}-card-insert-arrow`);
 						const insertFieldPlus   = insertField.querySelector(`.drop-${type}-card-insert-plus`);
 						const insertFieldText   = insertField.querySelector(`.drop-${type}-card-insert-text`);
-						
-						e.preventDefault(); 
+
+						e.preventDefault();
 
 						if (this.selectedSubjectCardsId.length == 0) {
 							this.dropFieldSubjectInsertAction(null, insertField)
@@ -7354,7 +7354,7 @@
 						insertFieldHitbox.ondrop         = (e) => {
 							e.preventDefault();
 							e.dataTransfer.dropEffect = "link";
-							
+
 							const data = e.target.dataset;
 							if (data.type.match(/subject|module/)) {
 								this.insertFieldHitboxOnDropEvent(e);
@@ -7434,10 +7434,10 @@
 						(draggedCardIsSelected ? this.selectedSubjectCardsId : [card.id]).forEach(subjectCardId => {
 							const subjectCard       = document.getElementById(subjectCardId);
 							const subjectTotalCoef  = subjectCard.querySelector(".subject-total-coef-div");
-							
+
 							subjectCard.style.width = "50%";
-							subjectTotalCoef.style.opacity = "0"; 
-							
+							subjectTotalCoef.style.opacity = "0";
+
 
 							if (!this.compactSubjCardsId.includes(subjectCardId) || this.detailedSubjCardsId.includes(subjectCardId)) {
 								this.foldSubjCard(subjectCard, true);
@@ -7453,24 +7453,24 @@
 							document.querySelectorAll(".grades-table-header-teacher").forEach(teacher => {teacher.style.display = "none";})
 						}, 50);
 
-						
+
 						if (!card.classList.contains("unclassified") && !draggedCardIsSelected) {
 
 							const sem           = card.dataset.semester;
 							const moduleName    = card.dataset.module;
 							const index         = card.dataset.index;
-						
+
 							const upperInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${parseInt(index)+0}"]`)
 							const upperInsertFieldHitbox = upperInsertField.querySelector(".drop-subject-card-insert-hitbox");
-	
+
 							const lowerInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${parseInt(index)+1}"]`)
 							const lowerInsertFieldHitbox = lowerInsertField.querySelector(".drop-subject-card-insert-hitbox");
-	
+
 							this.detachInsertFieldHitboxEventListeners(upperInsertFieldHitbox);
 							this.detachInsertFieldHitboxEventListeners(lowerInsertFieldHitbox);
 							upperInsertField.classList.remove("show");
 							lowerInsertField.classList.remove("show");
-		
+
 						}
 					}
 					else if (type == "module") {
@@ -7481,7 +7481,7 @@
 							const moduleHeaderLeftSize  = moduleCard.querySelector(".module-card-header-left-side");
 
 							moduleCard.style.width = "50%";
-							moduleTotalCoef.style.display = "none"; 
+							moduleTotalCoef.style.display = "none";
 							moduleHeaderLeftSize.style.width = "50%";
 
 							if (!draggedCardIsSelected) {
@@ -7494,7 +7494,7 @@
 							}
 							// A selected folded module card doesn't need to do anything other then changing its width
 						})
-						
+
 					}
 
 					if (!selectionGoingOn) {
@@ -7513,7 +7513,7 @@
 						document.querySelector(".drop-field-remove-from-module-text.bottom") .classList.remove("hover");
 						document.querySelector(".drop-field-remove-from-module-minus")       .classList.remove("hover");
 
-						// Select all the shown drop fields. 
+						// Select all the shown drop fields.
 						// Since it occurs after folding the subject card is being dragged, it won't select the 2 subject insertion fields adjacent to this subject card.
 						document.querySelectorAll(".drop-field.insert-field.show").forEach(insertField  => {
 							const type = insertField.classList.contains("subject") ? "subject" : "module";
@@ -7546,13 +7546,13 @@
 
 						(draggedCardIsSelected ? this.selectedSubjectCardsId : [card.id]).forEach(subjectCardId => {
 							const subjectCard = document.getElementById(subjectCardId);
-							
+
 							if (subjectCard) {
 								const subjectTotalCoef  = subjectCard.querySelector(".subject-total-coef-div");
 								subjectCard.style.width = "";
-								subjectTotalCoef.style.opacity = ""; 
-								
-	
+								subjectTotalCoef.style.opacity = "";
+
+
 								if (card.classList.contains("compact") && !this.compactSubjCardsId.includes(subjectCardId) && !this.detailedSubjCardsId.includes(subjectCardId)) {
 									this.unfoldSubjCard(subjectCard);
 								}
@@ -7568,24 +7568,24 @@
 							document.querySelectorAll(".grades-table-header-teacher").forEach(teacher => {teacher.style.display = "table-cell"})
 						}, 50);
 
-						
+
 						if (!card.classList.contains("unclassified") && !draggedCardIsSelected) {
 
 							const sem           = card.dataset.semester;
 							const moduleName    = card.dataset.module;
 							const index         = card.dataset.index;
-						
+
 							const upperInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${parseInt(index)+0}"]`)
 							const upperInsertFieldHitbox = upperInsertField.querySelector(".drop-subject-card-insert-hitbox");
-	
+
 							const lowerInsertField = document.querySelector(`.drop-field.insert-field.subject[data-semester="${sem}"][data-module="${moduleName}"][data-index="${parseInt(index)+1}"]`)
 							const lowerInsertFieldHitbox = lowerInsertField.querySelector(".drop-subject-card-insert-hitbox");
-	
+
 							this.attachInsertFieldHitboxEventListeners(upperInsertFieldHitbox);
 							this.attachInsertFieldHitboxEventListeners(lowerInsertFieldHitbox);
 							upperInsertField.classList.add("show");
 							lowerInsertField.classList.add("show");
-		
+
 						}
 					}
 					else if (card.classList.contains("module-card")) {
@@ -7599,7 +7599,7 @@
 								moduleCard.style.width = "";
 								moduleTotalCoef.style.display = "";
 								moduleHeaderLeftSize.style.width = "";
-	
+
 								if (!draggedCardIsSelected) {
 									// A non-selected module card has been dropped: if it was already folded before being dragged, we only show its adjacent module insertion fields, but unfold it as well otherwise
 									this.unfoldModuleCard(moduleCard, false, this.foldedModuleCardsId.includes(moduleCardId) ? "only" : true, true);
@@ -7610,7 +7610,7 @@
 								}
 							}
 						})
-						
+
 					}
 
 					if (!selectionGoingOn) {
@@ -7620,7 +7620,7 @@
 						document.querySelector(".drop-field.remove-from-module")        .classList.remove("show");
 						document.querySelector(".drop-field-remove-from-module-hitbox") .classList.remove("show");
 
-						// Select all the shown drop fields. 
+						// Select all the shown drop fields.
 						// Since it occurs after unfolding the subject card is being dragged, it WILL also select the 2 subject insertion fields adjacent to this subject card.
 						// Though in this case, nothing will change for the 2 adjacent subject insertion fields.
 						document.querySelectorAll(".drop-field.insert-field.show").forEach(insertField  => {
@@ -7636,14 +7636,14 @@
 				}
 
 			// #endregion -— Dragged element actions __________
-			
+
 
 
 
 
 
 			//#region -— Card selection ______________________
-			
+
 
 
 
@@ -7673,15 +7673,15 @@
 
 
 				// MARK: removeCardFromSelection()
-				/** 
+				/**
 				*  Manage all the actions involving the deletion of a card from the selection of cards
-				* 
+				*
 				* @param {String} notifDiv the div of the notif linked to the selected subject card
 				*/
 				removeCardFromSelection(notifDiv="all") {
 					if (notifDiv=="all") {      // clear all subject card selection as well as their respective notif
 						const selectedCardsId   = this.selectedSubjectCardsId.length > 0 ? this.selectedSubjectCardsId : this.selectedModuleCardsId;
-						
+
 						selectedCardsId.forEach(selectedCardId => {
 							const correspNotifDiv = document.querySelector(`.selected-card-notif-div[data-targetid="${selectedCardId}"]`);
 							correspNotifDiv.classList.remove("on");
@@ -7690,7 +7690,7 @@
 							this.changeTickIconToDragIcon(document.getElementById(selectedCardId));
 						})
 
-						
+
 						clearTimeout(this?.timeouts?.documentOnDragEnd?.hideTeacherTable);
 						if (!this?.timeouts?.removeCardFromSelection) { this.timeouts.removeCardFromSelection = {} }
 						this.timeouts.removeCardFromSelection.hideTeacherTable = setTimeout(() => {document.querySelectorAll(".grades-table-header-teacher").forEach(teacher =>   {teacher.style.display =  "table-cell"})}, 100);
@@ -7705,11 +7705,11 @@
 						this.selectedModuleCardsId  = [];
 						this.selectedSubjectCardsSortedByModule = {};
 
-					} 
+					}
 					else if (notifDiv?.classList?.contains("selected-card-notif-div")) {      // clear the specifically given notifDiv from the selection
 						const card = document.getElementById(notifDiv.dataset.targetid);
 						const type = notifDiv.dataset.type;
-						
+
 
 						notifDiv.classList.remove("on");
 						setTimeout(()=>{notifDiv.remove()}, 300);
@@ -7717,7 +7717,7 @@
 						if (type == "subject") {
 
 							if (this.selectedSubjectCardsId.includes(card.id))  this.selectedSubjectCardsId.splice(this.selectedSubjectCardsId.indexOf(card.id), 1);
-							
+
 							Object.keys(this.selectedSubjectCardsSortedByModule).forEach(moduleName => {
 								this.selectedSubjectCardsSortedByModule[moduleName].forEach((selectedSubjectCard, subjIndex) => {
 									this.selectedSubjectCardsSortedByModule[moduleName].splice(subjIndex, 1);
@@ -7726,20 +7726,20 @@
 									delete this.selectedSubjectCardsSortedByModule[moduleName];
 								}
 							})
-						
-							if (this.selectedSubjectCardsId.length == 0)  this.draggedElementOnDragEndAction(null, card); 
+
+							if (this.selectedSubjectCardsId.length == 0)  this.draggedElementOnDragEndAction(null, card);
 						}
 						else if (type == "module") {
 
 							if (this.selectedModuleCardsId.includes(card.id)) this.selectedModuleCardsId.splice(this.selectedModuleCardsId.indexOf(card.id), 1);
 
-							if (this.selectedModuleCardsId.length == 0)  this.draggedElementOnDragEndAction(null, card); 
+							if (this.selectedModuleCardsId.length == 0)  this.draggedElementOnDragEndAction(null, card);
 						}
 
 						this.changeTickIconToDragIcon(card);
 					}
-					
-					
+
+
 					// Ensure the subject insertion drop fields are displaying the right text
 					document.querySelectorAll(".drop-field.insert-field").forEach(subjInsertField => {
 						if (this.selectedSubjectCardsId.length == 0 && this.selectedModuleCardsId.length == 0) {
@@ -7778,21 +7778,21 @@
 					const dropFieldRemove       = document.querySelector(".drop-field.remove-from-module");
 					const dropFieldRemoveHitbox = document.querySelector(".drop-field-remove-from-module-hitbox");
 					const insertFieldHitboxes   = (insertFieldsContainer || document).querySelectorAll(".drop-subject-card-insert-hitbox, .drop-module-card-insert-hitbox");
-					
+
 					if (target == "add" || target == "all") {
 						dropFieldAdd.style.background = "";
 						dropFieldAddHitbox.ondragover =    (e) => {if (e.target.classList.contains("show")) {
-							e.preventDefault(); 
+							e.preventDefault();
 							dropFieldAdd.classList.add("hover");
 							dropFieldAdd.querySelectorAll(".drop-field-create-module-text, .drop-field-create-module-plus").forEach(text => {text.classList.add("hover");})
 						}};
 						dropFieldAddHitbox.ondragleave =   (e) => {if (e.target.classList.contains("show")) {
-							e.preventDefault(); 
+							e.preventDefault();
 							dropFieldAdd.classList.remove("hover");
 							dropFieldAdd.querySelectorAll(".drop-field-create-module-text, .drop-field-create-module-plus").forEach(text => {text.classList.remove("hover");})
 						}};
 						dropFieldAddHitbox.ondrop =        (e) => {if (e.target.classList.contains("show")) {
-							e.preventDefault(); 
+							e.preventDefault();
 							e.dataTransfer.dropEffect = "link";
 							dropFieldAdd.classList.remove("hover");
 							dropFieldAdd.querySelectorAll(".drop-field-create-module-text, .drop-field-create-module-plus").forEach(text => {text.classList.remove("hover");})
@@ -7800,17 +7800,17 @@
 						}};
 						// Custom :hover event, cuz otherwise it would trigger when the fields are not shown
 						dropFieldAddHitbox.onmouseenter =  (e) => {if (e.target.classList.contains("show")) {
-							e.preventDefault(); 
+							e.preventDefault();
 							dropFieldAdd.classList.add("hover");
 							dropFieldAdd.querySelectorAll(".drop-field-create-module-text, .drop-field-create-module-plus").forEach(text => {text.classList.add("hover");})
 						}};
 						dropFieldAddHitbox.onmouseleave =  (e) => {if (e.target.classList.contains("show")) {
-							e.preventDefault(); 
+							e.preventDefault();
 							dropFieldAdd.classList.remove("hover");
 							dropFieldAdd.querySelectorAll(".drop-field-create-module-text, .drop-field-create-module-plus").forEach(text => {text.classList.remove("hover");})
 						}};
 						dropFieldAddHitbox.onclick =       (e) => {if (e.target.classList.contains("show")) {
-							e.preventDefault(); 
+							e.preventDefault();
 							e.target.classList.remove("hover");
 							e.target.querySelectorAll(".drop-field-create-module-text, .drop-field-create-module-plus").forEach(text => {text.classList.remove("hover");})
 							if (this.selectedSubjectCardsId.length > 0) {
@@ -7818,23 +7818,23 @@
 							}
 						}};
 					}
-					
+
 					if (target == "remove" || target == "all") {
 						dropFieldRemove.style.background = "";
 						dropFieldRemoveHitbox.ondragover =    (e) => {if (e.target.classList.contains("show")) {
-							e.preventDefault(); 
+							e.preventDefault();
 							dropFieldRemove.classList.add("hover");
 							dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-text").forEach(text => {text.classList.add("hover");})
 							dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-minus").forEach(text => {text.classList.add("hover", "slight-horiz-shake"); text.onanimationend = () => {text.classList.remove("slight-horiz-shake"); text.onanimationend = null;}})
 						}};
 						dropFieldRemoveHitbox.ondragleave =   (e) => {if (e.target.classList.contains("show")) {
-							e.preventDefault(); 
+							e.preventDefault();
 							dropFieldRemove.classList.remove("hover");
 							dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-text").forEach(text => {text.classList.remove("hover");})
 							dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-minus").forEach(text => {text.classList.remove("hover", "slight-horiz-shake"); text.onanimationend = null;})
 						}};
 						dropFieldRemoveHitbox.ondrop =        (e) => {if (e.target.classList.contains("show")){
-							e.preventDefault(); 
+							e.preventDefault();
 							e.dataTransfer.dropEffect = "link";
 							dropFieldRemove.classList.remove("hover");
 							dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-text").forEach(text => {text.classList.remove("hover");})
@@ -7843,19 +7843,19 @@
 						}};
 						// Custom :hover event, cuz otherwise it would trigger when the fields are not shown
 						dropFieldRemoveHitbox.onmouseenter =  (e) => {if (e.target.classList.contains("show")) {
-							e.preventDefault(); 
+							e.preventDefault();
 							dropFieldRemove.classList.add("hover");
 							dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-text").forEach(text => {text.classList.add("hover");})
 							dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-minus").forEach(text => {text.classList.add("hover", "slight-horiz-shake"); text.onanimationend = () => {text.classList.remove("slight-horiz-shake"); text.onanimationend = null;}})
 						}};
 						dropFieldRemoveHitbox.onmouseleave =  (e) => {if (e.target.classList.contains("show")) {
-							e.preventDefault(); 
+							e.preventDefault();
 							dropFieldRemove.classList.remove("hover");
 							dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-text").forEach(text => {text.classList.remove("hover");})
 							dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-minus").forEach(text => {text.classList.remove("hover", "slight-horiz-shake"); text.onanimationend = null;})
 						}};
 						dropFieldRemoveHitbox.onclick =       (e) => {if (e.target.classList.contains("show")) {
-							e.preventDefault(); 
+							e.preventDefault();
 							dropFieldRemove.classList.remove("hover");
 							dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-text").forEach(text => {text.classList.remove("hover");})
 							dropFieldRemove.querySelectorAll(".drop-field-remove-from-module-minus").forEach(text => {text.classList.remove("hover", "slight-horiz-shake"); text.onanimationend = null;})
@@ -7892,7 +7892,7 @@
 
 							let subject, oldModuleName, manageSim = true;
 							if (!this.sim[sem]) manageSim = false;
-							
+
 							if (!cardIsSelected) {  // 1 unselected subj card dropped in the drop field "add"
 								subject = card.dataset.subject;
 								oldModuleName = card.dataset.module;
@@ -7910,7 +7910,7 @@
 										// newModuleName = oldModuleName;
 										// newModuleConfig.coefficients[subject] = 100;
 										bypasseReplacement = true;
-									} 
+									}
 									else {
 										newModuleConfig = {subjects: [subject], coefficients: {[subject]: 100}};
 
@@ -7935,14 +7935,14 @@
 										delete this.moduleConfig[sem][oldModuleName];
 									}
 
-								} 
+								}
 								else {
 									newModuleConfig = {subjects: [subject], coefficients: {[subject]: 100}};
 								}
 
 							} else {  // multiple subj cards dropped through selection in the drop field "add"
 								let remainingCoef = 100;
-								
+
 								// Scanning through all the modules of the selected matiere cards to get the name of the module of name "Module [x]", so that instead of creating a new Module,
 								// we replace the module with the lowest x that would have been deleted
 								let lowestModuleIndexNameToReplace = -1;
@@ -7950,8 +7950,8 @@
 									const _moduleSelection = this.selectedSubjectCardsSortedByModule[_moduleName];
 									const match = _moduleName.match(/Module (\d+)/);
 
-									// if the name matches "Module [x]" (1st condition) 
-									// and if the selection of subj cards of same module that will be removed from their module matches the number of subj in the said module (cond 2): 
+									// if the name matches "Module [x]" (1st condition)
+									// and if the selection of subj cards of same module that will be removed from their module matches the number of subj in the said module (cond 2):
 									// we save the number of the module
 									if (match && _moduleSelection.length == this.moduleConfig[sem][_moduleName].subjects.length) {
 										lowestModuleIndexNameToReplace = match[1];
@@ -7981,7 +7981,7 @@
 										}
 
 										newModuleConfig.subjects[selectionIndex] = subject;
-										
+
 
 										if (!subjectCard.classList.contains("unclassified")) {
 
@@ -8020,9 +8020,8 @@
 							let cardIsSelected = false;
 							this.selectedModuleCardsId.forEach(selectedModuleCardId => {if (selectedModuleCardId == card.id) cardIsSelected = true;});
 
-							let oldModuleName, manageSim = true;
-							if (!this.sim[sem]) manageSim = false;
-							
+							let oldModuleName
+
 							if (!cardIsSelected) {  // 1 unselected module card dropped in the "add" drop field
 								oldModuleName = card.dataset.module;
 								newModuleName = oldModuleName;
@@ -8034,22 +8033,22 @@
 
 							} else {  // multiple module cards dropped through selection in the "add" drop field
 								let remainingCoef = 100;
-								
+
 								// Scanning through all the selected module cards to get their name if they match "Module [x]", so that instead of creating a new module name,
 								// we replace the module with the lowest x that would have been deleted
 								let lowestModuleIndexNameToReplace = count;
 								Object.keys(this.selectedModuleCardsId).forEach(_moduleName => {
 									const match = _moduleName.match(/Module (\d+)/);
 
-									// if the name matches "Module [x]" (1st condition) 
-									// and if the selection of subj cards of same module that will be removed from their module matches the number of subj in the said module (2nd condition): 
+									// if the name matches "Module [x]" (1st condition)
+									// and if the selection of subj cards of same module that will be removed from their module matches the number of subj in the said module (2nd condition):
 									// we save the number of the module
 									if (parseInt(match?.[1] || lowestModuleIndexNameToReplace) < lowestModuleIndexNameToReplace) {
 										lowestModuleIndexNameToReplace = parseInt(match[1]);
 									}
 								})
 
-								// correcting the the name of the new module in case it should inherit the name of one of the selected module card 
+								// correcting the the name of the new module in case it should inherit the name of one of the selected module card
 								// because the later had a lower index than the new module's name anticipated
 								if (lowestModuleIndexNameToReplace < count) {
 									newModuleName = "Module "+lowestModuleIndexNameToReplace;
@@ -8058,7 +8057,7 @@
 
 								// Initiating the new module's data
 								newModuleConfig = {subjects: [], coefficients: {}};
-								
+
 								// scanning through all the selected modules
 								this.selectedModuleCardsId.forEach(_moduleCardId => {
 									const selectedModuleCard = document.getElementById(_moduleCardId);
@@ -8100,9 +8099,9 @@
 						}
 						else {
 							this.moduleConfig[sem].__modules__.splice(index, 0, newModuleName)
-						}                
+						}
 					}
-					
+
 					this.removeCardFromSelection();
 					this.saveConfig();
 					this.getGradesData();
@@ -8194,7 +8193,7 @@
 				// MARK: dropFieldSubjectInsertAction
 				dropFieldSubjectInsertAction(cardId=null, methodCaller=null) {
 					const sem = this.currentSemester;
-					
+
 					if (cardId) {   // When dropping a ".drop-field.insert-field.subject" class div
 						const card = document.getElementById(cardId);
 
@@ -8204,7 +8203,7 @@
 
 							const targetModuleName = methodCaller.dataset.module;
 							const insertionIndex = methodCaller.dataset.index;
-							
+
 							// The same thing happens whether this method is triggered from a selection or a single subject card, we just have to choose the right card id
 							(cardIsSelected ? this.selectedSubjectCardsId : [card.id]).forEach(subjectCardId => {
 								const subjectCard = document.getElementById(subjectCardId);
@@ -8213,17 +8212,17 @@
 								const oldModuleName     = subjectCard.dataset.module;
 								const oldModuleIndex    = this.moduleConfig[sem].__modules__.indexOf(oldModuleName);
 								const subjectOldIndex   = this.moduleConfig?.[sem]?.[oldModuleName]?.subjects?.indexOf(subject);
-							
+
 								// CASE 1: subject card comes from unclassified section to a module                 -> (default/easy case)
 								// CASE 2: subject card comes from a module to another module                       -> (moving case)
 								// CASE 3: subject card comes from a module to the same module at a different index -> (reordering case)
 								// CASE 4: subject card comes from a module to the same module at the same index    -> (it's no-use, so nothing happens. It shouldn't be reached though, since the adjacent insertion fields disappear when dragging a card)
 
 								switch (`
-									subject card comes from ${oldModuleName 
-										? `a module and is ${targetModuleName==oldModuleName 
-											? `reorganized to ${subjectOldIndex == insertionIndex || subjectOldIndex+1 == insertionIndex 
-												? "the same index" 
+									subject card comes from ${oldModuleName
+										? `a module and is ${targetModuleName==oldModuleName
+											? `reorganized to ${subjectOldIndex == insertionIndex || subjectOldIndex+1 == insertionIndex
+												? "the same index"
 												: "a different index"}`
 											: "moved to a different module"}`
 										: "the unclassified section"}
@@ -8265,7 +8264,7 @@
 										delete this.moduleConfig[sem]
 									}
 								}
-								
+
 							})
 
 							this.removeCardFromSelection();
@@ -8288,19 +8287,19 @@
 									const oldModuleName  = moduleCard.dataset.module;
 									const oldModuleIndex = this.moduleConfig[sem].__modules__.indexOf(oldModuleName);
 									const subjectCards = Array.from(moduleCard.querySelectorAll(".subject-card"));
-	
+
 									// reversing the list of subject cards so that the insertion index can remain constant
 									subjectCards.reverse().forEach((subjectCard, _index) => {
 										const subject = subjectCard.dataset.subject;
-	
+
 										this.moduleConfig[sem][targetModuleName].subjects.splice(insertionIndex, 0, subject);
 										this.moduleConfig[sem][targetModuleName].coefficients[subject] = Number(this.moduleConfig[sem][oldModuleName].coefficients[subject]);
-	
+
 										this.moduleConfig[sem][oldModuleName].subjects.splice(this.moduleConfig[sem][oldModuleName].subjects.length-1,1);
 										delete this.moduleConfig[sem][oldModuleName].coefficients[subject];
-										
+
 									})
-	
+
 									this.moduleConfig[sem].__modules__.splice(oldModuleIndex, 1)
 									delete this.moduleConfig[sem][oldModuleName];
 
@@ -8308,7 +8307,7 @@
 										delete this.moduleConfig[sem]
 									}
 								})
-							} 
+							}
 							else {
 								(cardIsSelected ? this.selectedModuleCardsId : [card.id]).forEach((moduleCardId, _index) => {
 									const moduleCard     = document.getElementById(moduleCardId);
@@ -8317,7 +8316,7 @@
 									const correctedInsertionIndex = insertionIndex < oldModuleIndex ? insertionIndex + _index : insertionIndex;
 									const correctedOldModuleIndex = correctedInsertionIndex < oldModuleIndex ? oldModuleIndex + 1 : oldModuleIndex;
 
-									// Insert the module at the right place, 
+									// Insert the module at the right place,
 									this.moduleConfig[sem].__modules__.splice(correctedInsertionIndex, 0, oldModuleName)
 									this.moduleConfig[sem].__modules__.splice(correctedOldModuleIndex, 1)
 								})
@@ -8350,7 +8349,7 @@
 
 						this.saveConfig();
 						this.getGradesData();
-						
+
 						moduleDetails.innerHTML = this.createAllSubjCards(sem, module);
 
 						this.attachAllSubjectCardRelatedEventListenersForEverySubjectCard();
@@ -8383,7 +8382,7 @@
 				}
 
 
-				
+
 				// MARK: createDropFieldInsertionField
 				createDropFieldInsertionField(type="subject", {sem=0, moduleName="", index=-1}={sem:0, moduleName:"", index:-1}) {
 					const thereIsSelection = this.selectedSubjectCardsId.length > 0;
@@ -8407,7 +8406,7 @@
 
 
 		//#endregion __________ — Drag  Events — __________
-		
+
 
 
 
@@ -8425,7 +8424,7 @@
 				importClear.innerHTML = !this.isLangEn ? "Effacer Config"   : "Clear Config";
 				importClear.title     = !this.isLangEn ? "Clique ici pour effacer ta configuration actuelle" : "Click here to clear your current configuration";
 				importOnline.children[1].innerHTML = !this.isLangEn ? "Obtenir une configuration en ligne" : "Get a configuration online";
-				
+
 				if (!importMenu.classList.contains("show") || open == true) {
 					clearTimeout(this.timeouts?.closeImportMenu);
 					importMenu.style.display = "";
@@ -8448,12 +8447,12 @@
 
 				importFile.onclick   = () => this.importData();
 				importClear.onclick  = () => {
-					this.moduleConfig = {}; 
-					this.compactSubjCardsId = []; 
+					this.moduleConfig = {};
+					this.compactSubjCardsId = [];
 					this.detailedSubjCardsId = [];
-					this.foldedModuleCardsId = []; 
-					this.getGradesData(); 
-					this.saveConfig(); 
+					this.foldedModuleCardsId = [];
+					this.getGradesData();
+					this.saveConfig();
 					this.generateContent({fadeIn: false});
 				};
 				importOnline.onclick = () => this.getConfigsFromRepoAPI(this.repoContentsAPI);
@@ -8461,7 +8460,7 @@
 
 			openOnlineCfgPickerModal(closeOtherModals=true) {
 				if (closeOtherModals) { this.closeEveryModal() }
-				
+
 				document.getElementById("importMenu").classList.remove("show");
 				this.timeouts.closeImportMenu = setTimeout(() => {importMenu.style.display = "none"}, 300);
 
@@ -8475,8 +8474,8 @@
 
 				pickerMenuContainer.innerHTML = `
 					<div class="online-cfg-picker-menu modal${this.settings.blurEnabled.value ? " blur" : ""}" id="pickerMenu">
-						<div class="online-cfg-picker-menu-header jura">${!this.isLangEn 
-							? "Note: Choisir une configuration effacera les traces de configuration pré-existante de l'année correspondante, mais pas des autres années" 
+						<div class="online-cfg-picker-menu-header jura">${!this.isLangEn
+							? "Note: Choisir une configuration effacera les traces de configuration pré-existante de l'année correspondante, mais pas des autres années"
 							: "Tip: Choosing a configuration will erase all traces of pre-existing configuration of the corresponding year, but not of the other years"
 						}</div>
 						<div class="online-cfg-picker-menu-body">
@@ -8491,12 +8490,12 @@
 				`;
 
 				const pickerMenu = document.querySelector("#pickerMenu");
-				
+
 				this.appendCloseModalIcon(pickerMenu)
 
 				clearTimeout(this.timeouts?.closePickerMenu)
 				setTimeout(() => {pickerMenu.classList.add("show");}, 10)
-				
+
 				pickerMenuContainer.onmousedown = (e) => {
 					if ((e.target.closest(".modal-close-btn") || !e.target.closest("#pickerMenu")) && !document.querySelector(".focus-notif-fullscreen-effect.focus")) {
 						pickerMenuContainer.onmouseup = (e) => {
@@ -8507,8 +8506,8 @@
 						}
 					}
 				}
-				
-				
+
+
 				pickerMenu.onclick = (e) => {
 					const dirCard = e.target.closest(".online-cfg-picker-menu-dir-card");
 
@@ -8564,7 +8563,7 @@
 				if (pickerMenu) {
 					pickerMenu.classList.remove("show");
 					this.timeouts.closePickerMenu = setTimeout(() => {
-						pickerMenu.parentElement.remove(); 
+						pickerMenu.parentElement.remove();
 						this.attachDocumentMouseListeners();
 						this.attachEcamDashMouseListeners();
 					}, 300);
@@ -8587,17 +8586,17 @@
 				html += sectionsArray.map(sectionDirData => {       // Dir: Section
 					// Creating an array containing all the properties' value of sectionDirData that are objects (so that have a descendance) with at least one property: they are the data of the year folders
 					const yearsArray = Object.values(sectionDirData).map(value => {if (value instanceof Object && Object.keys(value).length>0) {return value}}).filter(value => {return value});
-					
+
 					const name = sectionDirData.path.split("/").at(-1);
-					
-					
+
+
 					let out = type == "year" ? `
 					<div class="online-cfg-picker-menu-dir-tree ${type}" data-path="${sectionDirData.path}">
 						<div class="online-cfg-picker-menu-dir-tree-header ${type} ${this.lang}"></div>
 						<div class="online-cfg-picker-menu-dir-tree-nb-cfgs jura">${sectionDirData.nbCfgs} config${sectionDirData.nbCfgs>1?"s":""}</div>
 						<div class="online-cfg-picker-menu-dir-tree-body">
 					` : "";
-					
+
 					out += type == "section"
 					? `
 					<div class="online-cfg-picker-menu-dir-card ${type} jura" id="online-cfg-picker-menu-dir-card-section-${name}" data-path="${sectionDirData.path}">${name}</div>
@@ -8612,7 +8611,7 @@
 							<div class="online-cfg-picker-menu-dir-tree-nb-cfgs jura">${yearDirData.nbCfgs} config${yearDirData.nbCfgs>1?"s":""}</div>
 							<div class="online-cfg-picker-menu-dir-tree-body">
 						` : "";
-						
+
 						out += type == "year"
 						? `
 						<div class="online-cfg-picker-menu-dir-card ${type} jura" id="online-cfg-picker-menu-dir-card-section-${name}" data-path="${yearDirData.path}">${name}</div>
@@ -8628,7 +8627,7 @@
 								<div class="online-cfg-picker-menu-dir-tree-nb-cfgs jura">${promDirData.nbCfgs} config${promDirData.nbCfgs>1?"s":""}</div>
 								<div class="online-cfg-picker-menu-dir-tree-body">
 							` : "";
-							
+
 							out += type == "prom" ? `
 								<div class="online-cfg-picker-menu-dir-card ${type} jura" id="online-cfg-picker-menu-dir-card-section-${name}" data-path="${promDirData.path}">${name}</div>
 							`
@@ -8638,7 +8637,7 @@
 									<div class="online-cfg-picker-menu-dir-card config jura" id="online-cfg-picker-menu-dir-card-config-${name}" data-path="${path}" data-url="${this.tempGitConfigParentDirData[configName]}">${name}</div>
 								`
 							}).join("");
-							
+
 							out += type == "config" ? `
 								</div>
 							</div>
@@ -8649,7 +8648,7 @@
 							return out;
 						}).join("");
 
-						out += type == "prom" 
+						out += type == "prom"
 						? `
 							</div>
 						</div>
@@ -8657,8 +8656,8 @@
 
 						return out;
 					}).join("")
-					
-					out += type == "year" 
+
+					out += type == "year"
 					? `
 						</div>
 					</div>
@@ -8686,7 +8685,7 @@
 
 							// If parsed contains moduleConfig, apply it to the dashboard and persist
 							if (parsed?.version != this.configVersion) {
-								alert(!this.isLangEn 
+								alert(!this.isLangEn
 									? `Ce fichier de configuration n'est pas de la bonne version ! Assure-toi de télécharger la dernière version ! (Ce fichier est de version "${parsed?.version}", alors qmodule la version de fichier attendmodule est "${this.configVersion}")`
 									: `This configuration file isn't of the right version! Make sure you download the latest version! (This file's version is "${parsed?.version}", whereas the file's version expected is "${this.configVersion}")`
 								)
@@ -8704,22 +8703,22 @@
 							}
 							else {
 								console.log(parsed);
-								alert(!this.isLangEn 
+								alert(!this.isLangEn
 									? `Ce fichier de configuration est invalide ! Je ne trouve pas les données attendmodules !`
 									: `This configuration file is invalid! I don't find the expected datas!`
 								)
 							}
 
 							// Re-render dashboard to reflect imported config
-							try { 
+							try {
 								this.closeOnlineCfgPickerModal();
-								
+
 								this.timeouts.closePickerMenu = setTimeout(() => {
 									this.getGradesData();
 									this.changeSemester(this.currentSemester);
 									this.scrollToClientHighestElem("", {id: "dash-header", margin: 10, smooth: true});
 									this.saveConfig();
-								}, 300); 
+								}, 300);
 							} catch (e) {}
 
 							this.showLoadingSymbol(false);
@@ -8817,7 +8816,7 @@
 						if (this.currentTutoTipNotif?.optionalData?.actionCallback) this.currentTutoTipNotif?.optionalData?.actionCallback(this);
 					}
 					else if (this.keyInputMatch(e, "L", shiftRequired) 	&& (mode == "general" || mode.match(/\bShift\+L\b/i))) {
-						
+
 						this.isLangEn = !this.isLangEn;
 						this.lang     = this.isLangEn ? "en" : "fr";
 						this.saveLanguage();
@@ -8846,7 +8845,7 @@
 							document.querySelector(".fold-toggle").classList.remove("active");
 							this.unfoldAllModuleCards();
 						}
-						
+
 					}
 					else if (this.keyInputMatch(e, "R", shiftRequired)) {
 						debugger;
@@ -8868,7 +8867,7 @@
 								const simInpGrade = document.querySelector(`.simulated-grade-input.sim-inp-grade[data-subj="${target.dataset.subj}"][data-semester="${target.dataset.semester}"]`);
 								simInpGrade.focus({preventScroll: true, focusVisible: true});
 								const simInpGradeCoord = simInpGrade.getBoundingClientRect().top;
-								
+
 								if (simInpGradeCoord < 0 || simInpGradeCoord > window.innerHeight) {
 									simInpGrade.scrollIntoView({block: "center", smooth: true});
 								}
@@ -8878,7 +8877,7 @@
 								// Prevents the instant scroll if the text field is out of the screen
 								simInpCoef.focus({preventScroll: true, focusVisible: true});
 								const simInpCoefTopCoord = simInpCoef.getBoundingClientRect().top;
-								
+
 								// Smoothly scrolls to the text field if it's out of the screen
 								if (simInpCoefTopCoord < 0 || simInpCoefTopCoord > window.innerHeight) {
 									simInpCoef.scrollIntoView({block: "center", smooth: true});
@@ -8928,11 +8927,11 @@
 		/**
 		 * @param {ECAMDash} ecamDash
 		 * The ecam dashboard.
-		 * @param {HTMLElement | String} containerElem 
+		 * @param {HTMLElement | String} containerElem
 		 * The element (or its query selector) that will contain this {@link TutoTipNotif TutoTipNotif}
-		 * @param {HTMLElement | String} targetElem 
+		 * @param {HTMLElement | String} targetElem
 		 * The element (or its query selector) that is the target of this {@link TutoTipNotif TutoTipNotif} (clicking on it will move to the next {@link TutoTipNotif TutoTipNotif})
-		 * @param {{fr: String; en: String;}} tipNotifTexts 
+		 * @param {{fr: String; en: String;}} tipNotifTexts
 		 * An object with properties *fr* of value "theFrenchTextOfThis{@link TutoTipNotif TutoTipNotif}", and *en* of value "theEnglishTextOfThis{@link TutoTipNotif TutoTipNotif}"
 		 * @param {Object} optionalData
 		 * @param {number} [optionalData.appearanceDelay=320]
@@ -8954,9 +8953,9 @@
 		 * @param { ( board: ECAMDash ) => {} } optionalData.buttonsContainer.buttons.additionalActionCallback
 		 */
 		constructor(ecamDash, containerElem, targetElem=".tuto-tip-notif", tipNotifTexts={fr: "", en: ""}, optionalData=
-			//#region 
+			//#region
 			{
-				appearanceDelay: 320, 
+				appearanceDelay: 320,
 				targetElemStyle: {"z-index": "12"},
 				initialAction: () => {},
 				actionCallback: () => {this.dismissTipNotifDiv(); this.ecamDash.nextTipNotif();},
@@ -8970,7 +8969,7 @@
 			this.optionalData  	= optionalData;
 
 			if (!this.optionalData.appearanceDelay) 			this.optionalData.appearanceDelay = 320;
-			if (!this.optionalData.targetElemStyle) 			this.optionalData.targetElemStyle = {"z-index": "12"}; 
+			if (!this.optionalData.targetElemStyle) 			this.optionalData.targetElemStyle = {"z-index": "12"};
 			if (!this.optionalData.targetElemStyle["z-index"])	this.optionalData.targetElemStyle["z-index"] = "12";
 			if (!this.optionalData.initialAction)   			this.optionalData.initialAction  = () => {};
 			if (!this.optionalData.actionCallback)  			this.optionalData.actionCallback = () => {this.dismissTipNotifDiv(); this.ecamDash.nextTipNotif();};
@@ -8978,10 +8977,10 @@
 
 
 		// MARK: async createTipNotifDiv()
-		/** Method allowing to attach this tip notif to an element `targetElem` inside of a container `containerElem`, 
+		/** Method allowing to attach this tip notif to an element `targetElem` inside of a container `containerElem`,
 		 * handling specific styling for the different elements involved and a callback action `nextAction` to execute after clicking on the `nextActionTriggerElem`
-		 * 
-		 * Structure of the tip notif attached:   
+		 *
+		 * Structure of the tip notif attached:
 		 * @example
 		 * 	<div containerElem>
 		 * 		<div targetElem></div>
@@ -9058,8 +9057,8 @@
 
 
 				if (
-					(typeof targetElem == "string" ? document.querySelector(targetElem.replace(/\bAll\./, ".")) : targetElem).getBoundingClientRect().y < 0 
-					|| 
+					(typeof targetElem == "string" ? document.querySelector(targetElem.replace(/\bAll\./, ".")) : targetElem).getBoundingClientRect().y < 0
+					||
 					(typeof targetElem == "string" ? document.querySelector(targetElem.replace(/\bAll\./, ".")) : targetElem).getBoundingClientRect().y > window.innerHeight
 				) {
 					this.ecamDash.scrollToClientHighestElem("first", {targetElem: typeof targetElem == "string" ? document.querySelector(targetElem) : targetElem, smooth: true, block: "center" });
@@ -9071,8 +9070,8 @@
 
 		// MARK: async dismissTipNotifDiv()
 		/** Method allowing to detach this tip notif for an element `targetElem` and delete it from of a container `containerElem`, handling specific styling for the different elements involved.
-		 * 
-		 * Structure of the tip notif attached:  
+		 *
+		 * Structure of the tip notif attached:
 		 * @example
 		 * 	<div containerElem>
 		 * 		<div targetElem></div>
@@ -9087,7 +9086,7 @@
 				const undoStyleChanges = (styleObj) => {
 					return Object.fromEntries(Object.entries(styleObj).map(entry => {return [entry[0], ""]}))
 				}
-				
+
 				(typeof this.targetElem == "string" ? document.querySelectorAll(`${this.targetElem}`) : [this.targetElem]).forEach(elem => {
 					Object.entries(optionalData.targetElemStyle || {"z-tndex": ""})?.forEach(entry => {
 						elem.style.setProperty(entry[0], "");
@@ -9101,7 +9100,7 @@
 				// hiding the tip notif
 				this.tutoTipNotifContainer.style.opacity = "";
 				this.tutoTipNotifContainer.style.transform = "";
-				
+
 				// removing the tip notif after its hide effect occured
 				clearTimeout(this.deletionTimeout);
 				this.deletionTimeout = setTimeout(() => {
@@ -9122,7 +9121,7 @@
 					<div class="tuto-tip-btns-body"></div>
 				`;
 				Object.assign(this.buttonsContainer.style, {...(buttonsContainerData.style || {})});
-	
+
 				(buttonsContainerData.buttons || []).forEach((btnData, _index) => {
 					const btn = document.createElement("div");
 					this.buttonsContainer.querySelector(".tuto-tip-btns-body").appendChild(btn);
@@ -9132,7 +9131,7 @@
 					Object.assign(btn.style, {...(btnData.style || {})});
 					btn.onclick = () => {btnData.actionCallback();};
 				})
-	
+
 				containerElem.appendChild(this.buttonsContainer);
 			}
 		}
@@ -9151,7 +9150,7 @@
 	//#region Dashboard launch
 
 		if (!error) {
-			window.onload = () => { 
+			window.onload = () => {
 
 				const greyGridTable = document.querySelector(".greyGridTable");
 				const intranetFold = document.createElement("div");
@@ -9159,7 +9158,7 @@
 				intranetFold.innerHTML = `
 					<div class="intranet-text">
 						<div class="intranet-toggle fold-icon">△</div>
-						<div class="semester-name jura"> 
+						<div class="semester-name jura">
 							<div class="intranet-subtext"></div>
 						</div>
 						<div class="intranet-toggle fold-icon">△</div>
@@ -9188,14 +9187,14 @@
 				}
 
 				greyGridTable.style.display = "none";
-				
-				ecamDash = new ECAMDash(error); 
+
+				globalThis.ecamDash = new ECAMDash(error);
 			};
 		}
 		else if (error == "servers are down") {
 			document.body.style.background = "#a1a1a1";
-			
-			ecamDash = new ECAMDash(error);
+
+			globalThis.ecamDash = new ECAMDash(error);
 		}
 		else {
 			console.log("Looking somewhere else than in the grades: only showing the \"Notes\" button in the dockbar");
@@ -9211,5 +9210,5 @@
 		}
 
 	//#endregion
-	
+
 })();
