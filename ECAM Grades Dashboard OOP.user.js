@@ -64,13 +64,68 @@
 
 
 
-    // MARK: ———              STRING              ———
-    /** Replaces every whitespace character in ***this*** string by a single dash.
-     * @returns {string} ***This*** string after replacing every whitespace by a single dash.
-     */
+    //#region ———              STRING              ———
     String.prototype.replaceSpacesWithDashes = function () {
         return String(this).replaceAll(/\s/ig, "-")
     };
+    //#endregion 
+
+
+    //#region ———            FUNCTION           ———
+    Function.prototype.getArguments = function (args=undefined, allowedTypes=undefined) {
+        var argNames = this.toString().match(/\(([^\)]*)\)/)[1].split(/,[\n\r\t\s]*/).map(arg => { return arg.replaceAll(/=.+/g, "") });
+
+        switch (
+            (args !== undefined && isArguments(args) ? "args" : "no-args")
+            + ", " +
+            (allowedTypes !== undefined && ParameterTypeError.verifyAllowedTypes(allowedTypes) ? "allowedTypes" : "no-allowedTypes")
+        ) {
+            case "args, allowedTypes":
+                var out = {};
+                argNames.forEach((arg, i) => {
+                    out[arg] = {
+                        "value": args[i],
+                        "allowedTypes": allowedTypes[i]
+                    };
+                });
+            return out;
+
+            case "no-args, allowedTypes":
+                var out = {};
+                argNames.forEach((arg, i) => {
+                    out[arg] = {
+                        "allowedTypes": allowedTypes[i]
+                    };
+                });
+            return out;
+
+            case "args, no-allowedTypes":
+                var out = {};
+                argNames.forEach((arg, i) => {
+                    out[arg] = {
+                        "value": args[i],
+                        "allowedTypes": "any"
+                    };
+                });
+            return out;
+
+            default: return argNames;
+        }
+    }
+
+
+    Function.prototype.getArgument = function (index, args=undefined) {
+        return isArguments(args) ? Object.entries(this.getArguments(args))[index] : this.getArguments(args)[index];
+    }
+
+
+    Function.prototype.getArgumentFromValue = function (args, value, allowedTypes) {
+        Object.entries(this.getArguments(args, allowedTypes)).forEach(arg => {
+            if (arg[1].value === arg) return arg;
+        })
+        throw new Error("Couldn't find the given value \""+value+"\" from this function's given args.");
+    }
+    //#endregion 
 
 
 
@@ -136,36 +191,39 @@
 
     /**
      * Checks whether the given value is a function that can be used to construct an Object.
-     * @param {Function} value 
+     * @param {Function} func The Function to verify.
      * @returns `true` if the given value is a function that can be used to construct an Object, `false` otherwise.
      */
-    function isConstructible(value) {
-        if (typeof value !== "function") return false;
+    function isConstructible(func) {
+        if (typeof func !== "function") return false;
         try {
-            Reflect.construct(String, [], value); // "value" as newTarget, doesn't actually run value's body meaningfully but validates [[Construct]]
+            Reflect.construct(String, [], func); // "value" as newTarget, doesn't actually run value's body meaningfully but validates [[Construct]]
             return true;
         } catch {
             return false;
         }
     }
 
+
     /**
      * Checks whether the given value is a class.
-     * @param {Function} value 
+     * @param {Function} func The Function to verify.
      * @returns `true` if the given value is a class, `false` otherwise.
      */
-    function isClass(value) {
-        if (typeof value !== "function") return false;
-        return /^class[\s{]/.test(Function.prototype.toString.call(value));
+    function isClass(func) {
+        if (typeof func !== "function") return false;
+        return /^class[\s{]/.test(Function.prototype.toString.call(func));
     }
 
 
-    Function.prototype.getArguments = function () {
-        return this.toString().match(/\(([^\)]*)\)/)[1].split(/,[\s\t\n\r]+/).map(arg => { return arg.replaceAll(/=.*/g, "") });
-    }
 
-    Function.prototype.getArgument = function (index) {
-        return this.getArguments()[index];
+    /**
+     * Checks whether the given value is an {@link IArguments}.
+     * @param {IArguments} args `arguments` object.
+     * @returns `true` if args is an {@link IArguments}, `false` otherwise.
+     */
+    function isArguments(args) {
+        return (args?.toString() || "nope") === "[object Arguments]";
     }
 
 
@@ -250,8 +308,22 @@
             #paramValueCause;
 
 
+            /** Primordial types. @readonly */
+            static basicAllowedTypes = [ "bigint", "boolean", "function", "number", "object", "string", "symbol", "undefined" ];
+
+
+            /** Handled custom allowed types. @readonly */
+            static customAllowedTypes = [
+                "any",
+                "class", 
+                "constructor",
+                "arguments"
+            ];
+
+
             /** Handled named types. @readonly */
-            static #allowedTypes = ["bigint", "boolean", "function", "number", "object", "string", "symbol", "undefined", "class", "constructor"];
+            static handledAllowedTypes = this.basicAllowedTypes.concat(this.customAllowedTypes);
+
 
 
             /** Default allowed types. @readonly */
@@ -289,7 +361,7 @@
          * @param {Error} cause 
          */
         constructor(actualValue, allowedTypes, parameterName="(unknown)", methodName="<anonymous>", className="<anonymous>", message=ParameterTypeError.#defaultMessageHeader, cause=undefined) {
-            ParameterTypeError.verifyParams(
+            /* ParameterTypeError.verifyParams(
                 "<init>",
                 ParameterTypeError.name,
                 undefined,
@@ -323,7 +395,12 @@
                     "actualValue": cause, 
                     "parameterName": "cause"
                 }
+            ); */
+            ParameterTypeError.verifyParams(arguments, 
+                ["any", ParameterTypeError.#defaultAllowedTypes, "string", "string", "string", "string", "Error"], 
+                ParameterTypeError, className, message
             );
+
 
             const formattedMessage = ParameterTypeError.#messageFormat
                 .replace("${className}", className)
@@ -393,20 +470,62 @@
 
             // MARK: _  verifyParams()
             /**
-             * @param {string | Function} methodName
-             * @param {string | (new (...args: any[]) => any)} className
-             * @param {string} message
-             * @param  {...{"allowedTypes": string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[], "actualValue": any, "parameterName": string | undefined, "message": string | undefined}} paramData 
+             * 
+             * @param {IArguments} args 
+             * @param {string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]} allowedTypes 
+             * @param {Function} func 
+             * @param {string | (new (...args: any[]) => any)} className 
+             * @param {string} message 
              */
-            static verifyParams(methodName=undefined, className=undefined, message=undefined, ...paramData) {
-                if (this.active) paramData.forEach(p => { ParameterTypeError.verifyParam(
-                    p.actualValue, 
-                    p.allowedTypes || ParameterTypeError.#defaultAllowedTypes, 
-                    p.parameterName, 
-                    methodName || p.methodName, 
-                    className || p.className, 
-                    message || p.message
-                )})
+            static verifyParams(args, allowedTypes=ParameterTypeError.#defaultAllowedTypes, func, className="<unknown>", message=undefined) {
+                if (!this.active) return;
+
+                if (!isArguments(args)) { throw new ParameterTypeError(
+                    args,
+                    "arguments",
+                    this.verifyParams.getArgumentFromValue(arguments, args)[0],
+                    this.verifyParams.name,
+                    ParameterTypeError.name,
+                    "The given "+this.verifyParams.getArgumentFromValue(arguments, args)[0]+" must be an arguments object."
+                )}
+                this.verifyAllowedTypes(allowedTypes);
+                if (typeof func !== "function") { throw new ParameterTypeError(
+                    func,
+                    "function",
+                    this.verifyParams.getArgumentFromValue(arguments, func)[0],
+                    this.verifyParams.name,
+                    ParameterTypeError.name,
+                    "The given "+this.verifyParams.getArgumentFromValue(arguments, func)[0]+" must be a function."
+                )}
+                if (typeof className !== "string" && !isClass(className)) { throw new ParameterTypeError(
+                    className,
+                    ["string", "class"],
+                    this.verifyParams.getArgumentFromValue(arguments, className)[0],
+                    this.verifyParams.name,
+                    ParameterTypeError.name,
+                    "The given "+this.verifyParams.getArgumentFromValue(arguments, className)[0]+" must be a string or a class."
+                )}
+                if (typeof message !== "string") { throw new ParameterTypeError(
+                    message,
+                    "string",
+                    this.verifyParams.getArgumentFromValue(arguments, message)[0],
+                    this.verifyParams.name,
+                    ParameterTypeError.name,
+                    "The given "+this.verifyParams.getArgumentFromValue(arguments, message)[0]+" must be a string."
+                )}
+
+                const argsObj = func.getArguments(args, allowedTypes);
+
+                Object.entries(argsObj).forEach(a => {
+                    ParameterTypeError.verifyParam(
+                        a[1].value, 
+                        a[1].type, 
+                        a[0],
+                        func,
+                        className,
+                        message
+                    )
+                })
             }
 
 
@@ -424,65 +543,79 @@
              */
             static verifyParam(actualValue, allowedTypes=ParameterTypeError.#defaultAllowedTypes, parameterName=undefined, methodName=undefined, className=undefined, message=undefined) {
                 if (!this.active) return;
-                this.#verifyAllowedTypes(allowedTypes);
 
-                var isValid = false;
-                var allowedTypesIter = allowedTypes instanceof Array
-                    ? allowedTypes.map(type => typeof type === "string" ? type : type.toString())
+                this.verifyAllowedTypes(allowedTypes);
+                if (typeof parameterName !== "string") { throw new ParameterTypeError(
+                    parameterName,
+                    "string",
+                    this.verifyParam.getArgumentFromValue(arguments, parameterName)[0],
+                    this.verifyParam.name,
+                    ParameterTypeError.name,
+                    "The given "+this.verifyParam.getArgumentFromValue(arguments, parameterName)[0]+" must be a string."
+                )}
+                if (typeof methodName !== "string" && typeof methodName !== "function") { throw new ParameterTypeError(
+                    methodName,
+                    ["string", "function"],
+                    this.verifyParam.getArgumentFromValue(arguments, methodName)[0],
+                    this.verifyParam.name,
+                    ParameterTypeError.name,
+                    "The given "+this.verifyParam.getArgumentFromValue(arguments, methodName)[0]+" must be a string or a function."
+                )}
+                if (typeof className !== "string" && !isClass(className)) { throw new ParameterTypeError(
+                    className,
+                    ["string", "class"],
+                    this.verifyParam.getArgumentFromValue(arguments, className)[0],
+                    this.verifyParam.name,
+                    ParameterTypeError.name,
+                    "The given "+this.verifyParam.getArgumentFromValue(arguments, className)[0]+" must be a string or a class."
+                )}
+                if (typeof message !== "string") { throw new ParameterTypeError(
+                    message,
+                    "string",
+                    this.verifyParam.getArgumentFromValue(arguments, message)[0],
+                    this.verifyParam.name,
+                    ParameterTypeError.name,
+                    "The given "+this.verifyParam.getArgumentFromValue(arguments, message)[0]+" must be a string."
+                )}
+
+                const actualValuesIter = actualValue instanceof Array ? actualValue : [actualValue];
+
+                const allowedTypesIter = allowedTypes instanceof Array
+                    ? allowedTypes.map(type => type?.toString() || "nope")
                     : (typeof allowedTypes === "string" 
                         ? allowedTypes.replaceAll(" ", "").split("|")
                         : [ allowedTypes.name ]
                     )
                 ;
-                debugger;
 
-                for (var allowedType of allowedTypesIter) {
+                if (actualValue instanceof Array) {
+                    for (const actualValueElem of actualValue) {
+                        var isValid = false;
 
-                    var isExpectedTypePrimitive = false;
-
-                    var match = allowedType.match(/\(([^\)]+)\)\[\]/);
-                    if (match && actualValue instanceof Array) {
-                        const allowedTypeArray = match[1].replaceAll(" ", "").split("|");
-
-                        ParameterTypeError.#verifyArray(actualValue, allowedTypeArray);
-                        isValid = true;
-                    }
-                    else if (!ParameterTypeError.#allowedTypes.includes(allowedType)) {
-                        if (globalThis[allowedType]) {
-                            allowedType = globalThis[allowedType];
+                        for (const allowedType of allowedTypesIter) {
+                            try {
+                                this.#verifyValueAgainstAllowedTypes(value, allowedType);
+                                isValid = true;
+                                break;
+                            }
+                            catch (err) {}
                         }
-                        else {
-                            throw new ParameterTypeError(
-                                allowedType,
-                                ParameterTypeError.#defaultAllowedTypes,
-                                "expectedType",
-                                this.verifyParam.name,
-                                ParameterTypeError.name,
-                                "Improper ParameterTypeError instantiation: could NOT find a class named \""+allowedType+"\"."
-                            )
+
+                        if (!isValid) {
+
                         }
                     }
-                    else if (allowedType !== "class" && allowedType !== "constructor") isExpectedTypePrimitive = true;
-
-
-                    if (
-                        (isExpectedTypePrimitive  && (typeof actualValue === allowedType))
-                        ||
-                        (!isExpectedTypePrimitive && (
-                            allowedType === "class" || allowedType === "constructor" 
-                            ? ( allowedType === "class" ? isClass(actualValue) : isConstructible(actualValue) ) 
-                            : actualValue instanceof allowedType
-                        ))
-                    ) {
-                        isValid = true;
-                        debugger;
-                        // TODO break;
+                }
+                else for (const allowedType of allowedTypesIter) {
+                    try {
+                        this.#verifyValueAgainstAllowedTypes(value, allowedType);
+                        return;
                     }
-
+                    catch (err) {}
                 }
 
 
-                if (!isValid) throw new ParameterTypeError(
+                throw new ParameterTypeError(
                     actualValue,
                     allowedTypes,
                     parameterName,
@@ -499,28 +632,38 @@
              * Verifies that all the elements of the given array of values are of one of the types in the given allowedTypes.
              * 
              * @param {Array} values 
-             * @param {string | (new (...args: any[]) => any)} allowedTypes 
+             * @param {string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]} allowedTypes 
              */
             static #verifyArray(values, allowedTypes=ParameterTypeError.#defaultAllowedTypes) {
-                const errHeader = "Internal #verifyArray() error: ";
-                ParameterTypeError.verifyParam(values, "Array", this.#verifyArray.getArgument(0), this.#verifyArray.name, ParameterTypeError.name, errHeader+"given value is NOT an Array.");
-                ParameterTypeError.#verifyAllowedTypes(allowedTypes);
+                ParameterTypeError.verifyParam(
+                    values, 
+                    "Array", 
+                    this.#verifyArray.getArgumentFromValue(arguments, values)[0], 
+                    this.#verifyArray.name, 
+                    ParameterTypeError.name, 
+                    "The given "+this.#verifyArray.getArgumentFromValue(arguments, values)[0]+" is NOT an Array."
+                );
+                ParameterTypeError.verifyAllowedTypes(allowedTypes);
 
+                var isValid = false;
                 for (const value of values) {
-                    if (
-                        (typeof allowedTypes === "string" && typeof value === allowedTypes)
-                        ||
-                        (isClass(allowedTypes) && value)
-                    ) continue;
-                    else throw new ParameterTypeError(
-                        values,
-                        allowedTypes,
-                        "values",
-                        this.#verifyArray.name,
-                        ParameterTypeError.name,
-                        errHeader+"given values does NOT have all its elements respecting the given allowedTypes."
-                    )
+                    try {
+                        this.#verifyValueAgainstAllowedTypes(value, allowedTypes)
+                        isValid = true;
+                        break;
+                    }
+                    catch (err) {}
                 }
+
+                if (!isValid) throw new ParameterTypeError(
+                    values,
+                    allowedTypes,
+                    ParameterTypeError.#verifyArray.getArgumentFromValue(arguments, values)[0],
+                    this.#verifyArray.name,
+                    ParameterTypeError.name,
+                    "The given "+this.#verifyArray.getArgumentFromValue(arguments, values)[0]
+                    +" does NOT have all its elements respecting the given allowedTypes."
+                )
             }
 
 
@@ -528,46 +671,92 @@
 
             // MARK: _  #verifyValueAgainstAllowedTypes()
             /**
-             * Verifies that all the elements of the given array of values are of one of the types in the given allowedTypes.
+             * Verifies that the given value is of one of the types in the given allowedTypes.
              * 
-             * @param {any} values 
+             * @param {any} value 
              * @param {string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]} allowedTypes 
              */
             static #verifyValueAgainstAllowedTypes(value, allowedTypes=ParameterTypeError.#defaultAllowedTypes) {
-                this.#verifyAllowedTypes(allowedTypes);
+                this.verifyAllowedTypes(allowedTypes);
 
-                var isValid = true;
-                var expectedTypesIter = allowedTypes instanceof Array
-                    ? allowedTypes.map(type => typeof type === "string" ? type : type.toString())
+                var isValid = false;
+                var allowedTypesIter = allowedTypes instanceof Array
+                    ? allowedTypes.map(type => typeof type === "string" ? type : (type instanceof Array ? type : type.toString()))
                     : (typeof allowedTypes === "string" 
                         ? allowedTypes.replaceAll(" ", "").split("|")
                         : [ allowedTypes.name ]
                     )
                 ;
 
-                if (allowedTypes instanceof Array) { allowedTypes.forEach(allowedType => { this.#verifyValueAgainstAllowedTypes(value, allowedType); }) }
-                else if (!ParameterTypeError.#allowedTypes.includes(allowedTypes)) {
-                    var isExpectedTypePrimitive = false;
+                for (const allowedType of allowedTypesIter) {
+                    if (!isValid) {
+                        const match = allowedType.match(/\(([^\)]*)\)\[\]/);
+                        if (match || allowedType instanceof Array) {
+                            this.#verifyArray(value, allowedType);
+                        }
+                        else if (!ParameterTypeError.handledAllowedTypes.includes(allowedType)) {
+                            if (!globalThis[allowedType]) {
+                                throw new ParameterTypeError(
+                                    allowedType,
+                                    this.#defaultAllowedTypes,
+                                    ParameterTypeError.#verifyValueAgainstAllowedTypes.getArgumentFromValue(arguments, allowedType)[0],
+                                    ParameterTypeError.#verifyValueAgainstAllowedTypes.name,
+                                    ParameterTypeError.name,
+                                    "\""+allowedType+"\" is not a class known to globalThis."
+                                )
+                            }
+    
+                            if (value instanceof globalThis[allowedType]) isValid = true;
+                        }
+                        else if (allowedType === "constructor") { if (isConstructible(value)) isValid = true; }
+                        else if (allowedType === "class")       { if (isClass(value)) isValid = true; }
+                        else if (allowedType === "arguments")   { if (isArguments(value)) isValid = true; }
+                        else if (allowedType === "any")         { isValid = true; }
+                        else if (typeof value === allowedType)  { isValid = true; }
+                    }
+                }
+
+
+                if (!isValid) {
+                    throw new ParameterTypeError(
+                        value,
+                        allowedTypes,
+                        ParameterTypeError.#verifyValueAgainstAllowedTypes.getArgumentFromValue(arguments, value)[0],
+                        ParameterTypeError.#verifyValueAgainstAllowedTypes.name,
+                        ParameterTypeError.name,
+                        "The given "+ParameterTypeError.#verifyValueAgainstAllowedTypes.getArgumentFromValue(arguments, value)[0]+" is of an unexpected type."
+                    )
                 }
             }
 
 
+            // MARK: _  prepareAllowedTypes()
+            /**
+             * 
+             * @param {string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]} allowedTypes 
+             */
+            static prepareAllowedTypes(allowedTypes) {
+                this.verifyAllowedTypes(allowedTypes);
+            }
 
-            // MARK: _  #verifyAllowedTypes()
+
+
+            // MARK: _  verifyAllowedTypes()
             /**
              * Verifies that the given allowedTypes is properly defined.
              * 
              * @param {string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]} allowedTypes 
              */
-            static #verifyAllowedTypes(allowedTypes) {
-                if (allowedTypes instanceof Array) { allowedTypes.forEach(allowedType => { this.#verifyAllowedTypes(allowedType) }) }
+            static verifyAllowedTypes(allowedTypes) {
+                if (allowedTypes instanceof Array) { allowedTypes.forEach(allowedType => { this.verifyAllowedTypes(allowedType) }) }
                 else if ( typeof allowedTypes !== "string" && (globalThis[allowedTypes] ? !isConstructible(allowedTypes) : false) ) throw new ParameterTypeError(
                     allowedTypes,
                     this.#defaultAllowedTypes,
-                    "allowedTypes",
-                    this.#verifyAllowedTypes.name,
+                    this.verifyAllowedTypes.getArgumentFromValue(arguments, allowedTypes)[0],
+                    this.verifyAllowedTypes.name,
                     ParameterTypeError.name,
-                    "Improper ParameterTypeError use: given allowed is NOT a string, a class, a constructible nor an Array of any of the previous three."
+                    "Improper ParameterTypeError use: given "+this.verifyAllowedTypes.getArgumentFromValue(arguments, allowedTypes)[0]
+                    +" is NOT a string, a class, a constructible nor an Array of any of the previous three (possibly recursively)."
                 );
             }
 
@@ -868,7 +1057,7 @@
 
             /**
              *
-             * @param {String} string
+             * @param {string} string
              * @param {ECAMDashboard} ecamDash
              */
             static fromString(string, ecamDash=undefined) {
@@ -3237,8 +3426,8 @@ ParameterTypeError.active = true;
 ecamDash2 = new ECAMDashboard().parseGrades();
 
 paramsToVerify = [
-    "Le Goat", 
-    "Grade", 
+    ["Le Goat"], 
+    "string", 
     "v1", 
     "taunt", 
     "Gabriel", 
