@@ -58,74 +58,98 @@
 
 
 
-//#region General functions
+//#region — General functions —
 
 
 
 
 
-    //#region ———              STRING              ———
-    String.prototype.replaceSpacesWithDashes = function () {
-        return String(this).replaceAll(/\s/ig, "-")
-    };
+    // MARK: ——————————————————
+    ;
+
+
+
+    //#region === Add methods to prototypes ===
+
+
+
+
+        // MARK: ——————————————————
+        ;
+
+
+
+
+
+
+
+
+        //#region ———              STRING              ———
+        String.prototype.replaceSpacesWithDashes = function () {
+            return String(this).replaceAll(/\s/ig, "-")
+        };
+        //#endregion 
+
+
+
+
+
+        //#region ———            FUNCTION           ———
+
+
+
+
+        // MARK: _  getArguments()
+        Function.prototype.getArguments = function (args = undefined, allowedTypes = undefined) {
+            const argNames = getFunctionParamNames(this);
+
+            const hasArgs = args !== undefined && isArguments(args);
+            const hasAllowedTypes = allowedTypes !== undefined && isWellFormedAllowedTypes(allowedTypes);
+
+            if (!hasArgs && !hasAllowedTypes) {
+                return argNames;
+            }
+
+            const out = {};
+            argNames.forEach((name, i) => {
+                const entry = {};
+                if (hasArgs) entry.value = args[i];
+                if (hasAllowedTypes) entry.allowedTypes = allowedTypes[i];
+                out[name] = entry;
+            });
+            return out;
+        };
+
+
+        // MARK: _  getArgument()
+        Function.prototype.getArgument = function (index, args = undefined) {
+            return (args !== undefined && isArguments(args))
+                ? Object.entries(this.getArguments(args))[index]
+                : this.getArguments()[index];
+        };
+
+
+        // MARK: _  getArgumentfromValue()
+        Function.prototype.getArgumentFromValue = function (args, value, allowedTypes=undefined) {
+            const argsObj = this.getArguments(args, allowedTypes);
+            const found = Object.entries(argsObj).find(([, info]) => info.value === value);
+            if (!found) {
+                throw new Error(`Couldn't find the given value "${value}" from this function's given args.`);
+            }
+            return found;
+        };
+
+
+
+
+
     //#endregion 
 
 
-    //#region ———            FUNCTION           ———
-    Function.prototype.getArguments = function (args=undefined, allowedTypes=undefined) {
-        var argNames = this.toString().match(/\(([^\)]*)\)/)[1].split(/,[\n\r\t\s]*/).map(arg => { return arg.replaceAll(/=.+/g, "") });
-
-        switch (
-            (args !== undefined && isArguments(args) ? "args" : "no-args")
-            + ", " +
-            (allowedTypes !== undefined && ParameterTypeError.verifyAllowedTypes(allowedTypes) ? "allowedTypes" : "no-allowedTypes")
-        ) {
-            case "args, allowedTypes":
-                var out = {};
-                argNames.forEach((arg, i) => {
-                    out[arg] = {
-                        "value": args[i],
-                        "allowedTypes": allowedTypes[i]
-                    };
-                });
-            return out;
-
-            case "no-args, allowedTypes":
-                var out = {};
-                argNames.forEach((arg, i) => {
-                    out[arg] = {
-                        "allowedTypes": allowedTypes[i]
-                    };
-                });
-            return out;
-
-            case "args, no-allowedTypes":
-                var out = {};
-                argNames.forEach((arg, i) => {
-                    out[arg] = {
-                        "value": args[i],
-                        "allowedTypes": "any"
-                    };
-                });
-            return out;
-
-            default: return argNames;
-        }
-    }
 
 
-    Function.prototype.getArgument = function (index, args=undefined) {
-        return isArguments(args) ? Object.entries(this.getArguments(args))[index] : this.getArguments(args)[index];
-    }
-
-
-    Function.prototype.getArgumentFromValue = function (args, value, allowedTypes) {
-        Object.entries(this.getArguments(args, allowedTypes)).forEach(arg => {
-            if (arg[1].value === arg) return arg;
-        })
-        throw new Error("Couldn't find the given value \""+value+"\" from this function's given args.");
-    }
-    //#endregion 
+    // MARK: ——————————————————
+    ;
 
 
 
@@ -191,13 +215,13 @@
 
     /**
      * Checks whether the given value is a function that can be used to construct an Object.
-     * @param {Function} func The Function to verify.
+     * @param {Function} value The Function to verify.
      * @returns `true` if the given value is a function that can be used to construct an Object, `false` otherwise.
      */
-    function isConstructible(func) {
-        if (typeof func !== "function") return false;
+    function isConstructible(value) {
+        if (typeof value !== "function") return false;
         try {
-            Reflect.construct(String, [], func); // "value" as newTarget, doesn't actually run value's body meaningfully but validates [[Construct]]
+            Reflect.construct(String, [], value); // "value" as newTarget, doesn't actually run value's body meaningfully but validates [[Construct]]
             return true;
         } catch {
             return false;
@@ -207,29 +231,148 @@
 
     /**
      * Checks whether the given value is a class.
-     * @param {Function} func The Function to verify.
+     * @param {Function} value The Function to verify.
      * @returns `true` if the given value is a class, `false` otherwise.
      */
-    function isClass(func) {
-        if (typeof func !== "function") return false;
-        return /^class[\s{]/.test(Function.prototype.toString.call(func));
+    function isClass(value) {
+        if (typeof value !== "function") return false;
+        return /^class[\s{]/.test(Function.prototype.toString.call(value));
     }
 
 
 
     /**
      * Checks whether the given value is an {@link IArguments}.
-     * @param {IArguments} args `arguments` object.
+     * @param {IArguments} value Value to check.
      * @returns `true` if args is an {@link IArguments}, `false` otherwise.
      */
-    function isArguments(args) {
-        return (args?.toString() || "nope") === "[object Arguments]";
+    function isArguments(value) {
+        return Object.prototype.toString.call(value) === "[object Arguments]";
     }
+
+
+
+    //MARK:                 — internals —
+    //#region
+
+        /** Finds the parameter-list source between the first `(` at `openIndex` and its matching `)`. */
+        function extractBalancedParens(src, openIndex) {
+            let depth = 0;
+            for (let i = openIndex; i < src.length; i++) {
+                if (src[i] === "(") depth++;
+                else if (src[i] === ")") {
+                    depth--;
+                    if (depth === 0) return src.slice(openIndex + 1, i);
+                }
+            }
+            return null; // unbalanced source, shouldn't happen for a real function
+        }
+
+        /** Splits `str` on `separator`, ignoring occurrences nested inside (), [], or {}. */
+        function splitTopLevel(str, separator) {
+            const parts = [];
+            let depth = 0;
+            let current = "";
+            for (const c of str) {
+                if ("([{".includes(c)) depth++;
+                else if (")]}".includes(c)) depth--;
+
+                if (c === separator && depth === 0) {
+                    parts.push(current);
+                    current = "";
+                } else {
+                    current += c;
+                }
+            }
+            parts.push(current);
+            return parts;
+        }
+
+        /** Cuts a single parameter's source off at its top-level default-value `=`, if any. */
+        function stripDefaultValue(paramStr) {
+            let depth = 0;
+            for (let i = 0; i < paramStr.length; i++) {
+                const c = paramStr[i];
+                if ("([{".includes(c)) depth++;
+                else if (")]}".includes(c)) depth--;
+                else if (
+                    c === "=" && depth === 0 &&
+                    paramStr[i + 1] !== ">" &&                                   // not "=>"
+                    !["=", "!", "<", ">"].includes(paramStr[i - 1] ?? "")        // not "==", "!=", "<=", ">="
+                ) {
+                    return paramStr.slice(0, i).trim();
+                }
+            }
+            return paramStr.trim();
+        }
+
+        /**
+         * Extracts the parameter names of a function, in declaration order.
+         * Handles: normal functions, methods, arrow functions with parens,
+         * single-param arrow functions WITHOUT parens (`x => ...`), default
+         * values — including ones containing nested calls/arrays/objects
+         * (`b = compute(1, 2)`, `b = [1, 2, 3]`) — and rest parameters (`...rest`).
+         *
+         * @param {Function} func
+         * @returns {string[]}
+         */
+        function getFunctionParamNames(func) {
+            if (typeof func !== "function") return [];
+
+            const src = Function.prototype.toString.call(func);
+            const openIndex = src.indexOf("(");
+
+            let paramsStr;
+            if (openIndex === -1) {
+                // Parenless single-param arrow: `x => ...` (optionally `async x => ...`)
+                const arrowMatch = src.match(/^\s*(?:async\s+)?([A-Za-z_$][A-Za-z0-9_$]*)\s*=>/);
+                paramsStr = arrowMatch ? arrowMatch[1] : "";
+            } else {
+                paramsStr = extractBalancedParens(src, openIndex) ?? "";
+            }
+
+            if (paramsStr.trim() === "") return [];
+
+            return splitTopLevel(paramsStr, ",")
+                .map(p => stripDefaultValue(p).replace(/^\.\.\./, "").trim())
+                .filter(Boolean);
+        }
+
+        /**
+         * Loose structural check for "is this a plausible allowedTypes array" —
+         * an array whose entries are each a string, a function, or (recursively)
+         * another such array of alternatives.
+         *
+         * @param {any} allowedTypes
+         * @returns {boolean}
+         */
+        function isWellFormedAllowedTypes(allowedTypes) {
+            if (!Array.isArray(allowedTypes)) return false;
+            const isValidEntry = (entry) =>
+                typeof entry === "string" ||
+                typeof entry === "function" ||
+                (Array.isArray(entry) && entry.every(isValidEntry));
+            return allowedTypes.every(isValidEntry);
+        }
+
+    //#endregion
 
 
 
 
 //#endregion General functions
+
+
+
+
+    // MARK: ——————————————————
+//#endregion 
+
+
+
+
+
+
 
 
 
@@ -270,501 +413,633 @@
 
 
 
-
-
-        //MARK:                — properties —
+        //MARK:                — static config —
         //#region
 
+            static active = true;
 
-            /**
-             * Controls whether the ParameterTypeError should be verified in the code. 
-             * Setting it to `false` renders {@link ParameterTypeError.verifyParam()} and {@link ParameterTypeError.verifyParams()} ineffective.
-             * @type {boolean} 
-             */
-            static active = false;
-
-
-            /** Message of ***this*** {@link ParameterTypeError}. @type {string} */
-            #message;
-
-
-            /** Cause of ***this*** {@link ParameterTypeError}. @type {Error} */
-            #cause;
-
-
-            /** Class to which belongs causing ***this*** {@link ParameterTypeError}. @type {new (...args: any[]) => any} @readonly */
-            #classCause;
-
-
-            /** Name of the method causing ***this*** {@link ParameterTypeError}. @type {string} @readonly */
-            #methodNameCause;
-
-
-            /** Name of the parameter causing ***this*** {@link ParameterTypeError}. @type {string} @readonly */
-            #paramNameCause;
-
-
-            /** Value of the parameter causing ***this*** {@link ParameterTypeError}. @type {string} @readonly */
-            #paramValueCause;
-
-
-            /** Primordial types. @readonly */
-            static basicAllowedTypes = [ "bigint", "boolean", "function", "number", "object", "string", "symbol", "undefined" ];
-
-
-            /** Handled custom allowed types. @readonly */
-            static customAllowedTypes = [
-                "any",
-                "class", 
-                "constructor",
-                "arguments"
-            ];
-
-
-            /** Handled named types. @readonly */
+            static basicAllowedTypes = ["bigint", "boolean", "function", "number", "object", "string", "symbol", "undefined"];
+            static customAllowedTypes = ["any", "array", "class", "constructor", "arguments"];
             static handledAllowedTypes = this.basicAllowedTypes.concat(this.customAllowedTypes);
 
+            static #defaultMessageHeader = "Improper parameter type: parameter is NOT of an expected type.";
 
+            /** Cache of parsed type-expression strings -> AST, so a given spec is only parsed once. */
+            static #typeExpressionCache = new Map();
 
-            /** Default allowed types. @readonly */
-            static #defaultAllowedTypes = ["string", "class", "constructor", "(string | class | constructor)[]"];
-
-
-            /** Format of a message for a {@link ParameterTypeError}. @type {string} */
-            static #messageFormat = "\n"+
-                "    class:  ${className}\n"+
-                "    method: ${methodName}\n"+
-                "    parameter: \n"+
-                "        name:          ${parameterName}\n"+
-                "        expected type: ${expectedType}\n"+
-                "        actual type:   ${actualType}\n"
-            ;
-
-            static #defaultMessageHeader = "Improper ParameterTypeError instantiation: parameter is NOT of an expected type.";
-
-
-        //#endregion — properties —
+        //#endregion
 
 
 
 
+        //MARK:           — instance properties —
+        //#region
 
-        // MARK:               — constructor —
-        /**
-         * 
-         * @param {string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]} allowedTypes 
-         * @param {any} actualValue 
-         * @param {string} parameterName 
-         * @param {string | Function} methodName 
-         * @param {string | new (...args: any[]) => any} className 
-         * @param {string} message 
-         * @param {Error} cause 
-         */
-        constructor(actualValue, allowedTypes, parameterName="(unknown)", methodName="<anonymous>", className="<anonymous>", message=ParameterTypeError.#defaultMessageHeader, cause=undefined) {
-            /* ParameterTypeError.verifyParams(
-                "<init>",
-                ParameterTypeError.name,
-                undefined,
-                {
-                    "allowedTypes": "string", 
-                    "actualValue": parameterName, 
-                    "parameterName": "parameterName"
-                },
-                {
-                    "allowedTypes": ParameterTypeError.#defaultAllowedTypes, 
-                    "actualValue": allowedTypes, 
-                    "parameterName": "expectedType"
-                },
-                {
-                    "allowedTypes": ["string", "Function"], 
-                    "actualValue": methodName, 
-                    "parameterName": "methodName"
-                },
-                {
-                    "allowedTypes": ["string", "class"], 
-                    "actualValue": className, 
-                    "parameterName": "className"
-                },
-                {
-                    "allowedTypes": "string", 
-                    "actualValue": message, 
-                    "parameterName": "message"
-                },
-                {
-                    "allowedTypes": ["Error", "undefined"], 
-                    "actualValue": cause, 
-                    "parameterName": "cause"
-                }
-            ); */
-            ParameterTypeError.verifyParams(arguments, 
-                ["any", ParameterTypeError.#defaultAllowedTypes, "string", "string", "string", "string", "Error"], 
-                ParameterTypeError, className, message
-            );
+            #cause;
+            #classCause;
+            #methodNameCause;
+            #paramNameCause;
+            #paramValueCause;
+
+        //#endregion
 
 
-            const formattedMessage = ParameterTypeError.#messageFormat
-                .replace("${className}", className)
-                .replace("${methodName}", methodName)
-                .replace("${parameterName}", parameterName)
-                .replace("${expectedType}", allowedTypes)
-                .replace("${actualType}", (typeof actualValue === "object" ? actualValue.__proto__.toString() : typeof actualValue))
-            ;
 
-            super(message+formattedMessage, { cause });
+
+        //MARK:               — constructor —
+        constructor(actualValue, allowedTypes, parameterName = "(unknown)", methodName = "<anonymous>", className = "<anonymous>", message = ParameterTypeError.#defaultMessageHeader, cause = undefined) {
+            const resolvedMethodName = typeof methodName === "function" ? (methodName.name || "<anonymous>") : methodName;
+            const resolvedClassName = typeof className === "function" ? (className.name || "<anonymous>") : className;
+
+            const expectedTypeStr = ParameterTypeError.#describeAllowedType(allowedTypes);
+            const actualTypeStr = ParameterTypeError.#describeType(actualValue);
+
+            const formattedMessage =
+                "\n" +
+                `    class:  ${resolvedClassName}\n` +
+                `    method: ${resolvedMethodName}\n` +
+                "    parameter:\n" +
+                `        name:          ${parameterName}\n` +
+                `        expected type: ${expectedTypeStr}\n` +
+                `        actual type:   ${actualTypeStr}\n`;
+
+            super(message + formattedMessage, { cause });
 
             this.#cause = cause;
-            this.#classCause = className;
-            this.#methodNameCause = methodName;
+            this.#classCause = resolvedClassName;
+            this.#methodNameCause = resolvedMethodName;
             this.#paramNameCause = parameterName;
             this.#paramValueCause = actualValue;
         }
 
 
-        //MARK:             — encapsulation —
+
+
+        //MARK:              — encapsulation —
         //#region
 
+            get cause() { return this.#cause; }
+            get classCause() { return this.#classCause; }
+            get methodNameCause() { return this.#methodNameCause; }
+            get paramNameCause() { return this.#paramNameCause; }
+            get paramValueCause() { return this.#paramValueCause; }
 
-            /** Message of ***this*** {@link ParameterTypeError}. @type {string} */
-            get message() { return this.#message }
-            set message(value) {
-                ParameterTypeError.verifyParam(value, "string", "value", "message", ParameterTypeError.name)
-                this.#message = value;
-            }
-
-            /** Cause of ***this*** {@link ParameterTypeError}. @type {Error} */
-            get cause() { return this.#cause }
-            set cause(value) {
-                ParameterTypeError.verifyParam(value, Error, "value", "cause", ParameterTypeError.name)
-                this.#cause = value;
-            }
-
-
-            /** Class to which belongs causing ***this*** {@link ParameterTypeError}. @type {new (...args: any[]) => any} @readonly */
-            get classCause() { return this.#classCause }
-
-
-            /** Name of the method causing ***this*** {@link ParameterTypeError}. @type {string} @readonly */
-            get methodNameCause() { return this.#methodNameCause }
-
-
-            /** Name of the parameter causing ***this*** {@link ParameterTypeError}. @type {string} @readonly */
-            get paramNameCause() { return this.#paramNameCause }
-
-
-            /** Value of the parameter causing ***this*** {@link ParameterTypeError}. @type {string} @readonly */
-            get paramValueCause() { return this.#paramValueCause }
-
-
-
-        //#endregion — encapsulation —
+        //#endregion
 
 
 
 
-
-        //MARK:                 — methods —
+        //MARK:             — public methods —
         //#region
 
-
-
-
-            // MARK: _  verifyParams()
-            /**
-             * 
-             * @param {IArguments} args 
-             * @param {string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]} allowedTypes 
-             * @param {Function} func 
-             * @param {string | (new (...args: any[]) => any)} className 
-             * @param {string} message 
-             */
-            static verifyParams(args, allowedTypes=ParameterTypeError.#defaultAllowedTypes, func, className="<unknown>", message=undefined) {
-                if (!this.active) return;
-
-                if (!isArguments(args)) { throw new ParameterTypeError(
-                    args,
-                    "arguments",
-                    this.verifyParams.getArgumentFromValue(arguments, args)[0],
-                    this.verifyParams.name,
-                    ParameterTypeError.name,
-                    "The given "+this.verifyParams.getArgumentFromValue(arguments, args)[0]+" must be an arguments object."
-                )}
-                this.verifyAllowedTypes(allowedTypes);
-                if (typeof func !== "function") { throw new ParameterTypeError(
-                    func,
-                    "function",
-                    this.verifyParams.getArgumentFromValue(arguments, func)[0],
-                    this.verifyParams.name,
-                    ParameterTypeError.name,
-                    "The given "+this.verifyParams.getArgumentFromValue(arguments, func)[0]+" must be a function."
-                )}
-                if (typeof className !== "string" && !isClass(className)) { throw new ParameterTypeError(
-                    className,
-                    ["string", "class"],
-                    this.verifyParams.getArgumentFromValue(arguments, className)[0],
-                    this.verifyParams.name,
-                    ParameterTypeError.name,
-                    "The given "+this.verifyParams.getArgumentFromValue(arguments, className)[0]+" must be a string or a class."
-                )}
-                if (typeof message !== "string") { throw new ParameterTypeError(
-                    message,
-                    "string",
-                    this.verifyParams.getArgumentFromValue(arguments, message)[0],
-                    this.verifyParams.name,
-                    ParameterTypeError.name,
-                    "The given "+this.verifyParams.getArgumentFromValue(arguments, message)[0]+" must be a string."
-                )}
-
-                const argsObj = func.getArguments(args, allowedTypes);
-
-                Object.entries(argsObj).forEach(a => {
-                    ParameterTypeError.verifyParam(
-                        a[1].value, 
-                        a[1].type, 
-                        a[0],
-                        func,
-                        className,
-                        message
-                    )
-                })
-            }
 
 
 
             // MARK: _  verifyParam()
             /**
-             * Verifies that the given {@link actualValue} is at least of one of the given {@link allowedTypes}.
-             * 
-             * @param {any} actualValue The value of the parameter.
-             * @param {string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]} allowedTypes Name of the type the parameter is expected to be, or its prototype. May be composed in an array to give multiple allowed types.
-             * @param {string} parameterName Name of the method's parameter whose type is to be verified.
-             * @param {string | Function} methodName Name of the method whose parameter is to be verified.
-             * @param {string | (new (...args: any[]) => any)} className Name of the class to which belongs the currently executed method.
-             * @param {string} message Message of the {@link ParameterTypeError} to build and throw.
+             * Verifies that `actualValue` matches `allowedType`. Throws a {@link ParameterTypeError} otherwise.
+             *
+             * `allowedType` can be:
+             *  - a type-expression STRING — see the grammar notes below.
+             *  - a class/constructor reference (checked via `instanceof`).
+             *  - a RegExp instance, or a `"/pattern/flags"` string — matches string/number values via `.test(String(value))`.
+             *  - a raw JS ARRAY — a TUPLE: value must be an array of the exact same length, each
+             *    position checked against the type at that index. Elements can themselves be any
+             *    of the things in this list, nested arbitrarily.
+             *  - a raw JS OBJECT (plain, not array/RegExp) — an EXACT-SHAPE object type: value must
+             *    be a plain object with exactly the same key set, each value checked against the
+             *    (recursively any-of-the-above) type given for that key.
+             *
+             * Type-expression STRING grammar:
+             *  - plain type name: "string" | "number" | "boolean" | "function" | "object" | "bigint" | "symbol" | "undefined"
+             *  - pseudo-type: "any" | "array" | "class" | "constructor" | "arguments"
+             *  - a class name reachable via globalThis: "Error", "MyGlobalClass", ...
+             *  - a literal to enforce exactly: "3", "true", '"yes"'
+             *  - union: "A|B"
+             *  - array: "X[]" (any length) / "X[3]" (exact length)
+             *  - tuple: "[A, B, C]"
+             *  - regex literal: "/pattern/flags" (bare or quoted) — matches string/number values
+             *  - RECORD (structural object) type: "{ KeyPattern: ValueType, ... }" where each
+             *    KeyPattern is a quoted literal key ('"foo"'), a regex ("/tag-\d+/"), the pseudo
+             *    key-types "string" (any non-numeric-looking key) / "number" (any numeric-looking
+             *    key) / "any" (every key), or a "|"-union of these sharing one ValueType. Independent
+             *    pairs with DIFFERENT value types are unioned by wrapping each in parens:
+             *    "(\"a\": boolean)|(\"b\": number)". Every key actually present on the value must be
+             *    covered by some rule (most specific rule wins: literal > regex > pseudo key-type);
+             *    an uncovered key fails the match. ValueType can itself be any type expression,
+             *    including another nested record.
+             *
+             * All of the above nest arbitrarily.
+             *
+             * @param {any} actualValue
+             * @param {string | Function | RegExp | any[] | object} allowedType
+             * @param {string} [parameterName]
+             * @param {string | Function} [methodName]
+             * @param {string | Function} [className]
+             * @param {string} [message]
              */
-            static verifyParam(actualValue, allowedTypes=ParameterTypeError.#defaultAllowedTypes, parameterName=undefined, methodName=undefined, className=undefined, message=undefined) {
+            static verifyParam(actualValue, allowedType, parameterName = "(unknown)", methodName = "<anonymous>", className = "<anonymous>", message = undefined) {
                 if (!this.active) return;
 
-                this.verifyAllowedTypes(allowedTypes);
-                if (typeof parameterName !== "string") { throw new ParameterTypeError(
-                    parameterName,
-                    "string",
-                    this.verifyParam.getArgumentFromValue(arguments, parameterName)[0],
-                    this.verifyParam.name,
-                    ParameterTypeError.name,
-                    "The given "+this.verifyParam.getArgumentFromValue(arguments, parameterName)[0]+" must be a string."
-                )}
-                if (typeof methodName !== "string" && typeof methodName !== "function") { throw new ParameterTypeError(
-                    methodName,
-                    ["string", "function"],
-                    this.verifyParam.getArgumentFromValue(arguments, methodName)[0],
-                    this.verifyParam.name,
-                    ParameterTypeError.name,
-                    "The given "+this.verifyParam.getArgumentFromValue(arguments, methodName)[0]+" must be a string or a function."
-                )}
-                if (typeof className !== "string" && !isClass(className)) { throw new ParameterTypeError(
-                    className,
-                    ["string", "class"],
-                    this.verifyParam.getArgumentFromValue(arguments, className)[0],
-                    this.verifyParam.name,
-                    ParameterTypeError.name,
-                    "The given "+this.verifyParam.getArgumentFromValue(arguments, className)[0]+" must be a string or a class."
-                )}
-                if (typeof message !== "string") { throw new ParameterTypeError(
-                    message,
-                    "string",
-                    this.verifyParam.getArgumentFromValue(arguments, message)[0],
-                    this.verifyParam.name,
-                    ParameterTypeError.name,
-                    "The given "+this.verifyParam.getArgumentFromValue(arguments, message)[0]+" must be a string."
-                )}
+                if (!this.#matchesType(actualValue, allowedType)) {
+                    throw new ParameterTypeError(
+                        actualValue,
+                        allowedType,
+                        parameterName,
+                        methodName,
+                        className,
+                        message ?? this.#defaultMessageHeader
+                    );
+                }
+            }
 
-                const actualValuesIter = actualValue instanceof Array ? actualValue : [actualValue];
 
-                const allowedTypesIter = allowedTypes instanceof Array
-                    ? allowedTypes.map(type => type?.toString() || "nope")
-                    : (typeof allowedTypes === "string" 
-                        ? allowedTypes.replaceAll(" ", "").split("|")
-                        : [ allowedTypes.name ]
-                    )
-                ;
 
-                if (actualValue instanceof Array) {
-                    for (const actualValueElem of actualValue) {
-                        var isValid = false;
+            // MARK: _  verifyParams()
+            /**
+             * Verifies every argument in `args` against the type(s) at the same index in `allowedTypes`.
+             * Extra elements in `args` beyond `allowedTypes.length` are ignored.
+             *
+             * @param {IArguments | any[]} args Typically the callee's `arguments` object.
+             * @param {any[]} allowedTypes One entry per positional parameter to check (see {@link ParameterTypeError.verifyParam}).
+             * @param {string | Function} [methodName] Pass the actual function (not just its name) to get real parameter names in error messages.
+             * @param {string | Function} [className]
+             * @param {string} [message]
+             */
+            static verifyParams(args, allowedTypes, methodName = "<anonymous>", className = "<anonymous>", message = undefined) {
+                if (!this.active) return;
 
-                        for (const allowedType of allowedTypesIter) {
-                            try {
-                                this.#verifyValueAgainstAllowedTypes(value, allowedType);
-                                isValid = true;
+                if (!this.#isArguments(args) && !Array.isArray(args)) {
+                    throw new ParameterTypeError(
+                        args, "arguments", "args", "verifyParams", ParameterTypeError.name,
+                        "The given args must be an arguments object or an array."
+                    );
+                }
+                if (!Array.isArray(allowedTypes)) {
+                    throw new ParameterTypeError(
+                        allowedTypes, "array", "allowedTypes", "verifyParams", ParameterTypeError.name,
+                        "The given allowedTypes must be an array, with one entry per parameter to check."
+                    );
+                }
+
+                const argsArray = Array.from(args);
+                const paramNames = this.#extractParamNames(methodName);
+
+                for (let i = 0; i < allowedTypes.length; i++) {
+                    const parameterName = paramNames?.[i] ?? `arg${i + 1}`;
+                    this.verifyParam(argsArray[i], allowedTypes[i], parameterName, methodName, className, message);
+                }
+            }
+
+        //#endregion
+
+
+
+
+        //MARK:              — type matching —
+        //#region
+
+
+
+
+
+            // MARK: _  #matchesType()
+            static #matchesType(value, type) {
+                if (Array.isArray(type)) {
+                    return this.#matchesTuple(value, type);
+                }
+                if (typeof type === "function") {
+                    return value instanceof type || value === type;
+                }
+                if (type instanceof RegExp) {
+                    return (typeof value === "string" || typeof value === "number") && type.test(String(value));
+                }
+                if (type !== null && typeof type === "object") {
+                    return this.#matchesExactShape(value, type);
+                }
+                if (typeof type !== "string") return false;
+
+                const node = this.#parseTypeExpression(type);
+                return this.#matchesNode(value, node);
+            }
+
+
+
+            // MARK: _  #matchesTuple()
+            static #matchesTuple(value, typeArray) {
+                if (!Array.isArray(value)) return false;
+                if (value.length !== typeArray.length) return false;
+                return typeArray.every((t, i) => this.#matchesType(value[i], t));
+            }
+
+
+
+            // MARK: _  #matchesExactShape()
+            static #matchesExactShape(value, spec) {
+                if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
+                const specKeys = Object.keys(spec);
+                const valueKeys = Object.keys(value);
+                if (specKeys.length !== valueKeys.length) return false;
+                return specKeys.every(key =>
+                    Object.prototype.hasOwnProperty.call(value, key) && this.#matchesType(value[key], spec[key])
+                );
+            }
+
+
+
+            // MARK: _  #matchesNode()
+            static #matchesNode(value, node) {
+                switch (node.kind) {
+                    case "literal":
+                        return value === node.value;
+
+                    case "primitive":
+                        return typeof value === node.name;
+
+                    case "special":
+                        switch (node.name) {
+                            case "any": return true;
+                            case "array": return Array.isArray(value);
+                            case "class": return this.#isClass(value);
+                            case "constructor": return typeof value === "function";
+                            case "arguments": return this.#isArguments(value);
+                        }
+                        return false;
+
+                    case "named": {
+                        const ctor = globalThis[node.name];
+                        return typeof ctor === "function" && value instanceof ctor;
+                    }
+
+                    case "regex":
+                        return (typeof value === "string" || typeof value === "number") && node.regex.test(String(value));
+
+                    case "union":
+                        return node.options.some(opt => this.#matchesNode(value, opt));
+
+                    case "array": {
+                        if (!Array.isArray(value)) return false;
+                        if (node.length !== null && value.length !== node.length) return false;
+                        return value.every(v => this.#matchesNode(v, node.element));
+                    }
+
+                    case "tuple": {
+                        if (!Array.isArray(value)) return false;
+                        if (value.length !== node.elements.length) return false;
+                        return node.elements.every((elNode, idx) => this.#matchesNode(value[idx], elNode));
+                    }
+
+                    case "record": {
+                        if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
+                        for (const key of Object.keys(value)) {
+                            const rule = this.#findMatchingRecordRule(node.rules, key);
+                            if (!rule) return false;
+                            if (!this.#matchesNode(value[key], rule.valueType)) return false;
+                        }
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+
+
+            // MARK: _  #findMatchingRecordRule()
+            /** Picks the most specific rule (literal > regex > pseudo key-type) whose key-pattern matches `key`. */
+            static #findMatchingRecordRule(rules, key) {
+                let best = null;
+                let bestTier = Infinity;
+                for (const rule of rules) {
+                    for (const kp of rule.keyPatterns) {
+                        if (this.#matchesKeyPattern(key, kp)) {
+                            const tier = kp.kind === "literal" ? 0 : kp.kind === "regex" ? 1 : 2;
+                            if (tier < bestTier) { bestTier = tier; best = rule; }
+                            break;
+                        }
+                    }
+                }
+                return best;
+            }
+
+
+
+            // MARK: _  #matchesKeyPattern()
+            static #matchesKeyPattern(key, kp) {
+                switch (kp.kind) {
+                    case "literal": return key === kp.value;
+                    case "regex": return kp.regex.test(key);
+                    case "typename": {
+                        const isNumericKey = /^-?\d+(\.\d+)?$/.test(key);
+                        if (kp.name === "any") return true;
+                        if (kp.name === "number") return isNumericKey;
+                        if (kp.name === "string") return !isNumericKey;
+                        return false;
+                    }
+                }
+                return false;
+            }
+
+        //#endregion
+
+
+
+
+        //MARK:       — type-expression parsing —
+        //#region
+
+
+
+
+
+            // MARK: _  #parseTypeExpression()
+            static #parseTypeExpression(str) {
+                if (this.#typeExpressionCache.has(str)) return this.#typeExpressionCache.get(str);
+
+                let node;
+                try {
+                    const tokens = this.#tokenizeTypeExpression(str);
+                    let pos = 0;
+
+                    const peek = () => tokens[pos];
+                    const advance = () => tokens[pos++];
+                    const expect = (type) => {
+                        const t = advance();
+                        if (!t || t.type !== type) throw new SyntaxError(`expected "${type}" but got ${t ? `"${t.type}"` : "end of input"}`);
+                        return t;
+                    };
+
+                    const parseType = () => parseUnion();
+
+                    const parseUnion = () => {
+                        let n = parsePostfix();
+                        if (peek() && peek().type === "|") {
+                            const options = [n];
+                            while (peek() && peek().type === "|") {
+                                advance();
+                                options.push(parsePostfix());
+                            }
+                            n = { kind: "union", options };
+                        }
+                        return n;
+                    };
+
+                    const parsePostfix = () => {
+                        let n = parsePrimary();
+                        while (peek() && peek().type === "[") {
+                            advance();
+                            let length = null;
+                            if (peek() && peek().type === "literal" && peek().literalType === "number") {
+                                length = advance().value;
+                            }
+                            expect("]");
+                            n = { kind: "array", element: n, length };
+                        }
+                        return n;
+                    };
+
+                    const parseKeyPatternAtom = () => {
+                        const t = peek();
+                        if (!t) throw new SyntaxError("expected a key pattern");
+                        if (t.type === "literal") {
+                            advance();
+                            if (t.literalType === "regex") return { kind: "regex", regex: t.value };
+                            if (t.literalType === "string") return { kind: "literal", value: t.value };
+                            throw new SyntaxError(`a ${t.literalType} literal cannot be used as an object key pattern`);
+                        }
+                        if (t.type === "identifier") {
+                            advance();
+                            return { kind: "typename", name: t.value };
+                        }
+                        throw new SyntaxError(`unexpected token "${t.type}" in key pattern`);
+                    };
+
+                    const parseKeyPatternUnion = () => {
+                        const patterns = [parseKeyPatternAtom()];
+                        while (peek() && peek().type === "|") {
+                            advance();
+                            patterns.push(parseKeyPatternAtom());
+                        }
+                        return patterns;
+                    };
+
+                    const parseRecordMemberInto = (rules) => {
+                        if (peek() && peek().type === "(") {
+                            while (true) {
+                                expect("(");
+                                const keyPatterns = parseKeyPatternUnion();
+                                expect(":");
+                                const valueType = parseType();
+                                expect(")");
+                                rules.push({ keyPatterns, valueType });
+                                if (peek() && peek().type === "|") { advance(); continue; }
                                 break;
                             }
-                            catch (err) {}
+                        } else {
+                            const keyPatterns = parseKeyPatternUnion();
+                            expect(":");
+                            const valueType = parseType();
+                            rules.push({ keyPatterns, valueType });
                         }
+                    };
 
-                        if (!isValid) {
+                    const parsePrimary = () => {
+                        const t = peek();
+                        if (!t) throw new SyntaxError("unexpected end of type expression");
 
+                        if (t.type === "(") {
+                            advance();
+                            const inner = parseType();
+                            expect(")");
+                            return inner;
                         }
-                    }
-                }
-                else for (const allowedType of allowedTypesIter) {
-                    try {
-                        this.#verifyValueAgainstAllowedTypes(value, allowedType);
-                        return;
-                    }
-                    catch (err) {}
-                }
-
-
-                throw new ParameterTypeError(
-                    actualValue,
-                    allowedTypes,
-                    parameterName,
-                    methodName ? (typeof methodName === "function" ? methodName.name : methodName) : "<init>",
-                    className ? (typeof className === "function" ? className.name : className) : ParameterTypeError.name,
-                    message || ParameterTypeError.#defaultMessageHeader
-                )
-
-            }
-
-
-            // MARK: _  #verifyArray()
-            /**
-             * Verifies that all the elements of the given array of values are of one of the types in the given allowedTypes.
-             * 
-             * @param {Array} values 
-             * @param {string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]} allowedTypes 
-             */
-            static #verifyArray(values, allowedTypes=ParameterTypeError.#defaultAllowedTypes) {
-                ParameterTypeError.verifyParam(
-                    values, 
-                    "Array", 
-                    this.#verifyArray.getArgumentFromValue(arguments, values)[0], 
-                    this.#verifyArray.name, 
-                    ParameterTypeError.name, 
-                    "The given "+this.#verifyArray.getArgumentFromValue(arguments, values)[0]+" is NOT an Array."
-                );
-                ParameterTypeError.verifyAllowedTypes(allowedTypes);
-
-                var isValid = false;
-                for (const value of values) {
-                    try {
-                        this.#verifyValueAgainstAllowedTypes(value, allowedTypes)
-                        isValid = true;
-                        break;
-                    }
-                    catch (err) {}
-                }
-
-                if (!isValid) throw new ParameterTypeError(
-                    values,
-                    allowedTypes,
-                    ParameterTypeError.#verifyArray.getArgumentFromValue(arguments, values)[0],
-                    this.#verifyArray.name,
-                    ParameterTypeError.name,
-                    "The given "+this.#verifyArray.getArgumentFromValue(arguments, values)[0]
-                    +" does NOT have all its elements respecting the given allowedTypes."
-                )
-            }
-
-
-
-
-            // MARK: _  #verifyValueAgainstAllowedTypes()
-            /**
-             * Verifies that the given value is of one of the types in the given allowedTypes.
-             * 
-             * @param {any} value 
-             * @param {string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]} allowedTypes 
-             */
-            static #verifyValueAgainstAllowedTypes(value, allowedTypes=ParameterTypeError.#defaultAllowedTypes) {
-                this.verifyAllowedTypes(allowedTypes);
-
-                var isValid = false;
-                var allowedTypesIter = allowedTypes instanceof Array
-                    ? allowedTypes.map(type => typeof type === "string" ? type : (type instanceof Array ? type : type.toString()))
-                    : (typeof allowedTypes === "string" 
-                        ? allowedTypes.replaceAll(" ", "").split("|")
-                        : [ allowedTypes.name ]
-                    )
-                ;
-
-                for (const allowedType of allowedTypesIter) {
-                    if (!isValid) {
-                        const match = allowedType.match(/\(([^\)]*)\)\[\]/);
-                        if (match || allowedType instanceof Array) {
-                            this.#verifyArray(value, allowedType);
-                        }
-                        else if (!ParameterTypeError.handledAllowedTypes.includes(allowedType)) {
-                            if (!globalThis[allowedType]) {
-                                throw new ParameterTypeError(
-                                    allowedType,
-                                    this.#defaultAllowedTypes,
-                                    ParameterTypeError.#verifyValueAgainstAllowedTypes.getArgumentFromValue(arguments, allowedType)[0],
-                                    ParameterTypeError.#verifyValueAgainstAllowedTypes.name,
-                                    ParameterTypeError.name,
-                                    "\""+allowedType+"\" is not a class known to globalThis."
-                                )
+                        if (t.type === "[") {
+                            advance();
+                            const elements = [];
+                            if (peek() && peek().type !== "]") {
+                                elements.push(parseType());
+                                while (peek() && peek().type === ",") {
+                                    advance();
+                                    elements.push(parseType());
+                                }
                             }
-    
-                            if (value instanceof globalThis[allowedType]) isValid = true;
+                            expect("]");
+                            return { kind: "tuple", elements };
                         }
-                        else if (allowedType === "constructor") { if (isConstructible(value)) isValid = true; }
-                        else if (allowedType === "class")       { if (isClass(value)) isValid = true; }
-                        else if (allowedType === "arguments")   { if (isArguments(value)) isValid = true; }
-                        else if (allowedType === "any")         { isValid = true; }
-                        else if (typeof value === allowedType)  { isValid = true; }
+                        if (t.type === "{") {
+                            advance();
+                            const rules = [];
+                            if (peek() && peek().type !== "}") {
+                                parseRecordMemberInto(rules);
+                                while (peek() && peek().type === ",") {
+                                    advance();
+                                    parseRecordMemberInto(rules);
+                                }
+                            }
+                            expect("}");
+                            return { kind: "record", rules };
+                        }
+                        if (t.type === "literal") {
+                            advance();
+                            if (t.literalType === "regex") return { kind: "regex", regex: t.value };
+                            return { kind: "literal", value: t.value };
+                        }
+                        if (t.type === "identifier") {
+                            advance();
+                            if (ParameterTypeError.basicAllowedTypes.includes(t.value)) return { kind: "primitive", name: t.value };
+                            if (ParameterTypeError.customAllowedTypes.includes(t.value)) return { kind: "special", name: t.value };
+                            return { kind: "named", name: t.value };
+                        }
+                        throw new SyntaxError(`unexpected token "${t.type}"`);
+                    };
+
+                    node = parseType();
+                    if (pos !== tokens.length) throw new SyntaxError(`unexpected trailing content starting at token ${pos}`);
+                }
+                catch (err) {
+                    throw new SyntaxError(`Invalid type expression "${str}": ${err.message}`);
+                }
+
+                this.#typeExpressionCache.set(str, node);
+                return node;
+            }
+
+
+
+            // MARK: _  #tokenizeTypeExpression()
+            static #tokenizeTypeExpression(str) {
+                const tokens = [];
+                const n = str.length;
+                let i = 0;
+
+                const asRegexShape = (rawValue) => {
+                    const m = /^\/(.*)\/([a-zA-Z]*)$/.exec(rawValue);
+                    if (!m) return null;
+                    try { return new RegExp(m[1], m[2]); } catch { return null; }
+                };
+
+                while (i < n) {
+                    const c = str[i];
+
+                    if (/\s/.test(c)) { i++; continue; }
+
+                    if ("()[]{},|:".includes(c)) { tokens.push({ type: c }); i++; continue; }
+
+                    if (c === '"' || c === "'") {
+                        const quote = c;
+                        let j = i + 1;
+                        let value = "";
+                        while (j < n && str[j] !== quote) {
+                            if (str[j] === "\\" && j + 1 < n) { value += str[j + 1]; j += 2; continue; }
+                            value += str[j];
+                            j++;
+                        }
+                        if (j >= n) throw new SyntaxError("unterminated string literal");
+                        const regex = asRegexShape(value);
+                        if (regex) tokens.push({ type: "literal", literalType: "regex", value: regex });
+                        else tokens.push({ type: "literal", literalType: "string", value });
+                        i = j + 1;
+                        continue;
                     }
+
+                    if (c === "/") {
+                        let j = i + 1;
+                        let body = "";
+                        let terminated = false;
+                        while (j < n) {
+                            if (str[j] === "\\" && j + 1 < n) { body += str[j] + str[j + 1]; j += 2; continue; }
+                            if (str[j] === "/") { terminated = true; j++; break; }
+                            body += str[j];
+                            j++;
+                        }
+                        if (!terminated) throw new SyntaxError("unterminated regex literal");
+                        const flagsMatch = /^[a-zA-Z]*/.exec(str.slice(j));
+                        const flags = flagsMatch ? flagsMatch[0] : "";
+                        j += flags.length;
+                        let regex;
+                        try { regex = new RegExp(body, flags); }
+                        catch (err) { throw new SyntaxError(`invalid regex literal /${body}/${flags}: ${err.message}`); }
+                        tokens.push({ type: "literal", literalType: "regex", value: regex });
+                        i = j;
+                        continue;
+                    }
+
+                    const numMatch = /^-?\d+(\.\d+)?/.exec(str.slice(i));
+                    if (numMatch) {
+                        tokens.push({ type: "literal", literalType: "number", value: Number(numMatch[0]) });
+                        i += numMatch[0].length;
+                        continue;
+                    }
+
+                    const idMatch = /^[A-Za-z_$][A-Za-z0-9_$]*/.exec(str.slice(i));
+                    if (idMatch) {
+                        const word = idMatch[0];
+                        if (word === "true" || word === "false") {
+                            tokens.push({ type: "literal", literalType: "boolean", value: word === "true" });
+                        } else {
+                            tokens.push({ type: "identifier", value: word });
+                        }
+                        i += word.length;
+                        continue;
+                    }
+
+                    throw new SyntaxError(`unexpected character "${c}" at position ${i}`);
                 }
 
+                return tokens;
+            }
 
-                if (!isValid) {
-                    throw new ParameterTypeError(
-                        value,
-                        allowedTypes,
-                        ParameterTypeError.#verifyValueAgainstAllowedTypes.getArgumentFromValue(arguments, value)[0],
-                        ParameterTypeError.#verifyValueAgainstAllowedTypes.name,
-                        ParameterTypeError.name,
-                        "The given "+ParameterTypeError.#verifyValueAgainstAllowedTypes.getArgumentFromValue(arguments, value)[0]+" is of an unexpected type."
-                    )
+        //#endregion
+
+
+
+
+        //MARK:               — misc internals —
+        //#region
+
+
+
+
+
+            static #describeType(value) {
+                if (value === null) return "null";
+                if (Array.isArray(value)) return `array[${value.length}]`;
+                if (this.#isArguments(value)) return "arguments";
+                if (typeof value === "object") return value.constructor?.name ?? "object";
+                if (typeof value === "function") return this.#isClass(value) ? "class" : "function";
+                return typeof value;
+            }
+
+            static #describeAllowedType(type) {
+                if (typeof type === "function") return type.name || "<anonymous class>";
+                if (Array.isArray(type)) return "[" + type.map(t => this.#describeAllowedType(t)).join(", ") + "]";
+                if (type instanceof RegExp) return type.toString();
+                if (type !== null && typeof type === "object") {
+                    return "{" + Object.entries(type).map(([k, v]) => `${k}: ${this.#describeAllowedType(v)}`).join(", ") + "}";
                 }
+                return String(type);
             }
 
-
-            // MARK: _  prepareAllowedTypes()
-            /**
-             * 
-             * @param {string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]} allowedTypes 
-             */
-            static prepareAllowedTypes(allowedTypes) {
-                this.verifyAllowedTypes(allowedTypes);
+            static #isClass(value) {
+                return typeof value === "function" && /^class[\s{]/.test(Function.prototype.toString.call(value));
             }
 
-
-
-            // MARK: _  verifyAllowedTypes()
-            /**
-             * Verifies that the given allowedTypes is properly defined.
-             * 
-             * @param {string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]} allowedTypes 
-             */
-            static verifyAllowedTypes(allowedTypes) {
-                if (allowedTypes instanceof Array) { allowedTypes.forEach(allowedType => { this.verifyAllowedTypes(allowedType) }) }
-                else if ( typeof allowedTypes !== "string" && (globalThis[allowedTypes] ? !isConstructible(allowedTypes) : false) ) throw new ParameterTypeError(
-                    allowedTypes,
-                    this.#defaultAllowedTypes,
-                    this.verifyAllowedTypes.getArgumentFromValue(arguments, allowedTypes)[0],
-                    this.verifyAllowedTypes.name,
-                    ParameterTypeError.name,
-                    "Improper ParameterTypeError use: given "+this.verifyAllowedTypes.getArgumentFromValue(arguments, allowedTypes)[0]
-                    +" is NOT a string, a class, a constructible nor an Array of any of the previous three (possibly recursively)."
-                );
+            static #isArguments(value) {
+                return Object.prototype.toString.call(value) === "[object Arguments]";
             }
 
+            static #extractParamNames(fct) {
+                if (typeof fct !== "function") return null;
 
+                const src = Function.prototype.toString.call(fct);
+                const match = isClass(fct) ? src.match(/(?<=\n[\s\t\n]*)constructor[\s\t\n]*[^(]*\(([^)]*)\)/) : src.match(/^[^(]*\(([^)]*)\)/);
+                if (!match) return null;
+                return match[1]
+                    .split(",")
+                    .map(p => p.trim().split("=")[0].trim().replace(/^\.\.\./, ""))
+                    .filter(Boolean);
+            }
 
-        //#endregion .                 — methods —
-
-
+        //#endregion
     }
 
 
@@ -776,13 +1051,6 @@
 
     //-MARK: 
     ;
-
-
-
-
-
-
-
 
 
 
@@ -867,30 +1135,20 @@
          */
         constructor(grade, coef, subject, title=" — ", isSim=false, classAvg=" — ", prof=" — ", date=" — ", semester="?", module=undefined, ecamDash=undefined, id=undefined) {
 
-            // Parameters verification
-            //#region
-            if (isNaN(grade))                   { throw new ParameterTypeError("Improper Grade construction.") }
-            if (!(typeof subject == "string" || subject instanceof Subject))  {
-                throw new TypeError("Improper Grade construction: wrong '" + "subject" + "' parameter type, was expecting a Subject or a string.")
-            }
-            if (isNaN(coef))                    { throw new TypeError("Improper Grade construction: wrong '" + "coef"    + "' parameter type, was expecting a number.") }
-            if (typeof title != "string")       { throw new TypeError("Improper Grade construction: wrong '" + "title"   + "' parameter type, was expecting a string.") }
-            if (typeof isSim != "boolean")      { throw new TypeError("Improper Grade construction: wrong '" + "isSim"   + "' parameter type, was expecting a boolean.")}
-            if (typeof prof  != "string")       { throw new TypeError("Improper Grade construction: wrong '" + "prof"    + "' parameter type, was expecting a string.") }
-            if (typeof date  != "string")       { throw new TypeError("Improper Grade construction: wrong '" + "date"    + "' parameter type, was expecting a string.") }
-            if (!(semester instanceof Semester || !isNaN(semester) || semester == undefined))    {
-                throw new TypeError("Improper Grade construction: wrong '" + "semester"+ "' parameter type, was expecting a Semester, a number, or undefined.")
-            }
-            if (!(module instanceof Module || typeof module == "string" || module == undefined)) {
-                throw new TypeError("Improper Grade construction: wrong '" + "module"   + "' parameter type, was expecting a Module, a string, or undefined.")
-            }
-            if (!(ecamDash instanceof ECAMDashboard || ecamDash == undefined)) {
-                throw new TypeError("Improper Grade construction: wrong '" + "ecamDash" + "' parameter type, was expecting an ECAMDashboard or undefined.")
-            }
-            if (isNaN(id) && id != undefined) {
-                throw new TypeError("Improper Grade construction: wrong '" + "id"       + "' parameter type, was expecting a number or undefined.")
-            }
-            //#endregion
+            ParameterTypeError.verifyParams(arguments, [
+                "number",
+                "number",
+                Subject.name+"|string",
+                "string|undefined",
+                "boolean|undefined",
+                "number|\" — \"|undefined",
+                "string|undefined",
+                "string|undefined",
+                Semester.name+" | /\\d+|\\?/ | undefined",
+                Module.name+"|string|undefined",
+                ECAMDashboard.name+"|undefined",
+                "number|undefined"
+            ], Grade, Grade)
 
 
             this.#grade     = grade <= 20 ? (grade >= 0 ? Number(grade) : 0) : 20;
@@ -1068,18 +1326,18 @@
 
                 if (match) {
                     const grade = new Grade(
-                        match[5],
-                        match[7],
+                        parseFloat(match[5]),
+                        parseFloat(match[7]),
                         match[3],
                         match[4],
                         !isNaN(match[8]),
-                        match[6],
+                        parseFloat(match[6]),
                         undefined,
                         undefined,
-                        match[1],
+                        parseInt(match[1]),
                         match[2],
                         ecamDash,
-                        match[8]
+                        parseInt(match[8])
                     );
 
                     grade.enabled       = match[9]  === "ON";
@@ -3202,7 +3460,6 @@ class ECAMDashboard {
                                             this,
                                             g.id
                                         );
-                                        // debugger;
                                         this.sim.push(simGrade);
                                         this.grades.push(simGrade);
                                     })
@@ -3246,10 +3503,10 @@ class ECAMDashboard {
                     const cells = row.querySelectorAll("td");
 
                     if (cells.length >= 6 && cells[0].textContent.includes("/20")) {
-                        const grade     = parseFloat(cells[0].textContent.replace("/20", "").replace(",", ".")) || 0;
                         const libelle   = cells[1].textContent.trim();
-                        const coef      = parseFloat(cells[2].textContent.replace("%", "").replace(",", "."))   || 0;
-                        const classAvg  = parseFloat(cells[3].textContent.replace("/20", "").replace(",", ".")) || 0;
+                        const grade     = parseFloat(cells[0].textContent.replace(",", ".").replace("/20", "")) || 0;
+                        const coef      = parseFloat(cells[2].textContent.replace(",", ".").replace("%", ""))   || 0;
+                        const classAvg  = parseFloat(cells[3].textContent.replace(",", ".").replace("/20", "")) || 0;
                         const prof      = cells[4].textContent.trim();
                         const date      = cells[5].textContent.trim();
                         const semMatch  = libelle.match(/Semester\s+(\d+)/i);
@@ -3425,13 +3682,11 @@ ParameterTypeError.active = true;
 /** @type {ECAMDashboard} */
 ecamDash2 = new ECAMDashboard().parseGrades();
 
-paramsToVerify = [
-    ["Le Goat"], 
+ParameterTypeError.verifyParam(
+    "Le Goat", 
     "string", 
     "v1", 
     "taunt", 
     "Gabriel", 
     "You're getting rusty, machine!!"
-];
-
-ParameterTypeError.verifyParam(...paramsToVerify);
+);

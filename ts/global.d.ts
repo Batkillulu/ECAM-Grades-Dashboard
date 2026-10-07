@@ -16,38 +16,37 @@ interface String {
 interface Function {
 
     /**
-     * Gets the name of the arguments of ***this*** Function in an Array. 
-     * If {@link args} is given an {@link IArguments} object, 
-     * maps the name of the parameters to their corresponding values instead.
-     * @param args Arguments of the function, simply give "arguments".
-     * @param allowedTypes Description of the allowed types of each arguments.
+     * @param {IArguments} [args] The callee's `arguments` object.
+     * @param {(string | Function | (string|Function)[])[]} [allowedTypes] One entry per parameter.
+     * @returns {string[] | Object<string, {value?: any, allowedTypes?: any}>}
+     *   With neither `args` nor `allowedTypes`: an ordered array of parameter names.
+     *   Otherwise: an object keyed by parameter name (in declaration order), each holding
+     *   a `value` (when `args` is a real arguments object) and/or `allowedTypes` (when
+     *   `allowedTypes` is a well-formed allowedTypes array) — whichever were actually given.
      */
-    getArguments(args?: IArguments=arguments, allowedTypes: string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]): 
-    {string: { "value": any, "allowedTypes": string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[] }} | string[]
+    getArguments(args?: IArguments, allowedTypes?: string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]):
+    {string: { "value": any, "allowedTypes"?: string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[] }} | string[]
 
 
     /**
-     * Gets the name of the {@link index}-th arguments of ***this*** Function in an Array. 
-     * If {@link args} is given an {@link IArguments} object, 
-     * maps the name of the {@link index}-th parameters to its corresponding value instead.
-     * @param index Index of the argument to get.
-     * @param args Arguments of the function, simply give "arguments".
-     * @param allowedTypes Description of the allowed types of each arguments.
+     * @param {number} index Position of the parameter to fetch.
+     * @param {IArguments} [args] The callee's `arguments` object.
+     * @returns {string | [string, {value: any}]} Without `args`: just the parameter's name. With `args`: an `[name, {value}]` entry.
      */
-    getArgument(index:number, args?: IArguments, allowedTypes?: string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]): 
+    getArgument(index:number, args?: IArguments, allowedTypes?: string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]):
     [string, { "value": any, "allowedTypes": string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[] }] | any
 
 
     /**
-     * Gets the argument (entry with the name of the argument as key, 
-     * and as value an object with the "value" field associated to the value of the argument 
-     * and the "allowedTypes" field associated to the allowedTypes of the argument) 
-     * corresponding to the given value.
-     * @param args 
-     * @param value 
-     * @param allowedTypes
+     * Finds the `[name, {value, allowedTypes}]` entry whose captured value is `value`.
+     *
+     * @param {IArguments} args The callee's `arguments` object.
+     * @param {any} value The value to look for.
+     * @param {(string | Function | (string|Function)[])[]} [allowedTypes]
+     * @returns {[string, {value: any, allowedTypes?: any}]}
+     * @throws {Error} If no parameter currently holds `value`.
      */
-    getArgumentFromValue(args: IArguments, value: any, allowedTypes: string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]): 
+    getArgumentFromValue(args: IArguments, value: any, allowedTypes: string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]):
     [string, { "value": any, "allowedTypes": string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[] }]
 
 }
