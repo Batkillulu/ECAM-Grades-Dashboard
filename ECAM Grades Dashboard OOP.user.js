@@ -538,7 +538,7 @@
              * @param {string | Function} [className]
              * @param {string} [message]
              */
-            static verifyParam(actualValue, allowedType, parameterName = "(unknown)", methodName = "<anonymous>", className = "<anonymous>", message = undefined) {
+            static #verifyParam(actualValue, allowedType, parameterName = "(unknown)", methodName = "<anonymous>", className = "<anonymous>", message = undefined) {
                 if (!this.active) return;
 
                 if (!this.#matchesType(actualValue, allowedType)) {
@@ -577,7 +577,7 @@
 
                 for (let i = 0; i < allowedTypes.length; i++) {
                     const parameterName = paramNames?.[i] ?? `arg${i + 1}`;
-                    this.verifyParam(argsArray[i], allowedTypes[i], parameterName, method, className, message);
+                    this.#verifyParam(argsArray[i], allowedTypes[i], parameterName, method, className, message);
                 }
             }
 
@@ -1431,7 +1431,7 @@
              * @param {Grade[]} grades Array of {@link Grade}s to calculate the weighted average from.
              */
             static average(grades) {
-                ParameterTypeError.verifyParams(arguments, [Grade], Grade.average, Grade);
+                ParameterTypeError.verifyParams(arguments, [Grade.name+"[]"], Grade.average, Grade);
 
                 if (grades instanceof Array) {
                     let validArrayOfGrades = true, average = 0, totalCoef = 0;
@@ -1461,7 +1461,7 @@
              * @returns {number|" — "}
              */
             static classAverage(grades) {
-                ParameterTypeError.verifyParams(arguments, [Grade], Grade.classAverage, Grade);
+                ParameterTypeError.verifyParams(arguments, [Grade.name+"[]"], Grade.classAverage, Grade);
 
                 if (grades instanceof Array) {
                     let validArrayOfGrades = true, average = 0, totalCoef = 0;
@@ -2043,35 +2043,7 @@
          */
         constructor(name=undefined, semester=undefined, subjects=[]) {
 
-
-
-            //#region
-            if (typeof name != "string")      { throw new TypeError("Improper Module construction: wrong 'name' argument type, was expecting a string.") }
-            if (!(semester instanceof Semester) && semester !== undefined)  { throw new TypeError("Improper Module construction: wrong 'semester' optional argument type, was expecting a Semester, a number, or undefined.") }
-            if (!(subjects instanceof Array)) { throw new TypeError("Improper Module construction: the 'subjects' optional parameter is not an ARRAY, was expecting an Array of Subjects or of strings.") }
-
-            /** @type {Map<string, Subject>} */
-            let subjectsEntries = new Map();
-            const semesterObj  = semester  || subjects[0]?.semester;
-
-            subjects.forEach(subject => {
-                if (!(subject instanceof Subject || typeof subject == "string")) {
-                    throw new TypeError("Improper Module construction: the 'subjects' optional parameter is not an Array of SUBJECTS or STRINGS (and ONLY Subjects OR strings), was expecting an Array of Subjects or of strings.")
-                }
-
-                if (subject instanceof Subject) {
-                    if (subject.module != name) {
-                        throw new Error("Improper Module construction: the Subjects in the optional Array of Subjects parameter 'subjects' don't all have the same module name.")
-                    }
-
-                    if (subject.semester != semesterObj) {
-                        throw new Error("Improper Module construction: the Subjects in the optional Array of Subjects parameter 'subjects' don't all have the same semester number.")
-                    }
-                }
-
-
-            })
-            //#endregion
+            ParameterTypeError.verifyParams(arguments, ["string", Semester.name+"|number|/\\d+/|undefined", Subject.name+"|"+Subject.name+"[]|[]"])
 
             this.addSubjects(...subjects);
 
@@ -3342,8 +3314,6 @@ class ECAMDashboard {
 
         sim             = [];
 
-        gradesData = {};
-
         moduleConfig = {};
 
 
@@ -3624,10 +3594,13 @@ class ECAMDashboard {
             }
 
             this.retrieveCachedSimGrades();
-            this.computeStatsForEverything();
+            this.computeAllStats();
 
             return this;
         }
+
+
+
 
 
 
@@ -3665,9 +3638,12 @@ class ECAMDashboard {
                 "number | /\\d+/ | undefined"
             ], ECAMDashboard.prototype.addGrade, ECAMDashboard);
 
-            
+            if (!this.getSemester(semester)) this.addSemester(semester);
 
         }
+
+
+
 
 
         // MARK: _  getSubject()
@@ -3694,6 +3670,38 @@ class ECAMDashboard {
         }
 
 
+        // MARK: _  addSubject()
+        /**
+         * 
+         * @param {Subject|string} subject 
+         * @param {Module|string|undefined} module 
+         * @param {Semester|number|string|undefined} semester 
+         * @returns 
+         */
+        addSubject(subject, module=undefined, semester=undefined) {
+            ParameterTypeError.verifyParams(arguments, [
+                Subject.name +"|string", 
+                Module.name  +"|string|undefined", 
+                Semester.name+"|number|/\\d+/|undefined"
+            ], ECAMDashboard.prototype.addModule, ECAMDashboard);
+
+            /** @type {Semester|null} */ 
+            var sem = null;
+
+            if ((sem = this.getSemester(semester)) === null) sem = this.addSemester(semester);
+
+            if (this.getSubject(module, semester) === null) {
+                const newMod = new Module(module, sem);
+                this.modules.push(newMod);
+                return newMod;
+            }
+
+            return null;
+        }
+
+
+
+
         // MARK: _  getModule()
         /**
          *
@@ -3701,7 +3709,7 @@ class ECAMDashboard {
          * @returns {Module | null}
          */
         getModule(module, semester=undefined) {
-            if (!(module instanceof Module || typeof module == "string")) return null
+            ParameterTypeError.verifyParams(arguments, [Module.name+"|string", "number|/\\d+/|undefined"], ECAMDashboard.prototype.getModule, ECAMDashboard);
 
             this.modules.forEach(mod => {
                 if (module instanceof Module && mod.equals(module)) return mod;
@@ -3715,6 +3723,27 @@ class ECAMDashboard {
         }
 
 
+        // MARK: _  addModule()
+        addModule(module, semester) {
+            ParameterTypeError.verifyParams(arguments, [Module.name+"|string", "number|/\\d+/"], ECAMDashboard.prototype.addModule, ECAMDashboard);
+
+            /** @type {Semester|null} */ 
+            var sem = null;
+
+            if ((sem = this.getSemester(semester)) === null) sem = this.addSemester(semester);
+
+            if (this.getModule(module, semester) === null) {
+                const newMod = new Module(module, sem);
+                this.modules.push(newMod);
+                return newMod;
+            }
+
+            return null;
+        }
+
+
+
+
         // MARK: _  getSemester()
         /**
          *
@@ -3722,7 +3751,7 @@ class ECAMDashboard {
          * @returns {Semester | null}
          */
         getSemester(semester) {
-            if (!(semester instanceof Semester || !isNaN(semester))) return null
+            ParameterTypeError.verifyParams(arguments, ["number|/\\d+/"], ECAMDashboard.prototype.getSemester, ECAMDashboard);
 
             this.semesters.forEach(sem => {
                 if (semester instanceof Module && sem.equals(semester))  return semester;
@@ -3733,14 +3762,30 @@ class ECAMDashboard {
         }
 
 
+        // MARK: _  addSemester()
+        addSemester(semester) {
+            ParameterTypeError.verifyParams(arguments, ["number|/\\d+/"], ECAMDashboard.prototype.addSemester, ECAMDashboard);
 
-        // MARK: _  computeStatsForEverything()
+            if (this.getSemester(semester) === null) {
+                const newSem = new Semester(semester);
+                this.semesters.push(newSem);
+                return newSem;
+            }
+
+            return null;
+        }
+
+
+
+
+
+        // MARK: _  computeAllStats()
         /**
          * Compute the stats of every {@link Semester}, {@link Module} and {@link Subject}.
          *
          * @returns ***this*** {@link ECAMDashboard}.
          */
-        computeStatsForEverything() {
+        computeAllStats() {
             this.semesters.forEach(sem => { sem.computeStats(true, true) })
 
             return this;
