@@ -556,17 +556,7 @@
 
 
             // MARK: _  verifyParams()
-            /**
-             * Verifies every argument in `args` against the type(s) at the same index in `allowedTypes`.
-             * Extra elements in `args` beyond `allowedTypes.length` are ignored.
-             *
-             * @param {IArguments | any[]} args Typically the callee's `arguments` object.
-             * @param {any[]} allowedTypes One entry per positional parameter to check (see {@link ParameterTypeError.verifyParam}).
-             * @param {string | Function} [methodName] Pass the actual function (not just its name) to get real parameter names in error messages.
-             * @param {string | Function} [className]
-             * @param {string} [message]
-             */
-            static verifyParams(args, allowedTypes, methodName = "<anonymous>", className = "<anonymous>", message = undefined) {
+            static verifyParams(args, allowedTypes, method = "<anonymous>", className = "<anonymous>", message = undefined) {
                 if (!this.active) return;
 
                 if (!this.#isArguments(args) && !Array.isArray(args)) {
@@ -583,11 +573,11 @@
                 }
 
                 const argsArray = Array.from(args);
-                const paramNames = this.#extractParamNames(methodName);
+                const paramNames = this.#extractParamNames(method);
 
                 for (let i = 0; i < allowedTypes.length; i++) {
                     const parameterName = paramNames?.[i] ?? `arg${i + 1}`;
-                    this.verifyParam(argsArray[i], allowedTypes[i], parameterName, methodName, className, message);
+                    this.verifyParam(argsArray[i], allowedTypes[i], parameterName, method, className, message);
                 }
             }
 
@@ -1045,11 +1035,7 @@
 
 
 
-
-
-
-
-    //-MARK: 
+    // MARK: _________________________________________
     ;
 
 
@@ -1062,7 +1048,8 @@
 
 
 
-        //#region .                — properties —
+        // MARK:                  — properties —
+        //#region
 
 
             /** Value of ***this*** {@link Grade}, a positive float number below 20. @type {number} */
@@ -1112,8 +1099,7 @@
 
 
 
-
-        // MARK: .               — constructor —
+        // MARK:                 — constructor —
         /**
          * Constructs a {@link Grade}.
          *
@@ -1136,23 +1122,23 @@
         constructor(grade, coef, subject, title=" — ", isSim=false, classAvg=" — ", prof=" — ", date=" — ", semester="?", module=undefined, ecamDash=undefined, id=undefined) {
 
             ParameterTypeError.verifyParams(arguments, [
-                "number",
-                "number",
-                Subject.name+"|string",
-                "string|undefined",
-                "boolean|undefined",
-                "number|\" — \"|undefined",
-                "string|undefined",
-                "string|undefined",
+                "number | /\\d+/",
+                "number | /\\d+/",
+                Subject.name+" | string",
+                "string | undefined",
+                "boolean | undefined",
+                "number | /\\d+/ | \" — \" | undefined",
+                "string | undefined",
+                "string | undefined",
                 Semester.name+" | /\\d+|\\?/ | undefined",
-                Module.name+"|string|undefined",
-                ECAMDashboard.name+"|undefined",
-                "number|undefined"
+                Module.name+" | string | undefined",
+                ECAMDashboard.name+" | undefined",
+                "number | /\\d+/ | undefined"
             ], Grade, Grade)
 
 
-            this.#grade     = grade <= 20 ? (grade >= 0 ? Number(grade) : 0) : 20;
-            this.#coef      = coef <= 100 ? (coef  >= 0 ? Number(coef)  : 0) : 100;
+            this.#grade = grade <= 20 ? (grade >= 0 ? Number(grade) : 0) : 20;
+            this.#coef  = coef <= 100 ? (coef  >= 0 ? Number(coef)  : 0) : 100;
 
             if (!ecamDash) {
                 this.#subject   = subject;
@@ -1164,9 +1150,9 @@
 
                 if (this.#subject === null) {
 
-                    if ( (this.#semester = ecamDash.getSemester(semester)) === null )       this.#semester = new Semester(semester);
+                    if ( (this.#semester = ecamDash.getSemester(semester)) === null ) this.#semester = new Semester(semester);
 
-                    if ( (this.#module = ecamDash.getModule(module, semester)) === null )   this.#module = this.#semester.undefinedModule;
+                    if ( (this.#module = ecamDash.getModule(module, semester)) === null ) this.#module = this.#semester.undefinedModule;
 
                     this.#subject = new Subject(subject?.name || subject, 100, this.#module, this.#semester);
 
@@ -1180,8 +1166,8 @@
 
             }
 
-            this.#title     = title;
-            this.#isSim     = isSim;
+            this.#title = title;
+            this.#isSim = isSim;
 
             if (isSim) {
                 if (id) this.#id = id;
@@ -1211,7 +1197,8 @@
         }
 
 
-        //#region .             — encapsulation —
+        // MARK:               — encapsulation —
+        //#region
 
 
             /** Value of ***this*** {@link Grade}, a positive float number below 20. @type {number} */
@@ -1295,15 +1282,30 @@
 
 
 
+        // MARK:                   — methods —
+        //#region
 
-        //#region .                 — methods —
+        
 
 
+
+            // MARK: _  toString()
+            /**
+             * Gives the full string representation of ***this*** {@link Grade}.
+             * The returned string representation is can be used as a unique identifier of a grade,
+             * but also conveys all the data to know abou the grade (enabled or not, read or not, id if simulated, classAverage, grade, coef).
+             * Looks like:
+             * ```
+             * `${semesterNumber}\\${moduleName}\\${subjectName}\\${title} : ${grade}/20 vs ${classAvg}/20, ${coef}% ${""|`(${id})`} [${"ON"|"OFF"}${""|", UNREAD"}]`
+             * ```
+             * @override {@link Object#toString()}
+             * @returns The string representation of ***this*** {@link Grade}.
+             */
             toString() {
                 return "" +
-                    this.#semester + "//\\" +
-                    this.#module + "//\\" +
-                    this.#subject + "//\\" +
+                    this.#semester + "\\" +
+                    this.#module + "\\" +
+                    this.#subject + "\\" +
                     this.#title + " : " +
                     this.#grade + "/20 vs " +
                     this.#classAvg + "/20, " +
@@ -1313,6 +1315,32 @@
                 ;
             }
 
+
+
+            // MARK: _  uniqueIdentifier()
+            /**
+             * Gives a short string representation of ***this*** {@link Grade}, 
+             * shorter than {@link Grade#toString()}.
+             * The returned string representation is the smallest string representation 
+             * that can be used as a unique identifier of a grade.
+             * Looks like:
+             * ```
+             * `${semesterNumber}\\${moduleName}\\${subjectName}\\${title}`
+             * ```
+             * @returns A short string representation of ***this*** {@link Grade}.
+             */
+            getUniqueIdentifier() {
+                return "" +
+                    this.#semester + "\\" +
+                    this.#module + "\\" +
+                    this.#subject + "\\" +
+                    this.#title
+                ;
+            }
+
+
+
+            // MARK: _  static fromString()
             /**
              *
              * @param {string} string
@@ -1349,6 +1377,8 @@
 
 
 
+
+            // MARK: _  equals()
             /**
              * Verifies that ***this*** {@link Grade} has the exact same informations as the given {@link Grade}
              *
@@ -1373,12 +1403,36 @@
             }
 
 
+
+            // MARK:_  correspondsTo()
             /**
-             * The `Grade.average()` static method calculates the weighted average between all the given {@link Grade}s' value, rounded to the nearest hundredth of the average
+             * Checks whether the given Grade's unique descriptor (or the given Grade unique descriptor directly) 
+             * is equal to ***this*** {@link Grade}'s unique descriptor.
+             * @param {Grade | string} grade The {@link Grade} (or its unique descriptor string) ***this*** {@link Grade} should correspond to.
+             */
+            correspondsTo(grade) {
+                ParameterTypeError.verifyParams(arguments, [Grade, "string"], Grade.prototype.correspondsTo, Grade);
+                var out = false;
+
+                if (grade instanceof Grade) out = this.getUniqueIdentifier() === grade.getUniqueIdentifier();
+                else out = this.getUniqueIdentifier() === grade;
+
+                return out;
+            }
+
+
+
+
+
+            // MARK: _  static average()
+            /**
+             * The {@link Grade.average()} static method calculates the weighted average between all the given {@link Grade}s' value, rounded to the nearest hundredth of the average.
              *
              * @param {Grade[]} grades Array of {@link Grade}s to calculate the weighted average from.
              */
             static average(grades) {
+                ParameterTypeError.verifyParams(arguments, [Grade], Grade.average, Grade);
+
                 if (grades instanceof Array) {
                     let validArrayOfGrades = true, average = 0, totalCoef = 0;
 
@@ -1397,13 +1451,18 @@
                 return " — ";
             }
 
+
+            // MARK: _  static classAverage()
             /**
-             * The `Grade.average()` static method calculates the weighted average between all the given {@link Grade}s' classAvg value,
-             * rounded to the nearest hundredth of the average
+             * The {@link Grade.classAverage()} static method calculates the weighted average between all the given {@link Grade}s' classAvg value,
+             * rounded to the nearest hundredth of the average.
              *
              * @param {Grade[]} grades Array of {@link Grade}s to calculate the weighted class average from.
+             * @returns {number|" — "}
              */
             static classAverage(grades) {
+                ParameterTypeError.verifyParams(arguments, [Grade], Grade.classAverage, Grade);
+
                 if (grades instanceof Array) {
                     let validArrayOfGrades = true, average = 0, totalCoef = 0;
 
@@ -1609,7 +1668,18 @@
              * @throws {TypeError} If a parameter is of an unexpected type.
              */
             addNewGrade(grade, coef, title, isSim, classAvg, prof, date) {
-                const newGrade = new Grade(grade, coef, this, title, isSim, classAvg, prof, date, this.#semester, this.#module);
+                const newGrade = new Grade(
+                    grade, 
+                    coef, 
+                    this, 
+                    title, 
+                    isSim, 
+                    classAvg, 
+                    prof, 
+                    date, 
+                    this.#semester, 
+                    this.#module
+                );
                 this.#grades.push(newGrade);
 
                 return newGrade;
@@ -1786,17 +1856,17 @@
                     switch ((grade.enabled ? "enabled " : "disabled ") + (grade.isSim ? "sim " : "real ") + "grade") {
 
                         case "disabled real grade":
-                            disabledGrades.push(grade);
-                            realGrades.push(grade);
-                            disabledRealGrades.push(grade);
+                            disabledGrades      .push(grade);
+                            realGrades          .push(grade);
+                            disabledRealGrades  .push(grade);
 
                             totalCoefRealGrades         += grade.coef;
                         break;
 
                         case "enabled real grade":
-                            enabledGrades.push(grade);
-                            realGrades.push(grade);
-                            enabledRealGrades.push(grade);
+                            enabledGrades       .push(grade);
+                            realGrades          .push(grade);
+                            enabledRealGrades   .push(grade);
 
                             totalCoefRealGrades         += grade.coef;
                             totalCoefEnabledGrades      += grade.coef;
@@ -1804,15 +1874,15 @@
                         break;
 
                         case "disabled sim grade":
-                            disabledGrades.push(grade);
-                            simGrades.push(grade);
-                            disabledSimGrades.push(grade);
+                            disabledGrades      .push(grade);
+                            simGrades           .push(grade);
+                            disabledSimGrades   .push(grade);
                         break;
 
                         case "enabled sim grade":
-                            enabledGrades.push(grade);
-                            simGrades.push(grade);
-                            enabledSimGrades.push(grade);
+                            enabledGrades       .push(grade);
+                            simGrades           .push(grade);
+                            enabledSimGrades    .push(grade);
 
                             totalCoefEnabledGrades      += grade.coef;
                         break;
@@ -2300,6 +2370,9 @@
              * @param {boolean} [recomputeSubjects=true] `true` if the stats of the {@link Subject}s of ***this*** {@link Semester} has to be computed, `false` otherwise.
              */
             computeStats(recomputeSubjects=true) {
+
+                ParameterTypeError.verifyParams(arguments, ["boolean"], Subject.prototype.computeStats, Subject);
+
                 //#region
                 let
                     /** @type {Grade[]} */      grades                          = [],
@@ -2329,9 +2402,7 @@
                 //#endregion
 
                 // Pre-emptively compute all the subjects' stats
-                if (recomputeSubjects) Object.values(this.#subjects).forEach(subject => {
-                    subject.computeStats();
-                })
+                if (recomputeSubjects) Object.values(this.#subjects).forEach(subject => { if (subject instanceof Subject) subject.computeStats(); })
 
                 Object.values(this.#subjects).forEach(subject => {
                     const nbGrades = subject.grades.length;
@@ -2753,6 +2824,9 @@
              * @param {boolean} [recomputeModules=true] `true` if the stats of the {@link Module}s of ***this*** {@link Semester} has to be computed, `false` otherwise.
              */
             computeStats(recomputeSubjects=true, recomputeModules=true) {
+
+                ParameterTypeError.verifyParams(arguments, ["boolean", "boolean"], Semester.prototype.computeStats, Semester);
+
                 //#region
                 let
                     /** @type {Object.<string, Subject>} Keys are the name of the corresponding Subject value. */ subjects                  = {},
@@ -2767,38 +2841,31 @@
                     /** @type {number} */ totalCoefSubjectsNoGrade          = 0,
                     /** @type {number} */ totalCoefSubjectsNoEnabledGrade   = 0,
 
+                    /** @type {number} */ totalCoefGrades                   = 0,
+                    /** @type {number} */ totalCoefRealGrades               = 0,
+                    /** @type {number} */ totalCoefEnabledGrades            = 0,
+                    /** @type {number} */ totalCoefEnabledRealGrades        = 0,
 
                     /** @type {Grade[]} */ grades               = [],
                     /** @type {Grade[]} */ simGrades            = [],
                     /** @type {Grade[]} */ disabledRealGrades   = [],
-                    /** @type {Grade[]} */ disabledSimGrades    = [],
-
-                    /** @type {number} */ totalCoefGrades               = 0,
-                    /** @type {number} */ totalCoefRealGrades           = 0,
-                    /** @type {number} */ totalCoefEnabledGrades        = 0,
-                    /** @type {number} */ totalCoefEnabledRealGrades    = 0
-
+                    /** @type {Grade[]} */ disabledSimGrades    = []
                 ;
                 //#endregion
 
-                // Pre-emptively compute all the subjects' stats
-                if (recomputeSubjects) Object.values(this.#subjects).forEach(subject => {
-                    subject.computeStats();
-                })
-
                 // Pre-emptively compute all the modules' stats
-                if (recomputeModules) Object.values(this.#modules).forEach(module => {
-                    module.computeStats();
-                })
+                if (recomputeModules) Object.values(this.#modules).forEach(module => { module.computeStats(recomputeSubjects); })
 
                 Object.values(this.#modules || {}).forEach(module => {
 
                     Object.values(module.subjects || {}).forEach(subject => {
 
-                        grades.push(...subject.grades);
-                        simGrades.push(...subject.simGrades);
-                        disabledRealGrades.push(...subject.disabledRealGrades);
-                        disabledSimGrades.push(...subject.disabledSimGrades);
+                        this.#subjects[subject.name] = subject;
+
+                        grades              .push(...subject.grades);
+                        simGrades           .push(...subject.simGrades);
+                        disabledRealGrades  .push(...subject.disabledRealGrades);
+                        disabledSimGrades   .push(...subject.disabledSimGrades);
 
                         totalCoefSubjects           += subject.coef;
                         if (subject.grades.length == 0) {
@@ -3249,41 +3316,34 @@ class ECAMDashboard {
     // MARK:                  — properties —
     //#region
 
-        /** Array of all the {@link Grade}s of the user. @type {Grade[]} */
+
+        /** @readonly */
+        cacheKeys = {
+            /** @readonly */
+            cachedModuleConfig: "ECAM-DASHBOARD-module-config-v3",
+            /** @readonly */
+            cachedSimGrades: "ECAM-DASHBOARD-sim-grades-v3"
+        };
+
+
         grades      = [];
 
-        /** Array of all the {@link Subject}s of the user. @type {Subject[]} */
         subjects    = [];
 
-        /** Array of all the {@link Module}s of the user. @type {Module[]} */
         modules     = [];
 
-        /** Array of all the {@link Semester}s of the user. @type {Semester[]} */
         semesters   = [];
 
-        /** Array of all the non-read {@link Grade}s of the user. @type {Grade[]} */
         newGrades   = [];
 
-        /** Array of the string representation of all the read {@link Grade}s of the user. @type {Grade[]} */
         savedReadGrades = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SAVED_READ_GRADES") ) || [];
 
-        /** Array of the string representation of all the {@link Grade}s disabled by the user. @type {Grade[]} */
         disabledGrades  = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_DISABLED_GRADES") )   || [];
 
-        /** Arrary of the string representation of all the simulated {@link Grade}s created by the user. @type {Grade[]} */
         sim             = [];
 
-
-        /**
-         * Object representing a convenient structure to access all the backend data, in a "*JavaScript Object-access style*".
-         * @type {Object.< number, { "__object__": Semester, "__modules__": string[], "module": Object.< string, { "__object__": Module, "__subjects__": string[], "subject": Object.< string, { "__object__": Subject, "grades": Grade[] } > } > } >}
-         */
         gradesData = {};
 
-        /**
-         * Object representing the configuration of the modules for the user.
-         * @type {Object.< number, { "__object__": Semester, "__modules__": string[], "modules": Object.< string, { "__object__": Module, "__subjects__": string[], "subject": Object.< string, { "__object__": Subject, "coefficient": number } > } > } >}
-         */
         moduleConfig = {};
 
 
@@ -3317,7 +3377,11 @@ class ECAMDashboard {
 
             // MARK: _  cacheModuleConfig()
             cacheModuleConfig() {
-                localStorage.setItem("ECAM-DASHBOARD-module-config-v3", JSON.stringify(this.moduleConfig, (key, value) => { if (key == "__object__") return undefined; else return value; }))
+                localStorage.setItem(
+                    this.cacheKeys.cachedModuleConfig, 
+                    JSON.stringify(this.moduleConfig, (key, value) => { if (key === "__object__") return undefined; else return value; })
+                );
+
                 return this;
             }
 
@@ -3333,13 +3397,14 @@ class ECAMDashboard {
 
                 let valid = true;
 
-                try { this.moduleConfig = JSON.parse( localStorage.getItem("ECAM-DASHBOARD-module-config-v3") ) || {}; }
+                try { this.moduleConfig = JSON.parse( localStorage.getItem(this.cacheKeys.cachedModuleConfig) ) || {}; }
                 catch (e) {
                     this.moduleConfig = {};
                     valid = false;
                 }
 
                 if (valid && Object.keys(this.moduleConfig) > 0) {
+                    console.log("Found a valid cached module.")
 
                     // Preparing the Semester, Module and Subject objects from the moduleConfig
 
@@ -3417,21 +3482,33 @@ class ECAMDashboard {
 
 
 
+
+
             // MARK: _  cacheSimGrades()
             // TODO
             cacheSimGrades() {
-                localStorage.setItem("ECAM-DASHBOARD-sim-grades-v3", JSON.stringify(this.sim, (_key, value) => { return value.toString() }));
+                // JSON.stringify(this.sim, (_key, value) => { return value.toString() });
+
+                localStorage.setItem(
+                    this.cacheKeys.cachedSimGrades, 
+                    Array(this.sim).join(" | ")
+                );
                 return this;
             }
+
 
 
             // MARK: _  retrieveCachedSimGrades()
             retrieveCachedSimGrades() {
                 /** @type { Grade[] | null } */
                 let newSim = [];
-                // debugger;
 
-                try { newSim = JSON.parse( localStorage.getItem("ECAM-DASHBOARD-sim-grades-v3"), (_key, value) => { return Grade.fromString(value, this) } ) || []; }
+                try { 
+                    // newSim = JSON.parse(
+                    //     localStorage.getItem(this.cacheKeys.cachedSimGrades), (_key, value) => { return Grade.fromString(value, this) } 
+                    // ) || []; 
+                    newSim = localStorage.getItem(this.cacheKeys.cachedSimGrades).split(" | ").map( (g) => {return Grade.fromString(g)} )
+                }
                 catch (e) {}
 
 
@@ -3444,21 +3521,23 @@ class ECAMDashboard {
                             Object.entries(sem).forEach(mod => {
                                 Object.values(mod[1]).forEach(subj => {
                                     Object.values(subj).forEach(grade => {
-                                        /** @type {{"grade": number, "coef": number, "classAvg": number | " — ", "semester": number, "subject": string, "type": string, "__sim": boolean, "libelle": string, "id": number}} */
+                                        /**
+                                         * @type {{"grade": number, "coef": number, "classAvg": number | " — ", "semester": number, "subject": string, "type": string, "__sim": boolean, "libelle": string, "id": number}}
+                                         */
                                         const g = grade;
                                         const simGrade = new Grade(
-                                            g.grade,
-                                            g.coef,
+                                            parseFloat(g.grade),
+                                            parseFloat(g.coef),
                                             g.subject,
                                             g.type,
                                             g.__sim,
                                             undefined,
                                             undefined,
                                             undefined,
-                                            g.semester,
+                                            parseInt(g.semester),
                                             mod[0],
                                             this,
-                                            g.id
+                                            parseInt(g.id)
                                         );
                                         this.sim.push(simGrade);
                                         this.grades.push(simGrade);
@@ -3469,7 +3548,7 @@ class ECAMDashboard {
                     }
 
                     this.cacheSimGrades()
-                    // localStorage.removeItem("ECAM_DASHBOARD_SIM_GRADES");
+                    // TODO: localStorage.removeItem("ECAM_DASHBOARD_SIM_GRADES");
                 }
                 else this.sim = newSim;
 
@@ -3493,7 +3572,6 @@ class ECAMDashboard {
          */
         parseGrades() {
             this.retrieveCachedModuleConfig();
-            this.retrieveCachedSimGrades();
 
 
             if (document.querySelector(".greyGridTable")) {
@@ -3503,19 +3581,31 @@ class ECAMDashboard {
                     const cells = row.querySelectorAll("td");
 
                     if (cells.length >= 6 && cells[0].textContent.includes("/20")) {
-                        const libelle   = cells[1].textContent.trim();
+                        const label     = cells[1].textContent.trim();
                         const grade     = parseFloat(cells[0].textContent.replace(",", ".").replace("/20", "")) || 0;
-                        const coef      = parseFloat(cells[2].textContent.replace(",", ".").replace("%", ""))   || 0;
+                        const coef      = parseFloat(cells[2].textContent.replace(",", ".").replace("%",   "")) || 0;
                         const classAvg  = parseFloat(cells[3].textContent.replace(",", ".").replace("/20", "")) || 0;
                         const prof      = cells[4].textContent.trim();
                         const date      = cells[5].textContent.trim();
-                        const semMatch  = libelle.match(/Semester\s+(\d+)/i);
+                        const semMatch  = label.match(/Semester\s+(\d+)/i);
                         const semester  = semMatch ? semMatch[1] : "?";
-                        const parts     = libelle.split(" - ").map(p => p.trim());
-                        const subject   = parts.length >= 3 ? parts.slice(1,-1).join(" - ") : libelle;
+                        const parts     = label.split(" - ").map(p => p.trim());
+                        const subject   = parts.length >= 3 ? parts.slice(1,-1).join(" - ") : label;
                         const title     = parts.length >= 2 ? parts.at(-1) : "";
 
-                        this.grades.push( new Grade(grade, coef, subject, title, false, classAvg, prof, date, semester, undefined, this) );
+                        this.grades.push( new Grade(
+                            grade, 
+                            coef, 
+                            subject, 
+                            title, 
+                            false, 
+                            classAvg, 
+                            prof, 
+                            date, 
+                            semester, 
+                            undefined, 
+                            this
+                        ) );
                     }
                 });
 
@@ -3533,7 +3623,10 @@ class ECAMDashboard {
                 // this.grades = this.savedReadGrades;
             }
 
-            return this.computeStatsForEverything();
+            this.retrieveCachedSimGrades();
+            this.computeStatsForEverything();
+
+            return this;
         }
 
 
@@ -3555,6 +3648,28 @@ class ECAMDashboard {
         }
 
 
+
+        // MARK: _  addGrade()
+        addGrade(grade, coef, subject, title=" — ", isSim=false, classAvg=" — ", prof=" — ", date=" — ", semester="?", module=undefined, id=undefined) {
+            ParameterTypeError.verifyParams(arguments, [
+                "number | /\\d+/",
+                "number | /\\d+/",
+                Subject.name+" | string",
+                "string | undefined",
+                "boolean | undefined",
+                "number | /\\d+/ | \" — \" | undefined",
+                "string | undefined",
+                "string | undefined",
+                Semester.name+" | /\\d+|\\?/ | undefined",
+                Module.name+" | string | undefined",
+                "number | /\\d+/ | undefined"
+            ], ECAMDashboard.prototype.addGrade, ECAMDashboard);
+
+            
+
+        }
+
+
         // MARK: _  getSubject()
         /**
          *
@@ -3571,7 +3686,7 @@ class ECAMDashboard {
 
                 if (typeof subject == "string") if (subj.name == subject)
                     if (!module || (subj.module.name == module) )
-                        if ( !semester || (subj.semester.number == semester))
+                        if (!semester || (subj.semester.number == semester))
                             return subj;
             })
 
@@ -3680,13 +3795,4 @@ globalThis.ECAMDashboard        = ECAMDashboard;
 ParameterTypeError.active = true;
 
 /** @type {ECAMDashboard} */
-ecamDash2 = new ECAMDashboard().parseGrades();
-
-ParameterTypeError.verifyParam(
-    "Le Goat", 
-    "string", 
-    "v1", 
-    "taunt", 
-    "Gabriel", 
-    "You're getting rusty, machine!!"
-);
+window.ecamDash2 = new ECAMDashboard().parseGrades();
