@@ -1105,34 +1105,32 @@
          *
          * @param {number}          grade                   Value of ***this*** {@link Grade}, a positive float number below 20.
          * @param {number}          coef                    Value of the coefficient of ***this*** {@link Grade} in its {@link Subject}, a positive float number below 100, as a %.
-         * @param {Subject|string}  subject                 The {@link Subject} (or its name if you give the {@link ECAMDashboard}) ***this*** {@link Grade} will belong to.
+         * @param {Subject}         subject                 The {@link Subject} ***this*** {@link Grade} will belong to.
          * @param {string}          [title=" — "]           Title of ***this*** {@link Grade}. Default value is " — ".
          * @param {boolean}         [isSim=false]           `true` if ***this*** {@link Grade} is a simulated grade, `false` otherwise. `false` by default.
          * @param {number|" — "}    [classAvg=" — "]        Value of the class' average of ***this*** {@link Grade}, a positive float number below 20. Default value is " — ".
          * @param {string}          [prof=" — "]            Name of the teacher.s who published ***this*** {@link Grade}. Default value is " — ".
          * @param {string}          [date=" — "]            Date of publication of ***this*** {@link Grade} entered by the administration. Default value is " — ". ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet*.
-         * @param {Semester|number} [semester=undefined]    The {@link Semester} (or its number if you give the {@link ECAMDashboard}) ***this*** {@link Grade} will belong to. Default is undefined.
-         * @param {Module|string}   [module=undefined]      The {@link Module} (or its name if you give the {@link ECAMDashboard}) ***this*** {@link Grade} will belong to. Default is undefined.
+         * @param {Semester}        [semester=undefined]    The {@link Semester} ***this*** {@link Grade} will belong to. Default is "?".
+         * @param {Module}          [module=undefined]      The {@link Module} ***this*** {@link Grade} will belong to. Default is "undefined".
          * @param {ECAMDashboard}   [ecamDash=undefined]    The {@link ECAMDashboard}, in order to access the backend to retrieve existing {@link Subject}s, {@link Module}s and {@link Semester}s.
          * @param {number}          [id=undefined]          A wannabe unique id number for a simulated grade, built from the time stamp of its creation.
          *
-         *
          * @throws {ParameterTypeError} If a parameter is of an unexpected type.
          */
-        constructor(grade, coef, subject, title=" — ", isSim=false, classAvg=" — ", prof=" — ", date=" — ", semester="?", module=undefined, ecamDash=undefined, id=undefined) {
+        constructor(grade, coef, subject, title=" — ", isSim=false, classAvg=" — ", prof=" — ", date=" — ", semester="?", module=undefined, id=undefined) {
 
             ParameterTypeError.verifyParams(arguments, [
-                "number | /\\d+/",
-                "number | /\\d+/",
-                Subject.name+" | string",
+                "number | /\\d+(\\.\\d+)?/",
+                "number | /\\d+(\\.\\d+)?/",
+                Subject,
                 "string | undefined",
                 "boolean | undefined",
-                "number | /\\d+/ | \" — \" | undefined",
+                "number | /\\d+(\\.\\d+)?/ | \" — \" | undefined",
                 "string | undefined",
                 "string | undefined",
-                Semester.name+" | /\\d+|\\?/ | undefined",
-                Module.name+" | string | undefined",
-                ECAMDashboard.name+" | undefined",
+                Semester.name+" | undefined",
+                Module.name+" | undefined",
                 "number | /\\d+/ | undefined"
             ], Grade, Grade)
 
@@ -1140,31 +1138,9 @@
             this.#grade = grade <= 20 ? (grade >= 0 ? Number(grade) : 0) : 20;
             this.#coef  = coef <= 100 ? (coef  >= 0 ? Number(coef)  : 0) : 100;
 
-            if (!ecamDash) {
-                this.#subject   = subject;
-                this.#module    = module ? module : (subject instanceof Subject ? subject.module : "__#unclassified#__");
-                this.#semester  = semester ? semester : (subject instanceof Subject ? subject.semester : 0);
-            }
-            else {
-                this.#subject   = ecamDash.getSubject(subject, module, semester);
-
-                if (this.#subject === null) {
-
-                    if ( (this.#semester = ecamDash.getSemester(semester)) === null ) this.#semester = new Semester(semester);
-
-                    if ( (this.#module = ecamDash.getModule(module, semester)) === null ) this.#module = this.#semester.undefinedModule;
-
-                    this.#subject = new Subject(subject?.name || subject, 100, this.#module, this.#semester);
-
-                }
-                else {
-                    this.#module    = this.#subject.module;
-                    this.#semester  = this.#subject.semester;
-                }
-
-                this.#subject.addGrade(this);
-
-            }
+            this.#subject   = subject;
+            this.#module    = module ? module : (subject instanceof Subject ? subject.module : "__#unclassified#__");
+            this.#semester  = semester ? semester : (subject instanceof Subject ? subject.semester : 0);
 
             this.#title = title;
             this.#isSim = isSim;
@@ -1346,7 +1322,7 @@
              * @param {string} string
              * @param {ECAMDashboard} ecamDash
              */
-            static fromString(string, ecamDash=undefined) {
+            static fromString(string) {
                 /**
                  * @type { RegExpMatchArray | null }
                  */
@@ -1364,7 +1340,6 @@
                         undefined,
                         parseInt(match[1]),
                         match[2],
-                        ecamDash,
                         parseInt(match[8])
                     );
 
@@ -1397,6 +1372,7 @@
                         && grade.#prof 		== this.#prof
                         && grade.#date 		== this.#date
                         && grade.#isSim     == this.#isSim
+                        && grade.#id        == this.#id
                     );
                 }
                 else return false;
@@ -1711,7 +1687,18 @@
 
                     const {grade, coef, title=" — ", isSim="false", classAvg=" — ", prof=" — ", date=" — "} = gradeData;
 
-                    const newGrade = new Grade(grade, coef, this, isSim, classAvg, prof, date, this.#semester, this.#module);
+                    const newGrade = new Grade(
+                        grade, 
+                        coef, 
+                        this,
+                        title, 
+                        isSim, 
+                        classAvg, 
+                        prof, 
+                        date, 
+                        this.#semester, 
+                        this.#module
+                    );
                     this.#grades.push(newGrade);
                     out.push(newGrade);
                 })
@@ -2034,33 +2021,31 @@
         /**
          * Constructs an object of class {@link Module} from an array of {@link Subject}s.
          *
-         * @param {string}          name            Name of ***this*** {@link Module}.
-         * @param {Semester|number} [semester]      The {@link Semester} ***this*** {@link Module} will belong to, or its number.
-         * @param {Subject[]}       [subjects=[]]   Array of the {@link Subject}s in ***this*** {@link Module}. Default value is `[]`.
+         * @param {string}              name            Name of ***this*** {@link Module}.
+         * @param {Semester}            [semester]      The {@link Semester} ***this*** {@link Module} will belong to.
+         * @param {Subject|Subject[]}   [subjects=[]]   Array of the {@link Subject}s in ***this*** {@link Module}. Default value is `[]`.
          *
          * @throws {TypeError} If a parameter is of an unexpected type.
          * @throws {Error} If the `name` and/or `semester` property of at least one {@link Subject} in the Array of {@link Subject}s differs from that of the first {@link Subject} of the same Array, or from the corresponding constructor parameter if given instead.
          */
         constructor(name=undefined, semester=undefined, subjects=[]) {
 
-            ParameterTypeError.verifyParams(arguments, ["string", Semester.name+"|number|/\\d+/|undefined", Subject.name+"|"+Subject.name+"[]|[]"])
+            ParameterTypeError.verifyParams(arguments, ["string", Semester.name+"|undefined", Subject.name+"|"+Subject.name+"[]|undefined"])
 
             this.addSubjects(...subjects);
 
 
             this.#name      = name;
-            this.#subjects  = Object.fromEntries(subjectsEntries);
+            this.#subjects  = subjects instanceof Subject ? [subjects] : subjects;
 
-            const nbSubjects = Object.keys(this.#subjects).length;
-
-            // Constructing from an Array of Subjects
-            if (nbSubjects > 0) { this.#semester  = semesterObj; }
-
-            // Constructing a simulated module, it doesn't have subjects (yet)
+            if (Object.keys(this.#subjects).length > 0) {
+                // Constructing from an Array of Subjects
+                this.#semester = this.#subjects[0].semester;
+            }
             else {
+                // Constructing a simulated module, it doesn't have subjects (yet)
                 this.#semester = semester;
-
-                if (semester instanceof Semester) semester.addModules(this);
+                semester.addModules(this);
             }
         }
 
@@ -3495,7 +3480,7 @@ class ECAMDashboard {
                                          * @type {{"grade": number, "coef": number, "classAvg": number | " — ", "semester": number, "subject": string, "type": string, "__sim": boolean, "libelle": string, "id": number}}
                                          */
                                         const g = grade;
-                                        const simGrade = new Grade(
+                                        const simGrade = this.addGrade(
                                             parseFloat(g.grade),
                                             parseFloat(g.coef),
                                             g.subject,
@@ -3506,11 +3491,9 @@ class ECAMDashboard {
                                             undefined,
                                             parseInt(g.semester),
                                             mod[0],
-                                            this,
                                             parseInt(g.id)
                                         );
                                         this.sim.push(simGrade);
-                                        this.grades.push(simGrade);
                                     })
                                 })
                             })
@@ -3563,7 +3546,7 @@ class ECAMDashboard {
                         const subject   = parts.length >= 3 ? parts.slice(1,-1).join(" - ") : label;
                         const title     = parts.length >= 2 ? parts.at(-1) : "";
 
-                        this.grades.push( new Grade(
+                        this.addGrade(
                             grade, 
                             coef, 
                             subject, 
@@ -3573,9 +3556,8 @@ class ECAMDashboard {
                             prof, 
                             date, 
                             semester, 
-                            undefined, 
-                            this
-                        ) );
+                            undefined
+                        )
                     }
                 });
 
@@ -3607,39 +3589,64 @@ class ECAMDashboard {
         // MARK: _  getGrade()
         /**
          *
-         * @param {Grade} grade
-         * @returns
+         * @param {Grade|number|string} grade
+         * @param {number|string|undefined} coef
+         * @param {Subject|string|undefined} subj
+         * @param {string|undefined} title
+         * @param {boolean|undefined} isSim
+         * @param {number|string|undefined} classAvg
+         * @param {string|undefined} prof
+         * @param {string|undefined} date
+         * @param {Semester|number|string|undefined} sem
+         * @param {Module|string|undefined} mod
+         * @param {number|string|undefined} id
          */
-        getGrade(grade) {
-            if (!(grade instanceof Grade)) return null
+        getGrade(grade, coef=undefined, subj=undefined, title=undefined, isSim=undefined, classAvg=undefined, prof=undefined, date=undefined, sem=undefined, mod=undefined, id=undefined) {
+            ParameterTypeError.verifyParams(arguments, [
+                Grade.name+"|number|/\\d+(\\.\\d+)?/",
+                "number|/\\d+(\\.\\d+)?/|undefined",
+                "string|undefined",
+                "string|undefined",
+                "boolean|undefined",
+                "number|/\\d+(\\.\\d+)?/|undefined",
+                "string|undefined",
+                "string|undefined",
+                Module.name+"|string|undefined",
+                Semester.name+"|number|/\\d+/|undefined",
+                "number|/\\d+/|undefined"
+            ], ECAMDashboard.prototype.getGrade, ECAMDashboard)
 
             this.grades.forEach(g => {
-                if ( g.equals(grade) ) return g;
+                if (
+                    grade instanceof Grade
+                    ? g.equals(grade)
+                    : (
+                        g.grade === parseFloat(grade)
+                        &&
+                        g.coef === parseFloat(coef)
+                        &&
+                        g.subject.name === (subj instanceof Subject ? subj.name : subj)
+                        &&
+                        g.title === title
+                        &&
+                        g.isSim === isSim
+                        &&
+                        g.classAvg === parseFloat(classAvg)
+                        &&
+                        g.prof === prof
+                        &&
+                        g.date === date
+                        &&
+                        g.semester === (sem instanceof Semester ? sem.number : parseInt(sem))
+                        &&
+                        g.module.name === (mod instanceof Module ? mod.name : mod)
+                        &&
+                        g.id === parseInt(id)
+                    )
+                ) return g
             })
 
             return null
-        }
-
-
-
-        // MARK: _  addGrade()
-        addGrade(grade, coef, subject, title=" — ", isSim=false, classAvg=" — ", prof=" — ", date=" — ", semester="?", module=undefined, id=undefined) {
-            ParameterTypeError.verifyParams(arguments, [
-                "number | /\\d+/",
-                "number | /\\d+/",
-                Subject.name+" | string",
-                "string | undefined",
-                "boolean | undefined",
-                "number | /\\d+/ | \" — \" | undefined",
-                "string | undefined",
-                "string | undefined",
-                Semester.name+" | /\\d+|\\?/ | undefined",
-                Module.name+" | string | undefined",
-                "number | /\\d+/ | undefined"
-            ], ECAMDashboard.prototype.addGrade, ECAMDashboard);
-
-            if (!this.getSemester(semester)) this.addSemester(semester);
-
         }
 
 
@@ -3670,36 +3677,6 @@ class ECAMDashboard {
         }
 
 
-        // MARK: _  addSubject()
-        /**
-         * 
-         * @param {Subject|string} subject 
-         * @param {Module|string|undefined} module 
-         * @param {Semester|number|string|undefined} semester 
-         * @returns 
-         */
-        addSubject(subject, module=undefined, semester=undefined) {
-            ParameterTypeError.verifyParams(arguments, [
-                Subject.name +"|string", 
-                Module.name  +"|string|undefined", 
-                Semester.name+"|number|/\\d+/|undefined"
-            ], ECAMDashboard.prototype.addModule, ECAMDashboard);
-
-            /** @type {Semester|null} */ 
-            var sem = null;
-
-            if ((sem = this.getSemester(semester)) === null) sem = this.addSemester(semester);
-
-            if (this.getSubject(module, semester) === null) {
-                const newMod = new Module(module, sem);
-                this.modules.push(newMod);
-                return newMod;
-            }
-
-            return null;
-        }
-
-
 
 
         // MARK: _  getModule()
@@ -3709,7 +3686,7 @@ class ECAMDashboard {
          * @returns {Module | null}
          */
         getModule(module, semester=undefined) {
-            ParameterTypeError.verifyParams(arguments, [Module.name+"|string", "number|/\\d+/|undefined"], ECAMDashboard.prototype.getModule, ECAMDashboard);
+            ParameterTypeError.verifyParams(arguments, [Module.name+"|string", "number|/\\d+(\\.\\d+)?/|undefined"], ECAMDashboard.prototype.getModule, ECAMDashboard);
 
             this.modules.forEach(mod => {
                 if (module instanceof Module && mod.equals(module)) return mod;
@@ -3720,25 +3697,6 @@ class ECAMDashboard {
             })
 
             return null
-        }
-
-
-        // MARK: _  addModule()
-        addModule(module, semester) {
-            ParameterTypeError.verifyParams(arguments, [Module.name+"|string", "number|/\\d+/"], ECAMDashboard.prototype.addModule, ECAMDashboard);
-
-            /** @type {Semester|null} */ 
-            var sem = null;
-
-            if ((sem = this.getSemester(semester)) === null) sem = this.addSemester(semester);
-
-            if (this.getModule(module, semester) === null) {
-                const newMod = new Module(module, sem);
-                this.modules.push(newMod);
-                return newMod;
-            }
-
-            return null;
         }
 
 
@@ -3759,6 +3717,119 @@ class ECAMDashboard {
             })
 
             return null
+        }
+
+
+
+        // MARK: _  addGrade()
+        addGrade(grade, coef, subject, title=" — ", isSim=false, classAvg=" — ", prof=" — ", date=" — ", semester="?", module=undefined, id=undefined) {
+            ParameterTypeError.verifyParams(arguments, [
+                "number | /\\d+(\\.\\d+)?/",
+                "number | /\\d+(\\.\\d+)?/",
+                Subject.name+" | string",
+                "string | undefined",
+                "boolean | undefined",
+                "number | /\\d+(\\.\\d+)?/ | \" — \" | undefined",
+                "string | undefined",
+                "string | undefined",
+                Semester.name+" | /\\d+|\\?/ | undefined",
+                Module.name+" | string | undefined",
+                "number | /\\d+(\\.\\d+)?/ | undefined"
+            ], ECAMDashboard.prototype.addGrade, ECAMDashboard);
+
+            /** @type {Subject} */
+            var subj = null;
+            if ((subj = this.getSubject(subject, module, semester)) === null) subj = this.addSubject(subject, module, semester);
+
+            /** @type {Module} */
+            var mod = subj.module;
+            /** @type {Semester} */
+            var sem = subj.semester;
+
+            
+            if (this.getGrade(
+                grade,
+                coef,
+                subj,
+                title,
+                isSim,
+                classAvg,
+                prof,
+                date,
+                sem,
+                mod,
+                id
+            ) === null ) {
+                const newGrade = new Grade(
+                    grade,
+                    coef,
+                    subj,
+                    title,
+                    isSim,
+                    classAvg,
+                    prof,
+                    date,
+                    sem,
+                    mod,
+                    id
+                );
+
+                this.grades.push(newGrade);
+                if (isSim) this.sim.push(newGrade);
+            }
+
+        }
+
+
+        // MARK: _  addSubject()
+        /**
+         * 
+         * @param {Subject|string} subject 
+         * @param {Module|string|undefined} module 
+         * @param {Semester|number|string|undefined} semester 
+         * @returns 
+         */
+        addSubject(subject, module=undefined, semester=undefined) {
+            ParameterTypeError.verifyParams(arguments, [
+                Subject.name +"|string", 
+                Module.name  +"|string|undefined", 
+                Semester.name+"|number|/\\d+/|undefined"
+            ], ECAMDashboard.prototype.addModule, ECAMDashboard);
+
+            /** @type {Module} */
+            var mod = null;
+            
+            if ((mod = this.getModule(module, semester)) === null) mod = this.addModule(module, semester);
+
+            /** @type {Semester} */
+            var sem = mod.semester;
+
+            if (this.getSubject(subject, module, semester) === null) {
+                const newSubj = new Subject(subject, undefined, mod, sem);
+                this.subjects.push(newSubj);
+                return newSubj;
+            }
+
+            return null;
+        }
+
+
+        // MARK: _  addModule()
+        addModule(module, semester) {
+            ParameterTypeError.verifyParams(arguments, [Module.name+"|string", "number|/\\d+/"], ECAMDashboard.prototype.addModule, ECAMDashboard);
+
+            /** @type {Semester|null} */ 
+            var sem = null;
+
+            if ((sem = this.getSemester(semester)) === null) sem = this.addSemester(semester);
+
+            if (this.getModule(module, semester) === null) {
+                const newMod = new Module(module, sem);
+                this.modules.push(newMod);
+                return newMod;
+            }
+
+            return null;
         }
 
 
