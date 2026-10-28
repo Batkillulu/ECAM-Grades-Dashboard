@@ -54,7 +54,7 @@
 //  - maxence.leroux@ecam.fr    [for the financial and responsibility part]
 //
 
-
+//@ts-check
 
 
 
@@ -100,37 +100,55 @@
 
 
         // MARK: _  getArguments()
+        // @ts-ignore
         Function.prototype.getArguments = function (args = undefined, allowedTypes = undefined) {
-            const argNames = getFunctionParamNames(this);
-
+            
             const hasArgs = args !== undefined && isArguments(args);
             const hasAllowedTypes = allowedTypes !== undefined && isWellFormedAllowedTypes(allowedTypes);
+            const argNames = getFunctionParamNames(this);
 
             if (!hasArgs && !hasAllowedTypes) {
                 return argNames;
             }
 
+            /**
+             * @type {{[name: string]: { value?: any; allowedTypes?: string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]; }}}
+             */
             const out = {};
             argNames.forEach((name, i) => {
+                /**
+                 * @type {{ value?: any; allowedTypes?: string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]; }}
+                 */
                 const entry = {};
                 if (hasArgs) entry.value = args[i];
                 if (hasAllowedTypes) entry.allowedTypes = allowedTypes[i];
                 out[name] = entry;
             });
+
             return out;
         };
 
 
         // MARK: _  getArgument()
-        Function.prototype.getArgument = function (index, args = undefined) {
+        Function.prototype.getArgument = function (
+            /** @type {number} */ index, 
+            args = undefined
+        ) {
+            const getArgs = this.getArguments();
+
             return (args !== undefined && isArguments(args))
-                ? Object.entries(this.getArguments(args))[index]
-                : this.getArguments()[index];
+                ? Object.entries(getArgs)[index]
+                // @ts-ignore
+                : getArgs[index];
         };
 
 
         // MARK: _  getArgumentfromValue()
-        Function.prototype.getArgumentFromValue = function (args, value, allowedTypes=undefined) {
+        Function.prototype.getArgumentFromValue = function (
+            /** @type {IArguments} */ args, 
+            /** @type {any} */ value, 
+            /** @type {string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]|undefined} */ allowedTypes=undefined
+        ) {
             const argsObj = this.getArguments(args, allowedTypes);
             const found = Object.entries(argsObj).find(([, info]) => info.value === value);
             if (!found) {
@@ -150,67 +168,6 @@
 
     // MARK: ——————————————————
     ;
-
-
-
-    /**
-     * @param {Object[]} a The base Array of Objects of the comparison.
-     * @param {Object[]} b The Array of Object to which the base Array of Objects will be compared to.
-     */
-    function compareArraysOfObjects(a, b) {
-        const out = {common:[], more:[], missing:[]};
-
-        // turning a in an array of strings, for easier comparison in case the elements of a are objects
-        const aStringified = [];
-        JSON.stringify(a).split("},{").forEach(e => {
-            if (e[0]=="[") {
-                aStringified.push(e.split("[")[1]+"}")
-            }
-            else if (e.at(-1)=="]") {
-                aStringified.push("{"+e.split("]")[0])
-            }
-            else
-            {
-                aStringified.push("{"+e+"}")
-            }
-        })
-        // as a result, "["+aStringified.join(",")+"]" == JSON.stringify(a)
-
-
-        // turning a in an array of strings, for easier comparison in case the elements of a are objects
-        const bStringified = [];
-        JSON.stringify(b).split("},{").forEach(e => {
-            if (e[0]=="[") {
-                bStringified.push(e.split("[")[1]+"}")
-            }
-            else if (e.at(-1)=="]") {
-                bStringified.push("{"+e.split("]")[0])
-            }
-            else
-            {
-                bStringified.push("{"+e+"}")
-            }
-        })
-        // as a result, "["+bStringified.join(",")+"]" == JSON.stringify(b)
-
-        const b2 = [];
-        b.forEach((e) => {b2.push(e)})
-
-        aStringified.forEach((e, index) => {
-            if (bStringified.includes(e)) {
-                out.common.push(a[index]);
-                b2.pop(bStringified.indexOf(e));
-            }
-            else
-            {
-                out.more.push(a[index]);
-            }
-        })
-
-        out.missing = b2;
-
-        return out;
-    }
 
 
     /**
@@ -255,7 +212,11 @@
     //MARK:                 — internals —
     //#region
 
-        /** Finds the parameter-list source between the first `(` at `openIndex` and its matching `)`. */
+        /**
+         * Finds the parameter-list source between the first `(` at `openIndex` and its matching `)`.
+         * @param {string} src 
+         * @param {number} openIndex
+         */
         function extractBalancedParens(src, openIndex) {
             let depth = 0;
             for (let i = openIndex; i < src.length; i++) {
@@ -268,7 +229,11 @@
             return null; // unbalanced source, shouldn't happen for a real function
         }
 
-        /** Splits `str` on `separator`, ignoring occurrences nested inside (), [], or {}. */
+        /**
+         * Splits `str` on `separator`, ignoring occurrences nested inside (), [], or {}.
+         * @param {string} str 
+         * @param {string} separator
+         */
         function splitTopLevel(str, separator) {
             const parts = [];
             let depth = 0;
@@ -288,7 +253,10 @@
             return parts;
         }
 
-        /** Cuts a single parameter's source off at its top-level default-value `=`, if any. */
+        /**
+         * Cuts a single parameter's source off at its top-level default-value `=`, if any.
+         * @param {string} paramStr 
+         */
         function stripDefaultValue(paramStr) {
             let depth = 0;
             for (let i = 0; i < paramStr.length; i++) {
@@ -348,7 +316,7 @@
          */
         function isWellFormedAllowedTypes(allowedTypes) {
             if (!Array.isArray(allowedTypes)) return false;
-            const isValidEntry = (entry) =>
+            const isValidEntry = (/** @type {Function|string|(Function|string)[]} */ entry) =>
                 typeof entry === "string" ||
                 typeof entry === "function" ||
                 (Array.isArray(entry) && entry.every(isValidEntry));
@@ -368,6 +336,20 @@
     // MARK: ——————————————————
 //#endregion 
 
+
+
+
+
+
+
+
+
+//#region — General Variables —
+
+const nbRegExpSrc = "/\\d+((\\.|\\,)\\d+)?/";
+const intRegExpSrc = "/\\d+/";
+
+//#endregion 
 
 
 
@@ -404,12 +386,8 @@
 
 
     // MARK: ———    ParameterTypeError     ———
-    /**
-     * A subclass of TypeError offering methods to check on the parameters of a method and verify that they are of the expected type.
-     * 
-     * <!-- // TODO: ParameterTypeError should be only used in active development and REMOVED from the final version of the code. -->
-     */
     class ParameterTypeError extends TypeError {
+        
 
 
 
@@ -424,7 +402,10 @@
 
             static #defaultMessageHeader = "Improper parameter type: parameter is NOT of an expected type.";
 
-            /** Cache of parsed type-expression strings -> AST, so a given spec is only parsed once. */
+            /**
+             * Cache of parsed type-expression strings -> AST, so a given spec is only parsed once.
+             * @type {Map<string, ParameterTypeError.TypeNode>}
+             */
             static #typeExpressionCache = new Map();
 
         //#endregion
@@ -435,10 +416,15 @@
         //MARK:           — instance properties —
         //#region
 
+            /** @type {Error | undefined} */
             #cause;
+            /** @type {string} */
             #classCause;
+            /** @type {string} */
             #methodNameCause;
+            /** @type {string} */
             #paramNameCause;
+            /** @type {*} */
             #paramValueCause;
 
         //#endregion
@@ -447,6 +433,15 @@
 
 
         //MARK:               — constructor —
+        /**
+         * @param {*}                               actualValue The offending value.
+         * @param {ParameterTypeError.AllowedType}  allowedTypes What it was supposed to be.
+         * @param {string | undefined}              parameterName Name of the offending parameter.
+         * @param {string | Function | undefined}   methodName Method (or its name) in which the check happened.
+         * @param {string | Function | undefined}   className Class (or its name) to which that method belongs.
+         * @param {string | undefined}              message Header of the error message (the details are appended automatically).
+         * @param {Error | undefined}               cause Underlying error, if any.
+         */
         constructor(actualValue, allowedTypes, parameterName = "(unknown)", methodName = "<anonymous>", className = "<anonymous>", message = ParameterTypeError.#defaultMessageHeader, cause = undefined) {
             const resolvedMethodName = typeof methodName === "function" ? (methodName.name || "<anonymous>") : methodName;
             const resolvedClassName = typeof className === "function" ? (className.name || "<anonymous>") : className;
@@ -494,12 +489,12 @@
 
 
 
-
-            // MARK: _  verifyParam()
+            // MARK: _  verifyParams()
             /**
-             * Verifies that `actualValue` matches `allowedType`. Throws a {@link ParameterTypeError} otherwise.
+             * Verifies that `args` match their corresponding allowedType at the same index in `allowedTypes`.
+             * Throws a {@link ParameterTypeError} otherwise.
              *
-             * `allowedType` can be:
+             * `allowedTypes` can be:
              *  - a type-expression STRING — see the grammar notes below.
              *  - a class/constructor reference (checked via `instanceof`).
              *  - a RegExp instance, or a `"/pattern/flags"` string — matches string/number values via `.test(String(value))`.
@@ -531,37 +526,19 @@
              *
              * All of the above nest arbitrarily.
              *
-             * @param {any} actualValue
-             * @param {string | Function | RegExp | any[] | object} allowedType
-             * @param {string} [parameterName]
-             * @param {string | Function} [methodName]
+             * @param {IArguments | any[]} argument Typically the callee's `arguments` object.
+             * @param {ParameterTypeError.AllowedType[]} allowedTypes One entry per positional parameter to check.
+             * @param {string | Function} [method]
              * @param {string | Function} [className]
              * @param {string} [message]
+             * @returns {void}
              */
-            static #verifyParam(actualValue, allowedType, parameterName = "(unknown)", methodName = "<anonymous>", className = "<anonymous>", message = undefined) {
+            static verifyParams(argument, allowedTypes, method = "<anonymous>", className = "<anonymous>", message = undefined) {
                 if (!this.active) return;
 
-                if (!this.#matchesType(actualValue, allowedType)) {
+                if (!this.#isArguments(argument) && !Array.isArray(argument)) {
                     throw new ParameterTypeError(
-                        actualValue,
-                        allowedType,
-                        parameterName,
-                        methodName,
-                        className,
-                        message ?? this.#defaultMessageHeader
-                    );
-                }
-            }
-
-
-
-            // MARK: _  verifyParams()
-            static verifyParams(args, allowedTypes, method = "<anonymous>", className = "<anonymous>", message = undefined) {
-                if (!this.active) return;
-
-                if (!this.#isArguments(args) && !Array.isArray(args)) {
-                    throw new ParameterTypeError(
-                        args, "arguments", "args", "verifyParams", ParameterTypeError.name,
+                        argument, "arguments", "args", "verifyParams", ParameterTypeError.name,
                         "The given args must be an arguments object or an array."
                     );
                 }
@@ -572,12 +549,15 @@
                     );
                 }
 
-                const argsArray = Array.from(args);
+                const argsArray = Array.from(argument);
                 const paramNames = this.#extractParamNames(method);
 
                 for (let i = 0; i < allowedTypes.length; i++) {
                     const parameterName = paramNames?.[i] ?? `arg${i + 1}`;
-                    this.#verifyParam(argsArray[i], allowedTypes[i], parameterName, method, className, message);
+
+                    this.#verifyParam(argsArray[i], allowedTypes[i], 
+                        parameterName, method, className, message
+                    )
                 }
             }
 
@@ -592,8 +572,46 @@
 
 
 
+            // MARK: _  #verifyParam()
+            /**
+             * Verifies that `actualValue` matches `allowedType`. Throws a {@link ParameterTypeError} otherwise.
+             * (See {@link ParameterTypeError.verifyParams} for what `allowedType` can be.)
+             *
+             * @param {*} actualValue
+             * @param {ParameterTypeError.AllowedType} allowedType
+             * @param {string} [parameterName]
+             * @param {string | Function} [methodName]
+             * @param {string | Function} [className]
+             * @param {string} [message]
+             * @returns {void}
+             */
+            static #verifyParam(actualValue, allowedType, parameterName = "(unknown)", methodName = "<anonymous>", className = "<anonymous>", message = undefined) {
+                if (!this.active) return;
+
+                if (!this.#matchesType(actualValue, allowedType)) {
+                    debugger;
+                    throw new ParameterTypeError(
+                        actualValue,
+                        allowedType,
+                        parameterName,
+                        methodName,
+                        className,
+                        message ?? this.#defaultMessageHeader
+                    );
+                }
+            }
+
+
+
+
 
             // MARK: _  #matchesType()
+            /**
+             * 
+             * @param {*} value 
+             * @param {ParameterTypeError.AllowedType} type 
+             * @returns {boolean}
+             */
             static #matchesType(value, type) {
                 if (Array.isArray(type)) {
                     return this.#matchesTuple(value, type);
@@ -616,6 +634,12 @@
 
 
             // MARK: _  #matchesTuple()
+            /**
+             * 
+             * @param {*} value 
+             * @param {ParameterTypeError.AllowedType[]} typeArray 
+             * @returns {boolean}
+             */
             static #matchesTuple(value, typeArray) {
                 if (!Array.isArray(value)) return false;
                 if (value.length !== typeArray.length) return false;
@@ -625,6 +649,12 @@
 
 
             // MARK: _  #matchesExactShape()
+            /**
+             * 
+             * @param {*} value 
+             * @param {{ [key: string]: ParameterTypeError.AllowedType }} spec 
+             * @returns {boolean}
+             */
             static #matchesExactShape(value, spec) {
                 if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
                 const specKeys = Object.keys(spec);
@@ -638,6 +668,12 @@
 
 
             // MARK: _  #matchesNode()
+            /**
+             * 
+             * @param {*} value 
+             * @param {ParameterTypeError.TypeNode} node 
+             * @returns {boolean}
+             */
             static #matchesNode(value, node) {
                 switch (node.kind) {
                     case "literal":
@@ -657,7 +693,7 @@
                         return false;
 
                     case "named": {
-                        const ctor = globalThis[node.name];
+                        const ctor = /** @type {any} */ (globalThis)[node.name];
                         return typeof ctor === "function" && value instanceof ctor;
                     }
 
@@ -680,13 +716,20 @@
                     }
 
                     case "record": {
-                        if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
+                        /** @type {Set<ParameterTypeError.RecordRule>} */
+                        const used = new Set();
                         for (const key of Object.keys(value)) {
                             const rule = this.#findMatchingRecordRule(node.rules, key);
                             if (!rule) return false;
                             if (!this.#matchesNode(value[key], rule.valueType)) return false;
+                            used.add(rule);
                         }
-                        return true;
+                        /** @type {Map<number, boolean>} */
+                        const groupOk = new Map();
+                        for (const rule of node.rules) {
+                            groupOk.set(rule.group, groupOk.get(rule.group) || rule.optional || used.has(rule));
+                        }
+                        return ![...groupOk.values()].includes(false);
                     }
                 }
                 return false;
@@ -695,8 +738,14 @@
 
 
             // MARK: _  #findMatchingRecordRule()
-            /** Picks the most specific rule (literal > regex > pseudo key-type) whose key-pattern matches `key`. */
+            /** 
+             * Picks the most specific rule (literal > regex > pseudo key-type) whose key-pattern matches `key`.
+             * @param {ParameterTypeError.RecordRule[]} rules 
+             * @param {string} key 
+             * @return {ParameterTypeError.RecordRule | null}
+             */
             static #findMatchingRecordRule(rules, key) {
+                /** @type {ParameterTypeError.RecordRule | null} */
                 let best = null;
                 let bestTier = Infinity;
                 for (const rule of rules) {
@@ -714,6 +763,12 @@
 
 
             // MARK: _  #matchesKeyPattern()
+            /**
+             * 
+             * @param {string} key 
+             * @param {ParameterTypeError.KeyPattern} kp 
+             * @returns {boolean}
+             */
             static #matchesKeyPattern(key, kp) {
                 switch (kp.kind) {
                     case "literal": return key === kp.value;
@@ -742,9 +797,16 @@
 
 
             // MARK: _  #parseTypeExpression()
+            /**
+             * 
+             * @param {string} str 
+             * @returns {ParameterTypeError.TypeNode}
+             */
             static #parseTypeExpression(str) {
-                if (this.#typeExpressionCache.has(str)) return this.#typeExpressionCache.get(str);
+                const cached = this.#typeExpressionCache.get(str);
+                if (cached) return cached;
 
+                /** @type {ParameterTypeError.TypeNode} */
                 let node;
                 try {
                     const tokens = this.#tokenizeTypeExpression(str);
@@ -752,14 +814,17 @@
 
                     const peek = () => tokens[pos];
                     const advance = () => tokens[pos++];
+                    /** @param {string} type */
                     const expect = (type) => {
                         const t = advance();
                         if (!t || t.type !== type) throw new SyntaxError(`expected "${type}" but got ${t ? `"${t.type}"` : "end of input"}`);
                         return t;
                     };
 
+                    /** @returns {ParameterTypeError.TypeNode} */
                     const parseType = () => parseUnion();
 
+                    /** @returns {ParameterTypeError.TypeNode} */
                     const parseUnion = () => {
                         let n = parsePostfix();
                         if (peek() && peek().type === "|") {
@@ -773,6 +838,7 @@
                         return n;
                     };
 
+                    /** @returns {ParameterTypeError.TypeNode} */
                     const parsePostfix = () => {
                         let n = parsePrimary();
                         while (peek() && peek().type === "[") {
@@ -787,6 +853,7 @@
                         return n;
                     };
 
+                    /** @returns {ParameterTypeError.KeyPattern} */
                     const parseKeyPatternAtom = () => {
                         const t = peek();
                         if (!t) throw new SyntaxError("expected a key pattern");
@@ -803,6 +870,7 @@
                         throw new SyntaxError(`unexpected token "${t.type}" in key pattern`);
                     };
 
+                    /** @returns {ParameterTypeError.KeyPattern[]} */
                     const parseKeyPatternUnion = () => {
                         const patterns = [parseKeyPatternAtom()];
                         while (peek() && peek().type === "|") {
@@ -812,26 +880,39 @@
                         return patterns;
                     };
 
+                    /**
+                     * @param {number} group
+                     * @returns {ParameterTypeError.RecordRule}
+                     */
+                    const parseRecordPair = (group) => {
+                        const keyPatterns = parseKeyPatternUnion();
+                        let optional = false;
+                        if (peek() && peek().type === "?") { advance(); optional = true; }
+                        expect(":");
+                        const valueType = parseType();
+                        return { keyPatterns, valueType, optional, group };
+                    };
+
+                    /**
+                     * @param {ParameterTypeError.RecordRule[]} rules
+                     * @returns {void}
+                     */
                     const parseRecordMemberInto = (rules) => {
+                        const group = rules.length; // rules from one "(..)|(..)" member share a group id
                         if (peek() && peek().type === "(") {
                             while (true) {
                                 expect("(");
-                                const keyPatterns = parseKeyPatternUnion();
-                                expect(":");
-                                const valueType = parseType();
+                                rules.push(parseRecordPair(group));
                                 expect(")");
-                                rules.push({ keyPatterns, valueType });
                                 if (peek() && peek().type === "|") { advance(); continue; }
                                 break;
                             }
                         } else {
-                            const keyPatterns = parseKeyPatternUnion();
-                            expect(":");
-                            const valueType = parseType();
-                            rules.push({ keyPatterns, valueType });
+                            rules.push(parseRecordPair(group));
                         }
                     };
 
+                    /** @returns {ParameterTypeError.TypeNode} */
                     const parsePrimary = () => {
                         const t = peek();
                         if (!t) throw new SyntaxError("unexpected end of type expression");
@@ -844,6 +925,7 @@
                         }
                         if (t.type === "[") {
                             advance();
+                            /** @type {ParameterTypeError.TypeNode[]} */
                             const elements = [];
                             if (peek() && peek().type !== "]") {
                                 elements.push(parseType());
@@ -857,6 +939,7 @@
                         }
                         if (t.type === "{") {
                             advance();
+                            /** @type {ParameterTypeError.RecordRule[]} */
                             const rules = [];
                             if (peek() && peek().type !== "}") {
                                 parseRecordMemberInto(rules);
@@ -886,7 +969,7 @@
                     if (pos !== tokens.length) throw new SyntaxError(`unexpected trailing content starting at token ${pos}`);
                 }
                 catch (err) {
-                    throw new SyntaxError(`Invalid type expression "${str}": ${err.message}`);
+                    throw new SyntaxError(`Invalid type expression "${str}": ${/** @type {Error} */ (err).message}`);
                 }
 
                 this.#typeExpressionCache.set(str, node);
@@ -896,11 +979,21 @@
 
 
             // MARK: _  #tokenizeTypeExpression()
+            /**
+             * 
+             * @param {string} str 
+             * @returns {ParameterTypeError.Token[]}
+             */
             static #tokenizeTypeExpression(str) {
+                /** @type {ParameterTypeError.Token[]} */
                 const tokens = [];
                 const n = str.length;
                 let i = 0;
 
+                /**
+                 * @param {string} rawValue
+                 * @returns {RegExp | null}
+                 */
                 const asRegexShape = (rawValue) => {
                     const m = /^\/(.*)\/([a-zA-Z]*)$/.exec(rawValue);
                     if (!m) return null;
@@ -912,7 +1005,7 @@
 
                     if (/\s/.test(c)) { i++; continue; }
 
-                    if ("()[]{},|:".includes(c)) { tokens.push({ type: c }); i++; continue; }
+                    if ("()[]{},|:?".includes(c)) { tokens.push({ type: c }); i++; continue; }
 
                     if (c === '"' || c === "'") {
                         const quote = c;
@@ -947,7 +1040,7 @@
                         j += flags.length;
                         let regex;
                         try { regex = new RegExp(body, flags); }
-                        catch (err) { throw new SyntaxError(`invalid regex literal /${body}/${flags}: ${err.message}`); }
+                        catch (err) { throw new SyntaxError(`invalid regex literal /${body}/${flags}: ${/** @type {Error} */ (err).message}`); }
                         tokens.push({ type: "literal", literalType: "regex", value: regex });
                         i = j;
                         continue;
@@ -990,6 +1083,10 @@
 
 
 
+            /**
+             * @param {*} value
+             * @returns {string}
+             */
             static #describeType(value) {
                 if (value === null) return "null";
                 if (Array.isArray(value)) return `array[${value.length}]`;
@@ -999,6 +1096,10 @@
                 return typeof value;
             }
 
+            /**
+             * @param {ParameterTypeError.AllowedType} type
+             * @returns {string}
+             */
             static #describeAllowedType(type) {
                 if (typeof type === "function") return type.name || "<anonymous class>";
                 if (Array.isArray(type)) return "[" + type.map(t => this.#describeAllowedType(t)).join(", ") + "]";
@@ -1009,27 +1110,114 @@
                 return String(type);
             }
 
+            /**
+             * @param {*} value
+             * @returns {boolean}
+             */
             static #isClass(value) {
                 return typeof value === "function" && /^class[\s{]/.test(Function.prototype.toString.call(value));
             }
 
+            /**
+             * @param {*} value
+             * @returns {boolean}
+             */
             static #isArguments(value) {
                 return Object.prototype.toString.call(value) === "[object Arguments]";
             }
 
+            /**
+             * @param {*} fct A function, or a class (then its constructor's parameters are used).
+             * @returns {string[] | null}
+             */
             static #extractParamNames(fct) {
                 if (typeof fct !== "function") return null;
 
                 const src = Function.prototype.toString.call(fct);
-                const match = isClass(fct) ? src.match(/(?<=\n[\s\t\n]*)constructor[\s\t\n]*[^(]*\(([^)]*)\)/) : src.match(/^[^(]*\(([^)]*)\)/);
-                if (!match) return null;
-                return match[1]
-                    .split(",")
-                    .map(p => p.trim().split("=")[0].trim().replace(/^\.\.\./, ""))
+
+                let openIndex;
+                if (isClass(fct)) {
+                    const ctorMatch = /\bconstructor\s*(?=\()/.exec(src);
+                    if (!ctorMatch) return null; // implicit constructor: fall back to arg1, arg2...
+                    openIndex = src.indexOf("(", ctorMatch.index);
+                } else {
+                    openIndex = src.indexOf("(");
+                }
+
+                let paramsStr;
+                if (openIndex === -1) {
+                    // parenless single-param arrow: `x => ...`
+                    const arrowMatch = src.match(/^\s*(?:async\s+)?([A-Za-z_$][A-Za-z0-9_$]*)\s*=>/);
+                    paramsStr = arrowMatch ? arrowMatch[1] : "";
+                } else {
+                    paramsStr = this.#extractBalancedParens(src, openIndex) ?? "";
+                }
+
+                if (paramsStr.trim() === "") return [];
+
+                return this.#splitTopLevel(paramsStr, ",")
+                    .map(p => this.#stripDefaultValue(p).replace(/^\.\.\./, "").trim())
                     .filter(Boolean);
             }
 
+            /**
+             * @param {string} src
+             * @param {number} openIndex
+             * @returns {string | null}
+             */
+            static #extractBalancedParens(src, openIndex) {
+                let depth = 0;
+                for (let i = openIndex; i < src.length; i++) {
+                    if (src[i] === "(") depth++;
+                    else if (src[i] === ")") {
+                        depth--;
+                        if (depth === 0) return src.slice(openIndex + 1, i);
+                    }
+                }
+                return null;
+            }
+
+            /**
+             * @param {string} str
+             * @param {string} separator
+             * @returns {string[]}
+             */
+            static #splitTopLevel(str, separator) {
+                /** @type {string[]} */
+                const parts = [];
+                let depth = 0;
+                let current = "";
+                for (const c of str) {
+                    if ("([{".includes(c)) depth++;
+                    else if (")]}".includes(c)) depth--;
+                    if (c === separator && depth === 0) { parts.push(current); current = ""; }
+                    else current += c;
+                }
+                parts.push(current);
+                return parts;
+            }
+
+            /**
+             * @param {string} paramStr
+             * @returns {string}
+             */
+            static #stripDefaultValue(paramStr) {
+                let depth = 0;
+                for (let i = 0; i < paramStr.length; i++) {
+                    const c = paramStr[i];
+                    if ("([{".includes(c)) depth++;
+                    else if (")]}".includes(c)) depth--;
+                    else if (
+                        c === "=" && depth === 0 &&
+                        paramStr[i + 1] !== ">" &&
+                        !["=", "!", "<", ">"].includes(paramStr[i - 1] ?? "")
+                    ) return paramStr.slice(0, i).trim();
+                }
+                return paramStr.trim();
+            }
+
         //#endregion
+
     }
 
 
@@ -1055,13 +1243,13 @@
             /** Value of ***this*** {@link Grade}, a positive float number below 20. @type {number} */
             #grade;
 
-            /** The {@link Subject} (or its name) of ***this*** {@link Grade}. @type {Subject} @readonly */
+            /** The {@link Subject} of ***this*** {@link Grade}. @type {Subject|string|undefined} */
             #subject;
 
-            /** The {@link Module} (or its name) of ***this*** {@link Grade}. Has a getter and a setter. @type {Module}  */
+            /** The {@link Module} of ***this*** {@link Grade}. @type {Module|string|undefined} */
             #module;
 
-            /** The {@link Semester} (or its number) of ***this*** {@link Grade}. @type {Semester} @readonly */
+            /** The {@link Semester} of ***this*** {@link Grade}. @type {Semester|number|undefined} @readonly */
             #semester;
 
             /** Value of the coefficient of ***this*** {@link Grade} in its {@link Subject}, a positive float number below 100, in %. @type {number} */
@@ -1073,10 +1261,10 @@
             /** `true` if ***this*** {@link Grade} is a simulated grade, `false` otherwise. @type {boolean} @readonly */
             #isSim;
 
-            /** A 17-digits *wannabe unique* id number for a simulated grade, built from the time stamp of its creation. @type {number} @readonly */
+            /** A 17-digits *wannabe unique* id number for a simulated grade, built from the time stamp of its creation. @type {number|undefined} @readonly */
             #id;
 
-            /** Value of the class' average of ***this*** {@link Grade}, a positive float number below 20 @type {number} */
+            /** Value of the class' average of ***this*** {@link Grade}, a positive float number below 20 @type {number|undefined} */
             #classAvg;
 
             /** Name of the teacher.s who published ***this*** {@link Grade} (default when no teacher was given: " — ") @type {string} @readonly */
@@ -1094,6 +1282,9 @@
             #markedAsRead;
 
 
+
+
+
         //#endregion — properties —
 
 
@@ -1103,44 +1294,79 @@
         /**
          * Constructs a {@link Grade}.
          *
-         * @param {number}          grade                   Value of ***this*** {@link Grade}, a positive float number below 20.
-         * @param {number}          coef                    Value of the coefficient of ***this*** {@link Grade} in its {@link Subject}, a positive float number below 100, as a %.
-         * @param {Subject}         subject                 The {@link Subject} ***this*** {@link Grade} will belong to.
-         * @param {string}          [title=" — "]           Title of ***this*** {@link Grade}. Default value is " — ".
-         * @param {boolean}         [isSim=false]           `true` if ***this*** {@link Grade} is a simulated grade, `false` otherwise. `false` by default.
-         * @param {number|" — "}    [classAvg=" — "]        Value of the class' average of ***this*** {@link Grade}, a positive float number below 20. Default value is " — ".
-         * @param {string}          [prof=" — "]            Name of the teacher.s who published ***this*** {@link Grade}. Default value is " — ".
-         * @param {string}          [date=" — "]            Date of publication of ***this*** {@link Grade} entered by the administration. Default value is " — ". ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet*.
-         * @param {Semester}        [semester=undefined]    The {@link Semester} ***this*** {@link Grade} will belong to. Default is "?".
-         * @param {Module}          [module=undefined]      The {@link Module} ***this*** {@link Grade} will belong to. Default is "undefined".
-         * @param {ECAMDashboard}   [ecamDash=undefined]    The {@link ECAMDashboard}, in order to access the backend to retrieve existing {@link Subject}s, {@link Module}s and {@link Semester}s.
-         * @param {number}          [id=undefined]          A wannabe unique id number for a simulated grade, built from the time stamp of its creation.
-         *
-         * @throws {ParameterTypeError} If a parameter is of an unexpected type.
+         * @param {number}                              grade               Value of ***this*** {@link Grade}, a positive float number below 20.
+         * @param {number}                              coef                Value of the coefficient of ***this*** {@link Grade} in its {@link Subject}, a positive float number below 100, as a %.
+         * @param {Subject|string|undefined}            subject             The {@link Subject} ***this*** {@link Grade} will belong to.
+         * @param {string|undefined}                    [title=" — "]       Title of ***this*** {@link Grade}. Default value is " — ".
+         * @param {boolean|undefined}                   [isSim=false]       `true` if ***this*** {@link Grade} is a simulated grade, `false` otherwise. `false` by default.
+         * @param {number|string|undefined}             [classAvg=" — "]    Value of the class' average of ***this*** {@link Grade}, a positive float number below 20. Default value is " — ".
+         * @param {string|undefined}                    [prof=" — "]        Name of the teacher.s who published ***this*** {@link Grade}. Default value is " — ".
+         * @param {string|undefined}                    [date=" — "]        Date of publication of ***this*** {@link Grade} entered by the administration. Default value is " — ". ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet*.
+         * @param {Semester|number|string|undefined}    [semester="?"]      The {@link Semester} ***this*** {@link Grade} will belong to. Default is "?".
+         * @param {Module|string|undefined}             [module=undefined]  The {@link Module} ***this*** {@link Grade} will belong to. Default is "undefined".
+         * @param {number|undefined}                    [id=undefined]      An id number for a simulated grade, built from the time stamp of its creation. The id is guaranted to be unique.
          */
-        constructor(grade, coef, subject, title=" — ", isSim=false, classAvg=" — ", prof=" — ", date=" — ", semester="?", module=undefined, id=undefined) {
+        constructor(grade, coef, subject=undefined, title=" — ", isSim=false, classAvg=" — ", prof=" — ", date=" — ", semester="?", module=undefined, id=undefined) {
 
             ParameterTypeError.verifyParams(arguments, [
-                "number | /\\d+(\\.\\d+)?/",
-                "number | /\\d+(\\.\\d+)?/",
-                Subject,
+                "number | "+nbRegExpSrc,
+                "number | "+nbRegExpSrc,
+                Subject.name+" | string | undefined",
                 "string | undefined",
                 "boolean | undefined",
-                "number | /\\d+(\\.\\d+)?/ | \" — \" | undefined",
+                "number | "+nbRegExpSrc+" | \" — \" | undefined",
                 "string | undefined",
                 "string | undefined",
-                Semester.name+" | undefined",
-                Module.name+" | undefined",
-                "number | /\\d+/ | undefined"
+                Semester.name+" | "+intRegExpSrc+" | number | undefined",
+                Module.name+" | string | undefined",
+                "number | "+intRegExpSrc+" | undefined"
             ], Grade, Grade)
 
 
             this.#grade = grade <= 20 ? (grade >= 0 ? Number(grade) : 0) : 20;
             this.#coef  = coef <= 100 ? (coef  >= 0 ? Number(coef)  : 0) : 100;
 
-            this.#subject   = subject;
-            this.#module    = module ? module : (subject instanceof Subject ? subject.module : "__#unclassified#__");
-            this.#semester  = semester ? semester : (subject instanceof Subject ? subject.semester : 0);
+
+            if (subject instanceof Subject) {
+                this.#subject = subject;
+
+                if (module) {
+                    if (module === this.#subject.module) { this.#module = module; }
+                    else { throw new Error("Given "+Module.name+" does not correspond to the given "+Subject.name+"'s own "+Module.name+".") }
+                }
+                else { this.#module = this.#subject.module; }
+
+                if (semester) {
+                    if (semester === this.#subject.semester) { this.#semester = semester; }
+                    else { throw new Error("Given "+Semester.name+" does not correspond to the given "+Subject.name+"'s own "+Semester.name+".") }
+                }
+                else { this.#semester = this.#subject.semester; }
+            }
+            else if (typeof subject === "string") {
+                if (module) {
+                    if (typeof module === "string") { this.#module = module; }
+                    else { throw new Error("When giving the name of a subject instead of the "+Subject.name+", the module argument may not be a "+Module.name+", only a string.") }
+                }
+
+                if (semester) {
+                    if (typeof semester === "number") { this.#semester = semester; }
+                    else if (typeof semester === "string" && parseInt(semester)) { this.#semester = parseInt(semester); }
+                    else { throw new Error("When giving the name of a subject instead of the "+Subject.name+", the module argument may not be a "+Semester.name+", only a string.") }
+                }
+            }
+            else {
+                if (module) {
+                    if (typeof module === "string") { this.#module = module; }
+                    else { throw new Error("Without a "+Subject.name+" being given, the module argument may not be a "+Module.name+", only a string.") }
+                }
+
+                if (semester) {
+                    if (typeof semester === "number") { this.#semester = semester; }
+                    else if (typeof semester === "string" && parseInt(semester)) { this.#semester = parseInt(semester); }
+                    else { throw new Error("Without a "+Subject.name+" being given, the module argument may not be a "+Semester.name+", only a string.") }
+                }
+            }
+
 
             this.#title = title;
             this.#isSim = isSim;
@@ -1149,7 +1375,7 @@
                 if (id) this.#id = id;
                 else {
                     const t = new Date();
-                    this.#id = ""
+                    this.#id = parseInt(""
                         + t.getFullYear()
                         + String(t.getMonth())          .padStart(2, "0")
                         + String(t.getDate())           .padStart(2, "0")
@@ -1157,11 +1383,20 @@
                         + String(t.getMinutes())        .padStart(2, "0")
                         + String(t.getSeconds())        .padStart(2, "0")
                         + String(t.getMilliseconds())   .padStart(3, "0")
-                    ;
+                    );
                 }
             }
+            else {
+                this.#id = undefined;
+            }
 
-            this.#classAvg  = (classAvg == " — " || isNaN(classAvg)) ? " — " : ( classAvg <= 20 ? (classAvg >= 0 ? classAvg : 0) : 20 );
+
+            if (typeof classAvg === "number") {
+                this.#classAvg = classAvg <= 20 ? (classAvg >= 0 ? classAvg : 0) : 20;
+            }
+            else if (classAvg.match(RegExp(nbRegExpSrc))) {
+                this.#classAvg = parseFloat(classAvg) <= 20 ? (parseFloat(classAvg) >= 0 ? parseFloat(classAvg) : 0) : 20;
+            }
 
             this.#prof      = prof;
             this.#date      = date;
@@ -1177,56 +1412,85 @@
         //#region
 
 
-            /** Value of ***this*** {@link Grade}, a positive float number below 20. @type {number} */
-            get grade()     { return this.#grade    }
+            /** Value of ***this*** {@link Grade}, a positive float number below 20. */
+            get grade()     { return this.#grade }
             set grade(value) {
-                if (isNaN(value)) { throw new Error("Invalid Grade.grade setting: tried to set 'grade' to a type other than number") }
                 this.#grade = value <= 20 ? (value >= 0 ? Number(value) : 0) : 20;
             }
 
-            /** Value of the coefficient of ***this*** {@link Grade} in its {@link Subject}, a positive float number below 100, in %. @type {number} */
-            get coef()      { return this.#coef     }
+            /** Value of the coefficient of ***this*** {@link Grade} in its {@link Subject}, a positive float number below 100, in %. */
+            get coef()      { return this.#coef }
             set coef(value) {
-                if (isNaN(value)) { throw new Error("Invalid Grade.coef setting: tried to set 'coef' to a type other than number") }
                 this.#coef = value <= 100 ? (value >= 0 ? Number(value) : 0) : 100;
             }
 
-            /** The {@link Subject} (or its name) of ***this*** {@link Grade}. @type {Subject} @readonly */
-            get subject()   { return this.#subject  }
+            /** The {@link Subject} of ***this*** {@link Grade}. */
+            get subject()   { return this.#subject instanceof Subject ? this.#subject : undefined }
             set subject(value)    {
-                if (!(value instanceof Subject)) {throw new Error("Invalid Grade.subject setting: tried to set 'module' to a type other than Module")}
-
                 this.#subject = value;
             }
-
-            /** The {@link Module} of ***this*** {@link Grade}. Has a getter and a setter. @type {Module}  */
-            get module()    { return this.#module   }
-            set module(value)    {
-                if (!(value instanceof Module)) {throw new Error("Invalid Grade.module setting: tried to set 'module' to a type other than Module")}
-
-                this.#module = value;
+            /** The name of the {@link Subject} of ***this*** {@link Grade}. */
+            get subjectName() { return this.#subject instanceof Subject ? this.#subject.name : this.#subject }
+            set subjectName(value) {
+                if (typeof value === "string") {
+                    if (this.#subject instanceof Subject) {
+                        throw new Error(
+                            "This "+Grade.name+"'s "
+                            +Object.getOwnPropertyDescriptors(this).subject.get?.name
+                            +" property's current value is an actual "+Subject.name+", it may not be replaced with a string."
+                        )
+                    }
+                    else { this.#subject = value; }
+                }
             }
 
-            /** The {@link Semester} of ***this*** {@link Grade}. @type {Semester} @readonly */
+
+            /** The {@link Module} of ***this*** {@link Grade}. Has a getter and a setter. @type {Module|undefined}  */
+            get module()    { return this.#module instanceof Module ? this.#module : undefined }
+            set module(value)    {
+                this.#module = value;
+            }
+            /** The name of the {@link Module} of ***this*** {@link Grade}. */
+            get moduleName() { return this.#module instanceof Module ? this.#module.name : this.#module }
+            set moduleName(value) {
+                if (typeof value === "string") {
+                    if (this.#subject instanceof Subject) {
+                        throw new Error(
+                            "This "+Grade.name+"'s "
+                            +Object.getOwnPropertyDescriptors(this).subject.get?.name
+                            +" property's current value is an actual "+Subject.name+", it may not be replaced with a string."
+                        )
+                    }
+                    else { this.#subject = value; }
+                }
+            }
+
+            /** The {@link Semester} of ***this*** {@link Grade}. @type {Semester|number|undefined} @readonly */
             get semester()  { return this.#semester }
 
             /** Title of ***this*** {@link Grade} (default when no title was given: " — "). @type {string} */
             get title()     { return this.#title    }
             set title(value) {
-                if (typeof value != "string") { throw new Error("Invalid Grade.title setting: tried to set 'title' to a type other than string") }
                 this.#title = value;
             }
 
             /** `true` if ***this*** {@link Grade} is a simulated grade, `false` otherwise. @type {boolean} @readonly */
             get isSim()     { return this.#isSim    }
 
-            /** A 17-digits *wannabe unique* id number for a simulated grade, built from the time stamp of its creation. @type {string} @readonly */
-            get id()        { return this.#id       }
+            /** A 17-digits *wannabe unique* id number for a simulated grade, built from the time stamp of its creation. @type {number|undefined} @readonly */
+            get id()        { return this.#id }
 
-            /** Value of the class' average of ***this*** {@link Grade}, a positive float number below 20 @type {number} */
+            /** Value of the class' average of ***this*** {@link Grade}, a positive float number below 20 @type {number|undefined} */
             get classAvg()  { return this.#classAvg }
+            /**
+             * @param {number|string|undefined} value 
+             */
             set classAvg(value) {
-                this.#classAvg = (value == " — " || isNaN(value)) ? " — " : ( value <= 20 ? (value >= 0 ? value : 0) : 20 );
+                ParameterTypeError.verifyParams(arguments, ["number|string|undefined"], Object.getOwnPropertyDescriptors(Grade.prototype).classAvg.set, Grade)
+
+                if (typeof value === "string") { value = parseInt(value); }
+
+                this.#classAvg = (!value || isNaN(value)) ? undefined : ( (value) <= 20 ? (value >= 0 ? value : 0) : 20 );
             }
 
             /** Name of the teacher.s who published ***this*** {@link Grade} (default when no teacher was given: " — ") @type {string} @readonly */
@@ -1274,7 +1538,6 @@
              * ```
              * `${semesterNumber}\\${moduleName}\\${subjectName}\\${title} : ${grade}/20 vs ${classAvg}/20, ${coef}% ${""|`(${id})`} [${"ON"|"OFF"}${""|", UNREAD"}]`
              * ```
-             * @override {@link Object#toString()}
              * @returns The string representation of ***this*** {@link Grade}.
              */
             toString() {
@@ -1320,7 +1583,6 @@
             /**
              *
              * @param {string} string
-             * @param {ECAMDashboard} ecamDash
              */
             static fromString(string) {
                 /**
@@ -1334,7 +1596,7 @@
                         parseFloat(match[7]),
                         match[3],
                         match[4],
-                        !isNaN(match[8]),
+                        !isNaN(parseInt(match[8])),
                         parseFloat(match[6]),
                         undefined,
                         undefined,
@@ -1439,22 +1701,19 @@
             static classAverage(grades) {
                 ParameterTypeError.verifyParams(arguments, [Grade.name+"[]"], Grade.classAverage, Grade);
 
-                if (grades instanceof Array) {
-                    let validArrayOfGrades = true, average = 0, totalCoef = 0;
+                let average = 0, totalCoef = 0, i = -1;
 
-                    grades.forEach(grade => {
-                        if (grade instanceof Grade) {
-                            average += grade.#classAvg * grade.#coef;
-                            totalCoef += grade.#coef;
-                        }
-                        else validArrayOfGrades = false;
-                    })
+                for (const grade of grades) {
+                    i++;
 
-                    if (!validArrayOfGrades) return " — ";
-                    else return Math.round(100*average/totalCoef)/100 || " — ";
-
+                    if (grade.#classAvg) {
+                        average += grade.#classAvg * grade.#coef;
+                        totalCoef += grade.#coef;
+                    }
+                    else console.log("Grade n°"+i+" does not have a class average.")
                 }
-                return " — ";
+
+                return Math.round(100*average/totalCoef)/100 || " — ";
             }
 
         //#endregion — methods —
@@ -1478,7 +1737,8 @@
 
 
 
-        //#region .                — properties —
+        //MARK:                  — properties —
+        //#region 
 
 
 
@@ -1488,19 +1748,19 @@
             /** Coefficient of ***this*** {@link Subject} in its {@link Module}. @type {number} */
             #coef;
 
-            /** Average of the user for ***this*** {@link Subject}, a positive float number below 20 @type {number} @readonly */
+            /** Average of the user for ***this*** {@link Subject}, a positive float number below 20 @type {number | undefined} */
             #average;
 
-            /** Value of the class' average for ***this*** {@link Subject}, a positive float number below 20 @type {number} @readonly */
+            /** Value of the class' average for ***this*** {@link Subject}, a positive float number below 20 @type {number | undefined} */
             #classAvg;
 
             /** Array of the {@link Grade}s in ***this*** {@link Subject}. @type {Grade[]} @readonly */
             #grades = [];
 
-            /** Name of the module of ***this*** {@link Subject}. @type {Module} */
+            /** Name of the module of ***this*** {@link Subject}. @type {Module | string | undefined} */
             #module;
 
-            /** The {@link Semester} (or its number) of ***this*** {@link Subject}. @type {Semester} @readonly */
+            /** The {@link Semester} (or its number) of ***this*** {@link Subject}. @type {Semester | number | undefined} @readonly */
             #semester;
 
 
@@ -1529,16 +1789,16 @@
             /** Array of the disabled simulated {@link Grade}s in ***this*** {@link Subject}. @type {Grade[]} @readonly */
             #disabledSimGrades = [];
 
-            /** Total of the coefficients of all the {@link Grade}s in ***this*** {@link Subject}. @type {number} @readonly */
+            /** Total of the coefficients of all the {@link Grade}s in ***this*** {@link Subject}. @type {number | undefined} @readonly */
             #totalCoefGrades;
 
-            /** Total of the coefficients of all the real {@link Grade}s in ***this*** {@link Subject}. @type {number} @readonly */
+            /** Total of the coefficients of all the real {@link Grade}s in ***this*** {@link Subject}. @type {number | undefined} @readonly */
             #totalCoefRealGrades;
 
-            /** Total of the coefficients of all the enabled {@link Grade}s in ***this*** {@link Subject}. @type {number} @readonly */
+            /** Total of the coefficients of all the enabled {@link Grade}s in ***this*** {@link Subject}. @type {number | undefined} @readonly */
             #totalCoefEnabledGrades;
 
-            /** Total of the coefficients of all the enabled real {@link Grade}s in ***this*** {@link Subject}. @type {number} @readonly */
+            /** Total of the coefficients of all the enabled real {@link Grade}s in ***this*** {@link Subject}. @type {number | undefined} @readonly */
             #totalCoefEnabledRealGrades;
 
 
@@ -1554,46 +1814,48 @@
 
 
 
-        // MARK: .               — constructor —
+        // MARK:                 — constructor —
         /**
          * Constructs an object of class {@link Subject}.
          *
          * The array of {@link Grade}s may be empty/undefined, in this case, the next parameters `name` and `module` **must** be provided. This will create a simulated subject.
          *
          *
-         * @param {string}      name                    Name to give to ***this*** {@link Subject}.
-         * @param {number}      [coef=100]              Coefficient of ***this*** {@link Subject} in its {@link Module}, a positive float number below 100, as a %. Default value is 100.
-         * @param {Module}      [module=undefined]      The {@link Module} ***this*** {@link Subject} will belong to. Default value is `undefined`. Leave it `undefined` and give a {@link Semester} if you want to add this subject to the undefinedModule of the given {@link Semester}.
-         * @param {Semester}    [semester=undefined]    The {@link Semester} ***this*** {@link Subject} will belong to. Default value is `undefined`.
-         *
-         * @throws {TypeError} If a parameter is of an unexpected type.
+         * @param {string}          name                                    Name to give to ***this*** {@link Subject}.
+         * @param {number}          [coef=100]                              Coefficient of ***this*** {@link Subject} in its {@link Module}, a positive float number below 100, as a %. Default value is 100.
+         * @param {Module|Semester|undefined} [moduleOrSemester=undefined]  The {@link Module} ***this*** {@link Subject} will belong to, or the {@link Semester} whose undefined {@link Module} ***this*** {@link Module} will belong to.
          */
-        constructor(name, coef=100, module=undefined, semester=undefined) {
-
-
-
-            //#region
-            if (typeof name !== "string")   { throw new TypeError("Improper Subject construction: wrong 'name' argument type, was expecting a string") }
-            if (isNaN(coef))                { throw new TypeError("Improper Subject construction: wrong 'coef' optional argument type, was expecting a number") }
-            if (module !== undefined && !(module instanceof Module))    { throw new TypeError("Improper Subject construction: wrong 'module' optional argument type, was expecting a Module") }
-            //#endregion
+        constructor(name, coef=100, moduleOrSemester=undefined) {
+            ParameterTypeError.verifyParams(arguments, [
+                "string",
+                "number|"+nbRegExpSrc+"|undefined",
+                Module.name+"|"+Semester.name+"|undefined"
+            ], Subject, Subject);
 
             this.#name      = name;
             this.#coef      = coef <= 100 ? (coef >= 0 ? Number(coef) : 0) : 100;
 
-            this.#module    = module || semester.undefinedModule;
-            this.#semester  = semester || module.semester;
-
-            if (module instanceof Module) {
-                module.addSubject(this);
+            if (moduleOrSemester instanceof Module) {
+                this.#semester  = moduleOrSemester.semester;
+                this.#module    = moduleOrSemester;
+                this.#module.addSubjects(this);
             }
+            else if (moduleOrSemester instanceof Semester) {
+                this.#semester = moduleOrSemester;
+                this.#module = this.#semester.undefinedModule;
+                this.#module.addSubjects(this);
+            }
+
+            this.#subjectCard = new SubjectCard(this);
         }
 
 
-        //#region .             — encapsulation —
+        //MARK:               — encapsulation —
+        //#region 
 
             /**
-             * Name of ***this*** {@link Subject}. @type {string} */
+             * Name of ***this*** {@link Subject}. @type {string}
+             */
             get name()      { return this.#name     }
             set name(value) {
                 if (typeof value != "string") { throw new TypeError("Invalid Subject.name setting: tried to set 'name' to a type other than string") }
@@ -1601,7 +1863,8 @@
             }
 
             /**
-             * Coefficient of ***this*** {@link Subject} in its {@link Module}. @type {number} */
+             * Coefficient of ***this*** {@link Subject} in its {@link Module}. @type {number}
+             */
             get coef()      { return this.#coef     }
             set coef(value) {
                 if (isNaN(value)) { throw new TypeError("Invalid Subject.coef setting: tried to set 'coef' to a type other than number") }
@@ -1609,114 +1872,39 @@
             }
 
             /**
-             * Value of the class' average of ***this*** {@link Grade}, a positive float number below 20 @type {number} @readonly */
+             * Value of the class' average of ***this*** {@link Grade}, a positive float number below 20 @type {number | undefined} @readonly
+             */
             get average()   { return this.#average  }
 
             /**
-             * Value of the class' average of ***this*** {@link Grade}, a positive float number below 20 @type {number} @readonly */
+             * Value of the class' average of ***this*** {@link Grade}, a positive float number below 20 @type {number | undefined} @readonly
+             */
             get classAvg()  { return this.#classAvg }
 
             /**
-             * Array of the {@link Grade}s in ***this*** {@link Subject}. @type {Grade[]} @readonly */
+             * Array of the {@link Grade}s in ***this*** {@link Subject}. @type {Grade[]} @readonly
+             */
             get grades()    { return this.#grades   }
 
             /**
-             * Adds a {@link Grade} to ***this*** {@link Subject}.
-             * @param {Grade} grade The {@link Grade} to add to ***this*** {@link Subject}.
-             * @returns {Subject} ***this*** {@link Subject}.
+             * The {@link Module} of ***this*** {@link Subject}. @type {Module | undefined}
              */
-            addGrade(grade) {
-                if (!(grade instanceof Grade)) { throw new TypeError("Invalid Subject.addGrades() call: wrong 'grade' parameter type, was expecting a number.") }
-                this.#grades.push(grade);
-
-                return this;
-            }
+            get module()    { return this.#module instanceof Module ? this.#module : undefined }
             /**
-             * Adds a **new** {@link Grade} to ***this*** {@link Subject}.
-             * @param {number}  grade               Value of ***this*** {@link Grade}, a positive float number below 20.
-             * @param {number}  coef                Value of the coefficient of ***this*** {@link Grade} in its {@link Subject}, a positive float number below 100, as a %.
-             * @param {string}  [title=" — "]       Title of ***this*** {@link Grade}. Default value is " — ".
-             * @param {boolean} [isSim=false]       `true` if ***this*** {@link Grade} is a simulated grade, `false` otherwise. `false` by default.
-             * @param {number}  [classAvg=" — "]    Value of the class' average of ***this*** {@link Grade}, a positive float number below 20. Default value is " — ".
-             * @param {string}  [prof=" — "]        Name of the teacher.s who published ***this*** {@link Grade}. Default value is " — ".
-             * @param {string}  [date=" — "]        Date of publication of ***this*** {@link Grade} entered by the administration. Default value is " — ". ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet*.
-             * @returns {Grade} The **new** {@link Grade} added to ***this*** {@link Subject}.
-             * @throws {TypeError} If a parameter is of an unexpected type.
+             * @param {Module | undefined} value
              */
-            addNewGrade(grade, coef, title, isSim, classAvg, prof, date) {
-                const newGrade = new Grade(
-                    grade, 
-                    coef, 
-                    this, 
-                    title, 
-                    isSim, 
-                    classAvg, 
-                    prof, 
-                    date, 
-                    this.#semester, 
-                    this.#module
-                );
-                this.#grades.push(newGrade);
-
-                return newGrade;
-            }
-
-            /**
-             * @typedef {Object} NewGradeEntry
-             * @property {number}       grade               Value of ***this*** {@link Grade}, a positive float number below 20.
-             * @property {number}       coef                Value of the coefficient of ***this*** {@link Grade} in its {@link Subject}, a positive float number below 100, as a %.
-             * @property {string}       [title=" — "]       Title of ***this*** {@link Grade}. Default value is " — ".
-             * @property {boolean}      [isSim=false]       `true` if ***this*** {@link Grade} is a simulated grade, `false` otherwise. `false` by default.
-             * @property {number|" — "} [classAvg=" — "]    Value of the class' average of ***this*** {@link Grade}, a positive float number below 20. Default value is " — ".
-             * @property {string}       [prof=" — "]        Name of the teacher.s who published ***this*** {@link Grade}. Default value is " — ".
-             * @property {string}       [date=" — "]        Date of publication of ***this*** {@link Grade} entered by the administration. Default value is " — ". ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet*.
-             */
-            /**
-             *
-             * @param  {...NewGradeEntry} gradesData
-             * @returns {Grade} The **new** {@link Grade} added to ***this*** {@link Subject}.
-             * @throws {TypeError} If a parameter is of an unexpected type.
-             */
-            addNewGrades(...gradesData) {
-                let out = [];
-
-                gradesData.forEach(gradeData => {
-                    if (typeof gradeData !== "object") {
-                        throw new TypeError("Invalid Subject.addNewGrades() call: was expecting Objects like {grade: number, coef: number, ...}.");
-                    }
-
-                    const {grade, coef, title=" — ", isSim="false", classAvg=" — ", prof=" — ", date=" — "} = gradeData;
-
-                    const newGrade = new Grade(
-                        grade, 
-                        coef, 
-                        this,
-                        title, 
-                        isSim, 
-                        classAvg, 
-                        prof, 
-                        date, 
-                        this.#semester, 
-                        this.#module
-                    );
-                    this.#grades.push(newGrade);
-                    out.push(newGrade);
-                })
-
-                return out;
-            }
-
-            /**
-             * The {@link Module} of ***this*** {@link Subject}. @type {Module} */
-            get module()    { return this.#module   }
             set module(value)    {
-                if (!(value instanceof Module)) {throw new TypeError("Invalid Subject.module setting: tried to set 'module' to a type other than Module.")}
                 this.#module = value;
             }
+            /**
+             * The name of the {@link Module} of ***this*** {@link Subject}. @type {string | undefined}
+             */
+            get moduleName() { return this.#module instanceof Module ? this.#module.name : this.#module }
 
             /**
-             * The {@link Semester} (or its number) of ***this*** {@link Subject}. @type {Semester|number} @readonly */
-            get semester()  { return this.#semester }
+             * The {@link Semester} (or its number) of ***this*** {@link Subject}. @type {Semester | undefined} @readonly
+             */
+            get semester()  { return this.#semester instanceof Semester ? this.#semester : undefined }
 
             /**
              * Array of the real {@link Grade}s in ***this*** {@link Subject}. @type {Grade[]} @readonly */
@@ -1782,13 +1970,21 @@
 
 
 
-        //#region .                 — methods —
+        //MARK:                   — methods —
+        //#region 
 
 
-            toString() { return this.#name }
+
+
+            // MARK: _  toString()
+            toString() {
+                return ""+this.#semester + "\\" + this.#module + "\\" + this.#name
+            }
 
 
 
+
+            // MARK: _  equals()
             /**
              *
              * @param {Subject} subject
@@ -1810,6 +2006,25 @@
                 return false;
             }
 
+
+
+
+            
+            // MARK: _  addGrades()
+            /**
+             * Adds a {@link Grade} to ***this*** {@link Subject}.
+             * @param {Grade} grade The {@link Grade} to add to ***this*** {@link Subject}.
+             * @returns {Subject} ***this*** {@link Subject}.
+             */
+            addGrade(...grades) {
+                ParameterTypeError.verifyParams(arguments, [Grade.name+"[]|[]"])
+
+                this.#grades.push(grades);
+                if (this.#module instanceof Module) this.#module.grades.push(grades);
+                if (this.#semester instanceof Semester) this.#semester.grades.push(grades);
+
+                return this;
+            }
 
 
 
@@ -1917,7 +2132,8 @@
 
 
 
-        //#region .                — properties —
+        //MARK:                 — properties —
+        //#region 
 
 
 
@@ -1930,7 +2146,7 @@
             /** Value of the class' average for ***this*** {@link Module}, a positive float number below 20 @type {number} @readonly */
             #classAvg;
 
-            /** Object of all the {@link Subject}s (or their name) in ***this*** {@link Module}, with the {@link Subject}'s name as key and the {@link Subject} itself as value (or its name). @type {Object.<string, Subject|string>} @readonly */
+            /** Object of all the {@link Subject}s in ***this*** {@link Module}, with the {@link Subject}'s name as key and the {@link Subject} itself as value. @type {Object.<string, Subject>} @readonly */
             #subjects = {};
 
             /** The {@link Semester} of ***this*** {@link Module}, or its number. @type {Semester} @readonly */
@@ -2010,6 +2226,9 @@
             #moduleCard;
 
 
+            /** Name given to the unclassified module of a semester. @readonly */
+            static unclassified = "__#unclassified#__";
+
 
         //#endregion — properties —
 
@@ -2019,38 +2238,28 @@
 
         // MARK: .               — constructor —
         /**
-         * Constructs an object of class {@link Module} from an array of {@link Subject}s.
+         * Constructs an object of class {@link Module} from its given name and .
+         * Automatically adds the constructed {@link Module} to its {@link Semester}'s {@link Semester.modules}.
          *
-         * @param {string}              name            Name of ***this*** {@link Module}.
-         * @param {Semester}            [semester]      The {@link Semester} ***this*** {@link Module} will belong to.
-         * @param {Subject|Subject[]}   [subjects=[]]   Array of the {@link Subject}s in ***this*** {@link Module}. Default value is `[]`.
-         *
-         * @throws {TypeError} If a parameter is of an unexpected type.
-         * @throws {Error} If the `name` and/or `semester` property of at least one {@link Subject} in the Array of {@link Subject}s differs from that of the first {@link Subject} of the same Array, or from the corresponding constructor parameter if given instead.
+         * @param {string}              name                    Name of ***this*** {@link Module}.
+         * @param {Semester|undefined}  [semester=undefined]    The {@link Semester} ***this*** {@link Module} will belong to.
          */
-        constructor(name=undefined, semester=undefined, subjects=[]) {
+        constructor(name, semester) {
 
-            ParameterTypeError.verifyParams(arguments, ["string", Semester.name+"|undefined", Subject.name+"|"+Subject.name+"[]|undefined"])
+            ParameterTypeError.verifyParams(arguments, ["string", Semester.name+"|undefined"], Module, Module)
 
-            this.addSubjects(...subjects);
+            this.#name = name;
 
-
-            this.#name      = name;
-            this.#subjects  = subjects instanceof Subject ? [subjects] : subjects;
-
-            if (Object.keys(this.#subjects).length > 0) {
-                // Constructing from an Array of Subjects
-                this.#semester = this.#subjects[0].semester;
-            }
-            else {
-                // Constructing a simulated module, it doesn't have subjects (yet)
-                this.#semester = semester;
+            if (semester !== undefined) {
+                this.#semester  = semester;
                 semester.addModules(this);
             }
+
         }
 
 
-        //#region .             — encapsulation —
+        //MARK:               — encapsulation —
+        //#region 
 
             /**
              * Name of ***this*** {@link Module}. @type {string} */
@@ -2075,124 +2284,6 @@
             /**
              * Object of the {@link Subject}s (or their name) in ***this*** {@link Module}, with the {@link Subject}'s name as key and the {@link Subject} as value (or its name). @type {Object.<string, Subject|string>} @readonly */
             get subjects()  { return this.#subjects }
-
-            /**
-             * Adds a **new** {@link Subject} to ***this*** {@link Module}.
-             * @param {string}      name                    Name to give to ***this*** {@link Subject}.
-             * @param {number}      [coef=100]              Coefficient of ***this*** {@link Subject} in its {@link Module}, a positive float number below 100, as a %. Default value is 100.
-             *
-             * @returns {Module} ***this*** {@link Module}.
-             */
-            addNewSubject(subject, coef=100) {
-                const newSubj = new Subject(subject, coef, this, this.#semester);
-                this.#subjects[newSubj.name] = newSubj;
-
-                return this;
-            }
-            /**
-             * Adds new {@link Subject}s to ***this*** {@link Module}, from an object containing the name of the subject and its coef.
-             * @param {{name: string, coef?: number}[]} subjectsData
-             *
-             * @returns {Module} ***this*** {@link Module}.
-             */
-            addNewSubjects(...subjectsData) {
-                let out = {};
-
-                subjectsData.forEach(subjectData => {
-                    if (typeof subjectData !== "object" || subjectData === null) {
-                        throw new TypeError("Invalid Module.addNewSubjects() call: was expecting Objects like: {subject: string, coef: number | undefined}.")
-                    }
-
-                    const {name, coef=100} = subjectData;
-
-                    if (typeof name != "string") {
-                        throw new TypeError("Invalid Module.addNewSubjects() call: wrong type for a 'name' property, was expecting a string.")
-                    }
-                    if (isNaN(coef) && coef != undefined) {
-                        throw new TypeError("Invalid Module.addNewSubjects() call: wrong type for a 'coef' property, was expecting a number or undefined.")
-                    }
-
-                    const newSubj = new Subject(name, coef, this, this.#semester);
-
-                    out[newSubj.name] = this.#subjects[newSubj.name] = newSubj;
-                })
-
-                return out;
-            }
-
-            /**
-             * Adds a {@link Subject} to ***this*** {@link Module}.
-             * @param {Subject} subject The {@link Subject} to add to ***this*** {@link Module}.
-             *
-             * @returns {Module} ***this*** {@link Module}.
-             */
-            addSubject(subject) {
-                if (!(subject instanceof Subject)) {
-                    throw new TypeError("Invalid Module.addSubject() call: wrong type for the 'subject' parameter, was expecting a Subject")
-                }
-
-                this.#subjects[subject.name] = subject;
-
-                return this;
-            }
-            /**
-             * Adds {@link Subject}s (or their name) to ***this*** {@link Module}.
-             * @param {Subject[]} subjects The {@link Subject}s (or their name) to add to ***this*** {@link Module}.
-             *
-             * @returns {Module} ***this*** {@link Module}.
-             */
-            addSubjects(...subjects) {
-                subjects = subjects.flat();
-
-                subjects.forEach(subject => {
-                    if (!(subject instanceof Subject)) {
-                        throw new TypeError("Invalid Module.addSubjects() call: wrong type for the 'subjects' parameter.s, was expecting Subjects.")
-                    }
-
-                    this.#subjects[subject.name] = subject;
-                })
-
-                return this;
-            }
-
-            /**
-             * Removes a {@link Subject} from ***this*** {@link Module}.
-             * @param {Subject|string} subject The {@link Subject} (or its name) to remove from ***this*** {@link Module}.
-             *
-             * @returns {Module} ***this*** {@link Module}.
-             */
-            removeSubject(subject) {
-                if (!(subject instanceof Subject || typeof subject == "string")) {
-                    throw new TypeError("Invalid Module.removeSubject() call: wrong type for the 'subject' parameter, was expecting a Subject or a string.")
-                }
-                const name = subject instanceof Subject ? subject.name : subject;
-                delete this.#subjects[name];
-
-                return this;
-            }
-            /**
-             * Removes {@link Subject}s from ***this*** {@link Module}.
-             * @param {Subject[]|string[]} subjects The {@link Subject}s (or their name) to remove from ***this*** {@link Module}.
-             *
-             * @returns {Module} ***this*** {@link Module}.
-             */
-            removeSubjects(...subjects) {
-                subjects = subjects.flat();
-
-                subjects.forEach(subject => {
-                    if (!(subject instanceof Subject || typeof subject == "string")) {
-                        throw new TypeError("Invalid Module.removeSubjects() call: wrong type for the 'subject' parameter, was expecting Subjects or strings")
-                    }
-
-                    const name = subject instanceof Subject ? subject.name : subject;
-
-                    delete this.#subjects[name];
-                })
-
-                return this;
-            }
-
-
 
             /**
              * The {@link Semester} of ***this*** {@link Module}. @type {Semester} @readonly */
@@ -2293,22 +2384,29 @@
 
 
 
-        //#region .                 — methods —
+        //MARK:                  — methods —
+        //#region 
 
 
-            toString() { return this.#name }
 
 
 
+            // MARK: _  toString()
+            toString() {
+                return ""+ this.#semester +"\\"+ this.#name
+            }
+
+
+
+            // MARK: _  equals()
             /**
-             *
+             * Checks whether the given {@link Module} is the same as ***this*** {@link Module}.
+             * 
              * @param {Module} module
              * @returns
              */
             equals(module) {
-                if (!(module instanceof Module)) {
-                    return false;
-                }
+                if (!(module instanceof Module)) return false;
 
                 if (true
                     && this.#name == module.#name
@@ -2319,6 +2417,108 @@
 
                 return false;
             }
+
+
+
+
+
+            // MARK: _  getSubject()
+            /**
+             * Gets the given {@link Subject} (or the {@link Subject} whose name corresponds to the given string)
+             * from ***this*** {@link Module}.
+             * 
+             * @param {Subject|string} subject The {@link Subject} (or its name) belonging to ***this*** {@link Module}.
+             * 
+             * @throws {Error} If the {@link Subject} doesn't exist in ***this*** {@link Module}.
+             * @returns {Subject} The subject of ***this*** {@link Module}.
+             */
+            getSubject(subject) {
+                ParameterTypeError.verifyParams(arguments, [Subject.name+"|string"], Module.prototype.getSubject, Module);
+
+                Object.values(this.#subjects).forEach(subj => {
+                    if (subject instanceof Subject && subject.equals(subj)) return subj;
+                    else if (typeof subject === "string" && subject === subj.name) return subj;
+                })
+
+                throw new Error("Subject of name \""+ (subject instanceof Subject ? subject.name : subject) + "\" does not exists in the Module of name \""+ this.#name+ "\".");
+            }
+
+
+
+            // MARK: _  hasSubject()
+            /**
+             * Checks whether the given {@link Subject} (or the {@link Subject} whose name corresponds to the given string)
+             * exists in ***this*** {@link Module}.
+             * 
+             * @param {Subject|string} subject The {@link Subject} (or its name) belonging to ***this*** {@link Module}.
+             * 
+             * @returns {Subject} The subject of ***this*** {@link Module}.
+             */
+            hasSubject(subject) {
+                ParameterTypeError.verifyParams(arguments, [Subject.name+"|string"], Module.prototype.hasSubject, Module);
+
+                try {
+                    this.getSubject(subject);
+                    return true;
+                }
+                catch(e) { return false; }
+            }
+
+
+
+
+
+
+
+
+            // MARK: _  addSubjects()
+            /**
+             * Adds {@link Subject}s (or their name) to ***this*** {@link Module}.
+             * @param {Subject[]} subjects The {@link Subject}s (or their name) to add to ***this*** {@link Module}.
+             *
+             * @returns {Module} ***this*** {@link Module}.
+             */
+            addSubjects(...subjects) {
+                ParameterTypeError.verifyParams(arguments, [Subject.name+"[]"], Module.prototype.addSubjects, Module)
+                subjects = subjects.flat();
+
+                subjects.forEach(subject => {
+                    this.#subjects[subject.name] = subject;
+                    this.#semester.subjects[subject.name] = subject;
+                })
+
+                return this;
+            }
+
+
+
+            // MARK: _  removeSubject()
+            /**
+             * Removes {@link Subject}s from ***this*** {@link Module}.
+             * @param {Subject[]|string[]} subjects The {@link Subject}s (or their name) to remove from ***this*** {@link Module}.
+             *
+             * @throws {Error} If trying to remove a subject that can't be found in ***this*** {@link Module}.
+             * @returns {Module} ***this*** {@link Module}.
+             */
+            removeSubject(...subjects) {
+                ParameterTypeError.verifyParams(arguments, ["("+Subject.name+"|string"+")[]"], Module.prototype.removeSubject, Module)
+                subjects = subjects.flat();
+
+                subjects.forEach(subject => {
+                    const name = subject instanceof Subject ? subject.name : subject;
+                    if (!this.#subjects[name]) {
+                        throw new Error("No Subject of name \""+ (subject instanceof Subject ? subject.name : subject) + "\" could be found in the Module of name \""+ this.#name+ "\".");
+                    }
+
+                    delete this.#subjects[name];
+                })
+
+                return this;
+            }
+
+
+
+
 
 
             // MARK: _  computeStats()
@@ -2452,7 +2652,8 @@
 
 
 
-        //#region .                — properties —
+        //MARK:                 — properties —
+        //#region 
 
 
             /** Number of ***this*** {@link Semester}. @type {number} */
@@ -2461,7 +2662,7 @@
             /** Average of the user for ***this*** {@link Semester}, a positive float number below 20 @type {number} @readonly */
             #average;
 
-            /** Value of the class' average for ***this*** {@link Semester}, a positive float number below 20 @type {number} @readonly */
+            /** Average of the class for ***this*** {@link Semester}, a positive float number below 20 @type {number} @readonly */
             #classAvg;
 
 
@@ -2484,7 +2685,7 @@
 
 
             /** Array of the {@link Subject}s in ***this*** {@link Semester}. @type {Object.<string, Subject>} */
-            #subjects = [];
+            #subjects = {};
 
 
             /** Total of the coefficients of all the {@link Subject}s in ***this*** {@link Semester}. @type {number} @readonly */
@@ -2538,46 +2739,26 @@
 
 
 
-        // MARK: .               — constructor —
+        // MARK:                 — constructor —
         /**
+         * Constructs an object of class {@link Semester} from its given number.
+         * Automatically creates its attributed {@link SemesterCard}, along with its undefined {@link Module}.
          *
-         * @param {number} number
-         * @param {Module[]} modules
+         * @param {number|string} number
          */
-        constructor(number, modules=[]) {
-
-
-
-            //#region
-            if (isNaN(number))      { throw new TypeError("Improper Semester construction: wrong 'number' argument type, was expecting a number or something that isn't NaN.") }
-            if (!(modules instanceof Array))  { throw new TypeError("Improper Semester construction: the 'modules' optional parameter is not an ARRAY, was expecting an Array of Modules.") }
-
-            let hasUnclassifiedModule = false;
-            modules.forEach(module => {
-                if (!(module instanceof Module)) { throw new TypeError("Improper Semester construction: the 'modules' optional parameter is not an Array of MODULES, was expecting an Array of Modules") }
-
-                if (module.semester != number) {
-                    throw new Error("Improper Semester construction: the Subjects in the optional Array of Modules parameter 'modules' don't all have the same semester number")
-                }
-            })
-            //#endregion
-
+        constructor(number) {
+            ParameterTypeError.verifyParams(arguments, ["number|"+intRegExpSrc], Semester, Semester);
 
             this.#number = parseInt(number);
 
-            this.#undefinedModule = new Module("__#unclassified#__", this);
-            this.addModules(...modules);
-
-            Object.values(this.#modules).forEach(module => {
-                this.#subjects = module.subjects;
-                this.#grades   = module.grades;
-            })
+            this.#undefinedModule = new Module(Module.unclassified, this);
 
             this.#semesterCard = new SemesterCard(this);
         }
 
 
-        //#region .             — encapsulation —
+        //MARK:               — encapsulation —
+        //#region 
 
 
             /**
@@ -2591,12 +2772,12 @@
 
 
             /**
-             * Value of the class' average of ***this*** {@link Semester}, a positive float number below 20 @type {number} @readonly
+             * Average of the user for ***this*** {@link Semester}, a positive float number below 20 @type {number} @readonly
              */
             get average()   { return this.#average }
 
             /**
-             * Value of the class' average of ***this*** {@link Semester}, a positive float number below 20 @type {number} @readonly
+             * Average of the class for ***this*** {@link Semester}, a positive float number below 20 @type {number} @readonly
              */
             get classAvg()  { return this.#classAvg }
 
@@ -2606,57 +2787,6 @@
              * Object of the {@link Module}s in ***this*** {@link Semester}, with the {@link Module}'s name as key and the {@link Module} as value. @type {Object.<string, Module>} @readonly
              */
             get modules()  { return this.#modules }
-
-            /**
-             * Adds the {@link Module}.s to ***this*** {@link Semester}.
-             * @param {Module[]|string[]} modules The {@link Module}.s (or its/their name) to add to ***this*** {@link Semester}.
-             *
-             * @returns {Module[]} The {@link Module}s added to ***this*** {@link Semester}.
-             */
-            addModules(...modules) {
-                modules = modules.flat();
-
-                modules.forEach(module => {
-                    if (!(module instanceof Module) && typeof module != "string") {
-                        throw new TypeError("Invalid Semester.addModules() call: wrong type for the 'modules' parameter.s, was expecting Modules")
-                    }
-
-                    this.#modules[module.name]  = module;
-                })
-
-                return modules;
-            }
-
-            /**
-             * Removes the {@link Module}.s from ***this*** {@link Semester}.
-             * @param {Module[]|string[]} modules The {@link Module}.s (or its/their name) to remove from ***this*** {@link Semester}.
-             *
-             * @returns {Module[]} The {@link Module}s removed from ***this*** {@link Semester}.
-             */
-            removeModules(...modules) {
-                modules = modules.flat();
-                /** @type {string[]} */ let names = [];
-                /** @type {Module[]} */ let out = [];
-
-                modules.forEach(module => {
-                    if (!(module instanceof Module) && typeof module != "string") {
-                        throw new TypeError("Invalid Semester.removeModules() call: wrong type for the 'modules' parameter.s, was expecting Modules")
-                    }
-
-                    if (module == this.#modules["__#unclassified#__"] || module == "__#unclassified#__") {
-                        throw new TypeError("Invalid Semester.removeModules() call: can't remove the '__#unclassified#__' Module")
-                    }
-
-                    const name = module instanceof Module ? module.name : module;
-
-                    names.push(module.name);
-                    out.push(this.#modules[name]);
-
-                    delete this.#modules[name];
-                })
-
-                return out;
-            }
 
             /**
              * The undefined {@link Module} of ***this*** {@link Semester}. @type {Module} @readonly
@@ -2669,64 +2799,72 @@
              */
             get grades()    { return this.#grades }
 
+            /** Array of the {@link Subject}s in ***this*** {@link Semester}. @type {Object.<string, Subject>} */
             get subjects()    { return this.#subjects }
             set subjects(value) {
-                if (!(value instanceof Object)) { throw new TypeError("Invalid Semester.subjects setting: tried to set 'subjects' to a type other than an object of entries with a string key and a Subject value.") }
-                Object.values(value).forEach(elem => {
-                    if (!(elem instanceof Subject)) {
-                        throw new TypeError("Invalid Semester.subjects setting: tried to set 'subjects' to a type other than an object of entries with a string key and a Subject value.")
-                    }
-                })
+                ParameterTypeError.verifyParams(arguments, ["{string: "+Subject.name+"}"], "set Semester.subjects", Semester);
 
                 this.#subjects = value;
             }
 
             /**
-             * Array of the simulated {@link Grade}s in ***this*** {@link Semester}. @type {Grade[]} @readonly */
+             * Array of the simulated {@link Grade}s in ***this*** {@link Semester}. @type {Grade[]} @readonly 
+             */
             get simGrades() { return this.#simGrades }
 
             /**
-             * Array of the disabled real {@link Grade}s in ***this*** {@link Semester}. @type {Grade[]} @readonly */
+             * Array of the disabled real {@link Grade}s in ***this*** {@link Semester}. @type {Grade[]} @readonly
+             */
             get disabledRealGrades() { return this.#disabledRealGrades }
 
             /**
-             * Array of the disabled simulated {@link Grade}s in ***this*** {@link Semester}. @type {Grade[]} @readonly */
+             * Array of the disabled simulated {@link Grade}s in ***this*** {@link Semester}. @type {Grade[]} @readonly
+             */
             get disabledSimGrades() { return this.#disabledSimGrades }
 
             /**
-             * Total of the coefficients of all the {@link Subject}s in ***this*** {@link Semester}. @type {number} @readonly */
+             * Total of the coefficients of all the {@link Subject}s in ***this*** {@link Semester}. @type {number} @readonly
+             */
             get totalCoefSubjects() { return this.#totalCoefSubjects }
 
             /**
-             * Total of the coefficients of all the {@link Subject}s that don't have any {@link Grade}s in ***this*** {@link Semester}. @type {number} @readonly */
+             * Total of the coefficients of all the {@link Subject}s that don't have any {@link Grade}s in ***this*** {@link Semester}. @type {number} @readonly
+             */
             get totalCoefSubjectsNoGrade() { return this.#totalCoefSubjectsNoGrade }
 
             /**
-             * Total of the coefficients of all the {@link Subject}s that don't have any enabled {@link Grade}s in ***this*** {@link Semester}. @type {number} @readonly */
+             * Total of the coefficients of all the {@link Subject}s that don't have any enabled {@link Grade}s in ***this*** {@link Semester}. @type {number} @readonly
+             */
             get totalCoefSubjectsNoEnabledGrade() { return this.#totalCoefSubjectsNoEnabledGrade }
 
             /**
-             * Total of the coefficients of all the {@link Grade}s in ***this*** {@link Semester}. @type {number} @readonly */
+             * Total of the coefficients of all the {@link Grade}s in ***this*** {@link Semester}. @type {number} @readonly
+             */
             get totalCoefGrades() { return this.#totalCoefGrades }
 
             /**
-             * Total of the coefficients of all the real {@link Grade}s in ***this*** {@link Semester}. @type {number} @readonly */
+             * Total of the coefficients of all the real {@link Grade}s in ***this*** {@link Semester}. @type {number} @readonly
+             */
             get totalCoefRealGrades() { return this.#totalCoefRealGrades }
 
             /**
-             * Total of the coefficients of all the simulated {@link Grade}s in ***this*** {@link Semester}. @type {number} @readonly */
+             * Total of the coefficients of all the simulated {@link Grade}s in ***this*** {@link Semester}. @type {number} @readonly
+             */
             get totalCoefSimGrades() { return this.#totalCoefGrades - this.#totalCoefRealGrades }
 
             /**
-             * Total of the coefficients of all the enabled {@link Grade}s in ***this*** {@link Semester}. @type {number} @readonly */
+             * Total of the coefficients of all the enabled {@link Grade}s in ***this*** {@link Semester}. @type {number} @readonly
+             */
             get totalCoefEnabledGrades() { return this.#totalCoefEnabledGrades }
 
             /**
-             * Total of the coefficients of all the enabled real {@link Grade}s in ***this*** {@link Semester}. @type {number} @readonly */
+             * Total of the coefficients of all the enabled real {@link Grade}s in ***this*** {@link Semester}. @type {number} @readonly
+             */
             get totalCoefEnabledRealGrades() { return this.#totalCoefEnabledRealGrades }
 
             /**
-             * Total of the coefficients of all the enabled simulated {@link Grade}s in ***this*** {@link Semester}. @type {number} @readonly */
+             * Total of the coefficients of all the enabled simulated {@link Grade}s in ***this*** {@link Semester}. @type {number} @readonly
+             */
             get totalCoefEnabledSimGrades() { return this.#totalCoefEnabledGrades - this.#totalCoefEnabledRealGrades }
 
 
@@ -2737,7 +2875,8 @@
 
 
 
-        //#region .                 — methods —
+        //MARK:                  — methods —
+        //#region 
 
 
 
@@ -2752,7 +2891,7 @@
             // MARK: _  equals()
             /**
              *
-             * @param {Module} semester
+             * @param {Semester} semester
              * @returns
              */
             equals(semester) {
@@ -2774,6 +2913,154 @@
 
 
 
+            // MARK: _  getModule()
+            /**
+             * 
+             * @param {Module|string} module 
+             * @returns {Module}
+             */
+            getModule(module) {
+                ParameterTypeError.verifyParams(arguments, [Module.name+"|string"], Semester.prototype.getModule, Semester)
+
+                for (const mod of Object.values(this.#modules)) {
+                    if (module instanceof Module && module.equals(mod)) return mod;
+                    else if (typeof module === "string" && module === mod.name) return mod;
+                }
+
+                throw new Error("Module of name \""+ (module instanceof Module ? module.name : module) + "\" does not exist in the Semester n°"+this.#number+".");
+
+            }
+
+
+
+            // MARK: _  hasModule()
+            /**
+             * 
+             * @param {Module|string} module 
+             * @returns {boolean}
+             */
+            hasModule(module) {
+                ParameterTypeError.verifyParams(arguments, [Module.name+"|string"], Semester.prototype.hasModule, Semester)
+
+                try {
+                    this.getModule(module);
+                    return true;
+                }
+                catch(e) { return false; }
+            }
+
+
+
+
+            // MARK: _  getSubject()
+            /**
+             * 
+             * @param {Subject|string} subject 
+             * @param {Module|string|undefined} module 
+             * @returns {Subject}
+             */
+            getSubject(subject, module=undefined) {
+                ParameterTypeError.verifyParams(arguments, [
+                    Subject.name+"|string", 
+                    Module.name+"|string|undefined"
+                ], Semester.prototype.getSubject, Semester);
+
+                this.getModule(module);
+
+                if (module instanceof Module)   return module.getSubject(subject);
+                if (module !== undefined)       return this.getModule(module).getSubject(subject);
+
+                for (const subjName in this.#subjects) {
+                    const subj = this.#subjects[subjName];
+
+                    if (subject instanceof Subject) if (subject.equals(subj)) return subj;
+                    if (typeof subject === "string") if (subject === subj.name) return subj;
+                }
+
+                throw new Error("Subject of name "+(subject instanceof Subject ? subject.name : subject)+"does not exist in the Semester n°"+this.#number+".")
+            }
+
+
+
+
+
+            // MARK: _  hasSubject()
+            /**
+             * 
+             * @param {Subject|string} subject 
+             * @param {Module|string|undefined} module 
+             * @returns {boolean}
+             */
+            hasSubject(subject, module=undefined) {
+                ParameterTypeError.verifyParams(arguments, [
+                    Subject.name+"|string", 
+                    Module.name+"|string|undefined"
+                ], Semester.prototype.hasSubject, Semester);
+
+                try {
+                    this.getSubject(subject, module);
+                    return true;
+                }
+                catch(e) { return false; }
+            }
+
+
+
+            // MARK: _  addModules()
+            /**
+             * Adds the {@link Module}.s to ***this*** {@link Semester}.
+             * @param {Module[]|string[]} modules The {@link Module}.s (or its/their name) to add to ***this*** {@link Semester}.
+             *
+             * @returns {Module[]} The {@link Module}s added to ***this*** {@link Semester}.
+             */
+            addModules(...modules) {
+                ParameterTypeError.verifyParams(arguments, [Module.name+"[]|[]"], Semester.prototype.addModules, Semester);
+                modules = modules.flat();
+
+                modules.forEach(module => {
+                    this.#modules[module.name]  = module;
+                })
+
+                return modules;
+            }
+
+
+            // MARK: _  removeModules()
+            /**
+             * Removes the {@link Module}.s from ***this*** {@link Semester}.
+             * @param {Module[]|string[]} modules The {@link Module}.s (or its/their name) to remove from ***this*** {@link Semester}.
+             *
+             * @returns {Module[]} The {@link Module}s removed from ***this*** {@link Semester}.
+             */
+            removeModules(...modules) {
+                modules = modules.flat();
+                /** @type {string[]} */ let names = [];
+                /** @type {Module[]} */ let out = [];
+
+                modules.forEach(module => {
+                    if (!(module instanceof Module) && typeof module != "string") {
+                        throw new TypeError("Invalid Semester.removeModules() call: wrong type for the 'modules' parameter.s, was expecting Modules")
+                    }
+
+                    if (module == this.#modules[Module.unclassified] || module == Module.unclassified) {
+                        throw new Error("Invalid Semester.removeModules() call: can't remove the '"+Module.unclassified+"' Module")
+                    }
+
+                    const name = module instanceof Module ? module.name : module;
+
+                    names.push(module.name);
+                    out.push(this.#modules[name]);
+
+                    delete this.#modules[name];
+                })
+
+                return out;
+            }
+
+
+
+
+
             // MARK: _  computeStats()
             /**
              * Computes the total coefficients, the average and the class average of ***this*** {@link Semester}.
@@ -2786,7 +3073,6 @@
 
                 //#region
                 let
-                    /** @type {Object.<string, Subject>} Keys are the name of the corresponding Subject value. */ subjects                  = {},
                     /** @type {Object.<string, Subject>} Keys are the name of the corresponding Subject value. */ subjectsBelow100          = {},
                     /** @type {Object.<string, Subject>} Keys are the name of the corresponding Subject value. */ subjectsAbove100          = {},
                     /** @type {Object.<string, Subject>} Keys are the name of the corresponding Subject value. */ subjectsReallyBelow100    = {},
@@ -3098,10 +3384,10 @@
         // MARK: .               — constructor —
         /**
          * @param {Subject} subject The {@link Subject} to create a {@link SubjectCard} from.
-         * @throws {TypeError} if a parameter isn't of the expected type.
          */
         constructor(subject) {
-            if (!(subject instanceof Subject)) { throw new TypeError("Improper SubjectCard construction: wrong 'subject' argument type, was expecting a Subject") }
+            ParameterTypeError.verifyParams(arguments, [Subject], SubjectCard, SubjectCard);
+
             super("subject-card", "subject-card-"+subject.name.replaceSpacesWithDashes()+"-from-"+subject.module.name.replaceSpacesWithDashes()+"-in-semester-"+subject.semester.number);
 
             this.#subject = subject;
@@ -3283,16 +3569,23 @@ class ECAMDashboard {
         };
 
 
+        /** Array of all the {@link Grade}s of the user. @type {Grade[]} */
         grades      = [];
 
+        /** Array of all the {@link Subject}s of the user. @type {Subject[]} */
         subjects    = [];
 
+        /** Array of all the {@link Module}s of the user. @type {Module[]} */
         modules     = [];
 
+        
+        /** Array of all the {@link Semester}s of the user. @type {Semester[]} */
         semesters   = [];
 
+        /** Array of all the non-read {@link Grade}s of the user. @type {Grade[]} */
         newGrades   = [];
 
+        /** Array of the string representation of all the read {@link Grade}s of the user. */
         savedReadGrades = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SAVED_READ_GRADES") ) || [];
 
         disabledGrades  = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_DISABLED_GRADES") )   || [];
@@ -3310,14 +3603,82 @@ class ECAMDashboard {
 
 
     // MARK:                 — constructor —
-    constructor() {
-
-    }
+    constructor() {}
 
 
 
     // MARK:                   — methods —
     //#region
+
+
+
+
+
+        // MARK: _  parseGrades()
+        /**
+         * Reads the grades from the grades table, and create {@link Grade} instances.
+         *
+         * @returns ***this*** {@link ECAMDashboard}
+         */
+        parseGrades() {
+            this.retrieveCachedModuleConfig();
+
+
+            if (document.querySelector(".greyGridTable")) {
+                const rows = document.querySelectorAll("table.greyGridTable tbody tr");
+
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll("td");
+
+                    if (cells.length >= 6 && cells[0].textContent.includes("/20")) {
+                        const label     = cells[1].textContent.trim();
+                        const grade     = parseFloat(cells[0].textContent.replace(",", ".").replace("/20", "")) || 0;
+                        const coef      = parseFloat(cells[2].textContent.replace(",", ".").replace("%",   "")) || 0;
+                        const classAvg  = parseFloat(cells[3].textContent.replace(",", ".").replace("/20", "")) || 0;
+                        const prof      = cells[4].textContent.trim();
+                        const date      = cells[5].textContent.trim();
+                        const semMatch  = label.match(/Semester\s+(\d+)/i);
+                        const semester  = semMatch ? semMatch[1] : "?";
+                        const parts     = label.split(" - ").map(p => p.trim());
+                        const subject   = parts.length >= 3 ? parts.slice(1,-1).join(" - ") : label;
+                        const title     = parts.length >= 2 ? parts.at(-1) : "";
+
+                        this.addGrade(
+                            grade, 
+                            coef, 
+                            subject, 
+                            title, 
+                            false, 
+                            classAvg, 
+                            prof, 
+                            date, 
+                            semester, 
+                            undefined
+                        )
+                    }
+                });
+
+
+                // if (this.savedReadGrades.length == 0) {
+                //     this.newGrades = [];
+                //     this.savedReadGrades = this.grades;
+                // }
+                // else {
+                //     this.newGrades = compareArraysOfObjects(this.grades, this.savedReadGrades).more;
+                // }
+            }
+            else {
+                // this.newGrades = [];
+                // this.grades = this.savedReadGrades;
+            }
+
+            this.retrieveCachedSimGrades();
+            this.computeAllStats();
+
+            return this;
+        }
+
+
 
 
 
@@ -3358,25 +3719,22 @@ class ECAMDashboard {
                     valid = false;
                 }
 
-                if (valid && Object.keys(this.moduleConfig) > 0) {
+                if (valid && Object.keys(this.moduleConfig).length > 0) {
                     console.log("Found a valid cached module.")
 
                     // Preparing the Semester, Module and Subject objects from the moduleConfig
 
                     Object.keys(this.moduleConfig).forEach(_sem => {
                         const sem = parseInt(_sem);
-                        const semesterObj = new Semester(sem);
-                        this.semesters.push(semesterObj);
+                        const semesterObj = this.addSemester(sem);
                         this.moduleConfig[sem].__object__ = semesterObj;
 
                         Object.keys(this.moduleConfig[sem].modules).forEach(module => {
-                            const moduleObj = new Module(module, semesterObj);
-                            this.modules.push(moduleObj);
+                            const moduleObj = this.addModule(module, semesterObj);
                             this.moduleConfig[sem].modules[module].__object__ = moduleObj;
 
                             Object.entries(this.moduleConfig[sem].modules[module].subject).forEach(subjectEntry => {
-                                const subjectObj = new Subject(subjectEntry[0], subjectEntry[1].coefficient, moduleObj);
-                                this.subjects.push(subjectObj);
+                                const subjectObj = this.addSubject(subjectEntry[0], subjectEntry[1].coefficient, moduleObj, semesterObj);
                                 this.moduleConfig[sem].modules[module].subject[subjectEntry[0]].__object__ = subjectObj;
                             })
                         })
@@ -3393,28 +3751,31 @@ class ECAMDashboard {
 
                         Object.keys(oldModuleConfig).forEach(_sem => {
                             const sem = parseInt(_sem);
-                            const semesterObj = new Semester(sem);
+                            const semesterObj = this.addSemester(sem);
 
-                            this.semesters.push(semesterObj);
-                            this.moduleConfig[sem] = {"__object__": semesterObj, "modules": {}};
+                            this.moduleConfig[sem] = {
+                                "__object__": semesterObj, 
+                                "modules": {}
+                            };
 
                             Object.entries(oldModuleConfig[sem]).forEach(moduleEntry => {
 
                                 if (moduleEntry[0] == "__modules__") this.moduleConfig[sem].__modules__ = moduleEntry[1];
                                 else {
-                                    const moduleObj = new Module(moduleEntry[0], semesterObj);
+                                    const moduleObj = this.addModule(moduleEntry[0], semesterObj);
 
-                                    this.modules.push(moduleObj);
-                                    this.moduleConfig[sem].modules[moduleEntry[0]] = {"__object__": moduleObj, "subject": {}};
+                                    this.moduleConfig[sem].modules[moduleEntry[0]] = {
+                                        "__object__": moduleObj,
+                                        "subject": {}
+                                    };
 
                                     Object.entries(moduleEntry[1]).forEach(subjectEntry => {
 
                                         if (subjectEntry[0] == "subjects") this.moduleConfig[sem].modules[moduleEntry[0]].__subjects__ = subjectEntry[1];
                                         else if (subjectEntry[0] == "coefficients") {
                                             Object.entries(subjectEntry[1]).forEach(entry => {
-                                                const subjectObj = new Subject(entry[0], entry[1], moduleObj);
+                                                const subjectObj = this.addSubject(entry[0], entry[1], moduleObj, semesterObj);
 
-                                                this.subjects.push(subjectObj);
                                                 this.moduleConfig[sem].modules[moduleEntry[0]].subject[entry[0]] = {
                                                     "__object__": subjectObj,
                                                     "coefficient": entry[1]
@@ -3517,250 +3878,368 @@ class ECAMDashboard {
 
 
 
-        // MARK: _  parseGrades()
-        /**
-         * Reads the grades from the grades table, and create {@link Grade} instances.
-         *
-         * @returns ***this*** {@link ECAMDashboard}
-         */
-        parseGrades() {
-            this.retrieveCachedModuleConfig();
+
+        //#region — Backend manipulation
 
 
-            if (document.querySelector(".greyGridTable")) {
-                const rows = document.querySelectorAll("table.greyGridTable tbody tr");
 
-                rows.forEach(row => {
-                    const cells = row.querySelectorAll("td");
 
-                    if (cells.length >= 6 && cells[0].textContent.includes("/20")) {
-                        const label     = cells[1].textContent.trim();
-                        const grade     = parseFloat(cells[0].textContent.replace(",", ".").replace("/20", "")) || 0;
-                        const coef      = parseFloat(cells[2].textContent.replace(",", ".").replace("%",   "")) || 0;
-                        const classAvg  = parseFloat(cells[3].textContent.replace(",", ".").replace("/20", "")) || 0;
-                        const prof      = cells[4].textContent.trim();
-                        const date      = cells[5].textContent.trim();
-                        const semMatch  = label.match(/Semester\s+(\d+)/i);
-                        const semester  = semMatch ? semMatch[1] : "?";
-                        const parts     = label.split(" - ").map(p => p.trim());
-                        const subject   = parts.length >= 3 ? parts.slice(1,-1).join(" - ") : label;
-                        const title     = parts.length >= 2 ? parts.at(-1) : "";
 
-                        this.addGrade(
+            // MARK: _  getGrade()
+            /**
+             *
+             * @param {Grade|number|string} grade
+             * @param {number|string|undefined} coef
+             * @param {Subject|string|undefined} subj
+             * @param {string|undefined} title
+             * @param {boolean|undefined} isSim
+             * @param {number|string|undefined} classAvg
+             * @param {string|undefined} prof
+             * @param {string|undefined} date
+             * @param {Semester|number|string|undefined} sem
+             * @param {Module|string|undefined} mod
+             * @param {number|string|undefined} id
+             * 
+             * @returns {Grade}
+             * @throws {Error} if the grade doesn't exist.
+             */
+            getGrade(grade, coef=undefined, subj=undefined, title=undefined, isSim=undefined, classAvg=undefined, prof=undefined, date=undefined, sem=undefined, mod=undefined, id=undefined) {
+                ParameterTypeError.verifyParams(arguments, [
+                    Grade.name+"|number|"+nbRegExpSrc,
+                    "number|"+nbRegExpSrc+"|undefined",
+                    "string|undefined",
+                    "string|undefined",
+                    "boolean|undefined",
+                    "number|"+nbRegExpSrc+"|undefined",
+                    "string|undefined",
+                    "string|undefined",
+                    Module.name+"|string|undefined",
+                    Semester.name+"|number|"+intRegExpSrc+"|undefined",
+                    "number|"+intRegExpSrc+"|undefined"
+                ], ECAMDashboard.prototype.getGrade, ECAMDashboard)
+
+                if (!(grade instanceof Grade)) {
+                    ParameterTypeError.verifyParams(arguments, 
+                        [
+                            Grade.name,
+                            "number|"+nbRegExpSrc,
+                            "string",
+                            "string",
+                            "boolean",
+                            "number|"+nbRegExpSrc,
+                            "string",
+                            "string",
+                            Module.name+"|string",
+                            Semester.name+"|number|"+intRegExpSrc,
+                            "number|"+intRegExpSrc
+                        ], 
+                        ECAMDashboard.prototype.getGrade, ECAMDashboard, 
+                        "The method was given a grade as a number and not a "+Grade.name+", so it requires all the other informations (coef, subj, title, ...)."
+                    )
+                }
+
+                for (const g of this.grades) {
+                    if (
+                        grade instanceof Grade
+                        ? g.equals(grade)
+                        : (
+                            g.grade === parseFloat(grade)
+                            &&
+                            g.coef === parseFloat(coef)
+                            &&
+                            g.subject.name === (subj instanceof Subject ? subj.name : subj)
+                            &&
+                            g.title === title
+                            &&
+                            g.isSim === isSim
+                            &&
+                            g.classAvg === parseFloat(classAvg)
+                            &&
+                            g.prof === prof
+                            &&
+                            g.date === date
+                            &&
+                            g.semester === (sem instanceof Semester ? sem.number : parseInt(sem))
+                            &&
+                            g.module.name === (mod instanceof Module ? mod.name : mod)
+                            &&
+                            g.id === parseInt(id)
+                        )
+                    ) return g
+                }
+
+                throw new Error(
+                    "No Grade of string representation \""
+                    +(
+                        grade instanceof Grade 
+                        ? grade.toString() 
+                        : new Grade(
                             grade, 
                             coef, 
-                            subject, 
+                            subj, 
                             title, 
-                            false, 
+                            isSim, 
                             classAvg, 
                             prof, 
                             date, 
-                            semester, 
-                            undefined
-                        )
-                    }
-                });
-
-
-                // if (this.savedReadGrades.length == 0) {
-                //     this.newGrades = [];
-                //     this.savedReadGrades = this.grades;
-                // }
-                // else {
-                //     this.newGrades = compareArraysOfObjects(this.grades, this.savedReadGrades).more;
-                // }
-            }
-            else {
-                // this.newGrades = [];
-                // this.grades = this.savedReadGrades;
+                            sem, 
+                            mod, 
+                            id
+                        ).toString()
+                    ) 
+                    + "\" could be found."
+                );
             }
 
-            this.retrieveCachedSimGrades();
-            this.computeAllStats();
-
-            return this;
-        }
 
 
 
 
+            // MARK: _  hasGrade()
+            /**
+             *
+             * @param {Grade|number|string} grade
+             * @param {number|string|undefined} coef
+             * @param {Subject|string|undefined} subj
+             * @param {string|undefined} title
+             * @param {boolean|undefined} isSim
+             * @param {number|string|undefined} classAvg
+             * @param {string|undefined} prof
+             * @param {string|undefined} date
+             * @param {Semester|number|string|undefined} sem
+             * @param {Module|string|undefined} mod
+             * @param {number|string|undefined} id
+             * 
+             * @returns {boolean}
+             */
+            hasGrade(grade, coef=undefined, subj=undefined, title=undefined, isSim=undefined, classAvg=undefined, prof=undefined, date=undefined, sem=undefined, mod=undefined, id=undefined) {
+                ParameterTypeError.verifyParams(arguments, [
+                    Grade.name+"|number|"+nbRegExpSrc,
+                    "number|"+nbRegExpSrc+"|undefined",
+                    "string|undefined",
+                    "string|undefined",
+                    "boolean|undefined",
+                    "number|"+nbRegExpSrc+"|undefined",
+                    "string|undefined",
+                    "string|undefined",
+                    Module.name+"|string|undefined",
+                    Semester.name+"|number|"+intRegExpSrc+"|undefined",
+                    "number|"+intRegExpSrc+"|undefined"
+                ], ECAMDashboard.prototype.hasGrade, ECAMDashboard)
 
-
-        // MARK: _  getGrade()
-        /**
-         *
-         * @param {Grade|number|string} grade
-         * @param {number|string|undefined} coef
-         * @param {Subject|string|undefined} subj
-         * @param {string|undefined} title
-         * @param {boolean|undefined} isSim
-         * @param {number|string|undefined} classAvg
-         * @param {string|undefined} prof
-         * @param {string|undefined} date
-         * @param {Semester|number|string|undefined} sem
-         * @param {Module|string|undefined} mod
-         * @param {number|string|undefined} id
-         */
-        getGrade(grade, coef=undefined, subj=undefined, title=undefined, isSim=undefined, classAvg=undefined, prof=undefined, date=undefined, sem=undefined, mod=undefined, id=undefined) {
-            ParameterTypeError.verifyParams(arguments, [
-                Grade.name+"|number|/\\d+(\\.\\d+)?/",
-                "number|/\\d+(\\.\\d+)?/|undefined",
-                "string|undefined",
-                "string|undefined",
-                "boolean|undefined",
-                "number|/\\d+(\\.\\d+)?/|undefined",
-                "string|undefined",
-                "string|undefined",
-                Module.name+"|string|undefined",
-                Semester.name+"|number|/\\d+/|undefined",
-                "number|/\\d+/|undefined"
-            ], ECAMDashboard.prototype.getGrade, ECAMDashboard)
-
-            this.grades.forEach(g => {
-                if (
-                    grade instanceof Grade
-                    ? g.equals(grade)
-                    : (
-                        g.grade === parseFloat(grade)
-                        &&
-                        g.coef === parseFloat(coef)
-                        &&
-                        g.subject.name === (subj instanceof Subject ? subj.name : subj)
-                        &&
-                        g.title === title
-                        &&
-                        g.isSim === isSim
-                        &&
-                        g.classAvg === parseFloat(classAvg)
-                        &&
-                        g.prof === prof
-                        &&
-                        g.date === date
-                        &&
-                        g.semester === (sem instanceof Semester ? sem.number : parseInt(sem))
-                        &&
-                        g.module.name === (mod instanceof Module ? mod.name : mod)
-                        &&
-                        g.id === parseInt(id)
+                if (!(grade instanceof Grade)) {
+                    ParameterTypeError.verifyParams(arguments, 
+                        [
+                            Grade.name,
+                            "number|"+nbRegExpSrc,
+                            "string",
+                            "string",
+                            "boolean",
+                            "number|"+nbRegExpSrc,
+                            "string",
+                            "string",
+                            Module.name+"|string",
+                            Semester.name+"|number|"+intRegExpSrc,
+                            "number|"+intRegExpSrc
+                        ], 
+                        ECAMDashboard.prototype.hasGrade, ECAMDashboard, 
+                        "The method was given a grade as a number and not a "+Grade.name+", so it requires all the other informations (coef, subj, title, ...)."
                     )
-                ) return g
-            })
+                }
 
-            return null
-        }
-
-
-
-
-
-        // MARK: _  getSubject()
-        /**
-         *
-         * @param {Subject | string} subject The {@link Subject} containing the same informations as the {@link Subject} to find, or its name. If giving its name, you may give next the name of its module and the number of its semester for more precisions.
-         * @param {string} [module=undefined] Name of the module of the subject to search.
-         * @param {number} [semester=undefined] Number of the seemester of the subject to search.
-         * @returns {Subject | null}
-         */
-        getSubject(subject, module=undefined, semester=undefined) {
-            if (!(subject instanceof Subject || typeof subject == "string")) return null
-
-            this.subjects.forEach(subj => {
-                if (subject instanceof Subject) if (subj.equals(subject)) return subj;
-
-                if (typeof subject == "string") if (subj.name == subject)
-                    if (!module || (subj.module.name == module) )
-                        if (!semester || (subj.semester.number == semester))
-                            return subj;
-            })
-
-            return null
-        }
+                try {
+                    this.getGrade(
+                        grade, 
+                        coef, 
+                        subj, 
+                        title, 
+                        isSim, 
+                        classAvg, 
+                        prof, 
+                        date, 
+                        sem, 
+                        mod, 
+                        id
+                    );
+                    return true;
+                }
+                catch(e) { return false; }
+            }
 
 
 
 
-        // MARK: _  getModule()
-        /**
-         *
-         * @param {Module | string} module
-         * @returns {Module | null}
-         */
-        getModule(module, semester=undefined) {
-            ParameterTypeError.verifyParams(arguments, [Module.name+"|string", "number|/\\d+(\\.\\d+)?/|undefined"], ECAMDashboard.prototype.getModule, ECAMDashboard);
+            // MARK: _  getSubject()
+            /**
+             *
+             * @param {Subject | string} subject The {@link Subject} containing the same informations as the {@link Subject} to find, or its name. If giving its name, you may give next the name of its module and the number of its semester for more precisions.
+             * @param {Module | string} [module=undefined] Name of the module of the subject to search.
+             * @param {Semester | number} [semester=undefined] Number of the seemester of the subject to search.
+             * @returns {Subject}
+             */
+            getSubject(subject, module=undefined, semester=undefined) {
+                ParameterTypeError.verifyParams(arguments, [
+                    Subject.name+"|string",
+                    Module.name+"|string|undefined", 
+                    Semester.name+"|number|"+intRegExpSrc+"|undefined"
+                ], ECAMDashboard.prototype.getSubject, ECAMDashboard);
 
-            this.modules.forEach(mod => {
-                if (module instanceof Module && mod.equals(module)) return mod;
+                if (semester instanceof Semester)   return semester.getSubject(subject);
+                if (semester !== undefined)         return this.getSemester(semester).getSubject(subject);
+                if (module instanceof Module)       return module.getSubject(subject);
+                if (module !== undefined)           return this.getModule(module).getSubject(subject);
 
-                if (typeof module == "string" && mod.name == module)
-                    if ( !semester || (mod.semester.number == semester))
-                        return mod;
-            })
+                for (const subj of this.subjects) {
+                    if (subject instanceof Subject && subj.equals(subject)) return subj;
+                    if (typeof subject == "string" && subj.name == subject) return subj;
+                }
 
-            return null
-        }
+                throw new Error(
+                    "Subject of name \""+ (subject instanceof Subject ? subject.name : subject) + "\" does not exist"
+                    +(module !== undefined ? (" in the Module of name " + (module instanceof Module ? module.name : module)) : "")
+                    +(semester !== undefined ? (" in the Semester n°" + (semester instanceof Semester ? semester.number : semester)) : "")
+                    +"."
+                );
+            }
 
-
-
-
-        // MARK: _  getSemester()
-        /**
-         *
-         * @param {Semester | number} semester
-         * @returns {Semester | null}
-         */
-        getSemester(semester) {
-            ParameterTypeError.verifyParams(arguments, ["number|/\\d+/"], ECAMDashboard.prototype.getSemester, ECAMDashboard);
-
-            this.semesters.forEach(sem => {
-                if (semester instanceof Module && sem.equals(semester))  return semester;
-                if (typeof semester == "string" && sem.name == semester) return semester;
-            })
-
-            return null
-        }
-
-
-
-        // MARK: _  addGrade()
-        addGrade(grade, coef, subject, title=" — ", isSim=false, classAvg=" — ", prof=" — ", date=" — ", semester="?", module=undefined, id=undefined) {
-            ParameterTypeError.verifyParams(arguments, [
-                "number | /\\d+(\\.\\d+)?/",
-                "number | /\\d+(\\.\\d+)?/",
-                Subject.name+" | string",
-                "string | undefined",
-                "boolean | undefined",
-                "number | /\\d+(\\.\\d+)?/ | \" — \" | undefined",
-                "string | undefined",
-                "string | undefined",
-                Semester.name+" | /\\d+|\\?/ | undefined",
-                Module.name+" | string | undefined",
-                "number | /\\d+(\\.\\d+)?/ | undefined"
-            ], ECAMDashboard.prototype.addGrade, ECAMDashboard);
-
-            /** @type {Subject} */
-            var subj = null;
-            if ((subj = this.getSubject(subject, module, semester)) === null) subj = this.addSubject(subject, module, semester);
-
-            /** @type {Module} */
-            var mod = subj.module;
-            /** @type {Semester} */
-            var sem = subj.semester;
 
             
-            if (this.getGrade(
-                grade,
-                coef,
-                subj,
-                title,
-                isSim,
-                classAvg,
-                prof,
-                date,
-                sem,
-                mod,
-                id
-            ) === null ) {
-                const newGrade = new Grade(
+            // MARK: _  hasSubject()
+            /**
+             *
+             * @param {Subject | string} subject The {@link Subject} containing the same informations as the {@link Subject} to find, or its name. If giving its name, you may give next the name of its module and the number of its semester for more precisions.
+             * @param {Module | string} [module=undefined] Name of the module of the subject to search.
+             * @param {Semester | number} [semester=undefined] Number of the seemester of the subject to search.
+             * @returns {boolean}
+             */
+            hasSubject(subject, module=undefined, semester=undefined) {
+                ParameterTypeError.verifyParams(arguments, [
+                    Subject.name+"|string",
+                    Module.name+"|string|undefined", 
+                    Semester.name+"|number|"+intRegExpSrc+"|undefined"
+                ], ECAMDashboard.prototype.hasSubject, ECAMDashboard);
+
+                try {
+                    this.getSubject(subject, module, semester);
+                    return true;
+                }
+                catch(e) {
+                    return false;
+                }
+            }
+
+
+
+
+            // MARK: _  getModule()
+            /**
+             *
+             * @param {Module | string} module
+             * @param {Semester | number | string | undefined} semester
+             * @returns {Module | null}
+             */
+            getModule(module, semester=undefined) {
+                ParameterTypeError.verifyParams(arguments, [
+                    Module.name+"|string", 
+                    Semester.name+"|number|"+intRegExpSrc+"|undefined"
+                ], ECAMDashboard.prototype.getModule, ECAMDashboard);
+
+                if (semester instanceof Semester) return semester.getModule(module);
+                if (semester !== undefined) return this.getSemester(semester).getModule(module);
+
+                for (const mod of this.modules) {
+                    if (module instanceof Module && mod.equals(module)) return mod;
+                    if (typeof module == "string" && mod.name == module) return mod;
+                }
+
+                throw new Error(
+                    "Module of name \""+ (module instanceof Module ? module.name : module) + "\" doesn not exist"
+                    +(semester !== undefined ? (" in the Semester n°"+(semester instanceof Semester ? semester.number : semester)) : "")
+                    +"."
+                );
+            }
+
+
+
+
+            // MARK: _  hasModule()
+            /**
+             *
+             * @param {Module | string} module
+             * @returns {boolean}
+             */
+            hasModule(module, semester=undefined) {
+                ParameterTypeError.verifyParams(arguments, [
+                    Module.name+"|string", 
+                    Semester.name+"|number|"+intRegExpSrc+"|undefined"
+                ], ECAMDashboard.prototype.hasModule, ECAMDashboard);
+                
+                try {
+                    this.getModule(module, semester);
+                    return true;
+                }
+                catch (e) { return false; }
+            }
+
+
+
+
+            // MARK: _  getSemester()
+            /**
+             *
+             * @param {Semester | number} semester
+             * @returns {Semester | null}
+             */
+            getSemester(semester) {
+                ParameterTypeError.verifyParams(arguments, [Semester.name+"|number|"+nbRegExpSrc], ECAMDashboard.prototype.getSemester, ECAMDashboard);
+
+                for (const sem of this.semesters) {
+                    if (semester instanceof Semester && sem.equals(semester)) return semester;
+                    if (typeof semester == "string" && sem.number == semester)  return semester;
+                }
+
+
+                throw new Error(
+                    "Semester n°"+ (semester instanceof Semester ? semester.number : semester) + " does not exist."
+                );
+            }
+
+
+
+            // MARK: _  addGrade()
+            addGrade(grade, coef, subject, title=" — ", isSim=false, classAvg=" — ", prof=" — ", date=" — ", semester="?", module=undefined, id=undefined) {
+                ParameterTypeError.verifyParams(arguments, [
+                    "number | "+nbRegExpSrc,
+                    "number | "+nbRegExpSrc,
+                    Subject.name+" | string",
+                    "string | undefined",
+                    "boolean | undefined",
+                    "number | "+nbRegExpSrc+" | \" — \" | undefined",
+                    "string | undefined",
+                    "string | undefined",
+                    Semester.name+" | "+intRegExpSrc+" | undefined",
+                    Module.name+" | string | undefined",
+                    "number | "+intRegExpSrc+" | undefined"
+                ], ECAMDashboard.prototype.addGrade, ECAMDashboard);
+
+                /** @type {Subject} */
+                var subj = null;
+
+                try {
+                    subj = this.getSubject(subject, module, semester);
+                }
+                catch(e) {
+                    subj = this.addSubject(subject, undefined, module, semester);
+                }
+
+
+                /** @type {Module} */
+                var mod = subj.module;
+                /** @type {Semester} */
+                var sem = subj.semester;
+
+                
+                if (this.getGrade(
                     grade,
                     coef,
                     subj,
@@ -3772,95 +4251,115 @@ class ECAMDashboard {
                     sem,
                     mod,
                     id
-                );
+                ) === null ) {
+                    const newGrade = new Grade(
+                        grade,
+                        coef,
+                        subj,
+                        title,
+                        isSim,
+                        classAvg,
+                        prof,
+                        date,
+                        sem,
+                        mod,
+                        id
+                    );
 
-                this.grades.push(newGrade);
-                if (isSim) this.sim.push(newGrade);
+                    this.grades.push(newGrade);
+                    if (isSim) this.sim.push(newGrade);
+                }
+
             }
 
-        }
 
+            // MARK: _  addSubject()
+            /**
+             * 
+             * @param {Subject|string} subject 
+             * @param {Module|string|undefined} module 
+             * @param {Semester|number|string|undefined} semester 
+             * @returns 
+             */
+            addSubject(subject, coefficient=undefined, module=undefined, semester=undefined) {
+                ParameterTypeError.verifyParams(arguments, [
+                    Subject.name +"|string", 
+                    "number|"+nbRegExpSrc+"|undefined",
+                    Module.name  +"|string|undefined", 
+                    Semester.name+"|number|"+intRegExpSrc+"|undefined"
+                ], ECAMDashboard.prototype.addModule, ECAMDashboard);
 
-        // MARK: _  addSubject()
-        /**
-         * 
-         * @param {Subject|string} subject 
-         * @param {Module|string|undefined} module 
-         * @param {Semester|number|string|undefined} semester 
-         * @returns 
-         */
-        addSubject(subject, module=undefined, semester=undefined) {
-            ParameterTypeError.verifyParams(arguments, [
-                Subject.name +"|string", 
-                Module.name  +"|string|undefined", 
-                Semester.name+"|number|/\\d+/|undefined"
-            ], ECAMDashboard.prototype.addModule, ECAMDashboard);
+                /** @type {Module} */
+                var mod = null;
+                
+                if ((mod = this.getModule(module, semester)) === null) mod = this.addModule(module, semester);
 
-            /** @type {Module} */
-            var mod = null;
-            
-            if ((mod = this.getModule(module, semester)) === null) mod = this.addModule(module, semester);
+                if (this.hasSubject(subject, module, parseInt(semester))) {
+                    const newSubj = new Subject(subject, coefficient, mod, mod.semester);
+                    this.subjects.push(newSubj);
+                    return newSubj;
+                }
 
-            /** @type {Semester} */
-            var sem = mod.semester;
-
-            if (this.getSubject(subject, module, semester) === null) {
-                const newSubj = new Subject(subject, undefined, mod, sem);
-                this.subjects.push(newSubj);
-                return newSubj;
+                return null;
             }
 
-            return null;
-        }
 
+            // MARK: _  addModule()
+            /**
+             * 
+             * @param {Module|string} module 
+             * @param {number} semester 
+             * @returns The {@link Module} created.
+             */
+            addModule(module, semester) {
+                ParameterTypeError.verifyParams(arguments, [Module.name+"|string", Semester.name+"|number|"+intRegExpSrc], ECAMDashboard.prototype.addModule, ECAMDashboard);
 
-        // MARK: _  addModule()
-        addModule(module, semester) {
-            ParameterTypeError.verifyParams(arguments, [Module.name+"|string", "number|/\\d+/"], ECAMDashboard.prototype.addModule, ECAMDashboard);
+                /** @type {Semester|null} */ 
+                var sem = semester instanceof Semester ? semester : null;
 
-            /** @type {Semester|null} */ 
-            var sem = null;
+                if (sem === null) if ((sem = this.getSemester(semester)) === null) sem = this.addSemester(semester);
 
-            if ((sem = this.getSemester(semester)) === null) sem = this.addSemester(semester);
+                if (this.getModule(module, semester) === null) {
+                    const newMod = new Module(module, sem);
+                    this.modules.push(newMod);
+                    return newMod;
+                }
 
-            if (this.getModule(module, semester) === null) {
-                const newMod = new Module(module, sem);
-                this.modules.push(newMod);
-                return newMod;
+                return null;
             }
 
-            return null;
-        }
 
+            // MARK: _  addSemester()
+            addSemester(semester) {
+                ParameterTypeError.verifyParams(arguments, [Semester.name+"|number|"+intRegExpSrc], ECAMDashboard.prototype.addSemester, ECAMDashboard);
 
-        // MARK: _  addSemester()
-        addSemester(semester) {
-            ParameterTypeError.verifyParams(arguments, ["number|/\\d+/"], ECAMDashboard.prototype.addSemester, ECAMDashboard);
+                if (this.getSemester(semester) === null) {
+                    const newSem = new Semester(semester);
+                    this.semesters.push(newSem);
+                    return newSem;
+                }
 
-            if (this.getSemester(semester) === null) {
-                const newSem = new Semester(semester);
-                this.semesters.push(newSem);
-                return newSem;
+                return null;
             }
 
-            return null;
-        }
 
 
 
 
+            // MARK: _  computeAllStats()
+            /**
+             * Compute the stats of every {@link Semester}, {@link Module} and {@link Subject}.
+             *
+             * @returns ***this*** {@link ECAMDashboard}.
+             */
+            computeAllStats() {
+                this.semesters.forEach(sem => { sem.computeStats(true, true) })
 
-        // MARK: _  computeAllStats()
-        /**
-         * Compute the stats of every {@link Semester}, {@link Module} and {@link Subject}.
-         *
-         * @returns ***this*** {@link ECAMDashboard}.
-         */
-        computeAllStats() {
-            this.semesters.forEach(sem => { sem.computeStats(true, true) })
+                return this;
+            }
 
-            return this;
-        }
+
+        //#endregion — Backend manipulation
 
 
     //#endregion — methods —
