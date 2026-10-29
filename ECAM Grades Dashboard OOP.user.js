@@ -132,7 +132,7 @@
         // MARK: _  getArgument()
         Function.prototype.getArgument = function (
             /** @type {number} */ index, 
-            args = undefined
+            /** @type {IArguments|undefined} */ args = undefined
         ) {
             const getArgs = this.getArguments();
 
@@ -1240,46 +1240,104 @@ const intRegExpSrc = "/\\d+/";
         //#region
 
 
-            /** Value of ***this*** {@link Grade}, a positive float number below 20. @type {number} */
+            /** 
+             * Value of ***this*** {@link Grade}, a positive float number below 20. 
+             * @type {number}
+             */
             #grade;
 
-            /** The {@link Subject} of ***this*** {@link Grade}. @type {Subject|string|undefined} */
-            #subject;
+            /** 
+             * The {@link Subject} of ***this*** {@link Grade}. 
+             * @type {Subject | string | undefined}
+             */
+            #subject = undefined;
 
-            /** The {@link Module} of ***this*** {@link Grade}. @type {Module|string|undefined} */
-            #module;
+            /** 
+             * The {@link Module} of ***this*** {@link Grade}. 
+             * @type {Module | string | undefined}
+             */
+            #module = undefined;
 
-            /** The {@link Semester} of ***this*** {@link Grade}. @type {Semester|number|undefined} @readonly */
-            #semester;
+            /** 
+             * The {@link Semester} of ***this*** {@link Grade}. 
+             * @type {Semester | number | undefined}
+             */
+            #semester = undefined;
 
-            /** Value of the coefficient of ***this*** {@link Grade} in its {@link Subject}, a positive float number below 100, in %. @type {number} */
+            /** 
+             * Value of the coefficient of ***this*** {@link Grade} in its {@link Subject}, a positive float number below 100, in %. 
+             * @type {number}
+             */
             #coef;
 
-            /** Title of ***this*** {@link Grade} (default when no title was given: " — "). @type {string} */
-            #title;
+            /** 
+             * Title of ***this*** {@link Grade}. 
+             * @type {string}
+             */
+            #title = " — ";
 
-            /** `true` if ***this*** {@link Grade} is a simulated grade, `false` otherwise. @type {boolean} @readonly */
+            /** 
+             * `true` if ***this*** {@link Grade} is a simulated grade, `false` otherwise. 
+             * @type {boolean} 
+             * @readonly
+             */
             #isSim;
 
-            /** A 17-digits *wannabe unique* id number for a simulated grade, built from the time stamp of its creation. @type {number|undefined} @readonly */
+            /** 
+             * A 17-digits *wannabe unique* id number for a simulated grade, built from the time stamp of its creation. 
+             * @type {number|undefined} 
+             * @readonly
+             */
             #id;
 
-            /** Value of the class' average of ***this*** {@link Grade}, a positive float number below 20 @type {number|undefined} */
-            #classAvg;
+            /** 
+             * Value of the class' average of ***this*** {@link Grade}, a positive float number below 20 
+             * @type {number|undefined}
+             */
+            #classAvg = NaN;
 
-            /** Name of the teacher.s who published ***this*** {@link Grade} (default when no teacher was given: " — ") @type {string} @readonly */
+            /** 
+             * Name of the teacher.s who published ***this*** {@link Grade} (default when no teacher was given: " — ") 
+             * @type {string}
+             */
             #prof;
 
-            /** Date of publication of ***this*** {@link Grade} entered by the administration (default when no date was given: " — ").
-             * ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet.* @type {string} @readonly
+            /** 
+             * Date of publication of ***this*** {@link Grade} entered by the administration (default when no date was given: " — ").
+             * ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet.* 
+             * @type {string}
              */
             #date;
 
-            /** `true` if ***this*** {@link Grade} is enabled (so it counts in the calculation of the averages), `false` otherwise. @type {boolean} */
-            #enabled;
+            /** 
+             * `true` if ***this*** {@link Grade} is enabled (so it counts in the calculation of the averages), `false` otherwise. 
+             * @type {boolean}
+             */
+            #enabled = true;
 
-            /** `true` if ***this*** {@link Grade} was marked as read, `false` otherwise. @type {boolean} */
-            #markedAsRead;
+            /** 
+             * `true` if ***this*** {@link Grade} was marked as read, `false` otherwise. 
+             * @type {boolean}
+             */
+            #markedAsRead = false;
+
+
+
+            /**
+             * Separator used to separate the semester, the module, the subject and the title of a grade in its string representation.
+             * @type {"\/\/\\"}
+             * @readonly
+             */
+            static gradePathSeparator = "\/\/\\";
+
+
+
+            /**
+             * Separator used to separate the string representation of multiple grades.
+             * @type {"|"}
+             * @readonly
+             */
+            static gradesSeparator = "|";
 
 
 
@@ -1294,19 +1352,19 @@ const intRegExpSrc = "/\\d+/";
         /**
          * Constructs a {@link Grade}.
          *
-         * @param {number}                              grade               Value of ***this*** {@link Grade}, a positive float number below 20.
-         * @param {number}                              coef                Value of the coefficient of ***this*** {@link Grade} in its {@link Subject}, a positive float number below 100, as a %.
-         * @param {Subject|string|undefined}            subject             The {@link Subject} ***this*** {@link Grade} will belong to.
-         * @param {string|undefined}                    [title=" — "]       Title of ***this*** {@link Grade}. Default value is " — ".
-         * @param {boolean|undefined}                   [isSim=false]       `true` if ***this*** {@link Grade} is a simulated grade, `false` otherwise. `false` by default.
-         * @param {number|string|undefined}             [classAvg=" — "]    Value of the class' average of ***this*** {@link Grade}, a positive float number below 20. Default value is " — ".
-         * @param {string|undefined}                    [prof=" — "]        Name of the teacher.s who published ***this*** {@link Grade}. Default value is " — ".
-         * @param {string|undefined}                    [date=" — "]        Date of publication of ***this*** {@link Grade} entered by the administration. Default value is " — ". ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet*.
-         * @param {Semester|number|string|undefined}    [semester="?"]      The {@link Semester} ***this*** {@link Grade} will belong to. Default is "?".
-         * @param {Module|string|undefined}             [module=undefined]  The {@link Module} ***this*** {@link Grade} will belong to. Default is "undefined".
-         * @param {number|undefined}                    [id=undefined]      An id number for a simulated grade, built from the time stamp of its creation. The id is guaranted to be unique.
+         * @param {number|string}                       grade       Value of ***this*** {@link Grade}, a positive float number below 20.
+         * @param {number|string}                       coef        Value of the coefficient of ***this*** {@link Grade} in its {@link Subject}, a positive float number below 100, as a %.
+         * @param {Subject|string|undefined}            subject     The {@link Subject} ***this*** {@link Grade} will belong to.
+         * @param {string|undefined}                    title       Title of ***this*** {@link Grade}. Default value is " — ".
+         * @param {boolean|undefined}                   isSim       `true` if ***this*** {@link Grade} is a simulated grade, `false` otherwise. `false` by default.
+         * @param {number|string|undefined}             classAvg    Value of the class' average of ***this*** {@link Grade}, a positive float number below 20. Default value is " — ".
+         * @param {string|undefined}                    prof        Name of the teacher.s who published ***this*** {@link Grade}. Default value is " — ".
+         * @param {string|undefined}                    date        Date of publication of ***this*** {@link Grade} entered by the administration. Default value is " — ". ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet*.
+         * @param {Semester|number|string|undefined}    semester    The {@link Semester} ***this*** {@link Grade} will belong to. Default is "?".
+         * @param {Module|string|undefined}             module      The {@link Module} ***this*** {@link Grade} will belong to. Default is "undefined".
+         * @param {number|undefined}                    id          An id number for a simulated grade, built from the time stamp of its creation. The id is guaranted to be unique.
          */
-        constructor(grade, coef, subject=undefined, title=" — ", isSim=false, classAvg=" — ", prof=" — ", date=" — ", semester="?", module=undefined, id=undefined) {
+        constructor(grade, coef, subject=undefined, title=" — ", isSim=false, classAvg=undefined, prof=" — ", date=" — ", semester="?", module=undefined, id=undefined) {
 
             ParameterTypeError.verifyParams(arguments, [
                 "number | "+nbRegExpSrc,
@@ -1323,8 +1381,8 @@ const intRegExpSrc = "/\\d+/";
             ], Grade, Grade)
 
 
-            this.#grade = grade <= 20 ? (grade >= 0 ? Number(grade) : 0) : 20;
-            this.#coef  = coef <= 100 ? (coef  >= 0 ? Number(coef)  : 0) : 100;
+            this.#grade = typeof grade === "number" ? (grade <= 20 ? (grade >= 0 ? Number(grade) : 0) : 20) : parseFloat(grade);
+            this.#coef  = typeof coef === "number" ? (coef <= 100 ? (coef  >= 0 ? Number(coef)  : 0) : 100) : parseFloat(coef);
 
 
             if (subject instanceof Subject) {
@@ -1391,11 +1449,13 @@ const intRegExpSrc = "/\\d+/";
             }
 
 
-            if (typeof classAvg === "number") {
-                this.#classAvg = classAvg <= 20 ? (classAvg >= 0 ? classAvg : 0) : 20;
-            }
-            else if (classAvg.match(RegExp(nbRegExpSrc))) {
-                this.#classAvg = parseFloat(classAvg) <= 20 ? (parseFloat(classAvg) >= 0 ? parseFloat(classAvg) : 0) : 20;
+            if (classAvg) {
+                if (typeof classAvg === "number") {
+                    this.#classAvg = classAvg <= 20 ? (classAvg >= 0 ? classAvg : 0) : 20;
+                }
+                else if (classAvg.match(RegExp(nbRegExpSrc))) {
+                    this.#classAvg = parseFloat(classAvg) <= 20 ? (parseFloat(classAvg) >= 0 ? parseFloat(classAvg) : 0) : 20;
+                }
             }
 
             this.#prof      = prof;
@@ -1412,75 +1472,79 @@ const intRegExpSrc = "/\\d+/";
         //#region
 
 
-            /** Value of ***this*** {@link Grade}, a positive float number below 20. */
+            /** 
+             * Value of ***this*** {@link Grade}, a positive float number below 20.
+             */
             get grade()     { return this.#grade }
             set grade(value) {
                 this.#grade = value <= 20 ? (value >= 0 ? Number(value) : 0) : 20;
             }
 
-            /** Value of the coefficient of ***this*** {@link Grade} in its {@link Subject}, a positive float number below 100, in %. */
+            /** 
+             * Value of the coefficient of ***this*** {@link Grade} in its {@link Subject}, a positive float number below 100, in %.
+             * @type {number}
+             */
             get coef()      { return this.#coef }
+            /**
+             * @param {string | number} value
+             */
             set coef(value) {
+                if (typeof value === "string") { value = parseFloat(value); }
+
                 this.#coef = value <= 100 ? (value >= 0 ? Number(value) : 0) : 100;
             }
 
-            /** The {@link Subject} of ***this*** {@link Grade}. */
-            get subject()   { return this.#subject instanceof Subject ? this.#subject : undefined }
+            /** 
+             * The {@link Subject} of ***this*** {@link Grade}.
+             */
+            get subject()   { return this.#subject }
             set subject(value)    {
                 this.#subject = value;
             }
-            /** The name of the {@link Subject} of ***this*** {@link Grade}. */
-            get subjectName() { return this.#subject instanceof Subject ? this.#subject.name : this.#subject }
-            set subjectName(value) {
-                if (typeof value === "string") {
-                    if (this.#subject instanceof Subject) {
-                        throw new Error(
-                            "This "+Grade.name+"'s "
-                            +Object.getOwnPropertyDescriptors(this).subject.get?.name
-                            +" property's current value is an actual "+Subject.name+", it may not be replaced with a string."
-                        )
-                    }
-                    else { this.#subject = value; }
-                }
-            }
 
 
-            /** The {@link Module} of ***this*** {@link Grade}. Has a getter and a setter. @type {Module|undefined}  */
-            get module()    { return this.#module instanceof Module ? this.#module : undefined }
+            /** 
+             * The {@link Module} of ***this*** {@link Grade}.
+             */
+            get module()    { return this.#module }
             set module(value)    {
                 this.#module = value;
             }
-            /** The name of the {@link Module} of ***this*** {@link Grade}. */
-            get moduleName() { return this.#module instanceof Module ? this.#module.name : this.#module }
-            set moduleName(value) {
-                if (typeof value === "string") {
-                    if (this.#subject instanceof Subject) {
-                        throw new Error(
-                            "This "+Grade.name+"'s "
-                            +Object.getOwnPropertyDescriptors(this).subject.get?.name
-                            +" property's current value is an actual "+Subject.name+", it may not be replaced with a string."
-                        )
-                    }
-                    else { this.#subject = value; }
-                }
+
+            /** 
+             * The {@link Semester} of ***this*** {@link Grade}.
+             */
+            get semester()  { return this.#semester }
+            /**
+             * @param {string | number | Semester | undefined} value
+             */
+            set semester(value) {
+                this.#semester = typeof value === "string" ? parseInt(value) : value;
             }
 
-            /** The {@link Semester} of ***this*** {@link Grade}. @type {Semester|number|undefined} @readonly */
-            get semester()  { return this.#semester }
-
-            /** Title of ***this*** {@link Grade} (default when no title was given: " — "). @type {string} */
+            /** 
+             * Title of ***this*** {@link Grade} (default when no title was given: " — ").
+             */
             get title()     { return this.#title    }
             set title(value) {
                 this.#title = value;
             }
 
-            /** `true` if ***this*** {@link Grade} is a simulated grade, `false` otherwise. @type {boolean} @readonly */
+            /** 
+             * `true` if ***this*** {@link Grade} is a simulated grade, `false` otherwise.
+             * @readonly
+             */
             get isSim()     { return this.#isSim    }
 
-            /** A 17-digits *wannabe unique* id number for a simulated grade, built from the time stamp of its creation. @type {number|undefined} @readonly */
+            /** 
+             * A 17-digits *wannabe unique* id number for a simulated grade, built from the time stamp of its creation.
+             * @readonly
+             */
             get id()        { return this.#id }
 
-            /** Value of the class' average of ***this*** {@link Grade}, a positive float number below 20 @type {number|undefined} */
+            /** 
+             * Value of the class' average of ***this*** {@link Grade}, a positive float number below 20.
+             */
             get classAvg()  { return this.#classAvg }
             /**
              * @param {number|string|undefined} value 
@@ -1493,25 +1557,36 @@ const intRegExpSrc = "/\\d+/";
                 this.#classAvg = (!value || isNaN(value)) ? undefined : ( (value) <= 20 ? (value >= 0 ? value : 0) : 20 );
             }
 
-            /** Name of the teacher.s who published ***this*** {@link Grade} (default when no teacher was given: " — ") @type {string} @readonly */
+            /** 
+             * Name of the teacher.s who published ***this*** {@link Grade} (default when no teacher was given: " — ") 
+             */
             get prof()      { return this.#prof      }
+            set prof(value) {
+                this.#prof = value
+            }
 
-            /** Date of publication of ***this*** {@link Grade} entered by the administration (default when no date was given: " — ").
-             * ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet.* @type {string} @readonly
+            /**
+             * Date of publication of ***this*** {@link Grade} entered by the administration (default when no date was given: " — ").
+             * ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet.* 
              */
             get date()      { return this.#date      }
+            set date(value) {
+                this.#date = value;
+            }
 
-            /** `true` if ***this*** {@link Grade} is enabled (so it counts in the calculation of the averages), `false` otherwise. @type {boolean} */
+            /** 
+             * `true` if ***this*** {@link Grade} is enabled (so it counts in the calculation of the averages), `false` otherwise.
+             */
             get enabled()   { return this.#enabled  }
             set enabled(value) {
-                if (typeof value != "boolean") { throw new Error("Invalid Grade.enabled setting: tried to set 'enabled' to a type other than boolean") }
                 this.#enabled = value;
             }
 
-            /** `true` if ***this*** {@link Grade} was marked as read, `false` otherwise. @type {boolean} */
+            /** 
+             * `true` if ***this*** {@link Grade} was marked as read, `false` otherwise.
+             */
             get markedAsRead() { return this.#markedAsRead }
             set markedAsRead(value) {
-                if (typeof value != "boolean") { throw new Error("Invalid Grade.markedAsRead setting: tried to set 'markedAsRead' to a type other than boolean") }
                 this.#markedAsRead = value;
             }
 
@@ -1542,14 +1617,16 @@ const intRegExpSrc = "/\\d+/";
              */
             toString() {
                 return "" +
-                    this.#semester + "\\" +
-                    this.#module + "\\" +
-                    this.#subject + "\\" +
+                    this.#semester + Grade.gradePathSeparator +
+                    this.#module + Grade.gradePathSeparator +
+                    this.#subject + Grade.gradePathSeparator +
                     this.#title + " : " +
                     this.#grade + "/20 vs " +
                     this.#classAvg + "/20, " +
                     this.#coef + "% " +
                     ( this.#isSim ? "("+this.#id+") " : "" ) +
+                    ( this.#isSim ? "("+this.#prof+") " : "")+
+                    "("+this.#date+") "+
                     "["+(this.#enabled ? "ON" : "OFF")+( this.#isSim ? "" : ( this.#markedAsRead ? "" : ", UNREAD") )+"]"
                 ;
             }
@@ -1566,7 +1643,7 @@ const intRegExpSrc = "/\\d+/";
              * ```
              * `${semesterNumber}\\${moduleName}\\${subjectName}\\${title}`
              * ```
-             * @returns A short string representation of ***this*** {@link Grade}.
+             * @returns A short string representation of ***this*** {@link Grade}. Guaranted to be unique for the ***this*** {@link Grade}.
              */
             getUniqueIdentifier() {
                 return "" +
@@ -1585,30 +1662,91 @@ const intRegExpSrc = "/\\d+/";
              * @param {string} string
              */
             static fromString(string) {
+                const delimit = Grade.gradePathSeparator;
+                const semRegExp             = new RegExp(`(?<semester>[^(${ delimit})]+)${delimit}`);
+                const modRegExp             = new RegExp(`(?<module>[^(${   delimit})]+)${delimit}`);
+                const subjRegExp            = new RegExp(`(?<subject>[^(${  delimit})]+)${delimit}`);
+                const titleRegExp           = /(?<title>.+) :/;
+                const gradeRegExp           = /(?<grade>\d{1,2}(?:\.\d{1,2})?)\/20 vs /;
+                const classAvgRegExp        = /(?<classAvg>(?:\d{1,2}(?:\.\d{1,2})?)| — )\/20, /;
+                const coefRegExp            = /(?<coef>\d{1,2}(?:\.\d{1,2})?)% /;
+                const idRegExp              = /(\((?<id>\d+)\) )?/;
+                const profRegExp            = /(\((?<prof>[^\)]+)\) )?/;
+                const dateRegExp            = /\((?<date>[^\)]+)\) /;
+                const enabledRegExp         = /\[(?<enabled>ON|OFF)/;
+                const markedAsReadRegExp    = /(?<markedAsRead>, UNREAD)?\]/;
+
+                const regExp = new RegExp(
+                    semRegExp.source
+                    +modRegExp.source
+                    +subjRegExp.source
+                    +titleRegExp.source
+                    +gradeRegExp.source
+                    +classAvgRegExp.source
+                    +coefRegExp.source
+                    +idRegExp.source
+                    +profRegExp.source
+                    +dateRegExp.source
+                    +enabledRegExp.source
+                    +markedAsReadRegExp.source
+                );
+
+
                 /**
                  * @type { RegExpMatchArray | null }
                  */
-                const match = string.match(/(?:(.+)(?:\/\/\\(.+))(?:\/\/\\(.+))(?:\/\/\\(.+))) : (\d{1,2}(?:\.\d{1,2})?)\/20 vs ((?:\d{1,2}(?:\.\d{1,2})?)| — )\/20, (\d{1,2}(?:\.\d{1,2})?)%(?: \((\d+)\))? \[(ON|OFF)(?:, (UNREAD))?\]/);
+                // const match = string.match(/(?:(.+)(?:\/\/\\(.+))(?:\/\/\\(.+))(?:\/\/\\(.+))) : (\d{1,2}(?:\.\d{1,2})?)\/20 vs ((?:\d{1,2}(?:\.\d{1,2})?)| — )\/20, (\d{1,2}(?:\.\d{1,2})?)%(?: \((\d+)\))? \[(ON|OFF)(?:, (UNREAD))?\]/);
+                const match = string.match(regExp);
 
                 if (match) {
-                    const grade = new Grade(
-                        parseFloat(match[5]),
-                        parseFloat(match[7]),
-                        match[3],
-                        match[4],
-                        !isNaN(parseInt(match[8])),
-                        parseFloat(match[6]),
-                        undefined,
-                        undefined,
-                        parseInt(match[1]),
-                        match[2],
-                        parseInt(match[8])
+                    // const grade = new Grade(
+                    //     parseFloat(match[5]),
+                    //     parseFloat(match[7]),
+                    //     match[3],
+                    //     match[4],
+                    //     !isNaN(parseInt(match[8])),
+                    //     parseFloat(match[6]),
+                    //     undefined,
+                    //     undefined,
+                    //     parseInt(match[1]),
+                    //     match[2],
+                    //     parseInt(match[8])
+                    // );
+                    // parsedGrade.enabled       = match[9]  === "ON";
+                    // parsedGrade.markedAsRead  = match[10] !== "UNREAD";
+
+                    const semester      = typeof match?.groups?.semester === "string" ? parseInt(match?.groups?.semester) : undefined;
+                    const module        = match?.groups?.module || Module.unclassified;
+                    const subject       = match?.groups?.subject;
+                    const title         = match?.groups?.title;
+                    const grade         = parseFloat(match?.groups?.grade || "NaN");
+                    const classAvg      = parseFloat(match?.groups?.classAvg || "NaN");
+                    const coef          = parseFloat(match?.groups?.coef || "NaN");
+                    const id            = parseFloat(match?.groups?.id || "NaN");
+                    const isSim         = !isNaN(id);
+                    const prof          = match?.groups?.prof;
+                    const date          = match?.groups?.date;
+                    const enabled       = (match?.groups?.enabled === "ON" || match?.groups?.enabled === "OFF") ? (match?.groups?.enabled === "ON") : true;
+                    const markedAsRead  = match?.groups?.markedAsRead === ", UNREAD";
+
+                    const parsedGrade = new Grade(
+                        grade,
+                        coef,
+                        subject,
+                        title,
+                        isSim,
+                        classAvg,
+                        prof,
+                        date,
+                        semester,
+                        module,
+                        id
                     );
 
-                    grade.enabled       = match[9]  === "ON";
-                    grade.markedAsRead  = match[10] !== "UNREAD";
+                    parsedGrade.enabled       = enabled;
+                    parsedGrade.markedAsRead  = markedAsRead;
 
-                    return grade;
+                    return parsedGrade;
                 }
             }
 
@@ -1646,6 +1784,7 @@ const intRegExpSrc = "/\\d+/";
             /**
              * Checks whether the given Grade's unique descriptor (or the given Grade unique descriptor directly) 
              * is equal to ***this*** {@link Grade}'s unique descriptor.
+             * 
              * @param {Grade | string} grade The {@link Grade} (or its unique descriptor string) ***this*** {@link Grade} should correspond to.
              */
             correspondsTo(grade) {
@@ -1668,8 +1807,8 @@ const intRegExpSrc = "/\\d+/";
              *
              * @param {Grade[]} grades Array of {@link Grade}s to calculate the weighted average from.
              */
-            static average(grades) {
-                ParameterTypeError.verifyParams(arguments, [Grade.name+"[]"], Grade.average, Grade);
+            static average(...grades) {
+                ParameterTypeError.verifyParams(arguments, [Grade.name+"[]|"+Grade.name], Grade.average, Grade);
 
                 if (grades instanceof Array) {
                     let validArrayOfGrades = true, average = 0, totalCoef = 0;
@@ -1682,11 +1821,11 @@ const intRegExpSrc = "/\\d+/";
                         else validArrayOfGrades = false;
                     })
 
-                    if (!validArrayOfGrades) return " — ";
-                    else return Math.round(100*average/totalCoef)/100 || " — ";
+                    if (!validArrayOfGrades) return NaN;
+                    else return Math.round(100*average/totalCoef)/100 || NaN;
 
                 }
-                return " — ";
+                return NaN;
             }
 
 
@@ -1696,10 +1835,9 @@ const intRegExpSrc = "/\\d+/";
              * rounded to the nearest hundredth of the average.
              *
              * @param {Grade[]} grades Array of {@link Grade}s to calculate the weighted class average from.
-             * @returns {number|" — "}
              */
-            static classAverage(grades) {
-                ParameterTypeError.verifyParams(arguments, [Grade.name+"[]"], Grade.classAverage, Grade);
+            static classAverage(...grades) {
+                ParameterTypeError.verifyParams(arguments, [Grade.name+"[]|"+Grade.name], Grade.classAverage, Grade);
 
                 let average = 0, totalCoef = 0, i = -1;
 
@@ -1713,7 +1851,7 @@ const intRegExpSrc = "/\\d+/";
                     else console.log("Grade n°"+i+" does not have a class average.")
                 }
 
-                return Math.round(100*average/totalCoef)/100 || " — ";
+                return Math.round(100*average/totalCoef)/100 || NaN;
             }
 
         //#endregion — methods —
@@ -1742,68 +1880,130 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-            /** Name of ***this*** {@link Subject}. @type {string} */
+            /**
+             * Name of ***this*** {@link Subject}. 
+             * @type {string}
+             */
             #name;
 
-            /** Coefficient of ***this*** {@link Subject} in its {@link Module}. @type {number} */
+            /** 
+             * Coefficient of ***this*** {@link Subject} in its {@link Module}. 
+             * @type {number} 
+             */
             #coef;
 
-            /** Average of the user for ***this*** {@link Subject}, a positive float number below 20 @type {number | undefined} */
-            #average;
+            /** 
+             * Average of the user for ***this*** {@link Subject}, a positive float number below 20. 
+             * @type {number} 
+             */
+            #average = NaN;
 
-            /** Value of the class' average for ***this*** {@link Subject}, a positive float number below 20 @type {number | undefined} */
-            #classAvg;
+            /** 
+             * Value of the class' average for ***this*** {@link Subject}, a positive float number below 20. 
+             * @type {number} 
+             */
+            #classAvg = NaN;
 
-            /** Array of the {@link Grade}s in ***this*** {@link Subject}. @type {Grade[]} @readonly */
+            /** 
+             * Array of the {@link Grade}s in ***this*** {@link Subject}. 
+             * @type {Grade[]} 
+             * @readonly 
+             */
             #grades = [];
 
-            /** Name of the module of ***this*** {@link Subject}. @type {Module | string | undefined} */
+            /** 
+             * Name of the module of ***this*** {@link Subject}. 
+             * @type {Module | string | undefined} 
+             */
             #module;
 
-            /** The {@link Semester} (or its number) of ***this*** {@link Subject}. @type {Semester | number | undefined} @readonly */
+            /**
+             * The {@link Semester} (or its number) of ***this*** {@link Subject}. 
+             * @type {Semester | number | undefined} 
+             */
             #semester;
 
 
 
-            /** Array of the real {@link Grade}s in ***this*** {@link Subject}. @type {Grade[]} @readonly */
+            /** 
+             * Array of the real {@link Grade}s in ***this*** {@link Subject}. 
+             * @type {Grade[]} 
+             */
             #realGrades = [];
 
-            /** Array of the simulated {@link Grade}s in ***this*** {@link Subject}. @type {Grade[]} @readonly */
+            /** 
+             * Array of the simulated {@link Grade}s in ***this*** {@link Subject}. 
+             * @type {Grade[]} 
+             */
             #simGrades = [];
 
-            /** Array of the enabled {@link Grade}s in ***this*** {@link Subject}. @type {Grade[]} @readonly */
+            /** 
+             * Array of the enabled {@link Grade}s in ***this*** {@link Subject}. 
+             * @type {Grade[]} 
+             */
             #enabledGrades = [];
 
-            /** Array of the disabled {@link Grade}s in ***this*** {@link Subject}. @type {Grade[]} @readonly */
+            /** 
+             * Array of the disabled {@link Grade}s in ***this*** {@link Subject}. 
+             * @type {Grade[]} 
+             */
             #disabledGrades = [];
 
-            /** Array of the enabled real {@link Grade}s in ***this*** {@link Subject}. @type {Grade[]} @readonly */
+            /** 
+             * Array of the enabled real {@link Grade}s in ***this*** {@link Subject}. 
+             * @type {Grade[]} 
+             */
             #enabledRealGrades = [];
 
-            /** Array of the disabled real {@link Grade}s in ***this*** {@link Subject}. @type {Grade[]} @readonly */
+            /** 
+             * Array of the disabled real {@link Grade}s in ***this*** {@link Subject}. 
+             * @type {Grade[]} 
+             */
             #disabledRealGrades = [];
 
-            /** Array of the enabled simulated {@link Grade}s in ***this*** {@link Subject}. @type {Grade[]} @readonly */
+            /** 
+             * Array of the enabled simulated {@link Grade}s in ***this*** {@link Subject}. 
+             * @type {Grade[]} 
+             */
             #enabledSimGrades = [];
 
-            /** Array of the disabled simulated {@link Grade}s in ***this*** {@link Subject}. @type {Grade[]} @readonly */
+            /** 
+             * Array of the disabled simulated {@link Grade}s in ***this*** {@link Subject}. 
+             * @type {Grade[]} 
+             */
             #disabledSimGrades = [];
 
-            /** Total of the coefficients of all the {@link Grade}s in ***this*** {@link Subject}. @type {number | undefined} @readonly */
-            #totalCoefGrades;
+            /** 
+             * Total of the coefficients of all the {@link Grade}s in ***this*** {@link Subject}. 
+             * @type {number} 
+             */
+            #totalCoefGrades = NaN;
 
-            /** Total of the coefficients of all the real {@link Grade}s in ***this*** {@link Subject}. @type {number | undefined} @readonly */
-            #totalCoefRealGrades;
+            /** 
+             * Total of the coefficients of all the real {@link Grade}s in ***this*** {@link Subject}. 
+             * @type {number} 
+             */
+            #totalCoefRealGrades = NaN;
 
-            /** Total of the coefficients of all the enabled {@link Grade}s in ***this*** {@link Subject}. @type {number | undefined} @readonly */
-            #totalCoefEnabledGrades;
+            /** 
+             * Total of the coefficients of all the enabled {@link Grade}s in ***this*** {@link Subject}. 
+             * @type {number} 
+             */
+            #totalCoefEnabledGrades = NaN;
 
-            /** Total of the coefficients of all the enabled real {@link Grade}s in ***this*** {@link Subject}. @type {number | undefined} @readonly */
-            #totalCoefEnabledRealGrades;
+            /** 
+             * Total of the coefficients of all the enabled real {@link Grade}s in ***this*** {@link Subject}. 
+             * @type {number} 
+             */
+            #totalCoefEnabledRealGrades = NaN;
 
 
 
-            /** The {@link SubjectCard} corresponding to ***this*** {@link Subject}. @type {SubjectCard} */
+            /** 
+             * The {@link SubjectCard} corresponding to ***this*** {@link Subject}. 
+             * @type {SubjectCard}
+             * @readonly
+             */
             #subjectCard;
 
 
@@ -1821,9 +2021,9 @@ const intRegExpSrc = "/\\d+/";
          * The array of {@link Grade}s may be empty/undefined, in this case, the next parameters `name` and `module` **must** be provided. This will create a simulated subject.
          *
          *
-         * @param {string}          name                                    Name to give to ***this*** {@link Subject}.
-         * @param {number}          [coef=100]                              Coefficient of ***this*** {@link Subject} in its {@link Module}, a positive float number below 100, as a %. Default value is 100.
-         * @param {Module|Semester|undefined} [moduleOrSemester=undefined]  The {@link Module} ***this*** {@link Subject} will belong to, or the {@link Semester} whose undefined {@link Module} ***this*** {@link Module} will belong to.
+         * @param {string}                      name                            Name to give to ***this*** {@link Subject}.
+         * @param {number}                      [coef=100]                      Coefficient of ***this*** {@link Subject} in its {@link Module}, a positive float number below 100, as a %. Default value is 100.
+         * @param {Module|Semester|undefined}   [moduleOrSemester=undefined]    The {@link Module} ***this*** {@link Subject} will belong to, or the {@link Semester} whose undefined {@link Module} ***this*** {@link Module} will belong to.
          */
         constructor(name, coef=100, moduleOrSemester=undefined) {
             ParameterTypeError.verifyParams(arguments, [
@@ -1836,13 +2036,15 @@ const intRegExpSrc = "/\\d+/";
             this.#coef      = coef <= 100 ? (coef >= 0 ? Number(coef) : 0) : 100;
 
             if (moduleOrSemester instanceof Module) {
-                this.#semester  = moduleOrSemester.semester;
-                this.#module    = moduleOrSemester;
+                const module = moduleOrSemester;
+                this.#semester  = module.semester;
+                this.#module    = module;
                 this.#module.addSubjects(this);
             }
             else if (moduleOrSemester instanceof Semester) {
-                this.#semester = moduleOrSemester;
-                this.#module = this.#semester.undefinedModule;
+                const semester = moduleOrSemester;
+                this.#semester  = semester;
+                this.#module    = semester.undefinedModule;
                 this.#module.addSubjects(this);
             }
 
@@ -1854,7 +2056,7 @@ const intRegExpSrc = "/\\d+/";
         //#region 
 
             /**
-             * Name of ***this*** {@link Subject}. @type {string}
+             * Name of ***this*** {@link Subject}.
              */
             get name()      { return this.#name     }
             set name(value) {
@@ -1863,7 +2065,7 @@ const intRegExpSrc = "/\\d+/";
             }
 
             /**
-             * Coefficient of ***this*** {@link Subject} in its {@link Module}. @type {number}
+             * Coefficient of ***this*** {@link Subject} in its {@link Module}.
              */
             get coef()      { return this.#coef     }
             set coef(value) {
@@ -1872,95 +2074,105 @@ const intRegExpSrc = "/\\d+/";
             }
 
             /**
-             * Value of the class' average of ***this*** {@link Grade}, a positive float number below 20 @type {number | undefined} @readonly
+             * Value of the class' average of ***this*** {@link Grade}, a positive float number below 20. @readonly
              */
             get average()   { return this.#average  }
 
             /**
-             * Value of the class' average of ***this*** {@link Grade}, a positive float number below 20 @type {number | undefined} @readonly
+             * Value of the class' average of ***this*** {@link Grade}, a positive float number below 20. @readonly
              */
             get classAvg()  { return this.#classAvg }
 
             /**
-             * Array of the {@link Grade}s in ***this*** {@link Subject}. @type {Grade[]} @readonly
+             * Array of the {@link Grade}s in ***this*** {@link Subject}. @readonly
              */
             get grades()    { return this.#grades   }
 
             /**
-             * The {@link Module} of ***this*** {@link Subject}. @type {Module | undefined}
+             * The {@link Module} of ***this*** {@link Subject}.
              */
-            get module()    { return this.#module instanceof Module ? this.#module : undefined }
-            /**
-             * @param {Module | undefined} value
-             */
+            get module()    { return this.#module }
             set module(value)    {
                 this.#module = value;
             }
-            /**
-             * The name of the {@link Module} of ***this*** {@link Subject}. @type {string | undefined}
-             */
-            get moduleName() { return this.#module instanceof Module ? this.#module.name : this.#module }
 
             /**
-             * The {@link Semester} (or its number) of ***this*** {@link Subject}. @type {Semester | undefined} @readonly
+             * The {@link Semester} (or its number) of ***this*** {@link Subject}.
              */
             get semester()  { return this.#semester instanceof Semester ? this.#semester : undefined }
+            set semester(value) {
+                this.#semester = value;
+            }
 
             /**
-             * Array of the real {@link Grade}s in ***this*** {@link Subject}. @type {Grade[]} @readonly */
+             * Array of the real {@link Grade}s in ***this*** {@link Subject}. @readonly
+             */
             get realGrades() { return this.#realGrades }
 
             /**
-             * Array of the simulated {@link Grade}s in ***this*** {@link Subject}. @type {Grade[]} @readonly */
+             * Array of the simulated {@link Grade}s in ***this*** {@link Subject}. @readonly
+             */
             get simGrades() { return this.#simGrades }
 
             /**
-             * Array of the enabled {@link Grade}s in ***this*** {@link Subject}. @type {Grade[]} @readonly */
+             * Array of the enabled {@link Grade}s in ***this*** {@link Subject}. @readonly
+             */
             get enabledGrades() { return this.#enabledGrades }
 
             /**
-             * Array of the disabled {@link Grade}s in ***this*** {@link Subject}. @type {Grade[]} @readonly */
+             * Array of the disabled {@link Grade}s in ***this*** {@link Subject}. @readonly
+             */
             get disabledGrades() { return this.#disabledGrades }
 
             /**
-             * Array of the enabled real {@link Grade}s in ***this*** {@link Subject}. @type {Grade[]} @readonly */
+             * Array of the enabled real {@link Grade}s in ***this*** {@link Subject}. @readonly
+             */
             get enabledRealGrades() { return this.#enabledRealGrades }
 
             /**
-             * Array of the disabled real {@link Grade}s in ***this*** {@link Subject}. @type {Grade[]} @readonly */
+             * Array of the disabled real {@link Grade}s in ***this*** {@link Subject}. @readonly
+             */
             get disabledRealGrades() { return this.#disabledRealGrades }
 
             /**
-             * Array of the enabled simulated {@link Grade}s in ***this*** {@link Subject}. @type {Grade[]} @readonly */
+             * Array of the enabled simulated {@link Grade}s in ***this*** {@link Subject}. @readonly
+             */
             get enabledSimGrades() { return this.#enabledSimGrades }
 
             /**
-             * Array of the disabled simulated {@link Grade}s in ***this*** {@link Subject}. @type {Grade[]} @readonly */
+             * Array of the disabled simulated {@link Grade}s in ***this*** {@link Subject}. @readonly
+             */
             get disabledSimGrades() { return this.#disabledSimGrades }
 
             /**
-             * Total of the coefficients of all the {@link Grade}s in ***this*** {@link Subject}. @type {number} @readonly */
+             * Total of the coefficients of all the {@link Grade}s in ***this*** {@link Subject}. @readonly
+             */
             get totalCoefGrades() { return this.#totalCoefGrades }
 
             /**
-             * Total of the coefficients of all the real {@link Grade}s in ***this*** {@link Subject}. @type {number} @readonly */
+             * Total of the coefficients of all the real {@link Grade}s in ***this*** {@link Subject}. @readonly
+             */
             get totalCoefRealGrades() { return this.#totalCoefRealGrades }
 
             /**
-             * Total of the coefficients of all the simulated {@link Grade}s in ***this*** {@link Subject}. @type {number} @readonly */
-            get totalCoefSimGrades() { return this.#totalCoefGrades - this.#totalCoefRealGrades }
+             * Total of the coefficients of all the simulated {@link Grade}s in ***this*** {@link Subject}. @readonly
+             */
+            get totalCoefSimGrades() { return this.#totalCoefGrades && this.#totalCoefRealGrades ? (this.#totalCoefGrades - this.#totalCoefRealGrades) : undefined }
 
             /**
-             * Total of the coefficients of all the enabled {@link Grade}s in ***this*** {@link Subject}. @type {number} @readonly */
+             * Total of the coefficients of all the enabled {@link Grade}s in ***this*** {@link Subject}. @readonly
+             */
             get totalCoefEnabledGrades() { return this.#totalCoefEnabledGrades }
 
             /**
-             * Total of the coefficients of all the enabled real {@link Grade}s in ***this*** {@link Subject}. @type {number} @readonly */
+             * Total of the coefficients of all the enabled real {@link Grade}s in ***this*** {@link Subject}. @readonly
+             */
             get totalCoefEnabledRealGrades() { return this.#totalCoefEnabledRealGrades }
 
             /**
-             * Total of the coefficients of all the enabled simulated {@link Grade}s in ***this*** {@link Subject}. @type {number} @readonly */
-            get totalCoefEnabledSimGrades() { return this.#totalCoefEnabledGrades - this.#totalCoefEnabledRealGrades }
+             * Total of the coefficients of all the enabled simulated {@link Grade}s in ***this*** {@link Subject}. @readonly
+             */
+            get totalCoefEnabledSimGrades() { return this.#totalCoefEnabledGrades && this.#totalCoefEnabledRealGrades ? (this.#totalCoefEnabledGrades - this.#totalCoefEnabledRealGrades) : undefined }
 
 
 
@@ -1987,8 +2199,8 @@ const intRegExpSrc = "/\\d+/";
             // MARK: _  equals()
             /**
              *
-             * @param {Subject} subject
-             * @returns
+             * @param {any} subject
+             * @returns {boolean}
              */
             equals(subject) {
                 if (!(subject instanceof Subject)) {
@@ -1997,8 +2209,16 @@ const intRegExpSrc = "/\\d+/";
 
                 if (true
                     && this.#name == subject.#name
-                    && this.#module.equals(subject.#module)
-                    && this.#semester.equals(subject.#semester)
+                    && (
+                        this.#module instanceof Module 
+                        ? this.#module.equals(subject.#module instanceof Module ? subject.#module : undefined)
+                        : true
+                    )
+                    && (
+                        this.#semester instanceof Semester
+                        ? this.#semester.equals(subject.#semester)
+                        : true
+                    )
                 ) {
                     return true;
                 }
@@ -2013,15 +2233,27 @@ const intRegExpSrc = "/\\d+/";
             // MARK: _  addGrades()
             /**
              * Adds a {@link Grade} to ***this*** {@link Subject}.
-             * @param {Grade} grade The {@link Grade} to add to ***this*** {@link Subject}.
+             * @param {...Grade} grades The {@link Grade} to add to ***this*** {@link Subject}.
              * @returns {Subject} ***this*** {@link Subject}.
              */
             addGrade(...grades) {
                 ParameterTypeError.verifyParams(arguments, [Grade.name+"[]|[]"])
 
-                this.#grades.push(grades);
-                if (this.#module instanceof Module) this.#module.grades.push(grades);
-                if (this.#semester instanceof Semester) this.#semester.grades.push(grades);
+                for (const grade of grades) {
+                    grade.subject = this;
+                    grade.module = this.#module;
+                    grade.semester = this.#semester;
+
+                    this.#grades.push(grade);
+
+                    if (this.#module instanceof Module) {
+                        this.#module.grades.push(grade);
+                    }
+                    if (this.#semester instanceof Semester) {
+                        this.#semester.grades.push(grade);
+                    }
+                }
+
 
                 return this;
             }
@@ -2107,8 +2339,8 @@ const intRegExpSrc = "/\\d+/";
                 this.#totalCoefEnabledGrades     = Math.round(totalCoefEnabledGrades);
                 this.#totalCoefEnabledRealGrades = Math.round(totalCoefEnabledRealGrades);
 
-                this.#average   = Grade.average(this.#grades);
-                this.#classAvg  = Grade.classAverage(this.#grades);
+                this.#average   = Grade.average(...this.#grades);
+                this.#classAvg  = Grade.classAverage(...this.#grades);
             }
 
         //#endregion — methods —
@@ -2137,96 +2369,179 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-            /** Name of ***this*** {@link Module}. @type {string} */
+            /**
+             * Name of ***this*** {@link Module}. 
+             * @type {string}
+             */
             #name;
 
-            /** Average of the user for ***this*** {@link Module}, a positive float number below 20 @type {number} @readonly */
-            #average;
-
-            /** Value of the class' average for ***this*** {@link Module}, a positive float number below 20 @type {number} @readonly */
-            #classAvg;
-
-            /** Object of all the {@link Subject}s in ***this*** {@link Module}, with the {@link Subject}'s name as key and the {@link Subject} itself as value. @type {Object.<string, Subject>} @readonly */
-            #subjects = {};
-
-            /** The {@link Semester} of ***this*** {@link Module}, or its number. @type {Semester} @readonly */
+            /** 
+             * The {@link Semester} of ***this*** {@link Module}, or its number. 
+             * @type {Semester | number | undefined} 
+             */
             #semester;
 
+            /** 
+             * Average of the user for ***this*** {@link Module}, a positive float number below 20.
+             * @type {number} 
+             */
+            #average = NaN;
+
+            /** 
+             * Value of the class' average for ***this*** {@link Module}, a positive float number below 20.
+             * @type {number}
+             */
+            #classAvg = NaN;
+
+            /** 
+             * Object of all the {@link Subject}s in ***this*** {@link Module}, with the {@link Subject}'s name as key and the {@link Subject} itself as value. 
+             * @type {Object.<string, Subject>} 
+             */
+            #subjects = {};
 
 
-            /** Array of the {@link Grade}s in ***this*** {@link Module}. @type {Grade[]} @readonly */
+
+            /** 
+             * Array of the {@link Grade}s in ***this*** {@link Module}. 
+             * @type {Grade[]}
+             */
             #grades = [];
 
-            /** Array of the real {@link Grade}s in ***this*** {@link Module}. @type {Grade[]} @readonly */
+            /** 
+             * Array of the real {@link Grade}s in ***this*** {@link Module}. 
+             * @type {Grade[]}
+             */
             #realGrades = [];
 
-            /** Array of the simulated {@link Grade}s in ***this*** {@link Module}. @type {Grade[]} @readonly */
+            /** 
+             * Array of the simulated {@link Grade}s in ***this*** {@link Module}. 
+             * @type {Grade[]}
+             */
             #simGrades = [];
 
-            /** Array of the enabled real {@link Grade}s in ***this*** {@link Module}. @type {Grade[]} @readonly */
+            /** 
+             * Array of the enabled real {@link Grade}s in ***this*** {@link Module}. 
+             * @type {Grade[]}
+             */
             #enabledRealGrades = [];
 
-            /** Array of the disabled real {@link Grade}s in ***this*** {@link Module}. @type {Grade[]} @readonly */
+            /** 
+             * Array of the disabled real {@link Grade}s in ***this*** {@link Module}. 
+             * @type {Grade[]}
+             */
             #disabledRealGrades = [];
 
-            /** Array of the enabled simulated {@link Grade}s in ***this*** {@link Module}. @type {Grade[]} @readonly */
+            /** 
+             * Array of the enabled simulated {@link Grade}s in ***this*** {@link Module}. 
+             * @type {Grade[]}
+             */
             #enabledSimGrades = [];
 
-            /** Array of the disabled simulated {@link Grade}s in ***this*** {@link Module}. @type {Grade[]} @readonly */
+            /** 
+             * Array of the disabled simulated {@link Grade}s in ***this*** {@link Module}. 
+             * @type {Grade[]}
+             */
             #disabledSimGrades = [];
 
 
 
-            /** Total of the coefficients of all the {@link Subject}s in ***this*** {@link Module}. @type {number} @readonly */
-            #totalCoefSubjects;
+            /** 
+             * Total of the coefficients of all the {@link Subject}s in ***this*** {@link Module}. 
+             * @type {number}
+             */
+            #totalCoefSubjects = NaN;
 
-            /** Total of the coefficients of all the {@link Subject}s that don't have any {@link Grade}s in ***this*** {@link Module}. @type {number} @readonly */
-            #totalCoefSubjectsNoGrade;
+            /** 
+             * Total of the coefficients of all the {@link Subject}s that don't have any {@link Grade}s in ***this*** {@link Module}. 
+             * @type {number}
+             */
+            #totalCoefSubjectsNoGrade = NaN;
 
-            /** Total of the coefficients of all the {@link Subject}s that don't have any enabled {@link Grade}s in ***this*** {@link Module}. @type {number} @readonly */
-            #totalCoefSubjectsNoEnabledGrade;
-
-
-
-            /** Total of the coefficients of all the {@link Grade}s in ***this*** {@link Module}. @type {number} @readonly */
-            #totalCoefGrades;
-
-            /** Total of the coefficients of all the real {@link Grade}s in ***this*** {@link Module}. @type {number} @readonly */
-            #totalCoefRealGrades;
-
-            /** Total of the coefficients of all the enabled {@link Grade}s in ***this*** {@link Module}. @type {number} @readonly */
-            #totalCoefEnabledGrades;
-
-            /** Total of the coefficients of all the enabled real {@link Grade}s in ***this*** {@link Module}. @type {number} @readonly */
-            #totalCoefEnabledRealGrades;
+            /** 
+             * Total of the coefficients of all the {@link Subject}s that don't have any enabled {@link Grade}s in ***this*** {@link Module}. 
+             * @type {number}
+             */
+            #totalCoefSubjectsNoEnabledGrade = NaN;
 
 
 
-            /** All the {@link Subject}s in ***this*** {@link Module} that have an average *below 100*. @type {Subject[]} @readonly */
+            /** 
+             * Total of the coefficients of all the {@link Grade}s in ***this*** {@link Module}. 
+             * @type {number}
+             */
+            #totalCoefGrades = NaN;
+
+            /** 
+             * Total of the coefficients of all the real {@link Grade}s in ***this*** {@link Module}. 
+             * @type {number}
+             */
+            #totalCoefRealGrades = NaN;
+
+            /** 
+             * Total of the coefficients of all the enabled {@link Grade}s in ***this*** {@link Module}. 
+             * @type {number}
+             */
+            #totalCoefEnabledGrades = NaN;
+
+            /** 
+             * Total of the coefficients of all the enabled real {@link Grade}s in ***this*** {@link Module}. 
+             * @type {number}
+             */
+            #totalCoefEnabledRealGrades = NaN;
+
+
+
+            /** 
+             * All the {@link Subject}s in ***this*** {@link Module} that have an average *below 100*. 
+             * @type {Subject[]}
+             */
             #subjectsBelow100 = [];
 
-            /** All the {@link Subject}s in ***this*** {@link Module} that have an average *above 100*. @type {Subject[]} @readonly */
+            /** 
+             * All the {@link Subject}s in ***this*** {@link Module} that have an average *above 100*. 
+             * @type {Subject[]}
+             */
             #subjectsAbove100 = [];
 
-            /** All the {@link Subject}s in ***this*** {@link Module} that have an average of their real grades only *below 100*. @type {Subject[]} @readonly */
+            /** 
+             * All the {@link Subject}s in ***this*** {@link Module} that have an average of their real grades only *below 100*. 
+             * @type {Subject[]}
+             */
             #subjectsReallyBelow100 = [];
 
-            /** All the {@link Subject}s in ***this*** {@link Module} that have an average of their real grades only *above 100*. @type {Subject[]} @readonly */
+            /** 
+             * All the {@link Subject}s in ***this*** {@link Module} that have an average of their real grades only *above 100*. 
+             * @type {Subject[]}
+             */
             #subjectsReallyAbove100 = [];
 
-            /** All the {@link Subject}s in ***this*** {@link Module} that don't have any grade. @type {Subject[]} @readonly */
+            /** 
+             * All the {@link Subject}s in ***this*** {@link Module} that don't have any grade. 
+             * @type {Subject[]}
+             */
             #subjectsNoGrade = [];
 
-            /** All the {@link Subject}s in ***this*** {@link Module} that don't have any enabled grade. @type {Subject[]} @readonly */
+            /** 
+             * All the {@link Subject}s in ***this*** {@link Module} that don't have any enabled grade. 
+             * @type {Subject[]}
+             */
             #subjectsNoEnabledGrade = [];
 
 
 
-            /** The {@link ModuleCard} corresponding to ***this*** {@link Module}. @type {ModuleCard} */
+            /**
+             * The {@link ModuleCard} corresponding to ***this*** {@link Module}. 
+             * @type {ModuleCard} 
+             * @readonly 
+             */
             #moduleCard;
 
 
-            /** Name given to the unclassified module of a semester. @readonly */
+            /** 
+             * Name given to the unclassified module of a semester.
+             * @type {"\_\_#unclassified#\_\_"}
+             * @readonly
+             */
             static unclassified = "__#unclassified#__";
 
 
@@ -2236,7 +2551,7 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-        // MARK: .               — constructor —
+        // MARK:                 — constructor —
         /**
          * Constructs an object of class {@link Module} from its given name and .
          * Automatically adds the constructed {@link Module} to its {@link Semester}'s {@link Semester.modules}.
@@ -2245,16 +2560,16 @@ const intRegExpSrc = "/\\d+/";
          * @param {Semester|undefined}  [semester=undefined]    The {@link Semester} ***this*** {@link Module} will belong to.
          */
         constructor(name, semester) {
-
             ParameterTypeError.verifyParams(arguments, ["string", Semester.name+"|undefined"], Module, Module)
 
             this.#name = name;
 
             if (semester !== undefined) {
-                this.#semester  = semester;
+                this.#semester = semester;
                 semester.addModules(this);
             }
 
+            this.#moduleCard = new ModuleCard(this);
         }
 
 
@@ -2262,7 +2577,8 @@ const intRegExpSrc = "/\\d+/";
         //#region 
 
             /**
-             * Name of ***this*** {@link Module}. @type {string} */
+             * Name of ***this*** {@link Module}. @type {string}
+             */
             get name()      { return this.#name }
             set name(value) {
                 if (typeof value != "string") { throw new Error("Invalid Module.name setting: tried to set 'name' to a type other than string") }
@@ -2272,109 +2588,163 @@ const intRegExpSrc = "/\\d+/";
 
 
             /**
-             * Value of the class' average of ***this*** {@link Module}, a positive float number below 20 @type {number} @readonly */
+             * Value of the class' average of ***this*** {@link Module}, a positive float number below 20. 
+             * @readonly
+             */
             get average()   { return this.#average }
 
             /**
-             * Value of the class' average of ***this*** {@link Module}, a positive float number below 20 @type {number} @readonly */
+             * Value of the class' average of ***this*** {@link Module}, a positive float number below 20. 
+             * @readonly
+             */
             get classAvg()  { return this.#classAvg }
 
 
 
             /**
-             * Object of the {@link Subject}s (or their name) in ***this*** {@link Module}, with the {@link Subject}'s name as key and the {@link Subject} as value (or its name). @type {Object.<string, Subject|string>} @readonly */
+             * Object of the {@link Subject}s (or their name) in ***this*** {@link Module}, with the {@link Subject}'s name as key and the {@link Subject} as value (or its name). 
+             * @readonly
+             */
             get subjects()  { return this.#subjects }
 
             /**
-             * The {@link Semester} of ***this*** {@link Module}. @type {Semester} @readonly */
+             * The {@link Semester} of ***this*** {@link Module}.
+             */
             get semester()  { return this.#semester }
+            set semester(value) {
+                this.#semester = value;
+            }
 
             /**
-             * Array of the {@link Grade}s in ***this*** {@link Module}. @type {Grade[]} @readonly */
+             * Array of the {@link Grade}s in ***this*** {@link Module}. 
+             * @readonly
+             */
             get grades()    { return this.#grades }
 
             /**
-             * Array of the real {@link Grade}s in ***this*** {@link Module}. @type {Grade[]} @readonly */
+             * Array of the real {@link Grade}s in ***this*** {@link Module}. 
+             * @readonly
+             */
             get realGrades() { return this.#realGrades }
 
             /**
-             * Array of the simulated {@link Grade}s in ***this*** {@link Module}. @type {Grade[]} @readonly */
+             * Array of the simulated {@link Grade}s in ***this*** {@link Module}. 
+             * @readonly
+             */
             get simGrades() { return this.#simGrades }
 
             /**
-             * Array of the enabled real {@link Grade}s in ***this*** {@link Module}. @type {Grade[]} @readonly */
+             * Array of the enabled real {@link Grade}s in ***this*** {@link Module}. 
+             * @readonly
+             */
             get enabledRealGrades() { return this.#enabledRealGrades }
 
             /**
-             * Array of the disabled real {@link Grade}s in ***this*** {@link Module}. @type {Grade[]} @readonly */
+             * Array of the disabled real {@link Grade}s in ***this*** {@link Module}. 
+             * @readonly
+             */
             get disabledRealGrades() { return this.#disabledRealGrades }
 
             /**
-             * Array of the enabled simulated {@link Grade}s in ***this*** {@link Module}. @type {Grade[]} @readonly */
+             * Array of the enabled simulated {@link Grade}s in ***this*** {@link Module}. 
+             * @readonly
+             */
             get enabledSimGrades() { return this.#enabledSimGrades }
 
             /**
-             * Array of the disabled simulated {@link Grade}s in ***this*** {@link Module}. @type {Grade[]} @readonly */
+             * Array of the disabled simulated {@link Grade}s in ***this*** {@link Module}. 
+             * @readonly
+             */
             get disabledSimGrades() { return this.#disabledSimGrades }
 
             /**
-             * Total of the coefficients of all the {@link Subject}s in ***this*** {@link Module}. @type {number} @readonly */
+             * Total of the coefficients of all the {@link Subject}s in ***this*** {@link Module}. 
+             * @readonly
+             */
             get totalCoefSubjects() { return this.#totalCoefSubjects }
 
             /**
-             * Total of the coefficients of all the {@link Subject}s that don't have any {@link Grade}s in ***this*** {@link Module}. @type {number} @readonly */
+             * Total of the coefficients of all the {@link Subject}s that don't have any {@link Grade}s in ***this*** {@link Module}. 
+             * @readonly
+             */
             get totalCoefSubjectsNoGrade() { return this.#totalCoefSubjectsNoGrade }
 
             /**
-             * Total of the coefficients of all the {@link Subject}s that don't have any enabled {@link Grade}s in ***this*** {@link Module}. @type {number} @readonly */
+             * Total of the coefficients of all the {@link Subject}s that don't have any enabled {@link Grade}s in ***this*** {@link Module}. 
+             * @readonly
+             */
             get totalCoefSubjectsNoEnabledGrade() { return this.#totalCoefSubjectsNoEnabledGrade }
 
             /**
-             * Total of the coefficients of all the {@link Grade}s in ***this*** {@link Module}. @type {number} @readonly */
+             * Total of the coefficients of all the {@link Grade}s in ***this*** {@link Module}. 
+             * @readonly
+             */
             get totalCoefGrades() { return this.#totalCoefGrades }
 
             /**
-             * Total of the coefficients of all the real {@link Grade}s in ***this*** {@link Module}. @type {number} @readonly */
+             * Total of the coefficients of all the real {@link Grade}s in ***this*** {@link Module}. 
+             * @readonly
+             */
             get totalCoefRealGrades() { return this.#totalCoefRealGrades }
 
             /**
-             * Total of the coefficients of all the simulated {@link Grade}s in ***this*** {@link Module}. @type {number} @readonly */
-            get totalCoefSimGrades() { return this.#totalCoefGrades - this.#totalCoefRealGrades }
+             * Total of the coefficients of all the simulated {@link Grade}s in ***this*** {@link Module}. 
+             * @readonly
+             */
+            get totalCoefSimGrades() { return this.#totalCoefGrades && this.#totalCoefRealGrades ? (this.#totalCoefGrades - this.#totalCoefRealGrades) : undefined }
 
             /**
-             * Total of the coefficients of all the enabled {@link Grade}s in ***this*** {@link Module}. @type {number} @readonly */
+             * Total of the coefficients of all the enabled {@link Grade}s in ***this*** {@link Module}. 
+             * @readonly
+             */
             get totalCoefEnabledGrades() { return this.#totalCoefEnabledGrades }
 
             /**
-             * Total of the coefficients of all the enabled real {@link Grade}s in ***this*** {@link Module}. @type {number} @readonly */
+             * Total of the coefficients of all the enabled real {@link Grade}s in ***this*** {@link Module}. 
+             * @readonly
+             */
             get totalCoefEnabledRealGrades() { return this.#totalCoefEnabledRealGrades }
 
             /**
-             * Total of the coefficients of all the enabled simulated {@link Grade}s in ***this*** {@link Module}. @type {number} @readonly */
-            get totalCoefEnabledSimGrades() { return this.#totalCoefEnabledGrades - this.#totalCoefEnabledRealGrades }
+             * Total of the coefficients of all the enabled simulated {@link Grade}s in ***this*** {@link Module}. 
+             * @readonly
+             */
+            get totalCoefEnabledSimGrades() { return this.#totalCoefEnabledGrades && this.#totalCoefEnabledRealGrades ? (this.#totalCoefEnabledGrades - this.#totalCoefEnabledRealGrades) : undefined }
 
             /**
-             * All the {@link Subject}s in ***this*** {@link Module} that have an average *below 100*. @type {Subject[]} @readonly */
+             * All the {@link Subject}s in ***this*** {@link Module} that have an average *below 100*. 
+             * @readonly
+             */
             get subjectsBelow100() { return this.#subjectsBelow100; }
 
             /**
-             * All the {@link Subject}s in ***this*** {@link Module} that have an average *above 100*. @type {Subject[]} @readonly */
+             * All the {@link Subject}s in ***this*** {@link Module} that have an average *above 100*. 
+             * @readonly
+             */
             get subjectsAbove100() { return this.#subjectsAbove100; }
 
             /**
-             * All the {@link Subject}s in ***this*** {@link Module} that have an average of their real grades only *below 100*. @type {Subject[]} @readonly */
+             * All the {@link Subject}s in ***this*** {@link Module} that have an average of their real grades only *below 100*. 
+             * @readonly
+             */
             get subjectsReallyBelow100() { return this.#subjectsReallyBelow100; }
 
             /**
-             * All the {@link Subject}s in ***this*** {@link Module} that have an average of their real grades only *above 100*. @type {Subject[]} @readonly */
+             * All the {@link Subject}s in ***this*** {@link Module} that have an average of their real grades only *above 100*. 
+             * @readonly
+             */
             get subjectsReallyAbove100() { return this.#subjectsReallyAbove100; }
 
             /**
-             * All the {@link Subject}s in ***this*** {@link Module} that don't have any grade. @type {Subject[]} @readonly */
+             * All the {@link Subject}s in ***this*** {@link Module} that don't have any grade. 
+             * @readonly
+             */
             get subjectsNoGrade() { return this.#subjectsNoGrade; }
 
             /**
-             * All the {@link Subject}s in ***this*** {@link Module} that don't have any enabled grade. @type {Subject[]} @readonly */
+             * All the {@link Subject}s in ***this*** {@link Module} that don't have any enabled grade. 
+             * @readonly
+             */
             get subjectsNoEnabledGrade() { return this.#subjectsNoEnabledGrade; }
 
 
@@ -2402,15 +2772,15 @@ const intRegExpSrc = "/\\d+/";
             /**
              * Checks whether the given {@link Module} is the same as ***this*** {@link Module}.
              * 
-             * @param {Module} module
-             * @returns
+             * @param {any} module
+             * @returns {boolean}
              */
             equals(module) {
                 if (!(module instanceof Module)) return false;
 
                 if (true
                     && this.#name == module.#name
-                    && this.#semester.equals(module.#semester)
+                    && (this.#semester instanceof Semester ? this.#semester.equals(module.#semester) : this.#semester === module.#semester)
                 ) {
                     return true;
                 }
@@ -2451,8 +2821,6 @@ const intRegExpSrc = "/\\d+/";
              * exists in ***this*** {@link Module}.
              * 
              * @param {Subject|string} subject The {@link Subject} (or its name) belonging to ***this*** {@link Module}.
-             * 
-             * @returns {Subject} The subject of ***this*** {@link Module}.
              */
             hasSubject(subject) {
                 ParameterTypeError.verifyParams(arguments, [Subject.name+"|string"], Module.prototype.hasSubject, Module);
@@ -2484,7 +2852,10 @@ const intRegExpSrc = "/\\d+/";
 
                 subjects.forEach(subject => {
                     this.#subjects[subject.name] = subject;
-                    this.#semester.subjects[subject.name] = subject;
+
+                    if (this.#semester instanceof Semester) {
+                        this.#semester.subjects[subject.name] = subject;
+                    }
                 })
 
                 return this;
@@ -2495,7 +2866,7 @@ const intRegExpSrc = "/\\d+/";
             // MARK: _  removeSubject()
             /**
              * Removes {@link Subject}s from ***this*** {@link Module}.
-             * @param {Subject[]|string[]} subjects The {@link Subject}s (or their name) to remove from ***this*** {@link Module}.
+             * @param {(Subject|string)[]} subjects The {@link Subject}s (or their name) to remove from ***this*** {@link Module}.
              *
              * @throws {Error} If trying to remove a subject that can't be found in ***this*** {@link Module}.
              * @returns {Module} ***this*** {@link Module}.
@@ -2506,9 +2877,8 @@ const intRegExpSrc = "/\\d+/";
 
                 subjects.forEach(subject => {
                     const name = subject instanceof Subject ? subject.name : subject;
-                    if (!this.#subjects[name]) {
-                        throw new Error("No Subject of name \""+ (subject instanceof Subject ? subject.name : subject) + "\" could be found in the Module of name \""+ this.#name+ "\".");
-                    }
+
+                    if (!this.#subjects[name]) throw new Error("This "+Module.name+" n°"+this.#name+" does not have the "+Subject.name+" of name \""+name+"\".");
 
                     delete this.#subjects[name];
                 })
@@ -2586,6 +2956,7 @@ const intRegExpSrc = "/\\d+/";
                         }
                     }
                     else {
+                        if (subject.totalCoefGrades)
                         if      (subject.totalCoefGrades < 100) subjectsBelow100.push(subject);
                         else if (subject.totalCoefGrades > 100) subjectsAbove100.push(subject);
 
@@ -2595,10 +2966,10 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-                    totalCoefGrades             += subject.totalCoefGrades;
-                    totalCoefRealGrades         += subject.totalCoefRealGrades;
-                    totalCoefEnabledGrades      += subject.totalCoefEnabledGrades;
-                    totalCoefEnabledRealGrades  += subject.totalCoefEnabledRealGrades;
+                    totalCoefGrades             += subject.totalCoefGrades ? subject.totalCoefGrades : 0;
+                    totalCoefRealGrades         += subject.totalCoefRealGrades ? subject.totalCoefRealGrades : 0;
+                    totalCoefEnabledGrades      += subject.totalCoefEnabledGrades ? subject.totalCoefEnabledGrades : 0;
+                    totalCoefEnabledRealGrades  += subject.totalCoefEnabledRealGrades ? subject.totalCoefEnabledRealGrades : 0;
                 })
 
                 const nbSubjects = Object.keys(this.#subjects).length;
@@ -2627,8 +2998,8 @@ const intRegExpSrc = "/\\d+/";
                 this.#subjectsNoEnabledGrade            = subjectsNoEnabledGrade;
                 this.#subjectsNoGrade                   = subjectsNoGrade;
 
-                this.#average    = Grade.average(this.grades);
-                this.#classAvg   = Grade.classAverage(this.grades);
+                this.#average    = Grade.average(...this.grades);
+                this.#classAvg   = Grade.classAverage(...this.grades);
             }
 
         //#endregion — methods —
@@ -2656,80 +3027,141 @@ const intRegExpSrc = "/\\d+/";
         //#region 
 
 
-            /** Number of ***this*** {@link Semester}. @type {number} */
+            /**
+             * Number of ***this*** {@link Semester}. 
+             * @type {number}
+             */
             #number;
 
-            /** Average of the user for ***this*** {@link Semester}, a positive float number below 20 @type {number} @readonly */
-            #average;
+            /**
+             * Average of the user for ***this*** {@link Semester}, a positive float number below 20.
+             * @type {number}
+             */
+            #average = NaN;
 
-            /** Average of the class for ***this*** {@link Semester}, a positive float number below 20 @type {number} @readonly */
-            #classAvg;
+            /**
+             * Average of the class for ***this*** {@link Semester}, a positive float number below 20.
+             * @type {number}
+             */
+            #classAvg = NaN;
 
 
 
-            /** Object of all the {@link Module}s in ***this*** {@link Semester}, with the {@link Module}'s name as key and the {@link Module} itself as value. @type {Object.<string, Module>} @readonly */
+            /**
+             * Object of all the {@link Module}s in ***this*** {@link Semester}, with the {@link Module}'s name as key and the {@link Module} itself as value. 
+             * @type {Object.<string, Module>}
+             */
             #modules = {};
 
 
-            /** The undefined {@link Module} of ***this*** {@link Semester}. @type {Module} @readonly */
+            /**
+             * The undefined {@link Module} of ***this*** {@link Semester}. 
+             * @type {Module}
+             */
             #undefinedModule;
 
 
-            /** Array of all the {@link Modules}s in ***this*** {@link Semester}. @type {Object.<string, Module>} @readonly */
-            #modulesNoEnabledGrade = [];
+            /**
+             * Array of all the {@link Modules}s in ***this*** {@link Semester}. 
+             * @type {Object.<string, Module>}
+             */
+            #modulesNoEnabledGrade = {};
 
-            /** Array of the {@link Modules}s in ***this*** {@link Semester}. @type {Object.<string, Module>} @readonly */
-            #modulesNoGrade = [];
+            /**
+             * Array of the {@link Modules}s in ***this*** {@link Semester}. 
+             * @type {Object.<string, Module>}
+             */
+            #modulesNoGrade = {};
 
 
 
 
-            /** Array of the {@link Subject}s in ***this*** {@link Semester}. @type {Object.<string, Subject>} */
+            /**
+             * Array of the {@link Subject}s in ***this*** {@link Semester}. 
+             * @type {Object.<string, Subject>}
+             */
             #subjects = {};
 
 
-            /** Total of the coefficients of all the {@link Subject}s in ***this*** {@link Semester}. @type {number} @readonly */
-            #totalCoefSubjects;
+            /**
+             * Total of the coefficients of all the {@link Subject}s in ***this*** {@link Semester}. 
+             * @type {number}
+             */
+            #totalCoefSubjects = NaN;
 
-            /** Total of the coefficients of all the {@link Subject}s that don't have any {@link Grade}s in ***this*** {@link Semester}. @type {number} @readonly */
-            #totalCoefSubjectsNoGrade;
+            /**
+             * Total of the coefficients of all the {@link Subject}s that don't have any {@link Grade}s in ***this*** {@link Semester}. 
+             * @type {number}
+             */
+            #totalCoefSubjectsNoGrade = NaN;
 
-            /** Total of the coefficients of all the {@link Subject}s that don't have any enabled {@link Grade}s in ***this*** {@link Semester}. @type {number} @readonly */
-            #totalCoefSubjectsNoEnabledGrade;
+            /**
+             * Total of the coefficients of all the {@link Subject}s that don't have any enabled {@link Grade}s in ***this*** {@link Semester}. 
+             * @type {number}
+             */
+            #totalCoefSubjectsNoEnabledGrade = NaN;
 
 
 
 
-            /** Array of the {@link Grade}s in ***this*** {@link Semester}. @type {Grade[]} @readonly */
+            /**
+             * Array of the {@link Grade}s in ***this*** {@link Semester}. 
+             * @type {Grade[]}
+             */
             #grades = [];
 
 
-            /** Array of the simulated {@link Grade}s in ***this*** {@link Semester}. @type {Grade[]} @readonly */
+            /**
+             * Array of the simulated {@link Grade}s in ***this*** {@link Semester}. 
+             * @type {Grade[]}
+             */
             #simGrades = [];
 
-            /** Array of the disabled real {@link Grade}s in ***this*** {@link Semester}. @type {Grade[]} @readonly */
+            /**
+             * Array of the disabled real {@link Grade}s in ***this*** {@link Semester}. 
+             * @type {Grade[]}
+             */
             #disabledRealGrades = [];
 
-            /** Array of the disabled simulated {@link Grade}s in ***this*** {@link Semester}. @type {Grade[]} @readonly */
+            /**
+             * Array of the disabled simulated {@link Grade}s in ***this*** {@link Semester}. 
+             * @type {Grade[]}
+             */
             #disabledSimGrades = [];
 
 
 
-            /** Total of the coefficients of all the {@link Grade}s in ***this*** {@link Semester}. @type {number} @readonly */
-            #totalCoefGrades;
+            /**
+             * Total of the coefficients of all the {@link Grade}s in ***this*** {@link Semester}. 
+             * @type {number}
+             */
+            #totalCoefGrades = NaN;
 
-            /** Total of the coefficients of all the real {@link Grade}s in ***this*** {@link Semester}. @type {number} @readonly */
-            #totalCoefRealGrades;
+            /**
+             * Total of the coefficients of all the real {@link Grade}s in ***this*** {@link Semester}. 
+             * @type {number}
+             */
+            #totalCoefRealGrades = NaN;
 
-            /** Total of the coefficients of all the enabled {@link Grade}s in ***this*** {@link Semester}. @type {number} @readonly */
-            #totalCoefEnabledGrades;
+            /**
+             * Total of the coefficients of all the enabled {@link Grade}s in ***this*** {@link Semester}. 
+             * @type {number}
+             */
+            #totalCoefEnabledGrades = NaN;
 
-            /** Total of the coefficients of all the enabled real {@link Grade}s in ***this*** {@link Semester}. @type {number} @readonly */
-            #totalCoefEnabledRealGrades;
+            /**
+             * Total of the coefficients of all the enabled real {@link Grade}s in ***this*** {@link Semester}. 
+             * @type {number}
+             */
+            #totalCoefEnabledRealGrades = NaN;
 
 
 
-            /** The {@link SemesterCard} corresponding to ***this*** {@link Semester}. @type {SemesterCard} */
+            /**
+             * The {@link SemesterCard} corresponding to ***this*** {@link Semester}. 
+             * @type {SemesterCard}
+             * @readonly
+             */
             #semesterCard;
 
 
@@ -2749,7 +3181,7 @@ const intRegExpSrc = "/\\d+/";
         constructor(number) {
             ParameterTypeError.verifyParams(arguments, ["number|"+intRegExpSrc], Semester, Semester);
 
-            this.#number = parseInt(number);
+            this.#number = typeof number === "string" ? parseInt(number) : number;
 
             this.#undefinedModule = new Module(Module.unclassified, this);
 
@@ -2891,8 +3323,8 @@ const intRegExpSrc = "/\\d+/";
             // MARK: _  equals()
             /**
              *
-             * @param {Semester} semester
-             * @returns
+             * @param {any} semester
+             * @returns {boolean}
              */
             equals(semester) {
                 if (!(semester instanceof Semester)) {
@@ -2965,7 +3397,6 @@ const intRegExpSrc = "/\\d+/";
                     Module.name+"|string|undefined"
                 ], Semester.prototype.getSubject, Semester);
 
-                this.getModule(module);
 
                 if (module instanceof Module)   return module.getSubject(subject);
                 if (module !== undefined)       return this.getModule(module).getSubject(subject);
@@ -3009,47 +3440,49 @@ const intRegExpSrc = "/\\d+/";
             // MARK: _  addModules()
             /**
              * Adds the {@link Module}.s to ***this*** {@link Semester}.
-             * @param {Module[]|string[]} modules The {@link Module}.s (or its/their name) to add to ***this*** {@link Semester}.
+             * @param {Module[]} modules The {@link Module}.s (or its/their name) to add to ***this*** {@link Semester}.
              *
-             * @returns {Module[]} The {@link Module}s added to ***this*** {@link Semester}.
+             * @returns {Object.<string, Module>} The {@link Module}s added to ***this*** {@link Semester}.
              */
             addModules(...modules) {
                 ParameterTypeError.verifyParams(arguments, [Module.name+"[]|[]"], Semester.prototype.addModules, Semester);
                 modules = modules.flat();
 
+                /** @type {Object.<string, Module>} */ const out = {};
+
                 modules.forEach(module => {
-                    this.#modules[module.name]  = module;
+                    this.#modules[module.name] = module;
+                    out[module.name] = module;
                 })
 
-                return modules;
+                return out;
             }
 
 
             // MARK: _  removeModules()
             /**
              * Removes the {@link Module}.s from ***this*** {@link Semester}.
-             * @param {Module[]|string[]} modules The {@link Module}.s (or its/their name) to remove from ***this*** {@link Semester}.
+             * @param {(Module|string)[]} modules The {@link Module}.s (or its/their name) to remove from ***this*** {@link Semester}.
              *
-             * @returns {Module[]} The {@link Module}s removed from ***this*** {@link Semester}.
+             * @returns {Object.<string, Module>} The {@link Module}s removed from ***this*** {@link Semester}.
              */
             removeModules(...modules) {
                 modules = modules.flat();
-                /** @type {string[]} */ let names = [];
-                /** @type {Module[]} */ let out = [];
+                /** @type {Object.<string, Module>} */ let out = {};
 
                 modules.forEach(module => {
-                    if (!(module instanceof Module) && typeof module != "string") {
-                        throw new TypeError("Invalid Semester.removeModules() call: wrong type for the 'modules' parameter.s, was expecting Modules")
-                    }
-
                     if (module == this.#modules[Module.unclassified] || module == Module.unclassified) {
-                        throw new Error("Invalid Semester.removeModules() call: can't remove the '"+Module.unclassified+"' Module")
+                        throw new Error(
+                            "Invalid "+Semester.name+"."+Semester.prototype.removeModules.name+"() call: can not remove the \""+Module.unclassified+"\" Module."
+                        )
                     }
 
                     const name = module instanceof Module ? module.name : module;
+                    out[name] = this.#modules[name];
 
-                    names.push(module.name);
-                    out.push(this.#modules[name]);
+                    if (!this.#modules[name]) throw new Error(
+                        "This "+Semester.name+" n°"+this.#number+" does not have the "+Module.name+" of name \""+name+"\"."
+                    );
 
                     delete this.#modules[name];
                 })
@@ -3150,8 +3583,8 @@ const intRegExpSrc = "/\\d+/";
                 this.#totalCoefEnabledGrades            = Math.round(totalCoefEnabledGrades/nbSubjects);
                 this.#totalCoefEnabledRealGrades        = Math.round(totalCoefEnabledRealGrades/nbSubjects);
 
-                this.#average    = Grade.average(this.grades);
-                this.#classAvg   = Grade.classAverage(this.grades);
+                this.#average    = Grade.average(...this.grades);
+                this.#classAvg   = Grade.classAverage(...this.grades);
             }
 
         //#endregion — methods —
@@ -3289,7 +3722,8 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-        //#region .                — properties —
+        //MARK:                  — properties —
+        //#region 
 
             /** The {@link HTMLElement} linked to ***this*** {@link Card}. @type {HTMLElement} */
             #html;
@@ -3301,21 +3735,21 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-        // MARK: .               — constructor —
+        // MARK:                  — constructor —
         /**
          *
-         * @param {string} className Name of the class of ***this*** {@link Card}.
-         * @param {string} id Id of ***this*** {@link Card}.
+         * @param {string} htmlClassName Name of the HTML class of ***this*** {@link Card}'s outerHTML.
+         * @param {string} id Id of ***this*** {@link Card}'s outerHTML.
          * @param {HTMLElement|Card|undefined} parent Parent
          */
-        constructor(className, id, parent=undefined) {
-            if (typeof className != "string") { throw new TypeError("Improper Card construction: wrong 'className' argument type, was expecting a string.") }
+        constructor(htmlClassName, id, parent=undefined) {
+            if (typeof htmlClassName != "string") { throw new TypeError("Improper Card construction: wrong 'className' argument type, was expecting a string.") }
             if (typeof id != "string") { throw new TypeError("Improper Card construction: wrong 'id' argument type, was expecting a string.") }
             if (!(parent instanceof HTMLElement || parent instanceof Card || parent == undefined)) { throw new TypeError("Improper Card construction: wrong 'parent' argument type, was expecting an HTMLElement, a Card, or left undefined.") }
 
 
             this.#html = document.createElement("div");
-            this.#html.className = className;
+            this.#html.className = htmlClassName;
             this.#html.id = id;
 
             if (parent instanceof HTMLElement)  parent.appendChild(this.#html);
@@ -3360,55 +3794,62 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-        //#region .                — properties —
+        //MARK:                  — properties —
+        //#region 
 
 
             /** The {@link Subject} corresponding to ***this*** {@link SubjectCard}. @type {Subject} @readonly */
             #subject;
 
 
-            /** The {@link Module} corresponding to ***this*** {@link SubjectCard}. @type {Module} @readonly */
+            /** The {@link Module} corresponding to ***this*** {@link SubjectCard}. @type {Module|string|undefined} @readonly */
             #module;
 
 
-            /** The {@link Semester} corresponding to ***this*** {@link SubjectCard}. @type {Semester} @readonly */
+            /** The {@link Semester} corresponding to ***this*** {@link SubjectCard}. @type {Semester|number|undefined} @readonly */
             #semester;
 
 
-        //#endregion .                — properties —
+        //#endregion                  — properties —
 
 
 
 
 
-        // MARK: .               — constructor —
+        // MARK:                 — constructor —
         /**
          * @param {Subject} subject The {@link Subject} to create a {@link SubjectCard} from.
          */
         constructor(subject) {
             ParameterTypeError.verifyParams(arguments, [Subject], SubjectCard, SubjectCard);
+            const moduleName    = subject.module instanceof Module ? subject.module.name : subject.module;
+            const semesterName  = subject.semester instanceof Semester ? subject.semester.number : subject.semester;
 
-            super("subject-card", "subject-card-"+subject.name.replaceSpacesWithDashes()+"-from-"+subject.module.name.replaceSpacesWithDashes()+"-in-semester-"+subject.semester.number);
+            super("subject-card", "subject-card-"+subject.name.replaceSpacesWithDashes()+"-from-"+moduleName?.replaceSpacesWithDashes()+"-in-semester-"+semesterName);
 
             this.#subject = subject;
-            this.#module = subject.module;
-            this.#semester = subject.semester;
         }
 
 
-        //#region .             — encapsulation —
+        //MARK:               — encapsulation —
+        //#region 
 
 
             /**
-             * The {@link Subject} corresponding to ***this*** {@link SubjectCard}. @type {Subject} @readonly */
+             * The {@link Subject} corresponding to ***this*** {@link SubjectCard}.
+             */
             get subject() { return this.#subject }
 
             /**
-             * The {@link Module} corresponding to ***this*** {@link SubjectCard}. @type {Module} @readonly */
+             * The {@link Module} corresponding to ***this*** {@link SubjectCard}.
+             * @readonly
+             */
             get module() { return this.#module }
 
             /**
-             * The {@link Semester} corresponding to ***this*** {@link SubjectCard}. @type {Semester} @readonly */
+             * The {@link Semester} corresponding to ***this*** {@link SubjectCard}.
+             * @readonly
+             */
             get semester() { return this.#semester }
 
 
@@ -3434,7 +3875,7 @@ const intRegExpSrc = "/\\d+/";
             /** The {@link Module} corresponding to ***this*** {@link ModuleCard}. @type {Module} @readonly */
             #module;
 
-            /** The {@link Semester} corresponding to ***this*** {@link ModuleCard}. @type {Semester} @readonly */
+            /** The {@link Semester} corresponding to ***this*** {@link ModuleCard}. @type {Semester|number|undefined} @readonly */
             #semester;
 
 
@@ -3447,11 +3888,12 @@ const intRegExpSrc = "/\\d+/";
         // MARK: .               — constructor —
         /**
          * @param {Module} module The {@link Module} to create a {@link ModuleCard} from.
-         * @throws {TypeError} if a parameter isn't of the expected type.
          */
         constructor(module) {
-            if (!(module instanceof Module)) { throw new TypeError("Improper ModuleCard construction: wrong 'module' argument type, was expecting a Module") }
-            super("module-card", "module-card-"+module.name.replaceSpacesWithDashes()+"-in-semester-"+module.semester.number);
+            ParameterTypeError.verifyParams(arguments, [Module], ModuleCard, ModuleCard);
+            const semesterName  = module.semester instanceof Semester ? module.semester.number : module.semester;
+
+            super("module-card", "module-card-"+module.name.replaceSpacesWithDashes()+"-in-semester-"+semesterName);
 
             this.#module = module;
             this.#semester = module.semester;
@@ -3466,7 +3908,7 @@ const intRegExpSrc = "/\\d+/";
             get module() { return this.#module }
 
             /**
-             * The {@link Semester} corresponding to ***this*** {@link ModuleCard}. @type {Semester} @readonly */
+             * The {@link Semester} corresponding to ***this*** {@link ModuleCard}. @type {Semester|number|undefined} @readonly */
             get semester() { return this.#semester }
 
 
@@ -3560,38 +4002,92 @@ class ECAMDashboard {
     //#region
 
 
-        /** @readonly */
-        cacheKeys = {
-            /** @readonly */
-            cachedModuleConfig: "ECAM-DASHBOARD-module-config-v3",
-            /** @readonly */
-            cachedSimGrades: "ECAM-DASHBOARD-sim-grades-v3"
+        /**
+         * Object with values being the key of the localStorage cache containing data for this ECAMDashboard, 
+         * associated with keys that are short description of the value's meaning.
+         * @readonly
+         * @type {{
+         *      "moduleConfig": "ECAM_GRADES_DASHBOARD-module_config",
+         *      "simGrades":    "ECAM_GRADES_DASHBOARD-sim_grades"
+         * }}
+         */
+        static cacheKeys = {
+            /** @readonly */ moduleConfig:    "ECAM_GRADES_DASHBOARD-module_config",
+            /** @readonly */ simGrades:       "ECAM_GRADES_DASHBOARD-sim_grades"
         };
 
 
-        /** Array of all the {@link Grade}s of the user. @type {Grade[]} */
+        /**
+         * Array of all the {@link Grade}s of the user. 
+         * @type {Grade[]}
+         */
         grades      = [];
 
-        /** Array of all the {@link Subject}s of the user. @type {Subject[]} */
+        /**
+         * Array of all the {@link Subject}s of the user. 
+         * @type {Subject[]}
+         */
         subjects    = [];
 
-        /** Array of all the {@link Module}s of the user. @type {Module[]} */
+        /**
+         * Array of all the {@link Module}s of the user. 
+         * @type {Module[]}
+         */
         modules     = [];
 
         
-        /** Array of all the {@link Semester}s of the user. @type {Semester[]} */
+        /**
+         * Array of all the {@link Semester}s of the user. 
+         * @type {Semester[]}
+         */
         semesters   = [];
 
-        /** Array of all the non-read {@link Grade}s of the user. @type {Grade[]} */
+        /**
+         * Array of all the non-read {@link Grade}s of the user. 
+         * @type {Grade[]}
+         */
         newGrades   = [];
 
-        /** Array of the string representation of all the read {@link Grade}s of the user. */
-        savedReadGrades = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SAVED_READ_GRADES") ) || [];
 
-        disabledGrades  = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_DISABLED_GRADES") )   || [];
+        /**
+         * Array of all the disabled {@link Grade}s of the user. 
+         * ```
+         * JSON.parse( localStorage.getItem("ECAM_DASHBOARD_DISABLED_GRADES") || "[]" )
+         * ```
+         * @type {Grade[]}
+         */
+        disabledGrades  = [];
 
+
+
+        /**
+         * Array of all the simulated {@link Grade}s of the user.
+         * @type {Grade[]}
+         */
         sim             = [];
 
+
+        /**
+         * Object representing the configuration of the modules for the user.
+         * @type {{
+         *      [semesterNumber: number]: {
+         *          __object__: Semester,
+         *          __modules__: string[],
+         *          modules: {
+         *              [moduleName: string]: {
+         *                  __object__: Module,
+         *                  __subjects__: string[],
+         *                  subjects: {
+         *                      [subjectName: string]: {
+         *                          __object__: Subject, 
+         *                          coefficient: number 
+         *                      }
+         *                  }
+         *              }
+         *          }
+         *      }
+         * }}
+         */
         moduleConfig = {};
 
 
@@ -3638,7 +4134,7 @@ class ECAMDashboard {
                         const prof      = cells[4].textContent.trim();
                         const date      = cells[5].textContent.trim();
                         const semMatch  = label.match(/Semester\s+(\d+)/i);
-                        const semester  = semMatch ? semMatch[1] : "?";
+                        const semester  = semMatch ? parseInt(semMatch[1]) : undefined;
                         const parts     = label.split(" - ").map(p => p.trim());
                         const subject   = parts.length >= 3 ? parts.slice(1,-1).join(" - ") : label;
                         const title     = parts.length >= 2 ? parts.at(-1) : "";
@@ -3652,7 +4148,7 @@ class ECAMDashboard {
                             classAvg, 
                             prof, 
                             date, 
-                            semester, 
+                            semester,
                             undefined
                         )
                     }
@@ -3694,7 +4190,7 @@ class ECAMDashboard {
             // MARK: _  cacheModuleConfig()
             cacheModuleConfig() {
                 localStorage.setItem(
-                    this.cacheKeys.cachedModuleConfig, 
+                    ECAMDashboard.cacheKeys.moduleConfig, 
                     JSON.stringify(this.moduleConfig, (key, value) => { if (key === "__object__") return undefined; else return value; })
                 );
 
@@ -3713,7 +4209,7 @@ class ECAMDashboard {
 
                 let valid = true;
 
-                try { this.moduleConfig = JSON.parse( localStorage.getItem(this.cacheKeys.cachedModuleConfig) ) || {}; }
+                try { this.moduleConfig = JSON.parse( localStorage.getItem(ECAMDashboard.cacheKeys.moduleConfig) || "{}" ); }
                 catch (e) {
                     this.moduleConfig = {};
                     valid = false;
@@ -3726,16 +4222,16 @@ class ECAMDashboard {
 
                     Object.keys(this.moduleConfig).forEach(_sem => {
                         const sem = parseInt(_sem);
-                        const semesterObj = this.addSemester(sem);
+                        const semesterObj = this.ensureSemester(sem);
                         this.moduleConfig[sem].__object__ = semesterObj;
 
                         Object.keys(this.moduleConfig[sem].modules).forEach(module => {
-                            const moduleObj = this.addModule(module, semesterObj);
+                            const moduleObj = this.ensureModule(module, semesterObj);
                             this.moduleConfig[sem].modules[module].__object__ = moduleObj;
 
-                            Object.entries(this.moduleConfig[sem].modules[module].subject).forEach(subjectEntry => {
-                                const subjectObj = this.addSubject(subjectEntry[0], subjectEntry[1].coefficient, moduleObj, semesterObj);
-                                this.moduleConfig[sem].modules[module].subject[subjectEntry[0]].__object__ = subjectObj;
+                            Object.entries(this.moduleConfig[sem].modules[module].subjects).forEach(subjectEntry => {
+                                const subjectObj = this.ensureSubject(subjectEntry[0], subjectEntry[1].coefficient, moduleObj, semesterObj);
+                                this.moduleConfig[sem].modules[module].subjects[subjectEntry[0]].__object__ = subjectObj;
                             })
                         })
                     })
@@ -3751,10 +4247,11 @@ class ECAMDashboard {
 
                         Object.keys(oldModuleConfig).forEach(_sem => {
                             const sem = parseInt(_sem);
-                            const semesterObj = this.addSemester(sem);
+                            const semesterObj = this.ensureSemester(sem);
 
                             this.moduleConfig[sem] = {
                                 "__object__": semesterObj, 
+                                "__modules__": [],
                                 "modules": {}
                             };
 
@@ -3762,11 +4259,12 @@ class ECAMDashboard {
 
                                 if (moduleEntry[0] == "__modules__") this.moduleConfig[sem].__modules__ = moduleEntry[1];
                                 else {
-                                    const moduleObj = this.addModule(moduleEntry[0], semesterObj);
+                                    const moduleObj = this.ensureModule(moduleEntry[0], semesterObj);
 
                                     this.moduleConfig[sem].modules[moduleEntry[0]] = {
                                         "__object__": moduleObj,
-                                        "subject": {}
+                                        "__subjects__": [],
+                                        "subjects": {}
                                     };
 
                                     Object.entries(moduleEntry[1]).forEach(subjectEntry => {
@@ -3774,9 +4272,9 @@ class ECAMDashboard {
                                         if (subjectEntry[0] == "subjects") this.moduleConfig[sem].modules[moduleEntry[0]].__subjects__ = subjectEntry[1];
                                         else if (subjectEntry[0] == "coefficients") {
                                             Object.entries(subjectEntry[1]).forEach(entry => {
-                                                const subjectObj = this.addSubject(entry[0], entry[1], moduleObj, semesterObj);
+                                                const subjectObj = this.ensureSubject(entry[0], entry[1], moduleObj, semesterObj);
 
-                                                this.moduleConfig[sem].modules[moduleEntry[0]].subject[entry[0]] = {
+                                                this.moduleConfig[sem].modules[moduleEntry[0]].subjects[entry[0]] = {
                                                     "__object__": subjectObj,
                                                     "coefficient": entry[1]
                                                 };
@@ -3806,8 +4304,8 @@ class ECAMDashboard {
                 // JSON.stringify(this.sim, (_key, value) => { return value.toString() });
 
                 localStorage.setItem(
-                    this.cacheKeys.cachedSimGrades, 
-                    Array(this.sim).join(" | ")
+                    ECAMDashboard.cacheKeys.simGrades, 
+                    Array(this.sim).join(" "+Grade.gradesSeparator+" ")
                 );
                 return this;
             }
@@ -3816,50 +4314,70 @@ class ECAMDashboard {
 
             // MARK: _  retrieveCachedSimGrades()
             retrieveCachedSimGrades() {
-                /** @type { Grade[] | null } */
+                /** @type { Grade[] } */
                 let newSim = [];
 
                 try { 
                     // newSim = JSON.parse(
-                    //     localStorage.getItem(this.cacheKeys.cachedSimGrades), (_key, value) => { return Grade.fromString(value, this) } 
+                    //     localStorage.getItem(ECAMDashboard.cacheKeys.cachedSimGrades), (_key, value) => { return Grade.fromString(value, this) } 
                     // ) || []; 
-                    newSim = localStorage.getItem(this.cacheKeys.cachedSimGrades).split(" | ").map( (g) => {return Grade.fromString(g)} )
+
+                    (localStorage.getItem(ECAMDashboard.cacheKeys.simGrades) || "" ).split(Grade.gradesSeparator).forEach(g => {
+                        const parsedGrade = Grade.fromString(g);
+                        if (parsedGrade) newSim.push(parsedGrade);
+                    })
                 }
                 catch (e) {}
 
 
                 if (newSim.length == 0) {
-                    /** @type { Object.< string, Object.< string, Object.< string, Object[] > > > } */
-                    const oldSim = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SIM_GRADES") ) || {};
+                    /**
+                     * @type {{
+                     *      [semesterNumber: number]: {
+                     *          [moduleName: string]: {
+                     *              [subjectName: string]: [{
+                     *                  "grade": number, 
+                     *                  "coef": number, 
+                     *                  "classAvg": number | " — ", 
+                     *                  "semester": number, 
+                     *                  "subject": string, 
+                     *                  "type": string, 
+                     *                  "__sim": boolean, 
+                     *                  "libelle": string, 
+                     *                  "prof": string,
+                     *                  "date": string,
+                     *                  "id": number
+                     *              }]
+                     *          }
+                     *      }
+                     * }}
+                     */
+                    const oldSim = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SIM_GRADES") || "{}" ) || {};
 
-                    if (Object.keys(oldSim).length > 0) {
-                        Object.values(oldSim).forEach(sem => {
-                            Object.entries(sem).forEach(mod => {
-                                Object.values(mod[1]).forEach(subj => {
-                                    Object.values(subj).forEach(grade => {
-                                        /**
-                                         * @type {{"grade": number, "coef": number, "classAvg": number | " — ", "semester": number, "subject": string, "type": string, "__sim": boolean, "libelle": string, "id": number}}
-                                         */
-                                        const g = grade;
-                                        const simGrade = this.addGrade(
-                                            parseFloat(g.grade),
-                                            parseFloat(g.coef),
-                                            g.subject,
-                                            g.type,
-                                            g.__sim,
-                                            undefined,
-                                            undefined,
-                                            undefined,
-                                            parseInt(g.semester),
-                                            mod[0],
-                                            parseInt(g.id)
-                                        );
-                                        this.sim.push(simGrade);
-                                    })
+                    Object.values(oldSim).forEach(sem => {
+                        Object.entries(sem).forEach(mod => {
+                            Object.values(mod[1]).forEach(subj => {
+                                Object.values(subj).forEach(grade => {
+                                    const g = grade;
+                                    const simGrade = this.addGrade(
+                                        g.grade,
+                                        g.coef,
+                                        g.subject,
+                                        g.type,
+                                        g.__sim,
+                                        g.classAvg === " — " ? undefined : g.classAvg,
+                                        g.prof,
+                                        g.date,
+                                        g.semester,
+                                        mod[0],
+                                        g.id
+                                    );
+
+                                    if (simGrade) this.sim.push(simGrade);
                                 })
                             })
                         })
-                    }
+                    })
 
                     this.cacheSimGrades()
                     // TODO: localStorage.removeItem("ECAM_DASHBOARD_SIM_GRADES");
@@ -3890,20 +4408,20 @@ class ECAMDashboard {
              *
              * @param {Grade|number|string} grade
              * @param {number|string|undefined} coef
-             * @param {Subject|string|undefined} subj
+             * @param {Subject|string|undefined} subject
              * @param {string|undefined} title
              * @param {boolean|undefined} isSim
              * @param {number|string|undefined} classAvg
              * @param {string|undefined} prof
              * @param {string|undefined} date
-             * @param {Semester|number|string|undefined} sem
-             * @param {Module|string|undefined} mod
+             * @param {Semester|number|string|undefined} semester
+             * @param {Module|string|undefined} module
              * @param {number|string|undefined} id
              * 
              * @returns {Grade}
-             * @throws {Error} if the grade doesn't exist.
+             * @throws {Error} If the grade is not known to ***this*** {@link ECAMDashboard}.
              */
-            getGrade(grade, coef=undefined, subj=undefined, title=undefined, isSim=undefined, classAvg=undefined, prof=undefined, date=undefined, sem=undefined, mod=undefined, id=undefined) {
+            getGrade(grade, coef=undefined, subject=undefined, title=undefined, isSim=undefined, classAvg=undefined, prof=undefined, date=undefined, semester=undefined, module=undefined, id=undefined) {
                 ParameterTypeError.verifyParams(arguments, [
                     Grade.name+"|number|"+nbRegExpSrc,
                     "number|"+nbRegExpSrc+"|undefined",
@@ -3918,76 +4436,57 @@ class ECAMDashboard {
                     "number|"+intRegExpSrc+"|undefined"
                 ], ECAMDashboard.prototype.getGrade, ECAMDashboard)
 
-                if (!(grade instanceof Grade)) {
-                    ParameterTypeError.verifyParams(arguments, 
-                        [
-                            Grade.name,
-                            "number|"+nbRegExpSrc,
-                            "string",
-                            "string",
-                            "boolean",
-                            "number|"+nbRegExpSrc,
-                            "string",
-                            "string",
-                            Module.name+"|string",
-                            Semester.name+"|number|"+intRegExpSrc,
-                            "number|"+intRegExpSrc
-                        ], 
-                        ECAMDashboard.prototype.getGrade, ECAMDashboard, 
-                        "The method was given a grade as a number and not a "+Grade.name+", so it requires all the other informations (coef, subj, title, ...)."
-                    )
-                }
 
                 for (const g of this.grades) {
                     if (
                         grade instanceof Grade
                         ? g.equals(grade)
                         : (
-                            g.grade === parseFloat(grade)
+                            g.grade === (typeof grade === "string" ? parseFloat(grade) : grade)
                             &&
-                            g.coef === parseFloat(coef)
+                            g.coef === (typeof coef === "string" ? parseFloat(coef) : coef)
                             &&
-                            g.subject.name === (subj instanceof Subject ? subj.name : subj)
+                            (g.subject instanceof Subject ? g.subject.name : g.subject) === (subject instanceof Subject ? subject.name : subject)
                             &&
                             g.title === title
                             &&
                             g.isSim === isSim
                             &&
-                            g.classAvg === parseFloat(classAvg)
+                            g.classAvg === (typeof classAvg === "string" ? parseFloat(classAvg) : classAvg)
                             &&
                             g.prof === prof
                             &&
                             g.date === date
                             &&
-                            g.semester === (sem instanceof Semester ? sem.number : parseInt(sem))
+                            g.semester === (semester instanceof Semester ? semester.number : (typeof semester === "string" ? parseInt(semester) : semester))
                             &&
-                            g.module.name === (mod instanceof Module ? mod.name : mod)
+                            (g.module instanceof Module ? g.module.name : g.module) === (module instanceof Module ? module.name : module)
                             &&
-                            g.id === parseInt(id)
+                            g.id === (typeof id === "string" ? parseInt(id) : id)
                         )
                     ) return g
                 }
 
                 throw new Error(
-                    "No Grade of string representation \""
+                    "The Grade of string representation \""
                     +(
                         grade instanceof Grade 
                         ? grade.toString() 
                         : new Grade(
                             grade, 
-                            coef, 
-                            subj, 
+                            coef ? coef : NaN, 
+                            subject, 
                             title, 
                             isSim, 
                             classAvg, 
                             prof, 
                             date, 
-                            sem, 
-                            mod, 
-                            id
+                            semester, 
+                            module, 
+                            typeof id === "string" ? parseInt(id) : id
                         ).toString()
                     ) 
-                    + "\" could be found."
+                    + "\" is not known to this "+ECAMDashboard.name+"."
                 );
             }
 
@@ -4076,6 +4575,7 @@ class ECAMDashboard {
              * @param {Module | string} [module=undefined] Name of the module of the subject to search.
              * @param {Semester | number} [semester=undefined] Number of the seemester of the subject to search.
              * @returns {Subject}
+             * @throws {Error} If the subject is not known to ***this*** {@link ECAMDashboard}.
              */
             getSubject(subject, module=undefined, semester=undefined) {
                 ParameterTypeError.verifyParams(arguments, [
@@ -4094,12 +4594,7 @@ class ECAMDashboard {
                     if (typeof subject == "string" && subj.name == subject) return subj;
                 }
 
-                throw new Error(
-                    "Subject of name \""+ (subject instanceof Subject ? subject.name : subject) + "\" does not exist"
-                    +(module !== undefined ? (" in the Module of name " + (module instanceof Module ? module.name : module)) : "")
-                    +(semester !== undefined ? (" in the Semester n°" + (semester instanceof Semester ? semester.number : semester)) : "")
-                    +"."
-                );
+                throw new Error("Subject of name \""+ (subject instanceof Subject ? subject.name : subject) + "\" is not known to this "+ECAMDashboard.name+".");
             }
 
 
@@ -4135,8 +4630,9 @@ class ECAMDashboard {
             /**
              *
              * @param {Module | string} module
-             * @param {Semester | number | string | undefined} semester
-             * @returns {Module | null}
+             * @param {Semester | number | undefined} semester
+             * @returns {Module}
+             * @throws {Error} If the module is not known to ***this*** {@link ECAMDashboard}.
              */
             getModule(module, semester=undefined) {
                 ParameterTypeError.verifyParams(arguments, [
@@ -4152,11 +4648,7 @@ class ECAMDashboard {
                     if (typeof module == "string" && mod.name == module) return mod;
                 }
 
-                throw new Error(
-                    "Module of name \""+ (module instanceof Module ? module.name : module) + "\" doesn not exist"
-                    +(semester !== undefined ? (" in the Semester n°"+(semester instanceof Semester ? semester.number : semester)) : "")
-                    +"."
-                );
+                throw new Error("Module of name \""+ (module instanceof Module ? module.name : module) + "\" is not known to this "+ECAMDashboard.name+".");
             }
 
 
@@ -4166,6 +4658,7 @@ class ECAMDashboard {
             /**
              *
              * @param {Module | string} module
+             * @param {Semester|number|undefined} semester
              * @returns {boolean}
              */
             hasModule(module, semester=undefined) {
@@ -4188,26 +4681,54 @@ class ECAMDashboard {
             /**
              *
              * @param {Semester | number} semester
-             * @returns {Semester | null}
+             * @returns {Semester}
+             * @throws {Error} If the semester is not known to ***this*** {@link ECAMDashboard}.
              */
             getSemester(semester) {
-                ParameterTypeError.verifyParams(arguments, [Semester.name+"|number|"+nbRegExpSrc], ECAMDashboard.prototype.getSemester, ECAMDashboard);
-
                 for (const sem of this.semesters) {
                     if (semester instanceof Semester && sem.equals(semester)) return semester;
-                    if (typeof semester == "string" && sem.number == semester)  return semester;
+                    if (typeof semester == "string" && sem.number == semester) return semester;
                 }
 
 
                 throw new Error(
-                    "Semester n°"+ (semester instanceof Semester ? semester.number : semester) + " does not exist."
+                    "Semester n°"+ (semester instanceof Semester ? semester.number : semester) + " is not known to this "+ECAMDashboard.name+"."
                 );
+            }
+
+
+            // MARK: _  hasSemester()
+            /**
+             * 
+             * @param {Semester | number} semester 
+             * @returns {boolean}
+             */
+            hasSemester(semester) {
+                try {
+                    this.getSemester(semester)
+                    return true;
+                }
+                catch(e) { return false; }
             }
 
 
 
             // MARK: _  addGrade()
-            addGrade(grade, coef, subject, title=" — ", isSim=false, classAvg=" — ", prof=" — ", date=" — ", semester="?", module=undefined, id=undefined) {
+            /**
+             * 
+             * @param {number} grade 
+             * @param {number} coef 
+             * @param {Subject|string|undefined} subject 
+             * @param {string|undefined} title 
+             * @param {boolean|undefined} isSim 
+             * @param {number|undefined} classAvg 
+             * @param {string|undefined} prof 
+             * @param {string|undefined} date 
+             * @param {Semester|number|undefined} semester 
+             * @param {Module|string|undefined} module 
+             * @param {number|undefined} id 
+             */
+            addGrade(grade, coef, subject=undefined, title=" — ", isSim=false, classAvg=undefined, prof=" — ", date=" — ", semester=undefined, module=undefined, id=undefined) {
                 ParameterTypeError.verifyParams(arguments, [
                     "number | "+nbRegExpSrc,
                     "number | "+nbRegExpSrc,
@@ -4222,24 +4743,25 @@ class ECAMDashboard {
                     "number | "+intRegExpSrc+" | undefined"
                 ], ECAMDashboard.prototype.addGrade, ECAMDashboard);
 
-                /** @type {Subject} */
-                var subj = null;
+                /** @type {Subject|undefined} */
+                var subj = undefined;
 
                 try {
-                    subj = this.getSubject(subject, module, semester);
+                    if (subject) subj = this.getSubject(subject, module, semester);
                 }
                 catch(e) {
+                    //@ts-ignore
                     subj = this.addSubject(subject, undefined, module, semester);
                 }
 
 
-                /** @type {Module} */
-                var mod = subj.module;
-                /** @type {Semester} */
-                var sem = subj.semester;
+                /** @type {Module|string|undefined} */
+                var mod = subj instanceof Subject ? subj.module : undefined;
+                /** @type {Semester|number|undefined} */
+                var sem = subj instanceof Subject ? subj.semester : undefined;
 
                 
-                if (this.getGrade(
+                if (!this.hasGrade(
                     grade,
                     coef,
                     subj,
@@ -4251,7 +4773,7 @@ class ECAMDashboard {
                     sem,
                     mod,
                     id
-                ) === null ) {
+                )) {
                     const newGrade = new Grade(
                         grade,
                         coef,
@@ -4268,7 +4790,11 @@ class ECAMDashboard {
 
                     this.grades.push(newGrade);
                     if (isSim) this.sim.push(newGrade);
+
+                    return newGrade;
                 }
+
+                return null;
 
             }
 
@@ -4276,9 +4802,10 @@ class ECAMDashboard {
             // MARK: _  addSubject()
             /**
              * 
-             * @param {Subject|string} subject 
-             * @param {Module|string|undefined} module 
-             * @param {Semester|number|string|undefined} semester 
+             * @param {Subject|string}              subject 
+             * @param {number|undefined}            [coefficient=undefined] 
+             * @param {Module|string|undefined}     module 
+             * @param {Semester|number|undefined}   semester 
              * @returns 
              */
             addSubject(subject, coefficient=undefined, module=undefined, semester=undefined) {
@@ -4289,13 +4816,18 @@ class ECAMDashboard {
                     Semester.name+"|number|"+intRegExpSrc+"|undefined"
                 ], ECAMDashboard.prototype.addModule, ECAMDashboard);
 
-                /** @type {Module} */
-                var mod = null;
-                
-                if ((mod = this.getModule(module, semester)) === null) mod = this.addModule(module, semester);
+                /** @type {Module|undefined} */
+                var mod = undefined;
+                try {
+                    if (module) mod = this.getModule(module, semester)
+                }
+                catch(e) {
+                    //@ts-ignore
+                    mod = this.addModule(module, semester)
+                }
 
-                if (this.hasSubject(subject, module, parseInt(semester))) {
-                    const newSubj = new Subject(subject, coefficient, mod, mod.semester);
+                if (!this.hasSubject(subject, module, semester)) {
+                    const newSubj = new Subject(subject instanceof Subject ? subject.name : subject, coefficient, mod);
                     this.subjects.push(newSubj);
                     return newSubj;
                 }
@@ -4304,23 +4836,53 @@ class ECAMDashboard {
             }
 
 
+
+            // MARK: _  ensureSubject()
+            /**
+             * Tries to get the {@link Subject} corresponding to the given {@link Subject} (or its name),
+             * and if it does not exits, create it and return it.
+             * 
+             * @param {Subject|string}              subject                 The {@link Subject} (or its name) to find/create in the data of ***this*** {@link ECAMDashboard}.
+             * @param {number|undefined}            [coefficient=100]       The coefficient of the {@link Subject} to find/create. If the {@link Subject} did exist but the given coefficient does not match the current {@link Subject}'s coefficient, modify the {@link Subject}'s coefficient to make them match.
+             * @param {Module|string|undefined}     [module=undefined]      The {@link Module} (or its name) to which should belong the {@link Subject} to find/create.
+             * @param {Semester|number|undefined}   [semester=undefined]    The {@link Semester} (or its number) to which should belong the {@link Subject} to find/create.
+             * @returns {Subject} The {@link Subject} in the data of ***this*** {@link ECAMDashboard}, whether it was found or created.
+             */
+            ensureSubject(subject, coefficient=100, module=undefined, semester=undefined) {
+                try {
+                    const subj = this.getSubject(subject, module, semester);
+                    if (subj.coef != coefficient) subj.coef = coefficient;
+                    return subj;
+                }
+                catch (e) {
+                    // @ts-ignore
+                    return this.addSubject(subject, coefficient, module, semester)
+                }
+            }
+
+
             // MARK: _  addModule()
             /**
              * 
              * @param {Module|string} module 
-             * @param {number} semester 
+             * @param {Semester|number|undefined} semester 
              * @returns The {@link Module} created.
              */
-            addModule(module, semester) {
+            addModule(module, semester=undefined) {
                 ParameterTypeError.verifyParams(arguments, [Module.name+"|string", Semester.name+"|number|"+intRegExpSrc], ECAMDashboard.prototype.addModule, ECAMDashboard);
 
-                /** @type {Semester|null} */ 
-                var sem = semester instanceof Semester ? semester : null;
+                /** @type {Semester|undefined} */ 
+                var sem = undefined;
+                try {
+                    if (semester) {sem = this.getSemester(semester)}
+                }
+                catch (e) {
+                    //@ts-ignore
+                    sem = this.addSemester(semester)
+                }
 
-                if (sem === null) if ((sem = this.getSemester(semester)) === null) sem = this.addSemester(semester);
-
-                if (this.getModule(module, semester) === null) {
-                    const newMod = new Module(module, sem);
+                if (!this.hasModule(module, semester)) {
+                    const newMod = new Module(module instanceof Module ? module.name : module, sem);
                     this.modules.push(newMod);
                     return newMod;
                 }
@@ -4329,17 +4891,63 @@ class ECAMDashboard {
             }
 
 
+
+            // MARK: _  ensureModule()
+            /**
+             * Tries to get the {@link Module} corresponding to the given {@link Module} (or its name),
+             * and if it does not exits, create it and return it.
+             * 
+             * @param {Module|string}               module                  The {@link Module} (or its name) to find/create in the data of ***this*** {@link ECAMDashboard}.
+             * @param {Semester|number|undefined}   [semester=undefined]    The {@link Semester} (or its number) to which should belong the {@link Module} to find/create.
+             * @returns {Module} The {@link Module} in the data of ***this*** {@link ECAMDashboard}, whether it was found or created.
+             */
+            ensureModule(module, semester=undefined) {
+                try {
+                    return this.getModule(module, semester);
+                }
+                catch (e) {
+                    // @ts-ignore
+                    return this.addModule(module, semester)
+                }
+            }
+
+
             // MARK: _  addSemester()
+            /**
+             * 
+             * @param {Semester|number} semester 
+             * @returns 
+             */
             addSemester(semester) {
                 ParameterTypeError.verifyParams(arguments, [Semester.name+"|number|"+intRegExpSrc], ECAMDashboard.prototype.addSemester, ECAMDashboard);
 
-                if (this.getSemester(semester) === null) {
-                    const newSem = new Semester(semester);
+                if (!this.hasSemester(semester)) {
+                    const newSem = new Semester(semester instanceof Semester ? semester.number : semester);
                     this.semesters.push(newSem);
                     return newSem;
                 }
 
                 return null;
+            }
+
+
+
+            // MARK: _  ensureSemester()
+            /**
+             * Tries to get the {@link Semester} corresponding to the given {@link Semester} (or its number),
+             * and if it does not exits, create it and return it.
+             * 
+             * @param {Semester|number} semester The {@link Semester} (or its number) to find/create in the data of ***this*** {@link ECAMDashboard}.
+             * @returns {Semester} The {@link Semester} in the data of ***this*** {@link ECAMDashboard}, whether it was found or created.
+             */
+            ensureSemester(semester) {
+                try {
+                    return this.getSemester(semester);
+                }
+                catch (e) {
+                    // @ts-ignore
+                    return this.addSemester(semester)
+                }
             }
 
 
@@ -4378,26 +4986,26 @@ class ECAMDashboard {
 
 
 //#region <— Globalize classes —>
-globalThis.ParameterTypeError   = ParameterTypeError;
+/** @type {any} */ (globalThis).ParameterTypeError   = ParameterTypeError;
 
-globalThis.Grade                = Grade;
-globalThis.Subject              = Subject;
-globalThis.Module               = Module;
-globalThis.Semester             = Semester;
+/** @type {any} */ (globalThis).Grade                = Grade;
+/** @type {any} */ (globalThis).Subject              = Subject;
+/** @type {any} */ (globalThis).Module               = Module;
+/** @type {any} */ (globalThis).Semester             = Semester;
 
-globalThis.Setting              = Setting;
-globalThis.Settings             = Settings;
-globalThis.KeyboardShortcut     = KeyboardShortcut;
-globalThis.KeyboardShortcuts    = KeyboardShortcuts;
-
-
-globalThis.Card                 = Card;
-globalThis.SubjectCard          = SubjectCard;
-globalThis.ModuleCard           = ModuleCard;
-globalThis.SemesterCard         = SemesterCard;
+/** @type {any} */ (globalThis).Setting              = Setting;
+/** @type {any} */ (globalThis).Settings             = Settings;
+/** @type {any} */ (globalThis).KeyboardShortcut     = KeyboardShortcut;
+/** @type {any} */ (globalThis).KeyboardShortcuts    = KeyboardShortcuts;
 
 
-globalThis.ECAMDashboard        = ECAMDashboard;
+/** @type {any} */ (globalThis).Card                 = Card;
+/** @type {any} */ (globalThis).SubjectCard          = SubjectCard;
+/** @type {any} */ (globalThis).ModuleCard           = ModuleCard;
+/** @type {any} */ (globalThis).SemesterCard         = SemesterCard;
+
+
+/** @type {any} */ (globalThis).ECAMDashboard        = ECAMDashboard;
 // MARK: <— Globalize classes —>
 //#endregion
 
@@ -4407,7 +5015,7 @@ globalThis.ECAMDashboard        = ECAMDashboard;
 
 
 
-ParameterTypeError.active = true;
+ParameterTypeError.active = false;
 
 /** @type {ECAMDashboard} */
-window.ecamDash2 = new ECAMDashboard().parseGrades();
+globalThis.ecamDash2 = new ECAMDashboard().parseGrades();

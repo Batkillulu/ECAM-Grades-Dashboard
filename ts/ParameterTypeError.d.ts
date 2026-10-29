@@ -85,7 +85,7 @@ declare class ParameterTypeError extends TypeError {
      * @throws {ReferenceError} If a type-expression string names a class that is neither registered nor on `globalThis`.
      * @throws {SyntaxError} If a type-expression string is malformed.
      */
-    static verifyParam(
+    static #verifyParam(
         actualValue: any,
         allowedType: ParameterTypeError.AllowedType,
         parameterName?: string,
