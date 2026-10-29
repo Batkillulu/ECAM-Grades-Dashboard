@@ -344,20 +344,6 @@
 
 
 
-//#region — General Variables —
-
-const nbRegExpSrc = "/\\d+((\\.|\\,)\\d+)?/";
-const intRegExpSrc = "/\\d+/";
-
-//#endregion 
-
-
-
-
-
-
-
-
 
 
 
@@ -372,853 +358,6 @@ const intRegExpSrc = "/\\d+/";
 
 
 //#region ========= BACKEND =========
-
-
-
-
-    // MARK: ——————————————————
-    ;
-
-
-
-
-
-
-
-    // MARK: ———    ParameterTypeError     ———
-    class ParameterTypeError extends TypeError {
-        
-
-
-
-        // MARK:                — static config —
-        //#region
-
-            static active = true;
-
-            static basicAllowedTypes = ["bigint", "boolean", "function", "number", "object", "string", "symbol", "undefined"];
-            static customAllowedTypes = ["any", "array", "class", "constructor", "arguments"];
-            static handledAllowedTypes = this.basicAllowedTypes.concat(this.customAllowedTypes);
-
-            static #defaultMessageHeader = "Improper parameter type: parameter is NOT of an expected type.";
-
-            /**
-             * Cache of parsed type-expression strings -> AST, so a given spec is only parsed once.
-             * @type {Map<string, ParameterTypeError.TypeNode>}
-             */
-            static #typeExpressionCache = new Map();
-
-        //#endregion
-
-
-
-
-        // MARK:           — instance properties —
-        //#region
-
-            /** @type {Error | undefined} */
-            #cause;
-            /** @type {string} */
-            #classCause;
-            /** @type {string} */
-            #methodNameCause;
-            /** @type {string} */
-            #paramNameCause;
-            /** @type {*} */
-            #paramValueCause;
-
-        //#endregion
-
-
-
-
-        // MARK:               — constructor —
-        /**
-         * @param {*}                               actualValue The offending value.
-         * @param {ParameterTypeError.AllowedType}  allowedTypes What it was supposed to be.
-         * @param {string | undefined}              parameterName Name of the offending parameter.
-         * @param {string | Function | undefined}   methodName Method (or its name) in which the check happened.
-         * @param {string | Function | undefined}   className Class (or its name) to which that method belongs.
-         * @param {string | undefined}              message Header of the error message (the details are appended automatically).
-         * @param {Error | undefined}               cause Underlying error, if any.
-         */
-        constructor(actualValue, allowedTypes, parameterName = "(unknown)", methodName = "<anonymous>", className = "<anonymous>", message = ParameterTypeError.#defaultMessageHeader, cause = undefined) {
-            const resolvedMethodName = typeof methodName === "function" ? (methodName.name || "<anonymous>") : methodName;
-            const resolvedClassName = typeof className === "function" ? (className.name || "<anonymous>") : className;
-
-            const expectedTypeStr = ParameterTypeError.#describeAllowedType(allowedTypes);
-            const actualTypeStr = ParameterTypeError.#describeType(actualValue);
-
-            const formattedMessage =
-                "\n" +
-                `    class:  ${resolvedClassName}\n` +
-                `    method: ${resolvedMethodName}\n` +
-                "    parameter:\n" +
-                `        name:          ${parameterName}\n` +
-                `        expected type: ${expectedTypeStr}\n` +
-                `        actual type:   ${actualTypeStr}\n`;
-
-            super(message + formattedMessage, { cause });
-
-            this.#cause = cause;
-            this.#classCause = resolvedClassName;
-            this.#methodNameCause = resolvedMethodName;
-            this.#paramNameCause = parameterName;
-            this.#paramValueCause = actualValue;
-        }
-
-
-
-
-        // MARK:              — encapsulation —
-        //#region
-
-            get cause() { return this.#cause; }
-            get classCause() { return this.#classCause; }
-            get methodNameCause() { return this.#methodNameCause; }
-            get paramNameCause() { return this.#paramNameCause; }
-            get paramValueCause() { return this.#paramValueCause; }
-
-        //#endregion
-
-
-
-
-        // MARK:             — public methods —
-        //#region
-
-
-
-            // MARK: _  verifyParams()
-            /**
-             * Verifies that `args` match their corresponding allowedType at the same index in `allowedTypes`.
-             * Throws a {@link ParameterTypeError} otherwise.
-             *
-             * `allowedTypes` can be:
-             *  - a type-expression STRING — see the grammar notes below.
-             *  - a class/constructor reference (checked via `instanceof`).
-             *  - a RegExp instance, or a `"/pattern/flags"` string — matches string/number values via `.test(String(value))`.
-             *  - a raw JS ARRAY — a TUPLE: value must be an array of the exact same length, each
-             *    position checked against the type at that index. Elements can themselves be any
-             *    of the things in this list, nested arbitrarily.
-             *  - a raw JS OBJECT (plain, not array/RegExp) — an EXACT-SHAPE object type: value must
-             *    be a plain object with exactly the same key set, each value checked against the
-             *    (recursively any-of-the-above) type given for that key.
-             *
-             * Type-expression STRING grammar:
-             *  - plain type name: "string" | "number" | "boolean" | "function" | "object" | "bigint" | "symbol" | "undefined"
-             *  - pseudo-type: "any" | "array" | "class" | "constructor" | "arguments"
-             *  - a class name reachable via globalThis: "Error", "MyGlobalClass", ...
-             *  - a literal to enforce exactly: "3", "true", '"yes"'
-             *  - union: "A|B"
-             *  - array: "X[]" (any length) / "X[3]" (exact length)
-             *  - tuple: "[A, B, C]"
-             *  - regex literal: "/pattern/flags" (bare or quoted) — matches string/number values
-             *  - RECORD (structural object) type: "{ KeyPattern: ValueType, ... }" where each
-             *    KeyPattern is a quoted literal key ('"foo"'), a regex ("/tag-\d+/"), the pseudo
-             *    key-types "string" (any non-numeric-looking key) / "number" (any numeric-looking
-             *    key) / "any" (every key), or a "|"-union of these sharing one ValueType. Independent
-             *    pairs with DIFFERENT value types are unioned by wrapping each in parens:
-             *    "(\"a\": boolean)|(\"b\": number)". Every key actually present on the value must be
-             *    covered by some rule (most specific rule wins: literal > regex > pseudo key-type);
-             *    an uncovered key fails the match. ValueType can itself be any type expression,
-             *    including another nested record.
-             *
-             * All of the above nest arbitrarily.
-             *
-             * @param {IArguments | any[]} argument Typically the callee's `arguments` object.
-             * @param {ParameterTypeError.AllowedType[]} allowedTypes One entry per positional parameter to check.
-             * @param {string | Function} [method]
-             * @param {string | Function} [className]
-             * @param {string} [message]
-             * @returns {void}
-             */
-            static verifyParams(argument, allowedTypes, method = "<anonymous>", className = "<anonymous>", message = undefined) {
-                if (!this.active) return;
-
-                if (!this.#isArguments(argument) && !Array.isArray(argument)) {
-                    throw new ParameterTypeError(
-                        argument, "arguments", "args", "verifyParams", ParameterTypeError.name,
-                        "The given args must be an arguments object or an array."
-                    );
-                }
-                if (!Array.isArray(allowedTypes)) {
-                    throw new ParameterTypeError(
-                        allowedTypes, "array", "allowedTypes", "verifyParams", ParameterTypeError.name,
-                        "The given allowedTypes must be an array, with one entry per parameter to check."
-                    );
-                }
-
-                const argsArray = Array.from(argument);
-                const paramNames = this.#extractParamNames(method);
-
-                for (let i = 0; i < allowedTypes.length; i++) {
-                    const parameterName = paramNames?.[i] ?? `arg${i + 1}`;
-
-                    this.#verifyParam(argsArray[i], allowedTypes[i], 
-                        parameterName, method, className, message
-                    )
-                }
-            }
-
-        //#endregion
-
-
-
-
-        // MARK:              — type matching —
-        //#region
-
-
-
-
-            // MARK: _  #verifyParam()
-            /**
-             * Verifies that `actualValue` matches `allowedType`. Throws a {@link ParameterTypeError} otherwise.
-             * (See {@link ParameterTypeError.verifyParams} for what `allowedType` can be.)
-             *
-             * @param {*} actualValue
-             * @param {ParameterTypeError.AllowedType} allowedType
-             * @param {string} [parameterName]
-             * @param {string | Function} [methodName]
-             * @param {string | Function} [className]
-             * @param {string} [message]
-             * @returns {void}
-             */
-            static #verifyParam(actualValue, allowedType, parameterName = "(unknown)", methodName = "<anonymous>", className = "<anonymous>", message = undefined) {
-                if (!this.active) return;
-
-                if (!this.#matchesType(actualValue, allowedType)) {
-                    debugger;
-                    throw new ParameterTypeError(
-                        actualValue,
-                        allowedType,
-                        parameterName,
-                        methodName,
-                        className,
-                        message ?? this.#defaultMessageHeader
-                    );
-                }
-            }
-
-
-
-
-
-            // MARK: _  #matchesType()
-            /**
-             * 
-             * @param {*} value 
-             * @param {ParameterTypeError.AllowedType} type 
-             * @returns {boolean}
-             */
-            static #matchesType(value, type) {
-                if (Array.isArray(type)) {
-                    return this.#matchesTuple(value, type);
-                }
-                if (typeof type === "function") {
-                    return value instanceof type || value === type;
-                }
-                if (type instanceof RegExp) {
-                    return (typeof value === "string" || typeof value === "number") && type.test(String(value));
-                }
-                if (type !== null && typeof type === "object") {
-                    return this.#matchesExactShape(value, type);
-                }
-                if (typeof type !== "string") return false;
-
-                const node = this.#parseTypeExpression(type);
-                return this.#matchesNode(value, node);
-            }
-
-
-
-            // MARK: _  #matchesTuple()
-            /**
-             * 
-             * @param {*} value 
-             * @param {ParameterTypeError.AllowedType[]} typeArray 
-             * @returns {boolean}
-             */
-            static #matchesTuple(value, typeArray) {
-                if (!Array.isArray(value)) return false;
-                if (value.length !== typeArray.length) return false;
-                return typeArray.every((t, i) => this.#matchesType(value[i], t));
-            }
-
-
-
-            // MARK: _  #matchesExactShape()
-            /**
-             * 
-             * @param {*} value 
-             * @param {{ [key: string]: ParameterTypeError.AllowedType }} spec 
-             * @returns {boolean}
-             */
-            static #matchesExactShape(value, spec) {
-                if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
-                const specKeys = Object.keys(spec);
-                const valueKeys = Object.keys(value);
-                if (specKeys.length !== valueKeys.length) return false;
-                return specKeys.every(key =>
-                    Object.prototype.hasOwnProperty.call(value, key) && this.#matchesType(value[key], spec[key])
-                );
-            }
-
-
-
-            // MARK: _  #matchesNode()
-            /**
-             * 
-             * @param {*} value 
-             * @param {ParameterTypeError.TypeNode} node 
-             * @returns {boolean}
-             */
-            static #matchesNode(value, node) {
-                switch (node.kind) {
-                    case "literal":
-                        return value === node.value;
-
-                    case "primitive":
-                        return typeof value === node.name;
-
-                    case "special":
-                        switch (node.name) {
-                            case "any": return true;
-                            case "array": return Array.isArray(value);
-                            case "class": return this.#isClass(value);
-                            case "constructor": return typeof value === "function";
-                            case "arguments": return this.#isArguments(value);
-                        }
-                        return false;
-
-                    case "named": {
-                        const ctor = /** @type {any} */ (globalThis)[node.name];
-                        return typeof ctor === "function" && value instanceof ctor;
-                    }
-
-                    case "regex":
-                        return (typeof value === "string" || typeof value === "number") && node.regex.test(String(value));
-
-                    case "union":
-                        return node.options.some(opt => this.#matchesNode(value, opt));
-
-                    case "array": {
-                        if (!Array.isArray(value)) return false;
-                        if (node.length !== null && value.length !== node.length) return false;
-                        return value.every(v => this.#matchesNode(v, node.element));
-                    }
-
-                    case "tuple": {
-                        if (!Array.isArray(value)) return false;
-                        if (value.length !== node.elements.length) return false;
-                        return node.elements.every((elNode, idx) => this.#matchesNode(value[idx], elNode));
-                    }
-
-                    case "record": {
-                        /** @type {Set<ParameterTypeError.RecordRule>} */
-                        const used = new Set();
-                        for (const key of Object.keys(value)) {
-                            const rule = this.#findMatchingRecordRule(node.rules, key);
-                            if (!rule) return false;
-                            if (!this.#matchesNode(value[key], rule.valueType)) return false;
-                            used.add(rule);
-                        }
-                        /** @type {Map<number, boolean>} */
-                        const groupOk = new Map();
-                        for (const rule of node.rules) {
-                            groupOk.set(rule.group, groupOk.get(rule.group) || rule.optional || used.has(rule));
-                        }
-                        return ![...groupOk.values()].includes(false);
-                    }
-                }
-                return false;
-            }
-
-
-
-            // MARK: _  #findMatchingRecordRule()
-            /** 
-             * Picks the most specific rule (literal > regex > pseudo key-type) whose key-pattern matches `key`.
-             * @param {ParameterTypeError.RecordRule[]} rules 
-             * @param {string} key 
-             * @return {ParameterTypeError.RecordRule | null}
-             */
-            static #findMatchingRecordRule(rules, key) {
-                /** @type {ParameterTypeError.RecordRule | null} */
-                let best = null;
-                let bestTier = Infinity;
-                for (const rule of rules) {
-                    for (const kp of rule.keyPatterns) {
-                        if (this.#matchesKeyPattern(key, kp)) {
-                            const tier = kp.kind === "literal" ? 0 : kp.kind === "regex" ? 1 : 2;
-                            if (tier < bestTier) { bestTier = tier; best = rule; }
-                            break;
-                        }
-                    }
-                }
-                return best;
-            }
-
-
-
-            // MARK: _  #matchesKeyPattern()
-            /**
-             * 
-             * @param {string} key 
-             * @param {ParameterTypeError.KeyPattern} kp 
-             * @returns {boolean}
-             */
-            static #matchesKeyPattern(key, kp) {
-                switch (kp.kind) {
-                    case "literal": return key === kp.value;
-                    case "regex": return kp.regex.test(key);
-                    case "typename": {
-                        const isNumericKey = /^-?\d+(\.\d+)?$/.test(key);
-                        if (kp.name === "any") return true;
-                        if (kp.name === "number") return isNumericKey;
-                        if (kp.name === "string") return !isNumericKey;
-                        return false;
-                    }
-                }
-                return false;
-            }
-
-        //#endregion
-
-
-
-
-        // MARK:       — type-expression parsing —
-        //#region
-
-
-
-
-
-            // MARK: _  #parseTypeExpression()
-            /**
-             * 
-             * @param {string} str 
-             * @returns {ParameterTypeError.TypeNode}
-             */
-            static #parseTypeExpression(str) {
-                const cached = this.#typeExpressionCache.get(str);
-                if (cached) return cached;
-
-                /** @type {ParameterTypeError.TypeNode} */
-                let node;
-                try {
-                    const tokens = this.#tokenizeTypeExpression(str);
-                    let pos = 0;
-
-                    const peek = () => tokens[pos];
-                    const advance = () => tokens[pos++];
-                    /** @param {string} type */
-                    const expect = (type) => {
-                        const t = advance();
-                        if (!t || t.type !== type) throw new SyntaxError(`expected "${type}" but got ${t ? `"${t.type}"` : "end of input"}`);
-                        return t;
-                    };
-
-                    /** @returns {ParameterTypeError.TypeNode} */
-                    const parseType = () => parseUnion();
-
-                    /** @returns {ParameterTypeError.TypeNode} */
-                    const parseUnion = () => {
-                        let n = parsePostfix();
-                        if (peek() && peek().type === "|") {
-                            const options = [n];
-                            while (peek() && peek().type === "|") {
-                                advance();
-                                options.push(parsePostfix());
-                            }
-                            n = { kind: "union", options };
-                        }
-                        return n;
-                    };
-
-                    /** @returns {ParameterTypeError.TypeNode} */
-                    const parsePostfix = () => {
-                        let n = parsePrimary();
-                        while (peek() && peek().type === "[") {
-                            advance();
-                            let length = null;
-                            if (peek() && peek().type === "literal" && peek().literalType === "number") {
-                                length = advance().value;
-                            }
-                            expect("]");
-                            n = { kind: "array", element: n, length };
-                        }
-                        return n;
-                    };
-
-                    /** @returns {ParameterTypeError.KeyPattern} */
-                    const parseKeyPatternAtom = () => {
-                        const t = peek();
-                        if (!t) throw new SyntaxError("expected a key pattern");
-                        if (t.type === "literal") {
-                            advance();
-                            if (t.literalType === "regex") return { kind: "regex", regex: t.value };
-                            if (t.literalType === "string") return { kind: "literal", value: t.value };
-                            throw new SyntaxError(`a ${t.literalType} literal cannot be used as an object key pattern`);
-                        }
-                        if (t.type === "identifier") {
-                            advance();
-                            return { kind: "typename", name: t.value };
-                        }
-                        throw new SyntaxError(`unexpected token "${t.type}" in key pattern`);
-                    };
-
-                    /** @returns {ParameterTypeError.KeyPattern[]} */
-                    const parseKeyPatternUnion = () => {
-                        const patterns = [parseKeyPatternAtom()];
-                        while (peek() && peek().type === "|") {
-                            advance();
-                            patterns.push(parseKeyPatternAtom());
-                        }
-                        return patterns;
-                    };
-
-                    /**
-                     * @param {number} group
-                     * @returns {ParameterTypeError.RecordRule}
-                     */
-                    const parseRecordPair = (group) => {
-                        const keyPatterns = parseKeyPatternUnion();
-                        let optional = false;
-                        if (peek() && peek().type === "?") { advance(); optional = true; }
-                        expect(":");
-                        const valueType = parseType();
-                        return { keyPatterns, valueType, optional, group };
-                    };
-
-                    /**
-                     * @param {ParameterTypeError.RecordRule[]} rules
-                     * @returns {void}
-                     */
-                    const parseRecordMemberInto = (rules) => {
-                        const group = rules.length; // rules from one "(..)|(..)" member share a group id
-                        if (peek() && peek().type === "(") {
-                            while (true) {
-                                expect("(");
-                                rules.push(parseRecordPair(group));
-                                expect(")");
-                                if (peek() && peek().type === "|") { advance(); continue; }
-                                break;
-                            }
-                        } else {
-                            rules.push(parseRecordPair(group));
-                        }
-                    };
-
-                    /** @returns {ParameterTypeError.TypeNode} */
-                    const parsePrimary = () => {
-                        const t = peek();
-                        if (!t) throw new SyntaxError("unexpected end of type expression");
-
-                        if (t.type === "(") {
-                            advance();
-                            const inner = parseType();
-                            expect(")");
-                            return inner;
-                        }
-                        if (t.type === "[") {
-                            advance();
-                            /** @type {ParameterTypeError.TypeNode[]} */
-                            const elements = [];
-                            if (peek() && peek().type !== "]") {
-                                elements.push(parseType());
-                                while (peek() && peek().type === ",") {
-                                    advance();
-                                    elements.push(parseType());
-                                }
-                            }
-                            expect("]");
-                            return { kind: "tuple", elements };
-                        }
-                        if (t.type === "{") {
-                            advance();
-                            /** @type {ParameterTypeError.RecordRule[]} */
-                            const rules = [];
-                            if (peek() && peek().type !== "}") {
-                                parseRecordMemberInto(rules);
-                                while (peek() && peek().type === ",") {
-                                    advance();
-                                    parseRecordMemberInto(rules);
-                                }
-                            }
-                            expect("}");
-                            return { kind: "record", rules };
-                        }
-                        if (t.type === "literal") {
-                            advance();
-                            if (t.literalType === "regex") return { kind: "regex", regex: t.value };
-                            return { kind: "literal", value: t.value };
-                        }
-                        if (t.type === "identifier") {
-                            advance();
-                            if (ParameterTypeError.basicAllowedTypes.includes(t.value)) return { kind: "primitive", name: t.value };
-                            if (ParameterTypeError.customAllowedTypes.includes(t.value)) return { kind: "special", name: t.value };
-                            return { kind: "named", name: t.value };
-                        }
-                        throw new SyntaxError(`unexpected token "${t.type}"`);
-                    };
-
-                    node = parseType();
-                    if (pos !== tokens.length) throw new SyntaxError(`unexpected trailing content starting at token ${pos}`);
-                }
-                catch (err) {
-                    throw new SyntaxError(`Invalid type expression "${str}": ${/** @type {Error} */ (err).message}`);
-                }
-
-                this.#typeExpressionCache.set(str, node);
-                return node;
-            }
-
-
-
-            // MARK: _  #tokenizeTypeExpression()
-            /**
-             * 
-             * @param {string} str 
-             * @returns {ParameterTypeError.Token[]}
-             */
-            static #tokenizeTypeExpression(str) {
-                /** @type {ParameterTypeError.Token[]} */
-                const tokens = [];
-                const n = str.length;
-                let i = 0;
-
-                /**
-                 * @param {string} rawValue
-                 * @returns {RegExp | null}
-                 */
-                const asRegexShape = (rawValue) => {
-                    const m = /^\/(.*)\/([a-zA-Z]*)$/.exec(rawValue);
-                    if (!m) return null;
-                    try { return new RegExp(m[1], m[2]); } catch { return null; }
-                };
-
-                while (i < n) {
-                    const c = str[i];
-
-                    if (/\s/.test(c)) { i++; continue; }
-
-                    if ("()[]{},|:?".includes(c)) { tokens.push({ type: c }); i++; continue; }
-
-                    if (c === '"' || c === "'") {
-                        const quote = c;
-                        let j = i + 1;
-                        let value = "";
-                        while (j < n && str[j] !== quote) {
-                            if (str[j] === "\\" && j + 1 < n) { value += str[j + 1]; j += 2; continue; }
-                            value += str[j];
-                            j++;
-                        }
-                        if (j >= n) throw new SyntaxError("unterminated string literal");
-                        const regex = asRegexShape(value);
-                        if (regex) tokens.push({ type: "literal", literalType: "regex", value: regex });
-                        else tokens.push({ type: "literal", literalType: "string", value });
-                        i = j + 1;
-                        continue;
-                    }
-
-                    if (c === "/") {
-                        let j = i + 1;
-                        let body = "";
-                        let terminated = false;
-                        while (j < n) {
-                            if (str[j] === "\\" && j + 1 < n) { body += str[j] + str[j + 1]; j += 2; continue; }
-                            if (str[j] === "/") { terminated = true; j++; break; }
-                            body += str[j];
-                            j++;
-                        }
-                        if (!terminated) throw new SyntaxError("unterminated regex literal");
-                        const flagsMatch = /^[a-zA-Z]*/.exec(str.slice(j));
-                        const flags = flagsMatch ? flagsMatch[0] : "";
-                        j += flags.length;
-                        let regex;
-                        try { regex = new RegExp(body, flags); }
-                        catch (err) { throw new SyntaxError(`invalid regex literal /${body}/${flags}: ${/** @type {Error} */ (err).message}`); }
-                        tokens.push({ type: "literal", literalType: "regex", value: regex });
-                        i = j;
-                        continue;
-                    }
-
-                    const numMatch = /^-?\d+(\.\d+)?/.exec(str.slice(i));
-                    if (numMatch) {
-                        tokens.push({ type: "literal", literalType: "number", value: Number(numMatch[0]) });
-                        i += numMatch[0].length;
-                        continue;
-                    }
-
-                    const idMatch = /^[A-Za-z_$][A-Za-z0-9_$]*/.exec(str.slice(i));
-                    if (idMatch) {
-                        const word = idMatch[0];
-                        if (word === "true" || word === "false") {
-                            tokens.push({ type: "literal", literalType: "boolean", value: word === "true" });
-                        } else {
-                            tokens.push({ type: "identifier", value: word });
-                        }
-                        i += word.length;
-                        continue;
-                    }
-
-                    throw new SyntaxError(`unexpected character "${c}" at position ${i}`);
-                }
-
-                return tokens;
-            }
-
-        //#endregion
-
-
-
-
-        // MARK:               — misc internals —
-        //#region
-
-
-
-
-
-            /**
-             * @param {*} value
-             * @returns {string}
-             */
-            static #describeType(value) {
-                if (value === null) return "null";
-                if (Array.isArray(value)) return `array[${value.length}]`;
-                if (this.#isArguments(value)) return "arguments";
-                if (typeof value === "object") return value.constructor?.name ?? "object";
-                if (typeof value === "function") return this.#isClass(value) ? "class" : "function";
-                return typeof value;
-            }
-
-            /**
-             * @param {ParameterTypeError.AllowedType} type
-             * @returns {string}
-             */
-            static #describeAllowedType(type) {
-                if (typeof type === "function") return type.name || "<anonymous class>";
-                if (Array.isArray(type)) return "[" + type.map(t => this.#describeAllowedType(t)).join(", ") + "]";
-                if (type instanceof RegExp) return type.toString();
-                if (type !== null && typeof type === "object") {
-                    return "{" + Object.entries(type).map(([k, v]) => `${k}: ${this.#describeAllowedType(v)}`).join(", ") + "}";
-                }
-                return String(type);
-            }
-
-            /**
-             * @param {*} value
-             * @returns {boolean}
-             */
-            static #isClass(value) {
-                return typeof value === "function" && /^class[\s{]/.test(Function.prototype.toString.call(value));
-            }
-
-            /**
-             * @param {*} value
-             * @returns {boolean}
-             */
-            static #isArguments(value) {
-                return Object.prototype.toString.call(value) === "[object Arguments]";
-            }
-
-            /**
-             * @param {*} fct A function, or a class (then its constructor's parameters are used).
-             * @returns {string[] | null}
-             */
-            static #extractParamNames(fct) {
-                if (typeof fct !== "function") return null;
-
-                const src = Function.prototype.toString.call(fct);
-
-                let openIndex;
-                if (isClass(fct)) {
-                    const ctorMatch = /\bconstructor\s*(?=\()/.exec(src);
-                    if (!ctorMatch) return null; // implicit constructor: fall back to arg1, arg2...
-                    openIndex = src.indexOf("(", ctorMatch.index);
-                } else {
-                    openIndex = src.indexOf("(");
-                }
-
-                let paramsStr;
-                if (openIndex === -1) {
-                    // parenless single-param arrow: `x => ...`
-                    const arrowMatch = src.match(/^\s*(?:async\s+)?([A-Za-z_$][A-Za-z0-9_$]*)\s*=>/);
-                    paramsStr = arrowMatch ? arrowMatch[1] : "";
-                } else {
-                    paramsStr = this.#extractBalancedParens(src, openIndex) ?? "";
-                }
-
-                if (paramsStr.trim() === "") return [];
-
-                return this.#splitTopLevel(paramsStr, ",")
-                    .map(p => this.#stripDefaultValue(p).replace(/^\.\.\./, "").trim())
-                    .filter(Boolean);
-            }
-
-            /**
-             * @param {string} src
-             * @param {number} openIndex
-             * @returns {string | null}
-             */
-            static #extractBalancedParens(src, openIndex) {
-                let depth = 0;
-                for (let i = openIndex; i < src.length; i++) {
-                    if (src[i] === "(") depth++;
-                    else if (src[i] === ")") {
-                        depth--;
-                        if (depth === 0) return src.slice(openIndex + 1, i);
-                    }
-                }
-                return null;
-            }
-
-            /**
-             * @param {string} str
-             * @param {string} separator
-             * @returns {string[]}
-             */
-            static #splitTopLevel(str, separator) {
-                /** @type {string[]} */
-                const parts = [];
-                let depth = 0;
-                let current = "";
-                for (const c of str) {
-                    if ("([{".includes(c)) depth++;
-                    else if (")]}".includes(c)) depth--;
-                    if (c === separator && depth === 0) { parts.push(current); current = ""; }
-                    else current += c;
-                }
-                parts.push(current);
-                return parts;
-            }
-
-            /**
-             * @param {string} paramStr
-             * @returns {string}
-             */
-            static #stripDefaultValue(paramStr) {
-                let depth = 0;
-                for (let i = 0; i < paramStr.length; i++) {
-                    const c = paramStr[i];
-                    if ("([{".includes(c)) depth++;
-                    else if (")]}".includes(c)) depth--;
-                    else if (
-                        c === "=" && depth === 0 &&
-                        paramStr[i + 1] !== ">" &&
-                        !["=", "!", "<", ">"].includes(paramStr[i - 1] ?? "")
-                    ) return paramStr.slice(0, i).trim();
-                }
-                return paramStr.trim();
-            }
-
-        //#endregion
-
-    }
 
 
 
@@ -1399,7 +538,7 @@ const intRegExpSrc = "/\\d+/";
                 if (typeof classAvg === "number") {
                     this.#classAvg = classAvg <= 20 ? (classAvg >= 0 ? classAvg : 0) : 20;
                 }
-                else if (classAvg.match(RegExp(nbRegExpSrc))) {
+                else if (!isNaN(parseFloat(classAvg))) {
                     this.#classAvg = parseFloat(classAvg) <= 20 ? (parseFloat(classAvg) >= 0 ? parseFloat(classAvg) : 0) : 20;
                 }
             }
@@ -1493,8 +632,6 @@ const intRegExpSrc = "/\\d+/";
              * @param {number|string|undefined} value 
              */
             set classAvg(value) {
-                ParameterTypeError.verifyParams(arguments, ["number|string|undefined"], Object.getOwnPropertyDescriptors(Grade.prototype).classAvg.set, Grade)
-
                 if (typeof value === "string") { value = parseInt(value); }
 
                 this.#classAvg = (!value || isNaN(value)) ? NaN : ( (value) <= 20 ? (value >= 0 ? value : 0) : 20 );
@@ -1635,7 +772,6 @@ const intRegExpSrc = "/\\d+/";
              * @param {Grade | string} grade The {@link Grade} (or its unique descriptor string) ***this*** {@link Grade} should correspond to.
              */
             correspondsTo(grade) {
-                ParameterTypeError.verifyParams(arguments, [Grade, "string"], Grade.prototype.correspondsTo, Grade);
                 var out = false;
 
                 if (grade instanceof Grade) out = this.getUniqueIdentifier() === grade.getUniqueIdentifier();
@@ -1655,8 +791,6 @@ const intRegExpSrc = "/\\d+/";
              * @param {Grade[]} grades Array of {@link Grade}s to calculate the weighted average from.
              */
             static average(...grades) {
-                ParameterTypeError.verifyParams(arguments, [Grade.name+"[]|"+Grade.name], Grade.average, Grade);
-
                 if (grades instanceof Array) {
                     let validArrayOfGrades = true, average = 0, totalCoef = 0;
 
@@ -1684,8 +818,6 @@ const intRegExpSrc = "/\\d+/";
              * @param {Grade[]} grades Array of {@link Grade}s to calculate the weighted class average from.
              */
             static classAverage(...grades) {
-                ParameterTypeError.verifyParams(arguments, [Grade.name+"[]|"+Grade.name], Grade.classAverage, Grade);
-
                 let average = 0, totalCoef = 0, i = -1;
 
                 for (const grade of grades) {
@@ -2630,8 +1762,6 @@ const intRegExpSrc = "/\\d+/";
              * @returns {Subject} The subject of ***this*** {@link Module}.
              */
             getSubject(subject) {
-                ParameterTypeError.verifyParams(arguments, [Subject.name+"|string"], Module.prototype.getSubject, Module);
-
                 Object.values(this.#subjects).forEach(subj => {
                     if (subject instanceof Subject && subject.equals(subj)) return subj;
                     else if (typeof subject === "string" && subject === subj.name) return subj;
@@ -2650,8 +1780,6 @@ const intRegExpSrc = "/\\d+/";
              * @param {Subject|string} subject The {@link Subject} (or its name) belonging to ***this*** {@link Module}.
              */
             hasSubject(subject) {
-                ParameterTypeError.verifyParams(arguments, [Subject.name+"|string"], Module.prototype.hasSubject, Module);
-
                 try {
                     this.getSubject(subject);
                     return true;
@@ -2695,7 +1823,6 @@ const intRegExpSrc = "/\\d+/";
              * @returns {Module} ***this*** {@link Module}.
              */
             removeSubject(...subjects) {
-                ParameterTypeError.verifyParams(arguments, ["("+Subject.name+"|string"+")[]"], Module.prototype.removeSubject, Module)
                 subjects = subjects.flat();
 
                 subjects.forEach(subject => {
@@ -2720,9 +1847,6 @@ const intRegExpSrc = "/\\d+/";
              * @param {boolean} [recomputeSubjects=true] `true` if the stats of the {@link Subject}s of ***this*** {@link Semester} has to be computed, `false` otherwise.
              */
             computeStats(recomputeSubjects=true) {
-
-                ParameterTypeError.verifyParams(arguments, ["boolean"], Subject.prototype.computeStats, Subject);
-
                 //#region
                 let
                     /** @type {Grade[]} */      grades                          = [],
@@ -3066,8 +2190,6 @@ const intRegExpSrc = "/\\d+/";
             /** Array of the {@link Subject}s in ***this*** {@link Semester}. @type {Object.<string, Subject>} */
             get subjects()    { return this.#subjects }
             set subjects(value) {
-                ParameterTypeError.verifyParams(arguments, ["{string: "+Subject.name+"}"], "set Semester.subjects", Semester);
-
                 this.#subjects = value;
             }
 
@@ -3184,8 +2306,6 @@ const intRegExpSrc = "/\\d+/";
              * @returns {Module}
              */
             getModule(module) {
-                ParameterTypeError.verifyParams(arguments, [Module.name+"|string"], Semester.prototype.getModule, Semester)
-
                 for (const mod of Object.values(this.#modules)) {
                     if (module instanceof Module && module.equals(mod)) return mod;
                     else if (typeof module === "string" && module === mod.name) return mod;
@@ -3204,8 +2324,6 @@ const intRegExpSrc = "/\\d+/";
              * @returns {boolean}
              */
             hasModule(module) {
-                ParameterTypeError.verifyParams(arguments, [Module.name+"|string"], Semester.prototype.hasModule, Semester)
-
                 try {
                     this.getModule(module);
                     return true;
@@ -3249,11 +2367,6 @@ const intRegExpSrc = "/\\d+/";
              * @returns {boolean}
              */
             hasSubject(subject, module=undefined) {
-                ParameterTypeError.verifyParams(arguments, [
-                    Subject.name+"|string", 
-                    Module.name+"|string|undefined"
-                ], Semester.prototype.hasSubject, Semester);
-
                 try {
                     this.getSubject(subject, module);
                     return true;
@@ -3644,7 +2757,6 @@ const intRegExpSrc = "/\\d+/";
          * @param {Subject} subject The {@link Subject} to create a {@link SubjectCard} from.
          */
         constructor(subject) {
-            ParameterTypeError.verifyParams(arguments, [Subject], SubjectCard, SubjectCard);
             const moduleName    = subject.module instanceof Module ? subject.module.name : subject.module;
             const semesterName  = subject.semester instanceof Semester ? subject.semester.number : subject.semester;
 
@@ -3714,7 +2826,6 @@ const intRegExpSrc = "/\\d+/";
          * @param {Module} module The {@link Module} to create a {@link ModuleCard} from.
          */
         constructor(module) {
-            ParameterTypeError.verifyParams(arguments, [Module], ModuleCard, ModuleCard);
             const semesterName  = module.semester instanceof Semester ? module.semester.number : module.semester;
 
             super("module-card", "module-card-"+module.name.replaceSpacesWithDashes()+"-in-semester-"+semesterName);
