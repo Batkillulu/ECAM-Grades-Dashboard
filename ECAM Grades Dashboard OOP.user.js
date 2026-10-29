@@ -209,7 +209,7 @@
 
 
 
-    //MARK:                 — internals —
+    // MARK:                 — internals —
     //#region
 
         /**
@@ -365,7 +365,7 @@ const intRegExpSrc = "/\\d+/";
 
 
 //#region — BACKEND —
-//MARK: ——————————————————
+// MARK: ——————————————————
 
 
 
@@ -391,7 +391,7 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-        //MARK:                — static config —
+        // MARK:                — static config —
         //#region
 
             static active = true;
@@ -413,7 +413,7 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-        //MARK:           — instance properties —
+        // MARK:           — instance properties —
         //#region
 
             /** @type {Error | undefined} */
@@ -432,7 +432,7 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-        //MARK:               — constructor —
+        // MARK:               — constructor —
         /**
          * @param {*}                               actualValue The offending value.
          * @param {ParameterTypeError.AllowedType}  allowedTypes What it was supposed to be.
@@ -470,7 +470,7 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-        //MARK:              — encapsulation —
+        // MARK:              — encapsulation —
         //#region
 
             get cause() { return this.#cause; }
@@ -484,7 +484,7 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-        //MARK:             — public methods —
+        // MARK:             — public methods —
         //#region
 
 
@@ -566,7 +566,7 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-        //MARK:              — type matching —
+        // MARK:              — type matching —
         //#region
 
 
@@ -789,7 +789,7 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-        //MARK:       — type-expression parsing —
+        // MARK:       — type-expression parsing —
         //#region
 
 
@@ -1076,7 +1076,7 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-        //MARK:               — misc internals —
+        // MARK:               — misc internals —
         //#region
 
 
@@ -1248,21 +1248,21 @@ const intRegExpSrc = "/\\d+/";
 
             /** 
              * The {@link Subject} of ***this*** {@link Grade}. 
-             * @type {Subject | string | undefined}
+             * @type {Subject}
              */
-            #subject = undefined;
+            #subject;
 
             /** 
              * The {@link Module} of ***this*** {@link Grade}. 
-             * @type {Module | string | undefined}
+             * @type {Module}
              */
-            #module = undefined;
+            #module;
 
             /** 
              * The {@link Semester} of ***this*** {@link Grade}. 
-             * @type {Semester | number | undefined}
+             * @type {Semester}
              */
-            #semester = undefined;
+            #semester;
 
             /** 
              * Value of the coefficient of ***this*** {@link Grade} in its {@link Subject}, a positive float number below 100, in %. 
@@ -1292,7 +1292,7 @@ const intRegExpSrc = "/\\d+/";
 
             /** 
              * Value of the class' average of ***this*** {@link Grade}, a positive float number below 20 
-             * @type {number|undefined}
+             * @type {number}
              */
             #classAvg = NaN;
 
@@ -1354,76 +1354,22 @@ const intRegExpSrc = "/\\d+/";
          *
          * @param {number|string}                       grade       Value of ***this*** {@link Grade}, a positive float number below 20.
          * @param {number|string}                       coef        Value of the coefficient of ***this*** {@link Grade} in its {@link Subject}, a positive float number below 100, as a %.
-         * @param {Subject|string|undefined}            subject     The {@link Subject} ***this*** {@link Grade} will belong to.
+         * @param {Subject}                             subject     The {@link Subject} ***this*** {@link Grade} will belong to.
          * @param {string|undefined}                    title       Title of ***this*** {@link Grade}. Default value is " — ".
          * @param {boolean|undefined}                   isSim       `true` if ***this*** {@link Grade} is a simulated grade, `false` otherwise. `false` by default.
          * @param {number|string|undefined}             classAvg    Value of the class' average of ***this*** {@link Grade}, a positive float number below 20. Default value is " — ".
          * @param {string|undefined}                    prof        Name of the teacher.s who published ***this*** {@link Grade}. Default value is " — ".
          * @param {string|undefined}                    date        Date of publication of ***this*** {@link Grade} entered by the administration. Default value is " — ". ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet*.
-         * @param {Semester|number|string|undefined}    semester    The {@link Semester} ***this*** {@link Grade} will belong to. Default is "?".
-         * @param {Module|string|undefined}             module      The {@link Module} ***this*** {@link Grade} will belong to. Default is "undefined".
          * @param {number|undefined}                    id          An id number for a simulated grade, built from the time stamp of its creation. The id is guaranted to be unique.
          */
-        constructor(grade, coef, subject=undefined, title=" — ", isSim=false, classAvg=undefined, prof=" — ", date=" — ", semester="?", module=undefined, id=undefined) {
-
-            ParameterTypeError.verifyParams(arguments, [
-                "number | "+nbRegExpSrc,
-                "number | "+nbRegExpSrc,
-                Subject.name+" | string | undefined",
-                "string | undefined",
-                "boolean | undefined",
-                "number | "+nbRegExpSrc+" | \" — \" | undefined",
-                "string | undefined",
-                "string | undefined",
-                Semester.name+" | "+intRegExpSrc+" | number | undefined",
-                Module.name+" | string | undefined",
-                "number | "+intRegExpSrc+" | undefined"
-            ], Grade, Grade)
-
-
+        constructor(grade, coef, subject, title=" — ", isSim=false, classAvg=undefined, prof=" — ", date=" — ", id=undefined) {
             this.#grade = typeof grade === "number" ? (grade <= 20 ? (grade >= 0 ? Number(grade) : 0) : 20) : parseFloat(grade);
             this.#coef  = typeof coef === "number" ? (coef <= 100 ? (coef  >= 0 ? Number(coef)  : 0) : 100) : parseFloat(coef);
 
 
-            if (subject instanceof Subject) {
-                this.#subject = subject;
-
-                if (module) {
-                    if (module === this.#subject.module) { this.#module = module; }
-                    else { throw new Error("Given "+Module.name+" does not correspond to the given "+Subject.name+"'s own "+Module.name+".") }
-                }
-                else { this.#module = this.#subject.module; }
-
-                if (semester) {
-                    if (semester === this.#subject.semester) { this.#semester = semester; }
-                    else { throw new Error("Given "+Semester.name+" does not correspond to the given "+Subject.name+"'s own "+Semester.name+".") }
-                }
-                else { this.#semester = this.#subject.semester; }
-            }
-            else if (typeof subject === "string") {
-                if (module) {
-                    if (typeof module === "string") { this.#module = module; }
-                    else { throw new Error("When giving the name of a subject instead of the "+Subject.name+", the module argument may not be a "+Module.name+", only a string.") }
-                }
-
-                if (semester) {
-                    if (typeof semester === "number") { this.#semester = semester; }
-                    else if (typeof semester === "string" && parseInt(semester)) { this.#semester = parseInt(semester); }
-                    else { throw new Error("When giving the name of a subject instead of the "+Subject.name+", the module argument may not be a "+Semester.name+", only a string.") }
-                }
-            }
-            else {
-                if (module) {
-                    if (typeof module === "string") { this.#module = module; }
-                    else { throw new Error("Without a "+Subject.name+" being given, the module argument may not be a "+Module.name+", only a string.") }
-                }
-
-                if (semester) {
-                    if (typeof semester === "number") { this.#semester = semester; }
-                    else if (typeof semester === "string" && parseInt(semester)) { this.#semester = parseInt(semester); }
-                    else { throw new Error("Without a "+Subject.name+" being given, the module argument may not be a "+Semester.name+", only a string.") }
-                }
-            }
+            this.#subject   = subject;
+            this.#module    = subject.module;
+            this.#semester  = subject.semester;
 
 
             this.#title = title;
@@ -1515,11 +1461,8 @@ const intRegExpSrc = "/\\d+/";
              * The {@link Semester} of ***this*** {@link Grade}.
              */
             get semester()  { return this.#semester }
-            /**
-             * @param {string | number | Semester | undefined} value
-             */
             set semester(value) {
-                this.#semester = typeof value === "string" ? parseInt(value) : value;
+                this.#semester = value;
             }
 
             /** 
@@ -1554,7 +1497,7 @@ const intRegExpSrc = "/\\d+/";
 
                 if (typeof value === "string") { value = parseInt(value); }
 
-                this.#classAvg = (!value || isNaN(value)) ? undefined : ( (value) <= 20 ? (value >= 0 ? value : 0) : 20 );
+                this.#classAvg = (!value || isNaN(value)) ? NaN : ( (value) <= 20 ? (value >= 0 ? value : 0) : 20 );
             }
 
             /** 
@@ -1652,102 +1595,6 @@ const intRegExpSrc = "/\\d+/";
                     this.#subject + "\\" +
                     this.#title
                 ;
-            }
-
-
-
-            // MARK: _  static fromString()
-            /**
-             *
-             * @param {string} string
-             */
-            static fromString(string) {
-                const delimit = Grade.gradePathSeparator;
-                const semRegExp             = new RegExp(`(?<semester>[^(${ delimit})]+)${delimit}`);
-                const modRegExp             = new RegExp(`(?<module>[^(${   delimit})]+)${delimit}`);
-                const subjRegExp            = new RegExp(`(?<subject>[^(${  delimit})]+)${delimit}`);
-                const titleRegExp           = /(?<title>.+) :/;
-                const gradeRegExp           = /(?<grade>\d{1,2}(?:\.\d{1,2})?)\/20 vs /;
-                const classAvgRegExp        = /(?<classAvg>(?:\d{1,2}(?:\.\d{1,2})?)| — )\/20, /;
-                const coefRegExp            = /(?<coef>\d{1,2}(?:\.\d{1,2})?)% /;
-                const idRegExp              = /(\((?<id>\d+)\) )?/;
-                const profRegExp            = /(\((?<prof>[^\)]+)\) )?/;
-                const dateRegExp            = /\((?<date>[^\)]+)\) /;
-                const enabledRegExp         = /\[(?<enabled>ON|OFF)/;
-                const markedAsReadRegExp    = /(?<markedAsRead>, UNREAD)?\]/;
-
-                const regExp = new RegExp(
-                    semRegExp.source
-                    +modRegExp.source
-                    +subjRegExp.source
-                    +titleRegExp.source
-                    +gradeRegExp.source
-                    +classAvgRegExp.source
-                    +coefRegExp.source
-                    +idRegExp.source
-                    +profRegExp.source
-                    +dateRegExp.source
-                    +enabledRegExp.source
-                    +markedAsReadRegExp.source
-                );
-
-
-                /**
-                 * @type { RegExpMatchArray | null }
-                 */
-                // const match = string.match(/(?:(.+)(?:\/\/\\(.+))(?:\/\/\\(.+))(?:\/\/\\(.+))) : (\d{1,2}(?:\.\d{1,2})?)\/20 vs ((?:\d{1,2}(?:\.\d{1,2})?)| — )\/20, (\d{1,2}(?:\.\d{1,2})?)%(?: \((\d+)\))? \[(ON|OFF)(?:, (UNREAD))?\]/);
-                const match = string.match(regExp);
-
-                if (match) {
-                    // const grade = new Grade(
-                    //     parseFloat(match[5]),
-                    //     parseFloat(match[7]),
-                    //     match[3],
-                    //     match[4],
-                    //     !isNaN(parseInt(match[8])),
-                    //     parseFloat(match[6]),
-                    //     undefined,
-                    //     undefined,
-                    //     parseInt(match[1]),
-                    //     match[2],
-                    //     parseInt(match[8])
-                    // );
-                    // parsedGrade.enabled       = match[9]  === "ON";
-                    // parsedGrade.markedAsRead  = match[10] !== "UNREAD";
-
-                    const semester      = typeof match?.groups?.semester === "string" ? parseInt(match?.groups?.semester) : undefined;
-                    const module        = match?.groups?.module || Module.unclassified;
-                    const subject       = match?.groups?.subject;
-                    const title         = match?.groups?.title;
-                    const grade         = parseFloat(match?.groups?.grade || "NaN");
-                    const classAvg      = parseFloat(match?.groups?.classAvg || "NaN");
-                    const coef          = parseFloat(match?.groups?.coef || "NaN");
-                    const id            = parseFloat(match?.groups?.id || "NaN");
-                    const isSim         = !isNaN(id);
-                    const prof          = match?.groups?.prof;
-                    const date          = match?.groups?.date;
-                    const enabled       = (match?.groups?.enabled === "ON" || match?.groups?.enabled === "OFF") ? (match?.groups?.enabled === "ON") : true;
-                    const markedAsRead  = match?.groups?.markedAsRead === ", UNREAD";
-
-                    const parsedGrade = new Grade(
-                        grade,
-                        coef,
-                        subject,
-                        title,
-                        isSim,
-                        classAvg,
-                        prof,
-                        date,
-                        semester,
-                        module,
-                        id
-                    );
-
-                    parsedGrade.enabled       = enabled;
-                    parsedGrade.markedAsRead  = markedAsRead;
-
-                    return parsedGrade;
-                }
             }
 
 
@@ -1875,7 +1722,7 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-        //MARK:                  — properties —
+        // MARK:                  — properties —
         //#region 
 
 
@@ -1913,13 +1760,13 @@ const intRegExpSrc = "/\\d+/";
 
             /** 
              * Name of the module of ***this*** {@link Subject}. 
-             * @type {Module | string | undefined} 
+             * @type {Module} 
              */
             #module;
 
             /**
              * The {@link Semester} (or its number) of ***this*** {@link Subject}. 
-             * @type {Semester | number | undefined} 
+             * @type {Semester} 
              */
             #semester;
 
@@ -2018,41 +1865,31 @@ const intRegExpSrc = "/\\d+/";
         /**
          * Constructs an object of class {@link Subject}.
          *
-         * The array of {@link Grade}s may be empty/undefined, in this case, the next parameters `name` and `module` **must** be provided. This will create a simulated subject.
-         *
-         *
-         * @param {string}                      name                            Name to give to ***this*** {@link Subject}.
-         * @param {number}                      [coef=100]                      Coefficient of ***this*** {@link Subject} in its {@link Module}, a positive float number below 100, as a %. Default value is 100.
-         * @param {Module|Semester|undefined}   [moduleOrSemester=undefined]    The {@link Module} ***this*** {@link Subject} will belong to, or the {@link Semester} whose undefined {@link Module} ***this*** {@link Module} will belong to.
+         * @param {string}              name                Name to give to ***this*** {@link Subject}.
+         * @param {Module|Semester}     moduleOrSemester    The {@link Module} ***this*** {@link Subject} will belong to, or the {@link Semester} whose undefined {@link Module} ***this*** {@link Subject} will belong to.
+         * @param {number}              [coef=100]          Coefficient of ***this*** {@link Subject} in its {@link Module}, a positive float number below 100, as a %. Default value is 100.
          */
-        constructor(name, coef=100, moduleOrSemester=undefined) {
-            ParameterTypeError.verifyParams(arguments, [
-                "string",
-                "number|"+nbRegExpSrc+"|undefined",
-                Module.name+"|"+Semester.name+"|undefined"
-            ], Subject, Subject);
-
+        constructor(name, moduleOrSemester, coef=100) {
             this.#name      = name;
-            this.#coef      = coef <= 100 ? (coef >= 0 ? Number(coef) : 0) : 100;
+            this.#coef      = coef <= 100 ? (coef >= 0 ? coef : 0) : 100;
 
             if (moduleOrSemester instanceof Module) {
                 const module = moduleOrSemester;
                 this.#semester  = module.semester;
                 this.#module    = module;
-                this.#module.addSubjects(this);
             }
-            else if (moduleOrSemester instanceof Semester) {
+            else {
                 const semester = moduleOrSemester;
                 this.#semester  = semester;
                 this.#module    = semester.undefinedModule;
-                this.#module.addSubjects(this);
             }
+            this.#module.addSubjects(this);
 
             this.#subjectCard = new SubjectCard(this);
         }
 
 
-        //MARK:               — encapsulation —
+        // MARK:               — encapsulation —
         //#region 
 
             /**
@@ -2099,7 +1936,7 @@ const intRegExpSrc = "/\\d+/";
             /**
              * The {@link Semester} (or its number) of ***this*** {@link Subject}.
              */
-            get semester()  { return this.#semester instanceof Semester ? this.#semester : undefined }
+            get semester()  { return this.#semester }
             set semester(value) {
                 this.#semester = value;
             }
@@ -2182,7 +2019,7 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-        //MARK:                   — methods —
+        // MARK:                   — methods —
         //#region 
 
 
@@ -2237,25 +2074,17 @@ const intRegExpSrc = "/\\d+/";
              * @returns {Subject} ***this*** {@link Subject}.
              */
             addGrade(...grades) {
-                ParameterTypeError.verifyParams(arguments, [Grade.name+"[]|[]"])
-
                 for (const grade of grades) {
                     grade.subject = this;
                     grade.module = this.#module;
                     grade.semester = this.#semester;
 
                     this.#grades.push(grade);
-
-                    if (this.#module instanceof Module) {
-                        this.#module.grades.push(grade);
-                    }
-                    if (this.#semester instanceof Semester) {
-                        this.#semester.grades.push(grade);
-                    }
                 }
 
 
-                return this;
+                
+                return this.computeStats();
             }
 
 
@@ -2341,6 +2170,8 @@ const intRegExpSrc = "/\\d+/";
 
                 this.#average   = Grade.average(...this.#grades);
                 this.#classAvg  = Grade.classAverage(...this.#grades);
+
+                return this;
             }
 
         //#endregion — methods —
@@ -2364,7 +2195,7 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-        //MARK:                 — properties —
+        // MARK:                 — properties —
         //#region 
 
 
@@ -2377,7 +2208,7 @@ const intRegExpSrc = "/\\d+/";
 
             /** 
              * The {@link Semester} of ***this*** {@link Module}, or its number. 
-             * @type {Semester | number | undefined} 
+             * @type {Semester} 
              */
             #semester;
 
@@ -2556,24 +2387,20 @@ const intRegExpSrc = "/\\d+/";
          * Constructs an object of class {@link Module} from its given name and .
          * Automatically adds the constructed {@link Module} to its {@link Semester}'s {@link Semester.modules}.
          *
-         * @param {string}              name                    Name of ***this*** {@link Module}.
-         * @param {Semester|undefined}  [semester=undefined]    The {@link Semester} ***this*** {@link Module} will belong to.
+         * @param {string}      name        Name of ***this*** {@link Module}.
+         * @param {Semester}    semester    The {@link Semester} ***this*** {@link Module} will belong to.
          */
         constructor(name, semester) {
-            ParameterTypeError.verifyParams(arguments, ["string", Semester.name+"|undefined"], Module, Module)
-
             this.#name = name;
 
-            if (semester !== undefined) {
-                this.#semester = semester;
-                semester.addModules(this);
-            }
+            this.#semester = semester;
+            semester.addModules(this);
 
             this.#moduleCard = new ModuleCard(this);
         }
 
 
-        //MARK:               — encapsulation —
+        // MARK:               — encapsulation —
         //#region 
 
             /**
@@ -2754,7 +2581,7 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-        //MARK:                  — methods —
+        // MARK:                  — methods —
         //#region 
 
 
@@ -2847,18 +2674,14 @@ const intRegExpSrc = "/\\d+/";
              * @returns {Module} ***this*** {@link Module}.
              */
             addSubjects(...subjects) {
-                ParameterTypeError.verifyParams(arguments, [Subject.name+"[]"], Module.prototype.addSubjects, Module)
                 subjects = subjects.flat();
 
                 subjects.forEach(subject => {
                     this.#subjects[subject.name] = subject;
-
-                    if (this.#semester instanceof Semester) {
-                        this.#semester.subjects[subject.name] = subject;
-                    }
+                    this.#semester.subjects[subject.name] = subject;
                 })
 
-                return this;
+                return this.computeStats();
             }
 
 
@@ -3000,6 +2823,8 @@ const intRegExpSrc = "/\\d+/";
 
                 this.#average    = Grade.average(...this.grades);
                 this.#classAvg   = Grade.classAverage(...this.grades);
+
+                return this;
             }
 
         //#endregion — methods —
@@ -3023,7 +2848,7 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-        //MARK:                 — properties —
+        // MARK:                 — properties —
         //#region 
 
 
@@ -3165,6 +2990,15 @@ const intRegExpSrc = "/\\d+/";
             #semesterCard;
 
 
+
+
+            /**
+             * Fallback semester.
+             * @readonly
+             */
+            static unknownSemester = new Semester(-1);
+
+
         //#endregion — properties —
 
 
@@ -3179,8 +3013,6 @@ const intRegExpSrc = "/\\d+/";
          * @param {number|string} number
          */
         constructor(number) {
-            ParameterTypeError.verifyParams(arguments, ["number|"+intRegExpSrc], Semester, Semester);
-
             this.#number = typeof number === "string" ? parseInt(number) : number;
 
             this.#undefinedModule = new Module(Module.unclassified, this);
@@ -3189,7 +3021,7 @@ const intRegExpSrc = "/\\d+/";
         }
 
 
-        //MARK:               — encapsulation —
+        // MARK:               — encapsulation —
         //#region 
 
 
@@ -3307,7 +3139,7 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-        //MARK:                  — methods —
+        // MARK:                  — methods —
         //#region 
 
 
@@ -3392,12 +3224,6 @@ const intRegExpSrc = "/\\d+/";
              * @returns {Subject}
              */
             getSubject(subject, module=undefined) {
-                ParameterTypeError.verifyParams(arguments, [
-                    Subject.name+"|string", 
-                    Module.name+"|string|undefined"
-                ], Semester.prototype.getSubject, Semester);
-
-
                 if (module instanceof Module)   return module.getSubject(subject);
                 if (module !== undefined)       return this.getModule(module).getSubject(subject);
 
@@ -3442,20 +3268,16 @@ const intRegExpSrc = "/\\d+/";
              * Adds the {@link Module}.s to ***this*** {@link Semester}.
              * @param {Module[]} modules The {@link Module}.s (or its/their name) to add to ***this*** {@link Semester}.
              *
-             * @returns {Object.<string, Module>} The {@link Module}s added to ***this*** {@link Semester}.
+             * @returns {Semester} ***This*** {@link Semester}.
              */
             addModules(...modules) {
-                ParameterTypeError.verifyParams(arguments, [Module.name+"[]|[]"], Semester.prototype.addModules, Semester);
                 modules = modules.flat();
-
-                /** @type {Object.<string, Module>} */ const out = {};
 
                 modules.forEach(module => {
                     this.#modules[module.name] = module;
-                    out[module.name] = module;
                 })
 
-                return out;
+                return this.computeStats();
             }
 
 
@@ -3501,9 +3323,6 @@ const intRegExpSrc = "/\\d+/";
              * @param {boolean} [recomputeModules=true] `true` if the stats of the {@link Module}s of ***this*** {@link Semester} has to be computed, `false` otherwise.
              */
             computeStats(recomputeSubjects=true, recomputeModules=true) {
-
-                ParameterTypeError.verifyParams(arguments, ["boolean", "boolean"], Semester.prototype.computeStats, Semester);
-
                 //#region
                 let
                     /** @type {Object.<string, Subject>} Keys are the name of the corresponding Subject value. */ subjectsBelow100          = {},
@@ -3585,6 +3404,8 @@ const intRegExpSrc = "/\\d+/";
 
                 this.#average    = Grade.average(...this.grades);
                 this.#classAvg   = Grade.classAverage(...this.grades);
+
+                return this;
             }
 
         //#endregion — methods —
@@ -3677,7 +3498,7 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-//MARK: ——————————————————
+// MARK: ——————————————————
 //#endregion
 
 
@@ -3695,7 +3516,7 @@ const intRegExpSrc = "/\\d+/";
 
 
 //#region — FRONTEND —
-//MARK: ——————————————————
+// MARK: ——————————————————
 
 
 
@@ -3722,14 +3543,14 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-        //MARK:                  — properties —
+        // MARK:                  — properties —
         //#region 
 
             /** The {@link HTMLElement} linked to ***this*** {@link Card}. @type {HTMLElement} */
             #html;
 
 
-        //#endregion .                — properties —
+        //#endregion                  — properties —
 
 
 
@@ -3758,19 +3579,21 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-        //#region .             — encapsulation —
+        // MARK:               — encapsulation —
+        //#region 
 
             /** The {@link HTMLElement} linked to ***this*** {@link Card}. @type {HTMLElement} @readonly Outside of its class methods */
             get html() { return this.#html; }
 
 
-        //#endregion .             — encapsulation —
+        //#endregion               — encapsulation —
 
 
 
 
 
-        //#region .                 — methods —
+        // MARK:                   — methods —
+        //#region 
 
             render() {
 
@@ -3794,7 +3617,7 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-        //MARK:                  — properties —
+        // MARK:                  — properties —
         //#region 
 
 
@@ -3831,7 +3654,7 @@ const intRegExpSrc = "/\\d+/";
         }
 
 
-        //MARK:               — encapsulation —
+        // MARK:               — encapsulation —
         //#region 
 
 
@@ -3853,7 +3676,7 @@ const intRegExpSrc = "/\\d+/";
             get semester() { return this.#semester }
 
 
-        //#endregion .             — encapsulation —
+        //#endregion               — encapsulation —
 
 
 
@@ -3869,7 +3692,8 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-        //#region .                — properties —
+        // MARK:                  — properties —
+        //#region 
 
 
             /** The {@link Module} corresponding to ***this*** {@link ModuleCard}. @type {Module} @readonly */
@@ -3879,13 +3703,13 @@ const intRegExpSrc = "/\\d+/";
             #semester;
 
 
-        //#endregion .                — properties —
+        //#endregion                  — properties —
 
 
 
 
 
-        // MARK: .               — constructor —
+        // MARK:                 — constructor —
         /**
          * @param {Module} module The {@link Module} to create a {@link ModuleCard} from.
          */
@@ -3900,7 +3724,8 @@ const intRegExpSrc = "/\\d+/";
         }
 
 
-        //#region .             — encapsulation —
+        // MARK:               — encapsulation —
+        //#region 
 
 
             /**
@@ -3912,7 +3737,7 @@ const intRegExpSrc = "/\\d+/";
             get semester() { return this.#semester }
 
 
-        //#endregion .             — encapsulation —
+        //#endregion               — encapsulation —
 
 
         // MARK: ——————————————————
@@ -3927,20 +3752,21 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-        //#region .                — properties —
+        // MARK:                  — properties —
+        //#region 
 
 
             /** The {@link Semester} corresponding to ***this*** {@link SemesterCard}. @type {Semester} @readonly */
             #semester;
 
 
-        //#endregion .                — properties —
+        //#endregion                   — properties —
 
 
 
 
 
-        // MARK: .               — constructor —
+        // MARK:                 — constructor —
         /**
          * @param {Semester} semester The {@link Semester} to create a {@link SemesterCard} from.
          * @throws {TypeError} if a parameter isn't of the expected type.
@@ -3953,7 +3779,8 @@ const intRegExpSrc = "/\\d+/";
         }
 
 
-        //#region .             — encapsulation —
+        // MARK:               — encapsulation —
+        //#region 
 
 
             /**
@@ -3961,7 +3788,7 @@ const intRegExpSrc = "/\\d+/";
             get semester() { return this.#semester }
 
 
-        //#endregion .             — encapsulation —
+        //#endregion                — encapsulation —
     }
 
 //#endregion FRONTEND
@@ -3970,7 +3797,7 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-//MARK: ——————————————————
+// MARK: ——————————————————
 //#endregion
 
 
@@ -3985,7 +3812,7 @@ const intRegExpSrc = "/\\d+/";
 
 
 
-//MARK: ——————————————————
+// MARK: ——————————————————
 ;
 
 
@@ -4092,7 +3919,7 @@ class ECAMDashboard {
 
 
 
-    //#endregion .                — properties —
+    //#endregion                  — properties —
 
 
 
@@ -4134,7 +3961,7 @@ class ECAMDashboard {
                         const prof      = cells[4].textContent.trim();
                         const date      = cells[5].textContent.trim();
                         const semMatch  = label.match(/Semester\s+(\d+)/i);
-                        const semester  = semMatch ? parseInt(semMatch[1]) : undefined;
+                        const semester  = semMatch ? parseInt(semMatch[1]) : Semester.unknownSemester;
                         const parts     = label.split(" - ").map(p => p.trim());
                         const subject   = parts.length >= 3 ? parts.slice(1,-1).join(" - ") : label;
                         const title     = parts.length >= 2 ? parts.at(-1) : "";
@@ -4143,12 +3970,13 @@ class ECAMDashboard {
                             grade, 
                             coef, 
                             subject, 
+                            Module.unclassified, 
+                            semester, 
                             title, 
                             false, 
                             classAvg, 
                             prof, 
                             date, 
-                            semester,
                             undefined
                         )
                     }
@@ -4172,6 +4000,102 @@ class ECAMDashboard {
             this.computeAllStats();
 
             return this;
+        }
+
+
+
+
+
+        // MARK: _  gradeFromString()
+        /**
+         * 
+         * @param {string} string 
+         */
+        gradeFromString(string) {
+            const delimit = Grade.gradePathSeparator;
+            const semRegExp             = new RegExp(`(?<semester>[^(${ delimit})]+)${delimit}`);
+            const modRegExp             = new RegExp(`(?<module>[^(${   delimit})]+)${delimit}`);
+            const subjRegExp            = new RegExp(`(?<subject>[^(${  delimit})]+)${delimit}`);
+            const titleRegExp           = /(?<title>.+) :/;
+            const gradeRegExp           = /(?<grade>\d{1,2}(?:\.\d{1,2})?)\/20 vs /;
+            const classAvgRegExp        = /(?<classAvg>(?:\d{1,2}(?:\.\d{1,2})?)| — )\/20, /;
+            const coefRegExp            = /(?<coef>\d{1,2}(?:\.\d{1,2})?)% /;
+            const idRegExp              = /(\((?<id>\d+)\) )?/;
+            const profRegExp            = /(\((?<prof>[^\)]+)\) )?/;
+            const dateRegExp            = /\((?<date>[^\)]+)\) /;
+            const enabledRegExp         = /\[(?<enabled>ON|OFF)/;
+            const markedAsReadRegExp    = /(?<markedAsRead>, UNREAD)?\]/;
+
+            const regExp = new RegExp(
+                semRegExp.source
+                +modRegExp.source
+                +subjRegExp.source
+                +titleRegExp.source
+                +gradeRegExp.source
+                +classAvgRegExp.source
+                +coefRegExp.source
+                +idRegExp.source
+                +profRegExp.source
+                +dateRegExp.source
+                +enabledRegExp.source
+                +markedAsReadRegExp.source
+            );
+
+
+            /**
+             * @type { RegExpMatchArray | null }
+             */
+            // const match = string.match(/(?:(.+)(?:\/\/\\(.+))(?:\/\/\\(.+))(?:\/\/\\(.+))) : (\d{1,2}(?:\.\d{1,2})?)\/20 vs ((?:\d{1,2}(?:\.\d{1,2})?)| — )\/20, (\d{1,2}(?:\.\d{1,2})?)%(?: \((\d+)\))? \[(ON|OFF)(?:, (UNREAD))?\]/);
+            const match = string.match(regExp);
+
+            if (match) {
+                // const grade = new Grade(
+                //     parseFloat(match[5]),
+                //     parseFloat(match[7]),
+                //     match[3],
+                //     match[4],
+                //     !isNaN(parseInt(match[8])),
+                //     parseFloat(match[6]),
+                //     undefined,
+                //     undefined,
+                //     parseInt(match[1]),
+                //     match[2],
+                //     parseInt(match[8])
+                // );
+                // parsedGrade.enabled       = match[9]  === "ON";
+                // parsedGrade.markedAsRead  = match[10] !== "UNREAD";
+
+                const semester      = this.ensureSemester(typeof match?.groups?.semester === "string" ? parseInt(match?.groups?.semester) : NaN);
+                const module        = this.ensureModule(match?.groups?.module || "", semester);
+                const subject       = this.ensureSubject(match?.groups?.subject || "", module, semester);
+                const title         = match?.groups?.title;
+                const grade         = parseFloat(match?.groups?.grade || "NaN");
+                const classAvg      = parseFloat(match?.groups?.classAvg || "NaN");
+                const coef          = parseFloat(match?.groups?.coef || "NaN");
+                const id            = parseFloat(match?.groups?.id || "NaN");
+                const isSim         = !isNaN(id);
+                const prof          = match?.groups?.prof;
+                const date          = match?.groups?.date;
+                const enabled       = (match?.groups?.enabled === "ON" || match?.groups?.enabled === "OFF") ? (match?.groups?.enabled === "ON") : true;
+                const markedAsRead  = match?.groups?.markedAsRead === ", UNREAD";
+
+                const parsedGrade = new Grade(
+                    grade,
+                    coef,
+                    subject,
+                    title,
+                    isSim,
+                    classAvg,
+                    prof,
+                    date,
+                    id
+                );
+
+                parsedGrade.enabled       = enabled;
+                parsedGrade.markedAsRead  = markedAsRead;
+
+                return parsedGrade;
+            }
         }
 
 
@@ -4230,7 +4154,7 @@ class ECAMDashboard {
                             this.moduleConfig[sem].modules[module].__object__ = moduleObj;
 
                             Object.entries(this.moduleConfig[sem].modules[module].subjects).forEach(subjectEntry => {
-                                const subjectObj = this.ensureSubject(subjectEntry[0], subjectEntry[1].coefficient, moduleObj, semesterObj);
+                                const subjectObj = this.ensureSubject(subjectEntry[0], moduleObj, semesterObj, subjectEntry[1].coefficient);
                                 this.moduleConfig[sem].modules[module].subjects[subjectEntry[0]].__object__ = subjectObj;
                             })
                         })
@@ -4272,7 +4196,7 @@ class ECAMDashboard {
                                         if (subjectEntry[0] == "subjects") this.moduleConfig[sem].modules[moduleEntry[0]].__subjects__ = subjectEntry[1];
                                         else if (subjectEntry[0] == "coefficients") {
                                             Object.entries(subjectEntry[1]).forEach(entry => {
-                                                const subjectObj = this.ensureSubject(entry[0], entry[1], moduleObj, semesterObj);
+                                                const subjectObj = this.ensureSubject(entry[0], moduleObj, semesterObj, entry[1]);
 
                                                 this.moduleConfig[sem].modules[moduleEntry[0]].subjects[entry[0]] = {
                                                     "__object__": subjectObj,
@@ -4323,7 +4247,7 @@ class ECAMDashboard {
                     // ) || []; 
 
                     (localStorage.getItem(ECAMDashboard.cacheKeys.simGrades) || "" ).split(Grade.gradesSeparator).forEach(g => {
-                        const parsedGrade = Grade.fromString(g);
+                        const parsedGrade = this.gradeFromString(g);
                         if (parsedGrade) newSim.push(parsedGrade);
                     })
                 }
@@ -4363,13 +4287,13 @@ class ECAMDashboard {
                                         g.grade,
                                         g.coef,
                                         g.subject,
+                                        mod[0],
+                                        g.semester,
                                         g.type,
                                         g.__sim,
                                         g.classAvg === " — " ? undefined : g.classAvg,
                                         g.prof,
                                         g.date,
-                                        g.semester,
-                                        mod[0],
                                         g.id
                                     );
 
@@ -4406,36 +4330,23 @@ class ECAMDashboard {
             // MARK: _  getGrade()
             /**
              *
-             * @param {Grade|number|string} grade
-             * @param {number|string|undefined} coef
-             * @param {Subject|string|undefined} subject
-             * @param {string|undefined} title
-             * @param {boolean|undefined} isSim
-             * @param {number|string|undefined} classAvg
-             * @param {string|undefined} prof
-             * @param {string|undefined} date
-             * @param {Semester|number|string|undefined} semester
-             * @param {Module|string|undefined} module
-             * @param {number|string|undefined} id
+             * @param {Grade|number|string}                 grade
+             * @param {Subject|string}                      subj
+             * @param {Module|string|undefined}             module
+             * @param {Semester|number|string|undefined}    semester
+             * @param {number|string|undefined}             coef
+             * @param {string|undefined}                    title
+             * @param {boolean|undefined}                   isSim
+             * @param {number|string|undefined}             classAvg
+             * @param {string|undefined}                    prof
+             * @param {string|undefined}                    date
+             * @param {number|string|undefined}             id
              * 
              * @returns {Grade}
              * @throws {Error} If the grade is not known to ***this*** {@link ECAMDashboard}.
              */
-            getGrade(grade, coef=undefined, subject=undefined, title=undefined, isSim=undefined, classAvg=undefined, prof=undefined, date=undefined, semester=undefined, module=undefined, id=undefined) {
-                ParameterTypeError.verifyParams(arguments, [
-                    Grade.name+"|number|"+nbRegExpSrc,
-                    "number|"+nbRegExpSrc+"|undefined",
-                    "string|undefined",
-                    "string|undefined",
-                    "boolean|undefined",
-                    "number|"+nbRegExpSrc+"|undefined",
-                    "string|undefined",
-                    "string|undefined",
-                    Module.name+"|string|undefined",
-                    Semester.name+"|number|"+intRegExpSrc+"|undefined",
-                    "number|"+intRegExpSrc+"|undefined"
-                ], ECAMDashboard.prototype.getGrade, ECAMDashboard)
-
+            getGrade(grade, subj, module=undefined, semester=undefined, coef=undefined, title=undefined, isSim=undefined, classAvg=undefined, prof=undefined, date=undefined, id=undefined) {
+                const subject = this.getSubject(subj instanceof Subject ? subj.name : subj);
 
                 for (const g of this.grades) {
                     if (
@@ -4446,7 +4357,11 @@ class ECAMDashboard {
                             &&
                             g.coef === (typeof coef === "string" ? parseFloat(coef) : coef)
                             &&
-                            (g.subject instanceof Subject ? g.subject.name : g.subject) === (subject instanceof Subject ? subject.name : subject)
+                            g.subject.equals(subject)
+                            &&
+                            g.module.name === (module instanceof Module ? module.name : module)
+                            &&
+                            g.semester.number === (semester instanceof Semester ? semester.number : (typeof semester === "string" ? parseInt(semester) : semester))
                             &&
                             g.title === title
                             &&
@@ -4457,10 +4372,6 @@ class ECAMDashboard {
                             g.prof === prof
                             &&
                             g.date === date
-                            &&
-                            g.semester === (semester instanceof Semester ? semester.number : (typeof semester === "string" ? parseInt(semester) : semester))
-                            &&
-                            (g.module instanceof Module ? g.module.name : g.module) === (module instanceof Module ? module.name : module)
                             &&
                             g.id === (typeof id === "string" ? parseInt(id) : id)
                         )
@@ -4481,8 +4392,6 @@ class ECAMDashboard {
                             classAvg, 
                             prof, 
                             date, 
-                            semester, 
-                            module, 
                             typeof id === "string" ? parseInt(id) : id
                         ).toString()
                     ) 
@@ -4498,66 +4407,32 @@ class ECAMDashboard {
             /**
              *
              * @param {Grade|number|string} grade
+             * @param {Subject|string} subj
+             * @param {Module|string|undefined} mod
+             * @param {Semester|number|string|undefined} sem
              * @param {number|string|undefined} coef
-             * @param {Subject|string|undefined} subj
              * @param {string|undefined} title
              * @param {boolean|undefined} isSim
              * @param {number|string|undefined} classAvg
              * @param {string|undefined} prof
              * @param {string|undefined} date
-             * @param {Semester|number|string|undefined} sem
-             * @param {Module|string|undefined} mod
              * @param {number|string|undefined} id
              * 
              * @returns {boolean}
              */
-            hasGrade(grade, coef=undefined, subj=undefined, title=undefined, isSim=undefined, classAvg=undefined, prof=undefined, date=undefined, sem=undefined, mod=undefined, id=undefined) {
-                ParameterTypeError.verifyParams(arguments, [
-                    Grade.name+"|number|"+nbRegExpSrc,
-                    "number|"+nbRegExpSrc+"|undefined",
-                    "string|undefined",
-                    "string|undefined",
-                    "boolean|undefined",
-                    "number|"+nbRegExpSrc+"|undefined",
-                    "string|undefined",
-                    "string|undefined",
-                    Module.name+"|string|undefined",
-                    Semester.name+"|number|"+intRegExpSrc+"|undefined",
-                    "number|"+intRegExpSrc+"|undefined"
-                ], ECAMDashboard.prototype.hasGrade, ECAMDashboard)
-
-                if (!(grade instanceof Grade)) {
-                    ParameterTypeError.verifyParams(arguments, 
-                        [
-                            Grade.name,
-                            "number|"+nbRegExpSrc,
-                            "string",
-                            "string",
-                            "boolean",
-                            "number|"+nbRegExpSrc,
-                            "string",
-                            "string",
-                            Module.name+"|string",
-                            Semester.name+"|number|"+intRegExpSrc,
-                            "number|"+intRegExpSrc
-                        ], 
-                        ECAMDashboard.prototype.hasGrade, ECAMDashboard, 
-                        "The method was given a grade as a number and not a "+Grade.name+", so it requires all the other informations (coef, subj, title, ...)."
-                    )
-                }
-
+            hasGrade(grade, subj, mod=undefined, sem=undefined, coef=undefined, title=undefined, isSim=undefined, classAvg=undefined, prof=undefined, date=undefined, id=undefined) {
                 try {
                     this.getGrade(
                         grade, 
+                        subj,
+                        mod, 
+                        sem, 
                         coef, 
-                        subj, 
                         title, 
                         isSim, 
                         classAvg, 
                         prof, 
                         date, 
-                        sem, 
-                        mod, 
                         id
                     );
                     return true;
@@ -4571,30 +4446,21 @@ class ECAMDashboard {
             // MARK: _  getSubject()
             /**
              *
-             * @param {Subject | string} subject The {@link Subject} containing the same informations as the {@link Subject} to find, or its name. If giving its name, you may give next the name of its module and the number of its semester for more precisions.
-             * @param {Module | string} [module=undefined] Name of the module of the subject to search.
-             * @param {Semester | number} [semester=undefined] Number of the seemester of the subject to search.
+             * @param {Subject|string} subject The name of the {@link Subject} to find.
+             * @param {Module | string | undefined} [module=undefined] Name of the module of the subject to search.
+             * @param {Semester | number | undefined} [semester=undefined] Number of the seemester of the subject to search.
              * @returns {Subject}
              * @throws {Error} If the subject is not known to ***this*** {@link ECAMDashboard}.
              */
             getSubject(subject, module=undefined, semester=undefined) {
-                ParameterTypeError.verifyParams(arguments, [
-                    Subject.name+"|string",
-                    Module.name+"|string|undefined", 
-                    Semester.name+"|number|"+intRegExpSrc+"|undefined"
-                ], ECAMDashboard.prototype.getSubject, ECAMDashboard);
-
                 if (semester instanceof Semester)   return semester.getSubject(subject);
                 if (semester !== undefined)         return this.getSemester(semester).getSubject(subject);
                 if (module instanceof Module)       return module.getSubject(subject);
                 if (module !== undefined)           return this.getModule(module).getSubject(subject);
 
-                for (const subj of this.subjects) {
-                    if (subject instanceof Subject && subj.equals(subject)) return subj;
-                    if (typeof subject == "string" && subj.name == subject) return subj;
-                }
+                for (const subj of this.subjects) { if (subj.name == subject) return subj; }
 
-                throw new Error("Subject of name \""+ (subject instanceof Subject ? subject.name : subject) + "\" is not known to this "+ECAMDashboard.name+".");
+                throw new Error("Subject of name \""+subject+"\" is not known to this "+ECAMDashboard.name+".");
             }
 
 
@@ -4602,17 +4468,12 @@ class ECAMDashboard {
             // MARK: _  hasSubject()
             /**
              *
-             * @param {Subject | string} subject The {@link Subject} containing the same informations as the {@link Subject} to find, or its name. If giving its name, you may give next the name of its module and the number of its semester for more precisions.
-             * @param {Module | string} [module=undefined] Name of the module of the subject to search.
-             * @param {Semester | number} [semester=undefined] Number of the seemester of the subject to search.
+             * @param {Subject|string} subject The {@link Subject} containing the same informations as the {@link Subject} to find, or its name. If giving its name, you may give next the name of its module and the number of its semester for more precisions.
+             * @param {Module | string | undefined} [module=undefined] Name of the module of the subject to search.
+             * @param {Semester | number | undefined} [semester=undefined] Number of the seemester of the subject to search.
              * @returns {boolean}
              */
             hasSubject(subject, module=undefined, semester=undefined) {
-                ParameterTypeError.verifyParams(arguments, [
-                    Subject.name+"|string",
-                    Module.name+"|string|undefined", 
-                    Semester.name+"|number|"+intRegExpSrc+"|undefined"
-                ], ECAMDashboard.prototype.hasSubject, ECAMDashboard);
 
                 try {
                     this.getSubject(subject, module, semester);
@@ -4629,26 +4490,18 @@ class ECAMDashboard {
             // MARK: _  getModule()
             /**
              *
-             * @param {Module | string} module
+             * @param {Module|string} module
              * @param {Semester | number | undefined} semester
              * @returns {Module}
              * @throws {Error} If the module is not known to ***this*** {@link ECAMDashboard}.
              */
             getModule(module, semester=undefined) {
-                ParameterTypeError.verifyParams(arguments, [
-                    Module.name+"|string", 
-                    Semester.name+"|number|"+intRegExpSrc+"|undefined"
-                ], ECAMDashboard.prototype.getModule, ECAMDashboard);
+                if (semester instanceof Semester)   return semester.getModule(module);
+                if (semester !== undefined)         return this.getSemester(semester).getModule(module);
 
-                if (semester instanceof Semester) return semester.getModule(module);
-                if (semester !== undefined) return this.getSemester(semester).getModule(module);
+                for (const mod of this.modules) { if (mod.name == module) return mod; }
 
-                for (const mod of this.modules) {
-                    if (module instanceof Module && mod.equals(module)) return mod;
-                    if (typeof module == "string" && mod.name == module) return mod;
-                }
-
-                throw new Error("Module of name \""+ (module instanceof Module ? module.name : module) + "\" is not known to this "+ECAMDashboard.name+".");
+                throw new Error("Module of name \""+module+"\" is not known to this "+ECAMDashboard.name+".");
             }
 
 
@@ -4657,16 +4510,11 @@ class ECAMDashboard {
             // MARK: _  hasModule()
             /**
              *
-             * @param {Module | string} module
+             * @param {Module|string} module
              * @param {Semester|number|undefined} semester
              * @returns {boolean}
              */
             hasModule(module, semester=undefined) {
-                ParameterTypeError.verifyParams(arguments, [
-                    Module.name+"|string", 
-                    Semester.name+"|number|"+intRegExpSrc+"|undefined"
-                ], ECAMDashboard.prototype.hasModule, ECAMDashboard);
-                
                 try {
                     this.getModule(module, semester);
                     return true;
@@ -4680,19 +4528,15 @@ class ECAMDashboard {
             // MARK: _  getSemester()
             /**
              *
-             * @param {Semester | number} semester
+             * @param {Semester|number} semester
              * @returns {Semester}
              * @throws {Error} If the semester is not known to ***this*** {@link ECAMDashboard}.
              */
             getSemester(semester) {
-                for (const sem of this.semesters) {
-                    if (semester instanceof Semester && sem.equals(semester)) return semester;
-                    if (typeof semester == "string" && sem.number == semester) return semester;
-                }
-
+                for (const sem of this.semesters) { if (sem.number == semester) return sem; }
 
                 throw new Error(
-                    "Semester n°"+ (semester instanceof Semester ? semester.number : semester) + " is not known to this "+ECAMDashboard.name+"."
+                    "Semester n°"+semester+" is not known to this "+ECAMDashboard.name+"."
                 );
             }
 
@@ -4700,12 +4544,12 @@ class ECAMDashboard {
             // MARK: _  hasSemester()
             /**
              * 
-             * @param {Semester | number} semester 
+             * @param {Semester|number} semester 
              * @returns {boolean}
              */
             hasSemester(semester) {
                 try {
-                    this.getSemester(semester)
+                    this.getSemester(semester);
                     return true;
                 }
                 catch(e) { return false; }
@@ -4716,62 +4560,35 @@ class ECAMDashboard {
             // MARK: _  addGrade()
             /**
              * 
-             * @param {number} grade 
-             * @param {number} coef 
-             * @param {Subject|string|undefined} subject 
-             * @param {string|undefined} title 
-             * @param {boolean|undefined} isSim 
-             * @param {number|undefined} classAvg 
-             * @param {string|undefined} prof 
-             * @param {string|undefined} date 
-             * @param {Semester|number|undefined} semester 
-             * @param {Module|string|undefined} module 
-             * @param {number|undefined} id 
+             * @param {number}              grade 
+             * @param {number}              coef 
+             * @param {Subject|string}      subject 
+             * @param {Module|string}       module 
+             * @param {Semester|number}     semester 
+             * @param {string|undefined}    title 
+             * @param {boolean|undefined}   isSim 
+             * @param {number|undefined}    classAvg 
+             * @param {string|undefined}    prof 
+             * @param {string|undefined}    date 
+             * @param {number|undefined}    id 
              */
-            addGrade(grade, coef, subject=undefined, title=" — ", isSim=false, classAvg=undefined, prof=" — ", date=" — ", semester=undefined, module=undefined, id=undefined) {
-                ParameterTypeError.verifyParams(arguments, [
-                    "number | "+nbRegExpSrc,
-                    "number | "+nbRegExpSrc,
-                    Subject.name+" | string",
-                    "string | undefined",
-                    "boolean | undefined",
-                    "number | "+nbRegExpSrc+" | \" — \" | undefined",
-                    "string | undefined",
-                    "string | undefined",
-                    Semester.name+" | "+intRegExpSrc+" | undefined",
-                    Module.name+" | string | undefined",
-                    "number | "+intRegExpSrc+" | undefined"
-                ], ECAMDashboard.prototype.addGrade, ECAMDashboard);
-
-                /** @type {Subject|undefined} */
-                var subj = undefined;
-
-                try {
-                    if (subject) subj = this.getSubject(subject, module, semester);
-                }
-                catch(e) {
-                    //@ts-ignore
-                    subj = this.addSubject(subject, undefined, module, semester);
-                }
-
-
-                /** @type {Module|string|undefined} */
-                var mod = subj instanceof Subject ? subj.module : undefined;
-                /** @type {Semester|number|undefined} */
-                var sem = subj instanceof Subject ? subj.semester : undefined;
+            addGrade(grade, coef, subject, module, semester, title=" — ", isSim=false, classAvg=undefined, prof=" — ", date=" — ", id=undefined) {
+                var subj = subject instanceof Subject ? subject : this.ensureSubject(subject, module, semester);
+                var mod = subj.module;
+                var sem = subj.semester;
 
                 
                 if (!this.hasGrade(
                     grade,
-                    coef,
                     subj,
+                    mod,
+                    sem,
+                    coef,
                     title,
                     isSim,
                     classAvg,
                     prof,
                     date,
-                    sem,
-                    mod,
                     id
                 )) {
                     const newGrade = new Grade(
@@ -4783,8 +4600,6 @@ class ECAMDashboard {
                         classAvg,
                         prof,
                         date,
-                        sem,
-                        mod,
                         id
                     );
 
@@ -4794,7 +4609,7 @@ class ECAMDashboard {
                     return newGrade;
                 }
 
-                return null;
+                throw new Error("The "+Grade.name+" could not be created, as another exists under the same informations.")
 
             }
 
@@ -4802,37 +4617,22 @@ class ECAMDashboard {
             // MARK: _  addSubject()
             /**
              * 
-             * @param {Subject|string}              subject 
-             * @param {number|undefined}            [coefficient=undefined] 
-             * @param {Module|string|undefined}     module 
-             * @param {Semester|number|undefined}   semester 
+             * @param {string}              subject 
+             * @param {Module|string}       module 
+             * @param {Semester|number}     semester
+             * @param {number|undefined}    [coefficient=undefined]
              * @returns 
              */
-            addSubject(subject, coefficient=undefined, module=undefined, semester=undefined) {
-                ParameterTypeError.verifyParams(arguments, [
-                    Subject.name +"|string", 
-                    "number|"+nbRegExpSrc+"|undefined",
-                    Module.name  +"|string|undefined", 
-                    Semester.name+"|number|"+intRegExpSrc+"|undefined"
-                ], ECAMDashboard.prototype.addModule, ECAMDashboard);
-
-                /** @type {Module|undefined} */
-                var mod = undefined;
-                try {
-                    if (module) mod = this.getModule(module, semester)
-                }
-                catch(e) {
-                    //@ts-ignore
-                    mod = this.addModule(module, semester)
-                }
+            addSubject(subject, module, semester, coefficient=undefined) {
+                var mod = module instanceof Module ? module : this.ensureModule(module, semester);
 
                 if (!this.hasSubject(subject, module, semester)) {
-                    const newSubj = new Subject(subject instanceof Subject ? subject.name : subject, coefficient, mod);
+                    const newSubj = new Subject(subject, mod, coefficient);
                     this.subjects.push(newSubj);
                     return newSubj;
                 }
 
-                return null;
+                throw new Error("The "+Subject.name+" could not be created, as another exists under the same name.")
             }
 
 
@@ -4842,21 +4642,21 @@ class ECAMDashboard {
              * Tries to get the {@link Subject} corresponding to the given {@link Subject} (or its name),
              * and if it does not exits, create it and return it.
              * 
-             * @param {Subject|string}              subject                 The {@link Subject} (or its name) to find/create in the data of ***this*** {@link ECAMDashboard}.
-             * @param {number|undefined}            [coefficient=100]       The coefficient of the {@link Subject} to find/create. If the {@link Subject} did exist but the given coefficient does not match the current {@link Subject}'s coefficient, modify the {@link Subject}'s coefficient to make them match.
-             * @param {Module|string|undefined}     [module=undefined]      The {@link Module} (or its name) to which should belong the {@link Subject} to find/create.
-             * @param {Semester|number|undefined}   [semester=undefined]    The {@link Semester} (or its number) to which should belong the {@link Subject} to find/create.
+             * @param {string}            subject                   The {@link Subject} (or its name) to find/create in the data of ***this*** {@link ECAMDashboard}.
+             * @param {Module|string}     module                    The {@link Module} (or its name) to which should belong the {@link Subject} to find/create.
+             * @param {Semester|number}   semester                  The {@link Semester} (or its number) to which should belong the {@link Subject} to find/create.
+             * @param {number|undefined}  [coefficient=undefined]   The coefficient of the {@link Subject} to find/create. If the {@link Subject} did exist but the given coefficient does not match the current {@link Subject}'s coefficient, modify the {@link Subject}'s coefficient to make them match.
+             * 
              * @returns {Subject} The {@link Subject} in the data of ***this*** {@link ECAMDashboard}, whether it was found or created.
              */
-            ensureSubject(subject, coefficient=100, module=undefined, semester=undefined) {
+            ensureSubject(subject, module, semester, coefficient=undefined) {
                 try {
                     const subj = this.getSubject(subject, module, semester);
-                    if (subj.coef != coefficient) subj.coef = coefficient;
+                    if (coefficient) if (subj.coef != coefficient) subj.coef = coefficient;
                     return subj;
                 }
                 catch (e) {
-                    // @ts-ignore
-                    return this.addSubject(subject, coefficient, module, semester)
+                    return this.addSubject(subject, module, semester, coefficient)
                 }
             }
 
@@ -4864,30 +4664,21 @@ class ECAMDashboard {
             // MARK: _  addModule()
             /**
              * 
-             * @param {Module|string} module 
-             * @param {Semester|number|undefined} semester 
+             * @param {string} module 
+             * @param {Semester|number} semester 
              * @returns The {@link Module} created.
              */
-            addModule(module, semester=undefined) {
-                ParameterTypeError.verifyParams(arguments, [Module.name+"|string", Semester.name+"|number|"+intRegExpSrc], ECAMDashboard.prototype.addModule, ECAMDashboard);
-
+            addModule(module, semester) {
                 /** @type {Semester|undefined} */ 
-                var sem = undefined;
-                try {
-                    if (semester) {sem = this.getSemester(semester)}
-                }
-                catch (e) {
-                    //@ts-ignore
-                    sem = this.addSemester(semester)
-                }
+                var sem = semester instanceof Semester ? semester : this.ensureSemester(semester);
 
                 if (!this.hasModule(module, semester)) {
-                    const newMod = new Module(module instanceof Module ? module.name : module, sem);
+                    const newMod = new Module(module, sem);
                     this.modules.push(newMod);
                     return newMod;
                 }
 
-                return null;
+                throw new Error("The "+Module.name+" could not be created, as another exists under the same name.")
             }
 
 
@@ -4897,16 +4688,15 @@ class ECAMDashboard {
              * Tries to get the {@link Module} corresponding to the given {@link Module} (or its name),
              * and if it does not exits, create it and return it.
              * 
-             * @param {Module|string}               module                  The {@link Module} (or its name) to find/create in the data of ***this*** {@link ECAMDashboard}.
-             * @param {Semester|number|undefined}   [semester=undefined]    The {@link Semester} (or its number) to which should belong the {@link Module} to find/create.
+             * @param {string}              module      The {@link Module} (or its name) to find/create in the data of ***this*** {@link ECAMDashboard}.
+             * @param {Semester|number}     semester    The {@link Semester} (or its number) to which should belong the {@link Module} to find/create.
              * @returns {Module} The {@link Module} in the data of ***this*** {@link ECAMDashboard}, whether it was found or created.
              */
-            ensureModule(module, semester=undefined) {
+            ensureModule(module, semester) {
                 try {
                     return this.getModule(module, semester);
                 }
                 catch (e) {
-                    // @ts-ignore
                     return this.addModule(module, semester)
                 }
             }
@@ -4915,19 +4705,17 @@ class ECAMDashboard {
             // MARK: _  addSemester()
             /**
              * 
-             * @param {Semester|number} semester 
+             * @param {number} semester 
              * @returns 
              */
             addSemester(semester) {
-                ParameterTypeError.verifyParams(arguments, [Semester.name+"|number|"+intRegExpSrc], ECAMDashboard.prototype.addSemester, ECAMDashboard);
-
                 if (!this.hasSemester(semester)) {
-                    const newSem = new Semester(semester instanceof Semester ? semester.number : semester);
+                    const newSem = new Semester(semester);
                     this.semesters.push(newSem);
                     return newSem;
                 }
 
-                return null;
+                throw new Error("The "+Semester.name+" could not be created, as another exists under the same number.");
             }
 
 
@@ -4937,7 +4725,7 @@ class ECAMDashboard {
              * Tries to get the {@link Semester} corresponding to the given {@link Semester} (or its number),
              * and if it does not exits, create it and return it.
              * 
-             * @param {Semester|number} semester The {@link Semester} (or its number) to find/create in the data of ***this*** {@link ECAMDashboard}.
+             * @param {number} semester The {@link Semester} (or its number) to find/create in the data of ***this*** {@link ECAMDashboard}.
              * @returns {Semester} The {@link Semester} in the data of ***this*** {@link ECAMDashboard}, whether it was found or created.
              */
             ensureSemester(semester) {
@@ -4945,7 +4733,6 @@ class ECAMDashboard {
                     return this.getSemester(semester);
                 }
                 catch (e) {
-                    // @ts-ignore
                     return this.addSemester(semester)
                 }
             }
@@ -4976,7 +4763,7 @@ class ECAMDashboard {
 
 
 
-//MARK: ——————————————————
+// MARK: ——————————————————
 ;
 
 
