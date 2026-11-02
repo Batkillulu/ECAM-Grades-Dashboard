@@ -386,6 +386,31 @@
             #grade;
 
             /** 
+             * Value of the coefficient of ***this*** {@link Grade} in its {@link Subject}, a positive float number below 100, in %. 
+             * @type {number}
+             */
+            #coef;
+
+            /** 
+             * Title of ***this*** {@link Grade}. 
+             * @type {string}
+             */
+            #title = " — ";
+
+            /** 
+             * Date of publication of ***this*** {@link Grade} entered by the administration (default when no date was given: " — ").
+             * ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet.* 
+             * @type {string}
+             */
+            #date;
+
+            /** 
+             * Value of the class' average of ***this*** {@link Grade}, a positive float number below 20 
+             * @type {number}
+             */
+            #classAvg = NaN;
+
+            /** 
              * The {@link Subject} of ***this*** {@link Grade}. 
              * @type {Subject}
              */
@@ -404,18 +429,6 @@
             #semester;
 
             /** 
-             * Value of the coefficient of ***this*** {@link Grade} in its {@link Subject}, a positive float number below 100, in %. 
-             * @type {number}
-             */
-            #coef;
-
-            /** 
-             * Title of ***this*** {@link Grade}. 
-             * @type {string}
-             */
-            #title = " — ";
-
-            /** 
              * `true` if ***this*** {@link Grade} is a simulated grade, `false` otherwise. 
              * @type {boolean} 
              * @readonly
@@ -430,23 +443,10 @@
             #id;
 
             /** 
-             * Value of the class' average of ***this*** {@link Grade}, a positive float number below 20 
-             * @type {number}
-             */
-            #classAvg = NaN;
-
-            /** 
              * Name of the teacher.s who published ***this*** {@link Grade} (default when no teacher was given: " — ") 
              * @type {string}
              */
             #prof;
-
-            /** 
-             * Date of publication of ***this*** {@link Grade} entered by the administration (default when no date was given: " — ").
-             * ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet.* 
-             * @type {string}
-             */
-            #date;
 
             /** 
              * `true` if ***this*** {@link Grade} is enabled (so it counts in the calculation of the averages), `false` otherwise. 
@@ -507,6 +507,7 @@
 
 
             this.#subject   = subject;
+            this.#subject.addGrade(this);
             this.#module    = subject.module;
             this.#semester  = subject.semester;
 
@@ -546,9 +547,7 @@
             this.#prof      = prof;
             this.#date      = date;
 
-
             this.#enabled = true;
-
             this.#markedAsRead = false;
         }
 
@@ -747,16 +746,18 @@
             equals(grade) {
                 if (grade instanceof Grade) {
                     return ( true
-                        && grade.#grade 	== this.#grade
-                        && grade.#classAvg 	== this.#classAvg
-                        && grade.#coef 		== this.#coef
-                        && grade.#semester 	== this.#semester
-                        && grade.#subject 	== this.#subject
-                        && grade.#title 	== this.#title
-                        && grade.#prof 		== this.#prof
-                        && grade.#date 		== this.#date
-                        && grade.#isSim     == this.#isSim
-                        && grade.#id        == this.#id
+                        && grade.#grade 	    == this.#grade
+                        && grade.#classAvg 	    == this.#classAvg
+                        && grade.#coef 		    == this.#coef
+                        && grade.#semester 	    == this.#semester
+                        && grade.#subject 	    == this.#subject
+                        && grade.#title 	    == this.#title
+                        && grade.#prof 		    == this.#prof
+                        && grade.#date 		    == this.#date
+                        && grade.#isSim         == this.#isSim
+                        && grade.#id            == this.#id
+                        && grade.#enabled       == this.#enabled
+                        && grade.#markedAsRead  == this.#markedAsRead
                     );
                 }
                 else return false;
@@ -794,13 +795,13 @@
                 if (grades instanceof Array) {
                     let validArrayOfGrades = true, average = 0, totalCoef = 0;
 
-                    grades.forEach(grade => {
+                    for (const grade of grades) {
                         if (grade instanceof Grade) {
                             average += grade.#grade * grade.#coef;
                             totalCoef += grade.#coef;
                         }
                         else validArrayOfGrades = false;
-                    })
+                    }
 
                     if (!validArrayOfGrades) return NaN;
                     else return Math.round(100*average/totalCoef)/100 || NaN;
@@ -827,7 +828,6 @@
                         average += grade.#classAvg * grade.#coef;
                         totalCoef += grade.#coef;
                     }
-                    else console.log("Grade n°"+i+" does not have a class average.")
                 }
 
                 return Math.round(100*average/totalCoef)/100 || NaN;
@@ -844,6 +844,7 @@
         // MARK: _________________________________________
 
     }
+    /** @type {any} */ (globalThis).Grade = Grade;
 
 
 
@@ -1178,16 +1179,8 @@
 
                 if (true
                     && this.#name == subject.#name
-                    && (
-                        this.#module instanceof Module 
-                        ? this.#module.equals(subject.#module instanceof Module ? subject.#module : undefined)
-                        : true
-                    )
-                    && (
-                        this.#semester instanceof Semester
-                        ? this.#semester.equals(subject.#semester)
-                        : true
-                    )
+                    && this.#module.equals(subject.#module)
+                    && this.#semester.equals(subject.#semester)
                 ) {
                     return true;
                 }
@@ -1214,9 +1207,7 @@
                     this.#grades.push(grade);
                 }
 
-
-                
-                return this.computeStats();
+                return this;
             }
 
 
@@ -1244,7 +1235,7 @@
                 ;
                 //#endregion
 
-                this.grades.forEach(grade => {
+                for (const grade of this.grades) {
 
                     totalCoefGrades += grade.coef;
 
@@ -1284,7 +1275,7 @@
 
                     }
 
-                });
+                }
 
                 this.#realGrades = realGrades;
                 this.#simGrades = simGrades;
@@ -1317,7 +1308,7 @@
         // MARK: _________________________________________
 
     }
-
+    /** @type {any} */ (globalThis).Subject = Subject;
 
 
     // MARK: ———             MODULE             ———
@@ -1516,7 +1507,7 @@
 
         // MARK:                 — constructor —
         /**
-         * Constructs an object of class {@link Module} from its given name and .
+         * Constructs an object of class {@link Module} from its given name.
          * Automatically adds the constructed {@link Module} to its {@link Semester}'s {@link Semester.modules}.
          *
          * @param {string}      name        Name of ***this*** {@link Module}.
@@ -1540,7 +1531,6 @@
              */
             get name()      { return this.#name }
             set name(value) {
-                if (typeof value != "string") { throw new Error("Invalid Module.name setting: tried to set 'name' to a type other than string") }
                 this.#name = value;
             }
 
@@ -1739,7 +1729,7 @@
 
                 if (true
                     && this.#name == module.#name
-                    && (this.#semester instanceof Semester ? this.#semester.equals(module.#semester) : this.#semester === module.#semester)
+                    && this.#semester.equals(module.#semester)
                 ) {
                     return true;
                 }
@@ -1762,10 +1752,10 @@
              * @returns {Subject} The subject of ***this*** {@link Module}.
              */
             getSubject(subject) {
-                Object.values(this.#subjects).forEach(subj => {
+                for (const subj of Object.values(this.#subjects)) {
                     if (subject instanceof Subject && subject.equals(subj)) return subj;
-                    else if (typeof subject === "string" && subject === subj.name) return subj;
-                })
+                    else if (typeof subject === "string" && subject == subj.name) return subj;
+                }
 
                 throw new Error("Subject of name \""+ (subject instanceof Subject ? subject.name : subject) + "\" does not exists in the Module of name \""+ this.#name+ "\".");
             }
@@ -1804,12 +1794,22 @@
             addSubjects(...subjects) {
                 subjects = subjects.flat();
 
-                subjects.forEach(subject => {
+
+                for (const subject of subjects) {
+                    if (this.hasSubject(subject)) {
+                        throw new Error(
+                            "This Module \""+this.#name+"\" already has a Subject called \""+subject.name+"\"."
+                            + (subjects.length > 1 ? " Aborting the process without adding any of the given Subjects." : "")
+                        )
+                    }
+                }
+
+                for (const subject of subjects) {
                     this.#subjects[subject.name] = subject;
                     this.#semester.subjects[subject.name] = subject;
-                })
+                }
 
-                return this.computeStats();
+                return this;
             }
 
 
@@ -1825,13 +1825,20 @@
             removeSubject(...subjects) {
                 subjects = subjects.flat();
 
-                subjects.forEach(subject => {
+
+                for (const subject of subjects) {
+                    if (!this.hasSubject(subject)) {
+                        throw new Error(
+                            "This Module \""+this.#name+"\" does not have a Subject called \""+(subject instanceof Subject ? subject.name : subject)+"\"."
+                            + (subjects.length > 1 ? " Aborting the process without removing any of the given Subjects." : "")
+                        )
+                    }
+                }
+
+                for (const subject of subjects) {
                     const name = subject instanceof Subject ? subject.name : subject;
-
-                    if (!this.#subjects[name]) throw new Error("This "+Module.name+" n°"+this.#name+" does not have the "+Subject.name+" of name \""+name+"\".");
-
                     delete this.#subjects[name];
-                })
+                }
 
                 return this;
             }
@@ -1844,9 +1851,9 @@
             // MARK: _  computeStats()
             /**
              * Computes the total coefficients, the average and the class average of ***this*** {@link Module}.
-             * @param {boolean} [recomputeSubjects=true] `true` if the stats of the {@link Subject}s of ***this*** {@link Semester} has to be computed, `false` otherwise.
+             * @param {boolean} [computeSubjects=true] `true` if the stats of the {@link Subject}s of ***this*** {@link Semester} has to be computed, `false` otherwise.
              */
-            computeStats(recomputeSubjects=true) {
+            computeStats(computeSubjects=true) {
                 //#region
                 let
                     /** @type {Grade[]} */      grades                          = [],
@@ -1876,9 +1883,9 @@
                 //#endregion
 
                 // Pre-emptively compute all the subjects' stats
-                if (recomputeSubjects) Object.values(this.#subjects).forEach(subject => { if (subject instanceof Subject) subject.computeStats(); })
+                if (computeSubjects) Object.values(this.#subjects).forEach(subject => { subject.computeStats(); })
 
-                Object.values(this.#subjects).forEach(subject => {
+                for (const subject of Object.values(this.#subjects)) {
                     const nbGrades = subject.grades.length;
 
                     grades              .push(...subject.grades);
@@ -1917,7 +1924,7 @@
                     totalCoefRealGrades         += subject.totalCoefRealGrades ? subject.totalCoefRealGrades : 0;
                     totalCoefEnabledGrades      += subject.totalCoefEnabledGrades ? subject.totalCoefEnabledGrades : 0;
                     totalCoefEnabledRealGrades  += subject.totalCoefEnabledRealGrades ? subject.totalCoefEnabledRealGrades : 0;
-                })
+                }
 
                 const nbSubjects = Object.keys(this.#subjects).length;
 
@@ -1962,7 +1969,7 @@
         // MARK: _________________________________________
 
     }
-
+    /** @type {any} */ (globalThis).Module = Module;
 
 
     // MARK: ———            SEMESTER           ———
@@ -2004,10 +2011,10 @@
 
 
             /**
-             * The undefined {@link Module} of ***this*** {@link Semester}. 
+             * The unclassified {@link Module} of ***this*** {@link Semester}. 
              * @type {Module}
              */
-            #undefinedModule;
+            #unclassifiedModule;
 
 
             /**
@@ -2114,15 +2121,6 @@
             #semesterCard;
 
 
-
-
-            /**
-             * Fallback semester.
-             * @readonly
-             */
-            static unknownSemester = new Semester(-1);
-
-
         //#endregion — properties —
 
 
@@ -2139,7 +2137,7 @@
         constructor(number) {
             this.#number = typeof number === "string" ? parseInt(number) : number;
 
-            this.#undefinedModule = new Module(Module.unclassified, this);
+            this.#unclassifiedModule = new Module(Module.unclassified, this);
 
             this.#semesterCard = new SemesterCard(this);
         }
@@ -2154,7 +2152,6 @@
              */
             get number()      { return this.#number }
             set number(value) {
-                if (isNaN(value)) { throw new Error("Invalid Semester.name setting: tried to set 'number' to a type other than a number") }
                 this.#number = Number(value);
             }
 
@@ -2179,7 +2176,7 @@
             /**
              * The undefined {@link Module} of ***this*** {@link Semester}. @type {Module} @readonly
              */
-            get undefinedModule()  { return this.#undefinedModule }
+            get undefinedModule()  { return this.#unclassifiedModule }
 
 
             /**
@@ -2285,11 +2282,7 @@
                     return false;
                 }
 
-                if (true
-                    && this.#number == semester.#number
-                    && this.#average == semester.#average
-                    && this.#classAvg == semester.#classAvg
-                ) {
+                if (this.#number == semester.#number) {
                     return true;
                 }
 
@@ -2308,13 +2301,12 @@
             getModule(module) {
                 for (const mod of Object.values(this.#modules)) {
                     if (module instanceof Module && module.equals(mod)) return mod;
-                    else if (typeof module === "string" && module === mod.name) return mod;
+                    else if (typeof module === "string" && module == mod.name) return mod;
                 }
 
                 throw new Error("Module of name \""+ (module instanceof Module ? module.name : module) + "\" does not exist in the Semester n°"+this.#number+".");
 
             }
-
 
 
             // MARK: _  hasModule()
@@ -2329,6 +2321,70 @@
                     return true;
                 }
                 catch(e) { return false; }
+            }
+
+
+            // MARK: _  addModules()
+            /**
+             * Adds the {@link Module}.s to ***this*** {@link Semester}.
+             * @param {Module[]} modules The {@link Module}.s (or its/their name) to add to ***this*** {@link Semester}.
+             *
+             * @returns {Semester} ***This*** {@link Semester}.
+             */
+            addModules(...modules) {
+                modules = modules.flat();
+
+                for (const module of modules) {
+                    if (this.hasModule(module)) {
+                        throw new Error(
+                            "This Semester \""+this.#number+"\" already has a Module called \""+module.name+"\"."
+                            + (modules.length > 1 ? " Aborting the process without adding any of the given Modules." : "")
+                        )
+                    }
+                }
+
+                for (const module of modules) {
+                    this.#modules[module.name] = module;
+                }
+
+                return this;
+            }
+
+
+            // MARK: _  removeModules()
+            /**
+             * Removes the {@link Module}.s from ***this*** {@link Semester}.
+             * @param {(Module|string)[]} modules The {@link Module}.s (or its/their name) to remove from ***this*** {@link Semester}.
+             *
+             * @returns {Object.<string, Module>} The {@link Module}s removed from ***this*** {@link Semester}.
+             */
+            removeModules(...modules) {
+                modules = modules.flat();
+                /** @type {Object.<string, Module>} */ let out = {};
+
+                for (const module of modules) {
+                    if (!this.hasModule(module)) {
+                        throw new Error(
+                            "This Semester \""+this.#number+"\" does not have a Module called \""+(module instanceof Module ? module.name : module)+"\"."
+                            + (modules.length > 1 ? " Aborting the process without removing any of the given Modules." : "")
+                        )
+                    }
+                    if (module === this.#unclassifiedModule || module === Module.unclassified) {
+                        throw new Error(
+                            "Removing the \""+Module.unclassified+"\" Module is strictly forbidden."
+                            + (modules.length > 1 ? " Aborting the process without removing any of the given Modules." : "")
+                        )
+                    }
+                }
+
+                for (const module of modules) {
+                    const name = module instanceof Module ? module.name : module;
+                    out[name] = this.#modules[name];
+
+                    delete this.#modules[name];
+                }
+
+                return out;
             }
 
 
@@ -2349,14 +2405,11 @@
                     const subj = this.#subjects[subjName];
 
                     if (subject instanceof Subject) if (subject.equals(subj)) return subj;
-                    if (typeof subject === "string") if (subject === subj.name) return subj;
+                    if (typeof subject == "string") if (subject == subj.name) return subj;
                 }
 
                 throw new Error("Subject of name "+(subject instanceof Subject ? subject.name : subject)+"does not exist in the Semester n°"+this.#number+".")
             }
-
-
-
 
 
             // MARK: _  hasSubject()
@@ -2376,66 +2429,16 @@
 
 
 
-            // MARK: _  addModules()
-            /**
-             * Adds the {@link Module}.s to ***this*** {@link Semester}.
-             * @param {Module[]} modules The {@link Module}.s (or its/their name) to add to ***this*** {@link Semester}.
-             *
-             * @returns {Semester} ***This*** {@link Semester}.
-             */
-            addModules(...modules) {
-                modules = modules.flat();
-
-                modules.forEach(module => {
-                    this.#modules[module.name] = module;
-                })
-
-                return this.computeStats();
-            }
-
-
-            // MARK: _  removeModules()
-            /**
-             * Removes the {@link Module}.s from ***this*** {@link Semester}.
-             * @param {(Module|string)[]} modules The {@link Module}.s (or its/their name) to remove from ***this*** {@link Semester}.
-             *
-             * @returns {Object.<string, Module>} The {@link Module}s removed from ***this*** {@link Semester}.
-             */
-            removeModules(...modules) {
-                modules = modules.flat();
-                /** @type {Object.<string, Module>} */ let out = {};
-
-                modules.forEach(module => {
-                    if (module == this.#modules[Module.unclassified] || module == Module.unclassified) {
-                        throw new Error(
-                            "Invalid "+Semester.name+"."+Semester.prototype.removeModules.name+"() call: can not remove the \""+Module.unclassified+"\" Module."
-                        )
-                    }
-
-                    const name = module instanceof Module ? module.name : module;
-                    out[name] = this.#modules[name];
-
-                    if (!this.#modules[name]) throw new Error(
-                        "This "+Semester.name+" n°"+this.#number+" does not have the "+Module.name+" of name \""+name+"\"."
-                    );
-
-                    delete this.#modules[name];
-                })
-
-                return out;
-            }
-
-
 
 
 
             // MARK: _  computeStats()
             /**
              * Computes the total coefficients, the average and the class average of ***this*** {@link Semester}.
-             * @param {boolean} [recomputeSubjects=true] `true` if the stats of the {@link Subject}s of ***this*** {@link Semester} has to be computed, `false` otherwise.
-             * @param {boolean} [recomputeModules=true] `true` if the stats of the {@link Module}s of ***this*** {@link Semester} has to be computed, `false` otherwise.
+             * @param {boolean} [computeSubjects=true] `true` if the stats of the {@link Subject}s of ***this*** {@link Semester} has to be computed, `false` otherwise.
+             * @param {boolean} [computeModules=true] `true` if the stats of the {@link Module}s of ***this*** {@link Semester} has to be computed, `false` otherwise.
              */
-            computeStats(recomputeSubjects=true, recomputeModules=true) {
+            computeStats(computeSubjects=true, computeModules=true) {
                 //#region
                 let
                     /** @type {Object.<string, Subject>} Keys are the name of the corresponding Subject value. */ subjectsBelow100          = {},
@@ -2462,11 +2465,11 @@
                 //#endregion
 
                 // Pre-emptively compute all the modules' stats
-                if (recomputeModules) Object.values(this.#modules).forEach(module => { module.computeStats(recomputeSubjects); })
+                if (computeModules) Object.values(this.#modules).forEach(module => { module.computeStats(computeSubjects); })
 
-                Object.values(this.#modules || {}).forEach(module => {
+                for (const module of Object.values(this.#modules || {})) {
 
-                    Object.values(module.subjects || {}).forEach(subject => {
+                    for (const subject of Object.values(module.subjects || {})) {
 
                         this.#subjects[subject.name] = subject;
 
@@ -2496,9 +2499,9 @@
                         if      (subject.totalCoefRealGrades < 100) subjectsReallyBelow100[subject.name] = subject;
                         else if (subject.totalCoefRealGrades > 100) subjectsReallyAbove100[subject.name] = subject;
 
-                    })
+                    }
 
-                })
+                }
 
                 const nbSubjects = Object.keys(this.#subjects).length;
 
@@ -2530,7 +2533,7 @@
         // MARK: _________________________________________
 
     }
-
+    /** @type {any} */ (globalThis).Semester = Semester;
 
 
 
@@ -2556,7 +2559,7 @@
         // MARK: _________________________________________
 
     }
-
+    /** @type {any} */ (globalThis).Setting = Setting;
 
 
     // MARK: ———            SETTINGS            ———
@@ -2571,7 +2574,7 @@
         // MARK: _________________________________________
 
     }
-
+    /** @type {any} */ (globalThis).Settings = Settings;
 
 
 
@@ -2589,7 +2592,7 @@
         // MARK: _________________________________________
 
     }
-
+    /** @type {any} */ (globalThis).KeyboardShortcut = KeyboardShortcut;
 
 
     // MARK: ———  KEYBOARDSHORTCUTS  ———
@@ -2604,7 +2607,7 @@
         // MARK: _________________________________________
 
     }
-
+    /** @type {any} */ (globalThis).KeyboardShortcuts = KeyboardShortcuts;
 //#endregion BACKEND
 
 
@@ -2720,7 +2723,7 @@
 
         // MARK: ——————————————————
     }
-
+    /** @type {any} */ (globalThis).Card = Card;
 
 
     // MARK: ———         SUBJECTCARD        ———
@@ -2794,7 +2797,7 @@
 
         // MARK: ——————————————————
     }
-
+    /** @type {any} */ (globalThis).SubjectCard = SubjectCard;
 
 
     // MARK: ———         MODULECARD        ———
@@ -2853,7 +2856,7 @@
 
         // MARK: ——————————————————
     }
-
+    /** @type {any} */ (globalThis).ModuleCard = ModuleCard;
 
 
     // MARK: ———        SEMESTERCARD       ———
@@ -2901,7 +2904,7 @@
 
         //#endregion                — encapsulation —
     }
-
+    /** @type {any} */ (globalThis).SemesterCard = SemesterCard;
 //#endregion FRONTEND
 
 
@@ -2959,32 +2962,32 @@ class ECAMDashboard {
          * Array of all the {@link Grade}s of the user. 
          * @type {Grade[]}
          */
-        grades      = [];
+        grades          = [];
 
         /**
          * Array of all the {@link Subject}s of the user. 
          * @type {Subject[]}
          */
-        subjects    = [];
+        subjects        = [];
 
         /**
          * Array of all the {@link Module}s of the user. 
          * @type {Module[]}
          */
-        modules     = [];
+        modules         = [];
 
         
         /**
          * Array of all the {@link Semester}s of the user. 
-         * @type {Semester[]}
+         * @type {(Semester|undefined)[]}
          */
-        semesters   = [];
+        semesters       = [];
 
         /**
          * Array of all the non-read {@link Grade}s of the user. 
          * @type {Grade[]}
          */
-        newGrades   = [];
+        newGrades       = [];
 
 
         /**
@@ -3026,7 +3029,15 @@ class ECAMDashboard {
          *      }
          * }}
          */
-        moduleConfig = {};
+        moduleConfig    = {};
+
+
+
+        /**
+         * Fallback semester.
+         * @readonly
+         */
+        unknownSemester = this.addSemester(0);
 
 
 
@@ -3055,13 +3066,15 @@ class ECAMDashboard {
          * @returns ***this*** {@link ECAMDashboard}
          */
         parseGrades() {
+            console.log("Starting to parse the Grades.")
             this.retrieveCachedModuleConfig();
+            debugger;
 
 
             if (document.querySelector(".greyGridTable")) {
                 const rows = document.querySelectorAll("table.greyGridTable tbody tr");
 
-                rows.forEach(row => {
+                for (const row of rows) {
                     const cells = row.querySelectorAll("td");
 
                     if (cells.length >= 6 && cells[0].textContent.includes("/20")) {
@@ -3072,16 +3085,22 @@ class ECAMDashboard {
                         const prof      = cells[4].textContent.trim();
                         const date      = cells[5].textContent.trim();
                         const semMatch  = label.match(/Semester\s+(\d+)/i);
-                        const semester  = semMatch ? parseInt(semMatch[1]) : Semester.unknownSemester;
+                        const semester  = semMatch ? parseInt(semMatch[1]) : this.unknownSemester.number;
                         const parts     = label.split(" - ").map(p => p.trim());
                         const subject   = parts.length >= 3 ? parts.slice(1,-1).join(" - ") : label;
                         const title     = parts.length >= 2 ? parts.at(-1) : "";
+                        const module    = this.hasSubject(subject, undefined, semester)
+                            ? this.getSubject(subject, undefined, semester).module.name
+                            : Module.unclassified
+                        ;
+
+                        // if ( subject === "Mathematics for Engineers 5" ) debugger;
 
                         this.addGrade(
                             grade, 
                             coef, 
                             subject, 
-                            Module.unclassified, 
+                            module, 
                             semester, 
                             title, 
                             false, 
@@ -3091,7 +3110,7 @@ class ECAMDashboard {
                             undefined
                         )
                     }
-                });
+                }
 
 
                 // if (this.savedReadGrades.length == 0) {
@@ -3108,6 +3127,7 @@ class ECAMDashboard {
             }
 
             this.retrieveCachedSimGrades();
+            debugger;
             this.computeAllStats();
 
             return this;
@@ -3255,21 +3275,21 @@ class ECAMDashboard {
 
                     // Preparing the Semester, Module and Subject objects from the moduleConfig
 
-                    Object.keys(this.moduleConfig).forEach(_sem => {
+                    for (const _sem of Object.keys(this.moduleConfig)) {
                         const sem = parseInt(_sem);
                         const semesterObj = this.ensureSemester(sem);
                         this.moduleConfig[sem].__object__ = semesterObj;
 
-                        Object.keys(this.moduleConfig[sem].modules).forEach(module => {
+                        for (const module of Object.keys(this.moduleConfig[sem].modules)) {
                             const moduleObj = this.ensureModule(module, semesterObj);
                             this.moduleConfig[sem].modules[module].__object__ = moduleObj;
 
-                            Object.entries(this.moduleConfig[sem].modules[module].subjects).forEach(subjectEntry => {
+                            for (const subjectEntry of Object.entries(this.moduleConfig[sem].modules[module].subjects)) {
                                 const subjectObj = this.ensureSubject(subjectEntry[0], moduleObj, semesterObj, subjectEntry[1].coefficient);
                                 this.moduleConfig[sem].modules[module].subjects[subjectEntry[0]].__object__ = subjectObj;
-                            })
-                        })
-                    })
+                            }
+                        }
+                    }
 
                 }
                 else {
@@ -3280,7 +3300,7 @@ class ECAMDashboard {
                         // If old moduleConfig found, translate it to v3 and prepare the Semester, Module and Subject objects from it
                         const oldModuleConfig = JSON.parse(oldModuleConfigStringified);
 
-                        Object.keys(oldModuleConfig).forEach(_sem => {
+                        for (const _sem of Object.keys(oldModuleConfig)) {
                             const sem = parseInt(_sem);
                             const semesterObj = this.ensureSemester(sem);
 
@@ -3290,7 +3310,7 @@ class ECAMDashboard {
                                 "modules": {}
                             };
 
-                            Object.entries(oldModuleConfig[sem]).forEach(moduleEntry => {
+                            for (const moduleEntry of Object.entries(oldModuleConfig[sem])) {
 
                                 if (moduleEntry[0] == "__modules__") this.moduleConfig[sem].__modules__ = moduleEntry[1];
                                 else {
@@ -3302,23 +3322,23 @@ class ECAMDashboard {
                                         "subjects": {}
                                     };
 
-                                    Object.entries(moduleEntry[1]).forEach(subjectEntry => {
+                                    for (const subjectEntry of Object.entries(moduleEntry[1])) {
 
                                         if (subjectEntry[0] == "subjects") this.moduleConfig[sem].modules[moduleEntry[0]].__subjects__ = subjectEntry[1];
                                         else if (subjectEntry[0] == "coefficients") {
-                                            Object.entries(subjectEntry[1]).forEach(entry => {
+                                            for (const entry of Object.entries(subjectEntry[1])) {
                                                 const subjectObj = this.ensureSubject(entry[0], moduleObj, semesterObj, entry[1]);
 
                                                 this.moduleConfig[sem].modules[moduleEntry[0]].subjects[entry[0]] = {
                                                     "__object__": subjectObj,
                                                     "coefficient": entry[1]
                                                 };
-                                            })
+                                            }
                                         }
-                                    })
+                                    }
                                 }
-                            })
-                        })
+                            }
+                        }
                     }
 
                     this.cacheModuleConfig();
@@ -3389,10 +3409,10 @@ class ECAMDashboard {
                      */
                     const oldSim = JSON.parse( localStorage.getItem("ECAM_DASHBOARD_SIM_GRADES") || "{}" ) || {};
 
-                    Object.values(oldSim).forEach(sem => {
-                        Object.entries(sem).forEach(mod => {
-                            Object.values(mod[1]).forEach(subj => {
-                                Object.values(subj).forEach(grade => {
+                    for (const sem of Object.values(oldSim)) {
+                        for (const mod of Object.entries(sem)) {
+                            for (const subj of Object.values(mod[1])) {
+                                for (const grade of Object.values(subj)) {
                                     const g = grade;
                                     const simGrade = this.addGrade(
                                         g.grade,
@@ -3409,10 +3429,10 @@ class ECAMDashboard {
                                     );
 
                                     if (simGrade) this.sim.push(simGrade);
-                                })
-                            })
-                        })
-                    })
+                                }
+                            }
+                        }
+                    }
 
                     this.cacheSimGrades()
                     // TODO: localStorage.removeItem("ECAM_DASHBOARD_SIM_GRADES");
@@ -3436,6 +3456,76 @@ class ECAMDashboard {
 
 
 
+
+
+
+
+            // MARK: _  addGrade()
+            /**
+             * 
+             * @param {number}              grade 
+             * @param {number}              coef 
+             * @param {Subject|string}      subject 
+             * @param {Module|string}       module 
+             * @param {Semester|number}     semester 
+             * @param {string|undefined}    title 
+             * @param {boolean|undefined}   isSim 
+             * @param {number|undefined}    classAvg 
+             * @param {string|undefined}    prof 
+             * @param {string|undefined}    date 
+             * @param {number|undefined}    id 
+             */
+            addGrade(grade, coef, subject, module, semester, title=" — ", isSim=false, classAvg=undefined, prof=" — ", date=" — ", id=undefined) {
+                const sem  = this.ensureSemester(semester);
+                const mod  = this.ensureModule(module, semester);
+                const subj = this.ensureSubject(subject, module, semester);
+
+
+                if (!this.hasGrade(
+                    grade,
+                    subj,
+                    mod,
+                    sem,
+                    coef,
+                    title,
+                    isSim,
+                    classAvg,
+                    prof,
+                    date,
+                    id
+                )) {
+                    const newGrade = new Grade(
+                        grade,
+                        coef,
+                        subj,
+                        title,
+                        isSim,
+                        classAvg,
+                        prof,
+                        date,
+                        id
+                    );
+
+                    this.grades.push(newGrade);
+                    if (isSim) this.sim.push(newGrade);
+
+                    return newGrade;
+                }
+
+                throw new Error(
+                    "The "+Grade.name+" could not be created, as another exists under the same informations:"
+                    +"\n- title: "+title
+                    +"\n- grade: "+grade
+                    +"\n- coef: "+coef
+                    +"\n- date: "+date
+                    +"\n- sem\\mod\\subj: "+subj
+                    +"\n- isSim: "+isSim
+                    +"\n- classAvg: "+classAvg
+                    +"\n- prof: "+prof
+                    +"\n- id: "+id
+                )
+
+            }
 
 
             // MARK: _  getGrade()
@@ -3490,28 +3580,18 @@ class ECAMDashboard {
                 }
 
                 throw new Error(
-                    "The Grade of string representation \""
-                    +(
-                        grade instanceof Grade 
-                        ? grade.toString() 
-                        : new Grade(
-                            grade, 
-                            coef ? coef : NaN, 
-                            subject, 
-                            title, 
-                            isSim, 
-                            classAvg, 
-                            prof, 
-                            date, 
-                            typeof id === "string" ? parseInt(id) : id
-                        ).toString()
-                    ) 
-                    + "\" is not known to this "+ECAMDashboard.name+"."
+                    "The Grade with the following informations is not known to this "+ECAMDashboard.name+":"
+                    +"\n- title: "+title
+                    +"\n- grade: "+grade
+                    +"\n- coef: "+coef
+                    +"\n- date: "+date
+                    +"\n- sem\\mod\\subj: "+subj
+                    +"\n- isSim: "+isSim
+                    +"\n- classAvg: "+classAvg
+                    +"\n- prof: "+prof
+                    +"\n- id: "+id
                 );
             }
-
-
-
 
 
             // MARK: _  hasGrade()
@@ -3554,6 +3634,35 @@ class ECAMDashboard {
 
 
 
+
+
+            // MARK: _  addSubject()
+            /**
+             * 
+             * @param {Subject|string}      subject 
+             * @param {Module|string}       module 
+             * @param {Semester|number}     semester
+             * @param {number|undefined}    [coefficient=undefined]
+             * @returns 
+             */
+            addSubject(subject, module, semester, coefficient=undefined) {
+                const sem  = this.ensureSemester(semester);
+                const mod  = this.ensureModule(module, semester);
+
+                if (!this.hasSubject(subject, mod, sem)) {
+                    const newSubj = new Subject(subject instanceof Subject ? subject.name : subject, mod, coefficient);
+                    this.subjects.push(newSubj);
+                    return newSubj;
+                }
+
+                throw new Error(
+                    "The "+Subject.name+" could not be created, as another exists under the same name: "
+                    +"\n- name: "+(subject instanceof Subject ? subject.name : subject)
+                    +"\n- name: "+(subject instanceof Subject ? subject.name : subject)
+                )
+            }
+
+
             // MARK: _  getSubject()
             /**
              *
@@ -3564,16 +3673,19 @@ class ECAMDashboard {
              * @throws {Error} If the subject is not known to ***this*** {@link ECAMDashboard}.
              */
             getSubject(subject, module=undefined, semester=undefined) {
-                if (semester instanceof Semester)   return semester.getSubject(subject);
-                if (semester !== undefined)         return this.getSemester(semester).getSubject(subject);
                 if (module instanceof Module)       return module.getSubject(subject);
                 if (module !== undefined)           return this.getModule(module).getSubject(subject);
+                if (semester instanceof Semester)   return semester.getSubject(subject);
+                if (semester !== undefined)         return this.getSemester(semester).getSubject(subject);
 
-                for (const subj of this.subjects) { if (subj.name == subject) return subj; }
+                for (const subj of this.subjects) {
+                    if (subject instanceof Subject ? subj.equals(subject) : subj.name == subject) {
+                        return subj;
+                    }
+                }
 
                 throw new Error("Subject of name \""+subject+"\" is not known to this "+ECAMDashboard.name+".");
             }
-
 
             
             // MARK: _  hasSubject()
@@ -3596,6 +3708,53 @@ class ECAMDashboard {
             }
 
 
+            // MARK: _  ensureSubject()
+            /**
+             * Tries to get the {@link Subject} corresponding to the given {@link Subject} (or its name),
+             * and if it does not exits, create it and return it.
+             * 
+             * @param {Subject|string}            subject                   The {@link Subject} (or its name) to find/create in the data of ***this*** {@link ECAMDashboard}.
+             * @param {Module|string}     module                    The {@link Module} (or its name) to which should belong the {@link Subject} to find/create.
+             * @param {Semester|number}   semester                  The {@link Semester} (or its number) to which should belong the {@link Subject} to find/create.
+             * @param {number|undefined}  [coefficient=undefined]   The coefficient of the {@link Subject} to find/create. If the {@link Subject} did exist but the given coefficient does not match the current {@link Subject}'s coefficient, modify the {@link Subject}'s coefficient to make them match.
+             * 
+             * @returns {Subject} The {@link Subject} in the data of ***this*** {@link ECAMDashboard}, whether it was found or created.
+             */
+            ensureSubject(subject, module, semester, coefficient=undefined) {
+                try {
+                    const subj = this.getSubject(subject, module, semester);
+                    if (coefficient) if (subj.coef != coefficient) subj.coef = coefficient;
+                    return subj;
+                }
+                catch (e) {
+                    const subj = this.addSubject(subject, module, semester, coefficient)
+                    return subj;
+                }
+            }
+
+
+
+
+
+
+            // MARK: _  addModule()
+            /**
+             * 
+             * @param {Module|string} module 
+             * @param {Semester|number} semester 
+             * @returns The {@link Module} created.
+             */
+            addModule(module, semester) {
+                const sem = this.ensureSemester(semester);
+
+                if (!this.hasModule(module, sem)) {
+                    const newMod = new Module(module instanceof Module ? module.name : module, sem);
+                    this.modules.push(newMod);
+                    return newMod;
+                }
+
+                throw new Error("The "+Module.name+" could not be created, as another exists under the same name.")
+            }
 
 
             // MARK: _  getModule()
@@ -3610,12 +3769,14 @@ class ECAMDashboard {
                 if (semester instanceof Semester)   return semester.getModule(module);
                 if (semester !== undefined)         return this.getSemester(semester).getModule(module);
 
-                for (const mod of this.modules) { if (mod.name == module) return mod; }
+                for (const mod of this.modules) {
+                    if (module instanceof Module ? mod.equals(module) : mod.name == module) {
+                        return mod;
+                    }
+                }
 
                 throw new Error("Module of name \""+module+"\" is not known to this "+ECAMDashboard.name+".");
             }
-
-
 
 
             // MARK: _  hasModule()
@@ -3634,6 +3795,46 @@ class ECAMDashboard {
             }
 
 
+            // MARK: _  ensureModule()
+            /**
+             * Tries to get the {@link Module} corresponding to the given {@link Module} (or its name),
+             * and if it does not exits, create it and return it.
+             * 
+             * @param {Module|string}              module      The {@link Module} (or its name) to find/create in the data of ***this*** {@link ECAMDashboard}.
+             * @param {Semester|number}     semester    The {@link Semester} (or its number) to which should belong the {@link Module} to find/create.
+             * @returns {Module} The {@link Module} in the data of ***this*** {@link ECAMDashboard}, whether it was found or created.
+             */
+            ensureModule(module, semester) {
+                try {
+                    const mod = this.getModule(module, semester);
+                    return mod;
+                }
+                catch (e) {
+                    const mod = this.addModule(module, semester);
+                    return mod;
+                }
+            }
+
+
+
+
+
+
+            // MARK: _  addSemester()
+            /**
+             * 
+             * @param {Semester|number} semester 
+             * @returns 
+             */
+            addSemester(semester) {
+                if (!this.hasSemester(semester)) {
+                    const newSem = new Semester(semester instanceof Semester ? semester.number : semester);
+                    this.semesters[newSem.number] = newSem;
+                    return newSem;
+                }
+
+                throw new Error("The "+Semester.name+" could not be created, as another exists under the same number.");
+            }
 
 
             // MARK: _  getSemester()
@@ -3644,7 +3845,11 @@ class ECAMDashboard {
              * @throws {Error} If the semester is not known to ***this*** {@link ECAMDashboard}.
              */
             getSemester(semester) {
-                for (const sem of this.semesters) { if (sem.number == semester) return sem; }
+                for (const sem of this.semesters) {
+                    if (sem) if (semester instanceof Semester ? sem.equals(semester) : sem.number == semester) {
+                        return sem;
+                    }
+                }
 
                 throw new Error(
                     "Semester n°"+semester+" is not known to this "+ECAMDashboard.name+"."
@@ -3667,186 +3872,25 @@ class ECAMDashboard {
             }
 
 
-
-            // MARK: _  addGrade()
-            /**
-             * 
-             * @param {number}              grade 
-             * @param {number}              coef 
-             * @param {Subject|string}      subject 
-             * @param {Module|string}       module 
-             * @param {Semester|number}     semester 
-             * @param {string|undefined}    title 
-             * @param {boolean|undefined}   isSim 
-             * @param {number|undefined}    classAvg 
-             * @param {string|undefined}    prof 
-             * @param {string|undefined}    date 
-             * @param {number|undefined}    id 
-             */
-            addGrade(grade, coef, subject, module, semester, title=" — ", isSim=false, classAvg=undefined, prof=" — ", date=" — ", id=undefined) {
-                var subj = subject instanceof Subject ? subject : this.ensureSubject(subject, module, semester);
-                var mod = subj.module;
-                var sem = subj.semester;
-
-                
-                if (!this.hasGrade(
-                    grade,
-                    subj,
-                    mod,
-                    sem,
-                    coef,
-                    title,
-                    isSim,
-                    classAvg,
-                    prof,
-                    date,
-                    id
-                )) {
-                    const newGrade = new Grade(
-                        grade,
-                        coef,
-                        subj,
-                        title,
-                        isSim,
-                        classAvg,
-                        prof,
-                        date,
-                        id
-                    );
-
-                    this.grades.push(newGrade);
-                    if (isSim) this.sim.push(newGrade);
-
-                    return newGrade;
-                }
-
-                throw new Error("The "+Grade.name+" could not be created, as another exists under the same informations.")
-
-            }
-
-
-            // MARK: _  addSubject()
-            /**
-             * 
-             * @param {string}              subject 
-             * @param {Module|string}       module 
-             * @param {Semester|number}     semester
-             * @param {number|undefined}    [coefficient=undefined]
-             * @returns 
-             */
-            addSubject(subject, module, semester, coefficient=undefined) {
-                var mod = module instanceof Module ? module : this.ensureModule(module, semester);
-
-                if (!this.hasSubject(subject, module, semester)) {
-                    const newSubj = new Subject(subject, mod, coefficient);
-                    this.subjects.push(newSubj);
-                    return newSubj;
-                }
-
-                throw new Error("The "+Subject.name+" could not be created, as another exists under the same name.")
-            }
-
-
-
-            // MARK: _  ensureSubject()
-            /**
-             * Tries to get the {@link Subject} corresponding to the given {@link Subject} (or its name),
-             * and if it does not exits, create it and return it.
-             * 
-             * @param {string}            subject                   The {@link Subject} (or its name) to find/create in the data of ***this*** {@link ECAMDashboard}.
-             * @param {Module|string}     module                    The {@link Module} (or its name) to which should belong the {@link Subject} to find/create.
-             * @param {Semester|number}   semester                  The {@link Semester} (or its number) to which should belong the {@link Subject} to find/create.
-             * @param {number|undefined}  [coefficient=undefined]   The coefficient of the {@link Subject} to find/create. If the {@link Subject} did exist but the given coefficient does not match the current {@link Subject}'s coefficient, modify the {@link Subject}'s coefficient to make them match.
-             * 
-             * @returns {Subject} The {@link Subject} in the data of ***this*** {@link ECAMDashboard}, whether it was found or created.
-             */
-            ensureSubject(subject, module, semester, coefficient=undefined) {
-                try {
-                    const subj = this.getSubject(subject, module, semester);
-                    if (coefficient) if (subj.coef != coefficient) subj.coef = coefficient;
-                    return subj;
-                }
-                catch (e) {
-                    return this.addSubject(subject, module, semester, coefficient)
-                }
-            }
-
-
-            // MARK: _  addModule()
-            /**
-             * 
-             * @param {string} module 
-             * @param {Semester|number} semester 
-             * @returns The {@link Module} created.
-             */
-            addModule(module, semester) {
-                /** @type {Semester|undefined} */ 
-                var sem = semester instanceof Semester ? semester : this.ensureSemester(semester);
-
-                if (!this.hasModule(module, semester)) {
-                    const newMod = new Module(module, sem);
-                    this.modules.push(newMod);
-                    return newMod;
-                }
-
-                throw new Error("The "+Module.name+" could not be created, as another exists under the same name.")
-            }
-
-
-
-            // MARK: _  ensureModule()
-            /**
-             * Tries to get the {@link Module} corresponding to the given {@link Module} (or its name),
-             * and if it does not exits, create it and return it.
-             * 
-             * @param {string}              module      The {@link Module} (or its name) to find/create in the data of ***this*** {@link ECAMDashboard}.
-             * @param {Semester|number}     semester    The {@link Semester} (or its number) to which should belong the {@link Module} to find/create.
-             * @returns {Module} The {@link Module} in the data of ***this*** {@link ECAMDashboard}, whether it was found or created.
-             */
-            ensureModule(module, semester) {
-                try {
-                    return this.getModule(module, semester);
-                }
-                catch (e) {
-                    return this.addModule(module, semester)
-                }
-            }
-
-
-            // MARK: _  addSemester()
-            /**
-             * 
-             * @param {number} semester 
-             * @returns 
-             */
-            addSemester(semester) {
-                if (!this.hasSemester(semester)) {
-                    const newSem = new Semester(semester);
-                    this.semesters.push(newSem);
-                    return newSem;
-                }
-
-                throw new Error("The "+Semester.name+" could not be created, as another exists under the same number.");
-            }
-
-
-
             // MARK: _  ensureSemester()
             /**
              * Tries to get the {@link Semester} corresponding to the given {@link Semester} (or its number),
              * and if it does not exits, create it and return it.
              * 
-             * @param {number} semester The {@link Semester} (or its number) to find/create in the data of ***this*** {@link ECAMDashboard}.
+             * @param {Semester|number} semester The {@link Semester} (or its number) to find/create in the data of ***this*** {@link ECAMDashboard}.
              * @returns {Semester} The {@link Semester} in the data of ***this*** {@link ECAMDashboard}, whether it was found or created.
              */
             ensureSemester(semester) {
                 try {
-                    return this.getSemester(semester);
+                    const sem = this.getSemester(semester);
+                    return sem;
                 }
                 catch (e) {
-                    return this.addSemester(semester)
+                    const sem = this.addSemester(semester)
+                    return sem
                 }
             }
+
 
 
 
@@ -3859,7 +3903,7 @@ class ECAMDashboard {
              * @returns ***this*** {@link ECAMDashboard}.
              */
             computeAllStats() {
-                this.semesters.forEach(sem => { sem.computeStats(true, true) })
+                this.semesters.forEach(sem => { if (sem) sem.computeStats(true, true) })
 
                 return this;
             }
@@ -3871,7 +3915,7 @@ class ECAMDashboard {
     //#endregion — methods —
 
 }
-
+/** @type {any} */ (globalThis).ECAMDashboard = ECAMDashboard;
 
 
 // MARK: ——————————————————
@@ -3883,37 +3927,8 @@ class ECAMDashboard {
 
 
 
-//#region <— Globalize classes —>
-/** @type {any} */ (globalThis).ParameterTypeError   = ParameterTypeError;
-
-/** @type {any} */ (globalThis).Grade                = Grade;
-/** @type {any} */ (globalThis).Subject              = Subject;
-/** @type {any} */ (globalThis).Module               = Module;
-/** @type {any} */ (globalThis).Semester             = Semester;
-
-/** @type {any} */ (globalThis).Setting              = Setting;
-/** @type {any} */ (globalThis).Settings             = Settings;
-/** @type {any} */ (globalThis).KeyboardShortcut     = KeyboardShortcut;
-/** @type {any} */ (globalThis).KeyboardShortcuts    = KeyboardShortcuts;
-
-
-/** @type {any} */ (globalThis).Card                 = Card;
-/** @type {any} */ (globalThis).SubjectCard          = SubjectCard;
-/** @type {any} */ (globalThis).ModuleCard           = ModuleCard;
-/** @type {any} */ (globalThis).SemesterCard         = SemesterCard;
-
-
-/** @type {any} */ (globalThis).ECAMDashboard        = ECAMDashboard;
-// MARK: <— Globalize classes —>
-//#endregion
-
-
-
-
-
-
-
-ParameterTypeError.active = false;
 
 /** @type {ECAMDashboard} */
-globalThis.ecamDash2 = new ECAMDashboard().parseGrades();
+globalThis.ecamDash2 = new ECAMDashboard();
+
+ecamDash2.parseGrades();
