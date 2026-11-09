@@ -55,7 +55,7 @@
 //
 
 //@ts-check
-
+/** @typedef {"en"|"fr"} Language */
 
 
 //#region — General functions —
@@ -564,10 +564,7 @@
              * Value of ***this*** {@link Grade}, a positive float number below 20.
              */
             get grade()     { return this.#grade }
-            set grade(value) {
-                this.#grade = value <= 20 ? (value >= 0 ? Number(value) : 0) : 20;
-                this.updateUpHierarchyStats()
-            }
+            set grade(value) { this.#grade = value <= 20 ? (value >= 0 ? Number(value) : 0) : 20; }
 
             /** 
              * Value of the coefficient of ***this*** {@link Grade} in its {@link Subject}, a positive float number below 100, in %.
@@ -581,50 +578,37 @@
                 if (typeof value === "string") { value = parseFloat(value); }
 
                 this.#coef = value <= 100 ? (value >= 0 ? Number(value) : 0) : 100;
-                this.updateUpHierarchyStats()
             }
 
             /** 
              * The {@link Subject} of ***this*** {@link Grade}.
              */
             get subject()   { return this.#subject }
-            set subject(value)    {
-                this.#subject = value;
-            }
+            set subject(value)    { this.#subject = value; }
 
 
             /** 
              * The {@link Module} of ***this*** {@link Grade}.
              */
             get module()    { return this.#module }
-            set module(value)    {
-                this.#module = value;
-            }
+            set module(value)    { this.#module = value; }
 
             /** 
              * The {@link Semester} of ***this*** {@link Grade}.
              */
             get semester()  { return this.#semester }
-            set semester(value) {
-                const oldSem = this.#semester;
-                this.#semester = value;
-                oldSem.computeStats(true, true);
-                this.updateUpHierarchyStats()
-            }
 
             /** 
              * Title of ***this*** {@link Grade} (default when no title was given: " — ").
              */
-            get title()     { return this.#title    }
-            set title(value) {
-                this.#title = value;
-            }
+            get title()     { return this.#title }
+            set title(value) { this.#title = value; }
 
             /** 
              * `true` if ***this*** {@link Grade} is a simulated grade, `false` otherwise.
              * @readonly
              */
-            get isSim()     { return this.#isSim    }
+            get isSim()     { return this.#isSim }
 
             /** 
              * A 17-digits *wannabe unique* id number for a simulated grade, built from the time stamp of its creation.
@@ -644,42 +628,32 @@
                 if (typeof value === "string") { value = parseInt(value); }
 
                 this.#classAvg = (!value || isNaN(value)) ? NaN : ( (value) <= 20 ? (value >= 0 ? value : 0) : 20 );
-                this.updateUpHierarchyStats()
             }
 
             /** 
              * Name of the teacher.s who published ***this*** {@link Grade} (default when no teacher was given: " — ") 
              */
-            get prof()      { return this.#prof      }
-            set prof(value) {
-                this.#prof = value
-            }
+            get prof()      { return this.#prof }
+            set prof(value) { this.#prof = value }
 
             /**
              * Date of publication of ***this*** {@link Grade} entered by the administration (default when no date was given: " — ").
              * ***Warning**, may differ from the actual date at which the grade was uploaded on the intranet.* 
              */
-            get date()      { return this.#date      }
-            set date(value) {
-                this.#date = value;
-            }
+            get date()      { return this.#date }
+            set date(value) { this.#date = value; }
 
             /** 
              * `true` if ***this*** {@link Grade} is enabled (so it counts in the calculation of the averages), `false` otherwise.
              */
-            get enabled()   { return this.#enabled  }
-            set enabled(value) {
-                this.#enabled = value;
-                this.updateUpHierarchyStats()
-            }
+            get enabled()   { return this.#enabled }
+            set enabled(value) { this.#enabled = value; }
 
             /** 
              * `true` if ***this*** {@link Grade} was marked as read, `false` otherwise.
              */
             get markedAsRead() { return this.#markedAsRead }
-            set markedAsRead(value) {
-                this.#markedAsRead = value;
-            }
+            set markedAsRead(value) { this.#markedAsRead = value; }
 
 
 
@@ -1047,16 +1021,13 @@
             /**
              * Coefficient of ***this*** {@link Subject} in its {@link Module}.
              */
-            get coef()      { return this.#coef     }
-            set coef(value) {
-                this.#coef = value <= 100 ? (value >= 0 ? value : 0) : 100;
-                this.updateUpHierarchyStats()
-            }
+            get coef()      { return this.#coef }
+            set coef(value) { this.#coef = value <= 100 ? (value >= 0 ? value : 0) : 100; }
 
             /**
              * Value of the class' average of ***this*** {@link Grade}, a positive float number below 20. @readonly
              */
-            get average()   { return this.#average  }
+            get average()   { return this.#average }
 
             /**
              * Value of the class' average of ***this*** {@link Grade}, a positive float number below 20. @readonly
@@ -1066,7 +1037,7 @@
             /**
              * Array of the {@link Grade}s in ***this*** {@link Subject}. @readonly
              */
-            get grades()    { return this.#grades   }
+            get grades()    { return this.#grades }
 
             /**
              * The {@link Module} of ***this*** {@link Subject}.
@@ -1074,9 +1045,9 @@
             get module()    { return this.#module }
             set module(value)    {
                 const oldMod = this.#module;
+                delete oldMod.subjects[this.#name];
                 this.#module = value;
-                this.updateUpHierarchyStats()
-                oldMod.updateUpHierarchyStats()
+                this.#module.subjects[this.#name] = this;
             }
 
             /**
@@ -1237,28 +1208,6 @@
                 }
 
                 return Math.round(100*avg/totalSubjCoef)/100;
-            }
-
-
-
-
-            
-            // MARK: _  addGrades()
-            /**
-             * Adds a {@link Grade} to ***this*** {@link Subject}.
-             * @param {...Grade} grades The {@link Grade} to add to ***this*** {@link Subject}.
-             * @returns {Subject} ***this*** {@link Subject}.
-             */
-            addGrade(...grades) {
-                for (const grade of grades) {
-                    grade.subject = this;
-                    grade.module = this.#module;
-                    grade.semester = this.#semester;
-
-                    this.#grades.push(grade);
-                }
-
-                return this;
             }
 
 
@@ -1588,9 +1537,7 @@
              * Name of ***this*** {@link Module}. @type {string}
              */
             get name()      { return this.#name }
-            set name(value) {
-                this.#name = value;
-            }
+            set name(value) { this.#name = value; }
 
 
 
@@ -2297,9 +2244,7 @@
              * Number of ***this*** {@link Semester}. @type {number}
              */
             get number()      { return this.#number }
-            set number(value) {
-                this.#number = Number(value);
-            }
+            set number(value) { this.#number = Number(value); }
 
 
             /**
@@ -2330,11 +2275,12 @@
              */
             get grades()    { return this.#grades }
 
-            /** Array of the {@link Subject}s in ***this*** {@link Semester}. @type {Object.<string, Subject>} */
+            /** 
+             * Array of the {@link Subject}s in ***this*** {@link Semester}. 
+             * @type {Object.<string, Subject>} 
+             * @readonly 
+             */
             get subjects()    { return this.#subjects }
-            set subjects(value) {
-                this.#subjects = value;
-            }
 
             /**
              * Array of the simulated {@link Grade}s in ***this*** {@link Semester}. @type {Grade[]} @readonly 
@@ -2767,6 +2713,91 @@
     class Setting {
 
 
+        /** Name of ***this*** {@link Setting}. @type {LanguageSensitive<string>|string} */
+        #name = "??";
+
+        /** Description of ***this*** {@link Setting}. @type {LanguageSensitive<string>|string|undefined} */
+        #description = undefined;
+
+        /** Additional info about ***this*** {@link Setting}. @type {LanguageSensitive<string>|string|undefined} */
+        #info = undefined;
+
+        /** Type of the value of ***this*** {@link Setting}. @type {"boolean"|"number"|"string"} */
+        #valueType = "boolean";
+
+        /** Value of ***this*** {@link Setting}. @type {boolean|number|string} */
+        #value = true;
+
+        /** Action to perform upon changing ***this*** {@link Setting}. @type {() => void} */
+        action = () => {};
+
+        /** 
+         * {@link Setting}s which ***this*** {@link Setting} depends on. 
+         * @type {Array.<{
+         *      setting: Setting,
+         *      condition: {
+         *          type: "equal"|"higher"|"lower"|"match",
+         *          value: boolean|number|string
+         *      }
+         * }>} 
+         * @readonly 
+         */
+        parents = [];
+
+        /** 
+         * {@link Setting}s which depends on ***this*** {@link Setting}. 
+         * @type {Array.<{
+         *      setting: Setting,
+         *      condition: {
+         *          type: "equal"|"higher"|"lower"|"match",
+         *          value: boolean|number|string
+         *      }
+         * }>} 
+         * @readonly 
+         */
+        children = [];
+
+
+
+
+        /**
+         * 
+         * @param {boolean|number|string} value 
+         * @param {LanguageSensitive<string>|string|undefined} name 
+         * @param {LanguageSensitive<string>|string|undefined} description 
+         * @param {LanguageSensitive<string>|string|undefined} info 
+         * @param {()=>any} action 
+         */
+        constructor(value, name=undefined, description=undefined, info=undefined, action=()=>{}) {
+            if (name) this.#name = name;
+            this.#value = value;
+            this.action = action;
+            this.#description = description;
+            this.#info = info;
+        }
+
+
+        get name() {
+            if (this.#name instanceof LanguageSensitive) { return this.#name.content }
+            else return this.#name
+        }
+
+
+        get value() {
+            return this.#value
+        }
+
+
+        toString() {
+            return JSON.stringify({
+                "name": this.#name,
+                "value": this.#value,
+                "description": this.#description,
+                "info": this.#info,
+            })
+        }
+
+
 
 
 
@@ -2780,6 +2811,123 @@
 
     // MARK: ———            SETTINGS            ———
     class Settings {
+
+
+        /** @type {Setting} */ displayClassAvg;
+
+        /** @type {Setting} */ totalCoefValuesEnabled;
+
+        /** @type {Setting} */ totalCoefDebugTextsEnabled;
+
+        /** @type {Setting} */ blurEnabled;
+
+        /** @type {Setting} */ scrollHelpersEnabled;
+
+
+        /**
+         * 
+         * @param {{
+         *      [settingName:string]: boolean | string | number
+         * }} parsedSettings 
+         */
+        constructor(parsedSettings) {
+            this.displayClassAvg            = new Setting(true, 
+                new LanguageSensitive({
+                    "en": "Class average for modules and subjects",
+                    "fr": "Moyenne de classe de modules et matières",
+                }), 
+                new LanguageSensitive({
+                    "en": "Display the class averages for subjects, modules and semesters",
+                    "fr": "Afficher les moyennes de classe pour les matières, modules et semestres",
+                }), 
+                new LanguageSensitive({
+                    "en": "For students with high competitive spirit :D",
+                    "fr": "Pour les étudiants avec un esprit de compétition :D",
+                }), 
+            )
+
+            this.totalCoefValuesEnabled     = new Setting(true, 
+                new LanguageSensitive({
+                    "en": "Display total coefs",
+                    "fr": "Afficher les coefs totaux",
+                }), 
+                new LanguageSensitive({
+                    "en": "Display the total coefficients for subject and module cards",
+                    "fr": "Afficher les coefficients totaux pour les cartes de matière et de module",
+                }), 
+                new LanguageSensitive({
+                    "en": "The percentage.s showing up between the name of modules/subjects and their average",
+                    "fr": "Le.s pourcentage.s apparraissant entre le nom des modules/sujets et leur moyenne",
+                }), 
+            );
+
+            this.totalCoefDebugTextsEnabled = new Setting(true, 
+                new LanguageSensitive({
+                    "en": "Display the helper texts",
+                    "fr": "Afficher les textes d'aide",
+                }), 
+                new LanguageSensitive({
+                    "en": "Display the helper texts for subject and module cards",
+                    "fr": "Afficher les textes d'aide des cartes de sujet et de module",
+                }), 
+                new LanguageSensitive({
+                    "en": "It simply corresponds to the texts interpreting the numbers of \"Total Subjects Coef\" and \"Total Grades Coef\"",
+                    "fr": "Il s'agit simplement des textes interprétant les nombres des \"Coef Total des Matières\" et \"Coef Total des Notes\"",
+                }), 
+            );
+
+            this.blurEnabled                = new Setting(true, 
+                new LanguageSensitive({
+                    "en": "Enable blur",
+                    "fr": "Activer le flou",
+                }), 
+                new LanguageSensitive({
+                    "en": "Enable the blur that operates on the background of the windows (turned on by default because I find it nice :D)",
+                    "fr": "Activer le flou qui s'opère sur le fond des fenêtres (activé par défaut parce que je trouve ça joli :D)",
+                }), 
+                new LanguageSensitive({
+                    "en": "Not recommended for low-end devices",
+                    "fr": "Non recommendé pour les appareils à basses performances",
+                }), 
+            );
+
+            this.scrollHelpersEnabled       = new Setting(true, 
+                new LanguageSensitive({
+                    "en": "Scroll helpers",
+                    "fr": "Aides au défilement",
+                }), 
+                new LanguageSensitive({
+                    "en": "Enable the scroll helpers to follow the important elements on screen upon verticality changes. Disable it if you don't like these forced scrolls",
+                    "fr": "Activer l'aide au défilement pour suivre les éléments importants à l'écran lors de changements de verticalité. Désactive-la si tu n'aimes pas avoir ces défilements forcés",
+                }), 
+                new LanguageSensitive({
+                    "en": "Some actions (edit mode change, detailed/compact view mode change...) change the vertical position of some elements (i.e. module/subject cards), so this setting allows to scroll to keep the most important elements on screen",
+                    "fr": "Certaines actions (changement de mode d'édition, changement vue détaillée/compacte...) font changer la position verical de certains éléments (cartes de module/matière, entre autres), donc un défilement maintient certains éléments à l'écran",
+                }), 
+            );
+
+
+
+            if (parsedSettings?.displayClassAvg != undefined)               this.displayClassAvg;
+            if (parsedSettings?.totalCoefValuesEnabled != undefined)        this.totalCoefValuesEnabled;
+            if (parsedSettings?.totalCoefDebugTextsEnabled != undefined)    this.totalCoefDebugTextsEnabled;
+            if (parsedSettings?.blurEnabled != undefined)                   this.blurEnabled;
+            if (parsedSettings?.scrollHelpersEnabled != undefined)          this.scrollHelpersEnabled;
+        }
+
+
+
+        // MARK: _  toCacheString()
+        toCacheString() {
+            /** @type {Object.<string, string | number | boolean>} */
+            const out = {};
+
+            Object.entries(this).forEach((/** @type {[string, Setting]} */ entry) => {
+                out[entry[0]] = entry[1].value
+            });
+
+            return JSON.stringify(out)
+        }
 
 
 
@@ -2824,6 +2972,51 @@
 
     }
     /** @type {any} */ (globalThis).KeyboardShortcuts = KeyboardShortcuts;
+
+
+
+
+
+    // MARK: ———   LANGUAGESENSITIVE   ———
+    /** @template T */
+    class LanguageSensitive {
+
+
+        /**
+         * @type {{ [lang in Language]: T }}
+         */
+        #languageSensitiveContent;
+
+
+
+        /**
+         * 
+         * @param {{ [lang in Language]: T }} languageSensitiveContent 
+         */
+        constructor(languageSensitiveContent) {
+            this.#languageSensitiveContent = languageSensitiveContent;
+        }
+
+
+        /**
+         * Anything that is stored as content that depends on the currently set language.
+         */
+        get content() {
+            return this.#languageSensitiveContent[ECAMDashboard.lang]
+        }
+        set content(value) {
+            this.#languageSensitiveContent[ECAMDashboard.lang] = value
+        }
+
+
+
+
+
+
+        // MARK: _________________________________________
+    }
+    /** @type {any} */ (globalThis).LanguageSensitive = LanguageSensitive;
+
 //#endregion BACKEND
 
 
@@ -3160,17 +3353,25 @@ class ECAMDashboard {
 
 
         /**
+         * @type {Language}
+         */
+        static lang = "en";
+
+
+        /**
          * Object with values being the key of the localStorage cache containing data for this ECAMDashboard, 
          * associated with keys that are short description of the value's meaning.
          * @readonly
          * @type {{
-         *      "moduleConfig": "ECAM_GRADES_DASHBOARD-module_config",
-         *      "simGrades":    "ECAM_GRADES_DASHBOARD-sim_grades"
+         *      settings:       "ECAM_GRADES_DASHBOARD-settings",
+         *      moduleConfig:   "ECAM_GRADES_DASHBOARD-module_config",
+         *      simGrades:      "ECAM_GRADES_DASHBOARD-sim_grades",
          * }}
          */
         static cacheKeys = {
-            /** @readonly */ moduleConfig:    "ECAM_GRADES_DASHBOARD-module_config",
-            /** @readonly */ simGrades:       "ECAM_GRADES_DASHBOARD-sim_grades"
+            /** @readonly */ settings:      "ECAM_GRADES_DASHBOARD-settings",
+            /** @readonly */ moduleConfig:  "ECAM_GRADES_DASHBOARD-module_config",
+            /** @readonly */ simGrades:     "ECAM_GRADES_DASHBOARD-sim_grades",
         };
 
 
@@ -3191,7 +3392,6 @@ class ECAMDashboard {
          * @type {Module[]}
          */
         modules         = [];
-
         
         /**
          * Array of all the {@link Semester}s of the user. 
@@ -3262,6 +3462,13 @@ class ECAMDashboard {
         moduleConfig    = {};
 
 
+        /**
+         * @type {Settings}
+         */
+        // @ts-ignore
+        settings;
+
+
         offline = false;
 
 
@@ -3287,9 +3494,8 @@ class ECAMDashboard {
      */
     constructor(offline=false) {
         this.initCSS();
+        this.retrieveCachedSettings();
         this.offline = offline;
-
-        this.parseGrades();
 
         if (!offline) {
             const notes = document.createElement("li");
@@ -3302,6 +3508,9 @@ class ECAMDashboard {
             scolarite?.classList.remove("current-site");
             shortcutsBar?.querySelector(".taglib-my-places")?.appendChild(notes);
         }
+
+
+        this.parseGrades();
 
 
         const container = document.querySelector("#currentNote");
@@ -3322,169 +3531,195 @@ class ECAMDashboard {
 
 
 
-
-        // MARK: _  parseGrades()
-        /**
-         * Reads the grades from the grades table, and create {@link Grade} instances.
-         *
-         * @returns ***this*** {@link ECAMDashboard}
-         */
-        parseGrades() {
-            this.retrieveCachedModuleConfig();
-
-
-            if (document.querySelector(".greyGridTable")) {
-                const rows = document.querySelectorAll("table.greyGridTable tbody tr");
-
-                for (const row of rows) {
-                    const cells = row.querySelectorAll("td");
-
-                    if (cells.length >= 6 && cells[0].textContent.includes("/20")) {
-                        const label     = cells[1].textContent.trim();
-                        const grade     = parseFloat(cells[0].textContent.replace(",", ".").replace("/20", "")) || 0;
-                        const coef      = parseFloat(cells[2].textContent.replace(",", ".").replace("%",   "")) || 0;
-                        const classAvg  = parseFloat(cells[3].textContent.replace(",", ".").replace("/20", "")) || 0;
-                        const prof      = cells[4].textContent.trim();
-                        const date      = cells[5].textContent.trim();
-                        const semMatch  = label.match(/Semester\s+(\d+)/i);
-                        const semester  = semMatch ? parseInt(semMatch[1]) : this.unknownSemester.number;
-                        const parts     = label.split(" - ").map(p => p.trim());
-                        const subject   = parts.length >= 3 ? parts.slice(1,-1).join(" - ") : label;
-                        const title     = parts.length >= 2 ? parts.at(-1) : "";
-                        const module    = this.hasSubject(subject, undefined, semester)
-                            ? this.getSubject(subject, undefined, semester).module.name
-                            : Module.unclassified
-                        ;
-
-                        // if ( subject === "Mathematics for Engineers 5" ) debugger;
-
-                        this.addGrade(
-                            grade, 
-                            coef, 
-                            subject, 
-                            module, 
-                            semester, 
-                            title, 
-                            false, 
-                            classAvg, 
-                            prof, 
-                            date, 
-                            undefined
-                        )
-                    }
-                }
-
-
-                // if (this.savedReadGrades.length == 0) {
-                //     this.newGrades = [];
-                //     this.savedReadGrades = this.grades;
-                // }
-                // else {
-                //     this.newGrades = compareArraysOfObjects(this.grades, this.savedReadGrades).more;
-                // }
-            }
-            else {
-                // this.newGrades = [];
-                // this.grades = this.savedReadGrades;
-            }
-
-            this.retrieveCachedSimGrades();
-            this.computeAllStats();
-
-            return this;
-        }
+        //#region — Miscellaneous
 
 
 
 
 
-        // MARK: _  gradeFromString()
-        /**
-         * 
-         * @param {string} string 
-         */
-        gradeFromString(string) {
-            const delimit = Grade.gradePathSeparator;
-            const semRegExp             = new RegExp(`(?<semester>[^(${ delimit})]+)${delimit}`);
-            const modRegExp             = new RegExp(`(?<module>[^(${   delimit})]+)${delimit}`);
-            const subjRegExp            = new RegExp(`(?<subject>[^(${  delimit})]+)${delimit}`);
-            const titleRegExp           = /(?<title>.+) :/;
-            const gradeRegExp           = /(?<grade>\d{1,2}(?:\.\d{1,2})?)\/20 vs /;
-            const classAvgRegExp        = /(?<classAvg>(?:\d{1,2}(?:\.\d{1,2})?)| — )\/20, /;
-            const coefRegExp            = /(?<coef>\d{1,2}(?:\.\d{1,2})?)% /;
-            const idRegExp              = /(\((?<id>\d+)\) )?/;
-            const profRegExp            = /(\((?<prof>[^\)]+)\) )?/;
-            const dateRegExp            = /\((?<date>[^\)]+)\) /;
-            const enabledRegExp         = /\[(?<enabled>ON|OFF)/;
-            const markedAsReadRegExp    = /(?<markedAsRead>, UNREAD)?\]/;
+            // MARK: _  gradeFromString()
+            /**
+             * 
+             * @param {string} string 
+             */
+            gradeFromString(string) {
+                const delimit = Grade.gradePathSeparator;
+                const semRegExp             = new RegExp(`(?<semester>[^(${ delimit})]+)${delimit}`);
+                const modRegExp             = new RegExp(`(?<module>[^(${   delimit})]+)${delimit}`);
+                const subjRegExp            = new RegExp(`(?<subject>[^(${  delimit})]+)${delimit}`);
+                const titleRegExp           = /(?<title>.+) :/;
+                const gradeRegExp           = /(?<grade>\d{1,2}(?:\.\d{1,2})?)\/20 vs /;
+                const classAvgRegExp        = /(?<classAvg>(?:\d{1,2}(?:\.\d{1,2})?)| — )\/20, /;
+                const coefRegExp            = /(?<coef>\d{1,2}(?:\.\d{1,2})?)% /;
+                const idRegExp              = /(\((?<id>\d+)\) )?/;
+                const profRegExp            = /(\((?<prof>[^\)]+)\) )?/;
+                const dateRegExp            = /\((?<date>[^\)]+)\) /;
+                const enabledRegExp         = /\[(?<enabled>ON|OFF)/;
+                const markedAsReadRegExp    = /(?<markedAsRead>, UNREAD)?\]/;
 
-            const regExp = new RegExp(
-                semRegExp.source
-                +modRegExp.source
-                +subjRegExp.source
-                +titleRegExp.source
-                +gradeRegExp.source
-                +classAvgRegExp.source
-                +coefRegExp.source
-                +idRegExp.source
-                +profRegExp.source
-                +dateRegExp.source
-                +enabledRegExp.source
-                +markedAsReadRegExp.source
-            );
-
-
-            const match = string.match(regExp);
-
-            if (match) {
-                // const grade = new Grade(
-                //     parseFloat(match[5]),
-                //     parseFloat(match[7]),
-                //     match[3],
-                //     match[4],
-                //     !isNaN(parseInt(match[8])),
-                //     parseFloat(match[6]),
-                //     undefined,
-                //     undefined,
-                //     parseInt(match[1]),
-                //     match[2],
-                //     parseInt(match[8])
-                // );
-                // parsedGrade.enabled       = match[9]  === "ON";
-                // parsedGrade.markedAsRead  = match[10] !== "UNREAD";
-
-                const semester      = this.ensureSemester(typeof match?.groups?.semester === "string" ? parseInt(match?.groups?.semester) : NaN);
-                const module        = this.ensureModule(match?.groups?.module || "", semester);
-                const subject       = this.ensureSubject(match?.groups?.subject || "", module, semester);
-                const title         = match?.groups?.title;
-                const grade         = parseFloat(match?.groups?.grade || "NaN");
-                const classAvg      = parseFloat(match?.groups?.classAvg || "NaN");
-                const coef          = parseFloat(match?.groups?.coef || "NaN");
-                const id            = parseFloat(match?.groups?.id || "NaN");
-                const isSim         = !isNaN(id);
-                const prof          = match?.groups?.prof;
-                const date          = match?.groups?.date;
-                const enabled       = (match?.groups?.enabled === "ON" || match?.groups?.enabled === "OFF") ? (match?.groups?.enabled === "ON") : true;
-                const markedAsRead  = match?.groups?.markedAsRead === ", UNREAD";
-
-                const parsedGrade = new Grade(
-                    grade,
-                    coef,
-                    subject,
-                    title,
-                    isSim,
-                    classAvg,
-                    prof,
-                    date,
-                    id
+                const regExp = new RegExp(
+                    semRegExp.source
+                    +modRegExp.source
+                    +subjRegExp.source
+                    +titleRegExp.source
+                    +gradeRegExp.source
+                    +classAvgRegExp.source
+                    +coefRegExp.source
+                    +idRegExp.source
+                    +profRegExp.source
+                    +dateRegExp.source
+                    +enabledRegExp.source
+                    +markedAsReadRegExp.source
                 );
 
-                parsedGrade.enabled       = enabled;
-                parsedGrade.markedAsRead  = markedAsRead;
 
-                return parsedGrade;
+                const match = string.match(regExp);
+
+                if (match) {
+                    // const grade = new Grade(
+                    //     parseFloat(match[5]),
+                    //     parseFloat(match[7]),
+                    //     match[3],
+                    //     match[4],
+                    //     !isNaN(parseInt(match[8])),
+                    //     parseFloat(match[6]),
+                    //     undefined,
+                    //     undefined,
+                    //     parseInt(match[1]),
+                    //     match[2],
+                    //     parseInt(match[8])
+                    // );
+                    // parsedGrade.enabled       = match[9]  === "ON";
+                    // parsedGrade.markedAsRead  = match[10] !== "UNREAD";
+
+                    const semester      = this.ensureSemester(typeof match?.groups?.semester === "string" ? parseInt(match?.groups?.semester) : NaN);
+                    const module        = this.ensureModule(match?.groups?.module || "", semester);
+                    const subject       = this.ensureSubject(match?.groups?.subject || "", module, semester);
+                    const title         = match?.groups?.title;
+                    const grade         = parseFloat(match?.groups?.grade || "NaN");
+                    const classAvg      = parseFloat(match?.groups?.classAvg || "NaN");
+                    const coef          = parseFloat(match?.groups?.coef || "NaN");
+                    const id            = parseFloat(match?.groups?.id || "NaN");
+                    const isSim         = !isNaN(id);
+                    const prof          = match?.groups?.prof;
+                    const date          = match?.groups?.date;
+                    const enabled       = (match?.groups?.enabled === "ON" || match?.groups?.enabled === "OFF") ? (match?.groups?.enabled === "ON") : true;
+                    const markedAsRead  = match?.groups?.markedAsRead === ", UNREAD";
+
+                    const parsedGrade = new Grade(
+                        grade,
+                        coef,
+                        subject,
+                        title,
+                        isSim,
+                        classAvg,
+                        prof,
+                        date,
+                        id
+                    );
+
+                    parsedGrade.enabled       = enabled;
+                    parsedGrade.markedAsRead  = markedAsRead;
+
+                    return parsedGrade;
+                }
             }
-        }
+
+        //#endregion 
+
+
+
+
+
+        //#region — Backend
+
+
+
+
+
+            //MARK: —— Parsing
+            //#region 
+
+
+
+
+
+                // MARK: _  parseGrades()
+                /**
+                 * Reads the grades from the grades table, and create {@link Grade} instances.
+                 *
+                 * @returns ***this*** {@link ECAMDashboard}
+                 */
+                parseGrades() {
+                    this.retrieveCachedModuleConfig();
+
+
+                    if (document.querySelector(".greyGridTable")) {
+                        const rows = document.querySelectorAll("table.greyGridTable tbody tr");
+
+                        for (const row of rows) {
+                            const cells = row.querySelectorAll("td");
+
+                            if (cells.length >= 6 && cells[0].textContent.includes("/20")) {
+                                const label     = cells[1].textContent.trim();
+                                const grade     = parseFloat(cells[0].textContent.replace(",", ".").replace("/20", "")) || 0;
+                                const coef      = parseFloat(cells[2].textContent.replace(",", ".").replace("%",   "")) || 0;
+                                const classAvg  = parseFloat(cells[3].textContent.replace(",", ".").replace("/20", "")) || 0;
+                                const prof      = cells[4].textContent.trim();
+                                const date      = cells[5].textContent.trim();
+                                const semMatch  = label.match(/Semester\s+(\d+)/i);
+                                const semester  = semMatch ? parseInt(semMatch[1]) : this.unknownSemester.number;
+                                const parts     = label.split(" - ").map(p => p.trim());
+                                const subject   = parts.length >= 3 ? parts.slice(1,-1).join(" - ") : label;
+                                const title     = parts.length >= 2 ? parts.at(-1) : "";
+                                const module    = this.hasSubject(subject, undefined, semester)
+                                    ? this.getSubject(subject, undefined, semester).module.name
+                                    : Module.unclassified
+                                ;
+
+                                // if ( subject === "Mathematics for Engineers 5" ) debugger;
+
+                                this.addGrade(
+                                    grade, 
+                                    coef, 
+                                    subject, 
+                                    module, 
+                                    semester, 
+                                    title, 
+                                    false, 
+                                    classAvg, 
+                                    prof, 
+                                    date, 
+                                    undefined
+                                )
+                            }
+                        }
+
+
+                        // if (this.savedReadGrades.length == 0) {
+                        //     this.newGrades = [];
+                        //     this.savedReadGrades = this.grades;
+                        // }
+                        // else {
+                        //     this.newGrades = compareArraysOfObjects(this.grades, this.savedReadGrades).more;
+                        // }
+                    }
+                    else {
+                        // this.newGrades = [];
+                        // this.grades = this.savedReadGrades;
+                    }
+
+                    this.retrieveCachedSimGrades();
+                    this.computeAllStats();
+
+                    return this;
+                }
+
+            //#endregion 
+
+        //#endregion 
+
+
 
 
 
@@ -4477,7 +4712,6 @@ class ECAMDashboard {
             /**
              * Attempts to find in the cache of the user a moduleConfig v3, and prepares the moduleConfig object.
              * If couldn't find any, tries to get an old moduleConfig from the cache, and translates it before saving it as a moduleConfig v3.
-             * @returns `true` if no new module configuration has been recovered from cache, `false` otherwise.
              */
             retrieveCachedModuleConfig() {
 
@@ -4572,6 +4806,9 @@ class ECAMDashboard {
 
             // MARK: _  cacheSimGrades()
             // TODO
+            /**
+             * Saves the simulated {@link Grade}s into the cache of the user.
+             */
             cacheSimGrades() {
                 // JSON.stringify(this.sim, (_key, value) => { return value.toString() });
 
@@ -4585,6 +4822,9 @@ class ECAMDashboard {
 
 
             // MARK: _  retrieveCachedSimGrades()
+            /**
+             * Retrieves the simulated {@link Grade}s from the cache of the user.
+             */
             retrieveCachedSimGrades() {
                 /** @type { Grade[] } */
                 let newSim = [];
@@ -4658,6 +4898,43 @@ class ECAMDashboard {
 
 
                 return this;
+            }
+
+
+
+
+
+
+            // MARK: _  cacheSettings()
+            cacheSettings() {
+                localStorage.setItem(
+                    ECAMDashboard.cacheKeys.settings, 
+                    this.settings.toCacheString()
+                );
+                return this;
+            }
+
+
+
+            // MARK: _  retrieveCachedSettings()
+            retrieveCachedSettings() {
+
+                const cachedSettings = localStorage.getItem(ECAMDashboard.cacheKeys.settings);
+
+                if (cachedSettings) {
+                    this.settings = new Settings(JSON.parse(cachedSettings));
+                }
+                else {
+                    this.settings = new Settings(JSON.parse(localStorage['ECAM_DASHBOARD_SETTINGS'], (_, value) => {
+                        delete value.parents;
+                        delete value.children;
+                        return value?.value !== undefined ? value.value : value;
+                    }));
+
+                    this.cacheSettings();
+                    // localStorage.removeItem('ECAM_DASHBOARD_SETTINGS');
+                }
+                
             }
 
 
