@@ -8,8 +8,8 @@
         "Sustainable Management 7",
         "Society, Management & Entrepreneurship 7",
         "Systems Engineering 7",
-        "Applied Internship",
-        "Innovation Project 7"
+        "Innovation Project 7",
+        "Applied Internship"
       ],
       "Sustainable Management 7": {
         "subjects": [
@@ -88,12 +88,12 @@
     },
     "8": {
       "__modules__": [
-        "Sustainable Energy and Environmental Engineering S8",
+        "Sustainable Energy and Environmental Engineering 8",
         "Data and Engineering",
         "Sustainable Management 8",
-        "Society, Management & Entrepreneurship S8",
-        "Innovation Project S8 - Road to Business",
-        "Innovation Project S8 - Engineering Developments"
+        "Society, Management & Entrepreneurship 8",
+        "Innovation Project 8 - Road to Business",
+        "Innovation Project 8 - Engineering Developments"
       ],
       "Data and Engineering": {
         "subjects": [
@@ -121,7 +121,7 @@
           "Climate Transformation of Industries": 20
         }
       },
-      "Society, Management & Entrepreneurship S8": {
+      "Society, Management & Entrepreneurship 8": {
         "subjects": [
           "Strategy",
           "Change Management"
@@ -131,7 +131,7 @@
           "Change Management": 50
         }
       },
-      "Innovation Project S8 - Road to Business": {
+      "Innovation Project 8 - Road to Business": {
         "subjects": [
           "IP User Test Awareness",
           "IP Business Plan",
@@ -143,7 +143,7 @@
           "IP Project Closure": 40
         }
       },
-      "Innovation Project S8 - Engineering Developments": {
+      "Innovation Project 8 - Engineering Developments": {
         "subjects": [
           "IP Project Management and Technical Requirements",
           "IP Technical Deployment"
