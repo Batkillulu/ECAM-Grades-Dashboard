@@ -9,6 +9,7 @@
 // @run-at       document-end
 // @license      AGPL-3.0; Commercial license available
 // ==/UserScript==
+//#region 
 //
 //
 //
@@ -53,6 +54,7 @@
 //  - baptiste.jacquin@ecam.fr  [for the coding part]
 //  - maxence.leroux@ecam.fr    [for the financial and responsibility part]
 //
+//#endregion 
 
 //@ts-check
 /** @typedef {"en"|"fr"} Language */
@@ -85,11 +87,39 @@
 
 
         //#region ———              STRING              ———
-        String.prototype.replaceSpacesWithDashes = function () {
-            return String(this).replaceAll(/\s/ig, "-")
-        };
+            String.prototype.replaceSpacesWithDashes = function () {
+                return String(this).replaceAll(/\s/ig, "-")
+            };
         //#endregion 
 
+
+
+
+        //#region ———        KEYBOARDEVENT.    ———
+
+            KeyboardEvent.prototype.toString = function () {
+                return ""+
+                    `${this.repeat ? "repeated " : ""}`+
+                    `${this.altKey ? "alt + " : ""}`+
+                    `${this.ctrlKey ? "ctrl + " : ""}`+
+                    `${this.shiftKey ? "shift + " : ""}`+
+                    `${this.metaKey ? "meta + " : ""}`+
+                    `${this.key}`
+                ;
+            }
+
+            KeyboardEvent.prototype.toRegExp = function () {
+                return RegExp(""+
+                    `(?<repeat>${this.repeat ? "repeated " : ""})`+
+                    `(?<alt>${this.altKey ? "alt \\+ " : ""})`+
+                    `(?<ctrl>${this.ctrlKey ? "ctrl \\+ " : ""})`+
+                    `(?<shift>${this.shiftKey ? "shift \\+ " : ""})`+
+                    `(?<meta>${this.metaKey ? "meta \\+ " : ""})`+
+                    `(?<key>${this.key})`
+                );
+            }
+
+        //#endregion 
 
 
 
@@ -99,64 +129,65 @@
 
 
 
-        // MARK: _  getArguments()
-        // @ts-ignore
-        Function.prototype.getArguments = function (args = undefined, allowedTypes = undefined) {
-            
-            const hasArgs = args !== undefined && isArguments(args);
-            const hasAllowedTypes = allowedTypes !== undefined && isWellFormedAllowedTypes(allowedTypes);
-            const argNames = getFunctionParamNames(this);
+            // MARK: getArguments()
+            // @ts-ignore
+            Function.prototype.getArguments = function (args = undefined, allowedTypes = undefined) {
+                
+                const hasArgs = args !== undefined && isArguments(args);
+                const hasAllowedTypes = allowedTypes !== undefined && isWellFormedAllowedTypes(allowedTypes);
+                const argNames = getFunctionParamNames(this);
 
-            if (!hasArgs && !hasAllowedTypes) {
-                return argNames;
-            }
+                if (!hasArgs && !hasAllowedTypes) {
+                    return argNames;
+                }
 
-            /**
-             * @type {{[name: string]: { value?: any; allowedTypes?: string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]; }}}
-             */
-            const out = {};
-            argNames.forEach((name, i) => {
                 /**
-                 * @type {{ value?: any; allowedTypes?: string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]; }}
+                 * @type {{[name: string]: { value?: any; allowedTypes?: string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]; }}}
                  */
-                const entry = {};
-                if (hasArgs) entry.value = args[i];
-                if (hasAllowedTypes) entry.allowedTypes = allowedTypes[i];
-                out[name] = entry;
-            });
+                const out = {};
+                argNames.forEach((name, i) => {
+                    /**
+                     * @type {{ value?: any; allowedTypes?: string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]; }}
+                     */
+                    const entry = {};
+                    if (hasArgs) entry.value = args[i];
+                    if (hasAllowedTypes) entry.allowedTypes = allowedTypes[i];
+                    out[name] = entry;
+                });
 
-            return out;
-        };
-
-
-        // MARK: _  getArgument()
-        Function.prototype.getArgument = function (
-            /** @type {number} */ index, 
-            /** @type {IArguments|undefined} */ args = undefined
-        ) {
-            const getArgs = this.getArguments();
-
-            return (args !== undefined && isArguments(args))
-                ? Object.entries(getArgs)[index]
-                // @ts-ignore
-                : getArgs[index];
-        };
+                return out;
+            };
 
 
-        // MARK: _  getArgumentfromValue()
-        Function.prototype.getArgumentFromValue = function (
-            /** @type {IArguments} */ args, 
-            /** @type {any} */ value, 
-            /** @type {string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]|undefined} */ allowedTypes=undefined
-        ) {
-            const argsObj = this.getArguments(args, allowedTypes);
-            const found = Object.entries(argsObj).find(([, info]) => info.value === value);
-            if (!found) {
-                throw new Error(`Couldn't find the given value "${value}" from this function's given args.`);
-            }
-            return found;
-        };
+            // MARK: getArgument()
+            Function.prototype.getArgument = function (
+                /** @type {number} */ index, 
+                /** @type {IArguments|undefined} */ args = undefined
+            ) {
+                const getArgs = this.getArguments();
 
+                return (args !== undefined && isArguments(args))
+                    ? Object.entries(getArgs)[index]
+                    // @ts-ignore
+                    : getArgs[index];
+            };
+
+
+            // MARK: getArgumentfromValue()
+            Function.prototype.getArgumentFromValue = function (
+                /** @type {IArguments} */ args, 
+                /** @type {any} */ value, 
+                /** @type {string | (new (...args: any[]) => any) | (string | (new (...args: any[]) => any))[]|undefined} */ allowedTypes=undefined
+            ) {
+                const argsObj = this.getArguments(args, allowedTypes);
+                const found = Object.entries(argsObj).find(([, info]) => info.value === value);
+                if (!found) {
+                    throw new Error(`Couldn't find the given value "${value}" from this function's given args.`);
+                }
+                return found;
+            };
+
+        //#endregion 
 
 
 
@@ -209,7 +240,7 @@
 
 
 
-    // MARK:                 — internals —
+    // MARK:                   — internals —
     //#region
 
         /**
@@ -328,13 +359,12 @@
 
 
 
-//#endregion General functions
-
-
-
 
     // MARK: ——————————————————
-//#endregion 
+
+
+
+//#endregion General functions
 
 
 
@@ -669,7 +699,7 @@
 
 
 
-            // MARK: _  toString()
+            // MARK: toString()
             /**
              * Gives the full string representation of ***this*** {@link Grade}.
              * The returned string representation is can be used as a unique identifier of a grade,
@@ -698,7 +728,7 @@
 
 
 
-            // MARK: _  uniqueIdentifier()
+            // MARK: uniqueIdentifier()
             /**
              * Gives a short string representation of ***this*** {@link Grade}, 
              * shorter than {@link Grade#toString()}.
@@ -722,7 +752,7 @@
 
 
 
-            // MARK: _  equals()
+            // MARK: equals()
             /**
              * Verifies that ***this*** {@link Grade} has the exact same informations as the given {@link Grade}
              *
@@ -771,7 +801,7 @@
 
 
 
-            // MARK: _  static average()
+            // MARK: static average()
             /**
              * This static method calculates the weighted average between all the given {@link Grade}s' value, rounded to the nearest hundredth of the average.
              *
@@ -791,7 +821,7 @@
             }
 
 
-            // MARK: _  static classAverage()
+            // MARK: static classAverage()
             /**
              * This static method calculates the weighted average between all the given {@link Grade}s' classAvg value,
              * rounded to the nearest hundredth of the average.
@@ -813,7 +843,7 @@
 
 
 
-            // MARK: _  updateUpHierarchyStats()
+            // MARK: updateUpHierarchyStats()
             updateUpHierarchyStats() {
                 this.#semester.computeStats(this.#module, this.#subject)
             }
@@ -1140,7 +1170,7 @@
 
 
 
-            // MARK: _  toString()
+            // MARK: toString()
             toString() {
                 return ""+this.#semester + "\\" + this.#module + "\\" + this.#name
             }
@@ -1148,7 +1178,7 @@
 
 
 
-            // MARK: _  equals()
+            // MARK: equals()
             /**
              *
              * @param {any} subject
@@ -1172,7 +1202,7 @@
 
 
 
-            // MARK: _  static average()
+            // MARK: static average()
             /**
              * 
              * @param  {...Subject} subjects 
@@ -1192,7 +1222,7 @@
 
 
 
-            // MARK: _  static classAverage()
+            // MARK: static classAverage()
             /**
              * 
              * @param  {...Subject} subjects 
@@ -1213,7 +1243,7 @@
 
 
 
-            // MARK: _  computeStats()
+            // MARK: computeStats()
             /**
              * Computes the total coefficients, the average and the class average of ***this*** {@link Subject}.
              */
@@ -1299,7 +1329,7 @@
 
 
 
-            // MARK: _  updateUpHierarchyStats()
+            // MARK: updateUpHierarchyStats()
             updateUpHierarchyStats() {
                 this.#semester.computeStats(this.#module, this)
             }
@@ -1713,14 +1743,14 @@
 
 
 
-            // MARK: _  toString()
+            // MARK: toString()
             toString() {
                 return ""+ this.#semester +"\\"+ this.#name
             }
 
 
 
-            // MARK: _  equals()
+            // MARK: equals()
             /**
              * Checks whether the given {@link Module} is the same as ***this*** {@link Module}.
              * 
@@ -1742,7 +1772,7 @@
 
 
 
-            // MARK: _  static average()
+            // MARK: static average()
             /**
              * 
              * @param  {...Module} modules 
@@ -1762,7 +1792,7 @@
 
 
 
-            // MARK: _  static classAverage()
+            // MARK: static classAverage()
             /**
              * 
              * @param  {...Module} modules 
@@ -1784,7 +1814,7 @@
 
 
 
-            // MARK: _  getSubject()
+            // MARK: getSubject()
             /**
              * Gets the given {@link Subject} (or the {@link Subject} whose name corresponds to the given string)
              * from ***this*** {@link Module}.
@@ -1804,7 +1834,7 @@
             }
 
 
-            // MARK: _  getSubjects()
+            // MARK: getSubjects()
             /**
              * Gets the given {@link Subject} (or the {@link Subject} whose name corresponds to the given string)
              * from ***this*** {@link Module}.
@@ -1826,7 +1856,7 @@
 
 
 
-            // MARK: _  hasSubject()
+            // MARK: hasSubject()
             /**
              * Checks whether the given {@link Subject} (or the {@link Subject} whose name corresponds to the given string)
              * exists in ***this*** {@link Module}.
@@ -1843,7 +1873,7 @@
 
 
 
-            // MARK: _  hasSubjects()
+            // MARK: hasSubjects()
             /**
              * Checks whether the given {@link Subject}s (or the {@link Subject}s whose name correspond to the given strings)
              * all exist in ***this*** {@link Module}.
@@ -1865,7 +1895,7 @@
 
 
 
-            // MARK: _  addSubjects()
+            // MARK: addSubjects()
             /**
              * Adds {@link Subject}s (or their name) to ***this*** {@link Module}.
              * @param {Subject[]} subjects The {@link Subject}s (or their name) to add to ***this*** {@link Module}.
@@ -1895,7 +1925,7 @@
 
 
 
-            // MARK: _  removeSubjects()
+            // MARK: removeSubjects()
             /**
              * Removes {@link Subject}s from ***this*** {@link Module}.
              * @param {(Subject|string)[]} subjects The {@link Subject}s (or their name) to remove from ***this*** {@link Module}.
@@ -1929,7 +1959,7 @@
 
 
 
-            // MARK: _  computeStats()
+            // MARK: computeStats()
             /**
              * Computes the total coefficients, the average and the class average of ***this*** {@link Module}.
              * @param {boolean|string|Subject|(string|Subject)[]} [computeSubjects=true] 
@@ -2046,7 +2076,7 @@
 
 
 
-            // MARK: _  updateUpHierarchyStats()
+            // MARK: updateUpHierarchyStats()
             updateUpHierarchyStats() {
                 this.#semester.computeStats(this)
             }
@@ -2072,7 +2102,7 @@
 
 
 
-        // MARK:                 — properties —
+        // MARK:                  — properties —
         //#region 
 
 
@@ -2350,20 +2380,20 @@
 
 
 
-        // MARK:                  — methods —
+        // MARK:                   — methods —
         //#region 
 
 
 
 
-            // MARK: _  toString()
+            // MARK: toString()
             toString() { return this.#number }
 
 
 
 
 
-            // MARK: _  equals()
+            // MARK: equals()
             /**
              *
              * @param {any} semester
@@ -2382,7 +2412,7 @@
 
 
 
-            // MARK: _  static average()
+            // MARK: static average()
             /**
              * 
              * @param  {...(Semester|undefined)} semesters 
@@ -2402,7 +2432,7 @@
 
 
 
-            // MARK: _  static classAverage()
+            // MARK: static classAverage()
             /**
              * 
              * @param  {...(Semester|undefined)} semesters 
@@ -2423,7 +2453,7 @@
 
 
 
-            // MARK: _  getModule()
+            // MARK: getModule()
             /**
              * 
              * @param {Module|string} module 
@@ -2438,7 +2468,7 @@
             }
 
 
-            // MARK: _  getModules()
+            // MARK: getModules()
             /**
              * 
              * @param {(Module|string)[]} modules 
@@ -2450,7 +2480,7 @@
             }
 
 
-            // MARK: _  hasModule()
+            // MARK: hasModule()
             /**
              * 
              * @param {Module|string} module 
@@ -2464,7 +2494,7 @@
             }
 
 
-            // MARK: _  hasModules()
+            // MARK: hasModules()
             /**
              * 
              * @param {(Module|string)[]} modules 
@@ -2478,7 +2508,7 @@
             }
 
 
-            // MARK: _  addModules()
+            // MARK: addModules()
             /**
              * Adds the {@link Module}.s to ***this*** {@link Semester}.
              * @param {Module[]} modules The {@link Module}.s (or its/their name) to add to ***this*** {@link Semester}.
@@ -2505,7 +2535,7 @@
             }
 
 
-            // MARK: _  removeModules()
+            // MARK: removeModules()
             /**
              * Removes the {@link Module}.s from ***this*** {@link Semester}.
              * @param {(Module|string)[]} modules The {@link Module}.s (or its/their name) to remove from ***this*** {@link Semester}.
@@ -2544,7 +2574,7 @@
 
 
 
-            // MARK: _  getSubject()
+            // MARK: getSubject()
             /**
              * 
              * @param {Subject|string} subject 
@@ -2566,7 +2596,7 @@
             }
 
 
-            // MARK: _  hasSubject()
+            // MARK: hasSubject()
             /**
              * 
              * @param {Subject|string} subject 
@@ -2586,7 +2616,7 @@
 
 
 
-            // MARK: _  computeStats()
+            // MARK: computeStats()
             /**
              * Computes the total coefficients, the average and the class average of ***this*** {@link Semester}.
              * @param {boolean|string|Module|(string|Module)[]} [computeModules=true] 
@@ -2709,273 +2739,6 @@
 
 
 
-    // MARK: ———             SETTING             ———
-    class Setting {
-
-
-        /** Name of ***this*** {@link Setting}. @type {LanguageSensitive<string>|string} */
-        #name = "??";
-
-        /** Description of ***this*** {@link Setting}. @type {LanguageSensitive<string>|string|undefined} */
-        #description = undefined;
-
-        /** Additional info about ***this*** {@link Setting}. @type {LanguageSensitive<string>|string|undefined} */
-        #info = undefined;
-
-        /** Type of the value of ***this*** {@link Setting}. @type {"boolean"|"number"|"string"} */
-        #valueType = "boolean";
-
-        /** Value of ***this*** {@link Setting}. @type {boolean|number|string} */
-        #value = true;
-
-        /** Action to perform upon changing ***this*** {@link Setting}. @type {() => void} */
-        action = () => {};
-
-        /** 
-         * {@link Setting}s which ***this*** {@link Setting} depends on. 
-         * @type {Array.<{
-         *      setting: Setting,
-         *      condition: {
-         *          type: "equal"|"higher"|"lower"|"match",
-         *          value: boolean|number|string
-         *      }
-         * }>} 
-         * @readonly 
-         */
-        parents = [];
-
-        /** 
-         * {@link Setting}s which depends on ***this*** {@link Setting}. 
-         * @type {Array.<{
-         *      setting: Setting,
-         *      condition: {
-         *          type: "equal"|"higher"|"lower"|"match",
-         *          value: boolean|number|string
-         *      }
-         * }>} 
-         * @readonly 
-         */
-        children = [];
-
-
-
-
-        /**
-         * 
-         * @param {boolean|number|string} value 
-         * @param {LanguageSensitive<string>|string|undefined} name 
-         * @param {LanguageSensitive<string>|string|undefined} description 
-         * @param {LanguageSensitive<string>|string|undefined} info 
-         * @param {()=>any} action 
-         */
-        constructor(value, name=undefined, description=undefined, info=undefined, action=()=>{}) {
-            if (name) this.#name = name;
-            this.#value = value;
-            this.action = action;
-            this.#description = description;
-            this.#info = info;
-        }
-
-
-        get name() {
-            if (this.#name instanceof LanguageSensitive) { return this.#name.content }
-            else return this.#name
-        }
-
-
-        get value() {
-            return this.#value
-        }
-
-
-        toString() {
-            return JSON.stringify({
-                "name": this.#name,
-                "value": this.#value,
-                "description": this.#description,
-                "info": this.#info,
-            })
-        }
-
-
-
-
-
-
-
-        // MARK: _________________________________________
-
-    }
-    /** @type {any} */ (globalThis).Setting = Setting;
-
-
-    // MARK: ———            SETTINGS            ———
-    class Settings {
-
-
-        /** @type {Setting} */ displayClassAvg;
-
-        /** @type {Setting} */ totalCoefValuesEnabled;
-
-        /** @type {Setting} */ totalCoefDebugTextsEnabled;
-
-        /** @type {Setting} */ blurEnabled;
-
-        /** @type {Setting} */ scrollHelpersEnabled;
-
-
-        /**
-         * 
-         * @param {{
-         *      [settingName:string]: boolean | string | number
-         * }} parsedSettings 
-         */
-        constructor(parsedSettings) {
-            this.displayClassAvg            = new Setting(true, 
-                new LanguageSensitive({
-                    "en": "Class average for modules and subjects",
-                    "fr": "Moyenne de classe de modules et matières",
-                }), 
-                new LanguageSensitive({
-                    "en": "Display the class averages for subjects, modules and semesters",
-                    "fr": "Afficher les moyennes de classe pour les matières, modules et semestres",
-                }), 
-                new LanguageSensitive({
-                    "en": "For students with high competitive spirit :D",
-                    "fr": "Pour les étudiants avec un esprit de compétition :D",
-                }), 
-            )
-
-            this.totalCoefValuesEnabled     = new Setting(true, 
-                new LanguageSensitive({
-                    "en": "Display total coefs",
-                    "fr": "Afficher les coefs totaux",
-                }), 
-                new LanguageSensitive({
-                    "en": "Display the total coefficients for subject and module cards",
-                    "fr": "Afficher les coefficients totaux pour les cartes de matière et de module",
-                }), 
-                new LanguageSensitive({
-                    "en": "The percentage.s showing up between the name of modules/subjects and their average",
-                    "fr": "Le.s pourcentage.s apparraissant entre le nom des modules/sujets et leur moyenne",
-                }), 
-            );
-
-            this.totalCoefDebugTextsEnabled = new Setting(true, 
-                new LanguageSensitive({
-                    "en": "Display the helper texts",
-                    "fr": "Afficher les textes d'aide",
-                }), 
-                new LanguageSensitive({
-                    "en": "Display the helper texts for subject and module cards",
-                    "fr": "Afficher les textes d'aide des cartes de sujet et de module",
-                }), 
-                new LanguageSensitive({
-                    "en": "It simply corresponds to the texts interpreting the numbers of \"Total Subjects Coef\" and \"Total Grades Coef\"",
-                    "fr": "Il s'agit simplement des textes interprétant les nombres des \"Coef Total des Matières\" et \"Coef Total des Notes\"",
-                }), 
-            );
-
-            this.blurEnabled                = new Setting(true, 
-                new LanguageSensitive({
-                    "en": "Enable blur",
-                    "fr": "Activer le flou",
-                }), 
-                new LanguageSensitive({
-                    "en": "Enable the blur that operates on the background of the windows (turned on by default because I find it nice :D)",
-                    "fr": "Activer le flou qui s'opère sur le fond des fenêtres (activé par défaut parce que je trouve ça joli :D)",
-                }), 
-                new LanguageSensitive({
-                    "en": "Not recommended for low-end devices",
-                    "fr": "Non recommendé pour les appareils à basses performances",
-                }), 
-            );
-
-            this.scrollHelpersEnabled       = new Setting(true, 
-                new LanguageSensitive({
-                    "en": "Scroll helpers",
-                    "fr": "Aides au défilement",
-                }), 
-                new LanguageSensitive({
-                    "en": "Enable the scroll helpers to follow the important elements on screen upon verticality changes. Disable it if you don't like these forced scrolls",
-                    "fr": "Activer l'aide au défilement pour suivre les éléments importants à l'écran lors de changements de verticalité. Désactive-la si tu n'aimes pas avoir ces défilements forcés",
-                }), 
-                new LanguageSensitive({
-                    "en": "Some actions (edit mode change, detailed/compact view mode change...) change the vertical position of some elements (i.e. module/subject cards), so this setting allows to scroll to keep the most important elements on screen",
-                    "fr": "Certaines actions (changement de mode d'édition, changement vue détaillée/compacte...) font changer la position verical de certains éléments (cartes de module/matière, entre autres), donc un défilement maintient certains éléments à l'écran",
-                }), 
-            );
-
-
-
-            if (parsedSettings?.displayClassAvg != undefined)               this.displayClassAvg;
-            if (parsedSettings?.totalCoefValuesEnabled != undefined)        this.totalCoefValuesEnabled;
-            if (parsedSettings?.totalCoefDebugTextsEnabled != undefined)    this.totalCoefDebugTextsEnabled;
-            if (parsedSettings?.blurEnabled != undefined)                   this.blurEnabled;
-            if (parsedSettings?.scrollHelpersEnabled != undefined)          this.scrollHelpersEnabled;
-        }
-
-
-
-        // MARK: _  toCacheString()
-        toCacheString() {
-            /** @type {Object.<string, string | number | boolean>} */
-            const out = {};
-
-            Object.entries(this).forEach((/** @type {[string, Setting]} */ entry) => {
-                out[entry[0]] = entry[1].value
-            });
-
-            return JSON.stringify(out)
-        }
-
-
-
-
-
-
-
-        // MARK: _________________________________________
-
-    }
-    /** @type {any} */ (globalThis).Settings = Settings;
-
-
-
-
-
-    // MARK: ———   KEYBOARDSHORTCUT   ———
-    class KeyboardShortcut {
-
-
-
-
-
-
-
-        // MARK: _________________________________________
-
-    }
-    /** @type {any} */ (globalThis).KeyboardShortcut = KeyboardShortcut;
-
-
-    // MARK: ———  KEYBOARDSHORTCUTS  ———
-    class KeyboardShortcuts {
-
-
-
-
-
-
-
-        // MARK: _________________________________________
-
-    }
-    /** @type {any} */ (globalThis).KeyboardShortcuts = KeyboardShortcuts;
-
-
-
-
 
     // MARK: ———   LANGUAGESENSITIVE   ———
     /** @template T */
@@ -3016,6 +2779,726 @@
         // MARK: _________________________________________
     }
     /** @type {any} */ (globalThis).LanguageSensitive = LanguageSensitive;
+
+
+
+
+    // MARK: ———             SETTING             ———
+    /** @template T */
+    class Setting {
+
+
+
+
+        // MARK:                  — properties —
+        //#region 
+
+            /** Name of ***this*** {@link Setting}. @type {LanguageSensitive<string>|string} */
+            #name = "??";
+
+            /** Description of ***this*** {@link Setting}. @type {LanguageSensitive<string>|string|undefined} */
+            #description = undefined;
+
+            /** Additional info about ***this*** {@link Setting}. @type {LanguageSensitive<string>|string|undefined} */
+            #info = undefined;
+
+            /** Value of ***this*** {@link Setting}. @type {T} */
+            #value;
+
+            /** Default value of ***this*** {@link Setting}. @type {T} */
+            #defaultValue;
+
+            /** Type of the value of ***this*** {@link Setting}. @type {string} */
+            #valueType;
+
+            /** Action to perform upon changing ***this*** {@link Setting}. @type {() => void} */
+            action = () => {};
+
+            /** 
+             * {@link Setting}s which ***this*** {@link Setting} depends on. 
+             * @type {Array.<{
+             *      setting: Setting<*>,
+             *      condition: {
+             *          type: "equal"|"higher"|"lower"|"match",
+             *          value: boolean|number|string
+             *      }
+             * }>} 
+             * @readonly 
+             */
+            parents = [];
+
+            /** 
+             * {@link Setting}s which depends on ***this*** {@link Setting}. 
+             * @type {Array.<{
+             *      setting: Setting<*>,
+             *      condition: {
+             *          type: "equal"|"higher"|"lower"|"match",
+             *          value: boolean|number|string
+             *      }
+             * }>} 
+             * @readonly 
+             */
+            children = [];
+
+        //#endregion 
+
+
+
+
+        // MARK:                 — constructor —
+        /**
+         * 
+         * @param {T} [value=true] Defaults to true, giving ***this*** instance of {@link Setting} the T-type `boolean`.
+         * @param {LanguageSensitive<string>|string|undefined} [name] 
+         * @param {LanguageSensitive<string>|string|undefined} [description] 
+         * @param {LanguageSensitive<string>|string|undefined} [info] 
+         * @param {()=>any} [action] 
+         */
+        constructor(value = /** @type {T} */ (/** @type {boolean} */ (true)), name=undefined, description=undefined, info=undefined, action=()=>{}) {
+            if (name) this.#name = name;
+            this.#value = value;
+            this.#defaultValue = value;
+            this.#valueType = typeof value;
+            this.action = action;
+            this.#description = description;
+            this.#info = info;
+        }
+
+
+        // MARK:               — encapsulation —
+        //#region 
+
+
+            get value() {
+                return this.#value
+            }
+            set value(value) {
+                this.#value = value;
+            }
+            /**
+             * @readonly
+             */
+            get defaultValue() {
+                return this.#defaultValue
+            }
+            /**
+             * @readonly
+             */
+            get valueType() {
+                return this.#valueType
+            }
+
+            get name() {
+                if (this.#name instanceof LanguageSensitive) { return this.#name.content }
+                else return this.#name
+            }
+            get description() {
+                return this.#description
+            }
+            get info() {
+                return this.#info
+            }
+
+        //#endregion 
+
+
+        // MARK:                   — methods —
+        //#region 
+
+
+
+            // MARK: toString()
+            toString() {
+                return JSON.stringify({
+                    name: this.#name,
+                    value: this.#value,
+                    defaultValue: this.#defaultValue,
+                    description: this.#description,
+                    info: this.#info,
+                })
+            }
+
+
+
+            // MARK: equals()
+            /**
+             * 
+             * @param {Setting<*>} setting 
+             */
+            equals(setting) {
+                return this.toString() === setting.toString()
+            }
+
+
+
+            isDefault() {
+                return this.#value === this.#defaultValue
+            }
+
+
+
+            // MARK: restoreDefaultValue()
+            restoreDefaultValue() {
+                this.#value = this.#defaultValue
+            }
+
+
+        //#endregion 
+
+
+
+
+
+
+
+        // MARK: _________________________________________
+
+    }
+    /** @type {any} */ (globalThis).Setting = Setting;
+
+
+    // MARK: ———            SETTINGS            ———
+    class Settings {
+
+
+
+
+        // MARK:                  — properties —
+        //#region 
+
+
+            displayClassAvg = new Setting(true, 
+                new LanguageSensitive({
+                    en: "Class average for modules and subjects",
+                    "fr": "Moyenne de classe de modules et matières",
+                }), 
+                new LanguageSensitive({
+                    en: "Display the class averages for subjects, modules and semesters",
+                    fr: "Afficher les moyennes de classe pour les matières, modules et semestres",
+                }), 
+                new LanguageSensitive({
+                    en: "For students with high competitive spirit :D",
+                    fr: "Pour les étudiants avec un esprit de compétition :D",
+                }), 
+            );
+
+            totalCoefValuesEnabled = new Setting(true, 
+                new LanguageSensitive({
+                    en: "Display total coefs",
+                    fr: "Afficher les coefs totaux",
+                }), 
+                new LanguageSensitive({
+                    en: "Display the total coefficients for subject and module cards",
+                    fr: "Afficher les coefficients totaux pour les cartes de matière et de module",
+                }), 
+                new LanguageSensitive({
+                    en: "The percentage.s showing up between the name of modules/subjects and their average",
+                    fr: "Le.s pourcentage.s apparraissant entre le nom des modules/sujets et leur moyenne",
+                }), 
+            );
+
+            totalCoefDebugTextsEnabled = new Setting(true, 
+                new LanguageSensitive({
+                    en: "Display the helper texts",
+                    fr: "Afficher les textes d'aide",
+                }), 
+                new LanguageSensitive({
+                    en: "Display the helper texts for subject and module cards",
+                    fr: "Afficher les textes d'aide des cartes de sujet et de module",
+                }), 
+                new LanguageSensitive({
+                    en: "It simply corresponds to the texts interpreting the numbers of \"Total Subjects Coef\" and \"Total Grades Coef\"",
+                    fr: "Il s'agit simplement des textes interprétant les nombres des \"Coef Total des Matières\" et \"Coef Total des Notes\"",
+                }), 
+            );
+
+            blurEnabled = new Setting(true, 
+                new LanguageSensitive({
+                    en: "Enable blur",
+                    fr: "Activer le flou",
+                }), 
+                new LanguageSensitive({
+                    en: "Enable the blur that operates on the background of the windows (turned on by default because I find it nice :D)",
+                    fr: "Activer le flou qui s'opère sur le fond des fenêtres (activé par défaut parce que je trouve ça joli :D)",
+                }), 
+                new LanguageSensitive({
+                    en: "Not recommended for low-end devices",
+                    fr: "Non recommendé pour les appareils à basses performances",
+                }), 
+            );
+
+            scrollHelpersEnabled = new Setting(true, 
+                new LanguageSensitive({
+                    en: "Scroll helpers",
+                    fr: "Aides au défilement",
+                }), 
+                new LanguageSensitive({
+                    en: "Enable the scroll helpers to follow the important elements on screen upon vertical changes. Disable it if you don't like these forced scrolls",
+                    fr: "Activer l'aide au défilement pour suivre les éléments importants à l'écran lors de changements verticaux. Désactive-la si tu n'aimes pas avoir ces défilements forcés",
+                }), 
+                new LanguageSensitive({
+                    en: "Some actions (edit mode change, detailed/compact view mode change...) change the vertical position of some elements (i.e. module/subject cards), so this setting allows to scroll to keep the most important elements on screen",
+                    fr: "Certaines actions (changement de mode d'édition, changement vue détaillée/compacte...) font changer la position verticale de certains éléments (cartes de module/matière, entre autres), donc un défilement maintient certains éléments à l'écran",
+                }), 
+            );
+
+        //#endregion 
+
+
+        // MARK:                 — constructor —
+        /**
+         * 
+         * @param {{ [settingName:string]: * }} parsedSettings 
+         */
+        constructor(parsedSettings) {
+            if (typeof parsedSettings?.displayClassAvg === this.displayClassAvg.valueType)                          this.displayClassAvg.value = parsedSettings.displayClassAvg;
+            if (typeof parsedSettings?.totalCoefValuesEnabled === this.totalCoefValuesEnabled.valueType)            this.totalCoefValuesEnabled.value = parsedSettings.totalCoefValuesEnabled;
+            if (typeof parsedSettings?.totalCoefDebugTextsEnabled === this.totalCoefDebugTextsEnabled.valueType)    this.totalCoefDebugTextsEnabled.value = parsedSettings.totalCoefDebugTextsEnabled;
+            if (typeof parsedSettings?.blurEnabled === this.blurEnabled.valueType)                                  this.blurEnabled.value = parsedSettings.blurEnabled;
+            if (typeof parsedSettings?.scrollHelpersEnabled === this.scrollHelpersEnabled.valueType)                this.scrollHelpersEnabled.value = parsedSettings.scrollHelpersEnabled;
+        }
+
+
+
+        // MARK:                   — methods —
+        //#region 
+
+
+
+            // MARK: toCacheString()
+            toCacheString() {
+                /** @type {Object.<string, string | number | boolean>} */
+                const out = {};
+
+                Object.entries(this).forEach((/** @type {[string, Setting<*>]} */ entry) => {
+                    if (!entry[1].isDefault()) out[entry[0]] = entry[1].value
+                });
+
+                return JSON.stringify(out)
+            }
+
+        //#endregion 
+
+
+
+
+
+
+        // MARK: _________________________________________
+
+    }
+    /** @type {any} */ (globalThis).Settings = Settings;
+
+
+
+
+
+    // MARK: ———   KEYBOARDSHORTCUT   ———
+    class KeyboardShortcut {
+
+
+
+        // MARK:                  — properties —
+        //#region 
+
+            /** 
+             * Key associated to ***this*** {@link KeyboardShortcut}.
+             * @type {LanguageSensitive<string>|string} 
+             */
+            #key = "";
+
+            /** 
+             * Modifiers to be pressed along with the key associated to ***this*** {@link KeyboardShortcut}.  
+             * Each key takes as value `true` when the modifier is required, `false` when the modifier is not required, and `undefined` when the modifier is forbidden.
+             * @type {{alt?: boolean, ctrl?: boolean, shift?: boolean, meta?: boolean, repeat?: boolean}}
+             */
+            #modifiers = {};
+
+            /** 
+             * Key associated to ***this*** {@link KeyboardShortcut}.
+             * @type {LanguageSensitive<string>|string} 
+             * @readonly
+             */
+            defaultKey;
+
+            /** 
+             * Modifiers to be pressed along with the key associated to ***this*** {@link KeyboardShortcut}.
+             * @type {{alt?: boolean, ctrl?: boolean, shift?: boolean, meta?: boolean, repeat?: boolean}}
+             * @readonly
+             */
+            defaultModifiers;
+
+            /** 
+             * Displayable name of ***this*** {@link KeyboardShortcut}.
+             * @type {LanguageSensitive<string>|string|undefined} 
+             */
+            #name = "anonymous";
+
+            /** 
+             * Displayable description of ***this*** {@link KeyboardShortcut}.
+             * @type {LanguageSensitive<string>|string|undefined} 
+             */
+            #description = undefined;
+
+            /** 
+             * Additional info about ***this*** {@link KeyboardShortcut}. 
+             * @type {LanguageSensitive<string>|string|undefined} 
+             */
+            #info = undefined;
+
+            /** 
+             * Action associated to ***this*** {@link KeyboardShortcut}.
+             * @type {() => any} 
+             */
+            #action = () => {};
+
+            /** 
+             * Defines whether ***this*** {@link KeyboardShortcut} can be seen in the keyboard shortcuts' settings.
+             * @type {boolean} 
+             * @readonly 
+             */
+            visible;
+
+        //#endregion 
+
+
+
+        // MARK:                 — constructor —
+        /**
+         * @param {LanguageSensitive<string> | string} key 
+         * @param {Object} [modifiers] All the modifiers. Each element of this object `alt`, `ctrl`, `shift`, `meta`, and `repeat` take as value one of the following strings: `true` for "required", `false` for "whatever" (not required), `undefined` for "forbidden" (must not figure in the keyboard combination).
+         * @param {boolean | undefined} [modifiers.alt]    
+         * @param {boolean | undefined} [modifiers.ctrl]   
+         * @param {boolean | undefined} [modifiers.shift]  
+         * @param {boolean | undefined} [modifiers.meta]   
+         * @param {boolean | undefined} [modifiers.repeat] 
+         * @param {LanguageSensitive<string> | string | undefined} name 
+         * @param {LanguageSensitive<string> | string | undefined} [description=undefined]
+         * @param {LanguageSensitive<string> | string | undefined} [info=undefined]
+         * @param {() => any} [action=()=>{}] 
+         * @param {boolean} [visible=true] Controls whether the created {@link KeyboardShortcut} appears in the settings.
+         */
+        constructor(key, {alt, ctrl, shift, meta, repeat}={}, name="anonymous", description=undefined, info=undefined, action=()=>{}, visible=true) {
+            this.defaultKey = key;
+            this.defaultModifiers = {alt, ctrl, shift, meta, repeat};
+
+            this.#key = key;
+            this.#modifiers = {alt, ctrl, shift, meta, repeat};
+            this.#name = name;
+            this.#description = description;
+            this.#info = info;
+            this.#action = action;
+
+            this.visible = visible;
+        }
+
+
+
+
+        // MARK:               — encapsulation —
+        //#region 
+
+            get name() { return this.#name instanceof LanguageSensitive ? this.#name.content : this.#name }
+
+            get key() { return this.#key instanceof LanguageSensitive ? this.#key.content : this.#key }
+            set key(value) { this.#key=value; }
+
+            get modifiers() { return this.#modifiers }
+            set modifiers(value) { this.#modifiers=value; }
+
+            get description() { return this.#description instanceof LanguageSensitive ? this.#description.content : this.#description }
+
+            get info() { return this.#info instanceof LanguageSensitive ? this.#info.content : this.#info }
+
+            get action() { return this.#action }
+
+        //#endregion 
+
+
+
+
+
+
+
+        // MARK:                   — methods —
+        //#region 
+
+
+
+            // MARK: toString()
+            toString() {
+                return this.name + " = " 
+                    + (this.#modifiers.repeat === true ? "repeated " : (this.#modifiers.repeat === false ? "" : "not-repeated + "))
+                    + (this.#modifiers.alt === true ? "alt + " : (this.#modifiers.alt === false ? "" : "no-alt + "))
+                    + (this.#modifiers.ctrl === true ? "ctrl + " : (this.#modifiers.ctrl === false ? "" : "no-ctrl + "))
+                    + (this.#modifiers.shift === true ? "shift + " : (this.#modifiers.shift === false ? "" : "no-shift + "))
+                    + (this.#modifiers.meta === true ? "meta + " : (this.#modifiers.meta === false ? "" : "no-meta + "))
+            }
+
+
+
+            // MARK: isDefault()
+            /**
+             * Checks whether the key currently bound to ***this*** {@link KeyboardShortcut} with its modifiers is still the default key with its default modifiers.
+             * @returns `true` if the key of ***this*** {@link KeyboardShortcut} with its modifiers is still the default key with its default modifiers, `false` otherwise.
+             */
+            isDefault() {
+                return this.#key === this.defaultKey 
+                    && 
+                    this.#modifiers.alt === this.defaultModifiers.alt
+                    && 
+                    this.#modifiers.ctrl === this.defaultModifiers.ctrl
+                    && 
+                    this.#modifiers.shift === this.defaultModifiers.shift
+                    && 
+                    this.#modifiers.meta === this.defaultModifiers.meta
+                    && 
+                    this.#modifiers.repeat === this.defaultModifiers.repeat
+                ;
+            }
+
+
+
+            // MARK: restoreDefault()
+            /**
+             * Restores the default key and default modifiers of ***this*** {@link KeyboardShortcut} to its key and modifiers currently bound.
+             */
+            restoreDefault() { this.#key = this.defaultKey; this.#modifiers = this.defaultModifiers }
+
+
+
+            // MARK: keyMatcher() [static]
+            /**
+             * Gives a RegExp to use to match the string representation of a {@link KeyboardEvent} against.
+             * 
+             * @param {string | RegExp | string[] | RegExp[]} keyExpected The key expected to be pressed, an array of keys expected to be pressed or a regular expression to match the key pressed.
+             * @param {Object} [modifiers] All the modifiers. Each element of this object `alt`, `ctrl`, `shift`, `meta`, and `repeat` take as value one of the following strings: `true` for "required", `false` for "whatever" (not required), `undefined` for "forbidden" (must not figure in the keyboard combination).
+             * @param {boolean | undefined} [modifiers.alt]    
+             * @param {boolean | undefined} [modifiers.ctrl]   
+             * @param {boolean | undefined} [modifiers.shift]  
+             * @param {boolean | undefined} [modifiers.meta]   
+             * @param {boolean | undefined} [modifiers.repeat] 
+             */
+            static keyMatcher(keyExpected=/[^\s]+/, {alt, ctrl, shift, meta, repeat}={}) {
+                if      (typeof keyExpected == "string") { keyExpected = (keyExpected.match(/[^a-z]+/i) ? "\\" : "") + keyExpected; } // If the keyExpected is a string, proofing the case where the expected key is not an alphabetical character, making sure that the character doesn't have a special effect in the RegExp by adding a literal backslash in front of it in its string form so that it's turned into a backslash when forming the RegExp ("\\|", "\\*", "\\+", "\\/"...)
+                else if (keyExpected instanceof Array)   { keyExpected = keyExpected.map(s => { return s instanceof RegExp ? s.source : ((s.match(/[^a-z]+/i) ? "\\" : "") + s) }).join("|"); } // If the keyExpected is an array, joining them with "|" in-between after applying the same process as above to each of them
+                else if (keyExpected instanceof RegExp)  { keyExpected = keyExpected.source; }
+
+                let altPattern, ctrlPattern, shiftPattern, metaPattern, repeatPattern;
+                if (alt    === true) {altPattern    = "alt \\+ "}   else if (alt    === false) {altPattern    = "(?:alt \\+ )?"}   else if (alt    === undefined) {altPattern    = ""}
+                if (ctrl   === true) {ctrlPattern   = "ctrl \\+ "}  else if (ctrl   === false) {ctrlPattern   = "(?:ctrl \\+ )?"}  else if (ctrl   === undefined) {ctrlPattern   = ""}
+                if (shift  === true) {shiftPattern  = "shift \\+ "} else if (shift  === false) {shiftPattern  = "(?:shift \\+ )?"} else if (shift  === undefined) {shiftPattern  = ""}
+                if (meta   === true) {metaPattern   = "meta \\+ "}  else if (meta   === false) {metaPattern   = "(?:meta \\+ )?"}  else if (meta   === undefined) {metaPattern   = ""}
+                if (repeat === true) {repeatPattern = "repeated "}  else if (repeat === false) {repeatPattern = "(?:repeated )?"}  else if (repeat === undefined) {repeatPattern = ""}
+
+                return RegExp(
+                    `(?<repeat>${repeatPattern})(?<alt>${altPattern})(?<ctrl>${ctrlPattern})(?<shift>${shiftPattern})(?<meta>${metaPattern})(?<key>${keyExpected})`
+                );
+            }
+
+
+
+
+            // MARK: keyMatcher()
+            /**
+             * Builds the {@link RegExp} associated to ***this*** {@link KeyboardShortcut}.
+             * @returns The {@link RegExp} associated to ***this*** {@link KeyboardShortcut}.
+             */
+            keyMatcher() {
+                return KeyboardShortcut.keyMatcher(this.key, this.modifiers);
+            }
+
+
+
+            // MARK: matchKeyInput() [static]
+            /** 
+             * Call inside a onkeydown or onkeyup event listener 
+             * to check if the key pressed during the given {@link KeyboardEvent} matches the expected pressed key, 
+             * along with the optional modifiers and their requirements.
+             *
+             * @param {KeyboardEvent} keyboardEvent Pass the {@link KeyboardEvent} triggered by an onkey event from which this method is called.
+             * @param {string | RegExp | string[] | RegExp[]} keyExpected The key expected to be pressed, an array of keys expected to be pressed or a regular expression to match the key pressed.
+             * @param {Object} [modifiers] All the modifiers. Each element of this object `alt`, `ctrl`, `shift`, `meta`, and `repeat` take as value one of the following strings: `true` for "required", `false` for "whatever" (not required), `undefined` for "forbidden" (must not figure in the keyboard combination).
+             * @param {boolean | undefined} [modifiers.alt]    
+             * @param {boolean | undefined} [modifiers.ctrl]   
+             * @param {boolean | undefined} [modifiers.shift]  
+             * @param {boolean | undefined} [modifiers.meta]   
+             * @param {boolean | undefined} [modifiers.repeat] 
+             * @returns {(RegExpMatchArray & {groups?: {key?: string, alt?: string, ctrl?: string, shift?: string, meta?: string, repeat?: string}}) | null} A formated RegExpMatchArray result following the key and the modifiers given as parameters. `null` if the match is unsuccessful.
+             */
+            static matchKeyInput(keyboardEvent, keyExpected=/[^\s]+/, {alt, ctrl, shift, meta, repeat}={}) {
+                const keyPressed = keyboardEvent.toString();
+                console.log(keyPressed)
+                const keyExpectedPattern = KeyboardShortcut.keyMatcher(keyExpected, {alt, ctrl, shift, meta, repeat});
+                console.log(keyExpectedPattern)
+                const match = keyPressed.match(keyExpectedPattern);
+
+                return match;
+            }
+
+
+
+            // MARK: matchKeyInput()
+            /**
+             * Matches the key + modifiers of the given {@link KeyboardEvent} against the {@link RegExp} associated to ***this*** {@link KeyboardShortcut}.
+             * @param {KeyboardEvent} keyboardEvent 
+             */
+            matchKeyInput(keyboardEvent) {
+                return KeyboardShortcut.matchKeyInput(keyboardEvent, this.key, this.modifiers)
+            }
+
+
+        //#endregion 
+
+
+
+
+
+
+
+        // MARK: _________________________________________
+
+    }
+    /** @type {any} */ (globalThis).KeyboardShortcut = KeyboardShortcut;
+
+
+    // MARK: ———  KEYBOARDSHORTCUTS  ———
+    class KeyboardShortcuts {
+
+
+
+
+        // MARK:                  — properties —
+        //#region 
+
+
+            /** @type {KeyboardShortcut} @readonly */
+            debug = new KeyboardShortcut(
+                "R", {shift: true}, 
+                new LanguageSensitive({
+                    en: "debug",
+                    fr: "debug"
+                }), 
+                undefined, undefined, 
+                () => { debugger }, 
+                false
+            );
+
+
+            /** @type {KeyboardShortcut} @readonly */
+            closeWindow = new KeyboardShortcut(
+                "Escape", undefined, 
+                new LanguageSensitive({
+                    en: "Close Window",
+                    fr: "Fermer la Fenêtre"
+                }), 
+                new LanguageSensitive({
+                    en: "Close the window you are currently focused on.",
+                    fr: "Ferme la fenêtre sur laquelle vous êtes actuellement focalisé."
+                }), 
+                undefined, 
+                () => {}
+            );
+
+
+        //#endregion 
+
+
+        // MARK:                 — constructor —
+        /**
+         * @param {{[shortcutName: string]: { key: string, modifiers: {alt?:boolean, ctrl?:boolean, shift?:boolean, meta?:boolean, repeat?:boolean} }}} parsedShortcuts 
+         */
+        constructor(parsedShortcuts={}) {
+
+            if (parsedShortcuts?.closeWindow !== undefined) {
+                this.closeWindow.key = parsedShortcuts.closeWindow.key;
+                this.closeWindow.modifiers = parsedShortcuts.closeWindow.modifiers;
+            }
+
+        }
+
+
+
+
+        // MARK:                   — methods —
+        //#region 
+
+
+
+
+            // MARK: toCacheString()
+            /**
+             * Creates the cache string of the current {@link KeyboardShortcuts}.
+             * It only takes {@link KeyboardShortcut}s that have changed compared to their own's default setting.
+             * ```
+             *  JSON.stringify({
+             *      [KeyboardShortcutName: string]: {
+             *          key: string, modifiers: { alt?: boolean, ctrl?: boolean, shift?: boolean, meta?: boolean, repeat?: boolean } } 
+             *      }
+             *  )
+             * ```
+             */
+            toCacheString() {
+                return JSON.stringify(
+                    Object.fromEntries(
+                        Object.entries(this)
+                            .filter((/** @type {[String, KeyboardShortcut]} */ entry) => { return !(entry[1].visible && entry[1].isDefault()) })
+                            .map((/** @type {[String, KeyboardShortcut]} */ entry) => {
+                                return [entry[0], { key: entry[1].key, modifiers: entry[1].modifiers }]
+                            })
+                    )
+                );
+            }
+
+
+
+            // MARK: hasChanges()
+            hasChanges() {
+                for (const ks of Object.values(this)) {
+                    if (ks instanceof KeyboardShortcut && !ks.isDefault()) return true;
+                }
+
+                return false
+            }
+
+
+
+            // MARK: restoreDefaults()
+            restoreDefaults() {
+                for (const ks of Object.values(this)) {
+                    if (ks instanceof KeyboardShortcut && !ks.isDefault()) ks.restoreDefault();
+                }
+            }
+
+
+
+            // MARK: findMatch()
+            /**
+             * Finds a match between the given {@link KeyboardEvent} and the {@link KeyboardShortcut}s set up.
+             * @param {KeyboardEvent} keyboardEvent The {@link KeyboardEvent} fired by a onkey/onkeydown/onkeyup event.
+             */
+            findMatch(keyboardEvent) {
+                Object.values(this).forEach((/** @type {KeyboardShortcut} */ ks) => {
+                    console.log(ks);
+
+                    if (ks.matchKeyInput(keyboardEvent)) {
+                        console.log("Triggering: ", ks)
+                        ks.action()
+                    }
+                })
+            }
+
+        //#endregion 
+
+
+
+
+
+
+        // MARK: _________________________________________
+
+    }
+    /** @type {any} */ (globalThis).KeyboardShortcuts = KeyboardShortcuts;
 
 //#endregion BACKEND
 
@@ -3363,15 +3846,17 @@ class ECAMDashboard {
          * associated with keys that are short description of the value's meaning.
          * @readonly
          * @type {{
-         *      settings:       "ECAM_GRADES_DASHBOARD-settings",
-         *      moduleConfig:   "ECAM_GRADES_DASHBOARD-module_config",
-         *      simGrades:      "ECAM_GRADES_DASHBOARD-sim_grades",
+         *      settings:           "ECAM_GRADES_DASHBOARD-settings",
+         *      moduleConfig:       "ECAM_GRADES_DASHBOARD-module_config",
+         *      simGrades:          "ECAM_GRADES_DASHBOARD-sim_grades",
+         *      keyboardShortcuts:  "ECAM_GRADES_DASHBOARD-keyboard_shortcuts",
          * }}
          */
         static cacheKeys = {
-            /** @readonly */ settings:      "ECAM_GRADES_DASHBOARD-settings",
-            /** @readonly */ moduleConfig:  "ECAM_GRADES_DASHBOARD-module_config",
-            /** @readonly */ simGrades:     "ECAM_GRADES_DASHBOARD-sim_grades",
+            /** @readonly */ settings:              "ECAM_GRADES_DASHBOARD-settings",
+            /** @readonly */ moduleConfig:          "ECAM_GRADES_DASHBOARD-module_config",
+            /** @readonly */ simGrades:             "ECAM_GRADES_DASHBOARD-sim_grades",
+            /** @readonly */ keyboardShortcuts:     "ECAM_GRADES_DASHBOARD-keyboard_shortcuts",
         };
 
 
@@ -3400,25 +3885,16 @@ class ECAMDashboard {
         semesters       = [];
 
         /**
+         * Fallback semester.
+         * @readonly
+         */
+        unknownSemester = this.addSemester(0);
+
+        /**
          * Array of all the non-read {@link Grade}s of the user. 
          * @type {Grade[]}
          */
         newGrades       = [];
-
-
-        /**
-         * Global average of the user.
-         * @type {number}
-         */
-        average = NaN;
-
-
-        /**
-         * Global average of the user's class.
-         * @type {number}
-         */
-        classAvg = NaN;
-
 
         /**
          * Array of all the disabled {@link Grade}s of the user. 
@@ -3429,14 +3905,12 @@ class ECAMDashboard {
          */
         disabledGrades  = [];
 
-
-
         /**
          * Array of all the simulated {@link Grade}s of the user.
          * @type {Grade[]}
+         * @readonly
          */
-        sim             = [];
-
+        sim;
 
         /**
          * Object representing the configuration of the modules for the user.
@@ -3458,28 +3932,38 @@ class ECAMDashboard {
          *          }
          *      }
          * }}
+         * @readonly
          */
-        moduleConfig    = {};
+        moduleConfig = this.retrieveCachedModuleConfig();
 
+
+
+        /**
+         * Global average of the user.
+         * @type {number}
+         */
+        average = NaN;
+
+        /**
+         * Global average of the user's class.
+         * @type {number}
+         */
+        classAvg = NaN;
 
         /**
          * @type {Settings}
+         * @readonly
          */
-        // @ts-ignore
-        settings;
+        settings = this.retrieveCachedSettings();
+
+        /**
+         * @type {KeyboardShortcuts}
+         * @readonly
+         */
+        keyboardShortcuts = this.retrieveCachedKeyboardShortcuts();
 
 
         offline = false;
-
-
-
-        /**
-         * Fallback semester.
-         * @readonly
-         */
-        unknownSemester = this.addSemester(0);
-
-
 
     //#endregion                  — properties —
 
@@ -3494,7 +3978,6 @@ class ECAMDashboard {
      */
     constructor(offline=false) {
         this.initCSS();
-        this.retrieveCachedSettings();
         this.offline = offline;
 
         if (!offline) {
@@ -3511,6 +3994,8 @@ class ECAMDashboard {
 
 
         this.parseGrades();
+        this.sim = this.retrieveCachedSimGrades();
+        this.computeAllStats();
 
 
         const container = document.querySelector("#currentNote");
@@ -3537,7 +4022,7 @@ class ECAMDashboard {
 
 
 
-            // MARK: _  gradeFromString()
+            // MARK: gradeFromString()
             /**
              * 
              * @param {string} string 
@@ -3644,7 +4129,7 @@ class ECAMDashboard {
 
 
 
-                // MARK: _  parseGrades()
+                // MARK: parseGrades()
                 /**
                  * Reads the grades from the grades table, and create {@link Grade} instances.
                  *
@@ -3677,8 +4162,6 @@ class ECAMDashboard {
                                     : Module.unclassified
                                 ;
 
-                                // if ( subject === "Mathematics for Engineers 5" ) debugger;
-
                                 this.addGrade(
                                     grade, 
                                     coef, 
@@ -3709,9 +4192,6 @@ class ECAMDashboard {
                         // this.grades = this.savedReadGrades;
                     }
 
-                    this.retrieveCachedSimGrades();
-                    this.computeAllStats();
-
                     return this;
                 }
 
@@ -3730,7 +4210,7 @@ class ECAMDashboard {
 
 
 
-            // MARK: _  initCSS()
+            // MARK: initCSS()
             initCSS() {
 
                 
@@ -4696,7 +5176,7 @@ class ECAMDashboard {
 
 
 
-            // MARK: _  cacheModuleConfig()
+            // MARK: cacheModuleConfig()
             cacheModuleConfig() {
                 localStorage.setItem(
                     ECAMDashboard.cacheKeys.moduleConfig, 
@@ -4708,36 +5188,32 @@ class ECAMDashboard {
 
 
 
-            // MARK: _  retrieveCachedModuleConfig()
+            // MARK: retrieveCachedModuleConfig()
             /**
              * Attempts to find in the cache of the user a moduleConfig v3, and prepares the moduleConfig object.
              * If couldn't find any, tries to get an old moduleConfig from the cache, and translates it before saving it as a moduleConfig v3.
              */
             retrieveCachedModuleConfig() {
 
-                let valid = true;
+                let out = this.moduleConfig;
+                const moduleConfigStringified = localStorage.getItem(ECAMDashboard.cacheKeys.moduleConfig);
 
-                try { this.moduleConfig = JSON.parse( localStorage.getItem(ECAMDashboard.cacheKeys.moduleConfig) || "{}" ); }
-                catch (e) {
-                    this.moduleConfig = {};
-                    valid = false;
-                }
-
-                if (valid && Object.keys(this.moduleConfig).length > 0) {
+                if (moduleConfigStringified) {
                     // Preparing the Semester, Module and Subject objects from the moduleConfig
+                    out = JSON.parse( moduleConfigStringified );
 
-                    for (const _sem of Object.keys(this.moduleConfig)) {
+                    for (const _sem of Object.keys(out)) {
                         const sem = parseInt(_sem);
                         const semesterObj = this.ensureSemester(sem);
-                        this.moduleConfig[sem].__object__ = semesterObj;
+                        out[sem].__object__ = semesterObj;
 
-                        for (const module of Object.keys(this.moduleConfig[sem].modules)) {
+                        for (const module of Object.keys(out[sem].modules)) {
                             const moduleObj = this.ensureModule(module, semesterObj);
-                            this.moduleConfig[sem].modules[module].__object__ = moduleObj;
+                            out[sem].modules[module].__object__ = moduleObj;
 
-                            for (const subjectEntry of Object.entries(this.moduleConfig[sem].modules[module].subjects)) {
+                            for (const subjectEntry of Object.entries(out[sem].modules[module].subjects)) {
                                 const subjectObj = this.ensureSubject(subjectEntry[0], moduleObj, semesterObj, subjectEntry[1].coefficient);
-                                this.moduleConfig[sem].modules[module].subjects[subjectEntry[0]].__object__ = subjectObj;
+                                out[sem].modules[module].subjects[subjectEntry[0]].__object__ = subjectObj;
                             }
                         }
                     }
@@ -4755,7 +5231,7 @@ class ECAMDashboard {
                             const sem = parseInt(_sem);
                             const semesterObj = this.ensureSemester(sem);
 
-                            this.moduleConfig[sem] = {
+                            out[sem] = {
                                 "__object__": semesterObj, 
                                 "__modules__": [],
                                 "modules": {}
@@ -4763,11 +5239,11 @@ class ECAMDashboard {
 
                             for (const moduleEntry of Object.entries(oldModuleConfig[sem])) {
 
-                                if (moduleEntry[0] == "__modules__") this.moduleConfig[sem].__modules__ = moduleEntry[1];
+                                if (moduleEntry[0] == "__modules__") out[sem].__modules__ = moduleEntry[1];
                                 else {
                                     const moduleObj = this.ensureModule(moduleEntry[0], semesterObj);
 
-                                    this.moduleConfig[sem].modules[moduleEntry[0]] = {
+                                    out[sem].modules[moduleEntry[0]] = {
                                         "__object__": moduleObj,
                                         "__subjects__": [],
                                         "subjects": {}
@@ -4775,12 +5251,12 @@ class ECAMDashboard {
 
                                     for (const subjectEntry of Object.entries(moduleEntry[1])) {
 
-                                        if (subjectEntry[0] == "subjects") this.moduleConfig[sem].modules[moduleEntry[0]].__subjects__ = subjectEntry[1];
+                                        if (subjectEntry[0] == "subjects") out[sem].modules[moduleEntry[0]].__subjects__ = subjectEntry[1];
                                         else if (subjectEntry[0] == "coefficients") {
                                             for (const entry of Object.entries(subjectEntry[1])) {
                                                 const subjectObj = this.ensureSubject(entry[0], moduleObj, semesterObj, entry[1]);
 
-                                                this.moduleConfig[sem].modules[moduleEntry[0]].subjects[entry[0]] = {
+                                                out[sem].modules[moduleEntry[0]].subjects[entry[0]] = {
                                                     "__object__": subjectObj,
                                                     "coefficient": entry[1]
                                                 };
@@ -4794,9 +5270,10 @@ class ECAMDashboard {
 
                     this.cacheModuleConfig();
                     // TODO: localStorage.removeItem("ECAM_DASHBOARD_MODULE_CONFIG");
+
                 }
 
-                return this;
+                return out;
             }
 
 
@@ -4804,7 +5281,7 @@ class ECAMDashboard {
 
 
 
-            // MARK: _  cacheSimGrades()
+            // MARK: cacheSimGrades()
             // TODO
             /**
              * Saves the simulated {@link Grade}s into the cache of the user.
@@ -4821,25 +5298,25 @@ class ECAMDashboard {
 
 
 
-            // MARK: _  retrieveCachedSimGrades()
+            // MARK: retrieveCachedSimGrades()
             /**
              * Retrieves the simulated {@link Grade}s from the cache of the user.
              */
             retrieveCachedSimGrades() {
                 /** @type { Grade[] } */
                 let newSim = [];
+                const simGradesStringified = localStorage.getItem(ECAMDashboard.cacheKeys.simGrades);
 
-                try { 
+                if (simGradesStringified) { 
                     // newSim = JSON.parse(
                     //     localStorage.getItem(ECAMDashboard.cacheKeys.cachedSimGrades), (_key, value) => { return Grade.fromString(value, this) } 
                     // ) || []; 
 
-                    (localStorage.getItem(ECAMDashboard.cacheKeys.simGrades) || "" ).split(Grade.gradesSeparator).forEach(g => {
+                    (localStorage.getItem(ECAMDashboard.cacheKeys.simGrades) || "[]" ).split(Grade.gradesSeparator).forEach(g => {
                         const parsedGrade = this.gradeFromString(g);
                         if (parsedGrade) newSim.push(parsedGrade);
                     })
                 }
-                catch (e) {}
 
 
                 if (newSim.length == 0) {
@@ -4885,7 +5362,7 @@ class ECAMDashboard {
                                         g.id
                                     );
 
-                                    if (simGrade) this.sim.push(simGrade);
+                                    if (simGrade) newSim.push(simGrade);
                                 }
                             }
                         }
@@ -4894,10 +5371,9 @@ class ECAMDashboard {
                     this.cacheSimGrades()
                     // TODO: localStorage.removeItem("ECAM_DASHBOARD_SIM_GRADES");
                 }
-                else this.sim = newSim;
 
 
-                return this;
+                return newSim;
             }
 
 
@@ -4905,7 +5381,7 @@ class ECAMDashboard {
 
 
 
-            // MARK: _  cacheSettings()
+            // MARK: cacheSettings()
             cacheSettings() {
                 localStorage.setItem(
                     ECAMDashboard.cacheKeys.settings, 
@@ -4916,25 +5392,48 @@ class ECAMDashboard {
 
 
 
-            // MARK: _  retrieveCachedSettings()
+            // MARK: retrieveCachedSettings()
             retrieveCachedSettings() {
 
                 const cachedSettings = localStorage.getItem(ECAMDashboard.cacheKeys.settings);
+                let out;
 
                 if (cachedSettings) {
-                    this.settings = new Settings(JSON.parse(cachedSettings));
+                    out = new Settings(JSON.parse(cachedSettings));
                 }
                 else {
-                    this.settings = new Settings(JSON.parse(localStorage['ECAM_DASHBOARD_SETTINGS'], (_, value) => {
+                    out = new Settings(JSON.parse(localStorage.getItem('ECAM_DASHBOARD_SETTINGS') || "{}", (_, value) => {
                         delete value.parents;
                         delete value.children;
                         return value?.value !== undefined ? value.value : value;
                     }));
 
                     this.cacheSettings();
-                    // localStorage.removeItem('ECAM_DASHBOARD_SETTINGS');
+                    // TODO: localStorage.removeItem('ECAM_DASHBOARD_SETTINGS');
                 }
-                
+
+                return out;
+            }
+
+
+
+
+            // MARK: cacheKeyboardShortcuts
+            cacheKeyboardShortcuts() {
+                localStorage.setItem(
+                    ECAMDashboard.cacheKeys.keyboardShortcuts,
+                    this.keyboardShortcuts.toCacheString()
+                );
+            }
+
+
+
+            // MARK: retrieveCachedKeyboardShortcuts
+            retrieveCachedKeyboardShortcuts() {
+                const stringifiedKeyboardShortcuts = localStorage.getItem(ECAMDashboard.cacheKeys.keyboardShortcuts);
+                const parsedKeyboardShortcuts = JSON.parse(stringifiedKeyboardShortcuts || "{}");
+
+                return new KeyboardShortcuts(parsedKeyboardShortcuts);
             }
 
 
@@ -4954,7 +5453,7 @@ class ECAMDashboard {
 
 
 
-            // MARK: _  computeAllStats()
+            // MARK: computeAllStats()
             /**
              * Compute the stats of every {@link Semester}, {@link Module} and {@link Subject}.
              *
@@ -4983,7 +5482,7 @@ class ECAMDashboard {
 
 
 
-                // MARK: _  addGrade()
+                // MARK: addGrade()
                 /**
                  * 
                  * @param {number}              grade 
@@ -5056,7 +5555,7 @@ class ECAMDashboard {
 
 
 
-                // MARK: _  getGrade()
+                // MARK: getGrade()
                 /**
                  *
                  * @param {Grade|number|string}                 grade
@@ -5122,7 +5621,7 @@ class ECAMDashboard {
                 }
 
 
-                // MARK: _  getDisabledGrade()
+                // MARK: getDisabledGrade()
                 /**
                  *
                  * @param {Grade|number|string}                 grade
@@ -5190,7 +5689,7 @@ class ECAMDashboard {
 
 
 
-                // MARK: _  hasGrade()
+                // MARK: hasGrade()
                 /**
                  *
                  * @param {Grade|number|string} grade
@@ -5228,7 +5727,7 @@ class ECAMDashboard {
                 }
 
 
-                // MARK: _  hasDisabledGrade()
+                // MARK: hasDisabledGrade()
                 /**
                  *
                  * @param {Grade|number|string} grade
@@ -5267,7 +5766,7 @@ class ECAMDashboard {
 
 
 
-                // MARK: _  enableGrades()
+                // MARK: enableGrades()
                 /**
                  * Enables the given {@link Grade}.s.
                  * @param  {...Grade} grades The {@link Grade}.s to enable.
@@ -5283,7 +5782,7 @@ class ECAMDashboard {
                 }
 
 
-                // MARK: _  disableGrades()
+                // MARK: disableGrades()
                 /**
                  * Disables the given {@link Grade}.s.
                  * @param  {...Grade} grades The {@link Grade}.s to disable.
@@ -5298,7 +5797,7 @@ class ECAMDashboard {
                 }
 
 
-                // MARK: _  toggleGrades()
+                // MARK: toggleGrades()
                 /**
                  * Enables every given disabled {@link Grade} and disables every given enabled {@link Grade}.
                  * @param  {...Grade} grades The {@link Grade}.s to switch from enabled to disabled or vice-versa.
@@ -5328,7 +5827,7 @@ class ECAMDashboard {
 
 
 
-                // MARK: _  addSubject()
+                // MARK: addSubject()
                 /**
                  * 
                  * @param {Subject|string}      subject 
@@ -5358,7 +5857,7 @@ class ECAMDashboard {
 
 
 
-                // MARK: _  getSubject()
+                // MARK: getSubject()
                 /**
                  *
                  * @param {Subject|string} subject The name of the {@link Subject} to find.
@@ -5384,7 +5883,7 @@ class ECAMDashboard {
 
 
                 
-                // MARK: _  hasSubject()
+                // MARK: hasSubject()
                 /**
                  *
                  * @param {Subject|string} subject The {@link Subject} containing the same informations as the {@link Subject} to find, or its name. If giving its name, you may give next the name of its module and the number of its semester for more precisions.
@@ -5405,7 +5904,7 @@ class ECAMDashboard {
 
 
 
-                // MARK: _  ensureSubject()
+                // MARK: ensureSubject()
                 /**
                  * Tries to get the {@link Subject} corresponding to the given {@link Subject} (or its name),
                  * and if it does not exits, create it and return it.
@@ -5443,7 +5942,7 @@ class ECAMDashboard {
 
 
 
-                // MARK: _  addModule()
+                // MARK: addModule()
                 /**
                  * 
                  * @param {Module|string} module 
@@ -5464,7 +5963,7 @@ class ECAMDashboard {
 
 
 
-                // MARK: _  getModule()
+                // MARK: getModule()
                 /**
                  *
                  * @param {Module|string} module
@@ -5487,7 +5986,7 @@ class ECAMDashboard {
 
 
 
-                // MARK: _  hasModule()
+                // MARK: hasModule()
                 /**
                  *
                  * @param {Module|string} module
@@ -5504,7 +6003,7 @@ class ECAMDashboard {
 
 
 
-                // MARK: _  ensureModule()
+                // MARK: ensureModule()
                 /**
                  * Tries to get the {@link Module} corresponding to the given {@link Module} (or its name),
                  * and if it does not exits, create it and return it.
@@ -5538,7 +6037,7 @@ class ECAMDashboard {
 
 
 
-                // MARK: _  addSemester()
+                // MARK: addSemester()
                 /**
                  * 
                  * @param {Semester|number} semester 
@@ -5556,7 +6055,7 @@ class ECAMDashboard {
 
 
 
-                // MARK: _  getSemester()
+                // MARK: getSemester()
                 /**
                  *
                  * @param {Semester|number} semester
@@ -5577,7 +6076,7 @@ class ECAMDashboard {
 
 
 
-                // MARK: _  hasSemester()
+                // MARK: hasSemester()
                 /**
                  * 
                  * @param {Semester|number} semester 
@@ -5593,7 +6092,7 @@ class ECAMDashboard {
 
 
 
-                // MARK: _  ensureSemester()
+                // MARK: ensureSemester()
                 /**
                  * Tries to get the {@link Semester} corresponding to the given {@link Semester} (or its number),
                  * and if it does not exits, create it and return it.

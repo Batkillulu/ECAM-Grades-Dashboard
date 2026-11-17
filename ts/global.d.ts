@@ -13,6 +13,30 @@ interface String {
 }
 
 
+
+// MARK: KeyboardEvents
+interface KeyboardEvent {
+
+    /**
+     * Returns the string representation of ***this*** {@link KeyboardEvent}.
+     * 
+     * ```
+     * `${"repeated "|""}${"alt + "|""}${"ctrl + "|""}${"shift + "|""}${"meta + "|""}${this.key}`
+     * ```
+     */
+    toString(): string
+
+    /**
+     * Returns the string representation of ***this*** {@link KeyboardEvent}.
+     * 
+     * ```
+     * RegExp(`(?<repeat>${"repeated "|""})(?<alt>${"alt + "|""})(?<ctrl>${"ctrl + "|""})(?<shift>${"shift + "|""})(?<meta>${"meta + "|""})(?<key>${this.key})`)
+     * ```
+     */
+    toRegExp(): RegExp
+}
+
+
 // MARK: Function
 interface Function {
 
